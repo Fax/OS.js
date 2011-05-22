@@ -1,0 +1,31 @@
+.ApplicationFilemanager {
+}
+.ApplicationFilemanagerMain {
+  position : absolute;
+  top : 2px;
+  left : 2px;
+  right : 2px;
+  bottom : 2px;
+  background : #fff;
+}
+.ApplicationFilemanagerMain ul {
+  list-style-type : none;
+  padding : 0;
+  margin : 0;
+}
+.ApplicationFilemanagerMain li {
+  float : left;
+  margin : 0;
+  padding : 10px;
+  text-align : center;
+  width : 48px;
+  height : 48px;
+}
+.ApplicationFilemanagerMain li .Inner,
+.ApplicationFilemanagerMain li .Inner * {
+  cursor : pointer;
+}
+.ApplicationFilemanagerMain li.Current .Title {
+  background : #4f4f4f;
+  color : #fff;
+}

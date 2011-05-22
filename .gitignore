@@ -1,0 +1,16 @@
+.git-old
+_work/
+locale/*/*/messages.mo
+public_html/js/jquery-*
+build/classes/*/map/*
+build/classes/*/om/*
+build/conf/*-conf.php
+build/conf/classmap-*-conf.php
+build/sql/schema.sql
+build/sql/sqldb.map
+*.*.sw*
+.vimerr
+vim.session
+template/*.php
+doc/doxygen.log
+doc/api/*

@@ -1,0 +1,93 @@
+# SimpliciCore Project Locales
+# Copyright (C) 2010 Anders Evenrud
+# Anders Evenrud <andersevenrud@gmail.com>, 2010.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-02-22 21:27+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Anders Evenrud <andersevenrud@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# src/SessionViewController.class.php
+
+msgid "Logout successfull!"
+msgstr ""
+
+msgid "You have been logged out."
+msgstr ""
+
+msgid "Login failed!"
+msgstr ""
+
+msgid "Invalid username or password."
+msgstr ""
+
+msgid "Login successfull!"
+msgstr ""
+
+msgid "You are now logged in."
+msgstr ""
+
+# SCore/lib/ViewController.class.php
+
+msgid "Failed to save %s"
+msgstr ""
+
+msgid "Validation of %s has failed"
+msgstr ""
+
+msgid "Saved %s"
+msgstr ""
+
+msgid "Validation of %s successfull"
+msgstr ""
+
+# SCore/lib/Form.class.php
+
+msgid "must be at least %d characters"
+msgstr ""
+
+msgid "must be less than %d characters"
+msgstr ""
+
+msgid "must be set"
+msgstr ""
+
+# SCore/src/ApplicationController.class.php
+
+msgid "Permission denied!"
+msgstr ""
+
+msgid "You need to log in to perform this operation!"
+msgstr ""
+
+msgid "You do not have the privileges to view this page."
+msgstr ""
+
+msgid "You have been logged out!"
+msgstr ""
+
+msgid "You have been logged out after %d seconds of inactivity."
+msgstr ""
+
+# Score/src/ApplicationUser.class.php
+
+msgid "None"
+msgstr ""
+
+msgid "Normal user"
+msgstr ""
+
+msgid "Superuser"
+msgstr ""
+
+msgid "Administrator"
+msgstr ""
+

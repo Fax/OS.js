@@ -1,0 +1,4 @@
+*.log
+access_log
+error_log
+acces_log

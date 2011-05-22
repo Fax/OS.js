@@ -1,0 +1,202 @@
+@charset "UTF-8";
+
+body {
+  overflow : hidden;
+  margin : 0;
+  padding : 0;
+}
+
+/* Desktop */
+
+#Desktop {
+  position : relative;
+  padding : 10px;
+  padding-top : 40px;
+}
+
+/* Panel */
+
+.DesktopPanel {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  height : 30px;
+  z-index : 10000000;
+}
+
+.PanelButton {
+
+}
+
+.PanelItem {
+  float : left;
+  height : 20px;
+  line-height : 20px;
+  margin : 5px;
+  padding : 0;
+  cursor : pointer;
+  position : relative;
+}
+
+.PanelItem.Padded {
+  padding-left : 5px;
+  padding-right : 5px;
+}
+
+.PanelItem.AlignRight {
+  float : right;
+}
+.PanelItemHolder {
+  float : left;
+}
+.PanelItemHolder.AlignRight {
+  float : right;
+}
+
+.PanelItemMenu {
+}
+
+.PanelItemMenu ul {
+  position : absolute;
+  list-style-type : none;
+  margin : 0;
+  padding : 2px;
+  top : 20px;
+  left : 0;
+  display : none;
+}
+
+.PanelItemWindow {
+
+}
+
+.PanelItemWindow img {
+  vertical-align : middle;
+  margin-right : 5px;
+}
+
+.PanelItemClock {
+
+}
+
+.PanelItemLauncher {
+
+}
+.PanelItemLauncher img {
+  padding : 2px;
+}
+
+.PanelItemSeparator {
+  width : 1px;
+  margin-left : 2px;
+  margin-right : 2px;
+  padding : 0;
+}
+
+/* Menus */
+
+.Menu {
+  position : absolute;
+  list-style-type : none;
+  margin : 0;
+  padding : 5px;
+  top : 20px;
+  left : 0;
+  display : none;
+  min-width : 100px;
+  white-space : nowrap;
+}
+
+.Menu li {
+  padding : 5px;
+}
+.Menu li:hover {
+
+}
+
+.Menu li img {
+  vertical-align : middle;
+  margin-right : 5px;
+}
+
+/* Window */
+
+.Window {
+  min-width : 100px;
+  min-height : 100px;
+  width : 500px;
+  height : 300px;
+  position : absolute;
+  z-index : 10;
+  overflow : hidden;
+}
+.WindowTop {
+  height : 20px;
+  cursor : pointer;
+}
+.WindowTopInner {
+  padding : 2px;
+  padding-left : 5px;
+}
+.WindowTopControllers {
+  position : absolute;
+  top : 0px;
+  right : 0px;
+}
+.WindowTopController {
+  width : 14px;
+  height : 14px;
+  margin : 2px;
+  text-align : center;
+  float : left;
+}
+.WindowTopController:hover {
+}
+
+.WindowContent {
+  overflow : auto;
+  position : absolute;
+  top : 22px;
+  left : 2px;
+  right : 2px;
+  bottom : 4px;
+}
+.WindowContentInner {
+}
+.WindowBottom {
+  display : none;
+}
+.WindowBottomInner {
+  padding : 2px;
+}
+
+.Window .ui-resizable-handle {
+  position : absolute;
+  bottom : 0;
+  right : 0;
+  cursor : pointer;
+}
+
+.Dialog {
+
+
+}
+.DialogContent {
+  position : absolute;
+  top : 5px;
+  bottom : 25px;
+  right : 5px;
+  left : 5px;
+}
+.DialogContent.error {
+  color : #ff0000;
+}
+.DialogButtons {
+  position : absolute;
+  bottom : 4px;
+  right : 0px;
+  left : 0px;
+  height : 20px;
+  text-align : center;
+}

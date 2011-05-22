@@ -1,0 +1,15 @@
+* [ALT] Set up database and user
+* Set up apache-vhost to 'public_html/'
+* [ALT] Set up apache logging to 'logs/access-log' and 'logs/error-log'
+* Make sure the "SCore" symlink is correct
+* Make sure you have Framework dependencies installed
+* [ALT, DOC] Configure 'doc/doxygen.conf'
+* [ALT] Configure 'config/localhost.php'
+* Configure 'config/localhost-build.properties'
+* Configure 'config/localhost-runtime-conf.xml'
+* Configure 'header.php'
+* chown the '.cache' directory to apache user
+* chown the '.template_c' directory to apache user
+* chown the 'logs' directory to apache user
+* Run 'php bin/manage.php environment'
+* Run 'php bin/manage.php rebuild' or './bin/propel-gen'
