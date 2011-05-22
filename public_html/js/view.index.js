@@ -1,5 +1,7 @@
 (function() {
 
+  var ANIMATION_SPEED = 400;
+
   var _ApplicationRegister = {};
   var _Resources = null;
   var _Desktop = null;
@@ -157,6 +159,9 @@
         if ( _Window === win ) {
           _Window.blur();
         }
+        if ( state ) {
+          win.focus();
+        }
 
         this.panel.redraw(this);
       },
@@ -307,7 +312,7 @@
         this.app.destroy();
       }
 
-      $(this.$element).fadeOut(function() {
+      $(this.$element).fadeOut(ANIMATION_SPEED, function() {
         $(self.$element).remove();
       });
 
@@ -492,7 +497,7 @@
         if ( !this.minimized ) {
           var self = this;
 
-          this.$element.animate({opacity: 'hide', height: 'hide'}, {'duration' : 'slow', 'complete' : function() {
+          this.$element.animate({opacity: 'hide', height: 'hide'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
             _Desktop.toggleWindow(self, false);
           }});
 
@@ -505,7 +510,7 @@
     restore : function() {
       if ( this.minimized ) {
         var self = this;
-        this.$element.animate({opacity: 'show', height: 'show'}, {'duration' : 'slow', 'complete' : function() {
+        this.$element.animate({opacity: 'show', height: 'show'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
           _Desktop.toggleWindow(self, true);
         }});
       }
@@ -595,7 +600,7 @@
       });
 
       setTimeout(function() {
-        $("#LoadingBar").fadeOut();
+        $("#LoadingBar").fadeOut(ANIMATION_SPEED);
       }, 100);
     });
   });

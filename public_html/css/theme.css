@@ -16,9 +16,14 @@ body {
 }
 
 #LoadingBar {
+  background : #3c3c3d;
+
   -moz-box-shadow: 0px 0px 10px #000;
   -webkit-box-shadow: 0px 0px 10px #000;
   box-shadow: 0px 0px 10px #000;
+}
+#Loading .ui-progressbar-value {
+  background-image: url('/img/pbar-ani.gif');
 }
 
 .DesktopPanel {
@@ -30,15 +35,14 @@ body {
 }
 
 .PanelItem {
-  color : #fff;
+  color : #b0c2c1;
   border : 1px solid transparent;
 }
 .PanelItem:hover {
-  background : #414141;
+  color : #fff;
   border : 1px solid #363636;
 }
 .PanelItem.Current {
-  text-decoration : underline;
 }
 .PanelItemSeparator {
   border-left : 1px solid #363636;
@@ -63,15 +67,18 @@ body {
 }
 .WindowTop {
   color : #b0c2c1;
-  font-weight : bold;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#41454d', endColorstr='#31363d'); /* for IE */
   background: -webkit-gradient(linear, left top, left bottom, from(#41454d), to(#31363d)); /* for webkit browsers */
   background: -moz-linear-gradient(top,  #41454d,  #31363d); /* for firefox 3.6+ */ 
 }
+.WindowTopController {
+  font-weight : bold;
+  font-size : 16px;
+}
 .WindowTopController:hover {
   color : #fff;
 }
-.Window.Current .WindowTop {
+.Window.Current .WindowTopInner {
   color : #fff;
 }
 

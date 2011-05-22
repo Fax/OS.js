@@ -25,7 +25,6 @@ body {
 
 #LoadingBar {
   height : 22px;
-  background : #3c3c3d;
   border : 0 none;
 }
 #LoadingBar * {
@@ -34,7 +33,6 @@ body {
 }
 
 #Loading .ui-progressbar-value {
-  background-image: url('/img/pbar-ani.gif');
 }
 
 /* Panel */
@@ -91,12 +89,20 @@ body {
 }
 
 .PanelItemWindow {
-
+  background : #414141;
 }
-
 .PanelItemWindow img {
   vertical-align : middle;
   margin-right : 5px;
+}
+.PanelItemWindow {
+  -moz-opacity : 0.5;
+  opacity : 0.5;
+}
+.PanelItemWindow.Current {
+  color : #fff;
+  -moz-opacity : 1.0;
+  opacity : 1.0;
 }
 
 .PanelItemClock {
@@ -162,11 +168,11 @@ body {
 }
 .WindowTop {
   height : 26px;
-  cursor : pointer;
   text-align : center;
 }
 .WindowTopInner {
   padding : 5px;
+  cursor : default;
 }
 .WindowTop img {
   float : left;
@@ -185,11 +191,11 @@ body {
   right : 0px;
 }
 .WindowTopController {
-  width : 14px;
+  width : 22px;
   height : 14px;
-  margin : 4px;
   text-align : center;
   float : left;
+  cursor : pointer;
 }
 .WindowTopController:hover {
 }
