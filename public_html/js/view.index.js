@@ -307,7 +307,9 @@
         this.app.destroy();
       }
 
-      $(this.$element).remove();
+      $(this.$element).fadeOut(function() {
+        $(self.$element).remove();
+      });
 
       console.log("Window destroyed...", this);
     },
@@ -332,7 +334,7 @@
         el.attr("id", id).css("z-index", zi);
 
         el.find(".WindowContent").css("overflow", this.is_scrollable ? "auto" : "hidden");
-        el.find(".WindowTopInner").html(this.title);
+        el.find(".WindowTopInner span").html(this.title);
 
         if ( this.dialog ) {
           el.find(".DialogContent").html(this.content).addClass(this.opts.type);
@@ -340,6 +342,7 @@
             el.find(".ActionClose").click();
           });
         } else {
+          el.find(".WindowTopInner img").attr("src", "/img/icons/16x16/" + this.icon);
           el.find(".WindowContentInner").html(this.content);
         }
 
@@ -376,12 +379,25 @@
 
         if ( this.is_draggable ) {
           el.draggable({
-            handle : ".WindowTop"
+            handle : ".WindowTop",
+            start : function() {
+              el.addClass("Blend");
+            },
+            stop : function() {
+              el.removeClass("Blend");
+            }
           });
         }
 
         if ( this.is_resizable ) {
-          el.resizable();
+          el.resizable({
+            start : function() {
+              el.addClass("Blend");
+            },
+            stop : function() {
+              el.removeClass("Blend");
+            }
+          });
         }
 
         this.$element = el;
@@ -474,9 +490,12 @@
     minimize : function() {
       if ( this.is_minimizable ) {
         if ( !this.minimized ) {
-          this.$element.hide();
+          var self = this;
 
-          _Desktop.toggleWindow(this, false);
+          this.$element.animate({opacity: 'hide', height: 'hide'}, {'duration' : 'slow', 'complete' : function() {
+            _Desktop.toggleWindow(self, false);
+          }});
+
         }
 
         this.minimized = true;
@@ -485,9 +504,10 @@
 
     restore : function() {
       if ( this.minimized ) {
-        this.$element.show();
-
-        _Desktop.toggleWindow(this, true);
+        var self = this;
+        this.$element.animate({opacity: 'show', height: 'show'}, {'duration' : 'slow', 'complete' : function() {
+          _Desktop.toggleWindow(self, true);
+        }});
       }
 
       this.minimized = false;
@@ -551,6 +571,12 @@
   /////////////////////////////////////////////////////////////////////////////
 
   $(window).ready(function() {
+    $("#LoadingBar").progressbar({
+      value : 20
+    });
+
+    $("#Loading").show();
+
     _Resources = new ResourceManager();
 
     $.post("/", {'ajax' : true, 'action' : 'init'}, function(data) {
@@ -564,6 +590,13 @@
         alert(data.error);
       }
 
+      $("#LoadingBar").progressbar({
+        value : 100
+      });
+
+      setTimeout(function() {
+        $("#LoadingBar").fadeOut();
+      }, 100);
     });
   });
 

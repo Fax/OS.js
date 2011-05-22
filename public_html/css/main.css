@@ -14,6 +14,29 @@ body {
   padding-top : 40px;
 }
 
+#Loading {
+  position : absolute;
+  bottom : 10px;
+  right : 10px;
+  width : 200px;
+  height : 30px;
+  z-index : 1000000;
+}
+
+#LoadingBar {
+  height : 22px;
+  background : #3c3c3d;
+  border : 0 none;
+}
+#LoadingBar * {
+  height : 22px;
+  border : 0 none;
+}
+
+#Loading .ui-progressbar-value {
+  background-image: url('/img/pbar-ani.gif');
+}
+
 /* Panel */
 
 .DesktopPanel {
@@ -87,6 +110,10 @@ body {
   padding : 2px;
 }
 
+.PanelWindowHolder {
+  overflow : hidden;
+}
+
 .PanelItemSeparator {
   width : 1px;
   margin-left : 2px;
@@ -131,13 +158,26 @@ body {
   z-index : 10;
   overflow : hidden;
 }
+.Window.Dragging {
+}
 .WindowTop {
-  height : 20px;
+  height : 26px;
   cursor : pointer;
+  text-align : center;
 }
 .WindowTopInner {
-  padding : 2px;
-  padding-left : 5px;
+  padding : 5px;
+}
+.WindowTop img {
+  float : left;
+}
+.WindowTopInner span {
+  padding-left : 15px;
+  padding-right : 45px;
+}
+.Window.Dialog .WindowTopInner span {
+  padding-left : 0;
+  padding-right : 20px;
 }
 .WindowTopControllers {
   position : absolute;
@@ -147,7 +187,7 @@ body {
 .WindowTopController {
   width : 14px;
   height : 14px;
-  margin : 2px;
+  margin : 4px;
   text-align : center;
   float : left;
 }
@@ -157,7 +197,7 @@ body {
 .WindowContent {
   overflow : auto;
   position : absolute;
-  top : 22px;
+  top : 26px;
   left : 2px;
   right : 2px;
   bottom : 4px;

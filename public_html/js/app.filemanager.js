@@ -15,37 +15,37 @@ var ApplicationFilemanager = (function() {
       run : function() {
         var self = this;
         var el = app.$element;
+        var lastItem;
 
 
-        var _initClick = (function() {
-          var last;
+        var _selItem = function(self) {
+          if ( lastItem ) {
+            $(lastItem).parent().removeClass("Current");
+          }
 
-          return function() {
-            $(el).find("li .Inner").bind('click', function() {
-              if ( last ) {
-                $(last).parent().removeClass("Current");
-              }
+          if ( self ) {
+            $(self).parent().addClass("Current");
+          }
 
-              $(this).parent().addClass("Current");
+          lastItem = self;
+        };
 
-              last = this;
-            }).bind('dblclick', function() {
-              if ( $(this).parent().hasClass("type_dir") ) {
-                chdir($(this).find(".Title").html());
-              }
-            });
-          };
+        var _initClick = function() {
+          $(el).find("li .Inner").bind('click', function(ev) {
+            _selItem(this);
+            ev.stopPropagation();
+          }).bind('dblclick', function(ev) {
+            if ( $(this).parent().hasClass("type_dir") ) {
+              chdir($(this).find(".Title").html());
+            }
+            ev.stopPropagation();
+          });
+        };
 
-        })();
-
-        var _destroyView = (function() {
-
-          return function() {
-            $(el).find("li .Inner").unbind();
-            $(el).find("li").remove();
-          };
-
-        });
+        var _destroyView = function() {
+          $(el).find("li .Inner").unbind();
+          $(el).find("li").remove();
+        };
 
         function chdir(dir) {
           if ( dir != "/" ) {
@@ -64,6 +64,10 @@ var ApplicationFilemanager = (function() {
 
           _CurrentDir = dir;
         }
+
+        $(el).click(function() {
+          _selItem();
+        });
 
 
         this._super();

@@ -104,7 +104,13 @@ EOHTML;
             $icon = "places/folder.png";
             $type = "dir";
           }
-          $items[] = sprintf($html, $type, $icon, $file);
+          $title = $file;
+          /*
+          if ( mb_strlen($title) > 10 ) {
+            $title = substr($title, 0, 10);
+          }
+           */
+          $items[] = sprintf($html, $type, $icon, $title);
         }
       }
       closedir($handle);

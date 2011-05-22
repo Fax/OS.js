@@ -36,11 +36,18 @@
   <!-- Content -->
 </div>
 
+<!-- Loading -->
+<div id="Loading" style="display:none">
+  <div id="LoadingBar"></div>
+</div>
+
 <!-- Templates -->
 <div id="Window" style="display:none">
   <div class="Window">
     <div class="WindowTop">
       <div class="WindowTopInner">
+        <img alt="" src="/img/icons/16x16/emblems/emblem-unreadable.png" />
+        <span></span>
       </div>
       <div class="WindowTopControllers">
         <div class="WindowTopController ActionMinimize">
@@ -66,6 +73,7 @@
   <div class="Window Dialog">
     <div class="WindowTop">
       <div class="WindowTopInner">
+        <span></span>
       </div>
       <div class="WindowTopControllers">
         <div class="WindowTopController ActionClose">
