@@ -1,15 +1,113 @@
-* [ALT] Set up database and user
-* Set up apache-vhost to 'public_html/'
-* [ALT] Set up apache logging to 'logs/access-log' and 'logs/error-log'
-* Make sure the "SCore" symlink is correct
-* Make sure you have Framework dependencies installed
-* [ALT, DOC] Configure 'doc/doxygen.conf'
-* [ALT] Configure 'config/localhost.php'
-* Configure 'config/localhost-build.properties'
-* Configure 'config/localhost-runtime-conf.xml'
-* Configure 'header.php'
-* chown the '.cache' directory to apache user
-* chown the '.template_c' directory to apache user
-* chown the 'logs' directory to apache user
-* Run 'php bin/manage.php environment'
-* Run 'php bin/manage.php rebuild' or './bin/propel-gen'
+This has only been tested on these Linux distributions:
+* Gentoo Linux
+* Ubuntu Linux
+
+# Backend Dependencies:
+-------------------------------------------------------------------------------
+* Apache 2+  
+  Modules: ```htaccess, mod_headers, mod_expires, mod_rewrite, mod_deflate, mod_php5, mod_mime```
+* PHP 5.3 +  
+  Modules: ```apache2 mysql sockets xmlreader xmlwriter zip pdo imap mhash mysqli gettext```  
+  Suggested Modules: ```curl curlwrappers gd inifile snmp```
+* MySQL 5+  
+* 'msgfmt' (Optional, Locale generation, for localization and translations)  
+  ```Included in Linux```
+* 'exiftool'  
+  Debian users: ```apt-get install exiftool```  
+  Gentoo users: ```emerge exiftool```  
+  Download: ```http://www.sno.phy.queensu.ca/~phil/exiftool/```  
+* 'pdf2svg' (Optional, for use with PDF applications)  
+  Debian users: ```apt-get install pdf2svg```  
+  Gentoo users: ```emerge pdf2svg```  
+  Download: ```http://www.cityinthesky.co.uk/opensource/pdf2svg```  
+* _ffmpeg_ (Optional, for converting samples from OGG to MPEG)  
+Download: ```http://ffmpeg.org/download.html```
+
+# Frontend Dependencies:
+-------------------------------------------------------------------------------
+* jQuery  
+  ```http://code.jquery.com/jquery-1.7.1.min.js```
+
+* jQuery UI  
+  ```http://jqueryui.com/download/jquery-ui-1.8.17.custom.zip```
+
+* JSON2 by Douglas Crockford  
+  ```https://raw.github.com/douglascrockford/JSON-js/master/json2.js```
+
+* Sprintf by Alexandru Marasteanu  
+  ```http://www.diveintojavascript.com/projects/javascript-sprintf```
+
+* Gnome 2.x icon pack(s)  
+  ```http://ftp.gnome.org/pub/GNOME/sources/gnome-icon-theme/```
+
+* Yahoo YUI Compressor (Included)  
+  ```http://developer.yahoo.com/yui/compressor/```
+
+* Freedesktop Sound Theme  
+  ```http://cgit.freedesktop.org/sound-theme-freedesktop/tree/```
+
+# Automated Installation:
+-------------------------------------------------------------------------------
+The installer is not yet complete. See the next section.
+
+# Manual Installation:
+-------------------------------------------------------------------------------
+
+## First steps
+
+* Clone OS.js from Github
+* Set up `config.php`
+  - Create a copy of `config.example.php` and edit
+  - Or create a symlink and keep current example config
+* Set up other settings in `header.php` if required 
+* Set (temporary) permissions with `./bin/fix-permissions dev` [See note]
+* Create documentation with `./bin/update-documentation` (Optional)
+
+## Database
+* Use the `schema.sql` dump.
+* Use settings from `config.php` or create new and edit the file
+* Add an administrator user using `./bin/add-user`  
+  **NB:** Make sure database is clean and user is created with user_id=1
+
+## Web-Server
+* Use a vhost template in `doc/` and set up your web server
+* Create `/var/cache/OSjs` with permission to Apache
+* Update `php.ini` for the host or enable runtime ini_set for project  
+  The settings are found in the top of `header.php`.  
+  (You can alternatively allow PHP scripts allow settings ini-settings)
+
+## Frontend Dependencies
+* Download **jQuery** (1.7.1 by default)  
+  - Drop into `vendor/`  
+  - Symlink JS to `public_html/vendor/jquery.js` (Should exist)  
+* Download **jQuery UI** (1.8.17 by default)  
+  - Drop into `vendor/`  
+  - Symlink JS to `public_html/vendor/jquery-ui.js` (Should exist)  
+  - Symlink CSS to `public_html/vendor/jquery-ui-theme.css` (Should exist)  
+  - Symlink CSS images to `public_html/vendor/images` (Should exist)  
+* Download **sprintf**  
+  - Drop into `vendor/`  
+  - Symlink JS to `public_html/vendor/sprintf.js` (Should exist)  
+* Download **JSON2**  
+  - Drop into `vendor/`  
+  - Symlink JS to `public_html/vendor/json.js` (Should exist)  
+* Download **Gnome Icon Theme**
+  - Drop into `vendor/`  
+  - Symlink 16x16 and 32x32 directories to `public_html/img/icons/*` (Should exist)
+* Download **Freedesktop Sound Theme**
+  - Drop into `vendor/`  
+  - Symlink `stereo` directory to `public_html/sounds` (Should exist)  
+  - Run `./bin/convert-sounds` to create MP3 samples (Optional)
+
+## Extras
+* Clone the "OSjs-Packages" repository into `src/packages`  
+  - Compile all applications with `./bin/application-gen`  
+  - Install all applications globally with `./bin/install-all`
+
+## Finishing steps
+* Compile server-side locales with `./bin/update-locale`
+* If you're in a production environment or doing testing procedures run `./bin/update-compression` to compress all scripts etc. (Optional)
+* Fix permissions with `./bin/fix-permissions live` [See note]
+
+# Notes
+* `config.php` needs the correct VFS permissions set.

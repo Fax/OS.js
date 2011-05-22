@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+# Convert OGG sound samples to MP3
+#
+# @author Anders Evenrud <andersevenrud@gmail.com>
+# @licence Simplified BSD License
+#
+ROOT="vendor/sound-theme-freedesktop/stereo"
+for file in `ls $ROOT/*.oga`;
+do
+  fn=`basename $file .oga`
+  echo $fn
+  ffmpeg -y -i "$file" -acodec libmp3lame "$ROOT/$fn"\.mp3
+done

@@ -1,0 +1,157 @@
+#!/usr/bin/env php
+<?php
+/*!
+ * @file
+ * session-server -- Core API Wrapper Server
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
+ * @created 2011-06-03
+ */
+
+require "header.php";
+require "lib/ServerUser.class.php";
+require "lib/Server.class.php";
+//require "lib/Daemon.class.php";
+//require "lib/Platform.class.php";
+
+set_time_limit(0);
+ob_implicit_flush();
+
+class _SessionServer
+  extends Server
+{
+  /**
+   * Handle TCP/IP Connections
+   * @return bool
+  protected final function _processTCP($method, $args, &$response, $user) {
+    switch ( $method ) {
+
+      // Open TCP Connection
+      case "tcp_open":
+        if ( $s = $user->connect($args[0], $args[1]) ) {
+          $this->_sockets[] = $s;
+          $user->tcp_index = sizeof($this->_sockets) - 1;
+
+          $response["success"] = true;
+          $response["result"]  = true;
+        } else {
+          $response["error"] = true;
+        }
+
+        return true;
+        break;
+
+      // Send data over TCP Connection
+      case "tcp_send":
+        $err = "no socket";
+        $t   = $user->send($args[0]);
+        if ( !$t || $err = socket_last_error($t)  ) {
+          $response["success"] = true;
+          $response["result"]  = true;
+        } else {
+          $response["error"] = true;
+        }
+
+        return true;
+        break;
+
+      // Close TCP Connection
+      case "tcp_close":
+        if ( $ind = $user->tcp_index ) {
+          $user->disconnect();
+          array_splice($this->_sockets, $ind, 1);
+
+          $response["success"] = true;
+          $response["result"]  = true;
+        } else {
+          $response["error"] = true;
+        }
+
+        return true;
+        break;
+    }
+
+    return false;
+  }
+   */
+
+  /**
+   * Handle Platform Specific calls
+   * @return void
+  protected final function _processPlatform($class, $method, $args, &$response, $user) {
+    try {
+      if ( $result = call_user_func_array(Array($class, $method), Array($args)) ) {
+        $response["error"]   = false;
+        $response["success"] = true;
+        $response["result"]  = $result;
+      }
+    } catch ( Exception $e ) {
+      $response["error"] = $e->getMessage();
+    }
+  }
+   */
+
+  /**
+   * Handle a Message
+   * @return void
+   * @override
+  protected function _process($user, $data, $external = false) {
+    if ( $msg = parent::_process($user, $data, $external) ) {
+      $json     = null;
+      $response = Array(
+        "error"   => false,
+        "success" => false,
+        "result"  => null,
+        "method"  => null
+      );
+
+      try {
+        $json = @((array) JSON::decode($msg));
+      } catch ( Exception $e ) {}
+
+      if ( $json !== null && is_array($json) ) {
+        $_class   = $json['class'];
+        $_method  = $json['method'];
+        $_args    = $json['arguments'];
+
+        $response["method"] = "{$_class}::{$_method}";
+
+        // First handle TCP Connections
+        if ( !$this->_processTCP($_method, $_args, $response, $user) ) {
+          // Then other
+          $this->_processPlatform($_class, $_method, $_args, $response, $user);
+        }
+      }
+
+      $this->_send($user->type, $user->socket, JSON::encode($response));
+    }
+  }
+   */
+  protected function _process($user, $data, $external = false) {
+    if ( $msg = parent::_process($user, $data, $external) ) {
+      $response = false;
+
+      try {
+        $json = @((array) JSON::decode($msg));
+      } catch ( Exception $e ) {
+        $json = null;
+      }
+
+      print $json;
+
+      if ( $json !== null && is_array($json) ) {
+        $response = Array(
+          "id"    => $json["id"],
+          "data"  => $core->doPOST($json["data"])
+        );
+      }
+
+      $this->_send($user->type, $user->socket, JSON::encode($response));
+    }
+  }
+
+}
+
+_SessionServer::run(SERVER_HOST, SERVER_PORT);
+
+?>

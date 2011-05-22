@@ -1,0 +1,81 @@
+#!/usr/bin/env php
+<?php
+/*!
+ * @file
+ * socket-server -- TCP/IP WebSocket Wrapper Server
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
+ * @created 2011-06-03
+ */
+
+require "header.php";
+require "lib/ServerUser.class.php";
+require "lib/Server.class.php";
+//require "lib/Daemon.class.php";
+
+set_time_limit(0);
+ob_implicit_flush();
+
+class _SocketServer
+  extends Server
+{
+  protected function _process($user, $data, $external = false) {
+
+    if ( $msg = parent::_process($user, $data, $external) ) {
+      $response = null;
+
+      // Then validate JSON
+      $json = null;
+      try {
+        $json = (array) json_decode($msg);
+      } catch ( Exception $e ) {
+      }
+
+      if ( $json !== null && sizeof($json) ) {
+        $args = $json['arguments'];
+        switch ( $json['method'] ) {
+
+          // Open TCP Connection
+          case "tcp_open":
+            if ( $s = $user->connect($args[0], $args[1]) ) {
+              $this->_sockets[] = $s;
+              $user->tcp_index = sizeof($this->_sockets) - 1;
+              $response = Array("method" => $json['method'], "result" => true);
+            } else {
+              $response = Array("method" => $json['method'], "result" => false, "error" => true);
+            }
+            break;
+
+          // Send data over TCP Connection
+          case "tcp_send":
+            $err = "no socket";
+            $t   = $user->send($args[0]);
+            if ( !$t || $err = socket_last_error($t)  ) {
+              $response = Array("method" => $json['method'], "result" => false, "error" => $err);
+            } else {
+              $response = Array("method" => $json['method'], "result" => true);
+            }
+            break;
+
+          // Close TCP Connection
+          case "tcp_close":
+            if ( $ind = $user->tcp_index ) {
+              $user->disconnect();
+              array_splice($this->_sockets, $ind, 1);
+
+              $response = Array("method" => $json['method'], "result" => true);
+            } else {
+              $response = Array("method" => $json['method'], "result" => false, "error" => true);
+            }
+            break;
+        }
+      }
+
+      $this->_send($user->type, $user->socket, json_encode($response));
+    }
+  }
+
+}
+
+_SocketServer::run(SERVER_HOST, SERVER_PORT);
+?>

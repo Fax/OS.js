@@ -1,1 +1,0 @@
-../../SCore/public_html/js/jquery.js

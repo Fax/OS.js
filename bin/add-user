@@ -1,0 +1,150 @@
+#!/usr/bin/env php
+<?php
+/*!
+ * @file
+ * OS.js - JavaScript Operating System - add-user
+ *
+ * This script is used to add users to the database and VFS registry.
+ *
+ * Copyright (c) 2011-2012, Anders Evenrud <andersevenrud@gmail.com>
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met: 
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer. 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution. 
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
+ * @created 2012-04-18
+ */
+
+require "header.php";
+
+///////////////////////////////////////////////////////////////////////////////
+// DEFAULTS
+///////////////////////////////////////////////////////////////////////////////
+
+$username   = null;
+$password   = null;
+$privilege  = 130;
+$name       = "John Doe";
+
+///////////////////////////////////////////////////////////////////////////////
+// COMMAND LINE PARSING
+///////////////////////////////////////////////////////////////////////////////
+
+function my_exit($message) {
+  $help = <<<EOTXT
+$message
+
+Add a new user to Database and VFS. Usage:
+./bin/add-user [arguments,]
+-u --username  Username
+-p --password  Password
+-g --groups    User Groups (Default = 130 [User+Packages])
+                  0 = None
+                  1 = Guest
+                  2 = User
+                  4 = Admin
+                  128 = Packages
+-n --name      Real Name (Default = John Doe)
+
+EOTXT;
+
+  print $help;
+  exit(1);
+}
+
+$sopts = "u:p:g::n::";
+$aopts = Array(
+  "username:",
+  "password:",
+  "groups::",
+  "name::"
+);
+
+
+$options = getopt($sopts, $aopts);
+
+if ( sizeof($options) < 2 ) {
+  my_exit("Not enough arguments given!");
+}
+
+foreach ( $options as $k => $v ) {
+  switch ( $k ) {
+    case "u" :
+    case "username":
+      $username = $v;
+    break;
+    case "p" :
+    case "password" :
+      $password = $v;
+    break;
+    case "g" :
+    case "groups" :
+      $privilege = (int) $v;
+    break;
+    case "n" :
+    case "name" :
+      $name = $v;
+    break;
+  }
+}
+
+if ( !$username || !$password || !is_numeric($privilege) || !$name ) {
+  my_exit("Invalid or missing arguments...");
+}
+
+print <<<EOTXT
+Using arguments:
+
+  username  = $username
+  password  = $password
+  privilege = $privilege
+  real_name = $name
+
+
+EOTXT;
+
+///////////////////////////////////////////////////////////////////////////////
+// OPERATIONS
+///////////////////////////////////////////////////////////////////////////////
+
+$table = "user";
+$args  = Array(
+  "username"      => $username,
+  "password"      => $password,
+  "privilege"     => (int) $privilege,
+  "real_name"     => $name,
+  "last_session"  => "",
+  "last_registry" => "",
+  "created_at"    => date("%r")
+);
+
+if ( ($res = DB::Insert($table, $args)) !== false ) {
+  print "User '$username' was inserted into DB.\n";
+  print "You should now run 'cp -rf VFS/0 VFS/$res'";
+  print "PS: Make sure to set the correct permissions to this directory, se INSTALL";
+  exit(0);
+} else {
+  print "Failed to insert user into database!";
+  exit(1);
+}
+
+?>

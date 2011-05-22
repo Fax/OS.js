@@ -1,0 +1,238 @@
+#!/usr/bin/env php
+<?php
+/*!
+ * @file
+ * OS.js - JavaScript Operating System - create-package
+ *
+ * This script is used to create new (Empty) pakages.
+ *
+ * Copyright (c) 2011-2012, Anders Evenrud <andersevenrud@gmail.com>
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met: 
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer. 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution. 
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
+ * @created 2012-04-18
+ */
+
+define("NODB", true);
+require "header.php";
+require "lib/Compiler.class.php";
+
+///////////////////////////////////////////////////////////////////////////////
+// CONFIG
+///////////////////////////////////////////////////////////////////////////////
+
+// Command line options
+$cmd_short  = "v:n:t:i:s::c::d::";
+$cmd_long   = Array(
+  "variant:",
+  "name:",
+  "title::",
+  "icon:",
+  "schema::",
+  "category::",
+  "description::"
+);
+
+// Help text
+$help = <<<EOTXT
+Create a new Package from template:
+
+-v  --variant           Package variant (default: 1 [TYPE_APPLICATION])
+-n  --name              Internal Name, required (ex: Clock)
+-t  --title             Showing Title (Default: name, ex: Analog/Digital Clock)
+-i  --icon              Icon, required (relative)
+-s  --schema            Schema filename (Compile Application JS from Glade XML)
+-c  --category          Application category (Default: unknown)
+-d  --description       Package description (Default: title)
+
+Variants:
+  const TYPE_APPLICATION  = 1;
+  const TYPE_PANELITEM    = 2;
+  const TYPE_SERVICE      = 3;
+
+Packages will be placed in PATH_PACKAGES (header.php).
+When the Package has been created it will be automatically compiled.
+To install the package, run the install utility.
+
+EOTXT;
+
+// Variables used for template creation
+$template = "";
+$required = Array("variant", "name", "icon");
+$opts     = Array(
+  "variant"     => Package::TYPE_APPLICATION,
+  "name"        => "",
+  "title"       => "",
+  "icon"        => "",
+  "schema"      => "",
+  "category"    => "unknown",
+  "description" => ""
+);
+
+///////////////////////////////////////////////////////////////////////////////
+// TEMPLATES
+///////////////////////////////////////////////////////////////////////////////
+
+$template_application = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "package.application.xml"));
+$template_panelitem   = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "package.panelitem.xml"));
+$template_service     = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "package.service.xml"));
+
+///////////////////////////////////////////////////////////////////////////////
+// MAIN
+///////////////////////////////////////////////////////////////////////////////
+
+if ( $options = getopt($cmd_short, $cmd_long) ) {
+  foreach ( $options as $k => $v ) {
+    switch ( $k ) {
+      case "v" :
+      case "variant":
+        $variant = (int) $v;
+        if ( in_array($variant, array_keys(Package::$PackageTypes)) ) {
+          $opts["variant"] = $variant;
+        }
+      break;
+      case "n" :
+      case "name" :
+        $opts["name"] = trim($v);
+      break;
+      case "t" :
+      case "title" :
+        $opts["title"] = trim($v);
+      break;
+      case "i" :
+      case "icon" :
+        $opts["icon"] = trim($v);
+      break;
+      case "s" :
+      case "schema" :
+        $opts["schema"] = trim($v);
+      break;
+      case "c" :
+      case "category" :
+        $opts["schema"] = trim($v);
+      break;
+      case "d" :
+      case "description" :
+        $opts["description"] = trim($v);
+      break;
+
+    }
+  }
+} else {
+  print "Missing arguments!\n";
+  print $help;
+  exit(1);
+}
+
+// Defaults
+if ( !$opts["title"] && $opts["name"] ) {
+  $opts["title"] = $opts["name"];
+}
+if ( !$opts["description"] ) {
+  $opts["description"] = $opts["title"];
+}
+
+// Check required
+foreach ( $required as $r ) {
+  if ( !$opts[$r] ) {
+    print "Missing option '$r'\n";
+    print $help;
+    exit(1);
+  }
+}
+
+// Create new metadata.xml
+$folder = "";
+switch ( $opts["variant"] ) {
+  case Package::TYPE_APPLICATION :
+    $template = $template_application;
+    $folder   = "Application";
+  break;
+  case Package::TYPE_PANELITEM :
+    $template = $template_panelitem;
+    $folder   = "PanelItem";
+  break;
+  case Package::TYPE_SERVICE :
+    $template = $template_service;
+    $folder   = "Service";
+  break;
+}
+
+foreach ( $opts as $k => $v ) {
+  $template = str_replace("%$k%", $v, $template);
+}
+
+$unique = uniqid();
+$folder .= $opts["name"];
+$root   = sprintf("%s/%s", PATH_PACKAGES, $folder);
+
+if ( is_dir($root) ) {
+  print "This package already exist ($root)!\n";
+  exit(1);
+} else {
+  if ( mkdir($root) ) {
+    print "Created '$root'.\n";
+    if ( file_put_contents("{$root}/metadata.xml", $template) ) {
+      print "Created '$root/metadata.xml'.\n";
+      if ( Compiler::compile($folder) ) {
+        print "Compiled resources...\n";
+
+        if ( copy(sprintf("%s/apps/%s", PATH_BUILD, "{$folder}.js"), sprintf("%s/main.js", $root)) ) {
+          print "- Copied main.js\n";
+        } else {
+          print "! Failed to copy main.js\n";
+        }
+
+        if ( $opts["variant"] != Package::TYPE_SERVICE ) {
+          if ( copy(sprintf("%s/apps/%s", PATH_BUILD, "{$folder}.css"), sprintf("%s/main.css", $root)) ) {
+            print "- Copied main.css\n";
+          } else {
+            print "! Failed to copy main.css\n";
+          }
+        }
+
+        if ( copy(sprintf("%s/apps/%s", PATH_BUILD, "{$folder}.class.php"), sprintf("%s/%s.class.php", $root, $folder)) ) {
+          print "- Copied {$folder}.class.php\n";
+        } else {
+          print "! Failed to copy {$folder}.class.php\n";
+        }
+
+        print "\n Finished!\n";
+        print "To install this package, run the install utility.\n";
+
+      } else {
+        print "Failed to compile resources!\n";
+        exit(1);
+      }
+    } else {
+      print "Failed to create '$root/metadata.xml'!\n";
+      exit(1);
+    }
+  } else {
+    print "Failed to create '$root'!\n";
+    exit(1);
+  }
+}
+
+?>

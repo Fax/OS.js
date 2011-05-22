@@ -1,0 +1,154 @@
+@charset "UTF-8";
+/*!
+ * OS.js - JavaScript Operating System - CSS Theme: Dark
+ *
+ * Copyright (c) 2011-2012, Anders Evenrud <andersevenrud@gmail.com>
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met: 
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer. 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution. 
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @package OSjs.Themes
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
+ */
+
+body {
+  background : #005a77;
+  color : #222;
+}
+
+.DesktopPanel .Background {
+  background : #3c3c3d;
+  border-bottom : 1px solid #2a2a2b;
+  border-left : 1px solid #2a2a2b;
+  border-right : 1px solid #2a2a2b;
+}
+.DesktopPanel.Transparent .Background {
+  background : transparent;
+  border : 0 none;
+}
+
+.PanelItem {
+  color : #b0c2c1;
+}
+.PanelItemWindow:hover {
+  color : #fff;
+}
+.PanelItem.Current {
+}
+.PanelItemSeparator {
+  border-left : 1px solid #363636;
+  border-right : 1px solid #3f4040;
+}
+.PanelItemSeparator.Ghost {
+  border : 0 none;
+  background : #ff0000;
+}
+.PanelItemSeparator:hover,
+.PanelItemClock:hover {
+}
+
+.Window {
+  border : 1px solid #30353d;
+  background : #eeeeee;
+}
+.WindowTop {
+  color : #b0c2c1;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#41454d', endColorstr='#31363d'); /* for IE */
+  background-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20version%3D%221.0%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22gradient%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%20%2341454d%3B%22/%3E%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%20%2331363d%3B%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20x%3D%220%22%20y%3D%220%22%20fill%3D%22url%28%23gradient%29%22%20width%3D%22100%25%22%20height%3D%22100%25%22%20/%3E%3C/svg%3E);
+  background: -webkit-gradient(linear, left top, left bottom, from(#41454d), to(#31363d)); /* for webkit browsers */
+  background: -moz-linear-gradient(top,  #41454d,  #31363d); /* for firefox 3.6+ */ 
+
+}
+.GtkIconViewHeader {
+  color : #222;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e7eaec', endColorstr='#dddfe1'); /* for IE */
+  background-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20version%3D%221.0%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22gradient%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%20%23e7eaec%3B%22/%3E%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%20%23dddfe1%3B%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20x%3D%220%22%20y%3D%220%22%20fill%3D%22url%28%23gradient%29%22%20width%3D%22100%25%22%20height%3D%22100%25%22%20/%3E%3C/svg%3E);
+  background: -webkit-gradient(linear, left top, left bottom, from(#e7eaec), to(#dddfe1)); /* for webkit browsers */
+  background: -moz-linear-gradient(top,  #e7eaec,  #dddfe1); /* for firefox 3.6+ */ 
+  border-top : 1px solid #bdbfc1;
+  border-bottom : 1px solid #cacdcf;
+}
+.GtkIconViewHeader td.Space {
+  border-right : 1px solid #ced1d3;
+  padding-left : 5px;
+  margin-left : -5px;
+}
+.GtkIconViewHeader td.Space {
+  border-left : 1px solid #eef1f3;
+}
+.GtkIconViewHeader td.Space.First {
+  border-left :  0 none;
+}
+.GtkIconViewHeader td.Space.Last {
+  border-right : 0 none;
+}
+
+.WindowTopController {
+  font-weight : bold;
+  font-size : 16px;
+}
+.WindowTopController:hover {
+  color : #fff;
+}
+.Window.Current .WindowTopInner {
+  color : #fff;
+}
+.PanelItemWindow.Current {
+  color : #fff;
+  font-weight : bold;
+}
+
+.Menu,
+.GtkWindow .GtkMenuBar .GtkMenuItem ul, .GUIMenu {
+  border : 1px solid #30353d;
+  background : #eeeeee;
+  color : #222;
+}
+
+.Menu li.Default:hover,
+.GUIMenu li:hover {
+  color : #fff;
+  background : #4f4f4f;
+}
+
+/* SCROLLBARS */
+
+::-webkit-scrollbar {
+  width: 10px;
+  background : #f4f4f4;
+}
+::-webkit-scrollbar-button {
+}
+::-webkit-scrollbar-track {
+  background : #f4f4f4;
+  border : 0 none;
+}
+::-webkit-scrollbar-track-piece {
+}
+::-webkit-scrollbar-thumb {
+  background : #41454d;
+  border : 0 none;
+}
+::-webkit-scrollbar-corner {
+}
+::-webkit-scrollbar-resizer {
+}

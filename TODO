@@ -1,0 +1,58 @@
+CORE TODO:
+-------------------------------------------------------------------------------
+[HIG] Core: Refactor class constructs with tuples
+[MED] Fix bin/create-package ?!
+[MED] VFS: Finish JS Class (Temporary / Persistent)
+[MED] Panel: Redesign preferences
+[MED] Panel: Fix dock ?!
+[LOW] Panel: Settings - Background Image
+[LOW] Panel: Finish up multiples
+[LOW] WindowManager: Effect(s) configuration
+[LOW] Panel setting: Background Image
+[LOW] Panels: Add/Remove (Implement multiples in GUI)
+[LOW]  Core::_doUserOperation (User manipulation, backend)
+[LOW]  APP ControlPanel: _doUserOperation (User manipulation, frontend)
+[LOW]  Finish up Package Meta for loading from user
+[LOW]  Implement MenuNew in GtkMenu
+[LOW]  Add/Remove Panel
+[LOW]  Remove the global resize event and make a poll ?!
+       This would increase the performance of panel redraws etc.
+
+MISC TODO:
+-------------------------------------------------------------------------------
+[HIG] Finish Standalone Platform
+[LOW] Manifest and Cache for offline usage
+[LOW] Finish up the Installer
+[LOW] Finish up Console
+
+IDEAS ETC:
+-------------------------------------------------------------------------------
+[NUR] Application Streaming (VNC-ish)
+[NUR] Remove jQuery dependency, write custom library
+[NUR] Remove jQuery UI dependency, write custom library
+
+NEW GLADE TRANSFORMATION:
+-------------------------------------------------------------------------------
+ApplicationArchiver/          X
+ApplicationArkanoid/          -
+ApplicationBrowser/           -
+ApplicationClock/             -
+ApplicationDraw/
+ApplicationFileManager/       X
+ApplicationIDE/               X
+ApplicationIRC/
+ApplicationMail/
+ApplicationMusicPlayer/       X
+ApplicationPDF/               X
+ApplicationServerStatus/      -
+ApplicationTerminal/          -
+ApplicationTest/              -
+ApplicationTextpad/           X
+ApplicationTickTackToe/       X
+ApplicationVideoPlayer/       X
+ApplicationViewer/            X
+ApplicationWriter/
+SystemAbout/                  -
+SystemControlPanel/           -
+SystemLogout/                 -
+SystemProcesses/              -

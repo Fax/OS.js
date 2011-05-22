@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# Project codebase script: Commit changes
+#
+# @author Anders Evenrud <andersevenrud@gmail.com>
+# @licence Simplified BSD License
+#
+git commit "$@"
+
+if [ $? -eq 0 ]
+then
+  sleep 1
+
+  VER=`git rev-parse HEAD`
+  ./bin/git-commit-prepare $VER
+  git commit header.php -m "[AUTO]: header.php update"
+fi

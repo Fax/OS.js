@@ -1,0 +1,229 @@
+@charset "UTF-8";
+/*!
+ * OS.js - JavaScript Operating System - CSS Pimp Stylesheet
+ *
+ * Copyright (c) 2011-2012, Anders Evenrud <andersevenrud@gmail.com>
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met: 
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer. 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution. 
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @package OSjs.Styles
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
+ */
+
+/****************************************************************
+                           GENERIC
+ ****************************************************************/
+
+/* DnD */
+[draggable] {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+
+  -khtml-user-drag: element;
+  -webkit-user-drag: element;
+}
+
+/* Fullscreen */
+:-moz-full-screen,
+:-webkit-full-screen,
+:fullscreen {
+  width: 100% !important;
+  height : 100% !important;
+}
+:-webkit-full-screen .tohide,
+:-moz-full-screen .tohide,
+:fullscreen .tohide {
+  display: none;
+}
+
+/****************************************************************
+                          MISC UI
+ ****************************************************************/
+
+#LoginWindow:before {
+  content: "";
+  position : fixed;
+  width : 450px;
+  height : 125px;
+  border : 5px solid rgba(255, 255, 255, 0.5);
+  margin : -5px;
+}
+#LoginWindow {
+  -moz-box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+#Tooltip {
+  -moz-box-shadow: 0px 0px 10px #000;
+  -webkit-box-shadow: 0px 0px 10px #000;
+  box-shadow: 0px 0px 10px #000;
+}
+
+#ContextRectangle {
+  filter: alpha(opacity=50); /* internet explorer */
+  -khtml-opacity: 0.50;      /* khtml, old safari */
+  -moz-opacity: 0.50;       /* mozilla, netscape */
+  opacity: 0.50;           /* fx, safari, opera */
+}
+
+#Version {
+  -moz-text-shadow: 0px 0px 2px #444;
+  -webkit-text-shadow: 0px 0px 2px #444;
+  text-shadow: 0px 0px 2px #444;
+}
+
+#WindowToggler {
+  -moz-box-shadow: 0px 0px 10px #000;
+  -webkit-box-shadow: 0px 0px 10px #000;
+  box-shadow: 0px 0px 10px #000;
+}
+
+/****************************************************************
+                          DESKTOP
+ ****************************************************************/
+
+.DesktopPanel {
+  -moz-box-shadow: 0px 0px 10px #000;
+  -webkit-box-shadow: 0px 0px 10px #000;
+  box-shadow: 0px 0px 10px #000;
+
+  -khtml-opacity: 0.98;      /* khtml, old safari */
+  -moz-opacity: 0.98;       /* mozilla, netscape */
+  opacity: 0.98;           /* fx, safari, opera */
+}
+.DesktopPanel.Transparent {
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.DesktopPanel.Blur .Background {
+  -webkit-filter: blur(2px);
+  -moz-filter: blur(2px);
+  -ms-filter: blur(2px);
+  -o-filter: blur(2px);
+  filter: blur(2px);
+}
+.DesktopPanel.Blend .Background {
+  filter: alpha(opacity=50); /* internet explorer */
+  -khtml-opacity: 0.50;      /* khtml, old safari */
+  -moz-opacity: 0.50;       /* mozilla, netscape */
+  opacity: 0.50;           /* fx, safari, opera */
+}
+.DesktopPanel, .PanelItem {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+.DesktopPanel .Ghost {
+  filter: alpha(opacity=50); /* internet explorer */
+  -khtml-opacity: 0.50;      /* khtml, old safari */
+  -moz-opacity: 0.50;       /* mozilla, netscape */
+  opacity: 0.50;           /* fx, safari, opera */
+}
+
+#DesktopGrid .label {
+  -moz-border-radius: 10px; /* Firefox */
+  -webkit-border-radius: 10px; /* Safari, Chrome */
+  border-radius: 10px; /* CSS3 */
+
+  filter: alpha(opacity=90); /* internet explorer */
+  -khtml-opacity: 0.90;      /* khtml, old safari */
+  -moz-opacity: 0.90;       /* mozilla, netscape */
+  opacity: 0.90;           /* fx, safari, opera */
+}
+
+.DesktopNotification {
+  -moz-box-shadow: 0px 0px 10px #000;
+  -webkit-box-shadow: 0px 0px 10px #000;
+  box-shadow: 0px 0px 10px #000;
+}
+
+/****************************************************************
+                            WINDOWS
+ ****************************************************************/
+
+.Window {
+  -moz-box-shadow: 0px 0px 10px #000;
+  -webkit-box-shadow: 0px 0px 10px #000;
+  box-shadow: 0px 0px 10px #000;
+}
+
+.WindowTopInner span {
+  -moz-text-shadow: 0px 0px 2px #888;
+  -webkit-text-shadow: 0px 0px 2px #888;
+  text-shadow: 0px 0px 2px #888;
+}
+.Window.Current .WindowTopInner span {
+  -moz-text-shadow: 0px 0px 2px #aaa;
+  -webkit-text-shadow: 0px 0px 2px #aaa;
+  text-shadow: 0px 0px 2px #aaa;
+}
+
+.Window.Blend {
+  filter: alpha(opacity=50); /* internet explorer */
+  -khtml-opacity: 0.5;      /* khtml, old safari */
+  -moz-opacity: 0.5;       /* mozilla, netscape */
+  opacity: 0.5;           /* fx, safari, opera */
+}
+
+/****************************************************************
+                            MENUS
+ ****************************************************************/
+
+.Menu,
+.GUIMenu,
+.GtkWindow .GtkMenuBar .GtkMenuItem ul,
+.GtkCustomMenu ul {
+  -moz-box-shadow: 0px 0px 10px #000;
+  -webkit-box-shadow: 0px 0px 10px #000;
+  box-shadow: 0px 0px 10px #000;
+}
+
+/****************************************************************
+                          CLASSES.JS
+ ****************************************************************/
+
+/*
+.GUIProgress {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+.GUIProgress > span {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+.GUIProgress > span::before {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+*/

@@ -1,16 +1,39 @@
+# Common
 .git-old
 _work/
-locale/*/*/messages.mo
-public_html/js/jquery-*
-build/classes/*/map/*
-build/classes/*/om/*
-build/conf/*-conf.php
-build/conf/classmap-*-conf.php
-build/sql/schema.sql
-build/sql/sqldb.map
 *.*.sw*
 .vimerr
 vim.session
 template/*.php
 doc/doxygen.log
 doc/api/*
+doc/*
+public_html/.htpasswd
+VFS/*
+!VFS/0
+public_html/media/Public/*
+
+# Misc
+config.php
+
+# Sub-modules
+src/packages
+vendor/*
+!vendor/launcher
+
+# Build files
+src/build/minimize.cache
+src/locale/*/LC_MESSAGES/messages.mo
+src/build/packages.xml
+src/build/applications.xml
+src/build/database.sdb
+src/build/filesystem.sdb
+src/build/fontcache.xml
+
+# Minimized files
+src/apps/*/_min
+src/resources/_min
+src/base/_min
+src/base/locale/_min
+src/javascript/_min
+src/javascript/locale/_min

@@ -1,0 +1,544 @@
+@charset "UTF-8";
+/*!
+ * OS.js - JavaScript Operating System - CSS Theme: Default
+ *
+ * All default styles goes here
+ *
+ * Copyright (c) 2011-2012, Anders Evenrud <andersevenrud@gmail.com>
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met: 
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer. 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution. 
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @package OSjs.Themes
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
+ */
+
+body {
+  font-size : 12px;
+}
+
+/****************************************************************
+                           GENERIC
+ ****************************************************************/
+
+input.Disabled {
+  background : #e6e6e6;
+}
+
+textarea {
+  font-family : Monospace;
+  font-size : 12px;
+}
+
+button {
+  border: 1px solid #999;
+  border-bottom-color: #888;
+  color: #333;
+  background-color: #EEE;
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#F5F6F6), to(#E4E4E3));
+  background-image: -moz-linear-gradient(#F5F6F6, #E4E4E3);
+  background-image: -o-linear-gradient(#F5F6F6, #E4E4E3);
+  background-image: linear-gradient(#F5F6F6, #E4E4E3);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#f5f6f6', EndColorStr='#e4e4e3');
+  -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 white;
+  -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 #fff;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 white;
+}
+
+button:active {
+  border-color: #AAA;
+  background: #DDD;
+  filter: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+button[disabled="disabled"],
+button[disabled="disabled"]:active {
+  color: #ddd;
+}
+
+/****************************************************************
+                          MISC UI
+ ****************************************************************/
+
+#Version {
+  color : #fff;
+  font-size : 10px;
+  font-weight : bold;
+  line-height : 15px;
+}
+
+#ContextRectangle {
+  margin : -1px;
+  background : #eee;
+  border : 1px solid #222;
+}
+
+#Tooltip {
+  border : 1px solid #000;
+  background : #e6e6e6;
+  white-space : nowrap;
+}
+
+#WindowToggler {
+  border : 1px solid #000;
+  background : #fff;
+}
+#WindowTogglerTitle {
+  font-weight : bold;
+}
+#WindowTogglerList li {
+  border : 1px solid transparent;
+}
+#WindowTogglerList li.Current {
+  border : 1px solid #000;
+}
+#WindowTogglerRect {
+  border : 2px solid #000;
+  margin : -2px;
+}
+
+/****************************************************************
+                          DESKTOP
+ ****************************************************************/
+
+.DesktopPanel {
+}
+.DesktopPanel .Background {
+  background : #e6e6e6;
+}
+
+#DesktopGrid {
+  font-size : 90%;
+}
+
+#DesktopGrid .label {
+  color : #000;
+  background-color : #aaa;
+}
+#DesktopGrid .current .label {
+  background-color : #fff;
+}
+
+/*
+.PanelItem {
+  cursor : pointer;
+}
+*/
+
+.PanelItemWindow.Current {
+  font-weight : bold;
+}
+
+/****************************************************************
+                            WINDOWS
+ ****************************************************************/
+
+.Window {
+  background : #e6e6e6;
+}
+/*
+.WindowTopController {
+  cursor : pointer;
+}
+  */
+.WindowTopController {
+}
+.WindowTopController:hover,
+.WindowTopController.Active {
+  background : url('/img/theme.default/prelight_unfocused.png') no-repeat center center;
+}
+.WindowTopController:active {
+  background : url('/img/theme.default/prelight.png') no-repeat center center;
+}
+.WindowTopController .ActionMinimize {
+  background : url('/img/theme.default/minimize_unfocused.png') no-repeat center center;
+}
+.WindowTopController .ActionMinimize:hover {
+  background : url('/img/theme.default/minimize.png') no-repeat center center;
+}
+.WindowTopController .ActionMaximize {
+  background : url('/img/theme.default/maximize_unfocused.png') no-repeat center center;
+}
+.WindowTopController .ActionMaximize:hover {
+  background : url('/img/theme.default/maximize.png') no-repeat center center;
+}
+.WindowTopController .ActionClose {
+  background : url('/img/theme.default/close_unfocused.png') no-repeat center center;
+}
+.WindowTopController .ActionClose:hover {
+  background : url('/img/theme.default/close.png') no-repeat center center;
+}
+
+.WindowBottomInner {
+}
+/*
+.Window .ui-resizable-n {
+  cursor : n-resize;
+}
+.Window .ui-resizable-ne {
+  cursor : ne-resize;
+}
+.Window .ui-resizable-nw {
+  cursor : nw-resize;
+}
+.Window .ui-resizable-s {
+  cursor : s-resize;
+}
+.Window .ui-resizable-e {
+  cursor : e-resize;
+}
+.Window .ui-resizable-se {
+  cursor : se-resize;
+}
+.Window .ui-resizable-w {
+  cursor : w-resize;
+}
+.Window .ui-resizable-sw {
+  cursor : sw-resize;
+}
+  */
+
+/****************************************************************
+                            MENUS
+ ****************************************************************/
+
+.Menu {
+  background : #e6e6e6;
+}
+/*
+.Menu li {
+  cursor : pointer;
+}
+  */
+.Menu li.Disabled {
+  color : #777;
+}
+.Menu li.checked {
+  font-weight : bold;
+}
+.Menu li.header span,
+.Menu li.header:hover span {
+  font-weight : bold;
+  text-align : center;
+  background : #222;
+}
+.Menu li.header.Disabled span,
+.Menu li.header.Disabled:hover span {
+  color : #fff;
+}
+.Menu li.header span {
+  display : none;
+}
+/*
+.GtkWindow .GtkMenu li {
+  cursor : pointer;
+}
+  */
+
+/****************************************************************
+                            DIALOGS
+ ****************************************************************/
+
+.DialogContent.error {
+  color : #ff0000;
+}
+
+.OperationDialog li.even {
+  background : #fff;
+}
+.OperationDialog li.odd {
+  background : #e6e6e6;
+}
+.OperationDialog li.Disabled {
+  color : #777;
+}
+.OperationDialog .ProgressBar,
+.OperationDialog .ProgressBar * {
+  border : 0 none;
+}
+
+.OperationDialogColor .CurrentColor {
+  background : #000;
+  border : 2px inset;
+}
+
+/*
+.OperationDialog .FileChooser li {
+  cursor : pointer;
+}
+  */
+.OperationDialog .FileChooser li:hover {
+  text-decoration : underline;
+}
+.OperationDialog .FileChooser li.current {
+  font-weight : bold;
+}
+
+.OperationDialogLaunch p {
+  padding : 5px;
+  padding-top : 0;
+  margin : 0;
+}
+
+.OperationDialogLaunch ul {
+  margin : 0;
+  padding : 0;
+  list-style-type : none;
+  height : 170px;
+  overflow : auto;
+}
+.OperationDialogLaunch li {
+  margin : 0;
+  padding : 5px;
+}
+.OperationDialogLaunch li img {
+  vertical-align : middle;
+  margin-right : 5px;
+}
+.OperationDialogLaunch li:hover {
+  text-decoration : underline;
+}
+.OperationDialogLaunch li.current {
+  font-weight : bold;
+}
+
+.OperationDialogPanelItemAdd .Wrapper {
+  background : #fff;
+}
+.OperationDialogPanelItemAdd li {
+  color : #222;
+}
+.OperationDialogPanelItemAdd li.Current {
+  background : #4f4f4f;
+  color : #fff;
+}
+
+/****************************************************************
+                          DESKTOP
+ ****************************************************************/
+
+.DesktopNotification {
+  background : #3c3c3d;
+  color : #fff;
+  border : 1px solid #222;
+  word-wrap: break-word;
+}
+.DesktopNotification .Close {
+  color : #ddd;
+  font-size : 12px;
+  letter-spacing : 0px;
+  line-height : 12px;
+}
+.DesktopNotification .Close:hover {
+  color : #fff;
+}
+
+/****************************************************************
+                            GLADE
+ ****************************************************************/
+
+.GtkIconView {
+  background : #fff;
+}
+
+.GtkIconViewHeader {
+  color : #222;
+}
+
+.GtkIconView .Even {
+  background : #fff;
+}
+.GtkIconView .Odd {
+  background : #e6e6e6;
+}
+
+.GtkIconView {
+  background : #fff;
+}
+
+.GtkIconView tr.Current,
+.GtkIconView tr.odd.Current {
+  background : #4f4f4f;
+  color : #fff;
+}
+
+.GtkIconView tr.odd {
+  background : #e6e6e6;
+}
+
+.GtkIconView table.TableBody {
+  background : #fff;
+}
+
+.GtkStatusbar {
+  border-top : 1px solid #d1d4d7;
+  background : #e6e6e6;
+}
+
+.GtkColorButton {
+  border : 2px inset #fff;
+  background : #000;
+}
+
+.GUIMenu .HasChildren {
+  background : url('/img/theme.default/menu_expand.png') no-repeat right;
+}
+.GUIMenu .HasChildren:hover {
+  background : #4f4f4f url('/img/theme.default/menu_expand_hover.png') no-repeat right;
+}
+
+.GtkMenu .Subbed {
+  background : url('/img/theme.default/menu_expand.png') no-repeat right;
+}
+.GtkMenu .Subbed.Hover {
+  background : #4f4f4f url('/img/theme.default/menu_expand_hover.png') no-repeat right;
+}
+
+.GtkMenuBar {
+  font-size : 90%;
+  background : #4f4f4f;
+}
+.GtkCustomMenu .GtkMenu {
+  color : #222;
+}
+
+.GtkMenuBar ul,
+.GtkCustomMenu ul { /* Custom */
+  background : #e6e6e6;
+  border : 1px solid;
+}
+
+.GtkMenuBar .Checked {
+  font-weight : bold;
+}
+.GtkMenuBar .Disabled {
+  color : #ddd;
+}
+
+.GtkMenuBar .SubItem.Hover,
+.GtkCustomMenu .SubItem.Hover { /* Custom */
+  color : #fff;
+  background : #4f4f4f;
+}
+
+.GtkMenuBar .Level_0 {
+  color : #fff;
+}
+
+.GtkMenuBar span.Hover,
+.GtkCustomMenu span.Hover { /* Custom */
+  text-decoration : underline;
+}
+
+.GtkMenu li span.Hover {
+  text-decoration : none;
+}
+
+.GtkNotebook .ui-tabs-nav a {
+  color : #222;
+  font-weight : normal;
+}
+.GtkNotebook .ui-tabs-nav .ui-tabs-selected a {
+  font-weight : bold;
+}
+.GtkNotebook .ui-tabs-nav .ui-state-default {
+  height : 28px;
+  border-color : #d1d4d7;
+}
+.GtkNotebook .ui-tabs-nav .ui-tabs-selected {
+  background : #fff;
+}
+.GtkNotebook .GtkTab {
+  background : #fff;
+  border : 1px solid #d1d4d7;
+}
+
+/****************************************************************
+                          CLASSES.JS
+ ****************************************************************/
+
+.GUICheckList li.even {
+  background : #fff;
+}
+.GUICheckList li.odd {
+  background : #e6e6e6;
+}
+
+.GUIMenu {
+  background : #e6e6e6;
+}
+.GUIMenu .Header,
+.GUIMenu .Header:hover {
+  font-weight : bold;
+  text-align : center;
+  background : #222;
+  color : #fff;
+}
+.GUIMenu .Disabled {
+  color : #aaa;
+}
+
+
+.GUIProgress {
+  background: #EBEBEB;
+}
+
+.GUIProgress > span {
+  border-color: #BFBFBF #B3B3B3 #9E9E9E;
+  background-color: #CCC;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #F0F0F0), color-stop(70%, #DBDBDB), color-stop(100%, #CCC));
+  background-image: -webkit-linear-gradient(top, #F0F0F0 0%, #DBDBDB 70%, #CCC 100%);
+  background-image: -moz-linear-gradient(top, #F0F0F0 0%, #DBDBDB 70%, #CCC 100%);
+  background-image: -ms-linear-gradient(top, #F0F0F0 0%, #DBDBDB 70%, #CCC 100%);
+  background-image: -o-linear-gradient(top, #F0F0F0 0%, #DBDBDB 70%, #CCC 100%);
+  background-image: linear-gradient(top, #F0F0F0 0%, #DBDBDB 70%, #CCC 100%);
+  -webkit-box-shadow: inset 0 1px rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.GUIProgress span.default {
+  border-color: #459FD6 #3094D2 #277DB2;
+  background-color: #5AAADB;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #AED5ED), color-stop(70%, #7BBBE2), color-stop(100%, #5AAADB));
+  background-image: -webkit-linear-gradient(top, #AED5ED 0%, #7BBBE2 70%, #5AAADB 100%);
+  background-image: -moz-linear-gradient(top, #AED5ED 0%, #7BBBE2 70%, #5AAADB 100%);
+  background-image: -ms-linear-gradient(top, #AED5ED 0%, #7BBBE2 70%, #5AAADB 100%);
+  background-image: -o-linear-gradient(top, #AED5ED 0%, #7BBBE2 70%, #5AAADB 100%);
+  background-image: linear-gradient(top, #AED5ED 0%, #7BBBE2 70%, #5AAADB 100%);
+}
+
+.GUIProgress > span > span {
+  color: #404040;
+  color: #888;
+  text-shadow: 0 1px rgba(255, 255, 255, 0.4);
+}
+.GUIProgress span.default > span {
+  color : #fff;
+  text-shadow: 0 1px rgba(128, 128, 128, 0.4);
+}
+
+.GUIProgress > span::before {
+  background: url("/img/progress.png") 0 0 repeat-x;
+}
+

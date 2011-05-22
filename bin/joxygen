@@ -1,0 +1,393 @@
+#!/usr/bin/env php
+<?php
+/*!
+ * @file
+ * OS.js - JavaScript Operating System - joxygen
+ *
+ * This script parses doxygen documentation in JavaScript files
+ * and generates HTML documentation on the fly.
+ *
+ * Copyright (c) 2011-2012, Anders Evenrud <andersevenrud@gmail.com>
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met: 
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer. 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution. 
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
+ * @created 2012-01-04
+ */
+
+define("NODB", true);
+require "header.php";
+error_reporting(E_ALL);
+
+// Then parse comments
+function parse_comments($file) {
+  $code     = file_get_contents($file);
+  $results  = Array(
+    "functions" => Array(),
+    "other"     => Array()
+  );
+  if ( preg_match_all("#/\*\*(.*?)\*/#sm", $code, $comments) ) {
+    $i = 0;
+    foreach ( $comments[0] as $comment ) {
+      $type         = "method";
+      $stype        = "";
+      $returns      = "undefined";
+      $fixes        = Array();
+      $params       = Array();
+      $line_name    = "";
+      $line_desc    = Array();
+      $line_tokens  = Array();
+
+      foreach ( explode("\n", $comment) as $line ) {
+        $line = preg_replace("/^\s+?\* /", "", $line);
+        $line = trim(preg_replace("/\s+/", " ", $line));
+
+        // @foo bar
+        if ( preg_match("/^@/", $line) ) {
+          if ( preg_match("/^@class/", $line) ) {
+            $type = "class";
+          } else if ( preg_match("/^@function/", $line) ) {
+            $type = "function";
+          } else if ( preg_match("/^@constructor/", $line) ) {
+            $stype = "constructor";
+          } else if ( preg_match("/^@destructor/", $line) ) {
+            $stype = "destructor";
+          } else if ( preg_match("/^@return/", $line) ) {
+            $expl = explode(" ", $line, 2);
+            $returns = end($expl);
+          } else if ( preg_match("/^@(todo|fixme)/i", $line) ) {
+            $fixes[] = explode(" ", $line, 2);
+          } else if ( preg_match("/^@param/i", $line) ) {
+            $expl = explode(" ", $line, 4);
+            $params[] = $expl;
+          } else if ( preg_match("/^@/i", $line) ) {
+            $expl = explode(" ", $line, 2);
+            $line_tokens[] = Array(reset($expl), end($expl));
+          }
+        }
+        // My::Namespace -- Description
+        else if ( preg_match("/^(.*)(\:\:(.*))? \-\- (.*)/", $line) ) {
+          list($line_name, $desc) = explode(" -- ", $line);
+          $line_desc[] = "<i>$desc</i>";
+        }
+        // ...
+        else {
+          if ( $line != "*/" && $line != "/**" && $line != "*" ) {
+            $line_desc[] = $line;
+          }
+        }
+      }
+
+      if ( $line_name ) {
+        $ttype = ($type == "function") ? "functions" : "other";
+        $results[$ttype][$line_name] = Array(
+          "type"        => $type,
+          "stype"       => $stype,
+          "returns"     => $returns,
+          "params"      => $params,
+          "fixes"       => $fixes,
+          "name"        => $line_name,
+          "desc"        => $line_desc,
+          "block"       => $comment,
+          "tokens"      => $line_tokens
+        );
+      }
+
+      $i++;
+    }
+  }
+
+  ksort($results);
+
+  return $results;
+}
+
+function _create_document($results, $filename) {
+  $content  = "";
+
+
+  foreach ( $results as $namespace => $comment ) {
+
+    $draw_table = false;
+    $class = $comment['type'] == "method" ? "" : "top";
+    $content .= "<div class=\"section {$class}\">\n";
+    if ( preg_match("/^(.*)\:\:(.*)/", $namespace) ) {
+      $pre = $comment['stype'] ? "<i>{$comment['stype']}</i>" :  "<u>{$comment['returns']}</u>";
+      $content .= "<h2>{$pre} " . htmlspecialchars($namespace) . "</h2>\n";
+      $draw_table = true;
+    } else {
+      $nss = str_replace(" ", "", $namespace);
+      $type = ucfirst($comment['type']);
+      $content .= "<h1>{$type}: <a name=\"{$nss}\">" . htmlspecialchars($namespace) . "</a></h1>\n";
+      if ( $comment["type"] == "function" ) {
+        $draw_table = true;
+      }
+    }
+
+    $content .= "<p>" . implode("<br />", $comment['desc']) . "</p>\n";
+
+    if ( $comment['fixes'] ) {
+      $content .= "<p>\n";
+      foreach ( $comment['fixes'] as $f ) {
+        if ( !isset($f[1]) ) {
+          $f[] = "...";
+        }
+        $f[0] = strtoupper(str_replace("@", "", $f[0]));
+        $content .= "<span class=\"{$f[0]}\">{$f[0]}</span>: {$f[1]}<br />\n";
+      }
+      $content .= "</p>\n";
+    }
+
+    if ( $comment['tokens'] ) {
+      $content .= "<p>\n";
+      foreach ( $comment['tokens'] as $f ) {
+        if ( !isset($f[1]) ) {
+          $f[] = "...";
+        }
+        $f[0] = ucfirst(str_replace("@", "", $f[0]));
+        $content .= "<i>{$f[0]}</i>: {$f[1]}<br />\n";
+      }
+      $content .= "</p>\n";
+    }
+
+    if ( $draw_table ) {
+      if ( sizeof($comment['params']) ) {
+        $content .= "<table>";
+        $ii = 1;
+        foreach ( $comment['params'] as $param ) {
+          $content .= "<tr class=\"size_4\">";
+          foreach ( $param as $i => $td ) {
+            if ( $i == 0 ) {
+              $content .= "<td class=\"col_{$i}\">Parameter {$ii}</td>\n";
+              $ii++;
+            } else if ( $i == 1 ) {
+              $content .= "<td class=\"col_{$i}\"><b>{$td}</b></td>\n";
+            } else if ( $i == 2 ) {
+              $content .= "<td class=\"col_{$i}\">{$td}</td>\n";
+            } else {
+              $content .= "<td class=\"col_{$i}\"><i>{$td}</i></td>\n";
+            }
+          }
+          $content .= "</tr>";
+        }
+        $content .= "</table>";
+      }
+
+      /*
+      if ( sizeof($comment['params']) ) {
+        $content .= "<table>";
+        $maxlen = 0;
+        foreach ( $comment['params'] as $token ) {
+          if ( ($s = sizeof($token)) > $maxlen ) {
+            $maxlen = $s;
+          }
+        }
+
+        $pl = 1;
+        foreach ( $comment['params'] as $token ) {
+          $content .= "<tr class=\"size_{$maxlen}\">";
+          $lol = 0;
+          foreach ( $token as $t ) {
+            if ( $lol == 0 ) {
+              $tt = str_replace("@", "", $t);
+              switch ( strtolower($tt) ) {
+                case "param" : 
+                  $content .= "<td class=\"col_$lol\">Parameter {$pl}</td>";
+                  $pl++;
+                break;
+                default :
+                  $content .= "<td class=\"col_$lol\">{$t}</td>";
+                break;
+              }
+            } else if ( $lol == 1 ) {
+              $content .= "<td class=\"col_$lol\"><b>{$t}</b></td>";
+            } else if ( $lol == 3 ) {
+              $content .= "<td class=\"col_$lol\"><i>{$t}</i></td>";
+            } else {
+              $content .= "<td class=\"col_$lol\">{$t}</td>";
+            }
+            $lol++;
+          }
+          if ( sizeof($token) < $maxlen ) {
+            for ( $i = 0; $i < ($maxlen - sizeof($token)); $i++ ) {
+              $content .= "<td class=\"col_$lol\">&nbsp;</td>";
+              $lol++;
+            }
+          }
+          $content .= "</tr>";
+        }
+        $content .= "</table>";
+      }
+       */
+    }
+
+    $content .= "</div>\n";
+  }
+
+  return $content;
+}
+
+function create_document($results, $filename) {
+
+  $header   = "";
+  foreach ( array_keys($results['functions']) as $ns ) {
+    if ( !preg_match("/^(.*)\:\:(.*)/", $ns) ) {
+      $nss = str_replace(" ", "", $ns);
+      $header .= " <a href=\"#{$nss}\">{$ns}</a> ";
+    }
+  }
+
+  if ( $header ) {
+    $header .= " | ";
+  }
+
+  foreach ( array_keys($results['other']) as $ns ) {
+    if ( !preg_match("/^(.*)\:\:(.*)/", $ns) ) {
+      $nss = str_replace(" ", "", $ns);
+      $header .= " <a href=\"#{$nss}\">{$ns}</a> ";
+    }
+  }
+
+  $content_functions = _create_document($results['functions'], $filename);
+  $content_other     = _create_document($results['other'], $filename);
+
+
+  $html = <<<EOHTML
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OS.js Documentation</title>
+  <style type="text/css">
+  body, html {
+    font-family : Arial;
+    font-size : 1em;
+  }
+  #links {
+    text-align : center;
+  }
+  .section {
+    background : #e6e6e6;
+    padding : 10px;
+  }
+  .section.top {
+    margin-top : 10px;
+  }
+  table {
+    border-collapse : collapse;
+    width : 100%;
+  }
+  td {
+    vertical-align : top;
+    margin : 0;
+    padding : 5px;
+    background : #f0f0f0;
+  }
+  .size_2 .col_0,
+  .size_2 .col_1 {
+    width : 120px;
+  }
+  .size_2 .col_0,
+  .size_4 .col_0 {
+    background : #fafafa;
+  }
+  .size_4 .col_0,
+  .size_4 .col_1,
+  .size_4 .col_2 {
+    width : 120px;
+  }
+  .size_4 .col_3 {
+    /*width : 500px;*/
+  }
+  span.TODO,
+  span.FIXME {
+    color : #aa0000;
+    background : #ffff00;
+  }
+  h1 {
+    border-bottom : 1px solid;
+  }
+  </style>
+</head>
+<body>
+<a href="index.html">Home</a> | Filename: {$filename} | OS.js Documentation
+<hr />
+<div id="links">
+{$header}
+</div>
+<hr />
+
+{$content_functions}
+
+{$content_other}
+
+</body>
+</html>
+EOHTML;
+
+  return $html;
+}
+
+// First get code
+$filename  = "core.js";
+$results   = parse_comments(PATH_JSBASE . "/{$filename}");
+$core_html = create_document($results, $filename);
+file_put_contents("doc/javascript/core.html", $core_html);
+
+$filename  = "classes.js";
+$results   = parse_comments(PATH_JSBASE . "/{$filename}");
+$classes_html = create_document($results, $filename);
+file_put_contents("doc/javascript/classes.html", $classes_html);
+
+$filename  = "main.js";
+$results   = parse_comments(PATH_JSBASE . "/{$filename}");
+$main_html = create_document($results, $filename);
+file_put_contents("doc/javascript/main.html", $main_html);
+
+$filename  = "init.js";
+$results   = parse_comments(PATH_JSBASE . "/{$filename}");
+$init_html = create_document($results, $filename);
+file_put_contents("doc/javascript/init.html", $init_html);
+
+$index_html = <<<EOHTML
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OS.js Documentation</title>
+  <style type="text/css">
+  </style>
+</head>
+<body>
+<h1>OS.js JavaScript documentation</h1>
+<ul>
+  <li><a href="core.html">core.js</a></li>
+  <li><a href="classes.html">classes.js</a></li>
+  <li><a href="main.html">main.js</a></li>
+  <li><a href="init.html">init.js</a></li>
+</ul>
+</body>
+</html>
+EOHTML;
+
+file_put_contents("doc/javascript/index.html", $index_html);
+
+?>

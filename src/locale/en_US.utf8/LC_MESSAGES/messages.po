@@ -1,0 +1,159 @@
+# OS.js Translation - en_US
+# Copyright (C) 2012 Anders Evenrud
+# Anders Evenrud <andersevenrud@gmail.com>, 2012.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-02-22 21:27+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Anders Evenrud <andersevenrud@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# START
+msgid "Unknown error"
+msgstr "Unknown error"
+
+msgid "Unknown action given!"
+msgstr "Unknown action given!"
+
+msgid "No action given!"
+msgstr "No action given!"
+
+msgid "Cannot save snapshot. Failed to save in database!"
+msgstr "Cannot save snapshot. Failed to save in database!"
+
+msgid "Cannot save snapshot. Snapshot name already used!"
+msgstr "Cannot save snapshot. Snapshot name already used!"
+
+msgid "Cannot save snapshot. No input data given!"
+msgstr "Cannot save snapshot. No input data given!"
+
+msgid "Cannot save snapshot. No running session found!"
+msgstr "Cannot save snapshot. No running session found!"
+
+msgid "Cannot load snapshot. Failed to load from database!"
+msgstr "Cannot load snapshot. Failed to load from database!"
+
+msgid "Cannot load snapshot. No input data given!"
+msgstr "Cannot load snapshot. No input data given!"
+
+msgid "Cannot load snapshot. No running session found!"
+msgstr "Cannot load snapshot. No running session found!"
+
+msgid "You are not logged in!"
+msgstr "You are not logged in!"
+
+msgid "Application '%s' does not exist"
+msgstr "Application '%s' does not exist"
+
+msgid "Failed to register application"
+msgstr "Failed to register application"
+
+msgid "Failed to flush application"
+msgstr "Failed to flush application"
+
+msgid "Failed to handle application"
+msgstr "Failed to handle application"
+
+msgid "Failed to call Service!"
+msgstr "Failed to call Service!"
+
+msgid "Failed to construct Service!"
+msgstr "Failed to construct Service!"
+
+msgid "Missing some arguments!"
+msgstr "Missing some arguments!"
+
+msgid "Path does not exist"
+msgstr "Path does not exist"
+
+msgid "The file could not be read"
+msgstr "The file could not be read"
+
+msgid "Invalid argument"
+msgstr "Invalid argument"
+
+msgid "Failed to save '%s'"
+msgstr "Failed to save '%s'"
+
+msgid "Failed read directory '%s'"
+msgstr "Failed read directory '%s'"
+
+msgid "Failed to rename '%s'"
+msgstr "Failed to rename '%s'"
+
+msgid "Failed to delete '%s'"
+msgstr "Failed to delete '%s'"
+
+msgid "Failed to create directory '%s'"
+msgstr "Failed to create directory '%s'"
+
+msgid "Failed to read '%s'"
+msgstr "Failed to read '%s'"
+
+msgid "The file '%s' does not exist!"
+msgstr "The file '%s' does not exist!"
+
+msgid "The file '%s' already exists!"
+msgstr "The file '%s' already exists!"
+
+msgid "You do not have permission to '%s'!"
+msgstr "You do not have permission to '%s'!"
+
+msgid "Cannot read/write '%s'!"
+msgstr "Cannot read/write '%s'!"
+
+msgid "Failed to create user!"
+msgstr "Failed to create user!"
+
+msgid "Invalid user!"
+msgstr "Invalid user!"
+
+msgid "You do not have the privileges to perform this operation!"
+msgstr "You do not have the privileges to perform this operation!"
+
+msgid "Failed to save user!"
+msgstr "Failed to save user!"
+
+msgid "Cannot load snapshot. Failed to save to database!"
+msgstr "Cannot load snapshot. Failed to save to database!"
+
+msgid "Cannot delete snapshot. Failed to delete from database!"
+msgstr "Cannot delete snapshot. Failed to delete from database!"
+
+msgid "Cannot delete snapshot. No input data given!"
+msgstr "Cannot delete snapshot. No input data given!"
+
+msgid "Cannot delete snapshot. No running session found!"
+msgstr "Cannot delete snapshot. No running session found!"
+
+msgid "Cannot list snapshots. Failed to list from database!"
+msgstr "Cannot list snapshots. Failed to list from database!"
+
+msgid "Cannot list snapshots. No running session found!"
+msgstr "Cannot list snapshots. No running session found!"
+
+msgid "Check username and password!"
+msgstr "Check username and password!"
+
+msgid "Failed to install '%s'. Archive, Permission or Duplicate error!"
+msgstr "Failed to install '%s'. Archive, Permission or Duplicate error!"
+
+msgid "Failed to uninstall '%s'. Package or permission error!"
+msgstr "Failed to uninstall '%s'. Package or permission error!"
+
+msgid "Failed to uninstall '%s'. Package not found!"
+msgstr "Failed to uninstall '%s'. Package not found!"
+
+msgid "The username already exists!"
+msgstr "The username already exists!"
+
+msgid "Invalid or no action given!"
+msgstr "Invalid or no action given!"
+

@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# Project codebase script: Pull changes
+#
+# @author Anders Evenrud <andersevenrud@gmail.com>
+# @licence Simplified BSD License
+#
+
+# First update packages
+cd src/packages
+git pull
+
+# Chdir
+cd ../../
+
+# Do the magick
+./bin/fix-permissions dev
+git pull
+./bin/application-gen
+./bin/install-all
+./bin/update-compression
+./bin/update-locale
+./bin/update-fontcache
+./bin/fix-permissions live
+
+# Restart apache
+sudo /etc/init.d/apache2 restart
+
+# Restart mysql
+sudo /etc/init.d/mysql restart
