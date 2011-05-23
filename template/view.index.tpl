@@ -36,6 +36,10 @@
   <!-- Content -->
 </div>
 
+<!-- Console -->
+<div id="Console">
+</div>
+
 <!-- Loading -->
 <div id="Loading" style="display:none">
   <div id="LoadingBar"></div>
@@ -57,6 +61,18 @@
           <span>x</span>
         </div>
       </div>
+    </div>
+    <div class="WindowMenu">
+      <ul class="Top">
+        <!--
+        <li class="Top">
+          <span class="Top">File</span>
+          <ul class="Menu">
+            <li><span>Close</span></li>
+          </ul>
+        </li>
+        -->
+      </ul>
     </div>
     <div class="WindowContent">
       <div class="WindowContentInner">

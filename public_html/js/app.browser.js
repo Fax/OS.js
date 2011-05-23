@@ -1,5 +1,5 @@
 var ApplicationBrowser = (function() {
-  return function(Application, app) {
+  return function(Application, app, api) {
     var _ApplicationBrowser = Application.extend({
       init : function() {
         this._super("ApplicationBrowser");

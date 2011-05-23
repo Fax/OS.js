@@ -5,7 +5,7 @@
 @font-face {
   font-family : MyFont;
   font-weight : bold;
-  src: url('/css/Sansation_Regular_Bold.ttf');
+  src: url('/css/Sansation_Bold.ttf');
 }
 
 body {
@@ -15,6 +15,33 @@ body {
   color : #222;
 }
 
+#Console {
+  -moz-opacity : 0.8;
+  opacity : 0.8;
+  white-space : nowrap;
+}
+#Console .init {
+  color : #3b9450;
+}
+#Console .destroy {
+  color : #8f943b;
+}
+#Console .event {
+  color : #3b4b94;
+}
+#Console .response {
+  color : #87948f;
+}
+#Console .error {
+  color : #943b3b;
+  font-weight : bold;
+}
+#Console .info {
+  color : #fff;
+  font-weight : bold;
+}
+
+/*
 #LoadingBar {
   background : #3c3c3d;
 
@@ -25,6 +52,7 @@ body {
 #Loading .ui-progressbar-value {
   background-image: url('/img/pbar-ani.gif');
 }
+  */
 
 .DesktopPanel {
   background : #3c3c3d;
@@ -71,6 +99,13 @@ body {
   background: -webkit-gradient(linear, left top, left bottom, from(#41454d), to(#31363d)); /* for webkit browsers */
   background: -moz-linear-gradient(top,  #41454d,  #31363d); /* for firefox 3.6+ */ 
 }
+.WindowMenu span.Top {
+  color : #fff;
+}
+.WindowMenu span.Top:hover {
+  text-decoration : underline;
+}
+
 .WindowTopController {
   font-weight : bold;
   font-size : 16px;

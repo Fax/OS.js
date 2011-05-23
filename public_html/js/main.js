@@ -100,3 +100,26 @@ function in_array (needle, haystack, argStrict) {
  
     return false;
 }
+
+function sizeof(foo) {
+  if ( foo instanceof Object ) {
+    var i = 0;
+    for ( var x in foo ) {
+      if ( foo.hasOwnProperty(x) ) {
+        i++;
+      }
+    }
+    return i;
+  }
+  return foo.length;
+}
+
+function forEach(self, callback) {
+  for ( var x in self ) {
+    if ( self.hasOwnProperty(x) ) {
+      if ( callback(x, self[x]) === false ) {
+        break;
+      }
+    }
+  }
+}

@@ -8,6 +8,40 @@
   var _Window = null;
   var _TopIndex = 11;
 
+
+  var cconsole = {
+    'log' : function() {
+      var a = [];
+      for ( var x in arguments ) {
+        if ( arguments.hasOwnProperty(x) ) {
+          a.push(arguments[x]);
+        }
+      }
+
+      var cls = a.shift();
+      var first = a.shift();
+      a.unshift("<b>" + first + "</b>");
+
+      $("#Console").prepend($("<div></div>").attr("class", cls).html(a.join(" ")));
+    },
+    'info' : function(message) {
+      $("#Console").prepend($("<div></div>").attr("class", "info").html(message));
+    },
+    'error' : function(message) {
+      $("#Console").prepend($("<div></div>").attr("class", "error").html(message));
+    }
+  };
+
+  var API = {
+
+    'system' : {
+      'run' : function(path, mime) {
+        cconsole.log("info", "API", "run", mime, path);
+      }
+    }
+
+  };
+
   /////////////////////////////////////////////////////////////////////////////
   // MANAGERS
   /////////////////////////////////////////////////////////////////////////////
@@ -21,6 +55,7 @@
         this.resources = [];
 
         console.log("ResourceManager initialized...", this);
+        cconsole.log("init", "ResourceManager initialized...");
       },
 
       hasResource : function(res) {
@@ -44,6 +79,7 @@
         $("head").append(el);
 
         console.log("ResourceManager", "addResource", res, type, el);
+        cconsole.log("info", "ResourceManager added", res);
 
         this.resources.push(res);
       },
@@ -79,6 +115,7 @@
         this.panel = new Panel();
 
         console.log("Desktop initialized...");
+        cconsole.log("init", "Desktop initialized...");
       },
 
       destroy : function() {
@@ -186,6 +223,7 @@
       this.$element = $("#Panel");
 
       console.log("Panel initialized...", this);
+      cconsole.log("init", "Panel initialized...");
 
       // Fill menu
       var o;
@@ -279,6 +317,7 @@
       this.app = null;
       this.dialog = dialog ? true : false;
       this.opts = opts;
+      this.menu = [];
       this.uuid = null;
 
       this.title = this.dialog ? "Dialog" : "Window";
@@ -303,8 +342,10 @@
       var self = this;
 
       if ( this.uuid ) {
+        cconsole.log("event", "-&gt; Window Event: Flush!", self.uuid);
         $.post("/", {'ajax' : true, 'action' : 'flush', 'uuid' : self.uuid}, function(data) {
           console.log('Flushed Window', self, self.uuid, data);
+          cconsole.log("response", "&lt;- Window flushed...", self.uuid);
         });
       }
 
@@ -317,14 +358,17 @@
       });
 
       console.log("Window destroyed...", this);
+      cconsole.log("destroy", "Window destroyed...", this.uuid);
     },
 
     event : function(app, ev, args, callback) {
       if ( this.uuid ) {
         var self = this;
         var pargs = {'ajax' : true, 'action' : 'event', 'uuid' : self.uuid, 'instance' : {'name' : self.name, 'action' : ev, 'args' : args }};
+        cconsole.log("event", "-&gt; Window Event: Interaction!", self.uuid);
         $.post("/", pargs, function(data) {
           console.log('Event Window', self, self.uuid, pargs, data);
+          cconsole.log("response", "&lt;- Window event...", self.uuid);
 
           callback(data.result, data.error);
         });
@@ -336,11 +380,46 @@
         var self = this;
 
         var el = this.dialog ? $($("#Dialog").html()) : $($("#Window").html());
-        el.attr("id", id).css("z-index", zi);
+        var menu = false;
 
-        el.find(".WindowContent").css("overflow", this.is_scrollable ? "auto" : "hidden");
+        // Create Menu
+        if ( sizeof(this.menu) ) {
+          forEach(this.menu, function(ind, m) {
+            var mel = $("<li class=\"Top\"><span class=\"Top\"></span></li>");
+            mel.find("span").html(ind);
+
+            if ( m instanceof Object && sizeof(m) ) {
+              var smel = $("<ul class=\"Menu\"></ul>");
+              forEach(m, function(sind, sm) {
+                var submel = $("<li><span></span></li>");
+                submel.find("span").addClass(sm).html(sind);
+                smel.append(submel);
+              });
+
+              mel.append(smel);
+            } else {
+              mel.find("span").addClass(m);
+            }
+
+            el.find(".WindowMenu ul.Top").append(mel);
+
+            // Known (default) buttons
+            $(el).find(".WindowMenu .cmd_Close").click(function() {
+              el.find(".ActionClose").click();
+            });
+          });
+        }
+
+        // Show/Hide Menu
+        if ( el.find(".WindowMenu li").length ) {
+          el.find(".WindowContent").addClass("HasMenu");
+          menu = true;
+        } else {
+          el.find(".WindowMenu").hide();
+        }
+
+        // Content and buttons
         el.find(".WindowTopInner span").html(this.title);
-
         if ( this.dialog ) {
           el.find(".DialogContent").html(this.content).addClass(this.opts.type);
           el.find(".DialogButtons button").click(function() {
@@ -349,13 +428,23 @@
         } else {
           el.find(".WindowTopInner img").attr("src", "/img/icons/16x16/" + this.icon);
           el.find(".WindowContentInner").html(this.content);
+
+          $(el).find(".WindowMenu li.Top").hover(function() {
+            $(this).find("ul").show();
+          }, function() {
+            $(this).find("ul").hide();
+          });
         }
 
-        if ( this.width > 0 ) {
+        // Attributtes
+        el.attr("id", id).css("z-index", zi);
+        el.find(".WindowContent").css("overflow", this.is_scrollable ? "auto" : "hidden");
+
+        if ( !isNaN(this.width) && (this.width > 0) ) {
           $(el).css("width", this.width + "px");
         }
-        if ( this.height > 0 ) {
-          $(el).css("height", this.height + "px");
+        if ( !isNaN(this.height) && (this.height > 0) ) {
+          $(el).css("height", (this.height) + "px");
         }
 
         if ( this.gravity === "center" ) {
@@ -365,6 +454,7 @@
           });
         }
 
+        // Events
         el.mousedown(function() {
           desktop.focusWindow(self);
         });
@@ -380,8 +470,19 @@
           });
         }
 
+        // DOM
         desktop.$element.append(el);
 
+        // Adjustments after DOM
+        if ( !isNaN(this.height) && (this.height > 0) ) {
+          if ( menu ) {
+            var appendHeight = $(el).find(".WindowMenu").height();
+            $(el).css("height", (this.height + appendHeight) + "px");
+          }
+        }
+
+
+        // Add Handlers
         if ( this.is_draggable ) {
           el.draggable({
             handle : ".WindowTop",
@@ -407,24 +508,31 @@
 
         this.$element = el;
 
-        console.log("Window created...", this, this.uuid);
+        if ( this.dialog ) {
+          cconsole.log("init", "Dialog created...");
+        } else {
+          cconsole.log("init", "Window created...", this.uuid);
+        }
 
+        // Run Dialog or Application
         if ( this.dialog ) {
           desktop.focusWindow(this);
         } else {
           setTimeout(function() {
             //try {
               if ( window[method] ) {
-                self.app = window[method](Application, self);
+                self.app = window[method](Application, self, API);
               }
             //} catch ( e ) {
-            //  console.error("Window application creation failed...", e);
+            //  cconsole.error("Window application creation failed...", e);
             //  return;
             //}
 
             if ( self.uuid ) {
+              cconsole.log("event", "-&gt; Window Event: Registration!", self.uuid);
               $.post("/", {'ajax' : true, 'action' : 'register', 'uuid' : self.uuid, 'instance' : {'name' : self.name}}, function(data) {
                 console.log('Registered Window', self, self.uuid, data);
+                cconsole.log('response', '&lt;- Registered Window in Session', self.uuid);
               });
             }
 
@@ -455,6 +563,7 @@
               self.is_draggable  = data.result.is_draggable;
               self.is_resizable  = data.result.is_resizable;
               self.is_scrollable = data.result.is_scrollable;
+              self.menu          = data.result.menu;
               self.width         = parseInt(data.result.width, 10);
               self.height        = parseInt(data.result.height, 10);
 
@@ -576,11 +685,15 @@
   /////////////////////////////////////////////////////////////////////////////
 
   $(window).ready(function() {
+    cconsole.info("********* WARMING UP *********");
+
+    /*
     $("#LoadingBar").progressbar({
       value : 20
     });
 
     $("#Loading").show();
+    */
 
     _Resources = new ResourceManager();
 
@@ -595,6 +708,7 @@
         alert(data.error);
       }
 
+      /*
       $("#LoadingBar").progressbar({
         value : 100
       });
@@ -602,6 +716,7 @@
       setTimeout(function() {
         $("#LoadingBar").fadeOut(ANIMATION_SPEED);
       }, 100);
+      */
     });
   });
 

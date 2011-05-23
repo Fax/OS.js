@@ -14,6 +14,20 @@ body {
   padding-top : 40px;
 }
 
+#Console {
+  position : absolute;
+  padding : 5px;
+  bottom : 10px;
+  right : 10px;
+  width : 600px;
+  height : 150px;
+  color : #fff;
+  background : #000;
+  z-index : 5;
+  overflow : hidden;
+}
+
+/*
 #Loading {
   position : absolute;
   bottom : 10px;
@@ -34,6 +48,7 @@ body {
 
 #Loading .ui-progressbar-value {
 }
+  */
 
 /* Panel */
 
@@ -143,9 +158,9 @@ body {
 
 .Menu li {
   padding : 5px;
+  cursor : pointer;
 }
 .Menu li:hover {
-
 }
 
 .Menu li img {
@@ -158,8 +173,8 @@ body {
 .Window {
   min-width : 100px;
   min-height : 100px;
-  width : 500px;
-  height : 300px;
+  width : 500px; /* PHP */
+  height : 300px; /* PHP */
   position : absolute;
   z-index : 10;
   overflow : hidden;
@@ -199,6 +214,30 @@ body {
 }
 .WindowTopController:hover {
 }
+.WindowMenu {
+  height : 25px;
+  background : #4f4f4f;
+}
+.WindowMenu ul.Top {
+  list-style-type : none;
+  margin : 0;
+  padding : 0;
+}
+.WindowMenu li.Top {
+  float : left;
+  padding : 5px;
+  margin : 0;
+  position : relative;
+}
+.WindowMenu span.Top {
+  cursor : pointer;
+}
+.WindowMenu span.Top:hover {
+}
+.WindowMenu .Menu {
+  z-index : 10000;
+  padding : 2px;
+}
 
 .WindowContent {
   overflow : auto;
@@ -207,6 +246,9 @@ body {
   left : 2px;
   right : 2px;
   bottom : 4px;
+}
+.WindowContent.HasMenu {
+  top : 54px;
 }
 .WindowContentInner {
 }

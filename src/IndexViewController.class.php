@@ -7,6 +7,21 @@
  * @created 2011-05-22
  */
 
+function unix_path() {
+  $args = func_get_args();
+  $paths = array();
+  foreach( $args as $arg ) {
+    $paths = array_merge( $paths, (array)$arg );
+  }
+  foreach( $paths as &$path ) {
+    $path = trim( $path, '/' );
+  }
+  if( substr( $args[0], 0, 1 ) == '/' ) {
+    $paths[0] = '/' . $paths[0];
+  }
+  return join('/', $paths);
+}
+
 class DesktopApplication
 {
   const APP_TITLE = "Window";
@@ -20,9 +35,10 @@ class DesktopApplication
   public $is_draggable = true;
   public $is_resizable = true;
   public $is_scrollable = true;
-  public $width = -1;
-  public $height = -1;
+  public $width = 500;
+  public $height = 300;
   public $resources = Array();
+  public $menu = Array();
 
   public static $Registered = Array();
 
@@ -42,7 +58,8 @@ class DesktopApplication
       "is_scrollable" => $this->is_scrollable,
       "resources" => $this->resources,
       "width" => $this->width,
-      "height" => $this->height
+      "height" => $this->height,
+      "menu" => $this->menu
     );
   }
 
@@ -61,6 +78,11 @@ class ApplicationFilemanager
   public function __construct() {
     $this->title = self::APP_TITLE;
     $this->icon = self::APP_ICON;
+    $this->menu = Array(
+      "File" => Array("Close" => "cmd_Close"),
+      "Home" => "cmd_Home"/*,
+      "Back" => "cmd_Back"*/
+    );
 
     $this->content = <<<EOHTML
 
@@ -81,40 +103,63 @@ EOHTML;
     parent::__construct();
   }
   public static function Event($uuid, $action, Array $args) {
-    $items = Array();
-    $html = <<<EOHTML
-      <li class="type_%s">
-        <div class="Inner">
-          <div class="Image"><img alt="" src="/img/icons/32x32/%s" /></div>
-          <div class="Title">%s</div>
-        </div>
-      </li>
-EOHTML;
+    $items = Array("dir" => Array(), "text" => Array());
 
-    $add = !empty($args['path']) ? $args['path'] : "";
-    $root = PATH_PROJECT_HTML . "/media" . $add;
+    $root = PATH_PROJECT_HTML . "/media/";
+    if ( ($add = !empty($args['path']) ? str_replace(Array("..", ".", "//"), Array("", "", "/"), $args['path']) . "/" : "") ) {
+      $root = unix_path($root, $add);
+    }
+
     if ($handle = opendir($root)) {
       while (false !== ($file = readdir($handle))) {
         if ( $file != "." && $file != ".." ) {
-          $fpath = $root . $file;
-          $icon = "mimetypes/binary.png";
-          $type = "text";
+          //$fpath = $root . $file;
+          $fpath = unix_path($root, $file);
+          $frpath = str_replace(PATH_PROJECT_HTML . "/media/", "", $fpath);
+          $fsize = 0;
 
           if ( is_dir($fpath) ) {
             $icon = "places/folder.png";
             $type = "dir";
+            $mime = "";
+          } else {
+            $icon = "mimetypes/binary.png";
+            $type = "file";
+
+            $finfo = finfo_open(FILEINFO_MIME);
+            $mime = explode("; charset=", finfo_file($finfo, $fpath));
+            $mime = reset($mime);
+            finfo_close($finfo);
+
+            $fsize = filesize($fpath);
           }
-          $title = $file;
-          /*
-          if ( mb_strlen($title) > 10 ) {
-            $title = substr($title, 0, 10);
-          }
-           */
-          $items[] = sprintf($html, $type, $icon, $title);
+
+          $items[$type][] = <<<EOHTML
+      <li class="type_{$type}">
+        <div class="Inner">
+          <div class="Image"><img alt="" src="/img/icons/32x32/{$icon}" /></div>
+          <div class="Title">{$file}</div>
+          <div class="Info" style="display:none;">
+            <input type="hidden" name="type" value="{$type}" />
+            <input type="hidden" name="mime" value="{$mime}" />
+            <input type="hidden" name="name" value="{$file}" />
+            <input type="hidden" name="path" value="{$frpath}" />
+            <input type="hidden" name="size" value="{$fsize}" />
+          </div>
+        </div>
+      </li>
+EOHTML;
+
         }
       }
+
       closedir($handle);
     }
+
+    sort($items["dir"]);
+    sort($items["text"]);
+
+    $items = array_merge($items["dir"], $items["file"]);
 
     return Array("items" => implode("", $items));
   }
@@ -161,9 +206,11 @@ class ApplicationClock
   extends DesktopApplication
 {
   const APP_TITLE = "Clock";
+  const APP_ICON = "status/appointment-soon.png";
 
   public function __construct() {
     $this->title = self::APP_TITLE;
+    $this->icon = self::APP_ICON;
     $this->content = <<<EOHTML
 
 <div class="ApplicationClock">
@@ -217,6 +264,45 @@ EOHTML;
 }
 
 DesktopApplication::$Registered[] = "ApplicationRSSReader";
+
+class ApplicationTextpad
+  extends DesktopApplication
+{
+  const APP_TITLE = "TextPad";
+  const APP_ICON = "apps/text-editor.png";
+
+  public function __construct() {
+    $this->title = self::APP_TITLE;
+    $this->icon = self::APP_ICON;
+    $this->menu = Array(
+      "File" => Array(
+        "Open" => "cmd_Open",
+        "Save" => "cmd_Save",
+        "Save As..." => "cmd_SaveAs",
+        "Close" => "cmd_Close"
+      )
+    );
+
+    $this->content = <<<EOHTML
+
+<div class="ApplicationTextpad">
+  <textarea></textarea>
+</div>
+
+EOHTML;
+
+    $this->resources = Array(
+      "app.textpad.js",
+      "app.textpad.css"
+    );
+    $this->width = 400;
+    $this->height = 400;
+
+    parent::__construct();
+  }
+}
+
+DesktopApplication::$Registered[] = "ApplicationTextpad";
 
 
 /**

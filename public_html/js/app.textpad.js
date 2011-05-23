@@ -1,8 +1,8 @@
-var ApplicationCLASSNAME = (function() {
+var ApplicationTextpad = (function() {
   return function(Application, app, api) {
-    var _ApplicationCLASSNAME = Application.extend({
+    var _ApplicationTextpad = Application.extend({
       init : function() {
-        this._super("ApplicationCLASSNAME");
+        this._super("ApplicationTextpad");
       },
 
       destroy : function() {
@@ -16,6 +16,6 @@ var ApplicationCLASSNAME = (function() {
       }
     });
 
-    return new _ApplicationCLASSNAME();
+    return new _ApplicationTextpad();
   };
 })();

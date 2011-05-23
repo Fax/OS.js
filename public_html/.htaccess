@@ -1,1 +1,22 @@
-../SCore/public_html/.htaccess
+# SimpliciCore Framework defaults
+RewriteEngine On
+RewriteBase /
+
+# explicitly disable caching for scripts and other dynamic files
+<FilesMatch "\.(js|css)$">
+Header unset Cache-Control
+Header unset ETag
+Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+Header set Pragma "no-cache"
+Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+</FilesMatch>
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} ^/ws/
+RewriteRule . /ws.php [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/ws/
+RewriteRule . /index.php [L]
