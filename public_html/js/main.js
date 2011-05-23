@@ -115,11 +115,15 @@ function sizeof(foo) {
 }
 
 function forEach(self, callback) {
+  var s = sizeof(self) - 1;
+  var i = 0;
   for ( var x in self ) {
     if ( self.hasOwnProperty(x) ) {
-      if ( callback(x, self[x]) === false ) {
+      if ( callback(x, self[x], i, s) === false ) {
         break;
       }
+
+      i++;
     }
   }
 }

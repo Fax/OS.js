@@ -1,8 +1,8 @@
-var ApplicationCLASSNAME = (function() {
+var ApplicationSettings = (function() {
   return function(Application, app, api, argv) {
-    var _ApplicationCLASSNAME = Application.extend({
+    var _ApplicationSettings = Application.extend({
       init : function() {
-        this._super("ApplicationCLASSNAME");
+        this._super("ApplicationSettings");
       },
 
       destroy : function() {
@@ -16,6 +16,6 @@ var ApplicationCLASSNAME = (function() {
       }
     });
 
-    return new _ApplicationCLASSNAME();
+    return new _ApplicationSettings();
   };
 })();

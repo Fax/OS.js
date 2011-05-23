@@ -21,8 +21,6 @@ class ApplicationBrowser
   const APP_ICON  = "categories/gnome-globe.png";
 
   public function __construct() {
-    $this->title = self::APP_TITLE;
-    $this->icon = self::APP_ICON;
 
     $this->content = <<<EOHTML
 
@@ -43,7 +41,7 @@ EOHTML;
     );
     $this->is_scrollable = false;
 
-    parent::__construct();
+    parent::__construct(self::APP_TITLE, self::APP_ICON, self::APP_HIDDEN);
   }
 }
 

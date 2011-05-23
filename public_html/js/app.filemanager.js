@@ -1,5 +1,5 @@
 var ApplicationFilemanager = (function() {
-  return function(Application, app, api) {
+  return function(Application, app, api, argv) {
 
     var _CurrentDir = "/";
     var _History = [];

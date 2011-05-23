@@ -61,7 +61,7 @@ var ApplicationClock = (function() {
   }
 
 
-  return function(Application, app, api) {
+  return function(Application, app, api, argv) {
 
     var _ApplicationClock = Application.extend({
       init : function() {

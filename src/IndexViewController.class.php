@@ -8,6 +8,9 @@
  */
 
 require "DesktopApplication.class.php";
+
+// TODO: On-Demand
+require "apps/ApplicationSettings.class.php";
 require "apps/ApplicationFilemanager.class.php";
 require "apps/ApplicationClock.class.php";
 require "apps/ApplicationBrowser.class.php";
@@ -49,7 +52,6 @@ class IndexViewController
       if ( isset($args['ajax']) ) {
         $json = Array("success" => false, "error" => "Unknown error", "result" => null);
 
-
         if ( $args['action'] == "boot" ) {
 
         } else if ( $args['action'] == "load" ) {
@@ -73,8 +75,13 @@ class IndexViewController
           }
 
           $json = Array("success" => true, "error" => null, "result" => Array(
-            "applications" => $apps,
-            "settings"     => UserSetting::getUserSettings($wa->getUser())
+            "applications"   => $apps,
+            "settings"       => UserSetting::getUserSettings($wa->getUser()),
+            "mime_handlers"  => Array(
+                                "text/*"  => "ApplicationTextpad",
+                                "image/*" => "ApplicationViewer",
+                                "video/*" => "ApplicationViewer"
+                              )
           ));
         } else if ( $args['action'] == "register" ) {
           if ( $uuid = $args['uuid'] ) {
@@ -92,6 +99,32 @@ class IndexViewController
 
             $result = $cname::Event($uuid, $action, $aargs ? $aargs : Array());
             $json = Array("success" => true, "error" => null, "result" => $result);
+          }
+        } else if ( $args['action'] == "call" && isset($args['method']) && isset($args['args']) ) {
+          $method = $args['method'];
+          $argv   = $args['args'];
+
+          if ( $method == "read" ) {
+            if ( is_string($argv) ) {
+              $path = PATH_PROJECT_HTML . "/media/" . $argv;
+              if ( file_exists($path) && is_file($path) ) {
+                $json['result'] = file_get_contents($path);
+                $json['success'] = true;
+              } else {
+                $json['error'] = "Path does not exist";
+              }
+            } else {
+              $json['error'] = "Invalid argument";
+            }
+          } else if ( $method = "readdir" ) {
+            // TODO
+          } else {
+            if ( function_exists($method) ) {
+              $json['result']  = call_user_func_array($method, $argv);
+              $json['success'] = true;
+            } else {
+              $json['error'] = "Function does not exist";
+            }
           }
         }
 

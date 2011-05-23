@@ -7,7 +7,7 @@
   var _Desktop = null;
   var _Window = null;
   var _TopIndex = 11;
-
+  var _MimeHandlers = {};
 
   var cconsole = {
     'log' : function() {
@@ -37,6 +37,52 @@
     'system' : {
       'run' : function(path, mime) {
         cconsole.log("info", "API", "run", mime, path);
+        if ( mime ) {
+          forEach(_MimeHandlers, function(mt, mapp, mind, mlast) {
+            var mte = mt.split("/");
+            var mbase = mte.shift();
+            var mtype = mte.shift();
+
+            if ( mtype == "*" ) {
+              var ctbase = mime.split("/")[0];
+              if ( ctbase == mbase ) {
+                console.log("API found suited application for", mime, ":", mapp);
+                cconsole.log("info", "API", "found application for", mime, "=>", mapp);
+
+                API.system.launch(mapp, path);
+                return false;
+              }
+            }/* else {
+
+              if ( mt == mime ) {
+                API.launch(mapp);
+                return false;
+              }
+            }*/
+
+            if ( mind == mlast ) {
+              _Desktop.alert("error", "Found no suiting application for '" + path + "'");
+            }
+            console.log(mt, mapp);
+            return true;
+          });
+        }
+      },
+
+      'launch' : function(app_name, args) {
+        args = args || {};
+        _Desktop.addWindow(new Window(app_name, false, args));
+      },
+
+      'call' : function(method, argv, callback) {
+        $.post("/", {'ajax' : true, 'action' : 'call', 'method' : method, 'args' : argv}, function(data) {
+          if ( data.success ) {
+            callback(data.result, null);
+          } else {
+            _Desktop.alert("error", data.error);
+            callback(null, data.error);
+          }
+        });
       }
     }
 
@@ -528,7 +574,7 @@
           setTimeout(function() {
             //try {
               if ( window[method] ) {
-                self.app = window[method](Application, self, API);
+                self.app = window[method](Application, self, API, self.opts);
               }
             //} catch ( e ) {
             //  cconsole.error("Window application creation failed...", e);
@@ -708,6 +754,11 @@
 
       if ( data.success ) {
         _ApplicationRegister = data.result.applications;
+        _MimeHandlers        = data.result.mime_handlers;
+
+        console.log("ApplicationRegister", _ApplicationRegister);
+        console.log("MimeHandlers", _MimeHandlers);
+
         _Desktop = new Desktop(data.result.settings);
 
         _Desktop.addWindow(new Window("ApplicationFilemanager"));

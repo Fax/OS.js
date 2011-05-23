@@ -20,38 +20,42 @@ class DesktopApplication
   const APP_ICON  = "emblems/emblem-unreadable.png";
   const APP_HIDDEN = false;
 
-  public $uuid = null;
-  public $title = self::APP_TITLE;
-  public $content = "";
-  public $icon = self::APP_ICON;
-  public $is_draggable = true;
-  public $is_resizable = true;
-  public $is_scrollable = true;
-  public $width = 500;
-  public $height = 300;
-  public $resources = Array();
-  public $menu = Array();
+  protected $uuid          = null;
+  protected $title         = self::APP_TITLE;
+  protected $content       = "";
+  protected $icon          = self::APP_ICON;
+  protected $is_draggable  = true;
+  protected $is_resizable  = true;
+  protected $is_scrollable = true;
+  protected $width         = 500;
+  protected $height        = 300;
+  protected $resources     = Array();
+  protected $menu          = Array();
+  protected $accept_mime   = Array(); // TODO: Add here, remove from global?!
 
   public static $Registered = Array();
 
-  public function __construct() {
-    $this->uuid = UUID::v4();
+  public function __construct($title, $icon, $hidden) {
+    $this->uuid   = UUID::v4();
+    $this->title  = $title;
+    $this->icon   = $icon;
+    $this->hidden = (bool) $hidden;
   }
 
   public function __toJSON() {
     return Array(
-      "class" => get_class($this),
-      "uuid" => $this->uuid,
-      "icon" => $this->icon,
-      "title" => $this->title,
-      "content" => $this->content,
-      "is_draggable" => $this->is_draggable,
-      "is_resizable" => $this->is_resizable,
+      "class"         => get_class($this),
+      "uuid"          => $this->uuid,
+      "icon"          => $this->icon,
+      "title"         => $this->title,
+      "content"       => $this->content,
+      "is_draggable"  => $this->is_draggable,
+      "is_resizable"  => $this->is_resizable,
       "is_scrollable" => $this->is_scrollable,
-      "resources" => $this->resources,
-      "width" => $this->width,
-      "height" => $this->height,
-      "menu" => $this->menu
+      "resources"     => $this->resources,
+      "width"         => $this->width,
+      "height"        => $this->height,
+      "menu"          => $this->menu
     );
   }
 

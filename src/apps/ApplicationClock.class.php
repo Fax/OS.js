@@ -21,8 +21,6 @@ class ApplicationClock
   const APP_ICON = "status/appointment-soon.png";
 
   public function __construct() {
-    $this->title = self::APP_TITLE;
-    $this->icon = self::APP_ICON;
     $this->content = <<<EOHTML
 
 <div class="ApplicationClock">
@@ -41,7 +39,7 @@ EOHTML;
     $this->width = 200;
     $this->height = 230;
 
-    parent::__construct();
+    parent::__construct(self::APP_TITLE, self::APP_ICON, self::APP_HIDDEN);
   }
 }
 

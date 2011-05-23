@@ -37,8 +37,6 @@ class ApplicationFilemanager
   const APP_HIDDEN = true;
 
   public function __construct() {
-    $this->title = self::APP_TITLE;
-    $this->icon = self::APP_ICON;
     $this->menu = Array(
       "File" => Array("Close" => "cmd_Close"),
       "Home" => "cmd_Home"/*,
@@ -61,7 +59,7 @@ EOHTML;
       "app.filemanager.css"
      );
 
-    parent::__construct();
+    parent::__construct(self::APP_TITLE, self::APP_ICON, self::APP_HIDDEN);
   }
   public static function Event($uuid, $action, Array $args) {
     $items = Array("dir" => Array(), "text" => Array());

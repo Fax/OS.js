@@ -1,5 +1,5 @@
 var ApplicationTextpad = (function() {
-  return function(Application, app, api) {
+  return function(Application, app, api, argv) {
     var _ApplicationTextpad = Application.extend({
       init : function() {
         this._super("ApplicationTextpad");
@@ -11,6 +11,14 @@ var ApplicationTextpad = (function() {
 
       run : function() {
         var el = app.$element;
+
+        if ( argv ) {
+          api.system.call("read", argv, function(result, error) {
+            if ( error === null ) {
+              app.$element.find("textarea").val(result);
+            }
+          });
+        }
 
         this._super();
       }

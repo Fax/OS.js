@@ -21,14 +21,12 @@ class ApplicationTextpad
   const APP_ICON = "apps/text-editor.png";
 
   public function __construct() {
-    $this->title = self::APP_TITLE;
-    $this->icon = self::APP_ICON;
     $this->menu = Array(
       "File" => Array(
-        "Open" => "cmd_Open",
-        "Save" => "cmd_Save",
+        "Open"       => "cmd_Open",
+        "Save"       => "cmd_Save",
         "Save As..." => "cmd_SaveAs",
-        "Close" => "cmd_Close"
+        "Close"      => "cmd_Close"
       )
     );
 
@@ -47,7 +45,7 @@ EOHTML;
     $this->width = 400;
     $this->height = 400;
 
-    parent::__construct();
+    parent::__construct(self::APP_TITLE, self::APP_ICON, self::APP_HIDDEN);
   }
 }
 
