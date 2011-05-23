@@ -3,11 +3,12 @@
   var ANIMATION_SPEED = 400;
 
   var _ApplicationRegister = {};
-  var _Resources = null;
-  var _Desktop = null;
-  var _Window = null;
-  var _TopIndex = 11;
-  var _MimeHandlers = {};
+  var _Resources           = null;
+  var _Desktop             = null;
+  var _Window              = null;
+  var _TopIndex            = 11;
+  var _MimeHandlers        = {};
+  var _PreviousSession     = null;
 
   var cconsole = {
     'log' : function() {
@@ -31,6 +32,10 @@
       $("#Console").prepend($("<div></div>").attr("class", "error").html(message));
     }
   };
+
+  /////////////////////////////////////////////////////////////////////////////
+  // PUBLIC API
+  /////////////////////////////////////////////////////////////////////////////
 
   var API = {
 
@@ -71,6 +76,8 @@
 
       'launch' : function(app_name, args) {
         args = args || {};
+        console.log("API launching", app_name, args);
+        cconsole.log("info", "API", "launching", app_name);
         _Desktop.addWindow(new Window(app_name, false, args));
       },
 
@@ -86,6 +93,9 @@
       },
 
       'dialog' : function(type, message) {
+        type = type || "error";
+        message = message || "Unknown error";
+
         _Desktop.alert(type, message);
       }
     }
@@ -311,7 +321,7 @@
 
       $(".PanelItemMenu li, .PanelItemLauncher").click(function() {
         var app = $(this).find("span").attr("class").replace("launch_", "");
-        _Desktop.addWindow(new Window(app));
+        API.system.launch(app);
         if ( this.tagName == "li" ) {
           $(this).parents("ul").hide();
         }
@@ -627,7 +637,7 @@
               callback(data.result['class']);
             });
           } else {
-            _Desktop.alert("error", data.error);
+            API.system.dialog("error", data.error);
           }
         });
       }
@@ -698,6 +708,10 @@
 
   });
 
+  /////////////////////////////////////////////////////////////////////////////
+  // DIALOG
+  /////////////////////////////////////////////////////////////////////////////
+
   var Dialog = Window.extend({
 
     init : function(type, message) {
@@ -710,7 +724,6 @@
     }
 
   });
-
 
   /////////////////////////////////////////////////////////////////////////////
   // APPLICATION
@@ -759,13 +772,19 @@
       if ( data.success ) {
         _ApplicationRegister = data.result.applications;
         _MimeHandlers        = data.result.mime_handlers;
+        _PreviousSession     = data.result.session;
 
         console.log("ApplicationRegister", _ApplicationRegister);
         console.log("MimeHandlers", _MimeHandlers);
+        console.log("PreviousSession", _PreviousSession);
 
         _Desktop = new Desktop(data.result.settings);
 
-        _Desktop.addWindow(new Window("ApplicationFilemanager"));
+        var autolaunch = _PreviousSession.applications;
+        for ( var i = 0; i < autolaunch.length; i++ ) {
+          API.system.launch(autolaunch[i]);
+        }
+
       } else {
         alert(data.error);
       }

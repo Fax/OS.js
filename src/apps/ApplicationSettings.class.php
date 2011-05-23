@@ -47,6 +47,10 @@ EOHTML;
 
     parent::__construct(self::APP_TITLE, self::APP_ICON, self::APP_HIDDEN);
   }
+
+  public static function Event($uuid, $action, Array $args) {
+    return false;
+  }
 }
 
 DesktopApplication::$Registered[] = "ApplicationSettings";

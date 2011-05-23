@@ -9,6 +9,8 @@
 
 require "DesktopApplication.class.php";
 
+require "apps/SystemUser.class.php";
+
 // TODO: On-Demand
 require "apps/ApplicationSettings.class.php";
 require "apps/ApplicationFilemanager.class.php";
@@ -55,6 +57,20 @@ class IndexViewController
 
         if ( $args['action'] == "boot" ) {
 
+        } else if ( $args['action'] == "user" ) {
+          if ( $user = $wa->getUser() ) {
+            $json['success'] = true;
+            $json['result'] = Array(
+              "Username"   => $user->getUsername(),
+              "Privilege"  => $user->getPrivilegeType(),
+              "Name"       => $user->getName(),
+              "Email"      => $user->getEmail(),
+              "Company"    => $user->getCompanyName(),
+              "Cellphone"  => $user->getCellphone()
+            );
+          } else {
+            $json['error'] = "You are not logged in!";
+          }
         } else if ( $args['action'] == "load" ) {
           $class = $args['app'];
           if ( class_exists($class) ) {
@@ -79,10 +95,16 @@ class IndexViewController
             "applications"   => $apps,
             "settings"       => UserSetting::getUserSettings($wa->getUser()),
             "mime_handlers"  => Array(
-                                "text/*"  => "ApplicationTextpad",
-                                "image/*" => "ApplicationViewer",
-                                "video/*" => "ApplicationViewer"
-                              )
+              "text/*"  => "ApplicationTextpad",
+              "image/*" => "ApplicationViewer",
+              "video/*" => "ApplicationViewer"
+            ),
+            "session"        => Array(
+              "applications" => Array(
+                "ApplicationFilemanager",
+                "ApplicationSettings"
+              )
+            )
           ));
         } else if ( $args['action'] == "register" ) {
           if ( $uuid = $args['uuid'] ) {

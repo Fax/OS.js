@@ -28,6 +28,9 @@
 
     <div class="PanelItemHolder PanelItemDock AlignRight">
       <div class="PanelItem PanelItemLauncher">
+        <span class="launch_SystemUser"><img alt="" src="/img/icons/16x16/apps/user-info.png" title="User Information" /></span>
+      </div>
+      <div class="PanelItem PanelItemLauncher">
         <span class="launch_SystemLogout"><img alt="" src="/img/icons/16x16/actions/gnome-logout.png" title="Save and Quit" /></span>
       </div>
     </div>
