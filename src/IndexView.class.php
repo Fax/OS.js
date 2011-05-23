@@ -18,6 +18,8 @@ class IndexView
   extends View
 {
 
+  protected $_sUserSettings = Array();
+
   /**
    * @see View::$_aViewStyles
    */
@@ -45,6 +47,15 @@ class IndexView
     $this->addViewScript("/js/main.js");
     $this->addViewScript("/js/view.index.js");
   }
+
+  public function setUserSettings(Array $a) {
+    $this->_aUserSettings = $a;
+  }
+
+  public function getUserSettings() {
+    return $this->_aUserSettings;
+  }
+
 
 }
 

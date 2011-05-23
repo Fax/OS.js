@@ -108,11 +108,18 @@
 
     return Class.extend({
 
-      init : function() {
+      init : function(settings) {
         this.$element = $("#Desktop");
         this.stack = [];
 
         this.panel = new Panel();
+
+        if ( settings ) {
+          var wp = settings['desktop.wallpaper.path'];
+          if ( wp ) {
+            $("body").css("background", "url('/media/" + wp + "') center center");
+          }
+        }
 
         console.log("Desktop initialized...");
         cconsole.log("init", "Desktop initialized...");
@@ -701,7 +708,7 @@
 
       if ( data.success ) {
         _ApplicationRegister = data.result.applications;
-        _Desktop = new Desktop();
+        _Desktop = new Desktop(data.result.settings);
 
         _Desktop.addWindow(new Window("ApplicationFilemanager"));
       } else {

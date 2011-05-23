@@ -11,7 +11,7 @@
 body {
   font-family : MyFont, Arial;
   font-size : 12px;
-  background : #005a77 url('/media/02555_cherryblossoms_2560x1600.jpg') center center;
+  background : #005a77; /* url('/media/02555_cherryblossoms_2560x1600.jpg') center center;*/
   color : #222;
 }
 
