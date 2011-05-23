@@ -10,15 +10,14 @@
 require "DesktopApplication.class.php";
 
 require "apps/SystemUser.class.php";
+require "apps/SystemSettings.class.php";
 
 // TODO: On-Demand
-require "apps/ApplicationSettings.class.php";
-require "apps/ApplicationFilemanager.class.php";
 require "apps/ApplicationClock.class.php";
-require "apps/ApplicationBrowser.class.php";
+require "apps/ApplicationFilemanager.class.php";
 require "apps/ApplicationTextpad.class.php";
+require "apps/ApplicationBrowser.class.php";
 require "apps/ApplicationViewer.class.php";
-
 
 /**
  * IndexViewContoller Class
@@ -102,7 +101,7 @@ class IndexViewController
             "session"        => Array(
               "applications" => Array(
                 "ApplicationFilemanager",
-                "ApplicationSettings"
+                "SystemSettings"
               )
             )
           ));

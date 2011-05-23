@@ -1,20 +1,20 @@
 <?php
 /*!
  * @file
- * Contains ApplicationSettings Class
+ * Contains SystemSettings Class
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @license GPLv3 (see http://www.gnu.org/licenses/gpl-3.0.txt)
  * @created 2011-05-23
  */
 
 /**
- * ApplicationSettings Class
+ * SystemSettings Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package MyApplication
  * @class
  */
-class ApplicationSettings
+class SystemSettings
   extends DesktopApplication
 {
   const APP_TITLE = "Settings";
@@ -25,8 +25,8 @@ class ApplicationSettings
 
     $this->content = <<<EOHTML
 
-<div class="ApplicationSettings">
-  <div class="ApplicationSettingsForm">
+<div class="SystemSettings">
+  <div class="SystemSettingsForm">
     <form method="post" action="/" onsubmit="return false;">
     </form>
   </div>
@@ -53,6 +53,6 @@ EOHTML;
   }
 }
 
-DesktopApplication::$Registered[] = "ApplicationSettings";
+DesktopApplication::$Registered[] = "SystemSettings";
 
 ?>

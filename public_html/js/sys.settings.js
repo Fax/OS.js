@@ -1,8 +1,8 @@
-var ApplicationSettings = (function() {
+var SystemSettings = (function() {
   return function(Application, app, api, argv) {
-    var _ApplicationSettings = Application.extend({
+    var _SystemSettings = Application.extend({
       init : function() {
-        this._super("ApplicationSettings");
+        this._super("SystemSettings");
       },
 
       destroy : function() {
@@ -16,6 +16,6 @@ var ApplicationSettings = (function() {
       }
     });
 
-    return new _ApplicationSettings();
+    return new _SystemSettings();
   };
 })();

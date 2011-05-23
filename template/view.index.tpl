@@ -8,13 +8,6 @@
       </ul>
     </div>
 
-    <div class="PanelItem PanelItemLauncher">
-      <span class="launch_ApplicationFilemanager"><img alt="" src="/img/icons/16x16/places/user-home.png" title="Browse files" /></span>
-    </div>
-    <div class="PanelItem PanelItemLauncher">
-      <span class="launch_ApplicationSettings"><img alt="" src="/img/icons/16x16/categories/applications-system.png" title="Launch system settings" /></span>
-    </div>
-
     <div class="PanelItem PanelItemSeparator">&nbsp;</div>
 
     <div class="PanelItemHolder PanelWindowHolder">
@@ -27,6 +20,9 @@
     <div class="PanelItem PanelItemSeparator AlignRight">&nbsp;</div>
 
     <div class="PanelItemHolder PanelItemDock AlignRight">
+      <div class="PanelItem PanelItemLauncher">
+        <span class="launch_SystemSettings"><img alt="" src="/img/icons/16x16/categories/applications-system.png" title="System Settings" /></span>
+      </div>
       <div class="PanelItem PanelItemLauncher">
         <span class="launch_SystemUser"><img alt="" src="/img/icons/16x16/apps/user-info.png" title="User Information" /></span>
       </div>

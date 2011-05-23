@@ -34,7 +34,6 @@ class ApplicationFilemanager
 {
   const APP_TITLE = "File Manager";
   const APP_ICON  = "apps/file-manager.png";
-  const APP_HIDDEN = true;
 
   public function __construct() {
     $this->menu = Array(
