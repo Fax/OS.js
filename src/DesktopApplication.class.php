@@ -16,8 +16,8 @@
  */
 class DesktopApplication
 {
-  const APP_TITLE = "Window";
-  const APP_ICON  = "emblems/emblem-unreadable.png";
+  const APP_TITLE  = "Window";
+  const APP_ICON   = "emblems/emblem-unreadable.png";
   const APP_HIDDEN = false;
 
   protected $uuid          = null;

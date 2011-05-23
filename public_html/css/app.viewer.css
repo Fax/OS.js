@@ -1,0 +1,14 @@
+.ApplicationViewer {
+}
+
+.ApplicationViewerLoading {
+  background : url('/img/ajaxload_snake_trans.gif') no-repeat center center;
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 0px;
+}
+
+.ApplicationViewerImage {
+}

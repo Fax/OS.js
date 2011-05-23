@@ -83,6 +83,10 @@
             callback(null, data.error);
           }
         });
+      },
+
+      'dialog' : function(type, message) {
+        _Desktop.alert(type, message);
       }
     }
 
