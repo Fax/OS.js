@@ -1,42 +1,42 @@
 @font-face {
-  font-family : MyFont;
+  font-family : ThemeDarkFont;
   src: url('/css/Sansation_Regular.ttf');
 }
 @font-face {
-  font-family : MyFont;
+  font-family : ThemeDarkFont;
   font-weight : bold;
   src: url('/css/Sansation_Bold.ttf');
 }
 
-body {
-  font-family : MyFont, Arial;
+body.ThemeDark {
+  font-family : ThemeDarkFont, Arial;
   font-size : 12px;
   background : #005a77; /* url('/media/02555_cherryblossoms_2560x1600.jpg') center center;*/
   color : #222;
 }
 
-#Console {
+body.ThemeDark #Console {
   -moz-opacity : 0.8;
   opacity : 0.8;
   white-space : nowrap;
 }
-#Console .init {
+body.ThemeDark #Console .init {
   color : #3b9450;
 }
-#Console .destroy {
+body.ThemeDark #Console .destroy {
   color : #8f943b;
 }
-#Console .event {
+body.ThemeDark #Console .event {
   color : #3b4b94;
 }
-#Console .response {
+body.ThemeDark #Console .response {
   color : #87948f;
 }
-#Console .error {
+body.ThemeDark #Console .error {
   color : #943b3b;
   font-weight : bold;
 }
-#Console .info {
+body.ThemeDark #Console .info {
   color : #fff;
   font-weight : bold;
 }
@@ -54,7 +54,7 @@ body {
 }
   */
 
-.DesktopPanel {
+body.ThemeDark .DesktopPanel {
   background : #3c3c3d;
   border-bottom : 1px solid #2a2a2b;
   -moz-box-shadow: 0px 0px 10px #000;
@@ -62,62 +62,62 @@ body {
   box-shadow: 0px 0px 10px #000;
 }
 
-.PanelItem {
+body.ThemeDark .PanelItem {
   color : #b0c2c1;
   border : 1px solid transparent;
 }
-.PanelItem:hover {
+body.ThemeDark .PanelItem:hover {
   color : #fff;
   border : 1px solid #363636;
 }
-.PanelItem.Current {
+body.ThemeDark .PanelItem.Current {
 }
-.PanelItemSeparator {
+body.ThemeDark .PanelItemSeparator {
   border-left : 1px solid #363636;
   border-right : 1px solid #3f4040;
 }
-.PanelItemSeparator:hover,
-.PanelItemClock:hover {
+body.ThemeDark .PanelItemSeparator:hover,
+body.ThemeDark .PanelItemClock:hover {
   background : #3c3c3d;
   border : 1px solid transparent;
 }
 
-.Window {
+body.ThemeDark .Window {
   border : 1px solid #30353d;
   background : #eeeeee;
   -moz-box-shadow: 0px 0px 10px #000;
   -webkit-box-shadow: 0px 0px 10px #000;
   box-shadow: 0px 0px 10px #000;
 }
-.Window.Blend {
+body.ThemeDark .Window.Blend {
   -moz-opacity : 0.5;
   opacity : 0.5;
 }
-.WindowTop {
+body.ThemeDark .WindowTop {
   color : #b0c2c1;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#41454d', endColorstr='#31363d'); /* for IE */
   background: -webkit-gradient(linear, left top, left bottom, from(#41454d), to(#31363d)); /* for webkit browsers */
   background: -moz-linear-gradient(top,  #41454d,  #31363d); /* for firefox 3.6+ */ 
 }
-.WindowMenu span.Top {
+body.ThemeDark .WindowMenu span.Top {
   color : #fff;
 }
-.WindowMenu span.Top:hover {
+body.ThemeDark .WindowMenu span.Top:hover {
   text-decoration : underline;
 }
 
-.WindowTopController {
+body.ThemeDark .WindowTopController {
   font-weight : bold;
   font-size : 16px;
 }
-.WindowTopController:hover {
+body.ThemeDark .WindowTopController:hover {
   color : #fff;
 }
-.Window.Current .WindowTopInner {
+body.ThemeDark .Window.Current .WindowTopInner {
   color : #fff;
 }
 
-.Menu {
+body.ThemeDark .Menu {
   border : 1px solid #30353d;
   background : #eeeeee;
   color : #222;
@@ -125,7 +125,7 @@ body {
   -webkit-box-shadow: 0px 0px 10px #000;
   box-shadow: 0px 0px 10px #000;
 }
-.Menu li:hover {
+body.ThemeDark .Menu li:hover {
   color : #fff;
   background : #4f4f4f;
 }

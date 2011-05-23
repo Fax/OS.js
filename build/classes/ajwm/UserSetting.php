@@ -16,15 +16,18 @@
 class UserSetting extends BaseUserSetting {
 
   public static $AvailableSettings = Array(
-    "desktop.wallpaper.path"   => ""
+    "desktop.wallpaper.path"   => "",
+    "desktop.theme"            => Array("Dark", "Light"),
   );
 
   public static $DefaultSettings = Array(
-    "desktop.wallpaper.path"   => "02555_cherryblossoms_2560x1600.jpg"
+    "desktop.wallpaper.path"   => "02555_cherryblossoms_2560x1600.jpg",
+    "desktop.theme"            => "Dark"
   );
 
   public static $LabelSettings = Array(
-    "desktop.wallpaper.path"   => "Wallpaper Path"
+    "desktop.wallpaper.path"   => "Wallpaper Path",
+    "desktop.theme"            => "Theme"
   );
 
   public static $ValueSettings = Array(

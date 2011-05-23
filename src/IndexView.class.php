@@ -24,8 +24,7 @@ class IndexView
    * @see View::$_aViewStyles
    */
   protected $_aViewStyles     = Array(
-    "/css/main.css" => Array("all"),
-    "/css/theme.css" => Array("all")
+    "/css/main.css" => Array("all")
   );
 
   /**

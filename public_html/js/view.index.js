@@ -23,13 +23,13 @@
       var first = a.shift();
       a.unshift("<b>" + first + "</b>");
 
-      $("#Console").prepend($("<div></div>").attr("class", cls).html(a.join(" ")));
+      $("#Console").prepend($("<div></div>").attr("class", cls).html(a.join(" "))).scrollTop(0);
     },
     'info' : function(message) {
-      $("#Console").prepend($("<div></div>").attr("class", "info").html(message));
+      $("#Console").prepend($("<div></div>").attr("class", "info").html(message)).scrollTop(0);
     },
     'error' : function(message) {
-      $("#Console").prepend($("<div></div>").attr("class", "error").html(message));
+      $("#Console").prepend($("<div></div>").attr("class", "error").html(message)).scrollTop(0);
     }
   };
 
@@ -66,7 +66,7 @@
             }*/
 
             if ( mind == mlast ) {
-              _Desktop.alert("error", "Found no suiting application for '" + path + "'");
+              API.system.dialog("error", "Found no suiting application for '" + path + "'");
             }
             console.log(mt, mapp);
             return true;
@@ -86,7 +86,7 @@
           if ( data.success ) {
             callback(data.result, null);
           } else {
-            _Desktop.alert("error", data.error);
+            API.system.dialog("error", data.error);
             callback(null, data.error);
           }
         });
@@ -96,7 +96,7 @@
         type = type || "error";
         message = message || "Unknown error";
 
-        _Desktop.alert(type, message);
+        _Desktop.addWindow(new Dialog(type, message));
       }
     }
 
@@ -165,6 +165,7 @@
 
   var Desktop = (function() {
 
+    var _oldTheme = null;
 
     return Class.extend({
 
@@ -177,7 +178,11 @@
         if ( settings ) {
           var wp = settings['desktop.wallpaper.path'];
           if ( wp ) {
-            $("body").css("background", "url('/media/" + wp + "') center center");
+            this.setWallpaper(wp);
+          }
+          var theme = settings['desktop.theme'];
+          if ( theme ) {
+            this.setTheme(theme);
           }
         }
 
@@ -270,9 +275,24 @@
         this.panel.redraw(this);
       },
 
-      alert : function(type, message) {
-        this.addWindow(new Dialog(type, message));
+      setWallpaper : function(wp) {
+        $("body").css("background", "url('/media/" + wp + "') center center");
+      },
+
+      setTheme : function(theme) {
+        var cname = "Theme" + theme;
+        var fname = "theme." + theme.toLowerCase() + ".css";
+
+        _Resources.addResource(fname);
+
+        if ( _oldTheme ) {
+          $("body").removeClass(_oldTheme);
+        }
+
+        $("body").addClass(cname);
+        _oldTheme = cname;
       }
+
 
     });
 
