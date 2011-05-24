@@ -299,9 +299,11 @@
 
         win.focus();
 
-        _Window = win;
+        if ( _Window !== win ) {
+          this.panel.redraw(this);
+        }
 
-        this.panel.redraw(this);
+        _Window = win;
       },
 
       toggleWindow : function(win, state) {
@@ -390,7 +392,7 @@
         if ( _ApplicationRegister.hasOwnProperty(a) ) {
           o = _ApplicationRegister[a];
 
-          var litem = $("<li><span><img alt=\"\" src=\"\" /></span></li>");
+          var litem = $("<li><span><img alt=\"\" src=\"/img/blank.gif\" /></span></li>");
           litem.find("span").attr("class", "launch_" + a);
           litem.find("img").attr("src", "/img/icons/16x16/" + o.icon);
           litem.append(o.title);
@@ -433,7 +435,7 @@
       this.$element.find(".PanelItemWindow").remove();
 
       var _create = function(win) {
-        var el = $("<div class=\"PanelItem Padded PanelItemWindow\"><img alt=\"\" src=\"\" /><span></span></div>");
+        var el = $("<div class=\"PanelItem Padded PanelItemWindow\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div>");
         el.find("img").attr("src", "/img/icons/16x16/" + win.icon);
         el.find("span").html(win.title);
 
