@@ -29,6 +29,7 @@ class DesktopApplication
   protected $is_scrollable = true;
   protected $width         = 500;
   protected $height        = 300;
+  protected $gravity       = "";
   protected $resources     = Array();
   protected $menu          = Array();
   protected $accept_mime   = Array(); // TODO: Add here, remove from global?!
@@ -55,7 +56,8 @@ class DesktopApplication
       "resources"     => $this->resources,
       "width"         => $this->width,
       "height"        => $this->height,
-      "menu"          => $this->menu
+      "menu"          => $this->menu,
+      "gravity"       => $this->gravity
     );
   }
 

@@ -11,6 +11,7 @@ require "DesktopApplication.class.php";
 
 require "apps/SystemUser.class.php";
 require "apps/SystemSettings.class.php";
+require "apps/SystemLogout.class.php";
 
 // TODO: On-Demand
 require "apps/ApplicationClock.class.php";
@@ -52,6 +53,9 @@ class IndexViewController
 
         if ( $args['action'] == "boot" ) {
 
+        } else if ( $args['action'] == "logout" ) {
+          $json['success'] = true;
+          $json['result'] = true;
         } else if ( $args['action'] == "user" ) {
           if ( $user = $wa->getUser() ) {
             $json['success'] = true;

@@ -10,6 +10,16 @@
   var _MimeHandlers        = {};
   var _PreviousSession     = null;
 
+  function __null() {
+    _ApplicationRegister = {};
+    _Resources           = null;
+    _Desktop             = null;
+    _Window              = null;
+    _TopIndex            = 11;
+    _MimeHandlers        = {};
+    _PreviousSession     = null;
+  }
+
   var cconsole = {
     'log' : function() {
       var a = [];
@@ -103,8 +113,25 @@
     'user' : {
       'settings' : {
         'load' : function(settings) {
+          console.log("API loading user settings", settings);
+          cconsole.log("info", "API", "loaded user settings");
+
           _Desktop.loadSettings(settings);
         }
+      },
+
+      'logout' : function(save) {
+        console.log("API logging out", save);
+        cconsole.log("info", "API", "request logout");
+
+        save = save || false;
+        $.post("/", {'ajax' : true, 'action' : 'logout', 'save' : save}, function(data) {
+          if ( data.success ) {
+            $(window).unload();
+          } else {
+            API.system.dialog("error", data.error);
+          }
+        });
       }
     }
 
@@ -121,9 +148,19 @@
     return Class.extend({
       init : function() {
         this.resources = [];
+        this.links = [];
 
         console.log("ResourceManager initialized...", this);
         cconsole.log("init", "ResourceManager initialized...");
+      },
+
+      destroy : function() {
+        forEach(this.links, function(i, el) {
+          $(el).remove();
+        });
+
+        this.resources = null;
+        this.links = null;
       },
 
       hasResource : function(res) {
@@ -150,6 +187,7 @@
         cconsole.log("info", "ResourceManager added", res);
 
         this.resources.push(res);
+        this.links.push(el);
       },
 
       addResources : function(res, callback) {
@@ -190,9 +228,10 @@
       },
 
       destroy : function() {
-        $.die();
-        $.unbind();
+        //$.die(); // FIXME
+        //$.unbind();
 
+        this.setWallpaper(null);
         this.panel.destroy();
 
         var i = 0;
@@ -288,7 +327,11 @@
       },
 
       setWallpaper : function(wp) {
-        $("body").css("background", "url('/media/" + wp + "') center center");
+        if ( wp ) {
+          $("body").css("background", "url('/media/" + wp + "') center center");
+        } else {
+          $("body").css("background", "url('about:blank')");
+        }
       },
 
       setTheme : function(theme) {
@@ -361,7 +404,7 @@
     },
 
     destroy : function() {
-
+      this.$element.remove();
     },
 
     redraw : function(desktop) {
@@ -665,6 +708,7 @@
               self.menu          = data.result.menu;
               self.width         = parseInt(data.result.width, 10);
               self.height        = parseInt(data.result.height, 10);
+              self.gravity       = data.result.gravity;
 
               callback(data.result['class']);
             });
@@ -837,6 +881,13 @@
     if ( _Desktop ) {
       _Desktop.destroy();
     }
+    if ( _Resources ) {
+      _Resources.destroy();
+    }
+
+    $("#Console").remove(); // FIXME
+
+    __null();
   });
 
 })($, undefined);
