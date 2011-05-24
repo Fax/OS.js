@@ -54,6 +54,15 @@ class IndexViewController
         if ( $args['action'] == "boot" ) {
 
         } else if ( $args['action'] == "logout" ) {
+
+          if ( $args['session'] && $args['save'] ) {
+            $wa->getUser()->setSavedSession($args['session']);
+          } else {
+            $wa->getUser()->setSavedSession(null);
+          }
+
+          $wa->getUser()->save();
+
           $json['success'] = true;
           $json['result'] = true;
         } else if ( $args['action'] == "user" ) {

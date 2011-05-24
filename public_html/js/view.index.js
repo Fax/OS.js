@@ -125,7 +125,8 @@
         cconsole.log("info", "API", "request logout");
 
         save = save || false;
-        $.post("/", {'ajax' : true, 'action' : 'logout', 'save' : save}, function(data) {
+        var sess = save ? _Desktop.getSession() : false;
+        $.post("/", {'ajax' : true, 'action' : 'logout', 'save' : save, 'session' : sess}, function(data) {
           if ( data.success ) {
             $(window).unload();
           } else {
@@ -346,6 +347,12 @@
 
         $("body").addClass(cname);
         _oldTheme = cname;
+      },
+
+      getSession : function() {
+        return {
+
+        };
       }
 
 
