@@ -49,6 +49,26 @@
 
   var API = {
 
+    /*
+    'loading' : {
+      'show' : function() {
+        $("#Loading").show();
+      },
+
+      'hide' : function() {
+        setTimeout(function() {
+          $("#LoadingBar").fadeOut(ANIMATION_SPEED);
+        }, 100);
+      },
+
+      'progress' : function(v) {
+        $("#LoadingBar").progressbar({
+          value : v
+        });
+      }
+    },
+    */
+
     'system' : {
       'run' : function(path, mime) {
         cconsole.log("info", "API", "run", mime, path);
@@ -874,11 +894,9 @@
     cconsole.info("********* WARMING UP *********");
 
     /*
-    $("#LoadingBar").progressbar({
-      value : 20
+    $(window).scroll(function(ev) {
+      $(window).scrollTop(0).scrollLeft(0);
     });
-
-    $("#Loading").show();
     */
 
     _Resources = new ResourceManager();
@@ -914,15 +932,6 @@
         alert(data.error);
       }
 
-      /*
-      $("#LoadingBar").progressbar({
-        value : 100
-      });
-
-      setTimeout(function() {
-        $("#LoadingBar").fadeOut(ANIMATION_SPEED);
-      }, 100);
-      */
     });
   });
 
