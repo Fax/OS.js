@@ -1,4 +1,4 @@
-(function() {
+(function($, undefined) {
 
   var ANIMATION_SPEED = 400;
 
@@ -544,7 +544,7 @@
         var menu = false;
 
         // Create Menu
-        if ( sizeof(this.menu) ) {
+        if ( this.menu && sizeof(this.menu) ) {
           forEach(this.menu, function(ind, m) {
             var mel = $("<li class=\"Top\"><span class=\"Top\"></span></li>");
             mel.find("span").html(ind);
@@ -631,8 +631,7 @@
           });
         }
 
-        if ( sizeof(this.attrs) ) {
-          console.log("xxxxxxxxxxxxxxxxxx", this.attrs);
+        if ( this.attrs && sizeof(this.attrs) ) {
           if ( this.attrs.position instanceof Object ) {
             el.offset(this.attrs.position);
           }
@@ -938,4 +937,4 @@
     __null();
   });
 
-})($, undefined);
+})($);

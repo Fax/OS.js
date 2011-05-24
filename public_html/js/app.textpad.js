@@ -12,7 +12,7 @@ var ApplicationTextpad = (function() {
       run : function() {
         var el = app.$element;
 
-        if ( argv ) {
+        if ( typeof argv == "string" && argv ) {
           api.system.call("read", argv, function(result, error) {
             if ( error === null ) {
               app.$element.find("textarea").val(result);
