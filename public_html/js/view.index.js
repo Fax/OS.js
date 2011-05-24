@@ -98,6 +98,14 @@
 
         _Desktop.addWindow(new Dialog(type, message));
       }
+    },
+
+    'user' : {
+      'settings' : {
+        'load' : function(settings) {
+          _Desktop.loadSettings(settings);
+        }
+      }
     }
 
   };
@@ -172,19 +180,10 @@
       init : function(settings) {
         this.$element = $("#Desktop");
         this.stack = [];
+        this.loadSettings(settings);
 
         this.panel = new Panel();
 
-        if ( settings ) {
-          var wp = settings['desktop.wallpaper.path'];
-          if ( wp ) {
-            this.setWallpaper(wp);
-          }
-          var theme = settings['desktop.theme'];
-          if ( theme ) {
-            this.setTheme(theme);
-          }
-        }
 
         console.log("Desktop initialized...");
         cconsole.log("init", "Desktop initialized...");
@@ -273,6 +272,19 @@
         }
 
         this.panel.redraw(this);
+      },
+
+      loadSettings : function(settings) {
+        if ( settings ) {
+          var wp = settings['desktop.wallpaper.path'];
+          if ( wp ) {
+            this.setWallpaper(wp);
+          }
+          var theme = settings['desktop.theme'];
+          if ( theme ) {
+            this.setTheme(theme);
+          }
+        }
       },
 
       setWallpaper : function(wp) {

@@ -1,0 +1,25 @@
+.SystemSettings {
+  padding : 10px;
+}
+.SystemSettings h1 {
+  margin : 0;
+  padding : 0;
+}
+.SystemSettings div {
+  margin-top : 10px;
+  margin-bottom : 10px;
+}
+.SystemSettings table {
+  width : 100%;
+}
+.SystemSettings select {
+  width : 100%;
+}
+.SystemSettingsButtons {
+  position : absolute;
+  bottom : -10px;
+  right : 0px;
+  left : 0px;
+  text-align : right;
+  padding : 10px;
+}

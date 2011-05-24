@@ -39,10 +39,6 @@ class IndexViewController
       }
     }
 
-    if ( $view = $this->_oView ) {
-      $view->setUserSettings(UserSetting::getUserSettings($wa->getUser()));
-    }
-
     return false;
   }
 
@@ -100,7 +96,7 @@ class IndexViewController
             ),
             "session"        => Array(
               "applications" => Array(
-                "ApplicationFilemanager",
+                //"ApplicationFilemanager",
                 "SystemSettings"
               )
             )
@@ -116,8 +112,9 @@ class IndexViewController
         } else if ( $args['action'] == "event" ) {
           if ( ($uuid = $args['uuid']) && ($action = $args['action']) ) {
             $instance = $args['instance'];
-            $cname = $instance['name'];
-            $aargs = $instance['args'];
+            $cname    = $instance['name'];
+            $aargs    = $instance['args'];
+            $action   = $instance['action'];
 
             $result = $cname::Event($uuid, $action, $aargs ? $aargs : Array());
             $json = Array("success" => true, "error" => null, "result" => $result);

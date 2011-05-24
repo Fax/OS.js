@@ -60,7 +60,7 @@ var ApplicationFilemanager = (function() {
             _destroyView();
 
             if ( error ) {
-              alert(error);
+              api.system.dialog("error", error);
             } else {
               $(el).find(".ApplicationFilemanagerMain ul").html(result.items);
               _initClick();
