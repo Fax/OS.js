@@ -816,7 +816,7 @@
         'name'     : this.name,
         'size'     : {'width' : this.$element.width(), 'height' : this.$element.height()},
         'position' : this.$element.offset(),
-        'argv'     : []
+        'argv'     : this.opts
       };
     }
 
