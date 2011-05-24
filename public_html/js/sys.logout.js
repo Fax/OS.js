@@ -3,6 +3,8 @@ var SystemLogout = (function() {
     var _SystemLogout = Application.extend({
       init : function() {
         this._super("SystemLogout");
+
+        app.is_sessionable = false;
       },
 
       destroy : function() {

@@ -78,17 +78,18 @@
             if ( mind == mlast ) {
               API.system.dialog("error", "Found no suiting application for '" + path + "'");
             }
-            console.log(mt, mapp);
             return true;
           });
         }
       },
 
-      'launch' : function(app_name, args) {
+      'launch' : function(app_name, args, attrs) {
         args = args || {};
+        attrs = attrs || {};
+
         console.log("API launching", app_name, args);
         cconsole.log("info", "API", "launching", app_name);
-        _Desktop.addWindow(new Window(app_name, false, args));
+        _Desktop.addWindow(new Window(app_name, false, args, attrs));
       },
 
       'call' : function(method, argv, callback) {
@@ -350,8 +351,17 @@
       },
 
       getSession : function() {
-        return {
+        var windows = [];
 
+        var stack = this.stack;
+        for ( var i = 0; i < stack.length; i++ ) {
+          if ( stack[i].is_sessionable ) {
+            windows.push(stack[i].getAttributes());
+          }
+        }
+
+        return {
+          "windows" : windows
         };
       }
 
@@ -458,7 +468,7 @@
 
   var Window = Class.extend({
 
-    init : function(name, dialog, opts) {
+    init : function(name, dialog, opts, attrs) {
       this.name = name;
       this.created = false;
       this.loaded = false;
@@ -466,6 +476,7 @@
       this.app = null;
       this.dialog = dialog ? true : false;
       this.opts = opts;
+      this.attrs = attrs;
       this.menu = [];
       this.uuid = null;
 
@@ -477,6 +488,7 @@
       this.is_scrollable = this.dialog ? false :true;
       this.is_minimized = false;
       this.is_minimizable = this.dialog ? false : true;
+      this.is_sessionable = this.dialog ? false : true;
       this.is_closable = true;
       this.width = -1;
       this.height = -1;
@@ -617,6 +629,17 @@
           el.find(".ActionMinimize").click(function() {
             self.minimize();
           });
+        }
+
+        if ( sizeof(this.attrs) ) {
+          console.log("xxxxxxxxxxxxxxxxxx", this.attrs);
+          if ( this.attrs.position instanceof Object ) {
+            el.offset(this.attrs.position);
+          }
+          if ( this.attrs.size instanceof Object ) {
+            el.width(this.attrs.size.width + 'px');
+            el.height(this.attrs.size.height + 'px');
+          }
         }
 
         // DOM
@@ -787,6 +810,15 @@
 
     setIcon : function(i) {
       this.icon = i;
+    },
+
+    getAttributes : function() {
+      return {
+        'name'     : this.name,
+        'size'     : {'width' : this.$element.width(), 'height' : this.$element.height()},
+        'position' : this.$element.offset(),
+        'argv'     : []
+      };
     }
 
   });
@@ -863,9 +895,18 @@
 
         _Desktop = new Desktop(data.result.settings);
 
-        var autolaunch = _PreviousSession.applications;
-        for ( var i = 0; i < autolaunch.length; i++ ) {
-          API.system.launch(autolaunch[i]);
+        var autolaunch = _PreviousSession.windows;
+        var el;
+        if ( autolaunch ) {
+          for ( var i = 0; i < autolaunch.length; i++ ) {
+            el = autolaunch[i];
+            var argv = el.argv || [];
+            var attrs = {
+              'position' : el.position,
+              'size'     : el.size
+            };
+            API.system.launch(el.name, argv, attrs);
+          }
         }
 
       } else {

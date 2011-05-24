@@ -15,7 +15,6 @@ var SystemUser = (function() {
         var inner = app.$element.find(".SystemUserInner");
 
         $.post("/", {'ajax' : true, 'action' : 'user'}, function(data) {
-          console.log(data);
 
           if ( data.success ) {
             var table = $("<table></table>");

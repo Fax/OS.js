@@ -20,19 +20,20 @@ class DesktopApplication
   const APP_ICON   = "emblems/emblem-unreadable.png";
   const APP_HIDDEN = false;
 
-  protected $uuid          = null;
-  protected $title         = self::APP_TITLE;
-  protected $content       = "";
-  protected $icon          = self::APP_ICON;
-  protected $is_draggable  = true;
-  protected $is_resizable  = true;
-  protected $is_scrollable = true;
-  protected $width         = 500;
-  protected $height        = 300;
-  protected $gravity       = "";
-  protected $resources     = Array();
-  protected $menu          = Array();
-  protected $accept_mime   = Array(); // TODO: Add here, remove from global?!
+  protected $uuid            = null;
+  protected $title           = self::APP_TITLE;
+  protected $content         = "";
+  protected $icon            = self::APP_ICON;
+  protected $is_draggable    = true;
+  protected $is_resizable    = true;
+  protected $is_scrollable   = true;
+  protected $is_sessionable  = true;
+  protected $width           = 500;
+  protected $height          = 300;
+  protected $gravity         = "";
+  protected $resources       = Array();
+  protected $menu            = Array();
+  protected $accept_mime     = Array(); // TODO: Add here, remove from global?!
 
   public static $Registered = Array();
 
@@ -45,19 +46,20 @@ class DesktopApplication
 
   public function __toJSON() {
     return Array(
-      "class"         => get_class($this),
-      "uuid"          => $this->uuid,
-      "icon"          => $this->icon,
-      "title"         => $this->title,
-      "content"       => $this->content,
-      "is_draggable"  => $this->is_draggable,
-      "is_resizable"  => $this->is_resizable,
-      "is_scrollable" => $this->is_scrollable,
-      "resources"     => $this->resources,
-      "width"         => $this->width,
-      "height"        => $this->height,
-      "menu"          => $this->menu,
-      "gravity"       => $this->gravity
+      "class"           => get_class($this),
+      "uuid"            => $this->uuid,
+      "icon"            => $this->icon,
+      "title"           => $this->title,
+      "content"         => $this->content,
+      "is_draggable"    => $this->is_draggable,
+      "is_resizable"    => $this->is_resizable,
+      "is_scrollable"   => $this->is_scrollable,
+      "is_sessionable"  => $this->is_sessionable,
+      "resources"       => $this->resources,
+      "width"           => $this->width,
+      "height"          => $this->height,
+      "menu"            => $this->menu,
+      "gravity"         => $this->gravity
     );
   }
 

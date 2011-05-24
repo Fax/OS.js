@@ -56,7 +56,7 @@ class IndexViewController
         } else if ( $args['action'] == "logout" ) {
 
           if ( $args['session'] && $args['save'] ) {
-            $wa->getUser()->setSavedSession($args['session']);
+            $wa->getUser()->setSavedSession(json_encode($args['session']));
           } else {
             $wa->getUser()->setSavedSession(null);
           }
@@ -107,10 +107,7 @@ class IndexViewController
               "image/*" => "ApplicationViewer",
               "video/*" => "ApplicationViewer"
             ),
-            "session"        => Array(
-              "applications" => Array(
-              )
-            )
+            "session"        => json_decode($wa->getUser()->getSavedSession())
           ));
         } else if ( $args['action'] == "register" ) {
           if ( $uuid = $args['uuid'] ) {
