@@ -96,8 +96,6 @@ class IndexViewController
             ),
             "session"        => Array(
               "applications" => Array(
-                //"ApplicationFilemanager",
-                "SystemSettings"
               )
             )
           ));
