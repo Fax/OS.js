@@ -769,6 +769,18 @@
         // DOM
         desktop.$element.append(el);
 
+        // Fix title alignment
+        var lw = this.dialog ? 0 : 16;
+        var hw = 0;
+        $(el).find(".WindowTop .WindowTopController").filter(":visible").each(function() {
+          hw += parseInt($(this).width(), 10);
+        });
+
+        $(el).find(".WindowTopInner span").css({
+          "padding-left" : lw + "px",
+          "padding-right" : hw + "px"
+        });
+
         // Adjustments after DOM
         if ( !isNaN(this.height) && (this.height > 0) ) {
           if ( menu ) {
