@@ -123,11 +123,11 @@
         });
       },
 
-      'dialog' : function(type, message) {
+      'dialog' : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
         type = type || "error";
         message = message || "Unknown error";
 
-        _Desktop.addWindow(new Dialog(type, message));
+        _Desktop.addWindow(new Dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
       },
 
       'dialog_upload' : function(clb_finish, clb_progress, clb_cancel) {
@@ -491,9 +491,6 @@
       $(".PanelItemMenu li, .PanelItemLauncher").click(function() {
         var app = $(this).find("span").attr("class").replace("launch_", "");
         API.system.launch(app);
-        if ( this.tagName == "li" ) {
-          $(this).parents("ul").hide();
-        }
       });
     },
 
@@ -673,9 +670,6 @@
         el.find(".WindowTopInner span").html(this.title);
         if ( this.dialog ) {
           el.find(".DialogContent").html(this.content).addClass(this.opts.type);
-          el.find(".DialogButtons button.Close").click(function() {
-            el.find(".ActionClose").click();
-          });
         } else {
           el.find(".WindowTopInner img").attr("src", "/img/icons/16x16/" + this.icon);
           el.find(".WindowContentInner").html(this.content);
@@ -963,6 +957,10 @@
         $(litem).click(function() {
           $(this).parents(".Window").find(".ActionClose").click();
         });
+      } else {
+        $(litem).click(function() {
+          $(this).parents("ul").hide();
+        });
       }
 
       this.$element.append(litem);
@@ -976,13 +974,17 @@
 
   var Dialog = Window.extend({
 
-    init : function(type, message) {
+    init : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
       this._super("Dialog", true, {'type' : type});
 
       this.width = 200;
       this.height = 100;
       this.gravity = "center";
       this.content = message;
+
+      cmd_close  = cmd_close  || function() {};
+      cmd_ok     = cmd_ok     || function() {};
+      cmd_cancel = cmd_cancel || function() {};
 
       var self = this;
       this.create_callback = function() {
@@ -991,6 +993,19 @@
           self.$element.find(".DialogButtons .Ok").show();
           self.$element.find(".DialogButtons .Cancel").show();
         }
+
+        self.$element.find(".DialogButtons .Close").click(function() {
+          self.$element.find(".ActionClose").click();
+          cmd_close();
+        });
+        self.$element.find(".DialogButtons .Ok").click(function() {
+          self.$element.find(".ActionClose").click();
+          cmd_ok();
+        });
+        self.$element.find(".DialogButtons .Cancel").click(function() {
+          self.$element.find(".ActionClose").click();
+          cmd_cancel();
+        });
       };
     }
 
