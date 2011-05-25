@@ -340,6 +340,46 @@ body {
   border : 0 none;
 }
 
+.OperationDialog .FileChooser {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 40px;
+  overflow : auto;
+}
+.OperationDialog .FileChooser ul {
+  margin : 0;
+  padding : 0;
+  list-style-type : none;
+}
+.OperationDialog .FileChooser li {
+  padding : 5px;
+}
+.OperationDialog .FileChooser li img {
+  vertical-align : middle;
+  margin-right : 10px;
+}
+.OperationDialog .FileChooser li {
+  cursor : pointer;
+}
+.OperationDialog .FileChooser li:hover {
+  text-decoration : underline;
+}
+.OperationDialog .FileChooser li.current {
+  font-weight : bold;
+}
+.OperationDialog .FileChooserInput {
+  position : absolute;
+  left : 0px;
+  right : 0px;
+  bottom : 10px;
+  height : 20px;
+}
+.OperationDialog .FileChooserInput input {
+  width : 100%;
+}
+
 
 #ContextMenu {
   position : absolute;

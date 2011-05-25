@@ -17,15 +17,19 @@ var ApplicationTextpad = (function() {
       });
     }
 
-    function _open(content, callback) {
-      api.system.dialog_file(function() {
-        callback();
+    function _open(callback) {
+      api.system.dialog_file(function(fname) {
+        callback(fname);
       });
     }
 
-    function _update(file) {
+    function _update(file, el) {
       app.opts = file;
       argv = file;
+
+      console.log(argv, el);
+
+      $(el).find(".WindowTopInner span").html(app.title + ": " + (file || "New file"));
     }
 
     // APP
@@ -40,20 +44,28 @@ var ApplicationTextpad = (function() {
 
       run : function() {
         var self = this;
-
         var el = app.$element;
 
-        if ( typeof argv == "string" && argv ) {
-          api.system.call("read", argv, function(result, error) {
-            if ( error === null ) {
-              app.$element.find("textarea").val(result);
-            }
-          });
+        function _read_file(file) {
+          if ( typeof file == "string" && file ) {
+            api.system.call("read", file, function(result, error) {
+              if ( error === null ) {
+                app.$element.find("textarea").val(result);
+                _update(file, el);
+              } else {
+                _update(null, el);
+              }
+            });
+          } else {
+            _update(null, el);
+          }
         }
 
+        _read_file(argv);
+
         $(el).find(".WindowMenu .cmd_Open").parent().click(function() {
-          _open(function() {
-            //_update(null);
+          _open(function(fname) {
+            _read_file(fname);
           });
         });
 
@@ -63,13 +75,13 @@ var ApplicationTextpad = (function() {
 
         $(el).find(".WindowMenu .cmd_SaveAs").parent().click(function() {
           _saveAs(app.$element.find("textarea").val(), function() {
-            //_update(null);
+            //_update(null, el);
           });
         });
 
         $(el).find(".WindowMenu .cmd_New").parent().click(function() {
           app.$element.find("textarea").val("");
-          _update(null);
+          _update(null, el);
         });
 
         this._super();

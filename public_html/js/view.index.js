@@ -1035,21 +1035,22 @@
       clb_progress = clb_progress || function() {};
       clb_cancel   = clb_cancel   || function() {};
 
-
-      this.content        = $("<div class=\"OperationDialog\"><h1>" + message + "</h1><div class=\"OperationDialogInner\"></div></div>");
-
+      var self = this;
       if ( type == 'copy' ) {
         $(this.content).find(".OperationDialogInner").append("<p class=\"Status\">0 of 0</p><div class=\"ProgressBar\"></div>");
         $(this.content).find(".ProgressBar").progressbar({
           value : 50
         });
-        this.width          = 400;
-        this.height         = 170;
+        this.width    = 400;
+        this.height   = 170;
+        this.title    = "Copy file";
+        this.content  = $("<div class=\"OperationDialog\"><h1>" + message + "</h1><div class=\"OperationDialogInner\"></div></div>");
       } else if ( type == 'upload' ) {
-        this.width          = 400;
-        this.height         = 170;
+        this.width    = 400;
+        this.height   = 170;
+        this.title    = "Upload file";
+        this.content  = $("<div class=\"OperationDialog\"><h1>" + message + "</h1><div class=\"OperationDialogInner\"></div></div>");
 
-        var self = this;
         this.create_callback = function() {
           $(self.content).find(".OperationDialogInner").append("<p class=\"Status\">No file selected</p><div class=\"ProgressBar\"></div>");
           $(self.content).find(".ProgressBar").progressbar({
@@ -1092,6 +1093,70 @@
 
         };
 
+      } else if ( type == "file" ) {
+        this.width    = 400;
+        this.height   = 300;
+        this.title    = "File chooser";
+        this.content  = $("<div class=\"OperationDialog\"><div class=\"FileChooser\"><ul></ul></div><div class=\"FileChooserInput\"><input type=\"text\" /></div></div>");
+        this.is_resizable = true;
+        this.selected_file = null;
+
+        var ul = $(this.content).find("ul");
+        var inp = $(this.content).find("input[type='text']");
+        var prev = null;
+
+        API.system.call("readdir", "/", function(result, error) {
+          ul.find("li").remove();
+          if ( error === null ) {
+            for ( var f in result ) {
+              if ( result.hasOwnProperty(f) ) {
+                var o = result[f];
+                var el = $("<li><img alt=\"\" src=\"/img/blank.gif\" /><span></span></li>");
+                el.find("img").attr("src", "/img/icons/16x16/" + o.icon);
+                el.find("span").html(f);
+
+                (function(vo) {
+                  el.click(function() {
+
+                    if ( prev !== null ) {
+                      $(prev).removeClass("current");
+                    }
+
+                    if ( prev !== this ) {
+                      $(this).addClass("current");
+                    }
+
+                    if ( vo.type == "file" ) {
+                      self.selected_file = vo.path;
+                      self.$element.find("button.Ok").removeAttr("disabled");
+                      $(inp).val(vo.path);
+                    } else {
+                      self.selected_file = null;
+                      $(inp).val("");
+                      self.$element.find("button.Ok").attr("disabled", "disabled");
+                    }
+
+                    prev = this;
+                  });
+                })(o);
+
+                $(ul).append(el);
+              }
+            }
+          }
+        });
+
+        this.create_callback = function() {
+          self.$element.find(".DialogButtons .Close").hide();
+          self.$element.find(".DialogButtons .Cancel").show();
+
+          self.$element.find(".DialogButtons .Ok").show().click(function() {
+            if ( self.selected_file ) {
+              clb_finish(self.selected_file);
+            }
+          }).attr("disabled", "disabled");
+
+        };
       }
     },
 
@@ -1158,9 +1223,11 @@
     });
     */
 
+    /*
     $(document).bind("contextmenu",function(e){
       return false;
     });
+    */
 
     _Resources = new ResourceManager();
 
@@ -1190,7 +1257,6 @@
             API.system.launch(el.name, argv, attrs);
           }
         }
-
       } else {
         alert(data.error);
       }
