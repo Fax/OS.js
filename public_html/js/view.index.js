@@ -86,7 +86,7 @@
                 console.log("API found suited application for", mime, ":", mapp);
                 cconsole.log("info", "API", "found application for", mime, "=>", mapp);
 
-                API.system.launch(mapp, path);
+                API.system.launch(mapp, {'path' : path});
                 return false;
               }
             }/* else {
@@ -107,6 +107,9 @@
 
       'launch' : function(app_name, args, attrs) {
         args = args || {};
+        if ( args.length !== undefined && !args.length ) {
+          args = {};
+        }
         attrs = attrs || {};
 
         console.log("API launching", app_name, args);
@@ -551,40 +554,44 @@
 
   var Window = Class.extend({
 
-    init : function(name, dialog, opts, attrs) {
-      this.name = name;
-      this.created = false;
-      this.loaded = false;
-      this.current = false;
-      this.app = null;
-      this.dialog = dialog ? true : false;
-      this.opts = opts;
-      this.attrs = attrs;
-      this.menu = [];
-      this.statusbar = false;
-      this.uuid = null;
+    init : function(name, dialog, argv, attrs) {
+      // Various properties
+      this.created         = false;
+      this.loaded          = false;
+      this.current         = false;
+      this.app             = null;
+      this.uuid            = null;
+      this.last_attrs      = null;
       this.create_callback = null;
 
-      this.title = this.dialog ? "Dialog" : "Window";
-      this.content = "";
-      this.icon = "emblems/emblem-unreadable.png";
-      this.is_resizable = this.dialog ? false : true;
-      this.is_draggable = true;
-      this.is_scrollable = this.dialog ? false :true;
-      this.is_maximized = false;
+      // Window main attributes
+      this.name        = name;
+      this.title       = this.dialog ? "Dialog" : "Window";
+      this.content     = "";
+      this.icon        = "emblems/emblem-unreadable.png";
+      this.dialog      = dialog ? true : false;
+      this.argv        = argv;
+      this.attrs       = attrs;
+      this.menu        = [];
+      this.statusbar   = false;
+
+      // Window attributes
+      this.is_resizable   = this.dialog ? false : true;
+      this.is_draggable   = true;
+      this.is_scrollable  = this.dialog ? false :true;
+      this.is_maximized   = false;
       this.is_maximizable = this.dialog ? false : true;
-      this.is_minimized = false;
+      this.is_minimized   = false;
       this.is_minimizable = this.dialog ? false : true;
       this.is_sessionable = this.dialog ? false : true;
-      this.is_closable = true;
-      this.width = -1;
-      this.height = -1;
-      this.gravity = "none";
+      this.is_closable    = true;
+      this.width          = -1;
+      this.height         = -1;
+      this.gravity        = "none";
 
-      this.last_attrs = null;
-
+      // DOM Elements
       this.$element = null;
-      this.menus = [];
+      this.menus    = [];
 
       console.log("Window inited...", this);
     },
@@ -682,7 +689,7 @@
         // Content and buttons
         el.find(".WindowTopInner span").html(this.title);
         if ( this.dialog ) {
-          el.find(".DialogContent").html(this.content).addClass(this.opts.type);
+          el.find(".DialogContent").html(this.content).addClass(this.argv.type);
         } else {
           el.find(".WindowTopInner img").attr("src", "/img/icons/16x16/" + this.icon);
           el.find(".WindowContentInner").html(this.content);
@@ -803,7 +810,7 @@
           setTimeout(function() {
             //try {
               if ( window[method] ) {
-                self.app = window[method](Application, self, API, self.opts);
+                self.app = window[method](Application, self, API, self.argv);
               }
             //} catch ( e ) {
             //  cconsole.error("Window application creation failed...", e);
@@ -977,7 +984,7 @@
         'name'     : this.name,
         'size'     : {'width' : this.$element.width(), 'height' : this.$element.height()},
         'position' : this.$element.offset(),
-        'argv'     : this.opts
+        'argv'     : this.argv
       };
     }
 

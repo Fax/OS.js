@@ -60,7 +60,7 @@ class ApplicationFilemanager
 
 <div class="ApplicationFilemanager">
   <div class="ApplicationFilemanagerMain">
-    <ul>
+    <ul class="icon">
     </ul>
   </div>
 </div>
@@ -80,6 +80,7 @@ EOHTML;
       $result = Array();
 
       $path  = $args['path'];
+      $view  = $args['view'];
       $total = 0;
       $bytes = 0;
       $ignores = Array(".");
@@ -91,7 +92,8 @@ EOHTML;
       if ( ($items = ApplicationAPI::readdir($path, $ignores)) !== false ) {
         foreach ( $items as $file => $info ) {
 
-          $result[] = <<<EOHTML
+          if ( $view == "icon" ) {
+            $result[] = <<<EOHTML
         <li class="type_{$info['type']}">
           <div class="Inner">
             <div class="Image"><img alt="" src="/img/icons/32x32/{$info['icon']}" /></div>
@@ -106,6 +108,24 @@ EOHTML;
           </div>
         </li>
 EOHTML;
+          } else {
+            $result[] = <<<EOHTML
+        <li class="type_{$info['type']}">
+          <div class="Inner">
+            <div class="Image"><img alt="" src="/img/icons/16x16/{$info['icon']}" /></div>
+            <div class="Title">{$file}</div>
+            <div class="Info" style="display:none;">
+              <input type="hidden" name="type" value="{$info['type']}" />
+              <input type="hidden" name="mime" value="{$info['mime']}" />
+              <input type="hidden" name="name" value="{$file}" />
+              <input type="hidden" name="path" value="{$info['path']}" />
+              <input type="hidden" name="size" value="{$info['size']}" />
+            </div>
+          </div>
+        </li>
+EOHTML;
+
+          }
 
           $total++;
           $bytes += (int) $info['size'];

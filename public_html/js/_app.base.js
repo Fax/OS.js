@@ -1,4 +1,4 @@
-var ApplicationCLASSNAME = (function() {
+var ApplicationCLASSNAME = (function($, undefined) {
   return function(Application, app, api, argv) {
     var _ApplicationCLASSNAME = Application.extend({
       init : function() {
@@ -18,4 +18,4 @@ var ApplicationCLASSNAME = (function() {
 
     return new _ApplicationCLASSNAME();
   };
-})();
+})($);

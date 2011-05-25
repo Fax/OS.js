@@ -1,5 +1,9 @@
-var ApplicationFilemanager = (function() {
+var ApplicationFilemanager = (function($, undefined) {
   return function(Application, app, api, argv) {
+
+    if ( argv.view_type == undefined ) {
+      argv.view_type = 'icon';
+    }
 
     var _CurrentDir = "/";
     var _History = [];
@@ -7,6 +11,7 @@ var ApplicationFilemanager = (function() {
     var _ApplicationFilemanager = Application.extend({
       init : function() {
         this._super("ApplicationFilemanager");
+        this.argv = argv;
       },
 
       destroy : function() {
@@ -83,7 +88,7 @@ var ApplicationFilemanager = (function() {
         };
 
         function chdir(dir, hist) {
-          app.event(this, "browse", {"path" : dir}, function(result, error) {
+          app.event(this, "browse", {"path" : dir, "view" : self.argv['view_type']}, function(result, error) {
             _destroyView();
 
             if ( error ) {
@@ -109,6 +114,18 @@ var ApplicationFilemanager = (function() {
           }*/
         }
 
+        function _updateMenu() {
+          if ( self.argv.view_type == 'icon' ) {
+            $(el).find(".WindowMenu .cmd_View_List").parent().removeClass("checked");
+            $(el).find(".WindowMenu .cmd_View_Icons").parent().addClass("checked");
+            $(el).find(".ApplicationFilemanagerMain ul").attr("class", "icon");
+          } else {
+            $(el).find(".WindowMenu .cmd_View_List").parent().addClass("checked");
+            $(el).find(".WindowMenu .cmd_View_Icons").parent().removeClass("checked");
+            $(el).find(".ApplicationFilemanagerMain ul").attr("class", "list");
+          }
+        }
+
         $(el).click(function() {
           _selItem();
         });
@@ -131,6 +148,19 @@ var ApplicationFilemanager = (function() {
           chdir(_CurrentDir);
         });
 
+        $(el).find(".WindowMenu .cmd_View_List").parent().click(function() {
+          self.argv.view_type = 'list';
+          chdir(_CurrentDir);
+          _updateMenu();
+        });
+        $(el).find(".WindowMenu .cmd_View_Icons").parent().click(function() {
+          self.argv.view_type = 'icon';
+          chdir(_CurrentDir);
+          _updateMenu();
+        });
+
+        _updateMenu();
+
         /*
         $(el).find(".WindowMenu .cmd_Back").click(function() {
           if ( _History.length ) {
@@ -148,4 +178,4 @@ var ApplicationFilemanager = (function() {
 
     return new _ApplicationFilemanager();
   };
-})();
+})($);

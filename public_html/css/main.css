@@ -178,6 +178,9 @@ body {
   vertical-align : middle;
   margin-right : 5px;
 }
+.Menu li.checked {
+  font-weight : bold;
+}
 
 /* Window */
 

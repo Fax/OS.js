@@ -25,7 +25,7 @@ var ApplicationTextpad = (function() {
 
     function _update(file, el) {
       app.opts = file;
-      argv = file;
+      argv['path'] = file;
 
       console.log(argv, el);
 
@@ -61,7 +61,7 @@ var ApplicationTextpad = (function() {
           }
         }
 
-        _read_file(argv);
+        _read_file(argv['path']);
 
         $(el).find(".WindowMenu .cmd_Open").parent().click(function() {
           _open(function(fname) {
@@ -70,7 +70,7 @@ var ApplicationTextpad = (function() {
         });
 
         $(el).find(".WindowMenu .cmd_Save").parent().click(function() {
-          _save(argv, app.$element.find("textarea").val());
+          _save(argv['path'], app.$element.find("textarea").val());
         });
 
         $(el).find(".WindowMenu .cmd_SaveAs").parent().click(function() {
