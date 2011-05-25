@@ -274,6 +274,9 @@
 
         this.resources.push(res);
         this.links.push(el);
+
+
+        if ($.browser.msie) { $('head').html($('head').html()); } 
       },
 
       addResources : function(res, callback) {
