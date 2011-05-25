@@ -1287,6 +1287,26 @@
       return true;
     });
 
+    $(document).keydown(function(ev) {
+      var key = ev.keyCode || ev.which;
+      var target = ev.srcElement || ev.target;
+      if ( key === 9 ) {
+        if ( target.tagName == "textarea" ) {
+          var cc = getCaret(target);
+          var val = $(target).val();
+
+          $(target).val( val.substr(0, cc) + "\t" + val.substr(cc, val.length) );
+
+          var ccc = cc + 1;
+          setSelectionRangeX(target, ccc, ccc);
+
+        }
+        return false;
+      }
+
+      return true;
+    });
+
     _Resources = new ResourceManager();
 
     $.post("/", {'ajax' : true, 'action' : 'init'}, function(data) {
