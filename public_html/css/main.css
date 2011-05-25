@@ -316,3 +316,23 @@ body {
   height : 20px;
   text-align : center;
 }
+
+.OperationDialog {
+
+}
+.OperationDialog h1 {
+  margin : 0;
+  padding : 0;
+}
+.OperationDialog p {
+  margin : 0;
+  padding : 0;
+}
+.OperationDialogInner {
+  margin-top : 10px;
+}
+.OperationDialog .ProgressBar,
+.OperationDialog .ProgressBar * {
+  height : 22px;
+  border : 0 none;
+}

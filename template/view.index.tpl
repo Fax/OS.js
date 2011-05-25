@@ -102,7 +102,8 @@
           This is a dialog!
         </div>
         <div class="DialogButtons">
-          <button>Close</button>
+          <button class="Choose" style="display:none;">Choose</button>
+          <button class="Close">Close</button>
         </div>
       </div>
     </div>

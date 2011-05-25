@@ -42,6 +42,12 @@ class IndexViewController
       }
     }
 
+
+    // Upload "POST"
+    if ( isset($args['ajax']) && isset($args['action']) && isset($args['qqfile']) ) {
+      return Response::createJSON(ApplicationAPI::upload());
+    }
+
     return false;
   }
 
@@ -49,7 +55,9 @@ class IndexViewController
    * @see ViewController::doPOST()
    */
   public function doPOST(Array $args, WebApplication $wa) {
+
     if ( sizeof($args) ) {
+
       if ( isset($args['ajax']) ) {
         $json = Array("success" => false, "error" => "Unknown error", "result" => null);
 

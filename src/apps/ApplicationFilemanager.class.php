@@ -39,6 +39,7 @@ class ApplicationFilemanager
     $this->statusbar = true;
     $this->menu = Array(
       "File" => Array("Close" => "cmd_Close"),
+      "Upload" => "cmd_Upload",
       "Home" => "cmd_Home"/*,
       "Back" => "cmd_Back"*/
     );
@@ -63,36 +64,43 @@ EOHTML;
   }
 
   public static function Event($uuid, $action, Array $args) {
-    $result = Array();
+    if ( $action == "browse" ) {
+      $result = Array();
 
-    $path  = $args['path'];
-    $total = 0;
-    $bytes = 0;
-    if ( ($items = ApplicationAPI::readdir($path)) !== false ) {
-      foreach ( $items as $file => $info ) {
+      $path  = $args['path'];
+      $total = 0;
+      $bytes = 0;
+      if ( ($items = ApplicationAPI::readdir($path)) !== false ) {
+        foreach ( $items as $file => $info ) {
 
-        $result[] = <<<EOHTML
-      <li class="type_{$info['type']}">
-        <div class="Inner">
-          <div class="Image"><img alt="" src="/img/icons/32x32/{$info['icon']}" /></div>
-          <div class="Title">{$file}</div>
-          <div class="Info" style="display:none;">
-            <input type="hidden" name="type" value="{$info['type']}" />
-            <input type="hidden" name="mime" value="{$info['mime']}" />
-            <input type="hidden" name="name" value="{$file}" />
-            <input type="hidden" name="path" value="{$info['path']}" />
-            <input type="hidden" name="size" value="{$info['size']}" />
+          $result[] = <<<EOHTML
+        <li class="type_{$info['type']}">
+          <div class="Inner">
+            <div class="Image"><img alt="" src="/img/icons/32x32/{$info['icon']}" /></div>
+            <div class="Title">{$file}</div>
+            <div class="Info" style="display:none;">
+              <input type="hidden" name="type" value="{$info['type']}" />
+              <input type="hidden" name="mime" value="{$info['mime']}" />
+              <input type="hidden" name="name" value="{$file}" />
+              <input type="hidden" name="path" value="{$info['path']}" />
+              <input type="hidden" name="size" value="{$info['size']}" />
+            </div>
           </div>
-        </div>
-      </li>
+        </li>
 EOHTML;
 
-        $total++;
-        $bytes += (int) $info['size'];
+          $total++;
+          $bytes += (int) $info['size'];
+        }
       }
+
+      return Array("items" => implode("", $result), "total" => $total, "bytes" => $bytes, "path" => ($path == "/" ? "Home" : $path));
+    } else if ( $action == "upload" ) {
+
     }
 
-    return Array("items" => implode("", $result), "total" => $total, "bytes" => $bytes, "path" => ($path == "/" ? "Home" : $path));
+
+    return false;
   }
 
 }

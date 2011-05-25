@@ -30,7 +30,8 @@ class IndexView
    * @see View::$_aViewScripts
    */
   protected $_aViewScripts    = Array(
-    "/js/jquery.js" => Array()
+    "/js/jquery.js" => Array(),
+    "/js/fileuploader.js" => Array()
   );
 
   /**

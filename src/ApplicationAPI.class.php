@@ -7,6 +7,8 @@
  * @created 2011-05-25
  */
 
+require "AjaxUpload.php";
+
 /**
  * ApplicationAPI Class
  *
@@ -16,6 +18,24 @@
  */
 class ApplicationAPI
 {
+
+  public static function upload() {
+    // list of valid extensions, ex. array("jpeg", "xml", "bmp")
+    $allowedExtensions = array();
+    // max file size in bytes
+    $sizeLimit = 10 * 1024 * 1024;
+
+    $base     = PATH_PROJECT_HTML . "/media/";
+    $uploader = new qqFileUploader($allowedExtensions, $sizeLimit);
+    if ( $result = $uploader->handleUpload($base) ) {
+      // to pass data through iframe you will need to encode all html tags
+      //echo htmlspecialchars(json_encode($result), ENT_NOQUOTES);
+      return $result;
+    }
+
+    return $result;
+  }
+
   public static function readdir($path) {
     $base     = PATH_PROJECT_HTML . "/media";
     $absolute = "{$base}{$path}";

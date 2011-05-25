@@ -91,6 +91,12 @@ var ApplicationFilemanager = (function() {
           }
         });
 
+        $(el).find(".WindowMenu .cmd_Upload").click(function() {
+          api.system.dialog_upload(function() {
+            chdir(_CurrentDir);
+          });
+        });
+
         /*
         $(el).find(".WindowMenu .cmd_Back").click(function() {
           if ( _History.length ) {

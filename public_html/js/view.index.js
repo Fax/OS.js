@@ -128,6 +128,10 @@
         message = message || "Unknown error";
 
         _Desktop.addWindow(new Dialog(type, message));
+      },
+
+      'dialog_upload' : function(clb_finish, clb_progress, clb_cancel) {
+        _Desktop.addWindow(new OperationDialog('upload', 'Uploading file...', clb_finish, clb_progress, clb_cancel));
       }
     },
 
@@ -502,6 +506,7 @@
       this.menu = [];
       this.statusbar = false;
       this.uuid = null;
+      this.create_callback = null;
 
       this.title = this.dialog ? "Dialog" : "Window";
       this.content = "";
@@ -614,7 +619,7 @@
         el.find(".WindowTopInner span").html(this.title);
         if ( this.dialog ) {
           el.find(".DialogContent").html(this.content).addClass(this.opts.type);
-          el.find(".DialogButtons button").click(function() {
+          el.find(".DialogButtons button.Close").click(function() {
             el.find(".ActionClose").click();
           });
         } else {
@@ -751,6 +756,8 @@
           }, 0);
         }
 
+        if ( this.create_callback )
+          this.create_callback();
       }
 
       this.created = true;
@@ -877,6 +884,94 @@
     }
 
   });
+
+  /////////////////////////////////////////////////////////////////////////////
+  // OPERATION DIALOG
+  /////////////////////////////////////////////////////////////////////////////
+
+  var OperationDialog = Window.extend({
+
+    init : function(type, message, clb_finish, clb_progress, clb_cancel) {
+      this._super("OperationDialog", true, {'type' : type});
+
+      this.width          = 400;
+      this.height         = 200;
+      this.gravity        = "center";
+      this.is_minimizable = true;
+      this.uploader = null;
+
+      clb_finish   = clb_finish   || function() {};
+      clb_progress = clb_progress || function() {};
+      clb_cancel   = clb_cancel   || function() {};
+
+
+      this.content        = $("<div class=\"OperationDialog\"><h1>" + message + "</h1><div class=\"OperationDialogInner\"></div></div>");
+
+      if ( type == 'copy' ) {
+        $(this.content).find(".OperationDialogInner").append("<p class=\"Status\">0 of 0</p><div class=\"ProgressBar\"></div>");
+        $(this.content).find(".ProgressBar").progressbar({
+          value : 50
+        });
+        this.width          = 400;
+        this.height         = 170;
+      } else if ( type == 'upload' ) {
+        this.width          = 400;
+        this.height         = 170;
+
+        var self = this;
+        this.create_callback = function() {
+          $(self.content).find(".OperationDialogInner").append("<p class=\"Status\">No file selected</p><div class=\"ProgressBar\"></div>");
+          $(self.content).find(".ProgressBar").progressbar({
+            value : 0
+          });
+
+          var trigger = self.$element.find("button.Choose").show();
+          var pbar = $(self.content).find(".ProgressBar");
+
+          self.uploader = new qq.FileUploader({
+            element : trigger[0],
+            action  : '/',
+            params : {
+              ajax   : true,
+              action : 'upload'
+            },
+            onSubmit: function(id, fileName){
+              $(trigger).html(fileName);
+              return true;
+            },
+            onProgress: function(id, fileName, loaded, total){
+              $(pbar).progressbar({
+                value : total
+              });
+
+              clb_progress(fileName, loaded, total);
+            },
+            onComplete: function(id, fileName, responseJSON){
+              self.$element.find(".ActionClose").click();
+
+              clb_finish(fileName, responseJSON);
+            },
+            onCancel: function(id, fileName){
+              API.system.dialog("error", "File upload '" + fileName + "' was cancelled!");
+              self.$element.find(".ActionClose").click();
+
+              clb_cancel(fileName);
+            }
+          });
+        };
+
+      }
+    },
+
+    destroy : function() {
+      if ( this.uploader ) {
+        this.uploader = null;
+      }
+      this._super();
+    }
+
+  });
+
 
   /////////////////////////////////////////////////////////////////////////////
   // APPLICATION
