@@ -26,11 +26,19 @@ var ApplicationFilemanager = (function($, undefined) {
 
         var _selItem = function(self) {
           if ( lastItem ) {
-            $(lastItem).parent().removeClass("Current");
+            if ( self.tagName == "tr" ) {
+              $(lastItem).removeClass("Current");
+            } else {
+              $(lastItem).parent().removeClass("Current");
+            }
           }
 
           if ( self ) {
-            $(self).parent().addClass("Current");
+            if ( self.tagName == "tr" ) {
+              $(self).addClass("Current");
+            } else {
+              $(self).parent().addClass("Current");
+            }
 
             var name = $(self).find("input[name='name']").val();
             var size = $(self).find("input[name='size']").val();
@@ -51,16 +59,28 @@ var ApplicationFilemanager = (function($, undefined) {
 
         var _defaultStatusText = "";
 
-        var _initClick = function() {
-          $(el).find(".ApplicationFilemanagerMain li .Inner").bind('click', function(ev) {
+        var _initClick = function() { 
+
+          $(el).find(".ApplicationFilemanagerMain .Inner").bind('click', function(ev) {
             //_selItem(this);
             $(document).click(); // Trigger this! (deselects context-menu)
             ev.stopPropagation();
           }).bind('dblclick', function(ev) {
-            var fname = $(this).find("input[name=name]").val();
-            var fpath = $(this).find("input[name=path]").val();
-            var ftype = $(this).find("input[name=type]").val();
-            var fmime = $(this).find("input[name=mime]").val();
+
+
+            var fname = fpath =  ftype = fmime = null;
+
+            if ( this.tagName == "td" ) {
+              fname = $(this).parent().find("input[name=name]").val();
+              fpath = $(this).parent().find("input[name=path]").val();
+              ftype = $(this).parent().find("input[name=type]").val();
+              fmime = $(this).parent().find("input[name=mime]").val();
+            } else {
+              fname = $(this).find("input[name=name]").val();
+              fpath = $(this).find("input[name=path]").val();
+              ftype = $(this).find("input[name=type]").val();
+              fmime = $(this).find("input[name=mime]").val();
+            }
 
             if ( ftype == "dir" ) {
               chdir(fpath);
@@ -68,8 +88,13 @@ var ApplicationFilemanager = (function($, undefined) {
               api.system.run(fpath, fmime);
             }
             ev.stopPropagation();
+            ev.preventDefault();
           }).bind('mousedown', function(ev) {
             _selItem(this);
+
+            ev.stopPropagation();
+            ev.preventDefault();
+
             return api.application.context_menu(ev, [
               {"title" : "Delete", "method" : function() {
                 api.system.dialog("confirm", "Are you sure you want to delete this file?", null, function() {
@@ -80,11 +105,13 @@ var ApplicationFilemanager = (function($, undefined) {
           });
 
           $(el).find(".ApplicationFilemanagerMain li").addClass("ContextMenu");
+          $(el).find(".ApplicationFilemanagerMain td").addClass("ContextMenu");
         };
 
         var _destroyView = function() {
-          $(el).find(".ApplicationFilemanagerMain li .Inner").unbind();
-          $(el).find(".ApplicationFilemanagerMain li").remove();
+          $(el).find(".ApplicationFilemanagerMain .Inner").unbind();
+          $(el).find(".ApplicationFilemanagerMain ul").remove();
+          $(el).find(".ApplicationFilemanagerMain table").remove();
         };
 
         function chdir(dir, hist) {
@@ -97,7 +124,7 @@ var ApplicationFilemanager = (function($, undefined) {
 
               _defaultStatusText = "";
             } else {
-              $(el).find(".ApplicationFilemanagerMain ul").html(result.items);
+              $(el).find(".ApplicationFilemanagerMain").html(result.items);
               $(el).find(".WindowTopInner span").html(app.title + ": " + result.path);
 
               _defaultStatusText = sprintf("%d items (%d bytes)", result.total, result.bytes);
@@ -118,11 +145,9 @@ var ApplicationFilemanager = (function($, undefined) {
           if ( self.argv.view_type == 'icon' ) {
             $(el).find(".WindowMenu .cmd_View_List").parent().removeClass("checked");
             $(el).find(".WindowMenu .cmd_View_Icons").parent().addClass("checked");
-            $(el).find(".ApplicationFilemanagerMain ul").attr("class", "icon");
           } else {
             $(el).find(".WindowMenu .cmd_View_List").parent().addClass("checked");
             $(el).find(".WindowMenu .cmd_View_Icons").parent().removeClass("checked");
-            $(el).find(".ApplicationFilemanagerMain ul").attr("class", "list");
           }
         }
 

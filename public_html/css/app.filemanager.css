@@ -13,9 +13,7 @@
   padding : 0;
   margin : 0;
 }
-.ApplicationFilemanagerMain li.list li {
-}
-.ApplicationFilemanagerMain ul.icon li {
+.ApplicationFilemanagerMain li {
   float : left;
   margin : 0;
   padding : 10px;
@@ -23,13 +21,40 @@
   width : 48px;
   height : 48px;
   font-size : 10px;
-  word-wrap : break-word;
+  word-wrap : break-word
 }
-.ApplicationFilemanagerMain li .Inner,
-.ApplicationFilemanagerMain li .Inner * {
+
+.ApplicationFilemanagerMain .Inner,
+.ApplicationFilemanagerMain .Inner * {
   cursor : pointer;
 }
-.ApplicationFilemanagerMain ul li.Current .Title {
+.ApplicationFilemanagerMain .Current .Title {
   background : #4f4f4f;
   color : #fff;
+}
+.ApplicationFilemanagerMain tr.Current,
+.ApplicationFilemanagerMain tr.odd.Current {
+  background : #4f4f4f;
+  color : #fff;
+}
+
+.ApplicationFilemanagerMain table {
+  border-collapse : collapse;
+  width : 100%;
+}
+.ApplicationFilemanagerMain td {
+  padding : 2px;
+}
+.ApplicationFilemanagerMain td.Icon {
+  width : 16px;
+}
+.ApplicationFilemanagerMain td.Size {
+  width : 50px;
+}
+.ApplicationFilemanagerMain td.Type {
+  width : 50px;
+}
+
+.ApplicationFilemanagerMain tr.odd {
+  background : #e6e6e6;
 }
