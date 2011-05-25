@@ -275,7 +275,7 @@
         this.resources.push(res);
         this.links.push(el);
 
-
+        // FIXME: Add timeout here !!!
         if ($.browser.msie) { $('head').html($('head').html()); } 
       },
 
