@@ -36,53 +36,70 @@ class ApplicationAPI
     return $result;
   }
 
-  public static function readdir($path) {
+  public static function readdir($path, Array $ignores = null) {
+    if ( $ignores === null ) {
+      $ignores = Array(".", "..");
+    }
+
     $base     = PATH_PROJECT_HTML . "/media";
     $absolute = "{$base}{$path}";
 
     if ($handle = opendir($absolute)) {
       $items = Array("dir" => Array(), "file" => Array());
       while (false !== ($file = readdir($handle))) {
-        if ( $file == "." || $file == ".." )
+        if ( in_array($file, $ignores) ) {
           continue;
+        }
 
-        $abs_path = "{$absolute}/{$file}";
-        $rel_path = "{$path}/{$file}";
+        $icon  = "places/folder.png";
+        $type  = "dir";
+        $fsize = 0;
+        $mime  = "";
 
-        if ( is_dir($abs_path) ) {
-          $icon  = "places/folder.png";
-          $type  = "dir";
-          $fsize = 0;
-
-          $mime  = "";
-        } else {
-          $icon  = "mimetypes/binary.png";
-          $type  = "file";
-          $fsize = filesize($abs_path);
-
-          $finfo = finfo_open(FILEINFO_MIME);
-          $mime  = explode("; charset=", finfo_file($finfo, $abs_path));
-          $mime  = reset($mime);
-          finfo_close($finfo);
-
-          $tmp_mime = explode("/", $mime);
-          switch ( reset($tmp_mime) ) {
-            case "image" :
-              $icon = "mimetypes/image-x-generic.png";
-            break;
-            case "text" :
-              $icon = "mimetypes/text-x-generic.png";
-              switch ( $mime ) {
-                case "text/html" :
-                  $icon = "mimetypes/text-html.png";
-                break;
-              }
-            break;
+        if ( $file == ".." ) {
+          $xpath = explode("/", $path);
+          array_pop($xpath);
+          $fpath = implode("/", $xpath);
+          if ( !$fpath ) {
+            $fpath = "/";
           }
+          $icon = "status/folder-visiting.png";
+        } else {
+
+          $abs_path = "{$absolute}/{$file}";
+          $rel_path = "{$path}/{$file}";
+
+          if ( !is_dir($abs_path) ) {
+            $icon  = "mimetypes/binary.png";
+            $type  = "file";
+            $fsize = filesize($abs_path);
+
+            $finfo = finfo_open(FILEINFO_MIME);
+            $mime  = explode("; charset=", finfo_file($finfo, $abs_path));
+            $mime  = reset($mime);
+            finfo_close($finfo);
+
+            $tmp_mime = explode("/", $mime);
+            switch ( reset($tmp_mime) ) {
+              case "image" :
+                $icon = "mimetypes/image-x-generic.png";
+              break;
+              case "text" :
+                $icon = "mimetypes/text-x-generic.png";
+                switch ( $mime ) {
+                  case "text/html" :
+                    $icon = "mimetypes/text-html.png";
+                  break;
+                }
+              break;
+            }
+          }
+
+          $fpath = str_replace("//", "/", $rel_path);
         }
 
         $items[$type][$file] =  Array(
-          "path"     => str_replace("//", "/", $rel_path),
+          "path"     => $fpath,
           "size"     => $fsize,
           "mime"     => $mime,
           "icon"     => $icon,

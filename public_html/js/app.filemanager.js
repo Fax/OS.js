@@ -26,10 +26,25 @@ var ApplicationFilemanager = (function() {
 
           if ( self ) {
             $(self).parent().addClass("Current");
+
+            var name = $(self).find("input[name='name']").val();
+            var size = $(self).find("input[name='size']").val();
+            var mime = $(self).find("input[name='mime']").val();
+            var type = $(self).find("input[name='type']").val();
+
+            if ( type == "dir" ) {
+              $(el).find(".WindowBottomInner").html(sprintf('"%s" %s', name, "folder"));
+            } else {
+              $(el).find(".WindowBottomInner").html(sprintf('"%s" (%s b) %s', name, size, mime));
+            }
+          } else {
+            $(el).find(".WindowBottomInner").html(_defaultStatusText);
           }
 
           lastItem = self;
         };
+
+        var _defaultStatusText = "";
 
         var _initClick = function() {
           $(el).find(".ApplicationFilemanagerMain li .Inner").bind('click', function(ev) {
@@ -73,15 +88,18 @@ var ApplicationFilemanager = (function() {
 
             if ( error ) {
               api.system.dialog("error", error);
-              $(el).find(".WindowBottomInner").html();
               $(el).find(".WindowTopInner span").html(app.title);
+
+              _defaultStatusText = "";
             } else {
               $(el).find(".ApplicationFilemanagerMain ul").html(result.items);
               $(el).find(".WindowTopInner span").html(app.title + ": " + result.path);
 
-              $(el).find(".WindowBottomInner").html(sprintf("%d items (%d bytes)", result.total, result.bytes));
+              _defaultStatusText = sprintf("%d items (%d bytes)", result.total, result.bytes);
+
               _initClick();
             }
+            $(el).find(".WindowBottomInner").html(_defaultStatusText);
           });
 
           _CurrentDir = dir;
@@ -95,7 +113,7 @@ var ApplicationFilemanager = (function() {
           _selItem();
         });
 
-        $(el).find(".WindowMenu .cmd_Home").click(function() {
+        $(el).find(".WindowMenu .cmd_Home").parent().click(function() {
           if ( _CurrentDir != "/" ) {
             chdir("/");
             _History = [];
@@ -103,10 +121,14 @@ var ApplicationFilemanager = (function() {
           }
         });
 
-        $(el).find(".WindowMenu .cmd_Upload").click(function() {
+        $(el).find(".WindowMenu .cmd_Upload").parent().click(function() {
           api.system.dialog_upload(function() {
             chdir(_CurrentDir);
           });
+        });
+
+        $(el).find(".WindowMenu .cmd_Reload").parent().click(function() {
+          chdir(_CurrentDir);
         });
 
         /*

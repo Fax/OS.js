@@ -39,11 +39,21 @@ class ApplicationFilemanager
     $this->statusbar = true;
     $this->menu = Array(
       "File" => Array(
-        "Close" => "cmd_Close"
+        "Upload" => "cmd_Upload",
+        "Close"  => "cmd_Close"
       ),
-      "Upload" => "cmd_Upload",
-      "Home" => "cmd_Home"/*,
-      "Back" => "cmd_Back"*/
+      "Edit" => Array(
+
+      ),
+      "View" => Array(
+        "Reload"        => "cmd_Reload",
+        "View as icons" => "cmd_View_Icons",
+        "View as list"  => "cmd_View_List"
+      ),
+      "Go" => Array(
+        "Home" => "cmd_Home"/*,
+        "Back" => "cmd_Back"*/
+      )
     );
 
     $this->content = <<<EOHTML
@@ -72,7 +82,13 @@ EOHTML;
       $path  = $args['path'];
       $total = 0;
       $bytes = 0;
-      if ( ($items = ApplicationAPI::readdir($path)) !== false ) {
+      $ignores = Array(".");
+
+      if ( $path == "/" ) {
+        $ignores[] = "..";
+      }
+
+      if ( ($items = ApplicationAPI::readdir($path, $ignores)) !== false ) {
         foreach ( $items as $file => $info ) {
 
           $result[] = <<<EOHTML
