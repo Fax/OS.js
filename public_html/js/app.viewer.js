@@ -13,8 +13,8 @@ var ApplicationViewer = (function() {
         var el = app.$element;
         var loader = app.$element.find(".ApplicationViewerLoading");
 
-        if ( argv ) {
-          var img = $("<img alt=\"\" />").attr("src", "/media/" + argv);
+        if ( argv.path ) {
+          var img = $("<img alt=\"\" />").attr("src", "/media/" + argv.path);
           img.load(function() {
             var img = this;
             loader.hide();
