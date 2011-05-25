@@ -135,6 +135,60 @@
       }
     },
 
+    'application' : {
+      'context_menu' : (function() {
+
+        var inited = false;
+        var cm = null;
+
+        function _destroy() {
+          if ( cm !== null ) {
+            cm.destroy();
+          }
+
+          cm = null;
+        }
+
+        return function(ev, items, where) {
+
+          if ( inited === false ) {
+            $(document).click(function(ev) {
+              if ( !$(ev.target).filter(function(){ return $(this).parents(".Menu").length; }).length ) {
+                _destroy();
+              }
+            });
+
+            initied = true;
+          }
+
+          if ( ev.which === 3 ) {
+            _destroy();
+
+            cm = new Menu();
+            forEach(items, function(i, it) {
+              cm.create_item(it. title, it.icon, it.method);
+            });
+
+            var off = $(where).offset();
+            $("#ContextMenu").css(
+              {
+                "left" :off.left + "px",
+                "top" : off.top + "px"
+              }
+            ).html(cm.$element).show();
+
+            ev.stopPropagation();
+            ev.preventDefault();
+
+            return false;
+          }
+
+          return true;
+        };
+
+      })()
+    },
+
     'user' : {
       'settings' : {
         'load' : function(settings) {
@@ -410,20 +464,17 @@
       console.log("Panel initialized...", this);
       cconsole.log("init", "Panel initialized...");
 
+      this.start_menu = new Menu();
+
       // Fill menu
       var o;
       for ( var a in _ApplicationRegister ) {
         if ( _ApplicationRegister.hasOwnProperty(a) ) {
           o = _ApplicationRegister[a];
-
-          var litem = $("<li><span><img alt=\"\" src=\"/img/blank.gif\" /></span></li>");
-          litem.find("span").attr("class", "launch_" + a);
-          litem.find("img").attr("src", "/img/icons/16x16/" + o.icon);
-          litem.append(o.title);
-
-          $(".PanelItemMenu ul").append(litem);
+          this.start_menu.create_item(o.title, o.icon, "launch_" + a);
         }
       }
+      $(".PanelItemMenu").append(this.start_menu.$element);
 
       // Start clock
       setInterval(function() {
@@ -523,6 +574,7 @@
       this.gravity = "none";
 
       this.$element = null;
+      this.menus = [];
 
       console.log("Window inited...", this);
     },
@@ -536,6 +588,13 @@
           console.log('Flushed Window', self, self.uuid, data);
           cconsole.log("response", "&lt;- Window flushed...", self.uuid);
         });
+      }
+
+      if ( this.menus.length ) {
+        for ( var i = 0; i < this.menus.length; i++ ) {
+          this.menus[i].destroy();
+        }
+        this.menus = null;
       }
 
       if ( this.app ) {
@@ -578,24 +637,19 @@
             mel.find("span").html(ind);
 
             if ( m instanceof Object && sizeof(m) ) {
-              var smel = $("<ul class=\"Menu\"></ul>");
+              var menu = new Menu();
               forEach(m, function(sind, sm) {
-                var submel = $("<li><span></span></li>");
-                submel.find("span").addClass(sm).html(sind);
-                smel.append(submel);
+                menu.create_item(sind, null, sm);
               });
 
-              mel.append(smel);
+              mel.append(menu.$element);
+              self.menus.push(menu);
+
             } else {
               mel.find("span").addClass(m);
             }
 
             el.find(".WindowMenu ul.Top").append(mel);
-
-            // Known (default) buttons
-            $(el).find(".WindowMenu .cmd_Close").click(function() {
-              el.find(".ActionClose").click();
-            });
           });
         }
 
@@ -869,6 +923,54 @@
   });
 
   /////////////////////////////////////////////////////////////////////////////
+  // Menu
+  /////////////////////////////////////////////////////////////////////////////
+
+  var Menu = Class.extend({
+
+    init : function() {
+      this.$element = $("<ul></ul>");
+      this.$element.attr("class", "Menu");
+    },
+
+    destroy : function() {
+      if ( this.$element ) {
+        this.$element.remove();
+      }
+
+      this.$element = null;
+    },
+
+    clear : function() {
+      if ( this.$element ) {
+        this.$element.find("li").remove();
+      }
+    },
+
+    create_item : function(title, icon, method) {
+      var litem = $("<li><span><img alt=\"\" src=\"/img/blank.gif\" /></span></li>");
+      if ( typeof method == "function" ) {
+        litem.click(method);
+      } else {
+        litem.find("span").attr("class", method);
+      }
+      if ( icon ) {
+        litem.find("img").attr("src", "/img/icons/16x16/" + icon);
+      }
+      litem.append(title);
+
+      if ( method == "cmd_Close" ) {
+        $(litem).click(function() {
+          $(this).parents(".Window").find(".ActionClose").click();
+        });
+      }
+
+      this.$element.append(litem);
+    }
+
+  });
+
+  /////////////////////////////////////////////////////////////////////////////
   // DIALOG
   /////////////////////////////////////////////////////////////////////////////
 
@@ -881,6 +983,15 @@
       this.height = 100;
       this.gravity = "center";
       this.content = message;
+
+      var self = this;
+      this.create_callback = function() {
+        if ( type == "confirm" ) {
+          self.$element.find(".DialogButtons .Close").hide();
+          self.$element.find(".DialogButtons .Ok").show();
+          self.$element.find(".DialogButtons .Cancel").show();
+        }
+      };
     }
 
   });
@@ -1010,6 +1121,10 @@
       $(window).scrollTop(0).scrollLeft(0);
     });
     */
+
+    $(document).bind("contextmenu",function(e){
+      return false;
+    });
 
     _Resources = new ResourceManager();
 

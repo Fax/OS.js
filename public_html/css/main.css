@@ -255,6 +255,9 @@ body {
   z-index : 10000;
   padding : 2px;
 }
+.WindowMenu .Menu li {
+  padding : 0;
+}
 
 .WindowContent {
   overflow : auto;
@@ -335,4 +338,17 @@ body {
 .OperationDialog .ProgressBar * {
   height : 22px;
   border : 0 none;
+}
+
+
+#ContextMenu {
+  position : absolute;
+  top : 0;
+  left : 0;
+  z-index : 100000000;
+}
+#ContextMenu .Menu {
+  padding : 2px;
+  position : relative;
+  display : block;
 }

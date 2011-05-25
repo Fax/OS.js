@@ -4,8 +4,6 @@
 
     <div class="PanelItem PanelItemMenu">
       <img alt="" src="/img/icons/16x16/categories/gnome-applications.png" title="Launch Application" />
-      <ul class="Menu">
-      </ul>
     </div>
 
     <div class="PanelItem PanelItemSeparator">&nbsp;</div>
@@ -30,6 +28,9 @@
         <span class="launch_SystemLogout"><img alt="" src="/img/icons/16x16/actions/gnome-logout.png" title="Save and Quit" /></span>
       </div>
     </div>
+  </div>
+
+  <div id="ContextMenu">
   </div>
 
   <!-- Content -->
@@ -104,6 +105,8 @@
         <div class="DialogButtons">
           <button class="Choose" style="display:none;">Choose</button>
           <button class="Close">Close</button>
+          <button class="Ok" style="display:none;">Ok</button>
+          <button class="Cancel" style="display:none;">Cancel</button>
         </div>
       </div>
     </div>

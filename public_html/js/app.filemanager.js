@@ -34,6 +34,7 @@ var ApplicationFilemanager = (function() {
         var _initClick = function() {
           $(el).find(".ApplicationFilemanagerMain li .Inner").bind('click', function(ev) {
             _selItem(this);
+            $(document).click(); // Trigger this! (deselects context-menu)
             ev.stopPropagation();
           }).bind('dblclick', function(ev) {
             var fname = $(this).find("input[name=name]").val();
@@ -47,6 +48,11 @@ var ApplicationFilemanager = (function() {
               api.system.run(fpath, fmime);
             }
             ev.stopPropagation();
+          }).bind('mousedown', function(ev) {
+            return api.application.context_menu(ev, [
+              {"title" : "Delete", "method" : "cmd_Delete"},
+              {"title" : "Rename", "method" : "cmd_Rename"}
+            ], $(this));
           });
         };
 
