@@ -500,6 +500,7 @@
       this.opts = opts;
       this.attrs = attrs;
       this.menu = [];
+      this.statusbar = false;
       this.uuid = null;
 
       this.title = this.dialog ? "Dialog" : "Window";
@@ -599,6 +600,14 @@
           menu = true;
         } else {
           el.find(".WindowMenu").hide();
+        }
+
+        // Show/Hide Statusbar
+        if ( this.statusbar ) {
+          el.find(".WindowBottom").show();
+          el.find(".WindowContent").addClass("HasBottom");
+        } else {
+          el.find(".WindowBottom").hide();
         }
 
         // Content and buttons
@@ -757,6 +766,7 @@
               self.is_resizable  = data.result.is_resizable;
               self.is_scrollable = data.result.is_scrollable;
               self.menu          = data.result.menu;
+              self.statusbar     = data.result.statusbar;
               self.width         = parseInt(data.result.width, 10);
               self.height        = parseInt(data.result.height, 10);
               self.gravity       = data.result.gravity;

@@ -36,6 +36,7 @@ class ApplicationFilemanager
   const APP_ICON  = "apps/file-manager.png";
 
   public function __construct() {
+    $this->statusbar = true;
     $this->menu = Array(
       "File" => Array("Close" => "cmd_Close"),
       "Home" => "cmd_Home"/*,

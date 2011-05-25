@@ -193,7 +193,7 @@ body {
 .Window.Dragging {
 }
 .WindowTop {
-  height : 26px;
+  height : 28px;
   text-align : center;
 }
 .WindowTopInner {
@@ -217,8 +217,9 @@ body {
   right : 0px;
 }
 .WindowTopController {
-  width : 22px;
-  height : 14px;
+  width : 27px;
+  height : 28px;
+  line-height : 28px;
   text-align : center;
   float : left;
   cursor : pointer;
@@ -226,18 +227,23 @@ body {
 .WindowTopController:hover {
 }
 .WindowMenu {
-  height : 25px;
+  height : 28px;
   background : #4f4f4f;
 }
 .WindowMenu ul.Top {
   list-style-type : none;
   margin : 0;
   padding : 0;
+  margin-left : 5px;
+  margin-right : 5px;
 }
 .WindowMenu li.Top {
   float : left;
-  padding : 5px;
-  margin : 0;
+  height : 28px;
+  line-height : 28px;
+  padding : 0;
+  padding-left : 5px;
+  padding-right : 5px;
   position : relative;
 }
 .WindowMenu span.Top {
@@ -253,21 +259,29 @@ body {
 .WindowContent {
   overflow : auto;
   position : absolute;
-  top : 26px;
+  top : 30px;
   left : 2px;
   right : 2px;
   bottom : 4px;
 }
 .WindowContent.HasMenu {
-  top : 54px;
+  top : 58px;
+}
+.WindowContent.HasBottom {
+  bottom : 25px;
 }
 .WindowContentInner {
 }
 .WindowBottom {
-  display : none;
+  position : absolute;
+  bottom : 4px;
+  left : 4px;
+  right : 4px;
+  height : 21px;
 }
 .WindowBottomInner {
-  padding : 2px;
+  padding : 5px;
+  border-top : 1px solid #d1d4d7;
 }
 
 .Window .ui-resizable-handle {

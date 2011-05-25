@@ -61,8 +61,20 @@ var ApplicationFilemanager = (function() {
 
             if ( error ) {
               api.system.dialog("error", error);
+              $(el).find(".WindowBottomInner").html();
             } else {
               $(el).find(".ApplicationFilemanagerMain ul").html(result.items);
+
+              var ic = 0;
+              var bc = 0;
+
+              $(el).find(".ApplicationFilemanagerMain ul li").each(function(i, el) {
+                ic = (i+1);
+                bc += parseInt($(this).find("input[name='size']").val(), 10);
+              });
+
+
+              $(el).find(".WindowBottomInner").html(sprintf("%d items (%d bytes)", ic, bc));
               _initClick();
             }
           });

@@ -33,6 +33,7 @@ class DesktopApplication
   protected $gravity         = "";
   protected $resources       = Array();
   protected $menu            = Array();
+  protected $statusbar       = false;
   protected $accept_mime     = Array(); // TODO: Add here, remove from global?!
 
   public static $Registered = Array();
@@ -59,6 +60,7 @@ class DesktopApplication
       "width"           => $this->width,
       "height"          => $this->height,
       "menu"            => $this->menu,
+      "statusbar"       => $this->statusbar,
       "gravity"         => $this->gravity
     );
   }
