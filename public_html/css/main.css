@@ -189,7 +189,6 @@ body {
   position : absolute;
   z-index : 10;
   overflow : hidden;
-  background : #e6e6e6;
 }
 .Window.Dragging {
 }
