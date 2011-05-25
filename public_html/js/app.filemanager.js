@@ -58,6 +58,8 @@ var ApplicationFilemanager = (function() {
               {"title" : "Rename", "method" : "cmd_Rename"}
             ], $(this));
           });
+
+          $(el).find(".ApplicationFilemanagerMain li").addClass("ContextMenu");
         };
 
         var _destroyView = function() {

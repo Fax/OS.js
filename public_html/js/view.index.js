@@ -1280,11 +1280,12 @@
     });
     */
 
-    /*
-    $(document).bind("contextmenu",function(e){
-      return false;
+    $(document).bind("contextmenu",function(e) {
+      if ( $(e.target).id === "ContextMenu" || $(e.target).hasClass("ContextMenu") || $(e.target).hasClass("Menu") || $(e.target).parent().hasClass("ContextMenu") || $(e.target).parent().hasClass("Menu") ) {
+        return false;
+      }
+      return true;
     });
-    */
 
     _Resources = new ResourceManager();
 
