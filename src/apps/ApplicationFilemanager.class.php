@@ -38,7 +38,9 @@ class ApplicationFilemanager
   public function __construct() {
     $this->statusbar = true;
     $this->menu = Array(
-      "File" => Array("Close" => "cmd_Close"),
+      "File" => Array(
+        "Close" => "cmd_Close"
+      ),
       "Upload" => "cmd_Upload",
       "Home" => "cmd_Home"/*,
       "Back" => "cmd_Back"*/

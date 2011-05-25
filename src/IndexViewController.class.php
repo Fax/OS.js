@@ -153,7 +153,21 @@ class IndexViewController
             } else {
               $json['error'] = "Invalid argument";
             }
-          } else if ( $method = "readdir" ) {
+          } else if ( $method == "write" ) {
+
+            $path = PATH_PROJECT_HTML . "/media/" . $argv['file'];
+            if ( file_exists($path) && is_file($path) ) {
+              if ( file_put_contents($path, $argv['content']) ) {
+                $json['success'] = true;
+                $json['result'] = true;
+              } else {
+                $json['error'] = "Failed to save '{$argv['file']}'";
+              }
+            } else {
+              $json['error'] = "Failed to read '{$argv['file']}'";
+            }
+
+          } else if ( $method == "readdir" ) {
             if ( ($items = ApplicationAPI::readdir($argv)) !== false) {
               $json['result'] = $items;
               $json['success'] = true;

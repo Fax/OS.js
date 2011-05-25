@@ -20,6 +20,18 @@ var ApplicationTextpad = (function() {
           });
         }
 
+        $(el).find(".WindowMenu .cmd_Save").parent().click(function() {
+          if ( typeof argv == "string" && argv ) {
+            api.system.call("write", {'file' : argv, 'content' : app.$element.find("textarea").val()}, function(result, error) {
+              /*
+              if ( error === null ) {
+                alert("Success");
+              }
+              */
+            });
+          }
+        });
+
         this._super();
       }
     });

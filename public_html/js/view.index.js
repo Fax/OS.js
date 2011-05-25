@@ -959,7 +959,7 @@
         });
       } else {
         $(litem).click(function() {
-          $(this).parents("ul").hide();
+          $(this).parents("ul.Menu").hide();
         });
       }
 
@@ -1084,6 +1084,17 @@
               clb_cancel(fileName);
             }
           });
+
+          self.$element.find(".DialogButtons .Close").click(function() {
+            self.$element.find(".ActionClose").click();
+          });
+          self.$element.find(".DialogButtons .Ok").click(function() {
+            self.$element.find(".ActionClose").click();
+          });
+          self.$element.find(".DialogButtons .Cancel").click(function() {
+            self.$element.find(".ActionClose").click();
+          });
+
         };
 
       }
