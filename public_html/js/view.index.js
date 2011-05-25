@@ -566,6 +566,8 @@
       this.is_resizable = this.dialog ? false : true;
       this.is_draggable = true;
       this.is_scrollable = this.dialog ? false :true;
+      this.is_maximized = false;
+      this.is_maximizable = this.dialog ? false : true;
       this.is_minimized = false;
       this.is_minimizable = this.dialog ? false : true;
       this.is_sessionable = this.dialog ? false : true;
@@ -573,6 +575,8 @@
       this.width = -1;
       this.height = -1;
       this.gravity = "none";
+
+      this.last_attrs = null;
 
       this.$element = null;
       this.menus = [];
@@ -725,6 +729,14 @@
           el.find(".ActionMinimize").hide();
         }
 
+        if ( this.is_maximizable ) {
+          el.find(".ActionMaximize").click(function() {
+            self.maximize();
+          });
+        } else {
+          el.find(".ActionMaximize").hide();
+        }
+
         if ( this.attrs && sizeof(this.attrs) ) {
           if ( this.attrs.position instanceof Object ) {
             el.offset(this.attrs.position);
@@ -830,6 +842,7 @@
               self.is_draggable   = data.result.is_draggable;
               self.is_resizable   = data.result.is_resizable;
               self.is_scrollable  = data.result.is_scrollable;
+              self.is_maximizable = data.result.is_maximizable;
               self.is_minimizable = data.result.is_minimizable;
               self.is_closable    = data.result.is_closable;
               self.menu           = data.result.menu;
@@ -874,7 +887,7 @@
 
     minimize : function() {
       if ( this.is_minimizable ) {
-        if ( !this.minimized ) {
+        if ( !this.is_minimized ) {
           var self = this;
 
           this.$element.animate({opacity: 'hide', height: 'hide'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
@@ -883,19 +896,63 @@
 
         }
 
-        this.minimized = true;
+        this.is_minimized = true;
+      }
+    },
+
+    maximize : function() {
+      if ( this.is_maximizable ) {
+        if ( !this.is_maximized ) {
+          this.last_attrs = {
+            'size'     : {'width' : this.$element.width(), 'height' : this.$element.height()},
+            'position' : this.$element.offset()
+          };
+
+
+          var w = parseInt($(document).width(), 10);
+          var h = parseInt($(document).height(), 10);
+
+          this.$element.css({
+            'top'    : '40px',
+            'left'   : '10px'
+          }).animate({
+            'width'  : (w - 20) + "px",
+            'height' : (h - 50)  + "px"
+          }, {'duration' : ANIMATION_SPEED});
+          this.is_maximized = true;
+        } else {
+          this.restore();
+        }
+
       }
     },
 
     restore : function() {
-      if ( this.minimized ) {
+      if ( this.is_minimized  ) {
         var self = this;
         this.$element.animate({opacity: 'show', height: 'show'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
           _Desktop.toggleWindow(self, true);
         }});
+
+        this.is_minimized = false;
       }
 
-      this.minimized = false;
+
+      if ( this.is_maximized ) {
+        if ( this.last_attrs !== null ) {
+          this.$element.animate({
+            'top'    : this.last_attrs.position.top + 'px',
+            'left'   : this.last_attrs.position.left + 'px',
+            'width'  : this.last_attrs.size.width + 'px',
+            'height' : this.last_attrs.size.height + 'px'
+          }, {'duration' : ANIMATION_SPEED});
+
+          this.last_attrs === null;
+
+        }
+        this.is_maximized = false;
+      }
+
     },
 
     setTitle : function(t) {

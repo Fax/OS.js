@@ -57,6 +57,9 @@
         <div class="WindowTopController ActionMinimize">
           <span>_</span>
         </div>
+        <div class="WindowTopController ActionMaximize">
+          <span>+</span>
+        </div>
         <div class="WindowTopController ActionClose">
           <span>x</span>
         </div>

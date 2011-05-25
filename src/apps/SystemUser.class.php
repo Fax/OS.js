@@ -39,6 +39,7 @@ EOHTML;
     );
     $this->is_scrollable = false;
     $this->is_resizable = false;
+    $this->is_maximizable = false;
     $this->width = 200;
     $this->height = 200;
 
