@@ -62,19 +62,12 @@ var ApplicationFilemanager = (function() {
             if ( error ) {
               api.system.dialog("error", error);
               $(el).find(".WindowBottomInner").html();
+              $(el).find(".WindowTopInner span").html(app.title);
             } else {
               $(el).find(".ApplicationFilemanagerMain ul").html(result.items);
+              $(el).find(".WindowTopInner span").html(app.title + ": " + result.path);
 
-              var ic = 0;
-              var bc = 0;
-
-              $(el).find(".ApplicationFilemanagerMain ul li").each(function(i, el) {
-                ic = (i+1);
-                bc += parseInt($(this).find("input[name='size']").val(), 10);
-              });
-
-
-              $(el).find(".WindowBottomInner").html(sprintf("%d items (%d bytes)", ic, bc));
+              $(el).find(".WindowBottomInner").html(sprintf("%d items (%d bytes)", result.total, result.bytes));
               _initClick();
             }
           });

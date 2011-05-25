@@ -63,66 +63,38 @@ EOHTML;
   }
 
   public static function Event($uuid, $action, Array $args) {
-    $items = Array("dir" => Array(), "text" => Array());
+    $result = Array();
 
-    $root = PATH_PROJECT_HTML . "/media/";
-    if ( ($add = !empty($args['path']) ? str_replace(Array("..", ".", "//"), Array("", "", "/"), $args['path']) . "/" : "") ) {
-      $root = unix_path($root, $add);
-    }
+    $path  = $args['path'];
+    $total = 0;
+    $bytes = 0;
+    if ( ($items = ApplicationAPI::readdir($path)) !== false ) {
+      foreach ( $items as $file => $info ) {
 
-    if ($handle = opendir($root)) {
-      while (false !== ($file = readdir($handle))) {
-        if ( $file != "." && $file != ".." ) {
-          //$fpath = $root . $file;
-          $fpath = unix_path($root, $file);
-          $frpath = str_replace(PATH_PROJECT_HTML . "/media/", "", $fpath);
-          $fsize = 0;
-
-          if ( is_dir($fpath) ) {
-            $icon = "places/folder.png";
-            $type = "dir";
-            $mime = "";
-          } else {
-            $icon = "mimetypes/binary.png";
-            $type = "file";
-
-            $finfo = finfo_open(FILEINFO_MIME);
-            $mime = explode("; charset=", finfo_file($finfo, $fpath));
-            $mime = reset($mime);
-            finfo_close($finfo);
-
-            $fsize = filesize($fpath);
-          }
-
-          $items[$type][] = <<<EOHTML
-      <li class="type_{$type}">
+        $result[] = <<<EOHTML
+      <li class="type_{$info['type']}">
         <div class="Inner">
-          <div class="Image"><img alt="" src="/img/icons/32x32/{$icon}" /></div>
+          <div class="Image"><img alt="" src="/img/icons/32x32/{$info['icon']}" /></div>
           <div class="Title">{$file}</div>
           <div class="Info" style="display:none;">
-            <input type="hidden" name="type" value="{$type}" />
-            <input type="hidden" name="mime" value="{$mime}" />
+            <input type="hidden" name="type" value="{$info['type']}" />
+            <input type="hidden" name="mime" value="{$info['mime']}" />
             <input type="hidden" name="name" value="{$file}" />
-            <input type="hidden" name="path" value="{$frpath}" />
-            <input type="hidden" name="size" value="{$fsize}" />
+            <input type="hidden" name="path" value="{$info['path']}" />
+            <input type="hidden" name="size" value="{$info['size']}" />
           </div>
         </div>
       </li>
 EOHTML;
 
-        }
+        $total++;
+        $bytes += (int) $info['size'];
       }
-
-      closedir($handle);
     }
 
-    sort($items["dir"]);
-    sort($items["text"]);
-
-    $items = array_merge($items["dir"], $items["file"]);
-
-    return Array("items" => implode("", $items));
+    return Array("items" => implode("", $result), "total" => $total, "bytes" => $bytes, "path" => ($path == "/" ? "Home" : $path));
   }
+
 }
 
 DesktopApplication::$Registered[] = "ApplicationFilemanager";

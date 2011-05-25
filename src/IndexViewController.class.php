@@ -7,6 +7,8 @@
  * @created 2011-05-22
  */
 
+require "ApplicationAPI.class.php";
+
 require "DesktopApplication.class.php";
 
 require "apps/SystemUser.class.php";
@@ -144,7 +146,12 @@ class IndexViewController
               $json['error'] = "Invalid argument";
             }
           } else if ( $method = "readdir" ) {
-            // TODO
+            if ( ($items = ApplicationAPI::readdir($argv)) !== false) {
+              $json['result'] = $items;
+              $json['success'] = true;
+            } else {
+              $json['error'] = "Failed to read '$argv'";
+            }
           } else {
             if ( function_exists($method) ) {
               $json['result']  = call_user_func_array($method, $argv);

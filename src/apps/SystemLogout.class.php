@@ -45,6 +45,7 @@ EOHTML;
     $this->width = 200;
     $this->height = 150;
     $this->gravity = "center";
+    $this->is_draggable = false;
     $this->is_resizable = false;
     $this->is_scrollable = false;
 
