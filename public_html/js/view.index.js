@@ -350,7 +350,7 @@
 
             self.stack.push(win);
 
-            self.panel.redraw(self);
+            self.panel.redraw(self, win, false);
           };
 
 
@@ -375,7 +375,7 @@
             }
           }
 
-          this.panel.redraw(this);
+          this.panel.redraw(this, win, true);
         }
       },
 
@@ -390,7 +390,7 @@
         win.focus();
 
         if ( _Window !== win ) {
-          this.panel.redraw(this);
+          this.panel.redraw(this, win);
         }
 
         _Window = win;
@@ -404,7 +404,7 @@
           win.focus();
         }
 
-        this.panel.redraw(this);
+        this.panel.redraw(this, win);
       },
 
       loadSettings : function(settings) {
@@ -510,31 +510,38 @@
       this.$element.remove();
     },
 
-    redraw : function(desktop) {
+    redraw : function(desktop, win, remove) {
       var self = this;
-      var s = desktop.stack;
-      var i = 0;
-      var l = s.length;
 
-      this.$element.find(".PanelItemWindow").remove();
+      var id = win.$element.attr("id") + "_Shortcut";
 
-      var _create = function(win) {
-        var el = $("<div class=\"PanelItem Padded PanelItemWindow\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div>");
-        el.find("img").attr("src", "/img/icons/16x16/" + win.icon);
-        el.find("span").html(win.title);
+      if ( remove ) {
+        $("#" + id).remove();
+      } else {
 
-        if ( win.current )
-          el.addClass("Current");
+        if ( !document.getElementById(id) ) {
+          var el = $("<div class=\"PanelItem Padded PanelItemWindow\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div>");
+          el.find("img").attr("src", "/img/icons/16x16/" + win.icon);
+          el.find("span").html(win.title);
+          el.attr("id", id);
 
-        el.click(function() {
-          desktop.focusWindow(win);
-        });
+          if ( win.current ) {
+            el.addClass("Current");
+          }
 
-        self.$element.find(".PanelWindowHolder").append(el);
-      };
+          (function(vel, wwin) {
+            vel.click(function() {
+              desktop.focusWindow(wwin);
+            });
+          })(el, win);
 
-      for ( i; i < l; i++ ) {
-        _create(s[i]);
+          self.$element.find(".PanelWindowHolder").append(el);
+        }
+
+        if ( remove === undefined ) {
+          this.$element.find(".PanelItemWindow").removeClass("Current");
+          $("#" + id).addClass("Current");
+        }
       }
     },
 
