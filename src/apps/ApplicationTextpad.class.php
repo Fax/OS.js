@@ -23,6 +23,7 @@ class ApplicationTextpad
   public function __construct() {
     $this->menu = Array(
       "File" => Array(
+        "New"        => "cmd_New",
         "Open"       => "cmd_Open",
         "Save"       => "cmd_Save",
         "Save As..." => "cmd_SaveAs",

@@ -132,6 +132,10 @@
 
       'dialog_upload' : function(clb_finish, clb_progress, clb_cancel) {
         _Desktop.addWindow(new OperationDialog('upload', 'Uploading file...', clb_finish, clb_progress, clb_cancel));
+      },
+
+      'dialog_file' : function(clb_finish) {
+        _Desktop.addWindow(new OperationDialog('file', 'Choose file...', clb_finish));
       }
     },
 
@@ -682,7 +686,8 @@
         }
 
         // Attributtes
-        el.attr("id", id).css("z-index", zi);
+        el.attr("id", id);
+        el.css("z-index", zi);
         el.find(".WindowContent").css("overflow", this.is_scrollable ? "auto" : "hidden");
 
         if ( !isNaN(this.width) && (this.width > 0) ) {
@@ -1085,16 +1090,6 @@
             }
           });
 
-          self.$element.find(".DialogButtons .Close").click(function() {
-            self.$element.find(".ActionClose").click();
-          });
-          self.$element.find(".DialogButtons .Ok").click(function() {
-            self.$element.find(".ActionClose").click();
-          });
-          self.$element.find(".DialogButtons .Cancel").click(function() {
-            self.$element.find(".ActionClose").click();
-          });
-
         };
 
       }
@@ -1105,6 +1100,21 @@
         this.uploader = null;
       }
       this._super();
+    },
+
+    create : function(desktop, id, zi, method) {
+      this._super(desktop, id, zi, method);
+
+      var self = this;
+      self.$element.find(".DialogButtons .Close").click(function() {
+        self.$element.find(".ActionClose").click();
+      });
+      self.$element.find(".DialogButtons .Ok").click(function() {
+        self.$element.find(".ActionClose").click();
+      });
+      self.$element.find(".DialogButtons .Cancel").click(function() {
+        self.$element.find(".ActionClose").click();
+      });
     }
 
   });
