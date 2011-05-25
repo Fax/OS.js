@@ -28,6 +28,8 @@ class DesktopApplication
   protected $is_resizable    = true;
   protected $is_scrollable   = true;
   protected $is_sessionable  = true;
+  protected $is_minimizable  = true;
+  protected $is_closable     = true;
   protected $width           = 500;
   protected $height          = 300;
   protected $gravity         = "";
@@ -56,6 +58,8 @@ class DesktopApplication
       "is_resizable"    => $this->is_resizable,
       "is_scrollable"   => $this->is_scrollable,
       "is_sessionable"  => $this->is_sessionable,
+      "is_minimizable"  => $this->is_minimizable,
+      "is_closable"     => $this->is_closable,
       "resources"       => $this->resources,
       "width"           => $this->width,
       "height"          => $this->height,

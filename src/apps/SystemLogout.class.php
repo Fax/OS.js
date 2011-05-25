@@ -48,6 +48,7 @@ EOHTML;
     $this->is_draggable = false;
     $this->is_resizable = false;
     $this->is_scrollable = false;
+    $this->is_minimizable = false;
 
     parent::__construct(self::APP_TITLE, self::APP_ICON, self::APP_HIDDEN);
   }

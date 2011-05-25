@@ -655,11 +655,16 @@
           el.find(".ActionClose").click(function() {
             desktop.removeWindow(self);
           });
+        } else {
+          el.find(".ActionClose").hide();
         }
+
         if ( this.is_minimizable ) {
           el.find(".ActionMinimize").click(function() {
             self.minimize();
           });
+        } else {
+          el.find(".ActionMinimize").hide();
         }
 
         if ( this.attrs && sizeof(this.attrs) ) {
@@ -761,15 +766,17 @@
               self.setContent(data.result.content);
               self.setIcon(data.result.icon);
 
-              self.uuid          = data.result.uuid;
-              self.is_draggable  = data.result.is_draggable;
-              self.is_resizable  = data.result.is_resizable;
-              self.is_scrollable = data.result.is_scrollable;
-              self.menu          = data.result.menu;
-              self.statusbar     = data.result.statusbar;
-              self.width         = parseInt(data.result.width, 10);
-              self.height        = parseInt(data.result.height, 10);
-              self.gravity       = data.result.gravity;
+              self.uuid           = data.result.uuid;
+              self.is_draggable   = data.result.is_draggable;
+              self.is_resizable   = data.result.is_resizable;
+              self.is_scrollable  = data.result.is_scrollable;
+              self.is_minimizable = data.result.is_minimizable;
+              self.is_closable    = data.result.is_closable;
+              self.menu           = data.result.menu;
+              self.statusbar      = data.result.statusbar;
+              self.width          = parseInt(data.result.width, 10);
+              self.height         = parseInt(data.result.height, 10);
+              self.gravity        = data.result.gravity;
 
               callback(data.result['class']);
             });
