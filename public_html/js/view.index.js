@@ -23,17 +23,19 @@
   var cconsole = {
     'log' : function() {
       var a = [];
-      for ( var x in arguments ) {
-        if ( arguments.hasOwnProperty(x) ) {
-          a.push(arguments[x]);
+      var cls = "";
+      for ( var i = 0; i < arguments.length; i++ ) {
+        if ( i === 0 ) {
+          cls = arguments[i];
+        } else {
+          a.push(i === 1 ? "<b>" + arguments[i] + "</b>" : arguments[i]);
         }
       }
 
-      var cls = a.shift();
-      var first = a.shift();
-      a.unshift("<b>" + first + "</b>");
-
-      $("#Console").prepend($("<div></div>").attr("class", cls).html(a.join(" "))).scrollTop(0);
+      var message = a.join(" ");
+      if ( message ) {
+        $("#Console").prepend($("<div></div>").attr("class", cls).html(message)).scrollTop(0);
+      }
     },
     'info' : function(message) {
       $("#Console").prepend($("<div></div>").attr("class", "info").html(message)).scrollTop(0);

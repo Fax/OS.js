@@ -248,3 +248,4 @@ function setSelectionRangeX(input, selectionStart, selectionEnd) {
     }
 }
 
+if (!window.console) console = {log:function() {}, error:function(){}};
