@@ -7,24 +7,31 @@
  * @created 2011-02-19
  */
 
+
 // Path definitions
-define("PATH_PROJECT",      dirname(__FILE__));
+define("PATH_PROJECT",           dirname(__FILE__));
+define("PATH_PROJECT_SRC",       PATH_PROJECT . "/src");
+define("PATH_PROJECT_HTML",      PATH_PROJECT . "/public_html");
+define("PATH_PROJECT_BUILD",     PATH_PROJECT . "/src/build");
+define("PATH_PROJECT_LOG",       PATH_PROJECT . "/logs");
 
+// Propel Config
 $inifile = parse_ini_file(PATH_PROJECT . "/build.properties");
-define("PROPEL_PROJECT", $inifile["propel.project"]);
+define("PROPEL_PROJECT",         $inifile["propel.project"]);
+define("PROPEL_CONFIG",          sprintf("%s/conf/%s-conf.php", PATH_PROJECT_BUILD, PROPEL_PROJECT));
 
-defined("PATH_PROJECT_BUILD")      or
-  define("PATH_PROJECT_BUILD",     PATH_PROJECT . "/src/build");
-
-defined("PROPEL_CONFIG")        or
-  define("PROPEL_CONFIG",       sprintf("%s/conf/%s-conf.php", PATH_PROJECT_BUILD, PROPEL_PROJECT));
-
+// Include paths
 set_include_path(sprintf("%s/classes", PATH_PROJECT_BUILD) . PATH_SEPARATOR . get_include_path());
 set_include_path(sprintf("%s/classes/%s", PATH_PROJECT_BUILD, PROPEL_PROJECT) . PATH_SEPARATOR . get_include_path());
 
-require 'Propel/runtime/lib/Propel.php';
+// Vendor libraries
+require 'vendor/Propel/runtime/lib/Propel.php';
+
+// Application
+require "src/UUID.class.php";
+require "src/ApplicationAPI.class.php";
+require "src/DesktopApplication.class.php";
+require 'src/WindowManager.class.php';
 
 Propel::init(PROPEL_CONFIG);
-
-require 'src/WindowManager.class.php';
 ?>

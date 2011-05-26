@@ -7,11 +7,6 @@
  * @created 2011-05-22
  */
 
-require "UUID.class.php";
-require "ApplicationAPI.class.php";
-
-require "DesktopApplication.class.php";
-
 require "apps/SystemUser.class.php";
 require "apps/SystemSettings.class.php";
 require "apps/SystemLogout.class.php";

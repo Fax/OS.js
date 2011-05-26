@@ -212,6 +212,16 @@
         console.log("API logging out", save);
         cconsole.log("info", "API", "request logout");
 
+        if ( supports_html5_storage() ) {
+          API.session.save(save);
+        } else {
+          API.system.dialog("error", "Your browser does not support WebStorage!");
+        }
+      }
+    },
+
+    'session' : {
+      'save' : function(save) {
         save = save || false;
         var sess = save ? _Desktop.getSession() : false;
         $.post("/", {'ajax' : true, 'action' : 'logout', 'save' : save, 'session' : sess}, function(data) {
@@ -221,6 +231,22 @@
             API.system.dialog("error", data.error);
           }
         });
+      },
+
+      'restore' : function() {
+        var autolaunch = _PreviousSession.windows;
+        var el;
+        if ( autolaunch ) {
+          for ( var i = 0; i < autolaunch.length; i++ ) {
+            el = autolaunch[i];
+            var argv = el.argv || [];
+            var attrs = {
+              'position' : el.position,
+              'size'     : el.size
+            };
+            API.system.launch(el.name, argv, attrs);
+          }
+        }
       }
     }
 
@@ -1353,19 +1379,7 @@
 
         _Desktop = new Desktop(data.result.settings);
 
-        var autolaunch = _PreviousSession.windows;
-        var el;
-        if ( autolaunch ) {
-          for ( var i = 0; i < autolaunch.length; i++ ) {
-            el = autolaunch[i];
-            var argv = el.argv || [];
-            var attrs = {
-              'position' : el.position,
-              'size'     : el.size
-            };
-            API.system.launch(el.name, argv, attrs);
-          }
-        }
+        API.session.restore();
       } else {
         alert(data.error);
       }
