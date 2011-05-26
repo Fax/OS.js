@@ -22,7 +22,7 @@ class IndexView
    * @see View::$_aViewStyles
    */
   protected $_aViewStyles     = Array(
-    "/css/main.css" => Array("all"),
+    "/css/main.css"          => Array("all"),
     "/css/theme.default.css" => Array("all")
   );
 
@@ -30,8 +30,14 @@ class IndexView
    * @see View::$_aViewScripts
    */
   protected $_aViewScripts    = Array(
-    "/js/jquery.js" => Array(),
-    "/js/fileuploader.js" => Array()
+    "/js/json2.js"                       => Array(),
+    "/js/jquery.js"                      => Array(),
+    "/js/fileuploader.js"                => Array(),
+    "/js/jquery-ui-1.8.11.custom.min.js" => Array(),
+    "/js/sprintf-0.7-beta1.js"           => Array(),
+    "/js/main.js"                        => Array(),
+    "/js/view.index.js"                  => Array(),
+
   );
 
   /**
@@ -41,10 +47,6 @@ class IndexView
     parent::__construct(PROJECT_NAME, "view.index.tpl", null);
 
     $this->addViewStyle("/css/ui-lightness/jquery-ui-1.8.11.custom.css");
-    $this->addViewScript("/js/jquery-ui-1.8.11.custom.min.js");
-    $this->addViewScript("/js/sprintf-0.7-beta1.js");
-    $this->addViewScript("/js/main.js");
-    $this->addViewScript("/js/view.index.js");
   }
 
 }

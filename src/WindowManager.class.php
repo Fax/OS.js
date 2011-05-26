@@ -7,6 +7,7 @@
  * @created 2011-05-22
  */
 
+require "UUID.class.php";
 require "ApplicationAPI.class.php";
 
 require "DesktopApplication.class.php";
@@ -23,38 +24,33 @@ require "apps/ApplicationBrowser.class.php";
 require "apps/ApplicationViewer.class.php";
 
 /**
- * IndexViewContoller Class
+ * WindowManager Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package MyApplication
  * @class
  */
-class IndexViewController
-  extends ViewController
+class WindowManager
 {
-  /**
-   * @see ViewController::doGET()
-   */
-  public function doGET(Array $args, WebApplication $wa, $cached = false) {
-    if ( !$user = $wa->getUser() ) {
-      if ( ($user = UserQuery::create()->findPK(1)) ) {
-        $wa->login($user);
-      }
-    }
 
+  public static function initialize() {
+    return new WindowManager();
+  }
 
+  public function getUser() {
+    return UserQuery::create()->findPK(1);
+  }
+
+  public function doGET(Array $args) {
     // Upload "POST"
     if ( isset($args['ajax']) && isset($args['action']) && isset($args['qqfile']) ) {
-      return Response::createJSON(ApplicationAPI::upload());
+      return json_encode(ApplicationAPI::upload());
     }
 
     return false;
   }
 
-  /**
-   * @see ViewController::doPOST()
-   */
-  public function doPOST(Array $args, WebApplication $wa) {
+  public function doPOST(Array $args) {
 
     if ( sizeof($args) ) {
 
@@ -66,17 +62,17 @@ class IndexViewController
         } else if ( $args['action'] == "logout" ) {
 
           if ( $args['session'] && $args['save'] ) {
-            $wa->getUser()->setSavedSession(json_encode($args['session']));
+            $this->getUser()->setSavedSession(json_encode($args['session']));
           } else {
-            $wa->getUser()->setSavedSession(null);
+            $this->getUser()->setSavedSession(null);
           }
 
-          $wa->getUser()->save();
+          $this->getUser()->save();
 
           $json['success'] = true;
           $json['result'] = true;
         } else if ( $args['action'] == "user" ) {
-          if ( $user = $wa->getUser() ) {
+          if ( $user = $this->getUser() ) {
             $json['success'] = true;
             $json['result'] = Array(
               "Username"   => $user->getUsername(),
@@ -111,13 +107,13 @@ class IndexViewController
 
           $json = Array("success" => true, "error" => null, "result" => Array(
             "applications"   => $apps,
-            "settings"       => UserSetting::getUserSettings($wa->getUser()),
+            "settings"       => UserSetting::getUserSettings($this->getUser()),
             "mime_handlers"  => Array(
               "text/*"  => "ApplicationTextpad",
               "image/*" => "ApplicationViewer",
               "video/*" => "ApplicationViewer"
             ),
-            "session"        => json_decode($wa->getUser()->getSavedSession())
+            "session"        => json_decode($this->getUser()->getSavedSession())
           ));
         } else if ( $args['action'] == "register" ) {
           if ( $uuid = $args['uuid'] ) {
@@ -184,7 +180,7 @@ class IndexViewController
           }
         }
 
-        return Response::createJSON($json);
+        return json_encode($json);
       }
     }
 

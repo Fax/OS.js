@@ -10,21 +10,21 @@
 // Path definitions
 define("PATH_PROJECT",      dirname(__FILE__));
 
-// Project properties
-define("PROJECT_NAME",      "Another JSWM");
-define("PROJECT_CODENAME",  "MyApplication");
-define("PROJECT_LICENCE",   "MyApplicationLicence");
-define("PROJECT_VERSION",   "MyApplicationVersion");
-define("PROJECT_AUTHOR",    "MyApplicationAuthor");
-define("PROJECT_COPYRIGHT", "MyApplicationCopyright");
+$inifile = parse_ini_file(PATH_PROJECT . "/build.properties");
+define("PROPEL_PROJECT", $inifile["propel.project"]);
 
-// Includes
-require "SCore/header.php";
+defined("PATH_PROJECT_BUILD")      or
+  define("PATH_PROJECT_BUILD",     PATH_PROJECT . "/build");
 
-//require "src/DesktopApplication.class.php";
+defined("PROPEL_CONFIG")        or
+  define("PROPEL_CONFIG",       sprintf("%s/conf/%s-conf.php", PATH_PROJECT_BUILD, PROPEL_PROJECT));
 
-// URL mapping
-WebApplication::map(Array(
-));
+set_include_path(sprintf("%s/classes", PATH_PROJECT_BUILD) . PATH_SEPARATOR . get_include_path());
+set_include_path(sprintf("%s/classes/%s", PATH_PROJECT_BUILD, PROPEL_PROJECT) . PATH_SEPARATOR . get_include_path());
 
+require 'Propel/runtime/lib/Propel.php';
+
+Propel::init(PROPEL_CONFIG);
+
+require 'src/WindowManager.class.php';
 ?>

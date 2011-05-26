@@ -1,1 +1,26 @@
-config/localhost-runtime-conf.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <!-- Uncomment this if you have PEAR Log installed
+  <log>
+    <type>file</type>
+    <name>/path/to/propel.log</name>
+    <ident>propel-bookstore</ident>
+    <level>7</level>
+  </log>
+  -->
+  <propel>
+    <datasources default="ajwm">
+      <datasource id="ajwm">
+        <adapter>mysql</adapter> <!-- sqlite, mysql, myssql, oracle, or pgsql -->
+        <connection>
+          <dsn>mysql:host=localhost;dbname=ajwm</dsn>
+          <user>ajwm</user>
+          <password>S2cv6aHW5DG0</password>
+          <settings>
+            <setting id="charset">utf8</setting>
+          </settings>
+        </connection>
+      </datasource>
+    </datasources>
+  </propel>
+</config>
