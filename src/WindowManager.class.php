@@ -14,7 +14,6 @@ require "apps/SystemLogout.class.php";
 require "apps/ApplicationClock.class.php";
 require "apps/ApplicationFilemanager.class.php";
 require "apps/ApplicationTextpad.class.php";
-require "apps/ApplicationBrowser.class.php";
 require "apps/ApplicationViewer.class.php";
 
 /**
