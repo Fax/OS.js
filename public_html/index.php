@@ -41,6 +41,15 @@ header("Content-Type: text/html");
   <script type="text/javascript" src="/js/jquery-ui-1.8.11.custom.min.js"></script>
   <script type="text/javascript" src="/js/utils.js"></script>
   <script type="text/javascript" src="/js/main.js"></script>
+
+  <!-- Preloaded applications -->
+  <link rel="stylesheet" type="text/css" href="/css/sys.user.css" />
+  <link rel="stylesheet" type="text/css" href="/css/sys.settings.css" />
+  <link rel="stylesheet" type="text/css" href="/css/sys.logout.css" />
+
+  <script type="text/javascript" src="/js/sys.user.js"></script>
+  <script type="text/javascript" src="/js/sys.settings.js"></script>
+  <script type="text/javascript" src="/js/sys.logout.js"></script>
 </head>
 <body>
 

@@ -38,10 +38,12 @@ class SystemLogout
 
 EOHTML;
 
+    /*
     $this->resources = Array(
       "sys.logout.js",
       "sys.logout.css"
     );
+     */
     $this->width = 200;
     $this->height = 150;
     $this->gravity = "center";

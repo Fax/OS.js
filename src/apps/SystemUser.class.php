@@ -33,10 +33,13 @@ class SystemUser
 
 EOHTML;
 
+    /*
     $this->resources = Array(
       "sys.user.js",
       "sys.user.css"
     );
+     */
+
     $this->is_scrollable = false;
     $this->is_resizable = false;
     $this->is_maximizable = false;

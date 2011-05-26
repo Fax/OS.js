@@ -63,23 +63,28 @@ EOHTML;
     $this->content = <<<EOHTML
 
 <div class="SystemSettings">
-  <div class="SystemSettingsForm">
-    <form method="post" action="/" onsubmit="return false;">
+  <div class="SystemSettingsLoading"></div>
+  <div class="SystemSettingsInner">
+    <div class="SystemSettingsForm">
+      <form method="post" action="/" onsubmit="return false;">
 {$rows}
-    </form>
-  </div>
-  <div class="SystemSettingsButtons">
-    <button class="Save">Save</button>
-    <button class="Close">Close</button>
+      </form>
+    </div>
+    <div class="SystemSettingsButtons">
+      <button class="Save">Save</button>
+      <button class="Close">Close</button>
+    </div>
   </div>
 </div>
 
 EOHTML;
 
+    /*
     $this->resources = Array(
       "sys.settings.js",
       "sys.settings.css"
     );
+     */
     $this->width = 400;
     $this->height = 250;
     $this->is_maximizable = false;

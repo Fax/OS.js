@@ -39,6 +39,12 @@ var SystemSettings = (function() {
           api.user.settings.save(args);
         });
 
+
+        setTimeout(function() {
+          $(el).find(".SystemSettingsLoading").hide();
+          $(el).find(".SystemSettingsInner").show();
+        }, 300);
+
         this._super();
       }
     });
