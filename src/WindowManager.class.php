@@ -29,6 +29,10 @@ class WindowManager
 
   protected static $__Instance;
 
+  protected function __construct() {
+    session_start();
+  }
+
   public static function initialize() {
     if ( !self::$__Instance ) {
       self::$__Instance = new WindowManager();
@@ -93,7 +97,6 @@ class WindowManager
   }
 
   public function doPOST(Array $args) {
-
     if ( sizeof($args) ) {
 
       if ( isset($args['ajax']) ) {
@@ -104,6 +107,18 @@ class WindowManager
         } else if ( $args['action'] == "shutdown" ) {
           $json['success'] = true;
           $json['result'] = true;
+
+          $settings = isset($args['settings']) ? $args['settings'] : Array();
+          $session  = isset($args['session'])  ? $args['session']  : Array();
+
+          if ( $user = $this->getUser() ) {
+            $user->setSavedSettings(json_encode($settings));
+            $user->setSavedSession(json_encode($session));
+            $user->save();
+
+            $json['result'] = true;
+            $json['success'] = true;
+          }
         } else if ( $args['action'] == "user" ) {
           if ( $user = $this->getUser() ) {
             $json['success'] = true;

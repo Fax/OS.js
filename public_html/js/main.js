@@ -218,9 +218,7 @@
 
         API.session.save(save);
 
-        setTimeout(function() {
-          API.session.shutdown();
-        }, 10);
+        API.session.shutdown();
       }
     },
 
@@ -261,11 +259,15 @@
       },
 
       'shutdown' : function() {
-        $.post("/", {'ajax' : true, 'action' : 'shutdown'}, function(data) {
+        var ssess = _Desktop.getSession();
+        var ssett = _Settings.getSession();
+
+        $.post("/", {'ajax' : true, 'action' : 'shutdown', 'session' : ssess, 'settings' : ssett}, function(data) {
           if ( data.success ) {
             setTimeout(function() {
+              // FIXME: Do not use unload... make a safer way !
               $(window).unload();
-            }, 10);
+            }, 100);
           } else {
             API.system.dialog("error", data.error);
           }
@@ -382,6 +384,7 @@
   var SettingsManager = (function() {
 
     var _avail = {};
+    var _stores = [];
 
     return Class.extend({
 
@@ -389,15 +392,22 @@
         _avail = defaults;
 
         for ( var i in _avail ) {
-          if ( !localStorage.getItem(i) ) {
+          if ( _avail.hasOwnProperty(i) ) {
             if ( !_avail[i].hidden ) {
-              localStorage.setItem(i, _avail[i].value);
+              if ( !localStorage.getItem(i) ) {
+                localStorage.setItem(i, _avail[i].value);
+              }
+              _stores.push(i);
             }
           }
         }
 
-        console.log("SettingsManager initialized...", this, _avail);
+        console.log("SettingsManager initialized...", this, _avail, _stores);
         cconsole.log("init", "SettingsManager initialized...");
+      },
+
+      destroy : function() {
+        _avail = null;
       },
 
       _apply : function(settings) {
@@ -412,6 +422,7 @@
         if ( _avail[k] !== undefined ) {
           localStorage.setItem(k, v);
         }
+        //  if (e == QUOTA_EXCEEDED_ERR) { (try/catch)
       },
 
       _get : function(k, keys) {
@@ -428,6 +439,14 @@
           }
         }
         return ls;
+      },
+
+      getSession : function() {
+        var exp = {};
+        for ( var i = 0; i < _stores.length; i++ ) {
+          exp[_stores[i]] = localStorage.getItem(_stores[i]);
+        }
+        return exp;
       }
 
     });
@@ -1542,6 +1561,9 @@
   $(window).unload(function() {
     if ( _Desktop ) {
       _Desktop.destroy();
+    }
+    if ( _Settings ) {
+      _Settings.destroy();
     }
     if ( _Resources ) {
       _Resources.destroy();
