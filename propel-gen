@@ -1,4 +1,4 @@
 #!/bin/bash
 #
-PROPEL_GEN_HOME=./Propel
-./Propel/generator/bin/propel-gen $*
+PROPEL_GEN_HOME=./vendor/Propel
+./vendor/Propel/generator/bin/propel-gen $*

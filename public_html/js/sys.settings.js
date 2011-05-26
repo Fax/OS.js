@@ -13,25 +13,30 @@ var SystemSettings = (function() {
         var el = app.$element;
         var form = $(el).find("form");
 
+        $(form).find("input, select").each(function() {
+          if ( this.name ) {
+            var val = api.user.settings.get(this.name);
+            if ( val ) {
+              $(this).val(val);
+              $(form).find("input[name='fake_" + this.name + "']").val(val);
+            }
+          }
+        });
+
+        $(form).find("button").click(function() {
+          var txt = $(this).parent().find("input");
+          console.log(txt);
+          api.system.dialog_file(function(fname) {
+            $(txt).val(fname);
+          });
+        });
+
         $(el).find('button.Close').click(function() {
           $(el).find(".ActionClose").click();
         });
         $(el).find('button.Save').click(function() {
           var args = form.serializeObject();
-
-          app.event(this, "save", args, function(result, error) {
-            if ( error ) {
-              api.system.dialog("error", error);
-            } else {
-              if ( result ) {
-                api.system.dialog("info", "Your settings have been saved");
-                api.user.settings.load(result);
-              } else {
-                api.system.dialog("error", "Your settings were not saved!");
-              }
-            }
-          });
-
+          api.user.settings.save(args);
         });
 
         this._super();

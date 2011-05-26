@@ -36,6 +36,45 @@ class WindowManager
     return self::$__Instance;
   }
 
+  public static function getSettings() {
+    $apps = Array();
+
+    foreach ( DesktopApplication::$Registered as $c ) {
+      if ( !constant("{$c}::APP_HIDDEN") ) {
+        $apps[$c] = Array(
+          "title" => constant("{$c}::APP_TITLE"),
+          "icon" => constant("{$c}::APP_ICON")
+        );
+      }
+    }
+
+    return Array(
+      "desktop.wallpaper.path" => Array(
+        "type"  => "filename",
+        "value" => "/02555_cherryblossoms_2560x1600.jpg"
+      ),
+      "desktop.theme" => Array(
+        "type"    => "array",
+        "options" => Array("dark", "light"),
+        "value"   => "dark"
+      ),
+      "system.app.registered" => Array(
+        "type"    => "array",
+        "options" => $apps,
+        "hidden"  => true
+      ),
+      "system.app.handlers" => Array(
+        "type" => "array",
+        "hidden" => true,
+        "options" => Array(
+          "text/*"  => "ApplicationTextpad",
+          "image/*" => "ApplicationViewer",
+          "video/*" => "ApplicationViewer"
+      )
+      )
+    );
+  }
+
   public static function get() {
     return self::$__Instance;
   }
@@ -88,26 +127,9 @@ class WindowManager
             $json['error'] = "Application '$class' does not exist";
           }
         } else if ( $args['action'] == "init" ) {
-          $apps = Array();
-
-          foreach ( DesktopApplication::$Registered as $c ) {
-            if ( !constant("{$c}::APP_HIDDEN") ) {
-              $apps[$c] = Array(
-                "title" => constant("{$c}::APP_TITLE"),
-                "icon" => constant("{$c}::APP_ICON")
-              );
-            }
-          }
 
           $json = Array("success" => true, "error" => null, "result" => Array(
-            "applications"   => $apps,
-            "settings"       => UserSetting::getUserSettings($this->getUser()),
-            "mime_handlers"  => Array(
-              "text/*"  => "ApplicationTextpad",
-              "image/*" => "ApplicationViewer",
-              "video/*" => "ApplicationViewer"
-            ),
-            "session"        => json_decode($this->getUser()->getSavedSession())
+            "settings" => self::getSettings()
           ));
         } else if ( $args['action'] == "register" ) {
           if ( $uuid = $args['uuid'] ) {

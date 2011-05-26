@@ -5,20 +5,18 @@
 
   var ANIMATION_SPEED = 400;
 
-  var _ApplicationRegister = {};
   var _Resources           = null;
+  var _Settings            = null;
   var _Desktop             = null;
   var _Window              = null;
   var _TopIndex            = 11;
-  var _MimeHandlers        = {};
 
   function __null() {
-    _ApplicationRegister = {};
     _Resources           = null;
+    _Settings            = null;
     _Desktop             = null;
     _Window              = null;
     _TopIndex            = 11;
-    _MimeHandlers        = {};
   }
 
   var cconsole = {
@@ -76,7 +74,9 @@
       'run' : function(path, mime) {
         cconsole.log("info", "API", "run", mime, path);
         if ( mime ) {
-          forEach(_MimeHandlers, function(mt, mapp, mind, mlast) {
+          var apps = _Settings._get("system.app.handlers", true);
+          console.log(apps);
+          forEach(apps, function(mt, mapp, mind, mlast) {
             var mte = mt.split("/");
             var mbase = mte.shift();
             var mtype = mte.shift();
@@ -201,11 +201,13 @@
 
     'user' : {
       'settings' : {
-        'load' : function(settings) {
-          console.log("API loading user settings", settings);
-          cconsole.log("info", "API", "loaded user settings");
+        'save' : function(settings) {
+          _Settings._apply(settings);
+          _Desktop.applySettings();
+        },
 
-          _Desktop.loadSettings(settings);
+        'get' : function(k) {
+          return _Settings._get(k);
         }
       },
 
@@ -347,6 +349,62 @@
 
   })();
 
+
+  var SettingsManager = (function() {
+
+    var _avail = {};
+
+    return Class.extend({
+
+      init : function(defaults) {
+        _avail = defaults;
+
+        for ( var i in _avail ) {
+          if ( !localStorage.getItem(i) ) {
+            if ( !_avail[i].hidden ) {
+              localStorage.setItem(i, _avail[i].value);
+            }
+          }
+        }
+
+        console.log("SettingsManager initialized...", this, _avail);
+        cconsole.log("init", "SettingsManager initialized...");
+      },
+
+      _apply : function(settings) {
+        for ( var i in settings ) {
+          if ( settings.hasOwnProperty(i) ) {
+            this._set(i, settings[i]);
+          }
+        }
+      },
+
+      _set : function(k, v) {
+        if ( _avail[k] !== undefined ) {
+          localStorage.setItem(k, v);
+        }
+      },
+
+      _get : function(k, keys) {
+        var ls = undefined;
+        if ( _avail[k] !== undefined ) {
+          ls = localStorage.getItem(k);
+
+          if ( ls === null || ls === undefined || ls === "undefined" ) {
+            if ( keys ) {
+              ls = _avail[k].options;
+            } else {
+              ls = _avail[k].value;
+            }
+          }
+        }
+        return ls;
+      }
+
+    });
+
+  })();
+
   /////////////////////////////////////////////////////////////////////////////
   // DESKTOP
   /////////////////////////////////////////////////////////////////////////////
@@ -360,7 +418,7 @@
       init : function(settings) {
         this.$element = $("#Desktop");
         this.stack = [];
-        this.loadSettings(settings);
+        this.applySettings();
 
         this.panel = new Panel();
 
@@ -457,29 +515,30 @@
         this.panel.redraw(this, win);
       },
 
-      loadSettings : function(settings) {
-        if ( settings ) {
-          var wp = settings['desktop.wallpaper.path'];
-          if ( wp ) {
-            this.setWallpaper(wp);
-          }
-          var theme = settings['desktop.theme'];
-          if ( theme ) {
-            this.setTheme(theme);
-          }
+      applySettings : function() {
+        var wp = _Settings._get('desktop.wallpaper.path');
+        if ( wp ) {
+          this.setWallpaper(wp);
         }
+        var theme = _Settings._get('desktop.theme');
+        if ( theme ) {
+          this.setTheme(theme);
+        }
+
+        console.log("Applied user settings", [wp, theme]);
+        cconsole.log("info", "API", "applied user settings");
       },
 
       setWallpaper : function(wp) {
         if ( wp ) {
-          $("body").css("background", "url('/media/" + wp + "') center center");
+          $("body").css("background", "url('/media" + wp + "') center center");
         } else {
           $("body").css("background", "url('/img/blank.gif')");
         }
       },
 
       setTheme : function(theme) {
-        var cname = "Theme" + theme;
+        var cname = "Theme" + theme.capitalize();
         var fname = "theme." + theme.toLowerCase() + ".css";
 
         _Resources.addResource(fname);
@@ -530,9 +589,10 @@
 
       // Fill menu
       var o;
-      for ( var a in _ApplicationRegister ) {
-        if ( _ApplicationRegister.hasOwnProperty(a) ) {
-          o = _ApplicationRegister[a];
+      var apps = _Settings._get("system.app.registered", true);
+      for ( var a in apps ) {
+        if ( apps.hasOwnProperty(a) ) {
+          o = apps[a];
           this.start_menu.create_item(o.title, o.icon, "launch_" + a);
         }
       }
@@ -1394,13 +1454,8 @@
     $.post("/", {'ajax' : true, 'action' : 'init'}, function(data) {
 
       if ( data.success ) {
-        _ApplicationRegister = data.result.applications;
-        _MimeHandlers        = data.result.mime_handlers;
-
-        console.log("ApplicationRegister", _ApplicationRegister);
-        console.log("MimeHandlers", _MimeHandlers);
-
-        _Desktop = new Desktop(data.result.settings);
+        _Settings = new SettingsManager(data.result.settings);
+        _Desktop = new Desktop();
 
         API.session.restore();
       } else {

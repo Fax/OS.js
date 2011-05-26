@@ -23,44 +23,49 @@ class SystemSettings
 
   public function __construct() {
 
-    $usettings = UserSetting::getUserSettings(WindowManager::get()->getUser());
-    $asettings = UserSetting::$AvailableSettings;
-    $lsettings = UserSetting::$LabelSettings;
+    $rows = "";
+    foreach ( WindowManager::getSettings() as $k => $v ) {
 
-    $inner = "";
-    foreach ( $asettings as $key => $value ) {
-      $options = "";
-      $label   = htmlspecialchars($lsettings[$key]);
-      $current = $usettings[$key];
+      if ( isset($v['hidden']) && ($v['hidden'] === true) )
+        continue;
 
-      foreach ( $value as $avail ) {
-        $lvalue  = htmlspecialchars($avail);
-        $options .= sprintf("<option value=\"%s\" %s>%s</option>", $lvalue, ($avail == $current ? 'selected="selected"' : ""), $lvalue);
+      $input = "";
+      $value = isset($v['value']) ? $v['value'] : null;
+      if ( $v['type'] == "array" ) {
+        $opts = "";
+        if ( isset($v['options']) ) {
+          foreach ( $v['options'] as $ok => $ov ) {
+            $ov = htmlspecialchars($ov);
+            $opts .= "<option value=\"{$ov}\">{$ov}</option>";
+          }
+        }
+        $input = "<select name=\"{$k}\">{$opts}</select>";
+      } else if ( $v['type'] == "filename" ) {
+        $input = "<input type=\"text\" name=\"fake_{$k}\" value=\"{$value}\" disabled=\"disabled\" />";
+        $input .= "<input type=\"hidden\" name=\"{$k}\" value=\"{$value}\" />";
+        $input .= "<button>...</button>";
+      } else {
+        $input = "<input type=\"text\" name=\"{$k}\" value=\"{$value}\" />";
       }
 
+      $rows .= <<<EOHTML
 
-      $inner .= <<<EOHTML
-
-<h1>{$label}</h1>
 <div>
-  <select name="{$key}">
-{$options}
-  </select>
+  <h1>{$k}</h1>
+{$input}
 </div>
+
 
 EOHTML;
     }
+
 
     $this->content = <<<EOHTML
 
 <div class="SystemSettings">
   <div class="SystemSettingsForm">
     <form method="post" action="/" onsubmit="return false;">
-      <table>
-        <tbody>
-{$inner}
-        </tbody>
-      </table>
+{$rows}
     </form>
   </div>
   <div class="SystemSettingsButtons">
@@ -83,13 +88,6 @@ EOHTML;
   }
 
   public static function Event($uuid, $action, Array $args) {
-    if ( $action == "save" ) {
-      $user = WindowManager::get()->getUser();
-      UserSetting::saveUserSettings($user, $args);
-      return UserSetting::getUserSettings($user);;
-    }
-
-    return false;
   }
 }
 

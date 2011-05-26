@@ -255,3 +255,7 @@ function setSelectionRangeX(input, selectionStart, selectionEnd) {
 function supports_html5_storage() {
   return ('localStorage' in window) && window['localStorage'] !== null;
 }
+
+String.prototype.capitalize = function() {
+  return this.charAt(0).toUpperCase() + this.slice(1);
+};

@@ -16,6 +16,7 @@
     <column name="deleted_on" type="TIMESTAMP" />
     <column name="last_activity_on" type="TIMESTAMP" />
     <column name="saved_session" type="longvarchar" />
+    <column name="saved_settings" type="longvarchar" />
 
     <validator column="username">
       <rule name="unique" message="already exists" />
@@ -35,16 +36,6 @@
     <behavior name="soft_delete">
       <parameter name="deleted_column" value="deleted_on" />
     </behavior>
-  </table>
-
-  <table name="user_setting" phpName="UserSetting">
-    <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
-    <column name="user_id" type="integer" />
-    <foreign-key foreignTable="user" onDelete="cascade">
-      <reference local="user_id" foreign="id"/>
-    </foreign-key>
-    <column name="key" type="varchar" size="64" required="true" />
-    <column name="value" type="varchar" size="255" required="true" />
   </table>
 
 </database>
