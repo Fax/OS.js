@@ -47,24 +47,4 @@
     <column name="value" type="varchar" size="255" required="true" />
   </table>
 
-  <!-- =========================================================== -->
-  <!--                         SPOOLERS                            -->
-  <!-- =========================================================== -->
-
-  <table name="spool_mail" phpName="SpoolerMail">
-    <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
-    <column name="status" type="tinyint" required="true" default="0" />
-    <column name="log" type="longvarchar" required="false" />
-    <column name="content" type="longvarchar" required="true" />
-    <behavior name="timestampable" />
-  </table>
-
-  <table name="spool_sms" phpName="SpoolerSMS">
-    <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
-    <column name="status" type="tinyint" required="true" default="0" />
-    <column name="log" type="longvarchar" required="false" />
-    <column name="content" type="longvarchar" required="true" />
-    <behavior name="timestampable" />
-  </table>
-
 </database>

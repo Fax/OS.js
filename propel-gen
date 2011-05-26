@@ -1,0 +1,4 @@
+#!/bin/bash
+#
+PROPEL_GEN_HOME=./Propel
+./Propel/generator/bin/propel-gen $*

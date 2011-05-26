@@ -14,7 +14,7 @@ $inifile = parse_ini_file(PATH_PROJECT . "/build.properties");
 define("PROPEL_PROJECT", $inifile["propel.project"]);
 
 defined("PATH_PROJECT_BUILD")      or
-  define("PATH_PROJECT_BUILD",     PATH_PROJECT . "/build");
+  define("PATH_PROJECT_BUILD",     PATH_PROJECT . "/src/build");
 
 defined("PROPEL_CONFIG")        or
   define("PROPEL_CONFIG",       sprintf("%s/conf/%s-conf.php", PATH_PROJECT_BUILD, PROPEL_PROJECT));

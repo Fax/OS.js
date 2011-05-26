@@ -4,7 +4,7 @@
  */
 // Inspired by base2 and Prototype
 (function(){
-  var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
+  var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? (/\b_super\b/) : (/.*/);
   // The base Class implementation (does nothing)
   this.Class = function(){};
   
@@ -173,7 +173,7 @@ function getCaret(el) {
     el.focus(); 
 
     var r = document.selection.createRange(); 
-    if (r == null) { 
+    if (r === null) { 
       return 0; 
     } 
 
@@ -246,6 +246,10 @@ function setSelectionRangeX(input, selectionStart, selectionEnd) {
       input.focus();
       input.setSelectionRange(selectionStart, selectionEnd);
     }
+}
+
+function supports_html5_storage() {
+  return ('localStorage' in window) && window['localStorage'] !== null;
 }
 
 if (!window.console) console = {log:function() {}, error:function(){}};
