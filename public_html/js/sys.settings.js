@@ -25,10 +25,9 @@ var SystemSettings = (function() {
 
         $(form).find("button").click(function() {
           var txt = $(this).parent().find("input");
-          console.log(txt);
           api.system.dialog_file(function(fname) {
             $(txt).val(fname);
-          });
+          }, ["image/*"]);
         });
 
         $(el).find('button.Close').click(function() {

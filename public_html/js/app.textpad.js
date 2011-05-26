@@ -20,14 +20,12 @@ var ApplicationTextpad = (function() {
     function _open(callback) {
       api.system.dialog_file(function(fname) {
         callback(fname);
-      });
+      }, ["text/*"]);
     }
 
     function _update(file, el) {
       app.opts = file;
       argv['path'] = file;
-
-      console.log(argv, el);
 
       $(el).find(".WindowTopInner span").html(app.title + ": " + (file || "New file"));
     }

@@ -25,7 +25,7 @@ if ( !($json = $wm->doPOST($_POST)) === false ) {
 header("Content-Type: text/html");
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" manifest="cache.manifest">
 <head>
   <title>Another JSWM</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />

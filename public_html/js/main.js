@@ -137,11 +137,12 @@
       },
 
       'dialog_upload' : function(clb_finish, clb_progress, clb_cancel) {
-        _Desktop.addWindow(new OperationDialog('upload', 'Uploading file...', clb_finish, clb_progress, clb_cancel));
+        _Desktop.addWindow(new OperationDialog('upload', 'Uploading file...', null, clb_finish, clb_progress, clb_cancel));
       },
 
-      'dialog_file' : function(clb_finish) {
-        _Desktop.addWindow(new OperationDialog('file', 'Choose file...', clb_finish));
+      'dialog_file' : function(clb_finish, mime_filter) {
+        mime_filter = mime_filter || [];
+        _Desktop.addWindow(new OperationDialog('file', 'Choose file...', mime_filter, clb_finish));
       }
     },
 
@@ -287,6 +288,16 @@
         this.resources = [];
         this.links = [];
 
+        /*
+        window.addEventListener('offline', function() {
+          if(navigator.onLine == false) {
+            alert('We went offline');
+          } else {
+            alert('We are online again!');
+          }
+        }, true);
+        */
+
         console.log("ResourceManager initialized...", this);
         cconsole.log("init", "ResourceManager initialized...");
       },
@@ -298,6 +309,26 @@
 
         this.resources = null;
         this.links = null;
+      },
+
+      updateManifest : function() {
+        var cache = window.applicationCache;
+
+        var updateCache = function() {
+          cache.swapCache();
+          setTimeout(function() {
+            cache.removeEventListener('updateready', updateCache, false);
+          }, 0);
+        };
+
+        // Swap cache with updated data
+        cache.addEventListener('updateready', updateCache, false);
+
+        // Update cached data and call updateready listener after
+        if ( cache.status == cache.UPDATEREADY ) {
+          cache.update();
+        }
+
       },
 
       hasResource : function(res) {
@@ -608,7 +639,7 @@
         $(this).find("ul").hide();
       });
 
-      $(".PanelItemMenu li, .PanelItemLauncher").click(function() {
+      $(".PanelItemMenu li, .PanelItemLauncher").click(function(ev) {
         var app = $(this).find("span").attr("class").replace("launch_", "");
         API.system.launch(app);
       });
@@ -1219,7 +1250,7 @@
 
   var OperationDialog = Window.extend({
 
-    init : function(type, message, clb_finish, clb_progress, clb_cancel) {
+    init : function(type, message, argv, clb_finish, clb_progress, clb_cancel) {
       this._super("OperationDialog", true, {'type' : type});
 
       this.width          = 400;
@@ -1228,6 +1259,7 @@
       this.is_minimizable = true;
       this.uploader = null;
 
+      argv         = argv         || {};
       clb_finish   = clb_finish   || function() {};
       clb_progress = clb_progress || function() {};
       clb_cancel   = clb_cancel   || function() {};
@@ -1302,7 +1334,7 @@
         var inp = $(this.content).find("input[type='text']");
         var prev = null;
 
-        API.system.call("readdir", "/", function(result, error) {
+        API.system.call("readdir", {'path' : "/", 'mime' : argv}, function(result, error) {
           ul.find("li").remove();
           if ( error === null ) {
             for ( var f in result ) {

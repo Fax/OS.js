@@ -180,7 +180,11 @@ class WindowManager
             }
 
           } else if ( $method == "readdir" ) {
-            if ( ($items = ApplicationAPI::readdir($argv)) !== false) {
+            $path    = $argv['path'];
+            $ignores = isset($argv['ignore']) ? $argv['ignore'] : null;
+            $mime    = isset($argv['mime']) ? ($argv['mime'] ? $argv['mime'] : Array()) : Array();
+
+            if ( ($items = ApplicationAPI::readdir($path, $ignores, $mime)) !== false) {
               $json['result'] = $items;
               $json['success'] = true;
             } else {

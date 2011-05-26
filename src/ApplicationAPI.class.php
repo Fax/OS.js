@@ -36,7 +36,7 @@ class ApplicationAPI
     return $result;
   }
 
-  public static function readdir($path, Array $ignores = null) {
+  public static function readdir($path, Array $ignores = null, Array $mimes = Array()) {
     if ( $ignores === null ) {
       $ignores = Array(".", "..");
     }
@@ -72,15 +72,35 @@ class ApplicationAPI
           if ( !is_dir($abs_path) ) {
             $icon  = "mimetypes/binary.png";
             $type  = "file";
-            $fsize = filesize($abs_path);
 
             $finfo = finfo_open(FILEINFO_MIME);
             $mime  = explode("; charset=", finfo_file($finfo, $abs_path));
             $mime  = reset($mime);
+            $mmime = strstr($mime, "/", true);
             finfo_close($finfo);
 
-            $tmp_mime = explode("/", $mime);
-            switch ( reset($tmp_mime) ) {
+            $break = false;
+            foreach ( $mimes as $m ) {
+              if ( preg_match("/\/\*$/", $m) ) {
+                if ( strstr($m, "/", true) !== $mmime ) {
+                  $break = true;
+                  break;
+                }
+              } else {
+                if ( !$mime == $m ) {
+                  $break = true;
+                  break;
+                }
+              }
+            }
+
+            if ( $break ) {
+              continue;
+            }
+
+            $fsize = filesize($abs_path);
+
+            switch ( $mmime ) {
               case "image" :
                 $icon = "mimetypes/image-x-generic.png";
               break;
