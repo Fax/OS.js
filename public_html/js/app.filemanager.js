@@ -169,7 +169,8 @@ var ApplicationFilemanager = (function($, undefined) {
 
         $(el).find(".WindowMenu .cmd_Upload").parent().click(function() {
           api.system.dialog_upload(function() {
-            chdir(_CurrentDir);
+            //chdir(_CurrentDir);
+            chdir("/");
           });
         });
 

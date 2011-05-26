@@ -101,8 +101,18 @@ class ApplicationAPI
             $fsize = filesize($abs_path);
 
             switch ( $mmime ) {
+              case "application" :
+                switch ( $mime ) {
+                  case "application/ogg" :
+                    $icon = "mimetypes/video-x-generic.png"; // TODO EXTENSION CHECK
+                  break;
+                }
+              break;
               case "image" :
                 $icon = "mimetypes/image-x-generic.png";
+              break;
+              case "video" :
+                $icon = "mimetypes/video-x-generic.png";
               break;
               case "text" :
                 $icon = "mimetypes/text-x-generic.png";

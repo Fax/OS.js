@@ -73,7 +73,8 @@ class WindowManager
         "options" => Array(
           "text/*"  => "ApplicationTextpad",
           "image/*" => "ApplicationViewer",
-          "video/*" => "ApplicationViewer"
+          "video/*" => "ApplicationViewer",
+          "application/ogg" => "ApplicationViewer"
       )
       )
     );

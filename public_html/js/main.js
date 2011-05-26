@@ -87,16 +87,18 @@
                 console.log("API found suited application for", mime, ":", mapp);
                 cconsole.log("info", "API", "found application for", mime, "=>", mapp);
 
-                API.system.launch(mapp, {'path' : path});
+                API.system.launch(mapp, {'path' : path, 'mime' : mime});
                 return false;
               }
-            }/* else {
-
+            } else {
               if ( mt == mime ) {
-                API.launch(mapp);
+                console.log("API found suited application for", mime, ":", mapp);
+                cconsole.log("info", "API", "found application for", mime, "=>", mapp);
+
+                API.system.launch(mapp, {'path' : path, 'mime' : mime});
                 return false;
               }
-            }*/
+            }
 
             if ( mind == mlast ) {
               API.system.dialog("error", "Found no suiting application for '" + path + "'");
