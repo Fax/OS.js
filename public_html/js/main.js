@@ -215,13 +215,11 @@
         console.log("API logging out", save);
         cconsole.log("info", "API", "request logout");
 
-        if ( supports_html5_storage() ) {
-          API.session.save(save);
-        } else {
-          API.system.dialog("error", "Your browser does not support WebStorage!");
-        }
+        API.session.save(save);
 
-        API.session.shutdown();
+        setTimeout(function() {
+          API.session.shutdown();
+        }, 10);
       }
     },
 
@@ -1415,6 +1413,12 @@
 
   $(window).ready(function() {
     cconsole.info("********* WARMING UP *********");
+
+    if ( !supports_html5_storage() ) {
+      alert("Your browser does not support WebStorage. Cannot continue...");
+      return;
+    }
+
 
     /*
     $(window).scroll(function(ev) {
