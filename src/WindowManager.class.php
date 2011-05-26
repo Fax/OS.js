@@ -28,8 +28,17 @@ require "apps/ApplicationViewer.class.php";
 class WindowManager
 {
 
+  protected static $__Instance;
+
   public static function initialize() {
-    return new WindowManager();
+    if ( !self::$__Instance ) {
+      self::$__Instance = new WindowManager();
+    }
+    return self::$__Instance;
+  }
+
+  public static function get() {
+    return self::$__Instance;
   }
 
   public function getUser() {
@@ -54,16 +63,7 @@ class WindowManager
 
         if ( $args['action'] == "boot" ) {
 
-        } else if ( $args['action'] == "logout" ) {
-
-          if ( $args['session'] && $args['save'] ) {
-            $this->getUser()->setSavedSession(json_encode($args['session']));
-          } else {
-            $this->getUser()->setSavedSession(null);
-          }
-
-          $this->getUser()->save();
-
+        } else if ( $args['action'] == "shutdown" ) {
           $json['success'] = true;
           $json['result'] = true;
         } else if ( $args['action'] == "user" ) {

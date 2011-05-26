@@ -8,7 +8,6 @@
   var _Window              = null;
   var _TopIndex            = 11;
   var _MimeHandlers        = {};
-  var _PreviousSession     = null;
 
   function __null() {
     _ApplicationRegister = {};
@@ -17,7 +16,6 @@
     _Window              = null;
     _TopIndex            = 11;
     _MimeHandlers        = {};
-    _PreviousSession     = null;
   }
 
   var cconsole = {
@@ -217,36 +215,57 @@
         } else {
           API.system.dialog("error", "Your browser does not support WebStorage!");
         }
+
+        API.session.shutdown();
       }
     },
 
     'session' : {
       'save' : function(save) {
         save = save || false;
-        var sess = save ? _Desktop.getSession() : false;
-        $.post("/", {'ajax' : true, 'action' : 'logout', 'save' : save, 'session' : sess}, function(data) {
+        var sess = save ? _Desktop.getSession() : {};
+
+        localStorage.setItem('session', JSON.stringify(sess));
+      },
+
+      'restore' : function() {
+
+        if ( supports_html5_storage() ) {
+          var item = localStorage.getItem('session');
+          if ( item ) {
+            var session = JSON.parse(item);
+
+            console.log("API restore session", session);
+            cconsole.log("info", "API", "RESTORING SESSION");
+
+            var el;
+            var autolaunch = session.windows;
+            if ( autolaunch ) {
+              for ( var i = 0; i < autolaunch.length; i++ ) {
+                el = autolaunch[i];
+                var argv = el.argv || [];
+                var attrs = {
+                  'position' : el.position,
+                  'size'     : el.size
+                };
+                API.system.launch(el.name, argv, attrs);
+              }
+            }
+          }
+        }
+
+      },
+
+      'shutdown' : function() {
+        $.post("/", {'ajax' : true, 'action' : 'shutdown'}, function(data) {
           if ( data.success ) {
-            $(window).unload();
+            setTimeout(function() {
+              $(window).unload();
+            }, 10);
           } else {
             API.system.dialog("error", data.error);
           }
         });
-      },
-
-      'restore' : function() {
-        var autolaunch = _PreviousSession.windows;
-        var el;
-        if ( autolaunch ) {
-          for ( var i = 0; i < autolaunch.length; i++ ) {
-            el = autolaunch[i];
-            var argv = el.argv || [];
-            var attrs = {
-              'position' : el.position,
-              'size'     : el.size
-            };
-            API.system.launch(el.name, argv, attrs);
-          }
-        }
       }
     }
 
@@ -450,7 +469,7 @@
         if ( wp ) {
           $("body").css("background", "url('/media/" + wp + "') center center");
         } else {
-          $("body").css("background", "url('about:blank')");
+          $("body").css("background", "url('/img/blank.gif')");
         }
       },
 
@@ -1371,11 +1390,9 @@
       if ( data.success ) {
         _ApplicationRegister = data.result.applications;
         _MimeHandlers        = data.result.mime_handlers;
-        _PreviousSession     = data.result.session;
 
         console.log("ApplicationRegister", _ApplicationRegister);
         console.log("MimeHandlers", _MimeHandlers);
-        console.log("PreviousSession", _PreviousSession);
 
         _Desktop = new Desktop(data.result.settings);
 

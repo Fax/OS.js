@@ -23,7 +23,7 @@ class SystemSettings
 
   public function __construct() {
 
-    $usettings = UserSetting::getUserSettings(WebApplication::get()->getUser());
+    $usettings = UserSetting::getUserSettings(WindowManager::get()->getUser());
     $asettings = UserSetting::$AvailableSettings;
     $lsettings = UserSetting::$LabelSettings;
 
@@ -84,7 +84,7 @@ EOHTML;
 
   public static function Event($uuid, $action, Array $args) {
     if ( $action == "save" ) {
-      $user = WebApplication::get()->getUser();
+      $user = WindowManager::get()->getUser();
       UserSetting::saveUserSettings($user, $args);
       return UserSetting::getUserSettings($user);;
     }
