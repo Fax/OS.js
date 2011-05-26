@@ -115,7 +115,7 @@ var ApplicationFilemanager = (function($, undefined) {
         };
 
         function chdir(dir, hist) {
-          app.event(this, "browse", {"path" : dir, "view" : self.argv['view_type']}, function(result, error) {
+          app.event(self, "browse", {"path" : dir, "view" : self.argv['view_type']}, function(result, error) {
             _destroyView();
 
             if ( error ) {

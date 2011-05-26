@@ -11,7 +11,6 @@ require "apps/SystemUser.class.php";
 require "apps/SystemSettings.class.php";
 require "apps/SystemLogout.class.php";
 
-// TODO: On-Demand
 require "apps/ApplicationClock.class.php";
 require "apps/ApplicationFilemanager.class.php";
 require "apps/ApplicationTextpad.class.php";

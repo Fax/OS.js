@@ -1,5 +1,8 @@
 (function($, undefined) {
 
+  // Override for browsers without console
+  if (!window.console) console = {log:function() {}, error:function(){}};
+
   var ANIMATION_SPEED = 400;
 
   var _ApplicationRegister = {};
@@ -324,7 +327,9 @@
         this.links.push(el);
 
         // FIXME: Add timeout here !!!
-        if ($.browser.msie) { $('head').html($('head').html()); } 
+        if ($.browser.msie) {
+          $('head').html($('head').html());
+        }
       },
 
       addResources : function(res, callback) {
@@ -679,9 +684,10 @@
     },
 
     event : function(app, ev, args, callback) {
+
       if ( this.uuid ) {
         var self = this;
-        var pargs = {'ajax' : true, 'action' : 'event', 'uuid' : self.uuid, 'instance' : {'name' : self.name, 'action' : ev, 'args' : args }};
+        var pargs = {'ajax' : true, 'action' : 'event', 'cname' : app.name ,'uuid' : self.uuid, 'instance' : {'name' : self.name, 'action' : ev, 'args' : args }};
         cconsole.log("event", "-&gt; Window Event: Interaction!", self.uuid);
         $.post("/", pargs, function(data) {
           console.log('Event Window', self, self.uuid, pargs, data);

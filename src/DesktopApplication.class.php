@@ -39,7 +39,8 @@ class DesktopApplication
   protected $statusbar       = false;
   protected $accept_mime     = Array(); // TODO: Add here, remove from global?!
 
-  public static $Registered = Array();
+  public static $Registered = Array(
+  );
 
   public function __construct($title, $icon, $hidden) {
     $this->uuid   = UUID::v4();
