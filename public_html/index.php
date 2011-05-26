@@ -23,6 +23,10 @@ if ( !($json = $wm->doPOST($_POST)) === false ) {
 }
 
 header("Content-Type: text/html");
+header("Expires: Fri, 01 Jan 2010 05:00:00 GMT");
+header("Cache-Control: maxage=1");
+header("Cache-Control: no-cache");
+header("Pragma: no-cache");
 ?>
 <!DOCTYPE html>
 <html lang="en">
