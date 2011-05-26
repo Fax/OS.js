@@ -375,6 +375,13 @@ body {
   width : 100%;
 }
 
+.OperationDialog li.even {
+  background : #fff;
+}
+.OperationDialog li.odd {
+  background : #e6e6e6;
+}
+
 
 #ContextMenu {
   position : absolute;

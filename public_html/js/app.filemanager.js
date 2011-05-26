@@ -110,6 +110,10 @@ var ApplicationFilemanager = (function($, undefined) {
 
         var _destroyView = function() {
           $(el).find(".ApplicationFilemanagerMain .Inner").unbind();
+          $(el).find(".ApplicationFilemanagerMain ul").die();
+          $(el).find(".ApplicationFilemanagerMain ul").unbind();
+          $(el).find(".ApplicationFilemanagerMain table").die();
+          $(el).find(".ApplicationFilemanagerMain table").unbind();
           $(el).find(".ApplicationFilemanagerMain ul").remove();
           $(el).find(".ApplicationFilemanagerMain table").remove();
         };

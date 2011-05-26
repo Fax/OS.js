@@ -457,8 +457,10 @@
       },
 
       destroy : function() {
-        //$.die(); // FIXME
-        //$.unbind();
+        try {
+          $(document).die();
+          $(document).unbind();
+        } catch ( eee ) { }
 
         this.setWallpaper(null);
         this.panel.destroy();
@@ -1333,47 +1335,82 @@
         var ul = $(this.content).find("ul");
         var inp = $(this.content).find("input[type='text']");
         var prev = null;
+        var current_dir = "";
 
-        API.system.call("readdir", {'path' : "/", 'mime' : argv}, function(result, error) {
-          ul.find("li").remove();
-          if ( error === null ) {
-            for ( var f in result ) {
-              if ( result.hasOwnProperty(f) ) {
-                var o = result[f];
-                var el = $("<li><img alt=\"\" src=\"/img/blank.gif\" /><span></span></li>");
-                el.find("img").attr("src", "/img/icons/16x16/" + o.icon);
-                el.find("span").html(f);
+        var readdir = function(path)
+        {
+          if ( path == current_dir )
+            return;
 
-                (function(vo) {
-                  el.click(function() {
+          var ignores = path == "/" ? ["..", "."] : ["."];
 
-                    if ( prev !== null ) {
-                      $(prev).removeClass("current");
-                    }
+          API.system.call("readdir", {'path' : path, 'mime' : argv, 'ignore' : ignores}, function(result, error) {
+            $(ul).die();
+            $(ul).unbind();
 
-                    if ( prev !== this ) {
-                      $(this).addClass("current");
-                    }
+            ul.find("li").remove();
 
-                    if ( vo.type == "file" ) {
-                      self.selected_file = vo.path;
-                      self.$element.find("button.Ok").removeAttr("disabled");
-                      $(inp).val(vo.path);
-                    } else {
-                      self.selected_file = null;
-                      $(inp).val("");
-                      self.$element.find("button.Ok").attr("disabled", "disabled");
-                    }
+            if ( error === null ) {
+              var i = 0;
+              for ( var f in result ) {
+                if ( result.hasOwnProperty(f) ) {
+                  var o = result[f];
+                  var el = $("<li><img alt=\"\" src=\"/img/blank.gif\" /><span></span></li>");
+                  el.find("img").attr("src", "/img/icons/16x16/" + o.icon);
+                  el.find("span").html(f);
+                  el.addClass(i % 2 ? "odd" : "even");
 
-                    prev = this;
-                  });
-                })(o);
+                  (function(vo) {
+                    el.click(function() {
 
-                $(ul).append(el);
+                      if ( prev !== null && prev !== this ) {
+                        $(prev).removeClass("current");
+                      }
+
+                      if ( prev !== this ) {
+                        $(this).addClass("current");
+                      }
+
+                      if ( vo.type == "file" ) {
+                        self.selected_file = vo.path;
+                        self.$element.find("button.Ok").removeAttr("disabled");
+                        $(inp).val(vo.path);
+                      } else {
+                        self.selected_file = null;
+                        $(inp).val("");
+                        self.$element.find("button.Ok").attr("disabled", "disabled");
+                      }
+
+                      prev = this;
+                    });
+
+                    el.dblclick(function() {
+
+                      if ( vo.type != "file" ) {
+                        readdir(vo.path);
+                      } else {
+                        self.selected_file = vo.path;
+                        $(inp).val(vo.path);
+
+                        self.$element.find("button.Ok").removeAttr("disabled");
+                        self.$element.find("button.Ok").click();
+                      }
+
+                    });
+                  })(o);
+
+                  $(ul).append(el);
+
+                  i++;
+                }
               }
             }
-          }
-        });
+
+            self.$element.find("button.Ok").attr("disabled", "disabled");
+          });
+
+          current_dir = path;
+        };
 
         this.create_callback = function() {
           self.$element.find(".DialogButtons .Close").hide();
@@ -1385,6 +1422,7 @@
             }
           }).attr("disabled", "disabled");
 
+          readdir("/");
         };
       }
     },
