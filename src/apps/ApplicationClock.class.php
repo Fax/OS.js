@@ -24,7 +24,15 @@ class ApplicationClock
     $this->content = <<<EOHTML
 
 <div class="ApplicationClock">
-  <div class="ApplicationClockInner clock">
+  <div class="ApplicationClockInner">
+    <div class="Clock">
+      <div class="HourShadow"></div>
+      <div class="Hour"></div>
+      <div class="MinuteShadow"></div>
+      <div class="Minute"></div>
+      <div class="SecondShadow"></div>
+      <div class="Second"></div>
+    </div>
   </div>
 </div>
 
@@ -36,8 +44,8 @@ EOHTML;
     );
     $this->is_scrollable = false;
     $this->is_resizable = false;
-    $this->width = 200;
-    $this->height = 230;
+    $this->width = 204;
+    $this->height = 234;
 
     parent::__construct(self::APP_TITLE, self::APP_ICON, self::APP_HIDDEN);
   }

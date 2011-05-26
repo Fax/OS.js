@@ -1,5 +1,5 @@
 var ApplicationClock = (function() {
-
+  /*
   function CreateClock(el) {
     var radius = $(el).width() / 2;
     var face = $('<div class="face"></div>');
@@ -59,33 +59,47 @@ var ApplicationClock = (function() {
       _update(sss, ss, 60);
     }, 200);
   }
+  */
 
 
   return function(Application, app, api, argv) {
 
-    var _ApplicationClock = Application.extend({
-      init : function() {
-        this.clock = null;
+    var el = app.$element;
+    var hour = $(el).find(".Hour, .HourShadow");
+    var min = $(el).find(".Minute, .MinuteShadow");
+    var sec= $(el).find(".Second, .SecondShadow");
 
-        this._super("ApplicationClock");
-      },
+    setInterval( function() {
+      var d = new Date();
+      var seconds = d.getSeconds();
+      var sdegree = seconds * 6;
+      var srotate = "rotate(" + sdegree + "deg)";
 
-      destroy : function() {
-        if ( this.clock ) {
-          clearInterval(this.clock);
-        }
+      sec.css("-webkit-transform", srotate );
 
-        this._super();
-      },
+    }, 1000 );
 
-      run : function() {
-        this.clock = CreateClock(app.$element.find(".clock"));
+    setInterval( function() {
+      var d = new Date();
+      var hours = d.getHours();
+      var mins = d.getMinutes();
+      var hdegree = hours * 30 + Math.round(mins / 2);
+      var hrotate = "rotate(" + hdegree + "deg)";
 
-        this._super();
-      }
-    });
+      hour.css("-webkit-transform", hrotate );
 
-    return new _ApplicationClock();
+    }, 1000 );
+
+    setInterval( function() {
+      var d = new Date();
+      var mins = d.getMinutes();
+      var mdegree = mins * 6;
+      var mrotate = "rotate(" + mdegree + "deg)";
+
+      min.css("-webkit-transform", mrotate );
+    }, 1000 );
+
+
   };
 
 
