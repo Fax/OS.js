@@ -6,7 +6,7 @@
  * @license GPLv3 (see http://www.gnu.org/licenses/gpl-3.0.txt)
  * @created 2011-02-19
  */
-
+error_reporting(E_ALL | E_STRICT);
 
 // Path definitions
 define("PATH_PROJECT",           dirname(__FILE__));
