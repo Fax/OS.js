@@ -1,3 +1,10 @@
+/**
+ * Application: SystemSettings
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @class
+ */
 var SystemSettings = (function() {
   return function(Application, app, api, argv) {
     var _SystemSettings = Application.extend({

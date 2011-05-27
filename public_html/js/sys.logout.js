@@ -1,3 +1,10 @@
+/**
+ * Application: SystemLogout
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @class
+ */
 var SystemLogout = (function() {
   return function(Application, app, api, argv) {
     var _SystemLogout = Application.extend({

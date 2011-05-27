@@ -1,3 +1,10 @@
+/**
+ * Application: ApplicationClock
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @class
+ */
 var ApplicationClock = (function() {
 
   return function(Application, app, api, argv) {

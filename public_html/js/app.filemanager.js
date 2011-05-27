@@ -1,3 +1,10 @@
+/**
+ * Application: ApplicationFilemanager
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @class
+ */
 var ApplicationFilemanager = (function($, undefined) {
   return function(Application, app, api, argv) {
 

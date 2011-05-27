@@ -1,3 +1,10 @@
+/**
+ * Application: CLASSNAME
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @class
+ */
 var ApplicationCLASSNAME = (function($, undefined) {
   return function(Application, app, api, argv) {
     var _ApplicationCLASSNAME = Application.extend({

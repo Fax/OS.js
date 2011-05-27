@@ -1,3 +1,10 @@
+/**
+ * Application: ApplicationViewer
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @class
+ */
 var ApplicationViewer = (function() {
   return function(Application, app, api, argv) {
     var _ApplicationViewer = Application.extend({

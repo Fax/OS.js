@@ -1,3 +1,10 @@
+/**
+ * Application: SystemUser
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @class
+ */
 var SystemUser = (function() {
   return function(Application, app, api, argv) {
     var _SystemUser = Application.extend({

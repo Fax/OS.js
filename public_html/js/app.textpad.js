@@ -1,3 +1,10 @@
+/**
+ * Application: ApplicationTextpad
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @class
+ */
 var ApplicationTextpad = (function() {
   return function(Application, app, api, argv) {
 

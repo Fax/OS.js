@@ -1,3 +1,27 @@
+/**
+ * JavaScript Window Manager
+ *
+ * Creates a desktop environment inside the browser.
+ * Applications can be loaded via the server.
+ * Events and System calls are performed via the API
+ * object.
+ *
+ * Contains classes for the Window Manager:
+ * - ResourceManager
+ * - SettingsManager
+ * - Desktop
+ * - Panel and items
+ * - Window, Dialog, OperationDialog
+ * - Application
+ *
+ * Uses :
+ * - jQuery, jQuery UI
+ * - CSS 3
+ * - WebStorage (localStorage)
+ *
+ * @package ajwm.Core
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ */
 (function($, undefined) {
 
   // Override for browsers without console
@@ -622,6 +646,8 @@
     });
 
   })();
+
+  var DesktopConsole = null; // TODO
 
   /////////////////////////////////////////////////////////////////////////////
   // PANEL
