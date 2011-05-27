@@ -21,7 +21,7 @@ var ApplicationTextpad = (function() {
       }
     }
 
-    function _saveAs(content, callback) {
+    function _saveAs(callback) {
       api.system.dialog_file(function(file, mime) {
         callback(file, mime);
       }, ["text/*"], "save");
@@ -84,7 +84,7 @@ var ApplicationTextpad = (function() {
         });
 
         $(el).find(".WindowMenu .cmd_SaveAs").parent().click(function() {
-          _saveAs(app.$element.find("textarea").val(), function(file, mime) {
+          _saveAs(function(file, mime) {
             _save(file, app.$element.find("textarea").val(), function() {
               _update(file, el);
             });

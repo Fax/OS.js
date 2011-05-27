@@ -185,9 +185,16 @@ class WindowManager
           } else if ( $method == "write" ) {
 
             $path = PATH_PROJECT_HTML . "/media/" . $argv['file'];
+            $encoding = isset($argv['encoding']) ? $argv['encoding'] : null;
+            $content = $argv['content'];
+
+            if ( $encoding === "data:image/png;base64" ) {
+              $content = base64_decode(str_replace(Array("{$encoding},", " "), Array("", "+"), $content));
+            }
+
             // TODO : OVERWRITE
             //if ( file_exists($path) && is_file($path) ) {
-              if ( file_put_contents($path, $argv['content']) ) {
+              if ( file_put_contents($path, $content) ) {
                 $json['success'] = true;
                 $json['result'] = true;
               } else {

@@ -30,30 +30,6 @@ var ApplicationDraw = (function($, undefined) {
     return y;
   }
 
-  function _save(file, content, callback) {
-    callback = callback || function() {};
-
-    if ( typeof file == "string" && file ) {
-      api.system.call("write", {'file' : file, 'content' : content}, function(result, error) {
-        // SYSTEM HANDLES ERRORS
-      });
-    }
-  }
-
-  function _saveAs(content, callback) {
-    api.system.dialog_file(function() {
-      callback();
-    }, null, "save");
-  }
-
-  /*
-  function _open(callback) {
-    api.system.dialog_file(function(fname) {
-      callback(fname);
-    }, ["image/ *"]);
-  }
-  */
-
   var startPosX = 0;
   var startPosY = 0;
   var useFill = true;
@@ -165,6 +141,7 @@ var ApplicationDraw = (function($, undefined) {
 
       run : function() {
         var el = app.$element;
+        var self = this;
 
         var canvaso  = el.find("canvas").get(0);
         var contexto = canvaso.getContext('2d');
@@ -181,8 +158,52 @@ var ApplicationDraw = (function($, undefined) {
         canvaso.width  = canvas.width;
         canvaso.height = canvas.height;
 
+        /*
+        context.fillStyle = "rgba(255, 255, 255, 1)";
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        contexto.drawImage(canvas, 0, 0);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        */
+
         context.strokeStyle = $(el).find(".color_Foreground").css("background-color");
         context.fillStyle   = $(el).find(".color_Background").css("background-color");
+
+        function _save(file, content, callback) {
+          callback = callback || function() {};
+
+          if ( typeof file == "string" && file ) {
+            api.system.call("write", {'file' : file, 'content' : content, 'encoding' : 'data:image/png;base64'}, function(result, error) {
+              // SYSTEM HANDLES ERRORS
+              if ( result ) {
+                callback(file);
+              }
+            });
+          }
+        }
+
+        function _saveAs(callback) {
+          api.system.dialog_file(function(file, mime) {
+            callback(file, mime);
+          }, ["image/*"], "save");
+        }
+
+        function _open(callback) {
+          api.system.dialog_file(function(fname) {
+            callback(fname);
+          }, ["image/*"]);
+        }
+
+        function _update(file, el) {
+          app.opts = file;
+          argv['path'] = file;
+
+          $(el).find(".WindowTopInner span").html(app.title + ": " + (file || "New file"));
+        }
+
+
+
+
 
         $(canvas).css({
           "position" : "absolute",
@@ -263,13 +284,24 @@ var ApplicationDraw = (function($, undefined) {
           useFill = this.checked ? true : false;
         });
 
-        /*
         $(el).find(".WindowMenu .cmd_Open").parent().click(function() {
           _open(function(fname) {
-            _read_file(fname);
+            context.clearRect (0, 0, canvas.width, canvas.height);
+            contexto.clearRect (0, 0, canvas.width, canvas.height);
+
+            var img = new Image();
+            img.onload = function() {
+              canvas.width = img.width;
+              canvas.height = img.height;
+              canvaso.width = img.width;
+              canvaso.height = img.height;
+              context.drawImage(img, 0, 0, canvas.width, canvas.height);
+            };
+            img.src = "/media/" + fname;
+
+            _update(fname, el);
           });
         });
-        */
 
         $(el).find(".WindowMenu .cmd_Save").parent().click(function() {
           if ( argv && argv['path'] ) {
@@ -280,13 +312,17 @@ var ApplicationDraw = (function($, undefined) {
 
         $(el).find(".WindowMenu .cmd_SaveAs").parent().click(function() {
           var img = canvas.toDataURL("image/png");
-          _saveAs(img, function() {
-            //_update(null, el);
+          _saveAs(function(file, mime) {
+            _save(file, img, function() {
+              _update(file, el);
+            });
           });
         });
 
         $(el).find(".WindowMenu .cmd_New").parent().click(function() {
           app.$element.find("textarea").val("");
+          context.clearRect (0, 0, canvas.width, canvas.height);
+          contexto.clearRect (0, 0, canvas.width, canvas.height);
           _update(null, el);
         });
 
