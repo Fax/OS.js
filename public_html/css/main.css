@@ -207,11 +207,13 @@ body {
   text-align : center;
 }
 .WindowTopInner {
-  padding : 5px;
+  height : 28px;
+  line-height : 28px;
   cursor : default;
 }
 .WindowTop img {
   float : left;
+  padding : 5px;
 }
 .WindowTopControllers {
   position : absolute;
