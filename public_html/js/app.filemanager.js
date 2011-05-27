@@ -105,9 +105,12 @@ var ApplicationFilemanager = (function($, undefined) {
             return api.application.context_menu(ev, [
               {"title" : "Delete", "method" : function() {
                 api.system.dialog("confirm", "Are you sure you want to delete this file?", null, function() {
+                  alert('Not implemented yet'); // TODO
                 });
               }},
-              {"title" : "Rename", "method" : "cmd_Rename"}
+              {"title" : "Rename", "method" : function() {
+                alert('Not implemented yet'); // TODO
+              }}
             ], $(this));
           });
 
