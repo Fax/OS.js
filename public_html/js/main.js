@@ -505,6 +505,8 @@
         try {
           $(document).die();
           $(document).unbind();
+          $("body").die();
+          $("body").unbind();
         } catch ( eee ) { }
 
         this.setWallpaper(null);
@@ -1544,7 +1546,12 @@
     */
 
     $(document).bind("contextmenu",function(e) {
-      if ( $(e.target).id === "ContextMenu" || $(e.target).hasClass("ContextMenu") || $(e.target).hasClass("Menu") || $(e.target).parent().hasClass("ContextMenu") || $(e.target).parent().hasClass("Menu") ) {
+      // TODO: Add parameter to DOM object if Context Menu
+      if ( $(e.target).hasClass("ContextMenu") || $(e.target).hasClass("Menu") || $(e.target).parent().hasClass("ContextMenu") || $(e.target).parent().hasClass("Menu") ) {
+        return false;
+      }
+
+      if ( e.target.id === "Desktop" || e.target.id === "Panel" || e.target.id === "ContextMenu" ) {
         return false;
       }
       return true;
@@ -1552,19 +1559,21 @@
 
     $(document).keydown(function(ev) {
       var key = ev.keyCode || ev.which;
-      var target = ev.srcElement || ev.target;
-      if ( key === 9 ) {
-        if ( target.tagName == "textarea" ) {
-          var cc = getCaret(target);
-          var val = $(target).val();
+      var target = ev.target || ev.srcElement;
+      if ( target ) {
+        if ( key === 9 ) {
+          if ( target.tagName == "textarea" ) {
+            var cc = getCaret(target);
+            var val = $(target).val();
 
-          $(target).val( val.substr(0, cc) + "\t" + val.substr(cc, val.length) );
+            $(target).val( val.substr(0, cc) + "\t" + val.substr(cc, val.length) );
 
-          var ccc = cc + 1;
-          setSelectionRangeX(target, ccc, ccc);
+            var ccc = cc + 1;
+            setSelectionRangeX(target, ccc, ccc);
 
+          }
+          return false;
         }
-        return false;
       }
 
       return true;
