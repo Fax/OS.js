@@ -87,14 +87,14 @@ var ApplicationViewer = (function() {
               setTimeout(function() {
                 _resize(video, el, true);
               }, 1);
-            });
+            }, true);
             _video.addEventListener("error", function() {
               loader.hide();
 
               setTimeout(function() {
                 _resize(video, el, true);
               }, 1);
-            });
+            }, true);
 
             el.find(".ApplicationViewerImage").append(video);
             el.find(".WindowContent").css("overflow", "hidden");
