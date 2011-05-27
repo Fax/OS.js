@@ -1,6 +1,11 @@
 /**
  * JavaScript Window Manager
  *
+ * TODO: Hourglass while wating
+ * TODO: Font selection
+ * TODO: Finish up menu and context-menu
+ * TODO: Login screen
+ *
  * Creates a desktop environment inside the browser.
  * Applications can be loaded via the server.
  * Events and System calls are performed via the API
@@ -15,7 +20,7 @@
  * - Application
  *
  * Uses :
- * - jQuery, jQuery UI
+ * - jQuery
  * - CSS 3
  * - WebStorage (localStorage)
  *
