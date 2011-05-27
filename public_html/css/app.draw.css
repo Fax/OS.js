@@ -19,7 +19,8 @@
   border-right : 1px solid #d1d4d7;
 }
 
-.ApplicationDrawPanel button, label {
+.ApplicationDrawPanel button,
+.ApplicationDrawPanel label {
   margin : 10px;
   width : 80px;
   text-align : center;

@@ -698,7 +698,15 @@
 
       $(".PanelItemMenu li, .PanelItemLauncher").click(function(ev) {
         var app = $(this).find("span").attr("class").replace("launch_", "");
-        API.system.launch(app);
+        if ( app == "About" ) {
+          $("#DialogAbout").show();
+          $("#DialogAbout").css({
+            "top" : (($(document).height() / 2) - ($("#DialogAbout").height() / 2)) + "px",
+            "left" : (($(document).width() / 2) - ($("#DialogAbout").width() / 2)) + "px"
+          });
+        } else {
+          API.system.launch(app);
+        }
       });
     },
 

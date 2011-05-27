@@ -1,0 +1,21 @@
+@charset "UTF-8";
+/**
+ * Application: About
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ */
+
+.SystemAbout {
+
+}
+
+.SystemAboutInner {
+  text-align : center;
+}
+
+.SystemAboutInner span {
+  font-weight : bold;
+  font-size : 120%;
+  display : block;
+}

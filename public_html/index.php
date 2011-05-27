@@ -54,6 +54,7 @@ header("Pragma: no-cache");
   <script type="text/javascript" src="/js/main.js"></script>
 
   <!-- Preloaded applications -->
+  <link rel="stylesheet" type="text/css" href="/css/sys.about.css" />
   <link rel="stylesheet" type="text/css" href="/css/sys.user.css" />
   <link rel="stylesheet" type="text/css" href="/css/sys.settings.css" />
   <link rel="stylesheet" type="text/css" href="/css/sys.logout.css" />
@@ -84,6 +85,9 @@ header("Pragma: no-cache");
     <div class="PanelItem PanelItemSeparator AlignRight">&nbsp;</div>
 
     <div class="PanelItemHolder PanelItemDock AlignRight">
+      <div class="PanelItem PanelItemLauncher">
+        <span class="launch_SystemAbout"><img alt="" src="/img/icons/16x16/categories/system-help.png" title="About" /></span>
+      </div>
       <div class="PanelItem PanelItemLauncher">
         <span class="launch_SystemSettings"><img alt="" src="/img/icons/16x16/categories/applications-system.png" title="System Settings" /></span>
       </div>

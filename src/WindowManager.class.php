@@ -7,6 +7,7 @@
  * @created 2011-05-22
  */
 
+require "apps/SystemAbout.class.php";
 require "apps/SystemUser.class.php";
 require "apps/SystemSettings.class.php";
 require "apps/SystemLogout.class.php";
