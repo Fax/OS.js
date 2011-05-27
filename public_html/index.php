@@ -34,6 +34,12 @@ header("Pragma: no-cache");
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!--
+  JavaScript Window Manager
+
+  @package ajwm.Template
+  @author  Anders Evenrud <andersevenrud@gmail.com>
+  -->
   <title>Another JSWM</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
