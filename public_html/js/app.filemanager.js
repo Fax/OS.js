@@ -110,6 +110,9 @@ var ApplicationFilemanager = (function($, undefined) {
               }},
               {"title" : "Rename", "method" : function() {
                 alert('Not implemented yet'); // TODO
+              }},
+              {"title" : "Download", "method" : function() {
+                alert('Not implemented yet'); // TODO
               }}
             ], $(this));
           });

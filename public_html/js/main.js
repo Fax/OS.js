@@ -104,7 +104,6 @@
         cconsole.log("info", "API", "run", mime, path);
         if ( mime ) {
           var apps = _Settings._get("system.app.handlers", true);
-          console.log(apps);
           forEach(apps, function(mt, mapp, mind, mlast) {
             var mte = mt.split("/");
             var mbase = mte.shift();
@@ -131,6 +130,7 @@
 
             if ( mind == mlast ) {
               API.system.dialog("error", "Found no suiting application for '" + path + "'");
+              // TODO Ask for new browser window to open in ?!
             }
             return true;
           });
