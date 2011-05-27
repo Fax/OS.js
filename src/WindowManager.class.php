@@ -185,16 +185,17 @@ class WindowManager
           } else if ( $method == "write" ) {
 
             $path = PATH_PROJECT_HTML . "/media/" . $argv['file'];
-            if ( file_exists($path) && is_file($path) ) {
+            // TODO : OVERWRITE
+            //if ( file_exists($path) && is_file($path) ) {
               if ( file_put_contents($path, $argv['content']) ) {
                 $json['success'] = true;
                 $json['result'] = true;
               } else {
                 $json['error'] = "Failed to save '{$argv['file']}'";
               }
-            } else {
-              $json['error'] = "Failed to read '{$argv['file']}'";
-            }
+            //} else {
+            //  $json['error'] = "Failed to read '{$argv['file']}'";
+            //}
 
           } else if ( $method == "readdir" ) {
             $path    = $argv['path'];

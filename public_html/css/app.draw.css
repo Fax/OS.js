@@ -42,7 +42,7 @@
   height : 76px;
   border : 2px inset;
   margin : 10px;
-  background : #fff;
+  background-color : #e6e6e6;
 }
 
 .ApplicationDrawInner {
@@ -54,7 +54,7 @@
 }
 
 .ApplicationDrawInner .Canvas {
-  background : #fff;
+  background-color : #fff;
   margin : 0;
   padding : 0;
 }

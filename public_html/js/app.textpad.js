@@ -14,14 +14,17 @@ var ApplicationTextpad = (function() {
       if ( typeof file == "string" && file ) {
         api.system.call("write", {'file' : file, 'content' : content}, function(result, error) {
           // SYSTEM HANDLES ERRORS
+          if ( result ) {
+            callback(file);
+          }
         });
       }
     }
 
     function _saveAs(content, callback) {
-      api.system.dialog_file(function() {
-        callback();
-      });
+      api.system.dialog_file(function(file, mime) {
+        callback(file, mime);
+      }, ["text/*"], "save");
     }
 
     function _open(callback) {
@@ -75,12 +78,16 @@ var ApplicationTextpad = (function() {
         });
 
         $(el).find(".WindowMenu .cmd_Save").parent().click(function() {
-          _save(argv['path'], app.$element.find("textarea").val());
+          if ( argv && argv['path'] ) {
+            _save(argv['path'], app.$element.find("textarea").val());
+          }
         });
 
         $(el).find(".WindowMenu .cmd_SaveAs").parent().click(function() {
-          _saveAs(app.$element.find("textarea").val(), function() {
-            //_update(null, el);
+          _saveAs(app.$element.find("textarea").val(), function(file, mime) {
+            _save(file, app.$element.find("textarea").val(), function() {
+              _update(file, el);
+            });
           });
         });
 

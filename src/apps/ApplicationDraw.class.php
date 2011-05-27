@@ -25,15 +25,14 @@ class ApplicationDraw
 
 <div class="ApplicationDraw">
   <div class="ApplicationDrawPanel">
-    <button class="draw_Pencil Current">Pencil</button>
-    <button class="draw_Brush">Brush</button>
+    <button class="draw_Pencil">Pencil</button>
     <button class="draw_Line">Line</button>
     <button class="draw_Rectangle">Rectangle</button>
     <button class="draw_Circle">Circle</button>
 
-    <label>Foreground</label>
+    <label>Stroke</label>
     <div class="color_Foreground">&nbsp;</div>
-    <label>Background</label>
+    <label><input type="checkbox" class="enable_Fill" checked="checked" />Fill</label>
     <div class="color_Background">&nbsp;</div>
   </div>
   <div class="ApplicationDrawInner">
