@@ -18,10 +18,15 @@ class ApplicationViewer
   extends DesktopApplication
 {
   const APP_TITLE  = "Viewer";
-  const APP_ICON   = "apps/text-editor.png";
-  const APP_HIDDEN = true;
+  const APP_ICON   = "categories/gnome-multimedia.png";
 
   public function __construct() {
+    $this->menu = Array(
+      "File" => Array(
+        "Open"       => "cmd_Open",
+        "Close"      => "cmd_Close"
+      )
+    );
     $this->content = <<<EOHTML
 
 <div class="ApplicationViewer">

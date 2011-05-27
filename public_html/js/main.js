@@ -1393,7 +1393,7 @@
                       }
 
                       if ( vo.type == "file" ) {
-                        self.selected_file = vo.path;
+                        self.selected_file = vo;
                         self.$element.find("button.Ok").removeAttr("disabled");
                         $(inp).val(vo.path);
                       } else {
@@ -1410,7 +1410,7 @@
                       if ( vo.type != "file" ) {
                         readdir(vo.path);
                       } else {
-                        self.selected_file = vo.path;
+                        self.selected_file = vo;
                         $(inp).val(vo.path);
 
                         self.$element.find("button.Ok").removeAttr("disabled");
@@ -1439,7 +1439,7 @@
 
           self.$element.find(".DialogButtons .Ok").show().click(function() {
             if ( self.selected_file ) {
-              clb_finish(self.selected_file);
+              clb_finish(self.selected_file.path, self.selected_file.mime);
             }
           }).attr("disabled", "disabled");
 

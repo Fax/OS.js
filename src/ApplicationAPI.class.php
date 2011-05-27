@@ -75,26 +75,28 @@ class ApplicationAPI
 
             $finfo = finfo_open(FILEINFO_MIME);
             $mime  = explode("; charset=", finfo_file($finfo, $abs_path));
-            $mime  = reset($mime);
-            $mmime = strstr($mime, "/", true);
+            $mime  = trim(reset($mime));
+            $mmime = trim(strstr($mime, "/", true));
             finfo_close($finfo);
 
-            $break = false;
+            $add = sizeof($mimes) ? false : true;
             foreach ( $mimes as $m ) {
+              $m = trim($m);
+
               if ( preg_match("/\/\*$/", $m) ) {
-                if ( strstr($m, "/", true) !== $mmime ) {
-                  $break = true;
+                if ( strstr($m, "/", true) == $mmime ) {
+                  $add = true;
                   break;
                 }
               } else {
-                if ( !$mime == $m ) {
-                  $break = true;
+                if ( $mime == $m ) {
+                  $add = true;
                   break;
                 }
               }
             }
 
-            if ( $break ) {
+            if ( !$add ) {
               continue;
             }
 

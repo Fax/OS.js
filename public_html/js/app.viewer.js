@@ -18,20 +18,33 @@ var ApplicationViewer = (function() {
           var h = parseInt($(img).height(), 10);
 
           w = (force ? w : (w > 800 ? 800 : w)) + 4;
-          h = (force ? h : (h > 600 ? 600 : h)) + 34;
+          h = ((force ? h : (h > 600 ? 600 : h)) + 34) + 27;
 
           el.width(w + "px").height(h + "px");
         }
 
-        if ( argv.path ) {
-          var source = "/media/" + argv.path;
-          var mime = argv.mime;
+        function _open(callback) {
+          api.system.dialog_file(function(fname, mtype) {
+            callback(fname, mtype);
+          }, ["image/*", "video/*", "application/ogg"]);
+        }
+
+        var img;
+        var video;
+
+        function _play(path, mime) {
+          if ( img ) 
+            $(img).remove();
+          if ( video )
+            $(video).remove();
+
+          var source = "/media/" + path;
           var type = "image";
           if ( mime )
             type = mime.split("/")[0];
 
           if ( type == "image" ) {
-            var img = $("<img alt=\"\" />").attr("src", source);
+            img = $("<img alt=\"\" />").attr("src", source);
             img.load(function() {
               var img = this;
               loader.hide();
@@ -51,9 +64,10 @@ var ApplicationViewer = (function() {
             });
 
             el.find(".ApplicationViewerImage").append(img);
+            el.find(".WindowContent").css("overflow", "auto");
           } else {
             // FIXME: removeEventListener, jquery ?!
-            var video = $("<video>");
+            video = $("<video>");
             video.attr("controls", "controls");
             video.attr("src", source);
 
@@ -83,6 +97,16 @@ var ApplicationViewer = (function() {
             }, 1);
           }
         }
+
+        if ( argv.path ) {
+          _play(argv.path, argv.mime);
+        }
+
+        $(el).find(".WindowMenu .cmd_Open").parent().click(function() {
+          _open(function(fname, mtype) {
+            _play(fname, mtype);
+          });
+        });
 
         this._super();
       }
