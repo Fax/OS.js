@@ -22,6 +22,10 @@ body {
   height : 100%;
 }
 
+input.Disabled {
+  background : #e6e6e6;
+}
+
 /* Desktop */
 
 #Desktop {

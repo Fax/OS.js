@@ -171,9 +171,10 @@
         _Desktop.addWindow(new OperationDialog('upload', 'Uploading file...', null, clb_finish, clb_progress, clb_cancel));
       },
 
-      'dialog_file' : function(clb_finish, mime_filter) {
+      'dialog_file' : function(clb_finish, mime_filter, type) {
         mime_filter = mime_filter || [];
-        _Desktop.addWindow(new OperationDialog('file', 'Choose file...', mime_filter, clb_finish));
+        type = type || "open";
+        _Desktop.addWindow(new OperationDialog(type, 'Choose file...', mime_filter, clb_finish));
       }
     },
 
@@ -1378,10 +1379,10 @@
 
         };
 
-      } else if ( type == "file" ) {
+      } else if ( type == "file" || type == "open" || type == "save" ) {
         this.width    = 400;
         this.height   = 300;
-        this.title    = "File chooser";
+        this.title    = type == "save" ? "Save As..." : "Open File";
         this.content  = $("<div class=\"OperationDialog\"><div class=\"FileChooser\"><ul></ul></div><div class=\"FileChooserInput\"><input type=\"text\" /></div></div>");
         this.is_resizable = true;
         this.selected_file = null;
@@ -1390,6 +1391,57 @@
         var inp = $(this.content).find("input[type='text']");
         var prev = null;
         var current_dir = "";
+        var is_save = type == "save";
+        var currentFile = null;
+
+        if ( !is_save ) {
+          $(inp).focus(function() {
+            $(this).blur();
+          }).addClass("Disabled");
+        }
+
+        $(inp).keydown(function(ev) {
+          var keyCode = ev.which || ev.keyCode;
+          var val = $(this).val();
+
+          if ( keyCode == 13 ) {
+            if ( !is_save ) {
+              if ( !self.$element.find("button.Ok").attr("disabled") ) {
+                if ( currentFile ) {
+                  $(currentFile).trigger('dblclick');
+                }
+              }
+            } else {
+              if ( val ) {
+                if ( !val.match(/^\//) ) {
+                  val = (current_dir == "/" ? "/" : (current_dir + "/")) + val;
+                }
+
+                self.selected_file = {
+                  "path" : val,
+                  "size" : -1,
+                  "mime" : "",
+                  "icon" : "",
+                  "type" : "file"
+                };
+                self.$element.find("button.Ok").click();
+              }
+            }
+          }
+        });
+
+        $(inp).keyup(function(ev) {
+          var keyCode = ev.which || ev.keyCode;
+          var val = $(this).val();
+
+          if ( is_save ) {
+            if ( val ) {
+              self.$element.find("button.Ok").removeAttr("disabled");
+            } else {
+              self.$element.find("button.Ok").attr("disabled", "disabled");
+            }
+          }
+        });
 
         var readdir = function(path)
         {
@@ -1397,6 +1449,7 @@
             return;
 
           var ignores = path == "/" ? ["..", "."] : ["."];
+          currentFile = null;
 
           API.system.call("readdir", {'path' : path, 'mime' : argv, 'ignore' : ignores}, function(result, error) {
             $(ul).die();
@@ -1429,10 +1482,14 @@
                         self.selected_file = vo;
                         self.$element.find("button.Ok").removeAttr("disabled");
                         $(inp).val(vo.path);
+
+                        currentFile = this;
                       } else {
                         self.selected_file = null;
                         $(inp).val("");
                         self.$element.find("button.Ok").attr("disabled", "disabled");
+
+                        currentFile = null;
                       }
 
                       prev = this;
@@ -1443,11 +1500,22 @@
                       if ( vo.type != "file" ) {
                         readdir(vo.path);
                       } else {
-                        self.selected_file = vo;
-                        $(inp).val(vo.path);
 
-                        self.$element.find("button.Ok").removeAttr("disabled");
-                        self.$element.find("button.Ok").click();
+                        var _doSave = function() {
+                          self.selected_file = vo;
+                          $(inp).val(vo.path);
+
+                          self.$element.find("button.Ok").removeAttr("disabled");
+                          self.$element.find("button.Ok").click();
+                        };
+
+                        if ( is_save ) {
+                          if ( confirm("Are you sure you want to overwrite this file?") ) { // FIXME
+                            _doSave();
+                          }
+                        } else {
+                          _doSave();
+                        }
                       }
 
                     });
