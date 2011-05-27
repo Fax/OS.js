@@ -22,6 +22,9 @@ if ( !($json = $wm->doPOST($_POST)) === false ) {
   die($json);
 }
 
+$now = new DateTime();
+$timestamp = $now->format("d/m/Y h:i:s"); // TODO: Timezone
+
 header("Content-Type: text/html");
 header("Expires: Fri, 01 Jan 2010 05:00:00 GMT");
 header("Cache-Control: maxage=1");
@@ -34,15 +37,19 @@ header("Pragma: no-cache");
   <title>Another JSWM</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
+  <!-- Vendor libraries -->
   <link rel="stylesheet" type="text/css" href="/css/ui-lightness/jquery-ui-1.8.11.custom.css" />
-  <link rel="stylesheet" type="text/css" href="/css/main.css" />
-  <link rel="stylesheet" type="text/css" href="/css/theme.default.css" />
 
   <script type="text/javascript" src="/js/json2.js"></script>
   <script type="text/javascript" src="/js/sprintf-0.7-beta1.js"></script>
   <script type="text/javascript" src="/js/fileuploader.js"></script>
   <script type="text/javascript" src="/js/jquery-1.5.2.min.js"></script>
   <script type="text/javascript" src="/js/jquery-ui-1.8.11.custom.min.js"></script>
+
+  <!-- Main libraries -->
+  <link rel="stylesheet" type="text/css" href="/css/main.css" />
+  <link rel="stylesheet" type="text/css" href="/css/theme.default.css" />
+
   <script type="text/javascript" src="/js/utils.js"></script>
   <script type="text/javascript" src="/js/main.js"></script>
 
@@ -71,7 +78,7 @@ header("Pragma: no-cache");
     </div>
 
     <div class="PanelItem PanelItemClock AlignRight">
-      <span>31/01/00 00:00</span>
+      <span><?php print $timestamp; ?></span>
     </div>
 
     <div class="PanelItem PanelItemSeparator AlignRight">&nbsp;</div>

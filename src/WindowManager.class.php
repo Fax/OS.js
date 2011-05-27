@@ -29,6 +29,7 @@ class WindowManager
   protected static $__Instance;
 
   protected function __construct() {
+    date_default_timezone_set("Europe/Oslo");
     session_start();
   }
 
