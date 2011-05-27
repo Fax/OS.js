@@ -1,0 +1,14 @@
+Requirements:
+-------------------------------------------------------------------------------
+* UNIX
+* Apache
+* PHP 5.3
+* MySQL
+
+Vendor libraries used:
+* Propel ORM
+
+Application Requirements
+-------------------------------------------------------------------------------
+ApplicationYouTube:
+* pear install channel://pear.php.net/Services_YouTube-0.2.2

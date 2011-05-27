@@ -1,0 +1,60 @@
+@charset "UTF-8";
+/**
+ * Application: Draw
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ */
+
+.ApplicationDraw {
+
+}
+
+.ApplicationDrawPanel {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  bottom : 0px;
+  width : 100px;
+  border-right : 1px solid #d1d4d7;
+}
+
+.ApplicationDrawPanel button, label {
+  margin : 10px;
+  width : 80px;
+  text-align : center;
+  display : block;
+}
+.ApplicationDrawPanel button.Current {
+  font-weight : bold;
+}
+
+.ApplicationDrawPanel .color_Foreground {
+  width : 76px;
+  height : 76px;
+  border : 2px inset;
+  margin : 10px;
+  background : #000;
+}
+
+.ApplicationDrawPanel .color_Background {
+  width : 76px;
+  height : 76px;
+  border : 2px inset;
+  margin : 10px;
+  background : #fff;
+}
+
+.ApplicationDrawInner {
+  position : absolute;
+  top : 0px;
+  right : 0px;
+  bottom : 0px;
+  left : 101px;
+}
+
+.ApplicationDrawInner .Canvas {
+  background : #fff;
+  margin : 0;
+  padding : 0;
+}

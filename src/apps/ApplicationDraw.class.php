@@ -1,0 +1,69 @@
+<?php
+/*!
+ * @file
+ * Contains ApplicationDraw Class
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @license GPLv3 (see http://www.gnu.org/licenses/gpl-3.0.txt)
+ * @created 2011-05-27
+ */
+
+/**
+ * ApplicationDraw Class
+ *
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @package MyApplication
+ * @class
+ */
+class ApplicationDraw
+  extends DesktopApplication
+{
+  const APP_TITLE = "Draw";
+  const APP_ICON = "categories/gnome-graphics.png";
+
+  public function __construct() {
+    $this->content = <<<EOHTML
+
+<div class="ApplicationDraw">
+  <div class="ApplicationDrawPanel">
+    <button class="draw_Pencil Current">Pencil</button>
+    <button class="draw_Brush">Brush</button>
+    <button class="draw_Line">Line</button>
+    <button class="draw_Rectangle">Rectangle</button>
+    <button class="draw_Circle">Circle</button>
+
+    <label>Foreground</label>
+    <div class="color_Foreground">&nbsp;</div>
+    <label>Background</label>
+    <div class="color_Background">&nbsp;</div>
+  </div>
+  <div class="ApplicationDrawInner">
+    <canvas class="Canvas"></canvas>
+  </div>
+</div>
+
+EOHTML;
+
+    $this->menu = Array(
+      "File" => Array(
+        "Open"       => "cmd_Open",
+        "Save"       => "cmd_Save",
+        "Save As..." => "cmd_SaveAs",
+        "Close"      => "cmd_Close"
+      )
+    );
+
+    $this->width = 600;
+    $this->height = 500;
+    $this->is_scrollable = false;
+    $this->resources = Array(
+      "app.draw.js",
+      "app.draw.css"
+    );
+
+    parent::__construct(self::APP_TITLE, self::APP_ICON, self::APP_HIDDEN);
+  }
+}
+
+DesktopApplication::$Registered[] = "ApplicationDraw";
+
+?>
