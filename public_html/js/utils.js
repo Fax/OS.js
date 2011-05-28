@@ -259,3 +259,27 @@ function supports_html5_storage() {
 String.prototype.capitalize = function() {
   return this.charAt(0).toUpperCase() + this.slice(1);
 };
+
+function RGBFromHex(hex) {
+  var rgb = parseInt(hex.replace("#", ""), 16);
+  return {
+    red   : (rgb & (255 << 16)) >> 16,
+    green : (rgb & (255 << 8)) >> 8,
+    blue  : (rgb & 255)
+  };
+}
+
+function hexFromRGB(r, g, b) {
+  var hex = [
+    r.toString( 16 ),
+    g.toString( 16 ),
+    b.toString( 16 )
+  ];
+
+  $.each( hex, function( nr, val ) {
+    if ( val.length === 1 ) {
+      hex[ nr ] = "0" + val;
+    }
+  });
+  return hex.join( "" ).toUpperCase();
+}

@@ -31,6 +31,7 @@ var ApplicationTerminal = (function($, undefined) {
         };
 
         $(txt).val("~/ >");
+        app.focus_hook();
 
         this._super();
       }

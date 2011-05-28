@@ -11,19 +11,6 @@
  * Events and System calls are performed via the API
  * object.
  *
- * Contains classes for the Window Manager:
- * - ResourceManager
- * - SettingsManager
- * - Desktop
- * - Panel and items
- * - Window, Dialog, OperationDialog
- * - Application
- *
- * Uses :
- * - jQuery
- * - CSS 3
- * - WebStorage (localStorage)
- *
  * @package ajwm.Core
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  */
@@ -1329,93 +1316,49 @@
 
     init : function(start_color, clb_finish) {
 
-      this.color_obj    = null;
-      this.start_color  = start_color  || "#ffffff";
-      this.clb_finish   = clb_finish   || function() {};
-
       this._super("Color");
 
-      this.title    = "Choose color...";
+      this.clb_finish = clb_finish   || function() {};
+      this.colorObj   = RGBFromHex(start_color  || "#ffffff");
 
-      var inner = "<div><div class=\"Slider SliderR\"></div></div>";
-          inner += "<div><div class=\"Slider SliderG\"></div></div>";
-          inner += "<div><div class=\"Slider SliderB\"></div></div>";
-
-      this.content  = $("<div class=\"OperationDialog OperationDialogColor\"><div class=\"OperationDialogInner\">" + inner + "</div><div class=\"CurrentColor\"></div><div class=\"CurrentColorDesc\"></div></div>");
-
-      this.width    = 400;
-      this.height   = 170;
+      this.title      = "Choose color...";
+      this.content    = $("#OperationDialogColor").html();
+      this.width      = 400;
+      this.height     = 170;
     },
 
     create : function(desktop, id, zi, method) {
       var self = this;
       this._super(desktop, id, zi, method);
 
+      var desc      = $(self.$element).find(".CurrentColorDesc");
+      var cube      = $(self.$element).find(".CurrentColor");
 
-      self.$element.find(".DialogButtons .Close").hide();
-      self.$element.find(".DialogButtons .Cancel").show();
-
-      self.$element.find(".DialogButtons .Ok").show().click(function() {
-        self.clb_finish(self.colorObj, "#" + hexFromRGB(self.colorObj.red, self.colorObj.green, self.colorObj.blue));
-      });
-
-      var desc     = $(self.$element).find(".CurrentColorDesc");
-      var cube     = $(self.$element).find(".CurrentColor");
-      var color    = this.start_color.replace("#", "");
-      var rgb      = parseInt(color, 16);
-
-      var colorObj = new Object();
-      colorObj.red = (rgb & (255 << 16)) >> 16;
-      colorObj.green = (rgb & (255 << 8)) >> 8;
-      colorObj.blue = (rgb & 255);
-
-      this.colorObj = colorObj;
-
-      var _update = function() {
-        self.colorObj.red   = $(self.$element).find(".SliderR").slider("value");
-        self.colorObj.green = $(self.$element).find(".SliderG").slider("value");
-        self.colorObj.blue  = $(self.$element).find(".SliderB").slider("value");
+      var _update   = function() {
+        self.colorObj.red   = parseInt($(self.$element).find(".SliderR").slider("value"), 10);
+        self.colorObj.green = parseInt($(self.$element).find(".SliderG").slider("value"), 10);
+        self.colorObj.blue  = parseInt($(self.$element).find(".SliderB").slider("value"), 10);
         var hex = hexFromRGB(self.colorObj.red, self.colorObj.green, self.colorObj.blue);
         $(cube).css("background-color", "#" + hex);
         $(desc).html(sprintf("R: %03d, G: %03d, B: %03d (#%s)", self.colorObj.red, self.colorObj.green, self.colorObj.blue, hex));
       };
 
-      var hexFromRGB = function(r, g, b) {
-        var hex = [
-          r.toString( 16 ),
-          g.toString( 16 ),
-          b.toString( 16 )
-            ];
-        $.each( hex, function( nr, val ) {
-          if ( val.length === 1 ) {
-            hex[ nr ] = "0" + val;
-          }
-        });
-        return hex.join( "" ).toUpperCase();
-      };
 
-      $(self.content).find(".SliderR").slider({
-        'min'    : 0,
-        'max'    : 255,
-        'step'   : 1,
-        'value'  : colorObj.red,
-        'slide' : _update
-      });
-      $(self.content).find(".SliderG").slider({
-        'min'    : 0,
-        'max'    : 255,
-        'step'   : 1,
-        'value'  : colorObj.green,
-        'slide' : _update
-      });
-      $(self.content).find(".SliderB").slider({
-        'min'    : 0,
-        'max'    : 255,
-        'step'   : 1,
-        'value'  : colorObj.blue,
-        'slide' : _update
+      this.$element.find(".DialogButtons .Close").hide().find(".DialogButtons .Cancel").show();
+      this.$element.find(".DialogButtons .Ok").show().click(function() {
+        self.clb_finish(self.colorObj, "#" + hexFromRGB(self.colorObj.red, self.colorObj.green, self.colorObj.blue));
       });
 
+      $(this.$element).find(".Slider").slider({
+        'min'    : 0,
+        'max'    : 255,
+        'step'   : 1,
+        'slide'  : _update,
+        'change' : _update
+      }).
+        find(".SliderR").slider("value", this.colorObj.red).
+        find(".SliderG").slider("value", this.colorObj.green).
+        find(".SliderB").slider("value", this.colorObj.blue);
 
       _update();
     }
@@ -1424,24 +1367,27 @@
   var CopyOperationDialog = OperationDialog.extend({
 
     init : function(type, message, argv, clb_finish, clb_progress, clb_cancel) {
-      var self = this;
-
-      argv         = argv         || {};
-      clb_finish   = clb_finish   || function() {};
-      clb_progress = clb_progress || function() {};
-      clb_cancel   = clb_cancel   || function() {};
-
       this._super("Copy");
 
-      $(this.content).find(".OperationDialogInner").append("<p class=\"Status\">0 of 0</p><div class=\"ProgressBar\"></div>");
+      this.argv         = argv         || {};
+      this.clb_finish   = clb_finish   || function() {};
+      this.clb_progress = clb_progress || function() {};
+      this.clb_cancel   = clb_cancel   || function() {};
+
+      this.title    = "Copy file";
+      this.content  = $("#OperationDialogCopy").html();
+      this.width    = 400;
+      this.height   = 170;
+    },
+
+
+    create : function(desktop, id, zi, method) {
+      var self = this;
+      this._super(desktop, id, zi, method);
+
       $(this.content).find(".ProgressBar").progressbar({
         value : 50
       });
-
-      this.title    = "Copy file";
-      this.content  = $("<div class=\"OperationDialog\"><h1>" + message + "</h1><div class=\"OperationDialogInner\"></div></div>");
-      this.width    = 400;
-      this.height   = 170;
     }
 
   });
@@ -1451,14 +1397,14 @@
     init : function(clb_finish, clb_progress, clb_cancel) {
       var self = this;
 
+      this._super("Upload");
+
       this.clb_finish   = clb_finish   || function() {};
       this.clb_progress = clb_progress || function() {};
       this.clb_cancel   = clb_cancel   || function() {};
 
-      this._super("Upload");
-
       this.title    = "Upload file";
-      this.content  = $("<div class=\"OperationDialog\"><h1>Upload file...</h1><div class=\"OperationDialogInner\"></div></div>");
+      this.content  = $("#OperationDialogUpload").html();
       this.width    = 400;
       this.height   = 170;
       this.uploader = null;
@@ -1468,13 +1414,12 @@
       this._super(desktop, id, zi, method);
 
       var self = this;
-      $(self.content).find(".OperationDialogInner").append("<p class=\"Status\">No file selected</p><div class=\"ProgressBar\"></div>");
-      $(self.content).find(".ProgressBar").progressbar({
+      $(this.$element).find(".ProgressBar").progressbar({
         value : 0
       });
 
-      var trigger = self.$element.find("button.Choose").show();
-      var pbar = $(self.content).find(".ProgressBar");
+      var trigger = this.$element.find("button.Choose").show();
+      var pbar    = this.$element.find(".ProgressBar");
 
       self.uploader = new qq.FileUploader({
         element : trigger[0],
@@ -1485,14 +1430,17 @@
         },
         onSubmit: function(id, fileName){
           $(trigger).html(fileName);
+          self.$element.find("p.Status").html(sprintf("Uploading '%s'", fileName));
           return true;
         },
         onProgress: function(id, fileName, loaded, total){
+          var percentage = Math.round(loaded / total * 100);
           $(pbar).progressbar({
-            value : total
+            value : percentage
           });
 
-          self.clb_progress(fileName, loaded, total);
+          self.$element.find("p.Status").html(sprintf("Uploading '%s' %d of %d (%d%%)", fileName, loaded, total, percentage));
+          self.clb_progress(fileName, loaded, total, percentage);
         },
         onComplete: function(id, fileName, responseJSON){
           self.$element.find(".ActionClose").click();

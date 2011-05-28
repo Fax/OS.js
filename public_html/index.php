@@ -191,6 +191,47 @@ header("Pragma: no-cache");
   </div>
 </div>
 
+<div id="OperationDialogColor" style="display:none">
+  <div class="OperationDialog OperationDialogColor">
+    <div class="OperationDialogInner">
+      <div>
+        <div class="Slider SliderR"></div>
+      </div>
+      <div>
+        <div class="Slider SliderG"></div>
+      </div>
+      <div>
+        <div class="Slider SliderB"></div>
+      </div>
+    </div>
+    <div class="CurrentColor">
+    </div>
+    <div class="CurrentColorDesc">
+    </div>
+  </div>
+</div>
+
+<div id="OperationDialogCopy" style="display:none">
+  <div class="OperationDialog OperationDialogCopy">
+    <h1>Copy file</h1>
+    <div class="OperationDialogInner">
+      <p class="Status">0 of 0</p>
+      <div class="ProgressBar"></div>
+    </div>
+  </div>
+</div>
+
+<div id="OperationDialogUpload" style="display:none">
+  <div class="OperationDialog OperationDialogUpload">
+    <h1>Upload file...</h1>
+    <div class="OperationDialogInner">
+      <p class="Status">No file selected</p>
+      <div class="ProgressBar"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Version Stamp -->
 <div id="Version">
   JSWM Version <?php print PROJECT_VERSION; ?>
   -
