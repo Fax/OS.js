@@ -115,12 +115,16 @@
         _Desktop.addWindow(new Window(app_name, false, args, attrs));
       },
 
-      'call' : function(method, argv, callback) {
+      'call' : function(method, argv, callback, show_alert) {
+        show_alert = (show_alert === undefined) ? true : (show_alert ? true : false);
+
         $.post("/", {'ajax' : true, 'action' : 'call', 'method' : method, 'args' : argv}, function(data) {
           if ( data.success ) {
             callback(data.result, null);
           } else {
-            API.system.dialog("error", data.error);
+            if ( show_alert ) {
+              API.system.dialog("error", data.error);
+            }
             callback(null, data.error);
           }
         });

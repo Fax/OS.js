@@ -22,5 +22,9 @@
 
   font-family : Monospace;
   font-size : 11px;
+  resize : none;
+  overflow-x : none;
+  overflow-y : scroll;
+  white-space : none;
 }
 

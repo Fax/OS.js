@@ -199,7 +199,7 @@ class WindowManager
               $json['result'] = $items;
               $json['success'] = true;
             } else {
-              $json['error'] = "Failed to read '$argv'";
+              $json['error'] = "Failed to read '{$argv['path']}'";
             }
           } else {
             if ( function_exists($method) ) {

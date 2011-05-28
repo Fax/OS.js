@@ -19,27 +19,60 @@ var ApplicationTerminal = (function($, undefined) {
   return function(Application, app, api, argv) {
 
 
-    var CurrentDir = "/";
-    var Commands = {
-      'ls' : function(argv, $txt, callback) {
+    var CurrentDir = null;
+    var CurrentPath = null;
 
-        api.system.call("readdir", {'path' : CurrentDir}, function(result, error) {
+    var ChDir = function(dir, callback) {
+      dir = dir || "/";
+      callback = callback || function() {};
+
+      if ( !dir.match(/^\//) && CurrentDir ) {
+        dir = CurrentDir + dir;
+      }
+
+      if ( dir != CurrentDir ) {
+        api.system.call("readdir", {'path' : dir}, function(result, error) {
           if ( result ) {
-            var out = "";
-            for ( var f in result ) {
-              if ( result.hasOwnProperty(f) ) {
-                out += [str_pad(f, 60, " ", 'STR_PAD_RIGHT'), str_pad(result[f].mime, 25, " ", 'STR_PAD_LEFT'), str_pad(result[f].size, 15, " ", 'STR_PAD_LEFT'), "\n"].join("");
-              }
-            }
-
-            callback(out);
+            CurrentPath = result;
+            CurrentDir = dir;
+            callback(true);
           } else {
             callback(error);
           }
-        });
+        }, false);
+      } else {
+        callback(false);
+      }
+    };
+
+    var Commands = {
+      'ls' : function(argv, $txt, callback) {
+
+        if ( CurrentPath ) {
+          var out = "";
+          for ( var f in CurrentPath ) {
+            if ( CurrentPath.hasOwnProperty(f) ) {
+              out += [str_pad(f, 60, " ", 'STR_PAD_RIGHT'), str_pad(CurrentPath[f].mime, 25, " ", 'STR_PAD_LEFT'), str_pad(CurrentPath[f].size, 15, " ", 'STR_PAD_LEFT'), "\n"].join("");
+            }
+          }
+
+          callback(out);
+        } else {
+          callback("NO WORKING DIRECTORY!");
+        }
       },
       'cd' : function(argv, $txt, callback) {
-        callback("CHANGE DIRECTORY");
+        if ( (argv.length) && argv[0] ) {
+          ChDir(argv[0], function(res) {
+            if ( res === true ) {
+              callback("Changed directory to '" + argv[0] + "'");
+            } else {
+              callback("Failed to change directory to '" + argv[0] + "'");
+            }
+          });
+        } else {
+          callback("No argument given");
+        }
       }
     };
 
@@ -68,6 +101,12 @@ var ApplicationTerminal = (function($, undefined) {
           $(txt).blur();
         };
 
+        $(txt).mousedown(function(ev) {
+          ev.preventDefault();
+        }).dblclick(function(ev) {
+          ev.preventDefault();
+        });
+
         $(txt).val("");
         app.focus_hook();
 
@@ -79,7 +118,9 @@ var ApplicationTerminal = (function($, undefined) {
 
           var out = null;
           var args = [];
+
           var tmp = cmd.split(" ");
+          cmd = tmp[0];
           if ( tmp.length > 1 ) {
             tmp.shift();
             args = tmp;
@@ -102,7 +143,7 @@ var ApplicationTerminal = (function($, undefined) {
 
         var put = function(v) {
           v = v || "";
-          $(txt).val($(txt).val() + v + "~/ >");
+          $(txt).val($(txt).val() + v + "~" + CurrentDir + " > ");
           $(txt).attr({ scrollTop: $(txt).attr("scrollHeight") });
         };
 
@@ -139,7 +180,9 @@ var ApplicationTerminal = (function($, undefined) {
           return true;
         });
 
-        put();
+        ChDir("/", function(out) {
+          put(out === true ? null : out);
+        });
 
         this._super();
       }

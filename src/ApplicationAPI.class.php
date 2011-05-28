@@ -94,7 +94,7 @@ class ApplicationAPI
     $base     = PATH_PROJECT_HTML . "/media";
     $absolute = "{$base}{$path}";
 
-    if ($handle = opendir($absolute)) {
+    if ( is_dir($absolute) && $handle = opendir($absolute)) {
       $items = Array("dir" => Array(), "file" => Array());
       while (false !== ($file = readdir($handle))) {
         if ( in_array($file, $ignores) ) {
