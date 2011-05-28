@@ -170,11 +170,11 @@ var ApplicationFilemanager = (function($, undefined) {
 
         function _updateMenu() {
           if ( self.argv.view_type == 'icon' ) {
-            $(el).find(".WindowMenu .cmd_View_List").parent().removeClass("checked");
-            $(el).find(".WindowMenu .cmd_View_Icons").parent().addClass("checked");
+            app.setMenuItemAttribute("View", "cmd_View_List", "");
+            app.setMenuItemAttribute("View", "cmd_View_Icons", "checked");
           } else {
-            $(el).find(".WindowMenu .cmd_View_List").parent().addClass("checked");
-            $(el).find(".WindowMenu .cmd_View_Icons").parent().removeClass("checked");
+            app.setMenuItemAttribute("View", "cmd_View_List", "checked");
+            app.setMenuItemAttribute("View", "cmd_View_Icons", "");
           }
         }
 
@@ -182,7 +182,7 @@ var ApplicationFilemanager = (function($, undefined) {
           _selItem();
         });
 
-        $(el).find(".WindowMenu .cmd_Home").parent().click(function() {
+        app.setMenuItemAction("Go", "cmd_Home", function() {
           if ( _CurrentDir != "/" ) {
             chdir("/");
             _History = [];
@@ -190,23 +190,23 @@ var ApplicationFilemanager = (function($, undefined) {
           }
         });
 
-        $(el).find(".WindowMenu .cmd_Upload").parent().click(function() {
+        app.setMenuItemAction("File", "cmd_Upload", function() {
           api.system.dialog_upload(function() {
             //chdir(_CurrentDir);
             chdir("/");
           });
         });
 
-        $(el).find(".WindowMenu .cmd_Reload").parent().click(function() {
+        app.setMenuItemAction("View", "cmd_Reload", function() {
           chdir(_CurrentDir);
         });
 
-        $(el).find(".WindowMenu .cmd_View_List").parent().click(function() {
+        app.setMenuItemAction("View", "cmd_View_List", function() {
           self.argv.view_type = 'list';
           chdir(_CurrentDir);
           _updateMenu();
         });
-        $(el).find(".WindowMenu .cmd_View_Icons").parent().click(function() {
+        app.setMenuItemAction("View", "cmd_View_Icons", function() {
           self.argv.view_type = 'icon';
           chdir(_CurrentDir);
           _updateMenu();

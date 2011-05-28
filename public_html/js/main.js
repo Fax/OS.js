@@ -182,9 +182,9 @@
           if ( ev.which === which ) {
             _destroy();
 
-            cm = new Menu();
+            cm = new Menu(where);
             forEach(items, function(i, it) {
-              cm.create_item(it. title, it.icon, it.method, it.disabled);
+              cm.create_item(it. title, it.icon, it.method, it.disabled, it.attribute === "checked");
             });
 
             var off = $(where).offset();
@@ -799,10 +799,12 @@
         });
       }
 
-      if ( this.menus.length ) {
+      if ( sizeof(this.menus) ) {
+        /*
         for ( var i = 0; i < this.menus.length; i++ ) {
           this.menus[i].destroy();
         }
+        */
         this.menus = null;
       }
 
@@ -844,13 +846,19 @@
             mel.find("span").html(ind);
 
             if ( m instanceof Object && sizeof(m) ) {
-              var menu = new Menu();
-              forEach(m, function(sind, sm) {
-                menu.create_item(sind, null, sm);
-              });
-
-              mel.append(menu.$element);
-              self.menus.push(menu);
+              var menu_items = [];
+              for ( var x in m ) {
+                if ( m.hasOwnProperty(x) ) {
+                  menu_items.push({
+                    "title"  : x,
+                    "method" : m[x], // Can be changed!
+                    "name"   : m[x]
+                  });
+                }
+              }
+              if ( menu_items.length ) {
+                self.menus[ind] = menu_items;
+              }
 
             } else {
               mel.find("span").addClass(m);
@@ -884,10 +892,17 @@
           el.find(".WindowTopInner img").attr("src", "/img/icons/16x16/" + this.icon);
           el.find(".WindowContentInner").html(this.content);
 
+          /*
           $(el).find(".WindowMenu li.Top").hover(function() {
             $(this).find("ul").show();
           }, function() {
             $(this).find("ul").hide();
+          });
+          */
+
+          $(el).find(".WindowMenu li.Top").click(function(ev) {
+            var menu = $(this).find("span").html();
+            return API.application.context_menu(ev, self.menus[menu], $(this), 1);
           });
         }
 
@@ -1175,6 +1190,32 @@
 
     },
 
+    setMenuItemAttribute : function(m, it, attribute) {
+      if ( this.menus[m] ) {
+        for ( var i in this.menus[m] ) {
+          if ( this.menus[m].hasOwnProperty(i) ) {
+            if ( this.menus[m][i]['name'] == it ) {
+              this.menus[m][i]['attribute'] = attribute;
+              break;
+            }
+          }
+        }
+      }
+    },
+
+    setMenuItemAction : function(m, it, callback) {
+      if ( this.menus[m] ) {
+        for ( var i in this.menus[m] ) {
+          if ( this.menus[m].hasOwnProperty(i) ) {
+            if ( this.menus[m][i]['name'] == it ) {
+              this.menus[m][i]['method'] = callback;
+              break;
+            }
+          }
+        }
+      }
+    },
+
     setTitle : function(t) {
       this.title = t;
     },
@@ -1204,9 +1245,10 @@
 
   var Menu = Class.extend({
 
-    init : function() {
+    init : function(att_window) {
       this.$element = $("<ul></ul>");
       this.$element.attr("class", "Menu");
+      this.$window = att_window ? ($(att_window).parents(".Window")) : null;
     },
 
     destroy : function() {
@@ -1223,7 +1265,8 @@
       }
     },
 
-    create_item : function(title, icon, method, disabled) {
+    create_item : function(title, icon, method, disabled, checked) {
+      var self = this;
       var litem = $("<li><span><img alt=\"\" src=\"/img/blank.gif\" /></span></li>");
       if ( typeof method == "function" ) {
         litem.click(method);
@@ -1237,10 +1280,13 @@
       if ( disabled ) {
         $(litem).addClass("Disabled");
       }
+      if ( checked ) {
+        $(litem).addClass("checked");
+      }
 
       if ( method == "cmd_Close" ) {
         $(litem).click(function() {
-          $(this).parents(".Window").find(".ActionClose").click();
+          $(self.$window).find(".ActionClose").click();
         });
       } else {
         $(litem).click(function() {

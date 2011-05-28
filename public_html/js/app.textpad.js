@@ -71,19 +71,19 @@ var ApplicationTextpad = (function() {
 
         _read_file(argv['path']);
 
-        $(el).find(".WindowMenu .cmd_Open").parent().click(function() {
+        app.setMenuItemAction("File", "cmd_Open", function() {
           _open(function(fname) {
             _read_file(fname);
           });
         });
 
-        $(el).find(".WindowMenu .cmd_Save").parent().click(function() {
+        app.setMenuItemAction("File", "cmd_Save", function() {
           if ( argv && argv['path'] ) {
             _save(argv['path'], app.$element.find("textarea").val());
           }
         });
 
-        $(el).find(".WindowMenu .cmd_SaveAs").parent().click(function() {
+        app.setMenuItemAction("File", "cmd_SaveAs", function() {
           _saveAs(function(file, mime) {
             _save(file, app.$element.find("textarea").val(), function() {
               _update(file, el);
@@ -91,7 +91,7 @@ var ApplicationTextpad = (function() {
           });
         });
 
-        $(el).find(".WindowMenu .cmd_New").parent().click(function() {
+        app.setMenuItemAction("File", "cmd_New", function() {
           app.$element.find("textarea").val("");
           _update(null, el);
         });

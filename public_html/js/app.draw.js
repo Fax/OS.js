@@ -291,7 +291,7 @@ var ApplicationDraw = (function($, undefined) {
           useFill = this.checked ? true : false;
         });
 
-        $(el).find(".WindowMenu .cmd_Open").parent().click(function() {
+        app.setMenuItemAction("File", "cmd_Open", function() {
           _open(function(fname) {
             context.clearRect (0, 0, canvas.width, canvas.height);
             contexto.clearRect (0, 0, canvas.width, canvas.height);
@@ -310,14 +310,14 @@ var ApplicationDraw = (function($, undefined) {
           });
         });
 
-        $(el).find(".WindowMenu .cmd_Save").parent().click(function() {
+        app.setMenuItemAction("File", "cmd_Save", function() {
           if ( argv && argv['path'] ) {
             var img = canvas.toDataURL("image/png");
             _save(argv['path'], img);
           }
         });
 
-        $(el).find(".WindowMenu .cmd_SaveAs").parent().click(function() {
+        app.setMenuItemAction("File", "cmd_SaveAs", function() {
           var img = canvas.toDataURL("image/png");
           _saveAs(function(file, mime) {
             _save(file, img, function() {
@@ -326,7 +326,7 @@ var ApplicationDraw = (function($, undefined) {
           });
         });
 
-        $(el).find(".WindowMenu .cmd_New").parent().click(function() {
+        app.setMenuItemAction("File", "cmd_New", function() {
           app.$element.find("textarea").val("");
           context.clearRect (0, 0, canvas.width, canvas.height);
           contexto.clearRect (0, 0, canvas.width, canvas.height);

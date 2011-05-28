@@ -109,7 +109,7 @@ var ApplicationViewer = (function() {
           _play(argv.path, argv.mime);
         }
 
-        $(el).find(".WindowMenu .cmd_Open").parent().click(function() {
+        app.setMenuItemAction("File", "cmd_Open", function() {
           _open(function(fname, mtype) {
             _play(fname, mtype);
           });
