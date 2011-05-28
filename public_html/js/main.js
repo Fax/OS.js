@@ -19,7 +19,9 @@
   // Override for browsers without console
   if (!window.console) console = {log:function() {}, error:function(){}};
 
-  var ANIMATION_SPEED = 400;
+  var SETTING_REVISION = 1;
+
+  var ANIMATION_SPEED  = 400;
 
   var _Resources           = null;
   var _Settings            = null;
@@ -387,10 +389,17 @@
       init : function(defaults) {
         _avail = defaults;
 
+        var rev = localStorage.getItem("SETTING_REVISION");
+        var force = false;
+        if ( rev !== SETTING_REVISION ) {
+          force = true;
+          localStorage.setItem("SETTING_REVISION", SETTING_REVISION);
+        }
+
         for ( var i in _avail ) {
           if ( _avail.hasOwnProperty(i) ) {
             if ( !_avail[i].hidden ) {
-              if ( !localStorage.getItem(i) ) {
+              if ( force || !localStorage.getItem(i) ) {
                 localStorage.setItem(i, _avail[i].value);
               }
               _stores.push(i);
