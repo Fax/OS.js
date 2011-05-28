@@ -1747,7 +1747,7 @@
       var target = ev.target || ev.srcElement;
       if ( target ) {
         if ( key === 9 ) {
-          if ( target.tagName == "textarea" ) {
+          if ( target.tagName.toLowerCase() == "textarea" ) {
             var cc = getCaret(target);
             var val = $(target).val();
 
@@ -1766,10 +1766,11 @@
 
     $("#Desktop, .DesktopPanel").mousedown(function(ev) {
       var t = ev.target || ev.srcElement;
-      var tagName = t.tagName.toLowerCase();
-
-      if ( tagName !== "input" && tagName !== "textarea" ) {
-        ev.preventDefault();
+      if ( t ) {
+        var tagName = t.tagName.toLowerCase();
+        if ( tagName !== "input" && tagName !== "textarea" ) {
+          ev.preventDefault();
+        }
       }
     }).dblclick(function(ev) {
       ev.preventDefault();
