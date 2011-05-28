@@ -31,6 +31,11 @@ class ApplicationTerminal
 
 EOHTML;
 
+    $this->width = 800;
+    $this->height = 500;
+    $this->is_scrollable = false;
+    $this->is_resizable = false;
+    $this->is_maximizable = false;
     $this->resources = Array(
       "sys.terminal.js",
       "sys.terminal.css"
