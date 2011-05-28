@@ -471,10 +471,8 @@
 
       destroy : function() {
         try {
-          $(document).die();
-          $(document).unbind();
-          $("body").die();
-          $("body").unbind();
+          $("*").unbind();
+          $("*").die();
         } catch ( eee ) { }
 
         this.setWallpaper(null);
@@ -674,7 +672,7 @@
     },
 
     destroy : function() {
-      this.$element.remove();
+      this.$element.empty().remove();
     },
 
     redraw : function(desktop, win, remove) {
@@ -683,7 +681,7 @@
       var id = win.$element.attr("id") + "_Shortcut";
 
       if ( remove ) {
-        $("#" + id).remove();
+        $("#" + id).empty().remove();
       } else {
 
         if ( !document.getElementById(id) ) {
@@ -794,7 +792,7 @@
       }
 
       $(this.$element).fadeOut(ANIMATION_SPEED, function() {
-        $(self.$element).remove();
+        $(self.$element).empty().remove();
       });
 
       console.log("Window destroyed...", this);
@@ -1194,7 +1192,7 @@
 
     destroy : function() {
       if ( this.$element ) {
-        this.$element.remove();
+        this.$element.empty().remove();
       }
 
       this.$element = null;
@@ -1202,7 +1200,7 @@
 
     clear : function() {
       if ( this.$element ) {
-        this.$element.find("li").remove();
+        this.$element.find("li").empty().remove();
       }
     },
 
@@ -1508,7 +1506,7 @@
           $(ul).die();
           $(ul).unbind();
 
-          ul.find("li").remove();
+          ul.find("li").empty().remove();
 
           if ( error === null ) {
             var i = 0;
