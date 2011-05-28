@@ -1061,8 +1061,11 @@
           }, 0);
         }
 
-        if ( this.create_callback )
-          this.create_callback();
+        if ( this.create_callback ) {
+          setTimeout(function() {
+            self.create_callback();
+          }, 0);
+        }
       }
 
       this.created = true;
@@ -1353,16 +1356,32 @@
 
     init : function(clb_finish) {
 
-      var self = this;
-
       clb_finish   = clb_finish   || function() {};
 
       this._super("Color");
 
-      this.title    = "Copy file";
-      this.content  = $("<div class=\"OperationDialog\"><div class=\"OperationDialogInner\"></div></div>");
+      this.title    = "Choose color...";
+
+      var inner = "<div><div class=\"Slider SliderR\"></div></div>";
+          inner += "<div><div class=\"Slider SliderG\"></div></div>";
+          inner += "<div><div class=\"Slider SliderB\"></div></div>";
+
+      this.content  = $("<div class=\"OperationDialog\"><div class=\"OperationDialogInner\">" + inner + "</div></div>");
+
       this.width    = 400;
       this.height   = 170;
+    },
+
+    create : function(desktop, id, zi, method) {
+      this._super(desktop, id, zi, method);
+
+      var self = this;
+      $(self.content).find(".Slider").slider({
+        'min' : 0,
+        'max' : 255,
+        'step' : 1,
+        'value' : 100
+      });
     }
   });
 
@@ -1396,59 +1415,61 @@
     init : function(clb_finish, clb_progress, clb_cancel) {
       var self = this;
 
-      clb_finish   = clb_finish   || function() {};
-      clb_progress = clb_progress || function() {};
-      clb_cancel   = clb_cancel   || function() {};
+      this.clb_finish   = clb_finish   || function() {};
+      this.clb_progress = clb_progress || function() {};
+      this.clb_cancel   = clb_cancel   || function() {};
 
       this._super("Upload");
-
-      this.create_callback = function() {
-        $(self.content).find(".OperationDialogInner").append("<p class=\"Status\">No file selected</p><div class=\"ProgressBar\"></div>");
-        $(self.content).find(".ProgressBar").progressbar({
-          value : 0
-        });
-
-        var trigger = self.$element.find("button.Choose").show();
-        var pbar = $(self.content).find(".ProgressBar");
-
-        self.uploader = new qq.FileUploader({
-          element : trigger[0],
-          action  : '/',
-          params : {
-            ajax   : true,
-            action : 'upload'
-          },
-          onSubmit: function(id, fileName){
-            $(trigger).html(fileName);
-            return true;
-          },
-          onProgress: function(id, fileName, loaded, total){
-            $(pbar).progressbar({
-              value : total
-            });
-
-            clb_progress(fileName, loaded, total);
-          },
-          onComplete: function(id, fileName, responseJSON){
-            self.$element.find(".ActionClose").click();
-
-            clb_finish(fileName, responseJSON);
-          },
-          onCancel: function(id, fileName){
-            API.system.dialog("error", "File upload '" + fileName + "' was cancelled!");
-            self.$element.find(".ActionClose").click();
-
-            clb_cancel(fileName);
-          }
-        });
-
-      };
 
       this.title    = "Upload file";
       this.content  = $("<div class=\"OperationDialog\"><h1>Upload file...</h1><div class=\"OperationDialogInner\"></div></div>");
       this.width    = 400;
       this.height   = 170;
       this.uploader = null;
+    },
+
+    create : function(desktop, id, zi, method) {
+      this._super(desktop, id, zi, method);
+
+      var self = this;
+      $(self.content).find(".OperationDialogInner").append("<p class=\"Status\">No file selected</p><div class=\"ProgressBar\"></div>");
+      $(self.content).find(".ProgressBar").progressbar({
+        value : 0
+      });
+
+      var trigger = self.$element.find("button.Choose").show();
+      var pbar = $(self.content).find(".ProgressBar");
+
+      self.uploader = new qq.FileUploader({
+        element : trigger[0],
+        action  : '/',
+        params : {
+          ajax   : true,
+          action : 'upload'
+        },
+        onSubmit: function(id, fileName){
+          $(trigger).html(fileName);
+          return true;
+        },
+        onProgress: function(id, fileName, loaded, total){
+          $(pbar).progressbar({
+            value : total
+          });
+
+          self.clb_progress(fileName, loaded, total);
+        },
+        onComplete: function(id, fileName, responseJSON){
+          self.$element.find(".ActionClose").click();
+
+          self.clb_finish(fileName, responseJSON);
+        },
+        onCancel: function(id, fileName){
+          API.system.dialog("error", "File upload '" + fileName + "' was cancelled!");
+          self.$element.find(".ActionClose").click();
+
+          self.clb_cancel(fileName);
+        }
+      });
     },
 
     destroy : function() {
@@ -1637,6 +1658,10 @@
       };
       this.width    = 400;
       this.height   = 300;
+    },
+
+    create : function(desktop, id, zi, method) {
+      this._super(desktop, id, zi, method);
     }
 
   });
@@ -1728,6 +1753,9 @@
         _Desktop = new Desktop();
 
         API.session.restore();
+        API.system.dialog_color(function(color) {
+          alert(color);
+        });
       } else {
         alert(data.error);
       }
