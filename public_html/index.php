@@ -65,10 +65,12 @@ header("Pragma: no-cache");
   <link rel="stylesheet" type="text/css" href="/css/sys.user.css" />
   <link rel="stylesheet" type="text/css" href="/css/sys.settings.css" />
   <link rel="stylesheet" type="text/css" href="/css/sys.logout.css" />
+  <link rel="stylesheet" type="text/css" href="/css/sys.terminal.css" />
 
   <script type="text/javascript" src="/js/sys.user.js"></script>
   <script type="text/javascript" src="/js/sys.settings.js"></script>
   <script type="text/javascript" src="/js/sys.logout.js"></script>
+  <script type="text/javascript" src="/js/sys.terminal.js"></script>
 </head>
 <body>
 

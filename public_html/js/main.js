@@ -517,6 +517,9 @@
 
             self.stack.push(win);
 
+            //win.focus();
+            $(win.$element).trigger("mousedown");
+
             self.panel.redraw(self, win, false);
           };
 
@@ -772,6 +775,9 @@
       this.width          = -1;
       this.height         = -1;
       this.gravity        = "none";
+
+      this.focus_hook = null;
+      this.blur_hook = null;
 
       // DOM Elements
       this.$element = null;
@@ -1076,6 +1082,10 @@
 
         this.$element.css("z-index", _TopIndex);
         this.$element.addClass("Current");
+
+        if ( this.focus_hook ) {
+          this.focus_hook();
+        }
       }
       this.current = true;
     },
@@ -1083,6 +1093,10 @@
     blur : function() {
       if ( this.current ) {
         this.$element.removeClass("Current");
+
+        if ( this.blur_hook ) {
+          this.blur_hook();
+        }
       }
       this.current = false;
     },

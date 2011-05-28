@@ -224,7 +224,6 @@ var ApplicationDraw = (function($, undefined) {
             api.ui.cursor("pointer");
 
             ev.preventDefault();
-            ev.stopPropagation();
           }
         }).mousemove(function(ev) {
           if ( isDrawing ) {
@@ -232,7 +231,6 @@ var ApplicationDraw = (function($, undefined) {
 
             currentToolObj.mousemove(ev, context, canvas);
             //ev.preventDefault();
-            //ev.stopPropagation();
           }
         }).mouseup(function(ev) {
           if ( isDrawing ) {
@@ -246,7 +244,6 @@ var ApplicationDraw = (function($, undefined) {
             isDrawing = false;
 
             ev.preventDefault();
-            ev.stopPropagation();
           }
 
         }).click(function(ev) {

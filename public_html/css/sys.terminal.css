@@ -1,0 +1,23 @@
+@charset "UTF-8";
+/**
+ * Application: Terminal
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ */
+
+.ApplicationTerminal {
+
+}
+
+.ApplicationTerminalInner textarea {
+  border : 0 none;
+  background : #000;
+  color : #fff;
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 0px;
+}
+
