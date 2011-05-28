@@ -168,13 +168,13 @@
       },
 
       'dialog_upload' : function(clb_finish, clb_progress, clb_cancel) {
-        _Desktop.addWindow(new OperationDialog('upload', 'Uploading file...', null, clb_finish, clb_progress, clb_cancel));
+        _Desktop.addWindow(new UploadOperationDialog('upload', 'Uploading file...', null, clb_finish, clb_progress, clb_cancel));
       },
 
       'dialog_file' : function(clb_finish, mime_filter, type) {
         mime_filter = mime_filter || [];
         type = type || "open";
-        _Desktop.addWindow(new OperationDialog(type, 'Choose file...', mime_filter, clb_finish));
+        _Desktop.addWindow(new FileOperationDialog(type, 'Choose file...', mime_filter, clb_finish));
       }
     },
 
@@ -1322,245 +1322,9 @@
       this.height         = 200;
       this.gravity        = "center";
       this.is_minimizable = true;
-      this.uploader = null;
-
-      argv         = argv         || {};
-      clb_finish   = clb_finish   || function() {};
-      clb_progress = clb_progress || function() {};
-      clb_cancel   = clb_cancel   || function() {};
-
-      var self = this;
-      if ( type == 'copy' ) {
-        $(this.content).find(".OperationDialogInner").append("<p class=\"Status\">0 of 0</p><div class=\"ProgressBar\"></div>");
-        $(this.content).find(".ProgressBar").progressbar({
-          value : 50
-        });
-        this.width    = 400;
-        this.height   = 170;
-        this.title    = "Copy file";
-        this.content  = $("<div class=\"OperationDialog\"><h1>" + message + "</h1><div class=\"OperationDialogInner\"></div></div>");
-      } else if ( type == 'upload' ) {
-        this.width    = 400;
-        this.height   = 170;
-        this.title    = "Upload file";
-        this.content  = $("<div class=\"OperationDialog\"><h1>" + message + "</h1><div class=\"OperationDialogInner\"></div></div>");
-
-        this.create_callback = function() {
-          $(self.content).find(".OperationDialogInner").append("<p class=\"Status\">No file selected</p><div class=\"ProgressBar\"></div>");
-          $(self.content).find(".ProgressBar").progressbar({
-            value : 0
-          });
-
-          var trigger = self.$element.find("button.Choose").show();
-          var pbar = $(self.content).find(".ProgressBar");
-
-          self.uploader = new qq.FileUploader({
-            element : trigger[0],
-            action  : '/',
-            params : {
-              ajax   : true,
-              action : 'upload'
-            },
-            onSubmit: function(id, fileName){
-              $(trigger).html(fileName);
-              return true;
-            },
-            onProgress: function(id, fileName, loaded, total){
-              $(pbar).progressbar({
-                value : total
-              });
-
-              clb_progress(fileName, loaded, total);
-            },
-            onComplete: function(id, fileName, responseJSON){
-              self.$element.find(".ActionClose").click();
-
-              clb_finish(fileName, responseJSON);
-            },
-            onCancel: function(id, fileName){
-              API.system.dialog("error", "File upload '" + fileName + "' was cancelled!");
-              self.$element.find(".ActionClose").click();
-
-              clb_cancel(fileName);
-            }
-          });
-
-        };
-
-      } else if ( type == "file" || type == "open" || type == "save" ) {
-        this.width    = 400;
-        this.height   = 300;
-        this.title    = type == "save" ? "Save As..." : "Open File";
-        this.content  = $("<div class=\"OperationDialog\"><div class=\"FileChooser\"><ul></ul></div><div class=\"FileChooserInput\"><input type=\"text\" /></div></div>");
-        this.is_resizable = true;
-        this.selected_file = null;
-
-        var ul = $(this.content).find("ul");
-        var inp = $(this.content).find("input[type='text']");
-        var prev = null;
-        var current_dir = "";
-        var is_save = type == "save";
-        var currentFile = null;
-
-        if ( !is_save ) {
-          $(inp).focus(function() {
-            $(this).blur();
-          }).addClass("Disabled");
-        }
-
-        $(inp).keydown(function(ev) {
-          var keyCode = ev.which || ev.keyCode;
-          var val = $(this).val();
-
-          if ( keyCode == 13 ) {
-            if ( !is_save ) {
-              if ( !self.$element.find("button.Ok").attr("disabled") ) {
-                if ( currentFile ) {
-                  $(currentFile).trigger('dblclick');
-                }
-              }
-            } else {
-              if ( val ) {
-                if ( !val.match(/^\//) ) {
-                  val = (current_dir == "/" ? "/" : (current_dir + "/")) + val;
-                }
-
-                self.selected_file = {
-                  "path" : val,
-                  "size" : -1,
-                  "mime" : "",
-                  "icon" : "",
-                  "type" : "file"
-                };
-                self.$element.find("button.Ok").click();
-              }
-            }
-          }
-        });
-
-        $(inp).keyup(function(ev) {
-          var keyCode = ev.which || ev.keyCode;
-          var val = $(this).val();
-
-          if ( is_save ) {
-            if ( val ) {
-              self.$element.find("button.Ok").removeAttr("disabled");
-            } else {
-              self.$element.find("button.Ok").attr("disabled", "disabled");
-            }
-          }
-        });
-
-        var readdir = function(path)
-        {
-          if ( path == current_dir )
-            return;
-
-          var ignores = path == "/" ? ["..", "."] : ["."];
-          currentFile = null;
-
-          API.system.call("readdir", {'path' : path, 'mime' : argv, 'ignore' : ignores}, function(result, error) {
-            $(ul).die();
-            $(ul).unbind();
-
-            ul.find("li").remove();
-
-            if ( error === null ) {
-              var i = 0;
-              for ( var f in result ) {
-                if ( result.hasOwnProperty(f) ) {
-                  var o = result[f];
-                  var el = $("<li><img alt=\"\" src=\"/img/blank.gif\" /><span></span></li>");
-                  el.find("img").attr("src", "/img/icons/16x16/" + o.icon);
-                  el.find("span").html(f);
-                  el.addClass(i % 2 ? "odd" : "even");
-
-                  (function(vo) {
-                    el.click(function() {
-
-                      if ( prev !== null && prev !== this ) {
-                        $(prev).removeClass("current");
-                      }
-
-                      if ( prev !== this ) {
-                        $(this).addClass("current");
-                      }
-
-                      if ( vo.type == "file" ) {
-                        self.selected_file = vo;
-                        self.$element.find("button.Ok").removeAttr("disabled");
-                        $(inp).val(vo.path);
-
-                        currentFile = this;
-                      } else {
-                        self.selected_file = null;
-                        $(inp).val("");
-                        self.$element.find("button.Ok").attr("disabled", "disabled");
-
-                        currentFile = null;
-                      }
-
-                      prev = this;
-                    });
-
-                    el.dblclick(function() {
-
-                      if ( vo.type != "file" ) {
-                        readdir(vo.path);
-                      } else {
-
-                        var _doSave = function() {
-                          self.selected_file = vo;
-                          $(inp).val(vo.path);
-
-                          self.$element.find("button.Ok").removeAttr("disabled");
-                          self.$element.find("button.Ok").click();
-                        };
-
-                        if ( is_save ) {
-                          if ( confirm("Are you sure you want to overwrite this file?") ) { // FIXME
-                            _doSave();
-                          }
-                        } else {
-                          _doSave();
-                        }
-                      }
-
-                    });
-                  })(o);
-
-                  $(ul).append(el);
-
-                  i++;
-                }
-              }
-            }
-
-            self.$element.find("button.Ok").attr("disabled", "disabled");
-          });
-
-          current_dir = path;
-        };
-
-        this.create_callback = function() {
-          self.$element.find(".DialogButtons .Close").hide();
-          self.$element.find(".DialogButtons .Cancel").show();
-
-          self.$element.find(".DialogButtons .Ok").show().click(function() {
-            if ( self.selected_file ) {
-              clb_finish(self.selected_file.path, self.selected_file.mime);
-            }
-          }).attr("disabled", "disabled");
-
-          readdir("/");
-        };
-      }
     },
 
     destroy : function() {
-      if ( this.uploader ) {
-        this.uploader = null;
-      }
       this._super();
     },
 
@@ -1581,6 +1345,283 @@
 
   });
 
+  var CopyOperationDialog = OperationDialog.extend({
+
+    init : function(type, message, argv, clb_finish, clb_progress, clb_cancel) {
+      this._super(type, message, argv, clb_finish, clb_progress, clb_cancel);
+
+      var self = this;
+
+      argv         = argv         || {};
+      clb_finish   = clb_finish   || function() {};
+      clb_progress = clb_progress || function() {};
+      clb_cancel   = clb_cancel   || function() {};
+
+      $(this.content).find(".OperationDialogInner").append("<p class=\"Status\">0 of 0</p><div class=\"ProgressBar\"></div>");
+      $(this.content).find(".ProgressBar").progressbar({
+        value : 50
+      });
+
+      this.title    = "Copy file";
+      this.content  = $("<div class=\"OperationDialog\"><h1>" + message + "</h1><div class=\"OperationDialogInner\"></div></div>");
+      this.width    = 400;
+      this.height   = 170;
+    }
+
+  });
+
+  var UploadOperationDialog = OperationDialog.extend({
+
+    init : function(type, message, argv, clb_finish, clb_progress, clb_cancel) {
+      this._super(type, message, argv, clb_finish, clb_progress, clb_cancel);
+
+      var self = this;
+
+      argv         = argv         || {};
+      clb_finish   = clb_finish   || function() {};
+      clb_progress = clb_progress || function() {};
+      clb_cancel   = clb_cancel   || function() {};
+
+      this.create_callback = function() {
+        $(self.content).find(".OperationDialogInner").append("<p class=\"Status\">No file selected</p><div class=\"ProgressBar\"></div>");
+        $(self.content).find(".ProgressBar").progressbar({
+          value : 0
+        });
+
+        var trigger = self.$element.find("button.Choose").show();
+        var pbar = $(self.content).find(".ProgressBar");
+
+        self.uploader = new qq.FileUploader({
+          element : trigger[0],
+          action  : '/',
+          params : {
+            ajax   : true,
+            action : 'upload'
+          },
+          onSubmit: function(id, fileName){
+            $(trigger).html(fileName);
+            return true;
+          },
+          onProgress: function(id, fileName, loaded, total){
+            $(pbar).progressbar({
+              value : total
+            });
+
+            clb_progress(fileName, loaded, total);
+          },
+          onComplete: function(id, fileName, responseJSON){
+            self.$element.find(".ActionClose").click();
+
+            clb_finish(fileName, responseJSON);
+          },
+          onCancel: function(id, fileName){
+            API.system.dialog("error", "File upload '" + fileName + "' was cancelled!");
+            self.$element.find(".ActionClose").click();
+
+            clb_cancel(fileName);
+          }
+        });
+
+      };
+
+      this.title    = "Upload file";
+      this.content  = $("<div class=\"OperationDialog\"><h1>" + message + "</h1><div class=\"OperationDialogInner\"></div></div>");
+      this.width    = 400;
+      this.height   = 170;
+      this.uploader = null;
+    },
+
+    destroy : function() {
+      if ( this.uploader ) {
+        this.uploader = null;
+      }
+
+      this._super();
+    }
+
+  });
+
+  var FileOperationDialog = OperationDialog.extend({
+
+    init : function(type, message, argv, clb_finish, clb_progress, clb_cancel) {
+      this._super(type, message, argv, clb_finish, clb_progress, clb_cancel);
+
+      var self = this;
+
+      argv         = argv         || {};
+      clb_finish   = clb_finish   || function() {};
+      clb_progress = clb_progress || function() {};
+      clb_cancel   = clb_cancel   || function() {};
+
+      this.title    = type == "save" ? "Save As..." : "Open File";
+      this.content  = $("<div class=\"OperationDialog\"><div class=\"FileChooser\"><ul></ul></div><div class=\"FileChooserInput\"><input type=\"text\" /></div></div>");
+      this.is_resizable = true;
+      this.selected_file = null;
+
+      var ul = $(this.content).find("ul");
+      var inp = $(this.content).find("input[type='text']");
+      var prev = null;
+      var current_dir = "";
+      var is_save = type == "save";
+      var currentFile = null;
+
+      if ( !is_save ) {
+        $(inp).focus(function() {
+          $(this).blur();
+        }).addClass("Disabled");
+      }
+
+      $(inp).keydown(function(ev) {
+        var keyCode = ev.which || ev.keyCode;
+        var val = $(this).val();
+
+        if ( keyCode == 13 ) {
+          if ( !is_save ) {
+            if ( !self.$element.find("button.Ok").attr("disabled") ) {
+              if ( currentFile ) {
+                $(currentFile).trigger('dblclick');
+              }
+            }
+          } else {
+            if ( val ) {
+              if ( !val.match(/^\//) ) {
+                val = (current_dir == "/" ? "/" : (current_dir + "/")) + val;
+              }
+
+              self.selected_file = {
+                "path" : val,
+                "size" : -1,
+                "mime" : "",
+                "icon" : "",
+                "type" : "file"
+              };
+              self.$element.find("button.Ok").click();
+            }
+          }
+        }
+      });
+
+      $(inp).keyup(function(ev) {
+        var keyCode = ev.which || ev.keyCode;
+        var val = $(this).val();
+
+        if ( is_save ) {
+          if ( val ) {
+            self.$element.find("button.Ok").removeAttr("disabled");
+          } else {
+            self.$element.find("button.Ok").attr("disabled", "disabled");
+          }
+        }
+      });
+
+      var readdir = function(path)
+      {
+        if ( path == current_dir )
+          return;
+
+        var ignores = path == "/" ? ["..", "."] : ["."];
+        currentFile = null;
+
+        API.system.call("readdir", {'path' : path, 'mime' : argv, 'ignore' : ignores}, function(result, error) {
+          $(ul).die();
+          $(ul).unbind();
+
+          ul.find("li").remove();
+
+          if ( error === null ) {
+            var i = 0;
+            for ( var f in result ) {
+              if ( result.hasOwnProperty(f) ) {
+                var o = result[f];
+                var el = $("<li><img alt=\"\" src=\"/img/blank.gif\" /><span></span></li>");
+                el.find("img").attr("src", "/img/icons/16x16/" + o.icon);
+                el.find("span").html(f);
+                el.addClass(i % 2 ? "odd" : "even");
+
+                (function(vo) {
+                  el.click(function() {
+
+                    if ( prev !== null && prev !== this ) {
+                      $(prev).removeClass("current");
+                    }
+
+                    if ( prev !== this ) {
+                      $(this).addClass("current");
+                    }
+
+                    if ( vo.type == "file" ) {
+                      self.selected_file = vo;
+                      self.$element.find("button.Ok").removeAttr("disabled");
+                      $(inp).val(vo.path);
+
+                      currentFile = this;
+                    } else {
+                      self.selected_file = null;
+                      $(inp).val("");
+                      self.$element.find("button.Ok").attr("disabled", "disabled");
+
+                      currentFile = null;
+                    }
+
+                    prev = this;
+                  });
+
+                  el.dblclick(function() {
+
+                    if ( vo.type != "file" ) {
+                      readdir(vo.path);
+                    } else {
+
+                      var _doSave = function() {
+                        self.selected_file = vo;
+                        $(inp).val(vo.path);
+
+                        self.$element.find("button.Ok").removeAttr("disabled");
+                        self.$element.find("button.Ok").click();
+                      };
+
+                      if ( is_save ) {
+                        if ( confirm("Are you sure you want to overwrite this file?") ) { // FIXME
+                          _doSave();
+                        }
+                      } else {
+                        _doSave();
+                      }
+                    }
+
+                  });
+                })(o);
+
+                $(ul).append(el);
+
+                i++;
+              }
+            }
+          }
+
+          self.$element.find("button.Ok").attr("disabled", "disabled");
+        });
+
+        current_dir = path;
+      };
+
+      this.create_callback = function() {
+        self.$element.find(".DialogButtons .Close").hide();
+        self.$element.find(".DialogButtons .Cancel").show();
+
+        self.$element.find(".DialogButtons .Ok").show().click(function() {
+          if ( self.selected_file ) {
+            clb_finish(self.selected_file.path, self.selected_file.mime);
+          }
+        }).attr("disabled", "disabled");
+
+        readdir("/");
+      };
+      this.width    = 400;
+      this.height   = 300;
+    }
+
+  });
 
   /////////////////////////////////////////////////////////////////////////////
   // APPLICATION
