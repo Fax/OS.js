@@ -231,6 +231,18 @@ header("Pragma: no-cache");
   </div>
 </div>
 
+<div id="OperationDialogFile" style="display:none">
+  <div class="OperationDialog OperationDialogFile">
+    <div class="FileChooser">
+      <ul>
+      </ul>
+    </div>
+    <div class="FileChooserInput">
+      <input type="text" />
+    </div>
+  </div>
+</div>
+
 <!-- Version Stamp -->
 <div id="Version">
   JSWM Version <?php print PROJECT_VERSION; ?>

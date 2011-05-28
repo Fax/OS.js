@@ -1369,7 +1369,7 @@
     init : function(type, message, argv, clb_finish, clb_progress, clb_cancel) {
       this._super("Copy");
 
-      this.argv         = argv         || {};
+      this.aargv        = argv         || {};
       this.clb_finish   = clb_finish   || function() {};
       this.clb_progress = clb_progress || function() {};
       this.clb_cancel   = clb_cancel   || function() {};
@@ -1469,73 +1469,32 @@
   var FileOperationDialog = OperationDialog.extend({
 
     init : function(type, argv, clb_finish) {
-      var self = this;
 
-      argv         = argv         || {};
-      clb_finish   = clb_finish   || function() {};
+      this.aargv         = argv         || {};
+      this.atype         = type         || "open";
+      this.clb_finish    = clb_finish   || function() {};
+      this.selected_file = null;
 
       this._super("File");
 
-      this.title    = type == "save" ? "Save As..." : "Open File";
-      this.content  = $("<div class=\"OperationDialog\"><div class=\"FileChooser\"><ul></ul></div><div class=\"FileChooserInput\"><input type=\"text\" /></div></div>");
+      this.title        = type == "save" ? "Save As..." : "Open File";
+      this.content      = $("#OperationDialogFile").html();
       this.is_resizable = true;
-      this.selected_file = null;
+      this.width        = 400;
+      this.height       = 300;
+    },
 
-      var ul = $(this.content).find("ul");
-      var inp = $(this.content).find("input[type='text']");
-      var prev = null;
+    create : function(desktop, id, zi, method) {
+      var self = this;
+
+      this._super(desktop, id, zi, method);
+
+      var ul          = this.$element.find("ul");
+      var inp         = this.$element.find("input[type='text']");
+      var prev        = null;
       var current_dir = "";
-      var is_save = type == "save";
+      var is_save     = self.atype == "save";
       var currentFile = null;
-
-      if ( !is_save ) {
-        $(inp).focus(function() {
-          $(this).blur();
-        }).addClass("Disabled");
-      }
-
-      $(inp).keydown(function(ev) {
-        var keyCode = ev.which || ev.keyCode;
-        var val = $(this).val();
-
-        if ( keyCode == 13 ) {
-          if ( !is_save ) {
-            if ( !self.$element.find("button.Ok").attr("disabled") ) {
-              if ( currentFile ) {
-                $(currentFile).trigger('dblclick');
-              }
-            }
-          } else {
-            if ( val ) {
-              if ( !val.match(/^\//) ) {
-                val = (current_dir == "/" ? "/" : (current_dir + "/")) + val;
-              }
-
-              self.selected_file = {
-                "path" : val,
-                "size" : -1,
-                "mime" : "",
-                "icon" : "",
-                "type" : "file"
-              };
-              self.$element.find("button.Ok").click();
-            }
-          }
-        }
-      });
-
-      $(inp).keyup(function(ev) {
-        var keyCode = ev.which || ev.keyCode;
-        var val = $(this).val();
-
-        if ( is_save ) {
-          if ( val ) {
-            self.$element.find("button.Ok").removeAttr("disabled");
-          } else {
-            self.$element.find("button.Ok").attr("disabled", "disabled");
-          }
-        }
-      });
 
       var readdir = function(path)
       {
@@ -1545,7 +1504,7 @@
         var ignores = path == "/" ? ["..", "."] : ["."];
         currentFile = null;
 
-        API.system.call("readdir", {'path' : path, 'mime' : argv, 'ignore' : ignores}, function(result, error) {
+        API.system.call("readdir", {'path' : path, 'mime' : self.aargv, 'ignore' : ignores}, function(result, error) {
           $(ul).die();
           $(ul).unbind();
 
@@ -1628,24 +1587,68 @@
         current_dir = path;
       };
 
-      this.create_callback = function() {
-        self.$element.find(".DialogButtons .Close").hide();
-        self.$element.find(".DialogButtons .Cancel").show();
 
-        self.$element.find(".DialogButtons .Ok").show().click(function() {
-          if ( self.selected_file ) {
-            clb_finish(self.selected_file.path, self.selected_file.mime);
+      if ( !is_save ) {
+        $(inp).focus(function() {
+          $(this).blur();
+        }).addClass("Disabled");
+      }
+
+      $(inp).keydown(function(ev) {
+        var keyCode = ev.which || ev.keyCode;
+        var val = $(this).val();
+
+        if ( keyCode == 13 ) {
+          if ( !is_save ) {
+            if ( !self.$element.find("button.Ok").attr("disabled") ) {
+              if ( currentFile ) {
+                $(currentFile).trigger('dblclick');
+              }
+            }
+          } else {
+            if ( val ) {
+              if ( !val.match(/^\//) ) {
+                val = (current_dir == "/" ? "/" : (current_dir + "/")) + val;
+              }
+
+              self.selected_file = {
+                "path" : val,
+                "size" : -1,
+                "mime" : "",
+                "icon" : "",
+                "type" : "file"
+              };
+              self.$element.find("button.Ok").click();
+            }
           }
-        }).attr("disabled", "disabled");
+        }
+      });
 
-        readdir("/");
-      };
-      this.width    = 400;
-      this.height   = 300;
-    },
+      $(inp).keyup(function(ev) {
+        var keyCode = ev.which || ev.keyCode;
+        var val = $(this).val();
 
-    create : function(desktop, id, zi, method) {
-      this._super(desktop, id, zi, method);
+        if ( is_save ) {
+          if ( val ) {
+            self.$element.find("button.Ok").removeAttr("disabled");
+          } else {
+            self.$element.find("button.Ok").attr("disabled", "disabled");
+          }
+        }
+      });
+
+      this.$element.find(".DialogButtons .Close").hide();
+      this.$element.find(".DialogButtons .Cancel").show();
+
+      this.$element.find(".DialogButtons .Ok").show().click(function() {
+        if ( self.selected_file ) {
+          self.clb_finish(self.selected_file.path, self.selected_file.mime);
+        }
+      }).attr("disabled", "disabled");
+
+      readdir("/");
+
+
     }
 
   });
