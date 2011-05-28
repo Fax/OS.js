@@ -1189,7 +1189,7 @@
   });
 
   /////////////////////////////////////////////////////////////////////////////
-  // Menu
+  // MENU
   /////////////////////////////////////////////////////////////////////////////
 
   var Menu = Class.extend({
@@ -1529,6 +1529,9 @@
                 el.find("img").attr("src", "/img/icons/16x16/" + o.icon);
                 el.find("span").html(f);
                 el.addClass(i % 2 ? "odd" : "even");
+                if ( o['protected'] == "1" ) {
+                  el.addClass("Disabled");
+                }
 
                 (function(vo) {
                   el.click(function() {
@@ -1542,11 +1545,18 @@
                     }
 
                     if ( vo.type == "file" ) {
-                      self.selected_file = vo;
-                      self.$element.find("button.Ok").removeAttr("disabled");
-                      $(inp).val(vo.path);
+                      if ( vo['protected'] == "1" && is_save ) {
+                        self.selected_file = null;
+                        self.$element.find("button.Ok").attr("disabled", "disabled");
+                        currentFile = null;
+                        $(inp).val("");
+                      } else {
+                        self.selected_file = vo;
+                        self.$element.find("button.Ok").removeAttr("disabled");
+                        currentFile = this;
+                        $(inp).val(vo.path);
+                      }
 
-                      currentFile = this;
                     } else {
                       self.selected_file = null;
                       $(inp).val("");
@@ -1564,7 +1574,7 @@
                       readdir(vo.path);
                     } else {
 
-                      var _doSave = function() {
+                      var _doSelect = function() {
                         self.selected_file = vo;
                         $(inp).val(vo.path);
 
@@ -1573,11 +1583,15 @@
                       };
 
                       if ( is_save ) {
-                        if ( confirm("Are you sure you want to overwrite this file?") ) { // FIXME
-                          _doSave();
+                        if ( vo['protected'] == "1" ) {
+                          alert("This file is protected!"); // FIXME
+                        } else {
+                          if ( confirm("Are you sure you want to overwrite this file?") ) { // FIXME
+                            _doSelect();
+                          }
                         }
                       } else {
-                        _doSave();
+                        _doSelect();
                       }
                     }
 

@@ -179,7 +179,7 @@ input.Disabled {
   cursor : pointer;
 }
 .Menu li.Disabled {
-  color : #777;
+  color : #777; /* FIXME */
 }
 .Menu li:hover {
 }
@@ -414,6 +414,9 @@ input.Disabled {
 }
 .OperationDialog li.odd {
   background : #e6e6e6;
+}
+.OperationDialog li.Disabled {
+  color : #777; /* FIXME */
 }
 
 .OperationDialogColor .Slider {
