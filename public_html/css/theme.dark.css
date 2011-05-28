@@ -23,32 +23,6 @@ body.ThemeDark {
   color : #222;
 }
 
-body.ThemeDark #Console {
-  -moz-opacity : 0.8;
-  opacity : 0.8;
-  white-space : nowrap;
-}
-body.ThemeDark #Console .init {
-  color : #3b9450;
-}
-body.ThemeDark #Console .destroy {
-  color : #8f943b;
-}
-body.ThemeDark #Console .event {
-  color : #3b4b94;
-}
-body.ThemeDark #Console .response {
-  color : #87948f;
-}
-body.ThemeDark #Console .error {
-  color : #943b3b;
-  font-weight : bold;
-}
-body.ThemeDark #Console .info {
-  color : #fff;
-  font-weight : bold;
-}
-
 /*
 #LoadingBar {
   background : #3c3c3d;

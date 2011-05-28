@@ -48,31 +48,6 @@
     _TopIndex            = 11;
   }
 
-  var cconsole = {
-    'log' : function() {
-      var a = [];
-      var cls = "";
-      for ( var i = 0; i < arguments.length; i++ ) {
-        if ( i === 0 ) {
-          cls = arguments[i];
-        } else {
-          a.push(i === 1 ? "<b>" + arguments[i] + "</b>" : arguments[i]);
-        }
-      }
-
-      var message = a.join(" ");
-      if ( message ) {
-        $("#Console").prepend($("<div></div>").attr("class", cls).html(message)).scrollTop(0);
-      }
-    },
-    'info' : function(message) {
-      $("#Console").prepend($("<div></div>").attr("class", "info").html(message)).scrollTop(0);
-    },
-    'error' : function(message) {
-      $("#Console").prepend($("<div></div>").attr("class", "error").html(message)).scrollTop(0);
-    }
-  };
-
   /////////////////////////////////////////////////////////////////////////////
   // PUBLIC API
   /////////////////////////////////////////////////////////////////////////////
@@ -101,7 +76,6 @@
 
     'system' : {
       'run' : function(path, mime) {
-        cconsole.log("info", "API", "run", mime, path);
         if ( mime ) {
           var apps = _Settings._get("system.app.handlers", true);
           forEach(apps, function(mt, mapp, mind, mlast) {
@@ -113,7 +87,6 @@
               var ctbase = mime.split("/")[0];
               if ( ctbase == mbase ) {
                 console.log("API found suited application for", mime, ":", mapp);
-                cconsole.log("info", "API", "found application for", mime, "=>", mapp);
 
                 API.system.launch(mapp, {'path' : path, 'mime' : mime});
                 return false;
@@ -121,7 +94,6 @@
             } else {
               if ( mt == mime ) {
                 console.log("API found suited application for", mime, ":", mapp);
-                cconsole.log("info", "API", "found application for", mime, "=>", mapp);
 
                 API.system.launch(mapp, {'path' : path, 'mime' : mime});
                 return false;
@@ -145,7 +117,6 @@
         attrs = attrs || {};
 
         console.log("API launching", app_name, args);
-        cconsole.log("info", "API", "launching", app_name);
         _Desktop.addWindow(new Window(app_name, false, args, attrs));
       },
 
@@ -250,7 +221,6 @@
 
       'logout' : function(save) {
         console.log("API logging out", save);
-        cconsole.log("info", "API", "request logout");
 
         API.session.save(save);
 
@@ -274,7 +244,6 @@
             var session = JSON.parse(item);
 
             console.log("API restore session", session);
-            cconsole.log("info", "API", "RESTORING SESSION");
 
             var el;
             var autolaunch = session.windows;
@@ -337,7 +306,6 @@
         */
 
         console.log("ResourceManager initialized...", this);
-        cconsole.log("init", "ResourceManager initialized...");
       },
 
       destroy : function() {
@@ -390,7 +358,6 @@
         $("head").append(el);
 
         console.log("ResourceManager", "addResource", res, type, el);
-        cconsole.log("info", "ResourceManager added", res);
 
         this.resources.push(res);
         this.links.push(el);
@@ -439,7 +406,6 @@
         }
 
         console.log("SettingsManager initialized...", this, _avail, _stores);
-        cconsole.log("init", "SettingsManager initialized...");
       },
 
       destroy : function() {
@@ -508,7 +474,6 @@
 
 
         console.log("Desktop initialized...");
-        cconsole.log("init", "Desktop initialized...");
       },
 
       destroy : function() {
@@ -614,7 +579,6 @@
         }
 
         console.log("Applied user settings", [wp, theme]);
-        cconsole.log("info", "API", "applied user settings");
       },
 
       setWallpaper : function(wp) {
@@ -673,7 +637,6 @@
       this.$element = $("#Panel");
 
       console.log("Panel initialized...", this);
-      cconsole.log("init", "Panel initialized...");
 
       this.start_menu = new Menu();
 
@@ -815,10 +778,8 @@
       var self = this;
 
       if ( this.uuid ) {
-        cconsole.log("event", "-&gt; Window Event: Flush!", self.uuid);
         $.post("/", {'ajax' : true, 'action' : 'flush', 'uuid' : self.uuid}, function(data) {
           console.log('Flushed Window', self, self.uuid, data);
-          cconsole.log("response", "&lt;- Window flushed...", self.uuid);
         });
       }
 
@@ -838,7 +799,6 @@
       });
 
       console.log("Window destroyed...", this);
-      cconsole.log("destroy", "Window destroyed...", this.uuid);
     },
 
     event : function(app, ev, args, callback) {
@@ -846,10 +806,8 @@
       if ( this.uuid ) {
         var self = this;
         var pargs = {'ajax' : true, 'action' : 'event', 'cname' : app.name ,'uuid' : self.uuid, 'instance' : {'name' : self.name, 'action' : ev, 'args' : args }};
-        cconsole.log("event", "-&gt; Window Event: Interaction!", self.uuid);
         $.post("/", pargs, function(data) {
           console.log('Event Window', self, self.uuid, pargs, data);
-          cconsole.log("response", "&lt;- Window event...", self.uuid);
 
           callback(data.result, data.error);
         });
@@ -1026,12 +984,6 @@
 
         this.$element = el;
 
-        if ( this.dialog ) {
-          cconsole.log("init", "Dialog created...");
-        } else {
-          cconsole.log("init", "Window created...", this.uuid);
-        }
-
         // Run Dialog or Application
         if ( this.dialog ) {
           desktop.focusWindow(this);
@@ -1047,10 +999,8 @@
             //}
 
             if ( self.uuid ) {
-              cconsole.log("event", "-&gt; Window Event: Registration!", self.uuid);
               $.post("/", {'ajax' : true, 'action' : 'register', 'uuid' : self.uuid, 'instance' : {'name' : self.name}}, function(data) {
                 console.log('Registered Window', self, self.uuid, data);
-                cconsole.log('response', '&lt;- Registered Window in Session', self.uuid);
               });
             }
 
@@ -1760,8 +1710,6 @@
   /////////////////////////////////////////////////////////////////////////////
 
   $(window).ready(function() {
-    cconsole.info("********* WARMING UP *********");
-
     if ( !supports_html5_storage() ) {
       alert("Your browser does not support WebStorage. Cannot continue...");
       return;
@@ -1834,8 +1782,6 @@
     if ( _Resources ) {
       _Resources.destroy();
     }
-
-    $("#Console").remove(); // FIXME
 
     __null();
   });

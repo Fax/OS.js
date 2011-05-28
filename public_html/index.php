@@ -54,6 +54,7 @@ header("Pragma: no-cache");
 
   <!-- Main libraries -->
   <link rel="stylesheet" type="text/css" href="/css/main.css" />
+  <link rel="stylesheet" type="text/css" href="/css/pimp.css" />
   <link rel="stylesheet" type="text/css" href="/css/theme.default.css" />
 
   <script type="text/javascript" src="/js/utils.js"></script>
@@ -110,10 +111,6 @@ header("Pragma: no-cache");
   </div>
 
   <!-- Content -->
-</div>
-
-<!-- Console -->
-<div id="Console">
 </div>
 
 <!-- Loading -->
@@ -190,6 +187,14 @@ header("Pragma: no-cache");
       </div>
     </div>
   </div>
+</div>
+
+<div id="Version">
+  JSWM Version <?php print PROJECT_VERSION; ?>
+  -
+  <?php print PROJECT_AUTHOR; ?>
+
+  &lt;<?php print PROJECT_CONTACT; ?>&gt;
 </div>
 
 </body>

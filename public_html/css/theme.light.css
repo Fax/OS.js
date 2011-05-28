@@ -23,32 +23,6 @@ body.ThemeLight {
   color : #222;
 }
 
-body.ThemeLight #Console {
-  -moz-opacity : 0.8;
-  opacity : 0.8;
-  white-space : nowrap;
-}
-body.ThemeLight #Console .init {
-  color : #3b9450;
-}
-body.ThemeLight #Console .destroy {
-  color : #8f943b;
-}
-body.ThemeLight #Console .event {
-  color : #3b4b94;
-}
-body.ThemeLight #Console .response {
-  color : #87948f;
-}
-body.ThemeLight #Console .error {
-  color : #943b3b;
-  font-weight : bold;
-}
-body.ThemeLight #Console .info {
-  color : #fff;
-  font-weight : bold;
-}
-
 /*
 #LoadingBar {
   background : #9c9c9e;
