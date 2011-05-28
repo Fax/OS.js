@@ -43,14 +43,14 @@ header("Pragma: no-cache");
   <title>Another JSWM</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-  <!-- Vendor libraries -->
-  <link rel="stylesheet" type="text/css" href="/css/ui-lightness/jquery-ui-1.8.11.custom.css" />
-
   <script type="text/javascript" src="/js/json2.js"></script>
   <script type="text/javascript" src="/js/sprintf-0.7-beta1.js"></script>
   <script type="text/javascript" src="/js/fileuploader.js"></script>
   <script type="text/javascript" src="/js/jquery-1.5.2.min.js"></script>
-  <script type="text/javascript" src="/js/jquery-ui-1.8.11.custom.min.js"></script>
+  <script type="text/javascript" src="/js/jquery-ui-1.8.13.custom.min.js"></script>
+
+  <!-- Vendor libraries -->
+  <link rel="stylesheet" type="text/css" href="/css/ui-lightness/jquery-ui-1.8.13.custom.css" />
 
   <!-- Main libraries -->
   <link rel="stylesheet" type="text/css" href="/css/main.css" />

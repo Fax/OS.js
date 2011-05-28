@@ -395,6 +395,23 @@ input.Disabled {
   background : #e6e6e6;
 }
 
+.OperationDialogColor .Slider {
+  margin : 10px;
+  margin-right : 120px;
+}
+.OperationDialogColor .CurrentColor {
+  position : absolute;
+  top : 0px;
+  right : 0px;
+  width : 100px;
+  height : 100px;
+  border : 2px inset;
+  background : #000;
+}
+.OperationDialogColor .CurrentColorDesc {
+  margin-left : 10px;
+}
+
 
 #ContextMenu {
   position : absolute;

@@ -269,15 +269,21 @@ var ApplicationDraw = (function($, undefined) {
         $($(el).find(".ApplicationDrawPanel button").get(0)).click();
 
         $(el).find(".color_Foreground").click(function() {
-          var color = '#'+Math.floor(Math.random()*16777215).toString(16);
-          $(el).find(".color_Foreground").css("background-color", color);
-          context.strokeStyle = color;
+          //var color = '#'+Math.floor(Math.random()*16777215).toString(16);
+
+          api.system.dialog_color(context.strokeStyle, function(rgb, hex) {
+            $(el).find(".color_Foreground").css("background-color", hex);
+            context.strokeStyle = hex;
+          });
         });
 
         $(el).find(".color_Background").click(function() {
-          var color = '#'+Math.floor(Math.random()*16777215).toString(16);
-          $(el).find(".color_Background").css("background-color", color);
-          context.fillStyle = color;
+          //var color = '#'+Math.floor(Math.random()*16777215).toString(16);
+
+          api.system.dialog_color(context.fillStyle, function(rgb, hex) {
+            $(el).find(".color_Background").css("background-color", hex);
+            context.fillStyle = hex;
+          });
         });
 
         $(el).find(".enable_Fill").click(function() {

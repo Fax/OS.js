@@ -177,8 +177,8 @@
         _Desktop.addWindow(new FileOperationDialog(type, mime_filter, clb_finish));
       },
 
-      'dialog_color' : function(clb_finish) {
-        _Desktop.addWindow(new ColorOperationDialog(clb_finish));
+      'dialog_color' : function(start_color, clb_finish) {
+        _Desktop.addWindow(new ColorOperationDialog(start_color, clb_finish));
       }
     },
 
@@ -1354,9 +1354,11 @@
 
   var ColorOperationDialog = OperationDialog.extend({
 
-    init : function(clb_finish) {
+    init : function(start_color, clb_finish) {
 
-      clb_finish   = clb_finish   || function() {};
+      this.color_obj    = null;
+      this.start_color  = start_color  || "#ffffff";
+      this.clb_finish   = clb_finish   || function() {};
 
       this._super("Color");
 
@@ -1366,22 +1368,83 @@
           inner += "<div><div class=\"Slider SliderG\"></div></div>";
           inner += "<div><div class=\"Slider SliderB\"></div></div>";
 
-      this.content  = $("<div class=\"OperationDialog\"><div class=\"OperationDialogInner\">" + inner + "</div></div>");
+      this.content  = $("<div class=\"OperationDialog OperationDialogColor\"><div class=\"OperationDialogInner\">" + inner + "</div><div class=\"CurrentColor\"></div><div class=\"CurrentColorDesc\"></div></div>");
 
       this.width    = 400;
       this.height   = 170;
     },
 
     create : function(desktop, id, zi, method) {
+      var self = this;
       this._super(desktop, id, zi, method);
 
-      var self = this;
-      $(self.content).find(".Slider").slider({
-        'min' : 0,
-        'max' : 255,
-        'step' : 1,
-        'value' : 100
+
+      self.$element.find(".DialogButtons .Close").hide();
+      self.$element.find(".DialogButtons .Cancel").show();
+
+      self.$element.find(".DialogButtons .Ok").show().click(function() {
+        self.clb_finish(self.colorObj, "#" + hexFromRGB(self.colorObj.red, self.colorObj.green, self.colorObj.blue));
       });
+
+      var desc     = $(self.$element).find(".CurrentColorDesc");
+      var cube     = $(self.$element).find(".CurrentColor");
+      var color    = this.start_color.replace("#", "");
+      var rgb      = parseInt(color, 16);
+
+      var colorObj = new Object();
+      colorObj.red = (rgb & (255 << 16)) >> 16;
+      colorObj.green = (rgb & (255 << 8)) >> 8;
+      colorObj.blue = (rgb & 255);
+
+      this.colorObj = colorObj;
+
+      var _update = function() {
+        self.colorObj.red   = $(self.$element).find(".SliderR").slider("value");
+        self.colorObj.green = $(self.$element).find(".SliderG").slider("value");
+        self.colorObj.blue  = $(self.$element).find(".SliderB").slider("value");
+        var hex = hexFromRGB(self.colorObj.red, self.colorObj.green, self.colorObj.blue);
+        $(cube).css("background-color", "#" + hex);
+        $(desc).html(sprintf("R: %03d, G: %03d, B: %03d (#%s)", self.colorObj.red, self.colorObj.green, self.colorObj.blue, hex));
+      };
+
+      var hexFromRGB = function(r, g, b) {
+        var hex = [
+          r.toString( 16 ),
+          g.toString( 16 ),
+          b.toString( 16 )
+            ];
+        $.each( hex, function( nr, val ) {
+          if ( val.length === 1 ) {
+            hex[ nr ] = "0" + val;
+          }
+        });
+        return hex.join( "" ).toUpperCase();
+      };
+
+      $(self.content).find(".SliderR").slider({
+        'min'    : 0,
+        'max'    : 255,
+        'step'   : 1,
+        'value'  : colorObj.red,
+        'slide' : _update
+      });
+      $(self.content).find(".SliderG").slider({
+        'min'    : 0,
+        'max'    : 255,
+        'step'   : 1,
+        'value'  : colorObj.green,
+        'slide' : _update
+      });
+      $(self.content).find(".SliderB").slider({
+        'min'    : 0,
+        'max'    : 255,
+        'step'   : 1,
+        'value'  : colorObj.blue,
+        'slide' : _update
+      });
+
+
+      _update();
     }
   });
 
@@ -1753,9 +1816,6 @@
         _Desktop = new Desktop();
 
         API.session.restore();
-        API.system.dialog_color(function(color) {
-          alert(color);
-        });
       } else {
         alert(data.error);
       }
