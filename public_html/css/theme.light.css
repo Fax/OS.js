@@ -27,11 +27,9 @@ body.ThemeLight .DesktopPanel {
 
 body.ThemeLight .PanelItem {
   color : #b0c2c1;
-  border : 1px solid transparent;
 }
 body.ThemeLight .PanelItem:hover {
   color : #fff;
-  border : 1px solid #363636;
 }
 body.ThemeLight .PanelItem.Current {
 }
@@ -41,8 +39,6 @@ body.ThemeLight .PanelItemSeparator {
 }
 body.ThemeLight .PanelItemSeparator:hover,
 body.ThemeLight .PanelItemClock:hover {
-  background : #9c9c9e;
-  border : 1px solid transparent;
 }
 
 body.ThemeLight .Window {

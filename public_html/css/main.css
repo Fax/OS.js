@@ -6,7 +6,6 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  */
 
-
 html {
   overflow : hidden;
   width : 100%;
@@ -123,20 +122,16 @@ input.Disabled {
 }
 
 .PanelItemWindow {
-  background : #414141;
 }
 .PanelItemWindow img {
   vertical-align : middle;
   margin-right : 5px;
 }
 .PanelItemWindow {
-  -moz-opacity : 0.5;
-  opacity : 0.5;
 }
 .PanelItemWindow.Current {
   color : #fff;
-  -moz-opacity : 1.0;
-  opacity : 1.0;
+  font-weight : bold;
 }
 
 .PanelItemClock {

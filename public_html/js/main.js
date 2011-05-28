@@ -166,7 +166,8 @@
           cm = null;
         }
 
-        return function(ev, items, where) {
+        return function(ev, items, where, which) {
+          which = which || 3;
 
           if ( inited === false ) {
             $(document).click(function(ev) {
@@ -178,7 +179,7 @@
             initied = true;
           }
 
-          if ( ev.which === 3 ) {
+          if ( ev.which === which ) {
             _destroy();
 
             cm = new Menu();
@@ -645,30 +646,35 @@
 
       console.log("Panel initialized...", this);
 
-      this.start_menu = new Menu();
-
       // Fill menu
       var o;
       var apps = _Settings._get("system.app.registered", true);
+      var menu_items = [];
       for ( var a in apps ) {
         if ( apps.hasOwnProperty(a) ) {
           o = apps[a];
-          this.start_menu.create_item(o.title, o.icon, "launch_" + a);
+          (function(apn) {
+            menu_items.push({
+              "title" : o.title,
+              "method" : function() {
+                API.system.launch(apn);
+              },
+              "icon" : o.icon
+            });
+          })(a);
         }
       }
-      $(".PanelItemMenu").append(this.start_menu.$element);
+
+      $(".PanelItemMenu").click(function(ev) {
+        return API.application.context_menu(ev, menu_items, $(this), 1);
+      });
+
 
       // Start clock
       setInterval(function() {
         var d = new Date();
         $(".PanelItemClock span").html(sprintf("%02d/%02d/%02d %02d:%02s", d.getDate(), d.getMonth(), d.getYear(), d.getHours(), d.getMinutes()));
       }, 500);
-
-      $(".PanelItemMenu").hover(function() {
-        $(this).find("ul").show();
-      }, function() {
-        $(this).find("ul").hide();
-      });
 
       $(".PanelItemMenu li, .PanelItemLauncher").click(function(ev) {
         var app = $(this).find("span").attr("class").replace("launch_", "");
@@ -1761,7 +1767,7 @@
       var t = ev.target || ev.srcElement;
       if ( t ) {
         var tagName = t.tagName.toLowerCase();
-        if ( tagName !== "input" && tagName !== "textarea" ) {
+        if ( tagName !== "input" && tagName !== "textarea" && tagName !== "select" ) {
           ev.preventDefault();
         }
       }

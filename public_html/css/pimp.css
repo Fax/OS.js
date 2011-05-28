@@ -1,3 +1,11 @@
+@charset "UTF-8";
+/**
+ * Pimp Stylesheet
+ *
+ * @package ajwm.Styles
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ */
+
 @font-face {
   font-family : MainFont;
   src: url('/css/Sansation_Regular.ttf');
@@ -24,6 +32,16 @@ body {
   -moz-box-shadow: 0px 0px 10px #000;
   -webkit-box-shadow: 0px 0px 10px #000;
   box-shadow: 0px 0px 10px #000;
+
+  filter: alpha(opacity=98); /* internet explorer */
+  -khtml-opacity: 0.98;      /* khtml, old safari */
+  -moz-opacity: 0.98;       /* mozilla, netscape */
+  opacity: 0.98;           /* fx, safari, opera */
+}
+
+.PanelItemWindow {
+}
+.PanelItemWindow.Current {
 }
 
 .Window {
@@ -32,9 +50,27 @@ body {
   box-shadow: 0px 0px 10px #000;
 }
 
+.WindowTopInner span {
+  -moz-text-shadow: 0px 0px 2px #444;
+  -webkit-text-shadow: 0px 0px 2px #444;
+  text-shadow: 0px 0px 2px #444;
+}
+.WindowTopController {
+  -moz-text-shadow: 0px 0px 2px #444;
+  -webkit-text-shadow: 0px 0px 2px #444;
+  text-shadow: 0px 0px 2px #444;
+}
+.WindowTopController:hover {
+  -moz-text-shadow: 0px 0px 2px #eee;
+  -webkit-text-shadow: 0px 0px 2px #eee;
+  text-shadow: 0px 0px 2px #eee;
+}
+
 .Window.Blend {
-  -moz-opacity : 0.5;
-  opacity : 0.5;
+  filter: alpha(opacity=50); /* internet explorer */
+  -khtml-opacity: 0.5;      /* khtml, old safari */
+  -moz-opacity: 0.5;       /* mozilla, netscape */
+  opacity: 0.5;           /* fx, safari, opera */
 }
 
 .Menu {
