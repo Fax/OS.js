@@ -58,7 +58,7 @@ class WindowManager
     return Array(
       "desktop.wallpaper.path" => Array(
         "type"  => "filename",
-        "value" => "/02555_cherryblossoms_2560x1600.jpg"
+        "value" => "/System/Wallpapers/rqofigt.png"
       ),
       "desktop.theme" => Array(
         "type"    => "array",
