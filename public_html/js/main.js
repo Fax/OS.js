@@ -168,13 +168,17 @@
       },
 
       'dialog_upload' : function(clb_finish, clb_progress, clb_cancel) {
-        _Desktop.addWindow(new UploadOperationDialog('upload', 'Uploading file...', null, clb_finish, clb_progress, clb_cancel));
+        _Desktop.addWindow(new UploadOperationDialog(clb_finish, clb_progress, clb_cancel));
       },
 
       'dialog_file' : function(clb_finish, mime_filter, type) {
         mime_filter = mime_filter || [];
         type = type || "open";
-        _Desktop.addWindow(new FileOperationDialog(type, 'Choose file...', mime_filter, clb_finish));
+        _Desktop.addWindow(new FileOperationDialog(type, mime_filter, clb_finish));
+      },
+
+      'dialog_color' : function(clb_finish) {
+        _Desktop.addWindow(new ColorOperationDialog(clb_finish));
       }
     },
 
@@ -1315,7 +1319,7 @@
 
   var OperationDialog = Window.extend({
 
-    init : function(type, message, argv, clb_finish, clb_progress, clb_cancel) {
+    init : function(type) {
       this._super("OperationDialog", true, {'type' : type});
 
       this.width          = 400;
@@ -1345,17 +1349,39 @@
 
   });
 
+  var ColorOperationDialog = OperationDialog.extend({
+
+    init : function(clb_finish) {
+
+      var self = this;
+
+      clb_finish   = clb_finish   || function() {};
+
+      this._super("Color");
+
+      $(this.content).find(".OperationDialogInner").append("<p class=\"Status\">0 of 0</p><div class=\"ProgressBar\"></div>");
+      $(this.content).find(".ProgressBar").progressbar({
+        value : 50
+      });
+
+      this.title    = "Copy file";
+      this.content  = $("<div class=\"OperationDialog\"><h1>" + message + "</h1><div class=\"OperationDialogInner\"></div></div>");
+      this.width    = 400;
+      this.height   = 170;
+    }
+  });
+
   var CopyOperationDialog = OperationDialog.extend({
 
     init : function(type, message, argv, clb_finish, clb_progress, clb_cancel) {
-      this._super(type, message, argv, clb_finish, clb_progress, clb_cancel);
-
       var self = this;
 
       argv         = argv         || {};
       clb_finish   = clb_finish   || function() {};
       clb_progress = clb_progress || function() {};
       clb_cancel   = clb_cancel   || function() {};
+
+      this._super("Copy");
 
       $(this.content).find(".OperationDialogInner").append("<p class=\"Status\">0 of 0</p><div class=\"ProgressBar\"></div>");
       $(this.content).find(".ProgressBar").progressbar({
@@ -1372,15 +1398,14 @@
 
   var UploadOperationDialog = OperationDialog.extend({
 
-    init : function(type, message, argv, clb_finish, clb_progress, clb_cancel) {
-      this._super(type, message, argv, clb_finish, clb_progress, clb_cancel);
-
+    init : function(clb_finish, clb_progress, clb_cancel) {
       var self = this;
 
-      argv         = argv         || {};
       clb_finish   = clb_finish   || function() {};
       clb_progress = clb_progress || function() {};
       clb_cancel   = clb_cancel   || function() {};
+
+      this._super("Upload");
 
       this.create_callback = function() {
         $(self.content).find(".OperationDialogInner").append("<p class=\"Status\">No file selected</p><div class=\"ProgressBar\"></div>");
@@ -1425,7 +1450,7 @@
       };
 
       this.title    = "Upload file";
-      this.content  = $("<div class=\"OperationDialog\"><h1>" + message + "</h1><div class=\"OperationDialogInner\"></div></div>");
+      this.content  = $("<div class=\"OperationDialog\"><h1>Upload file...</h1><div class=\"OperationDialogInner\"></div></div>");
       this.width    = 400;
       this.height   = 170;
       this.uploader = null;
@@ -1443,15 +1468,13 @@
 
   var FileOperationDialog = OperationDialog.extend({
 
-    init : function(type, message, argv, clb_finish, clb_progress, clb_cancel) {
-      this._super(type, message, argv, clb_finish, clb_progress, clb_cancel);
-
+    init : function(type, argv, clb_finish) {
       var self = this;
 
       argv         = argv         || {};
       clb_finish   = clb_finish   || function() {};
-      clb_progress = clb_progress || function() {};
-      clb_cancel   = clb_cancel   || function() {};
+
+      this._super("File");
 
       this.title    = type == "save" ? "Save As..." : "Open File";
       this.content  = $("<div class=\"OperationDialog\"><div class=\"FileChooser\"><ul></ul></div><div class=\"FileChooserInput\"><input type=\"text\" /></div></div>");
@@ -1710,6 +1733,9 @@
         _Desktop = new Desktop();
 
         API.session.restore();
+        API.system.dialog_color(function(color) {
+          alert(color);
+        });
       } else {
         alert(data.error);
       }
