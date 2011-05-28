@@ -3,7 +3,6 @@
  *
  * TODO: Hourglass while wating
  * TODO: Font selection
- * TODO: Finish up menu and context-menu
  * TODO: Login screen
  *
  * Creates a desktop environment inside the browser.
@@ -253,7 +252,8 @@
                 var argv = el.argv || [];
                 var attrs = {
                   'position' : el.position,
-                  'size'     : el.size
+                  'size'     : el.size,
+                  'restore'  : true
                 };
                 API.system.launch(el.name, argv, attrs);
               }
@@ -838,6 +838,7 @@
 
         var el = this.dialog ? $($("#Dialog").html()) : $($("#Window").html());
         var menu = false;
+        var adjustSize = true;
 
         // Create Menu
         if ( this.menu && sizeof(this.menu) ) {
@@ -901,8 +902,8 @@
           */
 
           $(el).find(".WindowMenu li.Top").click(function(ev) {
-            var menu = $(this).find("span").html();
-            return API.application.context_menu(ev, self.menus[menu], $(this), 1);
+            var mmenu = $(this).find("span").html();
+            return API.application.context_menu(ev, self.menus[mmenu], $(this), 1);
           });
         }
 
@@ -959,6 +960,10 @@
             el.offset(this.attrs.position);
           }
           if ( this.attrs.size instanceof Object ) {
+            if ( this.attrs.restore ) {
+              adjustSize = false;
+            }
+
             el.width(this.attrs.size.width + 'px');
             el.height(this.attrs.size.height + 'px');
           }
@@ -981,12 +986,22 @@
 
         // Adjustments after DOM
         if ( !isNaN(this.height) && (this.height > 0) ) {
-          if ( menu ) {
-            var appendHeight = $(el).find(".WindowMenu").height();
+          if ( adjustSize ) {
+            var appendWidth = 4;
+            var appendHeight = 4 + $(el).find(".WindowTop").height();
+
+            if ( menu ) {
+              appendHeight += $(el).find(".WindowMenu").height();
+            }
+
+            if ( this.statusbar ) {
+              appendHeight += $(el).find(".WindowMenu").height();
+            }
+
             $(el).css("height", (this.height + appendHeight) + "px");
+            $(el).css("width", (this.width + appendWidth) + "px");
           }
         }
-
 
         // Add Handlers
         if ( this.is_draggable ) {

@@ -57,7 +57,7 @@ EOHTML;
     $this->is_maximizable = false;
     $this->is_minimizable = false;
     $this->width = 220;
-    $this->height = 160;
+    $this->height = 120;
     $this->gravity = "center";
 
     parent::__construct(self::APP_TITLE, self::APP_ICON, self::APP_HIDDEN);

@@ -86,7 +86,7 @@ EOHTML;
     );
      */
     $this->width = 400;
-    $this->height = 250;
+    $this->height = 200;
     $this->is_maximizable = false;
 
     parent::__construct(self::APP_TITLE, self::APP_ICON, self::APP_HIDDEN);

@@ -44,8 +44,8 @@ EOHTML;
     );
     $this->is_scrollable = false;
     $this->is_resizable = false;
-    $this->width = 204;
-    $this->height = 234;
+    $this->width = 200;
+    $this->height = 200;
 
     parent::__construct(self::APP_TITLE, self::APP_ICON, self::APP_HIDDEN);
   }

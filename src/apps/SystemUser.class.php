@@ -44,7 +44,7 @@ EOHTML;
     $this->is_resizable = false;
     $this->is_maximizable = false;
     $this->width = 200;
-    $this->height = 200;
+    $this->height = 170;
 
     parent::__construct(self::APP_TITLE, self::APP_ICON, self::APP_HIDDEN);
   }
