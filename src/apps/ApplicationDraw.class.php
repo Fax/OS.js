@@ -34,6 +34,11 @@ class ApplicationDraw
     <div class="color_Foreground">&nbsp;</div>
     <label><input type="checkbox" class="enable_Fill" checked="checked" />Fill</label>
     <div class="color_Background">&nbsp;</div>
+
+    <label>Thickness</label>
+    <div class="Slider">
+      <div class="slide_Thickness"></div>
+    </div>
   </div>
   <div class="ApplicationDrawInner">
     <canvas class="Canvas"></canvas>

@@ -168,6 +168,7 @@ var ApplicationDraw = (function($, undefined) {
 
         context.strokeStyle = $(el).find(".color_Foreground").css("background-color");
         context.fillStyle   = $(el).find(".color_Background").css("background-color");
+        context.lineWidth   = 1;
 
         function _save(file, content, callback) {
           callback = callback || function() {};
@@ -330,6 +331,16 @@ var ApplicationDraw = (function($, undefined) {
           context.clearRect (0, 0, canvas.width, canvas.height);
           contexto.clearRect (0, 0, canvas.width, canvas.height);
           _update(null, el);
+        });
+
+        $(el).find(".slide_Thickness").slider({
+          'min' : 1,
+          'max' : 50,
+          'value' : 1,
+          'step' : 1,
+          'slide' : function() {
+            context.lineWidth = $(el).find(".slide_Thickness").slider("value");
+          }
         });
 
         this._super();

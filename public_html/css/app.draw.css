@@ -46,6 +46,15 @@
   background-color : #e6e6e6;
 }
 
+.ApplicationDrawPanel input[type=checkbox] {
+  margin-left : -10px;
+}
+
+.ApplicationDrawPanel .Slider {
+  margin-left : 20px;
+  margin-right : 20px;
+}
+
 .ApplicationDrawInner {
   position : absolute;
   top : 0px;
