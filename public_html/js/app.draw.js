@@ -333,6 +333,8 @@ var ApplicationDraw = (function($, undefined) {
         });
 
         this._super();
+
+        _update(null, el);
       }
     });
 
