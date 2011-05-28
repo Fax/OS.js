@@ -8,10 +8,10 @@
 
 
 html {
-
   overflow : hidden;
   width : 100%;
   height : 100%;
+  cursor : default;
 }
 
 body {
@@ -209,7 +209,8 @@ input.Disabled {
 .WindowTopInner {
   height : 28px;
   line-height : 28px;
-  cursor : default;
+}
+.WindowTopInner span {
 }
 .WindowTop img {
   float : left;
@@ -249,8 +250,6 @@ input.Disabled {
   padding-left : 5px;
   padding-right : 5px;
   position : relative;
-}
-.WindowMenu span.Top {
   cursor : pointer;
 }
 .WindowMenu span.Top:hover {

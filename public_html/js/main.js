@@ -74,6 +74,12 @@
     },
     */
 
+    'ui' : {
+      'cursor' : function(c) {
+        $("body").css("cursor", c);
+      }
+    },
+
     'system' : {
       'run' : function(path, mime) {
         if ( mime ) {
@@ -963,9 +969,11 @@
             handle : ".WindowTop",
             start : function() {
               el.addClass("Blend");
+              API.ui.cursor("move");
             },
             stop : function() {
               el.removeClass("Blend");
+              API.ui.cursor("default");
             }
           });
         }
@@ -1754,6 +1762,17 @@
       }
 
       return true;
+    });
+
+    $("#Desktop, .DesktopPanel").mousedown(function(ev) {
+      var t = ev.target || ev.srcElement;
+      var tagName = t.tagName.toLowerCase();
+
+      if ( tagName !== "input" && tagName !== "textarea" ) {
+        ev.preventDefault();
+      }
+    }).dblclick(function(ev) {
+      ev.preventDefault();
     });
 
     _Resources = new ResourceManager();

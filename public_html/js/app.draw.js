@@ -221,29 +221,32 @@ var ApplicationDraw = (function($, undefined) {
 
             currentToolObj.mousedown(ev, context, canvas);
 
-            //ev.preventDefault();
-            //ev.stopPropagation();
+            api.ui.cursor("pointer");
+
+            ev.preventDefault();
+            ev.stopPropagation();
           }
         }).mousemove(function(ev) {
           if ( isDrawing ) {
             context.clearRect(0, 0, canvas.width, canvas.height);
 
             currentToolObj.mousemove(ev, context, canvas);
-
             //ev.preventDefault();
             //ev.stopPropagation();
           }
         }).mouseup(function(ev) {
           if ( isDrawing ) {
-            //ev.preventDefault();
-            //ev.stopPropagation();
-
             currentToolObj.mouseup(ev, context, canvas);
 
             contexto.drawImage(canvas, 0, 0);
             context.clearRect(0, 0, canvas.width, canvas.height);
 
+            api.ui.cursor("default");
+
             isDrawing = false;
+
+            ev.preventDefault();
+            ev.stopPropagation();
           }
 
         }).click(function(ev) {
