@@ -1014,6 +1014,7 @@
 
         if ( this.is_resizable ) {
           el.resizable({
+            handles : "se",
             start : function() {
               el.addClass("Blend");
             },
