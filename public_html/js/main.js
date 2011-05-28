@@ -1733,9 +1733,6 @@
         _Desktop = new Desktop();
 
         API.session.restore();
-        API.system.dialog_color(function(color) {
-          alert(color);
-        });
       } else {
         alert(data.error);
       }
