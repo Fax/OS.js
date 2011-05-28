@@ -105,6 +105,7 @@ EOHTML;
               <input type="hidden" name="name" value="{$file}" />
               <input type="hidden" name="path" value="{$info['path']}" />
               <input type="hidden" name="size" value="{$info['size']}" />
+              <input type="hidden" name="protected" value="{$info['protected']}" />
             </div>
           </div>
         </li>
@@ -125,6 +126,7 @@ EOHTML;
             <input type="hidden" name="name" value="{$file}" />
             <input type="hidden" name="path" value="{$info['path']}" />
             <input type="hidden" name="size" value="{$info['size']}" />
+            <input type="hidden" name="protected" value="{$info['protected']}" />
           </td>
         </tr>
 EOHTML;

@@ -102,19 +102,29 @@ var ApplicationFilemanager = (function($, undefined) {
             ev.stopPropagation();
             ev.preventDefault();
 
-            return api.application.context_menu(ev, [
-              {"title" : "Delete", "method" : function() {
-                api.system.dialog("confirm", "Are you sure you want to delete this file?", null, function() {
+            var pro = $(this).find("input[name=protected]").val() == "1";
+
+            if ( pro ) {
+              return api.application.context_menu(ev, [
+                {"title" : "Protected", "disabled" : true, "method" : function() {
+                  return false;
+                }}
+              ], $(this));
+            } else {
+              return api.application.context_menu(ev, [
+                {"title" : "Delete", "method" : function() {
+                  api.system.dialog("confirm", "Are you sure you want to delete this file?", null, function() {
+                    alert('Not implemented yet'); // TODO
+                  });
+                }},
+                {"title" : "Rename", "method" : function() {
                   alert('Not implemented yet'); // TODO
-                });
-              }},
-              {"title" : "Rename", "method" : function() {
-                alert('Not implemented yet'); // TODO
-              }},
-              {"title" : "Download", "method" : function() {
-                alert('Not implemented yet'); // TODO
-              }}
-            ], $(this));
+                }},
+                {"title" : "Download", "method" : function() {
+                  alert('Not implemented yet'); // TODO
+                }}
+              ], $(this));
+            }
           });
 
           $(el).find(".ApplicationFilemanagerMain li").addClass("ContextMenu");

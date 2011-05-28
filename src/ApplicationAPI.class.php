@@ -7,6 +7,19 @@
  * @created 2011-05-25
  */
 
+function startsWith($haystack, $needle)
+{
+    $length = strlen($needle);
+    return (substr($haystack, 0, $length) === $needle);
+}
+
+function endsWith($haystack, $needle)
+{
+    $length = strlen($needle);
+    $start  = $length * -1; //negative
+    return (substr($haystack, $start) === $needle);
+}
+
 /**
  * ApplicationAPI Class
  *
@@ -16,6 +29,12 @@
  */
 class ApplicationAPI
 {
+
+  protected static $ProtectedDirs = Array(
+    "/System" => Array(
+      "icon" => "places/folder-templates.png"
+    )
+  );
 
   public static function upload() {
     // list of valid extensions, ex. array("jpeg", "xml", "bmp")
@@ -34,6 +53,39 @@ class ApplicationAPI
     return $result;
   }
 
+  public static function readfile($argv) {
+    $path = PATH_PROJECT_HTML . "/media/" . $argv;
+    if ( file_exists($path) && is_file($path) ) {
+      return file_get_contents($path);
+    }
+    return false;
+  }
+
+  public static function writefile($argv) {
+    $path = PATH_PROJECT_HTML . "/media/" . $argv['file'];
+    $encoding = isset($argv['encoding']) ? $argv['encoding'] : null;
+    $content = $argv['content'];
+
+    foreach ( self::$ProtectedDirs as $k => $v ) {
+      if ( startsWith($path, $k) ) {
+        return false; // TODO: Exception
+      }
+    }
+
+
+    if ( $encoding === "data:image/png;base64" ) {
+      $content = base64_decode(str_replace(Array("{$encoding},", " "), Array("", "+"), $content));
+    }
+
+    // TODO : OVERWRITE
+    //if ( file_exists($path) && is_file($path) ) {
+    if ( file_put_contents($path, $content) ) {
+      return true;
+    }
+
+    return false;
+  }
+
   public static function readdir($path, Array $ignores = null, Array $mimes = Array()) {
     if ( $ignores === null ) {
       $ignores = Array(".", "..");
@@ -49,10 +101,11 @@ class ApplicationAPI
           continue;
         }
 
-        $icon  = "places/folder.png";
-        $type  = "dir";
-        $fsize = 0;
-        $mime  = "";
+        $icon      = "places/folder.png";
+        $type      = "dir";
+        $fsize     = 0;
+        $mime      = "";
+        $protected = false;
 
         if ( $file == ".." ) {
           $xpath = explode("/", $path);
@@ -123,17 +176,32 @@ class ApplicationAPI
                 }
               break;
             }
+          } else {
+            $tpath = str_replace("//", "/", $rel_path);
+            if ( isset(self::$ProtectedDirs[$tpath]) ) {
+              $icon = self::$ProtectedDirs[$tpath]['icon'];
+            }
           }
 
           $fpath = str_replace("//", "/", $rel_path);
         }
 
+        foreach ( self::$ProtectedDirs as $k => $v ) {
+          if ( startsWith($fpath, $k) ) {
+            $protected = true;
+            break;
+          }
+        }
+
+
+
         $items[$type][$file] =  Array(
-          "path"     => $fpath,
-          "size"     => $fsize,
-          "mime"     => $mime,
-          "icon"     => $icon,
-          "type"     => $type
+          "path"       => $fpath,
+          "size"       => $fsize,
+          "mime"       => $mime,
+          "icon"       => $icon,
+          "type"       => $type,
+          "protected"  => $protected ? 1 : 0
         );
 
       }

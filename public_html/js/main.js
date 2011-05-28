@@ -179,7 +179,7 @@
 
             cm = new Menu();
             forEach(items, function(i, it) {
-              cm.create_item(it. title, it.icon, it.method);
+              cm.create_item(it. title, it.icon, it.method, it.disabled);
             });
 
             var off = $(where).offset();
@@ -426,7 +426,7 @@
         if ( _avail[k] !== undefined ) {
           localStorage.setItem(k, v);
         }
-        //  if (e == QUOTA_EXCEEDED_ERR) { (try/catch)
+        //  if (e == QUOTA_EXCEEDED_ERR) { (try/catch) // TODO
       },
 
       _get : function(k, keys) {
@@ -1213,7 +1213,7 @@
       }
     },
 
-    create_item : function(title, icon, method) {
+    create_item : function(title, icon, method, disabled) {
       var litem = $("<li><span><img alt=\"\" src=\"/img/blank.gif\" /></span></li>");
       if ( typeof method == "function" ) {
         litem.click(method);
@@ -1224,6 +1224,9 @@
         litem.find("img").attr("src", "/img/icons/16x16/" + icon);
       }
       litem.append(title);
+      if ( disabled ) {
+        $(litem).addClass("Disabled");
+      }
 
       if ( method == "cmd_Close" ) {
         $(litem).click(function() {
