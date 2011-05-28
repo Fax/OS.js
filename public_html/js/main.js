@@ -1359,13 +1359,8 @@
 
       this._super("Color");
 
-      $(this.content).find(".OperationDialogInner").append("<p class=\"Status\">0 of 0</p><div class=\"ProgressBar\"></div>");
-      $(this.content).find(".ProgressBar").progressbar({
-        value : 50
-      });
-
       this.title    = "Copy file";
-      this.content  = $("<div class=\"OperationDialog\"><h1>" + message + "</h1><div class=\"OperationDialogInner\"></div></div>");
+      this.content  = $("<div class=\"OperationDialog\"><div class=\"OperationDialogInner\"></div></div>");
       this.width    = 400;
       this.height   = 170;
     }

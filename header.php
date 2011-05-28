@@ -26,6 +26,7 @@ set_include_path(sprintf("%s/classes/%s", PATH_PROJECT_BUILD, PROPEL_PROJECT) . 
 
 // Vendor libraries
 require 'vendor/Propel/runtime/lib/Propel.php';
+require "vendor/AjaxUpload.php";
 
 // Application
 require "src/UUID.class.php";

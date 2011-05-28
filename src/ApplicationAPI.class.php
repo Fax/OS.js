@@ -7,8 +7,6 @@
  * @created 2011-05-25
  */
 
-require "AjaxUpload.php";
-
 /**
  * ApplicationAPI Class
  *
