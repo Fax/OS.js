@@ -32,9 +32,17 @@ var SystemSettings = (function() {
 
         $(form).find("button").click(function() {
           var txt = $(this).parent().find("input");
+          var dir = $(txt).val();
+          if ( dir ) {
+            var tmp = dir.split("/");
+            if ( tmp.length > 1 ) {
+              tmp.pop();
+            }
+            dir = tmp.join("/");
+          }
           api.system.dialog_file(function(fname) {
             $(txt).val(fname);
-          }, ["image/*"]);
+          }, ["image/*"], "open", dir);
         });
 
         $(el).find('button.Close').click(function() {

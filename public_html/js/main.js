@@ -1,7 +1,8 @@
 /**
  * JavaScript Window Manager
  *
- * TODO: Login screen
+ * TODO: Finish Login screen
+ * TODO: Session: Store minimized/maximized etc.
  *
  * Creates a desktop environment inside the browser.
  * Applications can be loaded via the server.
@@ -145,10 +146,12 @@
         _Desktop.addWindow(new UploadOperationDialog(path, clb_finish, clb_progress, clb_cancel));
       },
 
-      'dialog_file' : function(clb_finish, mime_filter, type) {
+      'dialog_file' : function(clb_finish, mime_filter, type, cur_dir) {
         mime_filter = mime_filter || [];
         type = type || "open";
-        _Desktop.addWindow(new FileOperationDialog(type, mime_filter, clb_finish));
+        cur_dir = cur_dir || "/";
+
+        _Desktop.addWindow(new FileOperationDialog(type, mime_filter, clb_finish, cur_dir));
       },
 
       'dialog_color' : function(start_color, clb_finish) {
@@ -1573,12 +1576,13 @@
 
   var FileOperationDialog = OperationDialog.extend({
 
-    init : function(type, argv, clb_finish) {
+    init : function(type, argv, clb_finish, cur_dir) {
 
       this.aargv         = argv         || {};
       this.atype         = type         || "open";
       this.clb_finish    = clb_finish   || function() {};
       this.selected_file = null;
+      this.init_dir      = cur_dir      || "/";
 
       this._super("File");
 
@@ -1765,7 +1769,7 @@
         }
       }).attr("disabled", "disabled");
 
-      readdir("/");
+      readdir(this.init_dir);
 
 
     }
