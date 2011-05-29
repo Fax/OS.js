@@ -38,7 +38,8 @@ var ApplicationFilemanager = (function($, undefined) {
 
         var _selItem = function(self) {
           if ( lastItem ) {
-            if ( self.tagName == "tr" ) {
+            console.log(self, self.tagName);
+            if ( self.tagName.toLowerCase() == "tr" ) {
               $(lastItem).removeClass("Current");
             } else {
               $(lastItem).parent().removeClass("Current");
@@ -46,7 +47,7 @@ var ApplicationFilemanager = (function($, undefined) {
           }
 
           if ( self ) {
-            if ( self.tagName == "tr" ) {
+            if ( self.tagName.toLowerCase() == "tr" ) {
               $(self).addClass("Current");
             } else {
               $(self).parent().addClass("Current");

@@ -49,11 +49,12 @@
 .ApplicationFilemanagerMain table {
   border-collapse : collapse;
   width : 100%;
+  background : #fff;
 }
 .ApplicationFilemanagerMain td {
   padding : 2px;
 }
-.ApplicationFilemanagerMain td.Icon {
+.ApplicationFilemanagerMain td.Image {
   width : 16px;
 }
 .ApplicationFilemanagerMain td.Size {
