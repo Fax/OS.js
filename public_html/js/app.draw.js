@@ -34,79 +34,123 @@ var ApplicationDraw = (function($, undefined) {
     return y;
   }
 
-  return function(Application, app, api, argv) {
+  /**
+   * Color
+   * @class
+   */
+  var DrawColor = function() {
+    var red   = 0,
+        green = 0,
+        blue  = 0,
+        alpha = 100,
+        hex   = "#000000";
 
 
-    var startPosX = 0;
-    var startPosY = 0;
-    var useFill = true;
-    var useStroke = true;
-    var oldBrush = null;
+    if ( arguments.length == 1 ) {
+      hex = arguments[0];
 
-    Tools = {
-
-      'pencil' : {
-        mousedown : function(ev, context, canvas) {
-          context.beginPath();
-          context.moveTo(mouseposX(ev), mouseposY(ev));
-        },
-
-        mousemove : function(ev, context, canvas) {
-          context.lineTo(mouseposX(ev), mouseposY(ev));
-          context.stroke();
+      if ( hex.match(/^rgb/) ) {
+        var parts = hex.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+        delete (parts[0]);
+        for (var i = 1; i <= 3; ++i) {
+          parts[i] = parseInt(parts[i], 10).toString(16);
+          if (parts[i].length == 1) parts[i] = '0' + parts[i];
         }
-      },
+        hex = parts.join('');
+      }
 
-      'brush' : {
-        mousedown : function(ev, context, canvas) {
-          api.ui.cursor('crosshair');
-          oldBrush = context.strokeStyle;
+      var rgb = parseInt(hex.replace("#", ""), 16);
 
-          var img = new Image();
-          img.onload = function() {
-            context.strokeStyle = context.createPattern(img, 'repeat');
-          };
-          img.src = "/img/app.draw/icons/stock-controller-linux-input-16.png";
-          context.beginPath();
-        },
-        mousemove : function(ev, context, canvas) {
-          context.lineTo(mouseposX(ev), mouseposY(ev));
-          context.stroke();
-        },
-        mouseup : function(ev, context, canvas) {
-          api.ui.cursor('default');
-          context.strokeStyle = oldBrush;
+      red   = (rgb & (255 << 16)) >> 16;
+      green = (rgb & (255 << 8)) >> 8;
+      blue  = (rgb & 255);
+    } else {
+      red   = arguments[0] || 0;
+      green = arguments[1] || 0;
+      blue  = arguments[2] || 0;
+      alpha = arguments[3] || 0;
+
+      hex   = hexFromRGB(red, green, blue);
+    }
+
+    return {
+      hex : hex,
+      r   : red,
+      g   : green,
+      b   : blue,
+      a   : alpha
+    };
+  };
+
+  /**
+   * Tool Style
+   * @class
+   */
+  var Style = function() {
+    return {
+      stroke : DrawColor("#000000"),
+      fill   : DrawColor("#ffffff"),
+      width  : 1,
+      cap    : "butt",
+      join   : "milter"
+    };
+  };
+
+  /**
+   * Tool
+   * @class
+   */
+  var Tool = {
+
+    type   : 'pencil',
+    fill   : true,
+    stroke : true,
+
+    onMouseDown : function(ev, doc) {
+      if ( this.type == "pencil" || this.type == "brush" ) {
+        doc.context.beginPath();
+        doc.context.moveTo(doc.draw_start[0], doc.draw_start[1]);
+      }
+    },
+    onMouseMove : function(ev, doc) {
+      var startPosX = doc.draw_start[0];
+      var startPosY = doc.draw_start[1];
+      var mX = doc.draw_current[0];
+      var mY = doc.draw_current[1];
+      var posX, posY;
+      var x, y, w, h, r;
+
+      if ( this.type == "pencil" || this.type == "brush" ) {
+        doc.context.lineTo(doc.draw_current[0], doc.draw_current[1]);
+        doc.context.stroke();
+      } else if ( this.type == "line" ) {
+        doc.context.beginPath();
+        doc.context.moveTo(doc.draw_start[0], doc.draw_start[1]);
+        doc.context.lineTo(doc.draw_current[0], doc.draw_current[1]);
+        doc.context.stroke();
+        doc.context.closePath();
+      } else if ( this.type == "rectangle" ) {
+        x = Math.min(doc.draw_current[0], doc.draw_start[0]);
+        y = Math.min(doc.draw_current[1], doc.draw_start[1]);
+        w = Math.abs(doc.draw_current[0] - doc.draw_start[0]);
+        h = Math.abs(doc.draw_current[1] - doc.draw_start[1]);
+
+        if (!w || !h) {
+          return;
         }
-      },
 
-      'line' : {
-        mousedown : function(ev, context, canvas) {
-          api.ui.cursor('crosshair');
-        },
-        mousemove : function(ev, context, canvas) {
-          context.beginPath();
-          context.moveTo(startPosX, startPosY);
-          context.lineTo(mouseposX(ev), mouseposY(ev));
-          context.stroke();
-          context.closePath();
-
-        },
-        mouseup : function(ev, context, canvas) {
-          api.ui.cursor('default');
+        if ( Tool.stroke ) {
+          doc.context.strokeRect(x, y, w, h);
         }
-      },
+        if ( Tool.fill ) {
+          doc.context.fillRect(x, y, w, h);
+        }
+      } else if ( this.type == "square" ) {
 
-      'square' : {
-        mousedown : function(ev, context, canvas) {
-          api.ui.cursor('all-scroll');
-        },
-        mousemove : function(ev, context, canvas) {
-          var mX = mouseposX(ev);
-          var mY = mouseposY(ev);
-          var posX = Math.round(startPosX - mX);
-          var posY = Math.round(startPosY - mY);
+          posX = Math.round(startPosX - mX);
+          posY = Math.round(startPosY - mY);
           var or = Math.sqrt(Math.pow(posX, 2) + Math.pow(posY, 2));
-          var r = or;
+          r = or;
 
           if ( mX < startPosX || mY < startPosY )
             r = -r;
@@ -114,166 +158,285 @@ var ApplicationDraw = (function($, undefined) {
           mX = startPosX + r;
           mY = startPosX + r;
 
-          var x = Math.min(mX, startPosX);
-          var y = Math.min(mY, startPosY);
-          var w = or;
-          var h = or;
+          x = Math.min(mX, startPosX);
+          y = Math.min(mY, startPosY);
+          w = or;
+          h = or;
 
           if (!w || !h) {
             return;
           }
 
-          if ( useStroke ) {
-            context.strokeRect(x, y, w, h);
+          if ( Tool.stroke ) {
+            doc.context.strokeRect(x, y, w, h);
           }
-          if ( useFill ) {
-            context.fillRect(x, y, w, h);
+          if ( Tool.fill ) {
+            doc.context.fillRect(x, y, w, h);
           }
-        },
-        mouseup : function(ev, context, canvas) {
-          api.ui.cursor('default');
+
+      } else if ( this.type == "ellipse" ) {
+
+        var width = Math.abs(startPosX - doc.draw_current[0]);
+        var height = Math.abs(startPosY - doc.draw_current[1]);
+
+        if ( width > 0 && height > 0 ) {
+          doc.context.beginPath();
+
+          doc.context.moveTo(doc.draw_start[0], doc.draw_start[1] - height*2); // A1
+
+          doc.context.bezierCurveTo(
+            startPosX + width*2, startPosY - height*2, // C1
+            startPosX + width*2, startPosY + height*2, // C2
+            startPosX, startPosY + height*2); // A2
+
+          doc.context.bezierCurveTo(
+            startPosX - width*2, startPosY + height*2, // C3
+            startPosX - width*2, startPosY - height*2, // C4
+            startPosX, startPosY - height*2); // A1
+
+          doc.context.closePath();
+
+          if ( Tool.stroke ) {
+            doc.context.stroke();
+          }
+
+          if ( Tool.fill ) {
+            doc.context.fill();
+          }
         }
-      },
+      } else if ( this.type == "circle" ) {
+        posX = Math.abs(doc.draw_start[0] - doc.draw_current[0]);
+        posY = Math.abs(doc.draw_start[1] - doc.draw_current[1]);
+        r = Math.sqrt(Math.pow(posX, 2) + Math.pow(posY, 2));
 
-      'rectangle' : {
-        mousedown : function(ev, context, canvas) {
-          api.ui.cursor('all-scroll');
-        },
-        mousemove : function(ev, context, canvas) {
-          var mX = mouseposX(ev);
-          var mY = mouseposY(ev);
-          var x = Math.min(mX, startPosX);
-          var y = Math.min(mY, startPosY);
-          var w = Math.abs(mX - startPosX);
-          var h = Math.abs(mY - startPosY);
+        if ( r > 0 ) {
+          doc.context.beginPath();
+          doc.context.arc(doc.draw_start[0],doc.draw_start[1],r,0,Math.PI*2,true);
+          doc.context.closePath();
 
-          if (!w || !h) {
-            return;
+          if ( Tool.stroke ) {
+            doc.context.stroke();
           }
-
-          if ( useStroke ) {
-            context.strokeRect(x, y, w, h);
-          }
-          if ( useFill ) {
-            context.fillRect(x, y, w, h);
-          }
-        },
-        mouseup : function(ev, context, canvas) {
-          api.ui.cursor('default');
-        }
-      },
-
-      'circle' : {
-        mousedown : function(ev, context, canvas) {
-          api.ui.cursor('move');
-        },
-        mousemove : function(ev, context, canvas) {
-          var mX = mouseposX(ev);
-          var mY = mouseposY(ev);
-          var posX = Math.abs(startPosX - mX);
-          var posY = Math.abs(startPosY - mY);
-
-          var r = Math.sqrt(Math.pow(posX, 2) + Math.pow(posY, 2));
-
-          if ( r > 0 ) {
-            context.beginPath();
-            context.arc(startPosX,startPosY,r,0,Math.PI*2,true);
-            context.closePath();
-
-            if ( useStroke ) {
-              context.stroke();
-            }
-
-            if ( useFill ) {
-              context.fill();
-            }
-          }
-
-        },
-        mouseup : function(ev, context, canvas) {
-          api.ui.cursor('default');
-        }
-      },
-
-      'ellipse' : {
-        mousedown : function(ev, context, canvas) {
-          api.ui.cursor('move');
-        },
-        mousemove : function(ev, context, canvas) {
-
-          var width = Math.abs(startPosX - mouseposX(ev));
-          var height = Math.abs(startPosY - mouseposY(ev));
-
-          if ( width > 0 && height > 0 ) {
-            context.beginPath();
-
-            context.moveTo(startPosX, startPosY - height*2); // A1
-
-            context.bezierCurveTo(
-              startPosX + width*2, startPosY - height*2, // C1
-              startPosX + width*2, startPosY + height*2, // C2
-              startPosX, startPosY + height*2); // A2
-
-            context.bezierCurveTo(
-              startPosX - width*2, startPosY + height*2, // C3
-              startPosX - width*2, startPosY - height*2, // C4
-              startPosX, startPosY - height*2); // A1
-
-            context.closePath();
-
-            if ( useStroke ) {
-              context.stroke();
-            }
-
-            if ( useFill ) {
-              context.fill();
-            }
-          }
-
-
-        },
-        mouseup : function(ev, context, canvas) {
-          api.ui.cursor('default');
-        }
-      },
-
-      'fill' : {
-        mouseup : function(ev, context, canvas) {
-          context.fillRect(0, 0, canvas.width, canvas.height);
-        }
-      },
-
-      'pick' : {
-        mousedown : function(ev, context, canvas, contexto, canvaso) {
-          var posX = startPosX;
-          var posY = startPosY;
-
-          var imageData = contexto.getImageData(0, 0, canvas.width, canvas.height).data;
-          var index = (posX + posY * canvas.width) * 4;
-
-          var o = {
-            'r' : imageData[index + 0],
-            'g' : imageData[index + 1],
-            'b' : imageData[index + 2],
-            'a' : imageData[index + 3]
-          };
-
-          var el = $(canvas).parents(".Window");
-          var hex = "#" + hexFromRGB(o.r, o.g, o.b);
-
-          if ( ev.which === 1 ) {
-            $(el).find(".color_Foreground").css("background-color", hex);
-            context.strokeStyle = hex;
-          } else {
-            $(el).find(".color_Background").css("background-color", hex);
-            context.fillStyle = hex;
+          if ( Tool.fill ) {
+            doc.context.fill();
           }
         }
       }
+    },
+    onMouseUp : function(ev, doc) {
+      if ( this.type == "pick" ) {
+        var startPosX = doc.draw_start[0];
+        var startPosY = doc.draw_start[1];
+        var color = doc.getPixelColor(startPosX, startPosY);
 
-    };
+        if ( ev.which === 1 ) {
+          Style.stroke = color;
+          $(doc.root).find(".color_Foreground").css("background-color", "#" + Style.stroke.hex);
+        } else {
+          Style.fill = color;
+          $(doc.root).find(".color_Background").css("background-color", "#" + Style.fill.hex);
+        }
+      }
+    },
+
+    onMouseClick : function(ev, doc) {
+      if ( this.type == "fill" ) {
+        doc.context.fillRect(0, 0, doc.canvas.width, doc.canvas.height);
+        doc.redraw();
+      }
+    }
+  };
 
 
+
+  /**
+   * @document
+   */
+  var DrawDocument = {
+
+    init : function(el) {
+      var self = this;
+
+      this.loaded   = false;
+      this.root     = el;
+      this.canvaso  = el.find("canvas").get(0);
+      this.contexto = this.canvaso.getContext('2d');
+      this.canvas   = $(this.canvaso).parent().append("<canvas></canvas>").find("canvas").get(1);
+      this.context  = this.canvas.getContext('2d');
+
+      this.draw_on      = false;
+      this.draw_start   = null;
+      this.draw_current = null;
+
+      $(this.canvas).css({
+        "position" : "absolute",
+        "top"      : "0px",
+        "left"     : "0px"
+      });
+
+      $(this.canvas).mousedown(function(ev) {
+        self.onMouseDown(ev);
+      });
+      $(this.canvas).mousemove(function(ev) {
+        self.onMouseMove(ev);
+      });
+      $(this.canvas).mouseup(function(ev) {
+        self.onMouseUp(ev);
+      });
+      $(this.canvas).click(function(ev) {
+        self.onMouseClick(ev);
+      });
+
+      $(this.canvas).bind("contextmenu",function(e) {
+        return false;
+      });
+
+      this.setSize();
+      this.setStyle();
+
+      this.loaded = true;
+    },
+
+    destroy : function() {
+
+    },
+
+    clear : function() {
+      this.context.clearRect (0, 0, this.canvas.width, this.canvas.height);
+      this.contexto.clearRect (0, 0, this.canvas.width, this.canvas.height);
+    },
+
+    open : function(src) {
+      this.clear();
+
+      var self = this;
+      var img = new Image();
+      img.onload = function() {
+        self.canvas.width = img.width;
+        self.canvas.height = img.height;
+        self.canvaso.width = img.width;
+        self.canvaso.height = img.height;
+        self.context.drawImage(img, 0, 0, self.canvas.width, self.canvas.height);
+        self.redraw();
+      };
+      img.src = src;
+    },
+
+    redraw : function() {
+     this.contexto.drawImage(this.canvas, 0, 0);
+     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    },
+
+    /* MOUSE EVENTS */
+
+    onMouseDown : function(ev) {
+      this.setStyle();
+
+      if ( !this.draw_on ) {
+        this.draw_on = true;
+        this.draw_start = [mouseposX(ev), mouseposY(ev)];
+
+        Tool.onMouseDown(ev, this);
+      }
+
+      ev.preventDefault();
+    },
+
+    onMouseMove : function(ev) {
+      if ( this.draw_on ) {
+        this.draw_current = [mouseposX(ev), mouseposY(ev)];
+
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        Tool.onMouseMove(ev, this);
+      }
+    },
+
+    onMouseUp : function(ev) {
+      if ( this.draw_on ) {
+        Tool.onMouseUp(ev, this);
+
+        this.redraw();
+
+        this.draw_on = false;
+      }
+
+      ev.preventDefault();
+    },
+
+    onMouseClick : function(ev) {
+      Tool.onMouseClick(ev, this);
+
+      ev.preventDefault();
+    },
+
+    /* GETTERS */
+
+    getImage : function(type) {
+      type = type || "image/png";
+      return this.canvaso.toDataURL(type);
+    },
+
+    getPixelIndex : function(x, y) {
+      var imageData = this.contexto.getImageData(0, 0, this.canvas.width, this.canvas.height).data;
+      return ((x + y * this.canvas.width) * 4);
+    },
+
+    getPixelColor : function(x, y) {
+      var imageData = this.contexto.getImageData(0, 0, this.canvas.width, this.canvas.height).data;
+      var index = ((x + y * this.canvas.width) * 4);
+
+      return DrawColor(imageData[index + 0], imageData[index + 1], imageData[index + 2], imageData[index + 3]);
+    },
+
+    /* SETTERS */
+
+    setStyle : function() {
+      this.context.strokeStyle = Style.stroke.hex;
+      this.context.fillStyle   = Style.fill.hex;
+      this.context.lineWidth   = Style.width;
+      this.context.lineCap     = Style.cap;
+      this.context.lineJoin    = Style.join;
+
+      if ( Style.pattern ) {
+        var self = this;
+        var img = new Image();
+        img.onload = function() {
+          self.context.strokeStyle = self.context.createPattern(img, 'repeat');
+        };
+        img.src = Style.pattern;
+      }
+
+    },
+
+    setPixel : function(x, y, a) {
+
+    },
+
+    setSize : function() {
+      var oldImage;
+      if ( this.loaded ) {
+        oldImage = this.getImage();
+      }
+
+      this.canvas.width        = $(this.root).find(".WindowContent").width();
+      this.canvas.height       = $(this.root).find(".WindowContent").height();
+      this.canvaso.width       = this.canvas.width;
+      this.canvaso.height      = this.canvas.height;
+
+      if ( oldImage ) {
+        var self = this;
+        var img  = new Image();
+        img.onload = function() {
+          self.contexto.drawImage(img, 0, 0);
+        };
+        img.src = oldImage;
+      }
+    }
+
+  };
+
+  return function(Application, app, api, argv) {
 
     var _ApplicationDraw = Application.extend({
       init : function() {
@@ -281,55 +444,28 @@ var ApplicationDraw = (function($, undefined) {
       },
 
       destroy : function() {
+        DrawDocument.destroy();
+
         this._super();
       },
 
       run : function() {
         var el = app.$element;
         var self = this;
+        var tool = null;
 
-        var loaded   = false;
-        var canvaso  = el.find("canvas").get(0);
-        var contexto = canvaso.getContext('2d');
-        var canvas   = $(canvaso).parent().append("<canvas></canvas>").find("canvas").get(1);
-        var context  = canvas.getContext('2d');
 
-        var isDrawing       = false;
-        var currentTool     = null;
-        var currentToolText = null;
-        var currentToolObj  = null;
+        //
+        // Helpers
+        //
 
-        var _updateTools = function() {
-          context.strokeStyle = $(el).find(".color_Foreground").css("background-color");
-          context.fillStyle   = $(el).find(".color_Background").css("background-color");
-          context.lineWidth   = $(el).find(".slide_Thickness").slider("value");
-          context.lineCap     = $(el).find(".select_LineCap").val();
-          context.lineJoin    = $(el).find(".select_LineJoin").val();
-        };
+        function _update(file) {
+          app.opts = file;
+          argv['path'] = file;
+          app.argv = argv;
 
-        app.resize_hook = function() {
-          var oldImage;
-          if ( loaded ) {
-            oldImage = canvaso.toDataURL("image/png");
-          }
-
-          canvas.width        = $(el).find(".WindowContent").width();
-          canvas.height       = $(el).find(".WindowContent").height();
-          canvaso.width       = canvas.width;
-          canvaso.height      = canvas.height;
-
-          _updateTools();
-
-          if ( oldImage ) {
-            var img = new Image();
-            img.onload = function() {
-              contexto.drawImage(img, 0, 0);
-            };
-            img.src = oldImage;
-          }
-        };
-        app.resize_hook();
-        loaded = true;
+          $(el).find(".WindowTopInner span").html(app.title + ": " + (file || "New file"));
+        }
 
         function _save(file, content, callback) {
           callback = callback || function() {};
@@ -356,187 +492,131 @@ var ApplicationDraw = (function($, undefined) {
           }, ["image/*"]);
         }
 
-        function _update(file, el) {
-          app.opts = file;
-          argv['path'] = file;
+        //
+        // Initialization
+        //
 
-          $(el).find(".WindowTopInner span").html(app.title + ": " + (file || "New file"));
-        }
+        Tool.fill    = $(el).find(".enable_Fill").get(0).checked ? true : false;
+        Tool.stroke  = $(el).find(".enable_Stroke").get(0).checked ? true : false;
 
+        Style.stroke = DrawColor($(el).find(".color_Foreground").css("background-color"));
+        Style.fill   = DrawColor($(el).find(".color_Background").css("background-color"));
+        Style.width  = $(el).find(".slide_Thickness").slider("value");
+        Style.cap    = $(el).find(".select_LineCap").val();
+        Style.join   = $(el).find(".select_LineJoin").val();
 
+        DrawDocument.init(el);
 
+        app.resize_hook = function() {
+          DrawDocument.setSize();
+        };
 
-
-        $(canvas).css({
-          "position" : "absolute",
-          "top"      : "0px",
-          "left"     : "0px"
-        });
-
-        $(canvas).mousedown(function(ev) {
-          if ( !isDrawing ) {
-            isDrawing = true;
-
-            startPosX = mouseposX(ev);
-            startPosY = mouseposY(ev);
-
-            api.ui.cursor("pointer");
-
-            if ( currentToolObj.mousedown ) {
-              if ( currentToolText == "Pick" ) {
-                currentToolObj.mousedown(ev, context, canvas, contexto, canvaso);
-              } else {
-                currentToolObj.mousedown(ev, context, canvas);
-              }
-            }
-
-            ev.preventDefault();
-          }
-        }).mousemove(function(ev) {
-          if ( isDrawing ) {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-
-            if ( currentToolObj.mousemove ) {
-              currentToolObj.mousemove(ev, context, canvas);
-            }
-            //ev.preventDefault();
-          }
-        }).mouseup(function(ev) {
-          if ( isDrawing ) {
-            if ( currentToolObj.mouseup ) {
-              currentToolObj.mouseup(ev, context, canvas);
-            }
-
-            contexto.drawImage(canvas, 0, 0);
-            context.clearRect(0, 0, canvas.width, canvas.height);
-
-            api.ui.cursor("default");
-
-            isDrawing = false;
-
-            ev.preventDefault();
-          }
-
-        }).click(function(ev) {
-          if ( currentToolObj && currentToolObj.click ) {
-            currentToolObj.click(ev, context, canvas);
-          }
-        });
-
-        $(el).find("canvas").bind("contextmenu",function(e) {
-          return false;
-        });
+        //
+        // UI items
+        //
 
         // Tool buttons
-
         $(el).find(".ApplicationDrawPanel button").click(function() {
-          if ( $(this)[0] != $(currentTool)[0] ) {
-            if ( currentTool !== null ) {
-              $(currentTool).removeClass("Current");
-            }
+          if ( (tool) && (tool !== this) ) {
+            $(tool).removeClass("Current");
+          }
 
-            currentTool = this;
-            currentToolText = $(currentTool).attr("class").replace("draw_", "");
-            currentToolObj = Tools[currentToolText.toLowerCase()];
+          tool = this;
 
-            $(this).addClass("Current");
+          if ( tool ) {
+            var name = $(tool).attr("class").replace("draw_", "").toLowerCase();
+
+            Tool.type = name;
+            $(tool).addClass("Current");
+
           }
         });
+        $(el).find(".ApplicationDrawPanel button:first-child").click();
 
-        $($(el).find(".ApplicationDrawPanel button").get(0)).click();
-
+        // Foreground color selection
         $(el).find(".color_Foreground").click(function() {
-          //var color = '#'+Math.floor(Math.random()*16777215).toString(16);
-
-          api.system.dialog_color(context.strokeStyle, function(rgb, hex) {
+          api.system.dialog_color(Style.stroke.hex, function(rgb, hex) {
             $(el).find(".color_Foreground").css("background-color", hex);
-            context.strokeStyle = hex;
+            Style.stroke = DrawColor(hex);
           });
         });
 
+        // Background color selection
         $(el).find(".color_Background").click(function() {
-          //var color = '#'+Math.floor(Math.random()*16777215).toString(16);
-
-          api.system.dialog_color(context.fillStyle, function(rgb, hex) {
+          api.system.dialog_color(Style.fill.hex, function(rgb, hex) {
             $(el).find(".color_Background").css("background-color", hex);
-            context.fillStyle = hex;
+
+            Style.fill = DrawColor(hex);
           });
         });
 
-        $(el).find(".enable_Fill").click(function() {
-          useFill = this.checked ? true : false;
-        });
-        $(el).find(".enable_Stroke").click(function() {
-          useStroke = this.checked ? true : false;
-        });
-
-        $(el).find(".slide_Thickness").slider({
-          'min' : 1,
-          'max' : 50,
-          'value' : 1,
-          'step' : 1,
-          'change' : function() {
-            context.lineWidth = $(el).find(".slide_Thickness").slider("value");
-          },
-          'slide' : function() {
-            context.lineWidth = $(el).find(".slide_Thickness").slider("value");
-          }
-        });
-
+        // Tool props
         $(el).find(".select_LineCap").change(function() {
-          context.lineCap = $(el).find(".select_LineCap").val();
+          Style.cap = $(el).find(".select_LineCap").val();
         });
         $(el).find(".select_LineJoin").change(function() {
-          context.lineJoin = $(el).find(".select_LineJoin").val();
+          Style.join = $(el).find(".select_LineJoin").val();
+        });
+        $(el).find(".enable_Fill").click(function() {
+          Tool.fill = this.checked ? true : false;
+        });
+        $(el).find(".enable_Stroke").click(function() {
+          Tool.stroke = this.checked ? true : false;
         });
 
 
+        // Tool thickness
+        $(el).find(".slide_Thickness").slider({
+          'min'    : 1,
+          'max'    : 50,
+          'value'  : 1,
+          'step'   : 1,
+          'change' : function() {
+            Style.width = $(el).find(".slide_Thickness").slider("value");
+          },
+          'slide'  : function() {
+            Style.width = $(el).find(".slide_Thickness").slider("value");
+          }
+        });
+
+
+        //
         // Menu items
+        //
         app.setMenuItemAction("File", "cmd_Open", function() {
           _open(function(fname) {
-            context.clearRect (0, 0, canvas.width, canvas.height);
-            contexto.clearRect (0, 0, canvas.width, canvas.height);
-
-            var img = new Image();
-            img.onload = function() {
-              canvas.width = img.width;
-              canvas.height = img.height;
-              canvaso.width = img.width;
-              canvaso.height = img.height;
-              context.drawImage(img, 0, 0, canvas.width, canvas.height);
-            };
-            img.src = "/media/" + fname;
-
-            _update(fname, el);
+            DrawDocument.open("/media/" + fname);
+            _update(fname);
           });
         });
 
         app.setMenuItemAction("File", "cmd_Save", function() {
           if ( argv && argv['path'] ) {
-            var img = canvaso.toDataURL("image/png");
-            _save(argv['path'], img);
+            _save(argv['path'], DrawDocument.getImage());
+            _update(argv['path']);
           }
         });
 
         app.setMenuItemAction("File", "cmd_SaveAs", function() {
-          var img = canvaso.toDataURL("image/png");
           _saveAs(function(file, mime) {
-            _save(file, img, function() {
-              _update(file, el);
+            _save(file, DrawDocument.getImage(), function() {
+              _update(file);
             });
           });
         });
 
         app.setMenuItemAction("File", "cmd_New", function() {
-          app.$element.find("textarea").val("");
-          context.clearRect (0, 0, canvas.width, canvas.height);
-          contexto.clearRect (0, 0, canvas.width, canvas.height);
-          _update(null, el);
+          DrawDocument.clear();
+          _update(null);
         });
 
-        this._super();
-
-        _update(null, el);
+        if ( argv['path'] ) {
+          var fname = argv['path'];
+          DrawDocument.open("/media/" + fname);
+          _update(fname);
+        } else {
+          _update(null);
+        }
       }
     });
 

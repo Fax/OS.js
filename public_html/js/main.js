@@ -3,6 +3,8 @@
  *
  * TODO: Finish Login screen
  * TODO: Session: Store minimized/maximized etc.
+ * TODO: Key bindings:
+ *       - ESC on dialogs
  *
  * Creates a desktop environment inside the browser.
  * Applications can be loaded via the server.
@@ -1885,7 +1887,6 @@
           _Desktop = new Desktop();
 
           _Desktop.run();
-          API.system.launch("ApplicationDraw");
         } else {
           alert(data.error);
         }
