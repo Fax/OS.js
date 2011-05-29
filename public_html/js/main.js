@@ -1445,16 +1445,13 @@
 
       var desc      = $(self.$element).find(".CurrentColorDesc");
       var cube      = $(self.$element).find(".CurrentColor");
+      var running   = false;
 
-      var _update   = function(doColor) {
-        if ( doColor ) {
+      var _update   = function() {
+        if ( running ) {
           self.colorObj.red   = parseInt($(self.$element).find(".SliderR").slider("value"), 10);
           self.colorObj.green = parseInt($(self.$element).find(".SliderG").slider("value"), 10);
           self.colorObj.blue  = parseInt($(self.$element).find(".SliderB").slider("value"), 10);
-        } else {
-          self.$element.find(".SliderR").slider("value", self.colorObj.red).
-            find(".SliderG").slider("value", self.colorObj.green).
-            find(".SliderB").slider("value", self.colorObj.blue);
         }
 
         var hex = hexFromRGB(self.colorObj.red, self.colorObj.green, self.colorObj.blue);
@@ -1471,11 +1468,15 @@
         'min'    : 0,
         'max'    : 255,
         'step'   : 1,
-        'slide'  : function() { _update(true); },
-        'change' : function() { _update(true); }
+        'slide'  : _update,
+        'change' : _update
       });
 
-      _update();
+      this.$element.find(".SliderR").slider("value", this.colorObj.red);
+      this.$element.find(".SliderG").slider("value", this.colorObj.green);
+      this.$element.find(".SliderB").slider("value", this.colorObj.blue);
+
+      running = true;
     }
   });
 

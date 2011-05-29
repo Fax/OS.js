@@ -52,7 +52,7 @@
   width : 61px;
   height : 61px;
   border : 2px inset;
-  background : #000;
+  background : #000000;
 }
 
 .DrawToolColors .color_Background {
@@ -64,7 +64,7 @@
   width : 61px;
   height : 61px;
   border : 2px inset;
-  background-color : #fff;
+  background-color : #ffffff;
 }
 
 .ApplicationDrawPanel input[type=checkbox] {
