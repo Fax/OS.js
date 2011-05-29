@@ -30,116 +30,128 @@ var ApplicationDraw = (function($, undefined) {
     return y;
   }
 
-  var startPosX = 0;
-  var startPosY = 0;
-  var useFill = true;
-
-  Tools = {
-
-    'pencil' : {
-      mousedown : function(ev, context, canvas) {
-        context.beginPath();
-        context.moveTo(mouseposX(ev), mouseposY(ev));
-      },
-
-      mousemove : function(ev, context, canvas) {
-        context.lineTo(mouseposX(ev), mouseposY(ev));
-        context.stroke();
-      },
-
-      mouseup : function(ev, context, canvas) {
-
-      }
-    },
-
-    'brush' : {
-      mousedown : function(ev, context, canvas) {
-      },
-      mousemove : function(ev, context, canvas) {
-      },
-      mouseup : function(ev, context, canvas) {
-      }
-    },
-
-    'line' : {
-      mousedown : function(ev, context, canvas) {
-      },
-      mousemove : function(ev, context, canvas) {
-        context.beginPath();
-        context.moveTo(startPosX, startPosY);
-        context.lineTo(mouseposX(ev), mouseposY(ev));
-        context.stroke();
-        context.closePath();
-
-      },
-      mouseup : function(ev, context, canvas) {
-      }
-    },
-
-    'rectangle' : {
-      mousedown : function(ev, context, canvas) {
-      },
-      mousemove : function(ev, context, canvas) {
-        var mX = mouseposX(ev);
-        var mY = mouseposY(ev);
-        var x = Math.min(mX, startPosX);
-        var y = Math.min(mY, startPosY);
-        var w = Math.abs(mX - startPosX);
-        var h = Math.abs(mY - startPosY);
-
-        if (!w || !h) {
-          return;
-        }
-
-        context.strokeRect(x, y, w, h);
-        if ( useFill ) {
-          context.fillRect(x, y, w, h);
-        }
-      },
-      mouseup : function(ev, context, canvas) {
-      }
-    },
-
-    'circle' : {
-      mousedown : function(ev, context, canvas) {
-      },
-      mousemove : function(ev, context, canvas) {
-        var mX = mouseposX(ev);
-        var mY = mouseposY(ev);
-        var posX = Math.abs(startPosX - mX);
-        var posY = Math.abs(startPosY - mY);
-
-        var r = Math.sqrt(Math.pow(posX, 2) + Math.pow(posY, 2));
-
-        if ( r > 0 ) {
-          context.beginPath();
-          context.arc(startPosX,startPosY,r,0,Math.PI*2,true);
-          context.closePath();
-          context.stroke();
-
-          if ( useFill ) {
-            context.fill();
-          }
-        }
-
-      },
-      mouseup : function(ev, context, canvas) {
-      }
-    },
-
-    'fill' : {
-      mousedown : function(ev, context, canvas) {
-      },
-      mousemove : function(ev, context, canvas) {
-      },
-      mouseup : function(ev, context, canvas) {
-        context.fillRect(0, 0, canvas.width, canvas.height);
-      }
-    }
-
-  };
-
   return function(Application, app, api, argv) {
+
+
+    var startPosX = 0;
+    var startPosY = 0;
+    var useFill = true;
+
+    Tools = {
+
+      'pencil' : {
+        mousedown : function(ev, context, canvas) {
+          context.beginPath();
+          context.moveTo(mouseposX(ev), mouseposY(ev));
+        },
+
+        mousemove : function(ev, context, canvas) {
+          context.lineTo(mouseposX(ev), mouseposY(ev));
+          context.stroke();
+        },
+
+        mouseup : function(ev, context, canvas) {
+
+        }
+      },
+
+      'brush' : {
+        mousedown : function(ev, context, canvas) {
+          api.ui.cursor('crosshair');
+        },
+        mousemove : function(ev, context, canvas) {
+        },
+        mouseup : function(ev, context, canvas) {
+          api.ui.cursor('default');
+        }
+      },
+
+      'line' : {
+        mousedown : function(ev, context, canvas) {
+          api.ui.cursor('crosshair');
+        },
+        mousemove : function(ev, context, canvas) {
+          context.beginPath();
+          context.moveTo(startPosX, startPosY);
+          context.lineTo(mouseposX(ev), mouseposY(ev));
+          context.stroke();
+          context.closePath();
+
+        },
+        mouseup : function(ev, context, canvas) {
+          api.ui.cursor('default');
+        }
+      },
+
+      'rectangle' : {
+        mousedown : function(ev, context, canvas) {
+          api.ui.cursor('all-scroll');
+        },
+        mousemove : function(ev, context, canvas) {
+          var mX = mouseposX(ev);
+          var mY = mouseposY(ev);
+          var x = Math.min(mX, startPosX);
+          var y = Math.min(mY, startPosY);
+          var w = Math.abs(mX - startPosX);
+          var h = Math.abs(mY - startPosY);
+
+          if (!w || !h) {
+            return;
+          }
+
+          context.strokeRect(x, y, w, h);
+          if ( useFill ) {
+            context.fillRect(x, y, w, h);
+          }
+        },
+        mouseup : function(ev, context, canvas) {
+          api.ui.cursor('default');
+        }
+      },
+
+      'circle' : {
+        mousedown : function(ev, context, canvas) {
+          api.ui.cursor('move');
+        },
+        mousemove : function(ev, context, canvas) {
+          var mX = mouseposX(ev);
+          var mY = mouseposY(ev);
+          var posX = Math.abs(startPosX - mX);
+          var posY = Math.abs(startPosY - mY);
+
+          var r = Math.sqrt(Math.pow(posX, 2) + Math.pow(posY, 2));
+
+          if ( r > 0 ) {
+            context.beginPath();
+            context.arc(startPosX,startPosY,r,0,Math.PI*2,true);
+            context.closePath();
+            context.stroke();
+
+            if ( useFill ) {
+              context.fill();
+            }
+          }
+
+        },
+        mouseup : function(ev, context, canvas) {
+          api.ui.cursor('default');
+        }
+      },
+
+      'fill' : {
+        mousedown : function(ev, context, canvas) {
+        },
+        mousemove : function(ev, context, canvas) {
+        },
+        mouseup : function(ev, context, canvas) {
+          context.fillRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+
+    };
+
+
+
     var _ApplicationDraw = Application.extend({
       init : function() {
         this._super("ApplicationDraw");
@@ -148,6 +160,7 @@ var ApplicationDraw = (function($, undefined) {
       destroy : function() {
         this._super();
       },
+
 
       run : function() {
         var el = app.$element;
@@ -163,10 +176,13 @@ var ApplicationDraw = (function($, undefined) {
         var currentToolText = null;
         var currentToolObj  = null;
 
-        canvas.width   = $(el).find(".WindowContent").width();
-        canvas.height  = $(el).find(".WindowContent").height();
-        canvaso.width  = canvas.width;
-        canvaso.height = canvas.height;
+        app.resize_hook = function() {
+          canvas.width   = $(el).find(".WindowContent").width();
+          canvas.height  = $(el).find(".WindowContent").height();
+          canvaso.width  = canvas.width;
+          canvaso.height = canvas.height;
+        };
+        app.resize_hook();
 
         /*
         context.fillStyle = "rgba(255, 255, 255, 1)";
@@ -229,9 +245,9 @@ var ApplicationDraw = (function($, undefined) {
             startPosX = mouseposX(ev);
             startPosY = mouseposY(ev);
 
-            currentToolObj.mousedown(ev, context, canvas);
-
             api.ui.cursor("pointer");
+
+            currentToolObj.mousedown(ev, context, canvas);
 
             ev.preventDefault();
           }
