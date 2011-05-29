@@ -512,8 +512,6 @@
         if ( win instanceof Window ) {
           var self = this;
 
-          API.ui.cursor("wait");
-
           var callback = function(method) {
             var id = "Window_" + self.stack.length;
 
@@ -537,6 +535,7 @@
           if ( win.dialog ) {
             callback({});
           } else {
+            API.ui.cursor("wait");
             win.load(callback);
           }
         }
@@ -764,7 +763,6 @@
       this.app             = null;
       this.uuid            = null;
       this.last_attrs      = null;
-      this.create_callback = null;
 
       // Window main attributes
       this.name        = name;
@@ -1063,11 +1061,6 @@
           }, 0);
         }
 
-        if ( this.create_callback ) {
-          setTimeout(function() {
-            self.create_callback();
-          }, 0);
-        }
       }
 
       this.created = true;
@@ -1343,35 +1336,38 @@
       this._super("Dialog", true, {'type' : type});
 
       this.width = 200;
-      this.height = 100;
+      this.height = 70;
       this.gravity = "center";
       this.content = message;
+      this.dialog_type = type;
 
-      cmd_close  = cmd_close  || function() {};
-      cmd_ok     = cmd_ok     || function() {};
-      cmd_cancel = cmd_cancel || function() {};
+      this.cmd_close  = cmd_close  || function() {};
+      this.cmd_ok     = cmd_ok     || function() {};
+      this.cmd_cancel = cmd_cancel || function() {};
+    },
 
+    create : function(desktop, id, zi, method) {
       var self = this;
-      this.create_callback = function() {
-        if ( type == "confirm" ) {
-          self.$element.find(".DialogButtons .Close").hide();
-          self.$element.find(".DialogButtons .Ok").show();
-          self.$element.find(".DialogButtons .Cancel").show();
-        }
+      this._super(desktop, id, zi, method);
 
-        self.$element.find(".DialogButtons .Close").click(function() {
-          self.$element.find(".ActionClose").click();
-          cmd_close();
-        });
-        self.$element.find(".DialogButtons .Ok").click(function() {
-          self.$element.find(".ActionClose").click();
-          cmd_ok();
-        });
-        self.$element.find(".DialogButtons .Cancel").click(function() {
-          self.$element.find(".ActionClose").click();
-          cmd_cancel();
-        });
-      };
+      if ( this.dialog_type == "confirm" ) {
+        this.$element.find(".DialogButtons .Close").hide();
+        this.$element.find(".DialogButtons .Ok").show();
+        this.$element.find(".DialogButtons .Cancel").show();
+      }
+
+      this.$element.find(".DialogButtons .Close").click(function() {
+        self.$element.find(".ActionClose").click();
+        self.cmd_close();
+      });
+      this.$element.find(".DialogButtons .Ok").click(function() {
+        self.$element.find(".ActionClose").click();
+        self.cmd_ok();
+      });
+      this.$element.find(".DialogButtons .Cancel").click(function() {
+        self.$element.find(".ActionClose").click();
+        self.cmd_cancel();
+      });
     }
 
   });
