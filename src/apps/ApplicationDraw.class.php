@@ -27,10 +27,11 @@ class ApplicationDraw
   <div class="ApplicationDrawPanel">
     <div class="DrawToolButtons">
       <button class="draw_Pencil"><img alt="Pencil" title="Pencil" src="/img/app.draw/icons/stock-tool-pencil-16.png" /></button>
-      <button class="draw_Brush"><img alt="Brush" title="Brush" src="/img/app.draw/icons/stock-tool-paintbrush-16.png" /></button>
       <button class="draw_Line"><img alt="Line" title="Line" src="/img/app.draw/icons/stock-tool-path-16.png" /></button>
-      <button class="draw_Rectangle"><img alt="Rectangle" title="Rectangle" src="/img/app.draw/icons/stock-shape-square-16.png" /></button>
+      <button class="draw_Square"><img alt="Square" title="Square" src="/img/app.draw/icons/stock-shape-square-16.png" /></button>
+      <button class="draw_Rectangle"><img alt="Rectangle" title="Rectangle" src="/img/app.draw/icons/stock-shape-rectangle-16.png" /></button>
       <button class="draw_Circle"><img alt="Circle" title="Circle" src="/img/app.draw/icons/stock-shape-circle-16.png" /></button>
+      <button class="draw_Ellipse"><img alt="Ellipse" title="Ellipse" src="/img/app.draw/icons/stock-shape-ellipse-16.png" /></button>
       <button class="draw_Fill"><img alt="Fill" title="Fill" src="/img/app.draw/icons/stock-tool-bucket-fill-16.png" /></button>
       <div class="Clear">&nbsp;</div>
     </div>
@@ -43,6 +44,7 @@ class ApplicationDraw
     </div>
 
     <hr />
+    <label><input type="checkbox" class="enable_Stroke" checked="checked" />Use Stroke</label>
     <label><input type="checkbox" class="enable_Fill" checked="checked" />Use Fill</label>
 
     <label>Thickness</label>
@@ -86,7 +88,7 @@ EOHTML;
     );
 
     $this->width = 600;
-    $this->height = 500;
+    $this->height = 530;
     $this->is_scrollable = false;
     $this->resources = Array(
       "app.draw.js",

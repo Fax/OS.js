@@ -20,6 +20,9 @@
 }
 .ApplicationDrawPanel .Clear {
   clear : both;
+  height : 1px;
+  overflow : hidden;
+  visibility : hidden;
 }
 .ApplicationDrawPanel hr {
   clear : both;
