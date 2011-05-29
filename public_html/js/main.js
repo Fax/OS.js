@@ -1446,15 +1446,21 @@
       var desc      = $(self.$element).find(".CurrentColorDesc");
       var cube      = $(self.$element).find(".CurrentColor");
 
-      var _update   = function() {
-        self.colorObj.red   = parseInt($(self.$element).find(".SliderR").slider("value"), 10);
-        self.colorObj.green = parseInt($(self.$element).find(".SliderG").slider("value"), 10);
-        self.colorObj.blue  = parseInt($(self.$element).find(".SliderB").slider("value"), 10);
+      var _update   = function(doColor) {
+        if ( doColor ) {
+          self.colorObj.red   = parseInt($(self.$element).find(".SliderR").slider("value"), 10);
+          self.colorObj.green = parseInt($(self.$element).find(".SliderG").slider("value"), 10);
+          self.colorObj.blue  = parseInt($(self.$element).find(".SliderB").slider("value"), 10);
+        } else {
+          self.$element.find(".SliderR").slider("value", self.colorObj.red).
+            find(".SliderG").slider("value", self.colorObj.green).
+            find(".SliderB").slider("value", self.colorObj.blue);
+        }
+
         var hex = hexFromRGB(self.colorObj.red, self.colorObj.green, self.colorObj.blue);
         $(cube).css("background-color", "#" + hex);
         $(desc).html(sprintf("R: %03d, G: %03d, B: %03d (#%s)", self.colorObj.red, self.colorObj.green, self.colorObj.blue, hex));
       };
-
 
       this.$element.find(".DialogButtons .Close").hide().find(".DialogButtons .Cancel").show();
       this.$element.find(".DialogButtons .Ok").show().click(function() {
@@ -1465,12 +1471,9 @@
         'min'    : 0,
         'max'    : 255,
         'step'   : 1,
-        'slide'  : _update,
-        'change' : _update
-      }).
-        find(".SliderR").slider("value", this.colorObj.red).
-        find(".SliderG").slider("value", this.colorObj.green).
-        find(".SliderB").slider("value", this.colorObj.blue);
+        'slide'  : function() { _update(true); },
+        'change' : function() { _update(true); }
+      });
 
       _update();
     }

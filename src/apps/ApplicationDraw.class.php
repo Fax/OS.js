@@ -25,16 +25,25 @@ class ApplicationDraw
 
 <div class="ApplicationDraw">
   <div class="ApplicationDrawPanel">
-    <button class="draw_Pencil">Pencil</button>
-    <button class="draw_Line">Line</button>
-    <button class="draw_Rectangle">Rectangle</button>
-    <button class="draw_Circle">Circle</button>
-    <button class="draw_Fill">Fill</button>
+    <div class="DrawToolButtons">
+      <button class="draw_Pencil"><img alt="Pencil" title="Pencil" src="/img/app.draw/icons/stock-tool-pencil-16.png" /></button>
+      <button class="draw_Brush"><img alt="Brush" title="Brush" src="/img/app.draw/icons/stock-tool-paintbrush-16.png" /></button>
+      <button class="draw_Line"><img alt="Line" title="Line" src="/img/app.draw/icons/stock-tool-path-16.png" /></button>
+      <button class="draw_Rectangle"><img alt="Rectangle" title="Rectangle" src="/img/app.draw/icons/stock-shape-square-16.png" /></button>
+      <button class="draw_Circle"><img alt="Circle" title="Circle" src="/img/app.draw/icons/stock-shape-circle-16.png" /></button>
+      <button class="draw_Fill"><img alt="Fill" title="Fill" src="/img/app.draw/icons/stock-tool-bucket-fill-16.png" /></button>
+      <div class="Clear">&nbsp;</div>
+    </div>
 
-    <label>Stroke</label>
-    <div class="color_Foreground">&nbsp;</div>
-    <label><input type="checkbox" class="enable_Fill" checked="checked" />Fill</label>
-    <div class="color_Background">&nbsp;</div>
+    <hr />
+
+    <div class="DrawToolColors">
+      <div class="color_Foreground">&nbsp;</div>
+      <div class="color_Background">&nbsp;</div>
+    </div>
+
+    <hr />
+    <label><input type="checkbox" class="enable_Fill" checked="checked" />Use Fill</label>
 
     <label>Thickness</label>
     <div class="Slider">

@@ -1,6 +1,10 @@
 /**
  * Application: Draw
  *
+ * http://hacks.mozilla.org/2009/06/pushing-pixels-with-canvas/
+ * http://beej.us/blog/2010/02/html5s-canvas-part-ii-pixel-manipulation/
+ * https://developer.mozilla.org/En/Canvas_tutorial/Applying_styles_and_colors
+ *
  * @package ajwm.Applications
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
@@ -36,6 +40,7 @@ var ApplicationDraw = (function($, undefined) {
     var startPosX = 0;
     var startPosY = 0;
     var useFill = true;
+    var oldBrush = null;
 
     Tools = {
 
@@ -58,11 +63,22 @@ var ApplicationDraw = (function($, undefined) {
       'brush' : {
         mousedown : function(ev, context, canvas) {
           api.ui.cursor('crosshair');
+          oldBrush = context.strokeStyle;
+
+          var img = new Image();
+          img.onload = function() {
+            context.strokeStyle = context.createPattern(img, 'repeat');
+          };
+          img.src = "/img/app.draw/icons/stock-controller-linux-input-16.png";
+          context.beginPath();
         },
         mousemove : function(ev, context, canvas) {
+          context.lineTo(mouseposX(ev), mouseposY(ev));
+          context.stroke();
         },
         mouseup : function(ev, context, canvas) {
           api.ui.cursor('default');
+          context.strokeStyle = oldBrush;
         }
       },
 
@@ -286,6 +302,9 @@ var ApplicationDraw = (function($, undefined) {
           }
 
         }).click(function(ev) {
+          if ( currentToolObj && currentToolObj.click ) {
+            currentToolObj.click(ev, context, canvas);
+          }
         });
 
         $(el).find("canvas").bind("contextmenu",function(e) {

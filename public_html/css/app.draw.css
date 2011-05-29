@@ -18,31 +18,52 @@
   width : 100px;
   border-right : 1px solid #d1d4d7;
 }
+.ApplicationDrawPanel .Clear {
+  clear : both;
+}
+.ApplicationDrawPanel hr {
+  clear : both;
+  display : block;
+  margin : 10px;
+  margin-top : 0;
+  margin-bottom : 0;
+}
 
-.ApplicationDrawPanel button,
 .ApplicationDrawPanel label {
   margin : 10px;
   width : 80px;
   text-align : center;
   display : block;
 }
-.ApplicationDrawPanel button.Current {
-  font-weight : bold;
+
+.DrawToolColors {
+  position : relative;
+  margin : 10px;
+  height : 78px;
+  width : 76px;
 }
 
-.ApplicationDrawPanel .color_Foreground {
-  width : 76px;
-  height : 26px;
+.DrawToolColors .color_Foreground {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  z-index : 2;
+
+  width : 61px;
+  height : 61px;
   border : 2px inset;
-  margin : 10px;
   background : #000;
 }
 
-.ApplicationDrawPanel .color_Background {
-  width : 76px;
-  height : 26px;
+.DrawToolColors .color_Background {
+  position : absolute;
+  top : 15px;
+  left : 15px;
+  z-index : 1;
+
+  width : 61px;
+  height : 61px;
   border : 2px inset;
-  margin : 10px;
   background-color : #fff;
 }
 
@@ -75,4 +96,24 @@
   /*background-color : #fff;*/
   margin : 0;
   padding : 0;
+}
+
+.DrawToolButtons {
+}
+.DrawToolButtons button {
+  height : 38px;
+  width : 38px;
+  float : left;
+  margin : 5px;
+  padding : 0;
+  display : block;
+}
+.DrawToolButtons button img {
+  display : inline;
+  vertical-align : middle;
+}
+
+.ApplicationDrawPanel button.Current {
+  /*font-weight : bold;*/
+  border-color : #000;
 }
