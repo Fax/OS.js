@@ -1885,6 +1885,7 @@
           _Desktop = new Desktop();
 
           _Desktop.run();
+          API.system.launch("ApplicationDraw");
         } else {
           alert(data.error);
         }

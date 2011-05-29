@@ -10,6 +10,7 @@
 
 }
 
+/* Left panel */
 .ApplicationDrawPanel {
   position : absolute;
   top : 0px;
@@ -28,15 +29,6 @@
   clear : both;
   display : block;
   margin : 10px;
-  margin-top : 0;
-  margin-bottom : 0;
-}
-
-.ApplicationDrawPanel label {
-  margin : 10px;
-  width : 80px;
-  text-align : center;
-  display : block;
 }
 
 .DrawToolColors {
@@ -70,37 +62,6 @@
   background-color : #ffffff;
 }
 
-.ApplicationDrawPanel input[type=checkbox] {
-  margin-left : -10px;
-}
-
-.ApplicationDrawPanel .Slider {
-  margin-left : 20px;
-  margin-right : 20px;
-}
-.ApplicationDrawPanel .Select {
-  margin-left : 10px;
-  margin-right : 10px;
-}
-.ApplicationDrawPanel .Select select {
-  width : 76px;
-}
-
-.ApplicationDrawInner {
-  position : absolute;
-  top : 0px;
-  right : 0px;
-  bottom : 0px;
-  left : 101px;
-  background : url('/img/app.draw/checkerboard.png');
-}
-
-.ApplicationDrawInner .Canvas {
-  /*background-color : #fff;*/
-  margin : 0;
-  padding : 0;
-}
-
 .DrawToolButtons {
 }
 .DrawToolButtons button {
@@ -119,4 +80,71 @@
 .ApplicationDrawPanel button.Current {
   /*font-weight : bold;*/
   border-color : #000;
+}
+
+/* Top panel */
+.ApplicationDrawToolPanel {
+  position : absolute;
+  top : 0px;
+  left : 101px;
+  right : 0px;
+  height : 30px;
+  line-height : 30px;
+  border-bottom : 1px solid #d1d4d7;
+}
+.ApplicationDrawToolPanel .Box {
+  float : left;
+  width : 200px;
+}
+.ApplicationDrawToolPanel .Box.Alt {
+  float : right;
+  width : 150px;
+  text-align : right;
+}
+
+.ApplicationDrawToolPanel .Box label {
+  float : left;
+}
+.ApplicationDrawToolPanel .Box.Alt label {
+  width : 55px;
+}
+.ApplicationDrawToolPanel .Box.Alt select {
+  width : 90px;
+}
+.ApplicationDrawToolPanel .Box select {
+}
+.ApplicationDrawToolPanel .Box input[type=checkbox] {
+  vertical-align : middle;
+}
+
+.ApplicationDrawToolPanel .Slider {
+  width : 100px;
+  float : left;
+  margin : 8px;
+  margin-left : 20px;
+}
+/*
+.ApplicationDrawToolPanel .Select {
+  margin-left : 10px;
+  margin-right : 10px;
+}
+.ApplicationDrawToolPanel .Select select {
+  width : 76px;
+}
+  */
+
+/* Content */
+.ApplicationDrawInner {
+  position : absolute;
+  top : 31px;
+  right : 0px;
+  bottom : 0px;
+  left : 101px;
+  background : url('/img/app.draw/checkerboard.png');
+}
+
+.ApplicationDrawInner .Canvas {
+  /*background-color : #fff;*/
+  margin : 0;
+  padding : 0;
 }

@@ -241,6 +241,34 @@ var ApplicationDraw = (function($, undefined) {
         mouseup : function(ev, context, canvas) {
           context.fillRect(0, 0, canvas.width, canvas.height);
         }
+      },
+
+      'pick' : {
+        mousedown : function(ev, context, canvas, contexto, canvaso) {
+          var posX = startPosX;
+          var posY = startPosY;
+
+          var imageData = contexto.getImageData(0, 0, canvas.width, canvas.height).data;
+          var index = (posX + posY * canvas.width) * 4;
+
+          var o = {
+            'r' : imageData[index + 0],
+            'g' : imageData[index + 1],
+            'b' : imageData[index + 2],
+            'a' : imageData[index + 3]
+          };
+
+          var el = $(canvas).parents(".Window");
+          var hex = "#" + hexFromRGB(o.r, o.g, o.b);
+
+          if ( ev.which === 1 ) {
+            $(el).find(".color_Foreground").css("background-color", hex);
+            context.strokeStyle = hex;
+          } else {
+            $(el).find(".color_Background").css("background-color", hex);
+            context.fillStyle = hex;
+          }
+        }
       }
 
     };
@@ -355,7 +383,11 @@ var ApplicationDraw = (function($, undefined) {
             api.ui.cursor("pointer");
 
             if ( currentToolObj.mousedown ) {
-              currentToolObj.mousedown(ev, context, canvas);
+              if ( currentToolText == "Pick" ) {
+                currentToolObj.mousedown(ev, context, canvas, contexto, canvaso);
+              } else {
+                currentToolObj.mousedown(ev, context, canvas);
+              }
             }
 
             ev.preventDefault();

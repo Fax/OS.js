@@ -33,6 +33,7 @@ class ApplicationDraw
       <button class="draw_Circle"><img alt="Circle" title="Circle" src="/img/app.draw/icons/stock-shape-circle-16.png" /></button>
       <button class="draw_Ellipse"><img alt="Ellipse" title="Ellipse" src="/img/app.draw/icons/stock-shape-ellipse-16.png" /></button>
       <button class="draw_Fill"><img alt="Fill" title="Fill" src="/img/app.draw/icons/stock-tool-bucket-fill-16.png" /></button>
+      <button class="draw_Pick"><img alt="Pick" title="Pick color" src="/img/app.draw/icons/stock-color-pick-from-screen-16.png" /></button>
       <div class="Clear">&nbsp;</div>
     </div>
 
@@ -42,33 +43,43 @@ class ApplicationDraw
       <div class="color_Foreground">&nbsp;</div>
       <div class="color_Background">&nbsp;</div>
     </div>
+  </div>
 
-    <hr />
-    <label><input type="checkbox" class="enable_Stroke" checked="checked" />Use Stroke</label>
-    <label><input type="checkbox" class="enable_Fill" checked="checked" />Use Fill</label>
-
-    <label>Thickness</label>
-    <div class="Slider">
-      <div class="slide_Thickness"></div>
+  <div class="ApplicationDrawToolPanel">
+    <div class="Box">
+      <label><input type="checkbox" class="enable_Stroke" checked="checked" />Use Stroke</label>
+      <label><input type="checkbox" class="enable_Fill" checked="checked" />Use Fill</label>
     </div>
 
-    <label>Line Cap</label>
-    <div class="Select">
-      <select class="select_LineCap">
-        <option selected="selected" value="butt">butt</option>
-        <option value="round">round</option>
-        <option value="square">square</option>
-      </select>
+    <div class="Box">
+      <label>Thickness</label>
+      <div class="Slider">
+        <div class="slide_Thickness"></div>
+      </div>
     </div>
 
-    <label>Line Join</label>
-    <div class="Select">
-      <select class="select_LineJoin">
-        <option selected="selected" value="milter">milter</option>
-        <option value="bevel">bevel</option>
-        <option value="round">round</option>
-      </select>
+    <div class="Box Alt">
+      <label>Line Cap</label>
+      <div class="Select">
+        <select class="select_LineCap">
+          <option selected="selected" value="butt">butt</option>
+          <option value="round">round</option>
+          <option value="square">square</option>
+        </select>
+      </div>
     </div>
+
+    <div class="Box Alt">
+      <label>Line Join</label>
+      <div class="Select">
+        <select class="select_LineJoin">
+          <option selected="selected" value="milter">milter</option>
+          <option value="bevel">bevel</option>
+          <option value="round">round</option>
+        </select>
+      </div>
+    </div>
+
   </div>
   <div class="ApplicationDrawInner">
     <canvas class="Canvas"></canvas>
@@ -87,8 +98,9 @@ EOHTML;
       )
     );
 
-    $this->width = 600;
-    $this->height = 530;
+    $this->width = 901; // 800
+    $this->height = 433; // 400
+    $this->statusbar = true;
     $this->is_scrollable = false;
     $this->resources = Array(
       "app.draw.js",
