@@ -314,8 +314,6 @@
           }
         }, true);
         */
-
-        console.log("ResourceManager initialized...", this);
       },
 
       destroy : function() {
@@ -379,7 +377,6 @@
       },
 
       addResources : function(res, callback) {
-        console.log("ResourceManager","addResources",res);
         var i = 0;
         var l = res.length;
 
@@ -486,8 +483,6 @@
         this.$element = $("#Desktop");
         this.stack = [];
         this.panel = null;
-
-        console.log("Desktop initialized...");
       },
 
       destroy : function() {
@@ -665,8 +660,6 @@
       var self = this;
 
       this.$element = $("#Panel").show();
-
-      console.log("Panel initialized...", this);
 
       // Fill menu
       var o;

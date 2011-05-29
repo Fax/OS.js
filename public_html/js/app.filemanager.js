@@ -38,7 +38,6 @@ var ApplicationFilemanager = (function($, undefined) {
 
         var _selItem = function(self) {
           if ( lastItem ) {
-            console.log(self, self.tagName);
             if ( self.tagName.toLowerCase() == "tr" ) {
               $(lastItem).removeClass("Current");
             } else {
