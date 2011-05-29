@@ -13,6 +13,9 @@ var ApplicationFilemanager = (function($, undefined) {
     if ( argv.view_type == undefined ) {
       argv.view_type = 'icon';
     }
+    if ( argv.path == undefined ) {
+      argv.path = "/";
+    }
 
     var _CurrentDir = "/";
     var _History = [];
@@ -164,6 +167,7 @@ var ApplicationFilemanager = (function($, undefined) {
           });
 
           _CurrentDir = dir;
+          self.argv['path'] = _CurrentDir;
 
           /*if ( hist !== false ) {
             _History.push(_CurrentDir);
@@ -227,7 +231,7 @@ var ApplicationFilemanager = (function($, undefined) {
 
         this._super();
 
-        chdir("/");
+        chdir(argv.path);
       }
     });
 
