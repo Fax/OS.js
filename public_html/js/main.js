@@ -1427,10 +1427,11 @@
       this.clb_finish = clb_finish   || function() {};
       this.colorObj   = RGBFromHex(start_color  || "#ffffff");
 
-      this.title      = "Choose color...";
-      this.content    = $("#OperationDialogColor").html();
-      this.width      = 400;
-      this.height     = 170;
+      this.title    = "Choose color...";
+      this.icon     = "apps/style.png";
+      this.content  = $("#OperationDialogColor").html();
+      this.width    = 400;
+      this.height   = 170;
     },
 
     create : function(desktop, id, zi, method) {
@@ -1511,6 +1512,7 @@
       this.clb_cancel   = clb_cancel   || function() {};
 
       this.title    = "Upload file";
+      this.icon     = "actions/up.png";
       this.content  = $("#OperationDialogUpload").html();
       this.width    = 400;
       this.height   = 140;
@@ -1587,6 +1589,7 @@
       this._super("File");
 
       this.title        = type == "save" ? "Save As..." : "Open File";
+      this.icon         = type == "save" ? "actions/document-save.png" : "actions/document-open.png";
       this.content      = $("#OperationDialogFile").html();
       this.is_resizable = true;
       this.width        = 400;

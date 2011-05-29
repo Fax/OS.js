@@ -18,7 +18,7 @@ class SystemAbout
   extends DesktopApplication
 {
   const APP_TITLE = "About";
-  const APP_ICON = "categories/system-help.png";
+  const APP_ICON = "actions/gtk-about.png";
   const APP_HIDDEN = true;
 
   public function __construct() {
