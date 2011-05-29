@@ -49,8 +49,9 @@ var ApplicationDraw = (function($, undefined) {
     if ( arguments.length == 1 ) {
       hex = arguments[0];
 
-      if ( hex.match(/^rgb/) ) {
-        var parts = hex.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+      if ( hex.match(/^rgba?/) ) {
+        //var parts = hex.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+        var parts = hex.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
         delete (parts[0]);
         for (var i = 1; i <= 3; ++i) {
           parts[i] = parseInt(parts[i], 10).toString(16);
