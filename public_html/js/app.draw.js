@@ -166,6 +166,7 @@ var ApplicationDraw = (function($, undefined) {
         var el = app.$element;
         var self = this;
 
+        var loaded   = false;
         var canvaso  = el.find("canvas").get(0);
         var contexto = canvaso.getContext('2d');
         var canvas   = $(canvaso).parent().append("<canvas></canvas>").find("canvas").get(1);
@@ -177,12 +178,28 @@ var ApplicationDraw = (function($, undefined) {
         var currentToolObj  = null;
 
         app.resize_hook = function() {
-          canvas.width   = $(el).find(".WindowContent").width();
-          canvas.height  = $(el).find(".WindowContent").height();
-          canvaso.width  = canvas.width;
-          canvaso.height = canvas.height;
+          var oldImage;
+          if ( loaded ) {
+            oldImage = canvaso.toDataURL("image/png");
+          }
+
+          canvas.width        = $(el).find(".WindowContent").width();
+          canvas.height       = $(el).find(".WindowContent").height();
+          canvaso.width       = canvas.width;
+          canvaso.height      = canvas.height;
+          context.strokeStyle = $(el).find(".color_Foreground").css("background-color");
+          context.fillStyle   = $(el).find(".color_Background").css("background-color");
+
+          if ( oldImage ) {
+            var img = new Image();
+            img.onload = function() {
+              contexto.drawImage(img, 0, 0);
+            };
+            img.src = oldImage;
+          }
         };
         app.resize_hook();
+        loaded = true;
 
         /*
         context.fillStyle = "rgba(255, 255, 255, 1)";
