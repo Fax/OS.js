@@ -1,8 +1,6 @@
 /**
  * JavaScript Window Manager
  *
- * TODO: Hourglass while wating
- * TODO: Font selection
  * TODO: Login screen
  *
  * Creates a desktop environment inside the browser.
@@ -63,9 +61,16 @@
     */
 
     'ui' : {
-      'cursor' : function(c) {
-        $("body").css("cursor", c);
-      }
+      'cursor' : (function() {
+        var ccursor = "default";
+
+        return function(c) {
+          if ( c !== ccursor ) {
+            $("body").css("cursor", c);
+          }
+          ccursor = c;
+        };
+      })()
     },
 
     'system' : {
@@ -507,10 +512,16 @@
         if ( win instanceof Window ) {
           var self = this;
 
+          API.ui.cursor("wait");
+
           var callback = function(method) {
             var id = "Window_" + self.stack.length;
 
-            win.create(self, id, _TopIndex, method);
+            win.create(self, id, _TopIndex, method, function() {
+              setTimeout(function() {
+                API.ui.cursor("default");
+              }, 50);
+            });
 
             _TopIndex++;
 
@@ -833,9 +844,10 @@
       }
     },
 
-    create : function(desktop, id, zi, method) {
+    create : function(desktop, id, zi, method, mcallback) {
       if ( !this.created ) {
         var self = this;
+        mcallback = mcallback || function() {};
 
         var el = this.dialog ? $($("#Dialog").html()) : $($("#Window").html());
         var adjustSize = true;
@@ -1022,6 +1034,8 @@
         // Run Dialog or Application
         if ( this.dialog ) {
           desktop.focusWindow(this);
+
+          mcallback();
         } else {
           setTimeout(function() {
             //try {
@@ -1036,6 +1050,8 @@
             if ( self.uuid ) {
               $.post("/", {'ajax' : true, 'action' : 'register', 'uuid' : self.uuid, 'instance' : {'name' : self.name}}, function(data) {
                 console.log('Registered Window', self, self.uuid, data);
+
+                mcallback();
               });
             }
 
