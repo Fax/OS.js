@@ -764,6 +764,7 @@
       this.argv        = argv;
       this.attrs       = attrs;
       this.menu        = [];
+      this.menubar     = false;
       this.statusbar   = false;
 
       // Window attributes
@@ -837,7 +838,6 @@
         var self = this;
 
         var el = this.dialog ? $($("#Dialog").html()) : $($("#Window").html());
-        var menu = false;
         var adjustSize = true;
 
         // Create Menu
@@ -872,7 +872,7 @@
         // Show/Hide Menu
         if ( el.find(".WindowMenu li").length ) {
           el.find(".WindowContent").addClass("HasMenu");
-          menu = true;
+          this.menubar = true;
         } else {
           el.find(".WindowMenu").hide();
         }
@@ -971,6 +971,7 @@
 
         // DOM
         desktop.$element.append(el);
+        this.$element = el;
 
         // Fix title alignment
         var lw = this.dialog ? 0 : 16;
@@ -985,21 +986,9 @@
         });
 
         // Adjustments after DOM
-        if ( !isNaN(this.height) && (this.height > 0) ) {
-          if ( adjustSize ) {
-            var appendWidth = 4;
-            var appendHeight = 4 + $(el).find(".WindowTop").height();
-
-            if ( menu ) {
-              appendHeight += $(el).find(".WindowMenu").height();
-            }
-
-            if ( this.statusbar ) {
-              appendHeight += $(el).find(".WindowMenu").height();
-            }
-
-            $(el).css("height", (this.height + appendHeight) + "px");
-            $(el).css("width", (this.width + appendWidth) + "px");
+        if ( adjustSize ) {
+          if ( !isNaN(this.height) && (this.height > 0) ) {
+            this.resize(this.width, this.height);
           }
         }
 
@@ -1029,8 +1018,6 @@
             }
           });
         }
-
-        this.$element = el;
 
         // Run Dialog or Application
         if ( this.dialog ) {
@@ -1203,6 +1190,22 @@
         this.is_maximized = false;
       }
 
+    },
+
+    resize : function(width, height) {
+      var appendWidth = 4;
+      var appendHeight = 4 + this.$element.find(".WindowTop").height();
+
+      if ( this.menubar ) {
+        appendHeight += this.$element.find(".WindowMenu").height();
+      }
+
+      if ( this.statusbar ) {
+        appendHeight += this.$element.find(".WindowBottom").height();
+      }
+
+      this.$element.css("height", (height + appendHeight) + "px");
+      this.$element.css("width", (width + appendWidth) + "px");
     },
 
     setMenuItemAttribute : function(m, it, attribute) {

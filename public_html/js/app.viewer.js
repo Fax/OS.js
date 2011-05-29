@@ -24,10 +24,10 @@ var ApplicationViewer = (function() {
           var w = parseInt($(img).width(), 10);
           var h = parseInt($(img).height(), 10);
 
-          w = (force ? w : (w > 800 ? 800 : w)) + 4;
-          h = ((force ? h : (h > 600 ? 600 : h)) + 34) + 27;
+          w = (force ? w : (w > 800 ? 800 : w));
+          h = ((force ? h : (h > 600 ? 600 : h)));
 
-          el.width(w + "px").height(h + "px");
+          app.resize(w, h);
         }
 
         function _open(callback) {
