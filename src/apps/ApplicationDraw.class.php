@@ -40,6 +40,24 @@ class ApplicationDraw
     <div class="Slider">
       <div class="slide_Thickness"></div>
     </div>
+
+    <label>Line Cap</label>
+    <div class="Select">
+      <select class="select_LineCap">
+        <option selected="selected" value="butt">butt</option>
+        <option value="round">round</option>
+        <option value="square">square</option>
+      </select>
+    </div>
+
+    <label>Line Join</label>
+    <div class="Select">
+      <select class="select_LineJoin">
+        <option selected="selected" value="milter">milter</option>
+        <option value="bevel">bevel</option>
+        <option value="round">round</option>
+      </select>
+    </div>
   </div>
   <div class="ApplicationDrawInner">
     <canvas class="Canvas"></canvas>

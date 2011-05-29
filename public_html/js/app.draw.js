@@ -177,6 +177,14 @@ var ApplicationDraw = (function($, undefined) {
         var currentToolText = null;
         var currentToolObj  = null;
 
+        var _updateTools = function() {
+          context.strokeStyle = $(el).find(".color_Foreground").css("background-color");
+          context.fillStyle   = $(el).find(".color_Background").css("background-color");
+          context.lineWidth   = $(el).find(".slide_Thickness").slider("value");
+          context.lineCap     = $(el).find(".select_LineCap").val();
+          context.lineJoin    = $(el).find(".select_LineJoin").val();
+        };
+
         app.resize_hook = function() {
           var oldImage;
           if ( loaded ) {
@@ -187,8 +195,8 @@ var ApplicationDraw = (function($, undefined) {
           canvas.height       = $(el).find(".WindowContent").height();
           canvaso.width       = canvas.width;
           canvaso.height      = canvas.height;
-          context.strokeStyle = $(el).find(".color_Foreground").css("background-color");
-          context.fillStyle   = $(el).find(".color_Background").css("background-color");
+
+          _updateTools();
 
           if ( oldImage ) {
             var img = new Image();
@@ -200,18 +208,6 @@ var ApplicationDraw = (function($, undefined) {
         };
         app.resize_hook();
         loaded = true;
-
-        /*
-        context.fillStyle = "rgba(255, 255, 255, 1)";
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.fillRect(0, 0, canvas.width, canvas.height);
-        contexto.drawImage(canvas, 0, 0);
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        */
-
-        context.strokeStyle = $(el).find(".color_Foreground").css("background-color");
-        context.fillStyle   = $(el).find(".color_Background").css("background-color");
-        context.lineWidth   = 1;
 
         function _save(file, content, callback) {
           callback = callback || function() {};
@@ -296,6 +292,8 @@ var ApplicationDraw = (function($, undefined) {
           return false;
         });
 
+        // Tool buttons
+
         $(el).find(".ApplicationDrawPanel button").click(function() {
           if ( $(this)[0] != $(currentTool)[0] ) {
             if ( currentTool !== null ) {
@@ -334,6 +332,28 @@ var ApplicationDraw = (function($, undefined) {
           useFill = this.checked ? true : false;
         });
 
+        $(el).find(".slide_Thickness").slider({
+          'min' : 1,
+          'max' : 50,
+          'value' : 1,
+          'step' : 1,
+          'change' : function() {
+            context.lineWidth = $(el).find(".slide_Thickness").slider("value");
+          },
+          'slide' : function() {
+            context.lineWidth = $(el).find(".slide_Thickness").slider("value");
+          }
+        });
+
+        $(el).find(".select_LineCap").change(function() {
+          context.lineCap = $(el).find(".select_LineCap").val();
+        });
+        $(el).find(".select_LineJoin").change(function() {
+          context.lineJoin = $(el).find(".select_LineJoin").val();
+        });
+
+
+        // Menu items
         app.setMenuItemAction("File", "cmd_Open", function() {
           _open(function(fname) {
             context.clearRect (0, 0, canvas.width, canvas.height);
@@ -374,16 +394,6 @@ var ApplicationDraw = (function($, undefined) {
           context.clearRect (0, 0, canvas.width, canvas.height);
           contexto.clearRect (0, 0, canvas.width, canvas.height);
           _update(null, el);
-        });
-
-        $(el).find(".slide_Thickness").slider({
-          'min' : 1,
-          'max' : 50,
-          'value' : 1,
-          'step' : 1,
-          'slide' : function() {
-            context.lineWidth = $(el).find(".slide_Thickness").slider("value");
-          }
         });
 
         this._super();

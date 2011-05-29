@@ -32,7 +32,7 @@
 
 .ApplicationDrawPanel .color_Foreground {
   width : 76px;
-  height : 76px;
+  height : 26px;
   border : 2px inset;
   margin : 10px;
   background : #000;
@@ -40,7 +40,7 @@
 
 .ApplicationDrawPanel .color_Background {
   width : 76px;
-  height : 76px;
+  height : 26px;
   border : 2px inset;
   margin : 10px;
   background-color : #fff;
@@ -53,6 +53,13 @@
 .ApplicationDrawPanel .Slider {
   margin-left : 20px;
   margin-right : 20px;
+}
+.ApplicationDrawPanel .Select {
+  margin-left : 10px;
+  margin-right : 10px;
+}
+.ApplicationDrawPanel .Select select {
+  width : 76px;
 }
 
 .ApplicationDrawInner {
