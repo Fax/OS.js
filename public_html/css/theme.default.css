@@ -2,20 +2,125 @@
 /**
  * Theme: Default
  *
+ * All default styles goes here
+ *
  * @package ajwm.Themes
  * @author Anders Evenrud <andersevenrud@gmail.com>
  */
 
+html {
+  cursor : default;
+}
+
 body {
   background : #666;
+  font-size : 12px;
+}
+
+input.Disabled {
+  background : #e6e6e6;
 }
 
 .DesktopPanel {
   background : #e6e6e6;
 }
+
+.PanelItem {
+  cursor : pointer;
+}
+
+.PanelItemWindow.Current {
+  color : #fff;
+  font-weight : bold;
+}
+
 .Window {
   background : #e6e6e6;
 }
+.WindowTopController {
+  cursor : pointer;
+}
+.WindowMenu {
+  background : #4f4f4f;
+}
+.WindowMenu li.Top {
+  cursor : pointer;
+}
+.WindowBottomInner {
+  border-top : 1px solid #d1d4d7;
+}
+.Window .ui-resizable-n {
+  cursor : n-resize;
+}
+.Window .ui-resizable-ne {
+  cursor : ne-resize;
+}
+.Window .ui-resizable-nw {
+  cursor : nw-resize;
+}
+.Window .ui-resizable-s {
+  cursor : s-resize;
+}
+.Window .ui-resizable-e {
+  cursor : e-resize;
+}
+.Window .ui-resizable-se {
+  cursor : se-resize;
+}
+.Window .ui-resizable-w {
+  cursor : w-resize;
+}
+.Window .ui-resizable-sw {
+  cursor : sw-resize;
+}
+
 .Menu {
   background : #e6e6e6;
+}
+.Menu li {
+  cursor : pointer;
+}
+.Menu li.Disabled {
+  color : #777;
+}
+.Menu li.checked {
+  font-weight : bold;
+}
+
+.DialogContent.error {
+  color : #ff0000;
+}
+
+.OperationDialog li.even {
+  background : #fff;
+}
+.OperationDialog li.odd {
+  background : #e6e6e6;
+}
+.OperationDialog li.Disabled {
+  color : #777;
+}
+.OperationDialog .ProgressBar,
+.OperationDialog .ProgressBar * {
+  border : 0 none;
+}
+
+.OperationDialogColor .CurrentColor {
+  background : #000;
+  border : 2px inset;
+}
+
+.OperationDialog .FileChooser li {
+  cursor : pointer;
+}
+.OperationDialog .FileChooser li:hover {
+  text-decoration : underline;
+}
+.OperationDialog .FileChooser li.current {
+  font-weight : bold;
+}
+
+#Version {
+  color : #000;
+  font-size : 10px;
 }

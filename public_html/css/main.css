@@ -2,6 +2,11 @@
 /**
  * Main Stylesheet
  *
+ * This is the main stylesheet. User for positioning elements etc.
+ * - Default colors, fonts, cursors etc. in 'theme.default.css'
+ * - CSS2/3 can be found in 'pimp.css'
+ * - Theme is defined by js 'theme.*.js'
+ *
  * @package ajwm.Styles
  * @author Anders Evenrud <andersevenrud@gmail.com>
  */
@@ -10,7 +15,6 @@ html {
   overflow : hidden;
   width : 100%;
   height : 100%;
-  cursor : default;
 }
 
 body {
@@ -19,20 +23,18 @@ body {
   padding : 0;
   width : 100%;
   height : 100%;
-  font-size : 12px;
 }
 
+/*
 input.Disabled {
-  background : #e6e6e6;
 }
+*/
 
 #Version {
   position : absolute;
   bottom : 0px;
   right : 0px;
   text-align : right;
-  font-size : 10px;
-  color : #000;
   padding : 5px;
 }
 
@@ -80,9 +82,11 @@ input.Disabled {
   display : none;
 }
 
+/*
 .PanelButton {
 
 }
+*/
 
 .PanelItem {
   float : left;
@@ -90,7 +94,6 @@ input.Disabled {
   line-height : 20px;
   margin : 5px;
   padding : 0;
-  cursor : pointer;
   position : relative;
 }
 
@@ -128,11 +131,10 @@ input.Disabled {
   vertical-align : middle;
   margin-right : 5px;
 }
+/*
 .PanelItemWindow {
 }
 .PanelItemWindow.Current {
-  color : #fff;
-  font-weight : bold;
 }
 
 .PanelItemClock {
@@ -142,6 +144,7 @@ input.Disabled {
 .PanelItemLauncher {
 
 }
+  */
 .PanelItemLauncher img {
   padding : 2px;
 }
@@ -173,21 +176,22 @@ input.Disabled {
 
 .Menu li {
   padding : 5px;
-  cursor : pointer;
 }
+/*
 .Menu li.Disabled {
-  color : #777; /* FIXME */
 }
 .Menu li:hover {
 }
+  */
 
 .Menu li img {
   vertical-align : middle;
   margin-right : 5px;
 }
+/*
 .Menu li.checked {
-  font-weight : bold;
 }
+  */
 
 /* Window */
 
@@ -227,13 +231,11 @@ input.Disabled {
   line-height : 28px;
   text-align : center;
   float : left;
-  cursor : pointer;
 }
 .WindowTopController:hover {
 }
 .WindowMenu {
   height : 28px;
-  background : #4f4f4f;
 }
 .WindowMenu ul.Top {
   list-style-type : none;
@@ -250,7 +252,6 @@ input.Disabled {
   padding-left : 5px;
   padding-right : 5px;
   position : relative;
-  cursor : pointer;
 }
 .WindowMenu span.Top:hover {
 }
@@ -287,46 +288,35 @@ input.Disabled {
 }
 .WindowBottomInner {
   padding : 5px;
-  border-top : 1px solid #d1d4d7;
 }
 
+/*
 .Window .ui-resizable-handle {
-  /*
-  position : absolute;
-  bottom : 0;
-  right : 0;
-  cursor : pointer;
-  */
 }
 .Window .ui-resizable-n {
-  cursor : n-resize;
 }
 .Window .ui-resizable-ne {
-  cursor : ne-resize;
 }
 .Window .ui-resizable-nw {
-  cursor : nw-resize;
 }
 .Window .ui-resizable-s {
-  cursor : s-resize;
 }
 .Window .ui-resizable-e {
-  cursor : e-resize;
 }
 .Window .ui-resizable-se {
-  cursor : se-resize;
 }
 .Window .ui-resizable-w {
-  cursor : w-resize;
 }
 .Window .ui-resizable-sw {
-  cursor : sw-resize;
 }
+*/
 
+/*
 .Dialog {
 
 
 }
+  */
 .DialogContent {
   position : absolute;
   top : 5px;
@@ -334,9 +324,10 @@ input.Disabled {
   right : 5px;
   left : 5px;
 }
+/*
 .DialogContent.error {
-  color : #ff0000;
 }
+  */
 .DialogButtons {
   position : absolute;
   bottom : 4px;
@@ -346,9 +337,11 @@ input.Disabled {
   text-align : center;
 }
 
+/*
 .OperationDialog {
 
 }
+  */
 .OperationDialog h1 {
   margin : 0;
   padding : 0;
@@ -363,7 +356,6 @@ input.Disabled {
 .OperationDialog .ProgressBar,
 .OperationDialog .ProgressBar * {
   height : 22px;
-  border : 0 none;
 }
 
 .OperationDialog .FileChooser {
@@ -386,15 +378,14 @@ input.Disabled {
   vertical-align : middle;
   margin-right : 10px;
 }
+/*
 .OperationDialog .FileChooser li {
-  cursor : pointer;
 }
 .OperationDialog .FileChooser li:hover {
-  text-decoration : underline;
 }
 .OperationDialog .FileChooser li.current {
-  font-weight : bold;
 }
+  */
 .OperationDialog .FileChooserInput {
   position : absolute;
   left : 0px;
@@ -406,15 +397,14 @@ input.Disabled {
   width : 100%;
 }
 
+/*
 .OperationDialog li.even {
-  background : #fff;
 }
 .OperationDialog li.odd {
-  background : #e6e6e6;
 }
 .OperationDialog li.Disabled {
-  color : #777; /* FIXME */
 }
+  */
 
 .OperationDialogColor .Slider {
   margin : 10px;
@@ -426,8 +416,6 @@ input.Disabled {
   right : 0px;
   width : 100px;
   height : 100px;
-  border : 2px inset;
-  background : #000;
 }
 .OperationDialogColor .CurrentColorDesc {
   margin-left : 10px;
