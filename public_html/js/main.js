@@ -805,7 +805,6 @@
       // Window hooks FIXME: Event listeners on_XXX
       this.focus_hook  = null;
       this.blur_hook   = null;
-      this.resize_hook = null;
 
       // DOM Elements
       this.$element = null;
@@ -831,6 +830,9 @@
         */
         this.menus = null;
       }
+
+      this.focus_hook  = null;
+      this.blur_hook   = null;
 
       if ( this.app ) {
         this.app.destroy();
@@ -1039,9 +1041,6 @@
             },
             stop : function() {
               el.removeClass("Blend");
-              if ( self.resize_hook ) {
-                self.resize_hook();
-              }
             }
           });
         }

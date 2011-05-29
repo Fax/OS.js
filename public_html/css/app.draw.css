@@ -140,11 +140,11 @@
   right : 0px;
   bottom : 0px;
   left : 101px;
-  background : url('/img/app.draw/checkerboard.png');
 }
 
 .ApplicationDrawInner .Canvas {
   /*background-color : #fff;*/
+  background : url('/img/app.draw/checkerboard.png');
   margin : 0;
   padding : 0;
 }

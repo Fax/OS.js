@@ -116,8 +116,9 @@ var ApplicationDraw = (function($, undefined) {
     onMouseMove : function(ev, doc) {
       var startPosX = doc.draw_start[0];
       var startPosY = doc.draw_start[1];
-      var mX = doc.draw_current[0];
-      var mY = doc.draw_current[1];
+      var mX        = doc.draw_current[0];
+      var mY        = doc.draw_current[1];
+
       var posX, posY;
       var x, y, w, h, r;
 
@@ -263,11 +264,13 @@ var ApplicationDraw = (function($, undefined) {
       this.canvaso  = el.find("canvas").get(0);
       this.contexto = this.canvaso.getContext('2d');
       this.canvas   = $(this.canvaso).parent().append("<canvas></canvas>").find("canvas").get(1);
-      this.context  = this.canvas.getContext('2d');
+      this.context  = this.canvas.getContext('2d'); // This layer gets drawn to 'context' on update
 
       this.draw_on      = false;
       this.draw_start   = null;
       this.draw_current = null;
+      this.image_width  = -1;
+      this.image_height = -1;
 
       $(this.canvas).css({
         "position" : "absolute",
@@ -292,8 +295,9 @@ var ApplicationDraw = (function($, undefined) {
         return false;
       });
 
-      this.setSize();
+      this.setSize(this.image_width, this.image_height);
       this.setStyle();
+      this.clear();
 
       this.loaded = true;
     },
@@ -303,22 +307,38 @@ var ApplicationDraw = (function($, undefined) {
     },
 
     clear : function() {
-      this.context.clearRect (0, 0, this.canvas.width, this.canvas.height);
-      this.contexto.clearRect (0, 0, this.canvas.width, this.canvas.height);
+
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.contexto.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      this.image_width  = 640;
+      this.image_height = 480;
+      this.setSize(this.image_width, this.image_height);
     },
 
-    open : function(src) {
+    open : function(src, c_success, c_error) {
       this.clear();
+
+      c_success = c_success || function() {};
+      c_error   = c_error   || function() {};
 
       var self = this;
       var img = new Image();
       img.onload = function() {
-        self.canvas.width = img.width;
-        self.canvas.height = img.height;
-        self.canvaso.width = img.width;
+        self.canvas.width   = img.width;
+        self.canvas.height  = img.height;
+        self.canvaso.width  = img.width;
         self.canvaso.height = img.height;
+        self.image_width    = img.width;
+        self.image_height   = img.height;
+
         self.context.drawImage(img, 0, 0, self.canvas.width, self.canvas.height);
         self.redraw();
+
+        c_success(src);
+      };
+      img.onerror = function() {
+        c_error(src);
       };
       img.src = src;
     },
@@ -414,14 +434,14 @@ var ApplicationDraw = (function($, undefined) {
 
     },
 
-    setSize : function() {
+    setSize : function(w, h) {
       var oldImage;
       if ( this.loaded ) {
         oldImage = this.getImage();
       }
 
-      this.canvas.width        = $(this.root).find(".WindowContent").width();
-      this.canvas.height       = $(this.root).find(".WindowContent").height();
+      this.canvas.width        = w || $(this.root).find(".WindowContent").width();
+      this.canvas.height       = h || $(this.root).find(".WindowContent").height();
       this.canvaso.width       = this.canvas.width;
       this.canvaso.height      = this.canvas.height;
 
@@ -453,7 +473,6 @@ var ApplicationDraw = (function($, undefined) {
       run : function() {
         var el = app.$element;
         var self = this;
-        var tool = null;
 
 
         //
@@ -461,9 +480,9 @@ var ApplicationDraw = (function($, undefined) {
         //
 
         function _update(file) {
-          app.opts = file;
+          app.opts     = file;
           argv['path'] = file;
-          app.argv = argv;
+          app.argv     = argv;
 
           $(el).find(".WindowTopInner span").html(app.title + ": " + (file || "New file"));
         }
@@ -494,29 +513,11 @@ var ApplicationDraw = (function($, undefined) {
         }
 
         //
-        // Initialization
-        //
-
-        Tool.fill    = $(el).find(".enable_Fill").get(0).checked ? true : false;
-        Tool.stroke  = $(el).find(".enable_Stroke").get(0).checked ? true : false;
-
-        Style.stroke = DrawColor($(el).find(".color_Foreground").css("background-color"));
-        Style.fill   = DrawColor($(el).find(".color_Background").css("background-color"));
-        Style.width  = $(el).find(".slide_Thickness").slider("value");
-        Style.cap    = $(el).find(".select_LineCap").val();
-        Style.join   = $(el).find(".select_LineJoin").val();
-
-        DrawDocument.init(el);
-
-        app.resize_hook = function() {
-          DrawDocument.setSize();
-        };
-
-        //
         // UI items
         //
 
         // Tool buttons
+        var tool = null;
         $(el).find(".ApplicationDrawPanel button").click(function() {
           if ( (tool) && (tool !== this) ) {
             $(tool).removeClass("Current");
@@ -611,13 +612,32 @@ var ApplicationDraw = (function($, undefined) {
           _update(null);
         });
 
+        //
+        // Initialization
+        //
+
+        Tool.fill    = $(el).find(".enable_Fill").get(0).checked ? true : false;
+        Tool.stroke  = $(el).find(".enable_Stroke").get(0).checked ? true : false;
+
+        Style.stroke = DrawColor($(el).find(".color_Foreground").css("background-color"));
+        Style.fill   = DrawColor($(el).find(".color_Background").css("background-color"));
+        Style.width  = $(el).find(".slide_Thickness").slider("value");
+        Style.cap    = $(el).find(".select_LineCap").val();
+        Style.join   = $(el).find(".select_LineJoin").val();
+
+        DrawDocument.init(el);
+
+        var fname = null;
         if ( argv['path'] ) {
-          var fname = argv['path'];
-          DrawDocument.open("/media/" + fname);
-          _update(fname);
+          fname = argv['path'];
+          DrawDocument.open("/media/" + fname, function() {
+            _update(fname);
+          });
         } else {
-          _update(null);
+          _update(fname);
         }
+
+
       }
     });
 
