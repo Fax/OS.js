@@ -121,6 +121,26 @@ header("Pragma: no-cache");
 </div>
 
 <!-- Templates -->
+<div id="LoginWindow" class="Window" style="display:none">
+  <div class="WindowContent">
+    <div class="WindowContentInner">
+      <form method="post" action="/">
+        <div class="Row">
+          <label for="LoginUsername">Username</label>
+          <input type="text" id="LoginUsername" value="Administrator" name="username" />
+        </div>
+        <div class="Row">
+          <label for="LoginPassword">Password</label>
+          <input type="password" id="LoginPassword" value="Administrator" name="password" />
+        </div>
+        <div class="Buttons">
+          <input type="submit" value="Log in" />
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <div id="Window" style="display:none">
   <div class="Window">
     <div class="WindowTop">

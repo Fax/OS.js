@@ -17,21 +17,21 @@
   if (!window.console) console = {log:function() {}, error:function(){}};
 
   var SETTING_REVISION = 1;
-
+  var ENABLE_LOGIN     = false;
   var ANIMATION_SPEED  = 400;
 
-  var _Resources           = null;
-  var _Settings            = null;
-  var _Desktop             = null;
-  var _Window              = null;
-  var _TopIndex            = 11;
+  var _Resources       = null;
+  var _Settings        = null;
+  var _Desktop         = null;
+  var _Window          = null;
+  var _TopIndex        = 11;
 
   function __null() {
-    _Resources           = null;
-    _Settings            = null;
-    _Desktop             = null;
-    _Window              = null;
-    _TopIndex            = 11;
+    _Resources         = null;
+    _Settings          = null;
+    _Desktop           = null;
+    _Window            = null;
+    _TopIndex          = 11;
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -1858,19 +1858,40 @@
       ev.preventDefault();
     });
 
-    _Resources = new ResourceManager();
+    var __LAUNCH = function()
+    {
+      _Resources = new ResourceManager();
+      $.post("/", {'ajax' : true, 'action' : 'init'}, function(data) {
+        if ( data.success ) {
+          _Settings = new SettingsManager(data.result.settings);
+          _Desktop = new Desktop();
 
-    $.post("/", {'ajax' : true, 'action' : 'init'}, function(data) {
-      if ( data.success ) {
-        _Settings = new SettingsManager(data.result.settings);
-        _Desktop = new Desktop();
+          _Desktop.run();
+        } else {
+          alert(data.error);
+        }
 
-        _Desktop.run();
-      } else {
-        alert(data.error);
-      }
+      });
+    };
 
-    });
+
+    if ( ENABLE_LOGIN ) {
+      var el = $("#LoginWindow");
+      $(el).show().css({
+        "top" : parseInt(($(document).height() / 2) - ($(el).height() / 2), 10) - 80 + "px",
+        "left" : parseInt(($(document).width() / 2) - ($(el).width() / 2), 10) + "px"
+      });
+
+      $(el).find("input[type=password]").focus();
+      $(el).find("form").submit(function() {
+        $(el).hide();
+        __LAUNCH();
+        return false;
+      });
+    } else {
+      __LAUNCH();
+    }
+
   });
 
   $(window).unload(function() {

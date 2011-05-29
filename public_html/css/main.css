@@ -445,3 +445,31 @@ input.Disabled {
   position : relative;
   display : block;
 }
+
+#LoginWindow {
+  width : 300px;
+  height : 140px;
+}
+#LoginWindow .WindowContent {
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 0px;
+  padding : 10px;
+  overflow : hidden;
+}
+#LoginWindow .Row {
+  clear : both;
+  margin-bottom : 10px;
+}
+#LoginWindow .Row label {
+  display : block;
+}
+#LoginWindow .Row input {
+  display : block;
+  width : 275px;
+}
+#LoginWindow .Buttons {
+  clear : both;
+  text-align : center;
+}
