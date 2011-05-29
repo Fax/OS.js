@@ -177,7 +177,6 @@ var ApplicationDraw = (function($, undefined) {
         this._super();
       },
 
-
       run : function() {
         var el = app.$element;
         var self = this;

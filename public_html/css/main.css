@@ -112,21 +112,19 @@ input.Disabled {
   float : right;
 }
 
+/*
 .PanelItemMenu {
 }
+  */
 
-.PanelItemMenu ul {
-  position : absolute;
-  list-style-type : none;
-  margin : 0;
-  padding : 2px;
-  top : 20px;
-  left : 0;
-  display : none;
+.PanelItemMenu img {
+  vertical-align : middle;
 }
 
+/*
 .PanelItemWindow {
 }
+  */
 .PanelItemWindow img {
   vertical-align : middle;
   margin-right : 5px;
