@@ -1,6 +1,8 @@
 /**
  * Application: ApplicationFilemanager
  *
+ * TODO: Upload to relative path
+ *
  * @package ajwm.Applications
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
@@ -191,9 +193,9 @@ var ApplicationFilemanager = (function($, undefined) {
         });
 
         app.setMenuItemAction("File", "cmd_Upload", function() {
-          api.system.dialog_upload(function() {
-            //chdir(_CurrentDir);
-            chdir("/");
+          api.system.dialog_upload(_CurrentDir, function() {
+            chdir(_CurrentDir);
+            //chdir("/");
           });
         });
 

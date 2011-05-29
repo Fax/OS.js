@@ -93,8 +93,8 @@ class WindowManager
 
   public function doGET(Array $args) {
     // Upload "POST"
-    if ( isset($args['ajax']) && isset($args['action']) && isset($args['qqfile']) ) {
-      return json_encode(ApplicationAPI::upload());
+    if ( isset($args['ajax']) && isset($args['action']) && isset($args['qqfile']) && isset($args['path']) ) {
+      return json_encode(ApplicationAPI::upload($args['path']));
     }
 
     return false;

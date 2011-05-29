@@ -141,8 +141,8 @@
         _Desktop.addWindow(new Dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
       },
 
-      'dialog_upload' : function(clb_finish, clb_progress, clb_cancel) {
-        _Desktop.addWindow(new UploadOperationDialog(clb_finish, clb_progress, clb_cancel));
+      'dialog_upload' : function(path, clb_finish, clb_progress, clb_cancel) {
+        _Desktop.addWindow(new UploadOperationDialog(path, clb_finish, clb_progress, clb_cancel));
       },
 
       'dialog_file' : function(clb_finish, mime_filter, type) {
@@ -1497,11 +1497,12 @@
 
   var UploadOperationDialog = OperationDialog.extend({
 
-    init : function(clb_finish, clb_progress, clb_cancel) {
+    init : function(path, clb_finish, clb_progress, clb_cancel) {
       var self = this;
 
       this._super("Upload");
 
+      this.upload_path  = path;
       this.clb_finish   = clb_finish   || function() {};
       this.clb_progress = clb_progress || function() {};
       this.clb_cancel   = clb_cancel   || function() {};
@@ -1509,7 +1510,7 @@
       this.title    = "Upload file";
       this.content  = $("#OperationDialogUpload").html();
       this.width    = 400;
-      this.height   = 170;
+      this.height   = 140;
       this.uploader = null;
     },
 
@@ -1524,12 +1525,13 @@
       var trigger = this.$element.find("button.Choose").show();
       var pbar    = this.$element.find(".ProgressBar");
 
-      self.uploader = new qq.FileUploader({
+      this.uploader = new qq.FileUploader({
         element : trigger[0],
         action  : '/',
         params : {
           ajax   : true,
-          action : 'upload'
+          action : 'upload',
+          path : self.upload_path
         },
         onSubmit: function(id, fileName){
           $(trigger).html(fileName);

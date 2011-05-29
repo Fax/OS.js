@@ -36,13 +36,13 @@ class ApplicationAPI
     )
   );
 
-  public static function upload() {
+  public static function upload($path) {
     // list of valid extensions, ex. array("jpeg", "xml", "bmp")
     $allowedExtensions = array();
     // max file size in bytes
     $sizeLimit = 10 * 1024 * 1024;
 
-    $base     = PATH_PROJECT_HTML . "/media/";
+    $base     = PATH_PROJECT_HTML . "/media/" . ($path ? "{$path}/" : "");
     $uploader = new qqFileUploader($allowedExtensions, $sizeLimit);
     if ( $result = $uploader->handleUpload($base) ) {
       // to pass data through iframe you will need to encode all html tags
