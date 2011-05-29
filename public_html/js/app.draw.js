@@ -125,6 +125,16 @@ var ApplicationDraw = (function($, undefined) {
       },
       mouseup : function(ev, context, canvas) {
       }
+    },
+
+    'fill' : {
+      mousedown : function(ev, context, canvas) {
+      },
+      mousemove : function(ev, context, canvas) {
+      },
+      mouseup : function(ev, context, canvas) {
+        context.fillRect(0, 0, canvas.width, canvas.height);
+      }
     }
 
   };
@@ -312,13 +322,13 @@ var ApplicationDraw = (function($, undefined) {
 
         app.setMenuItemAction("File", "cmd_Save", function() {
           if ( argv && argv['path'] ) {
-            var img = canvas.toDataURL("image/png");
+            var img = canvaso.toDataURL("image/png");
             _save(argv['path'], img);
           }
         });
 
         app.setMenuItemAction("File", "cmd_SaveAs", function() {
-          var img = canvas.toDataURL("image/png");
+          var img = canvaso.toDataURL("image/png");
           _saveAs(function(file, mime) {
             _save(file, img, function() {
               _update(file, el);

@@ -29,6 +29,7 @@ class ApplicationDraw
     <button class="draw_Line">Line</button>
     <button class="draw_Rectangle">Rectangle</button>
     <button class="draw_Circle">Circle</button>
+    <button class="draw_Fill">Fill</button>
 
     <label>Stroke</label>
     <div class="color_Foreground">&nbsp;</div>
