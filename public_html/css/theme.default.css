@@ -6,6 +6,10 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  */
 
+body {
+  background : #222;
+}
+
 .DesktopPanel {
   background : #e6e6e6;
 }

@@ -477,13 +477,10 @@
 
     return Class.extend({
 
-      init : function(settings) {
+      init : function() {
         this.$element = $("#Desktop");
         this.stack = [];
-        this.applySettings();
-
-        this.panel = new Panel();
-
+        this.panel = null;
 
         console.log("Desktop initialized...");
       },
@@ -495,13 +492,23 @@
         } catch ( eee ) { }
 
         this.setWallpaper(null);
-        this.panel.destroy();
+
+        if ( this.panel ) {
+          this.panel.destroy();
+        }
 
         var i = 0;
         var l = this.stack.length;
         for ( i; i < l; i++ ) {
           this.stack[i].destroy();
         }
+      },
+
+      run : function(settings) {
+        this.applySettings();
+        this.panel = new Panel();
+
+        API.session.restore();
       },
 
       redraw : function() {
@@ -652,7 +659,7 @@
     init : function() {
       var self = this;
 
-      this.$element = $("#Panel");
+      this.$element = $("#Panel").show();
 
       console.log("Panel initialized...", this);
 
@@ -1854,12 +1861,11 @@
     _Resources = new ResourceManager();
 
     $.post("/", {'ajax' : true, 'action' : 'init'}, function(data) {
-
       if ( data.success ) {
         _Settings = new SettingsManager(data.result.settings);
         _Desktop = new Desktop();
 
-        API.session.restore();
+        _Desktop.run();
       } else {
         alert(data.error);
       }
