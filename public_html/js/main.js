@@ -1001,7 +1001,7 @@
             desktop.removeWindow(self);
           });
         } else {
-          el.find(".ActionClose").hide();
+          el.find(".ActionClose").parent().hide();
         }
 
         if ( this.is_minimizable ) {
@@ -1009,7 +1009,7 @@
             self.minimize();
           });
         } else {
-          el.find(".ActionMinimize").hide();
+          el.find(".ActionMinimize").parent().hide();
         }
 
         if ( this.is_maximizable ) {
@@ -1017,7 +1017,7 @@
             self.maximize();
           });
         } else {
-          el.find(".ActionMaximize").hide();
+          el.find(".ActionMaximize").parent().hide();
         }
 
         //
