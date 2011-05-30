@@ -1292,10 +1292,10 @@
           this.height = this.last_attrs.size.height;
 
           this.$element.animate({
-            'top'    : top + 'px',
-            'left'   : left + 'px',
-            'width'  : width + 'px',
-            'height' : height + 'px'
+            'top'    : this.top + 'px',
+            'left'   : this.left + 'px',
+            'width'  : this.width + 'px',
+            'height' : this.height + 'px'
           }, {'duration' : ANIMATION_SPEED});
 
           this.last_attrs === null;
