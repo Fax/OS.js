@@ -1,9 +1,8 @@
 /**
  * JavaScript Window Manager
  *
- * TODO: jQuery UI Stacking
+ * TODO: jQuery UI Stacking ???
  * TODO: Finish Login screen
- * TODO: Session: Store minimized/maximized etc.
  *
  * Creates a desktop environment inside the browser.
  * Applications can be loaded via the server.
@@ -269,6 +268,7 @@
                 var attrs = {
                   'position' : el.position,
                   'size'     : el.size,
+                  'attribs'  : el.attribs,
                   'restore'  : true
                 };
                 API.system.launch(el.name, argv, attrs);
@@ -539,7 +539,9 @@
             self.stack.push(win);
 
             //win.focus();
-            $(win.$element).trigger("mousedown");
+            if ( !win.is_minimized ) {
+              $(win.$element).trigger("mousedown");
+            }
 
             self.panel.redraw(self, win, false);
           };
@@ -1044,6 +1046,12 @@
             this.width = this.attrs.size.width;
             this.height = this.attrs.size.height;
           }
+          if ( this.attrs.restore ) {
+            if ( this.attrs.attribs && sizeof(this.attrs.attribs) ) {
+              this.is_minimized = this.attrs.attribs.minimized;
+              this.is_maximized = this.attrs.attribs.maximized;
+            }
+          }
         }
 
         if ( !isNaN(this.width) && (this.width > 0) ) {
@@ -1090,6 +1098,9 @@
             stop : function() {
               el.removeClass("Blend");
               API.ui.cursor("default");
+
+              self.left = self.$element.offset()['left'];
+              self.top = self.$element.offset()['top'];
             }
           });
         }
@@ -1141,6 +1152,10 @@
         }
 
         this.$element = el;
+
+        if ( this.is_minimized ) {
+          $(el).hide();
+        }
       }
 
       this.created = true;
@@ -1234,16 +1249,21 @@
             'position' : this.$element.offset()
           };
 
-
+          var ppos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
           var w = parseInt($(document).width(), 10);
           var h = parseInt($(document).height(), 10);
 
+          this.top = ppos == "top" ? 40 : 10;
+          this.left = 10;
+          this.width = w - 20;
+          this.height = h - 50;
+
           this.$element.css({
-            'top'    : '40px',
-            'left'   : '10px'
+            'top'    : (this.top) + 'px',
+            'left'   : (this.left) + 'px'
           }).animate({
-            'width'  : (w - 20) + "px",
-            'height' : (h - 50)  + "px"
+            'width'  : (this.width) + "px",
+            'height' : (this.height)  + "px"
           }, {'duration' : ANIMATION_SPEED});
           this.is_maximized = true;
         } else {
@@ -1266,11 +1286,16 @@
 
       if ( this.is_maximized ) {
         if ( this.last_attrs !== null ) {
+          this.top = this.last_attrs.position.top;
+          this.left = this.last_attrs.position.left;
+          this.width = this.last_attrs.size.width;
+          this.height = this.last_attrs.size.height;
+
           this.$element.animate({
-            'top'    : this.last_attrs.position.top + 'px',
-            'left'   : this.last_attrs.position.left + 'px',
-            'width'  : this.last_attrs.size.width + 'px',
-            'height' : this.last_attrs.size.height + 'px'
+            'top'    : top + 'px',
+            'left'   : left + 'px',
+            'width'  : width + 'px',
+            'height' : height + 'px'
           }, {'duration' : ANIMATION_SPEED});
 
           this.last_attrs === null;
@@ -1328,7 +1353,8 @@
       return {
         'name'     : this.name,
         'size'     : {'width' : this.$element.width(), 'height' : this.$element.height()},
-        'position' : this.$element.offset(),
+        'position' : {'left' : this.left, 'top' : this.top},
+        'attribs'  : {'minimized' : this.is_minimized, 'maximized' : this.is_maximized},
         'argv'     : this.argv
       };
     }
