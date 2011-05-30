@@ -35,10 +35,11 @@ var ApplicationFilemanager = (function($, undefined) {
         var el = app.$element;
         var lastItem;
 
+        el.addClass(this.name);
 
         var _selItem = function(self) {
           if ( lastItem ) {
-            if ( self.tagName.toLowerCase() == "tr" ) {
+            if ( self && self.tagName.toLowerCase() == "tr" ) {
               $(lastItem).removeClass("Current");
             } else {
               $(lastItem).parent().removeClass("Current");

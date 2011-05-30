@@ -139,16 +139,19 @@ function str_pad (input, pad_length, pad_string, pad_type) {
  * @return int
  */
 function sizeof(foo) {
-  if ( foo instanceof Object ) {
-    var i = 0;
-    for ( var x in foo ) {
-      if ( foo.hasOwnProperty(x) ) {
-        i++;
+  if ( foo ) {
+    if ( foo instanceof Object ) {
+      var i = 0;
+      for ( var x in foo ) {
+        if ( foo.hasOwnProperty(x) ) {
+          i++;
+        }
       }
+      return i;
     }
-    return i;
+    return foo.length ? foo.length : 0;
   }
-  return foo.length ? foo.length : 0;
+  return 0;
 }
 
 /**

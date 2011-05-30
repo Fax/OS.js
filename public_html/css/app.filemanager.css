@@ -8,6 +8,9 @@
 
 .ApplicationFilemanager {
 }
+.Window.ApplicationFilemanager .WindowContent{
+  background : #fff;
+}
 .ApplicationFilemanagerMain {
   position : absolute;
   top : 2px;

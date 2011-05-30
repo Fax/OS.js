@@ -1125,14 +1125,14 @@
               self.top = self.$element.offset()['top'];
             }
           }).touch({
-    animate: false,
-    sticky: false,
-    dragx: true,
-    dragy: true,
-    rotate: false,
-    resort: true,
-    scale: false
-});
+            animate: false,
+            sticky: false,
+            dragx: true,
+            dragy: true,
+            rotate: false,
+            resort: true,
+            scale: false
+          });
         }
 
         if ( this.is_resizable ) {
