@@ -455,6 +455,17 @@ input.Disabled {
   display : block;
 }
 
+#ContextRectangle {
+  position : absolute;
+  top : -1000px;
+  left : -1000px;
+  width : 0px;
+  height : 0px;
+  z-index : 100000000;
+  padding : 0;
+
+}
+
 #LoginWindow {
   width : 300px;
   height : 140px;

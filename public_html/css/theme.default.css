@@ -21,6 +21,12 @@ input.Disabled {
   background : #e6e6e6;
 }
 
+#ContextRectangle {
+  margin : -1px;
+  background : #eee;
+  border : 1px solid #222;
+}
+
 .DesktopPanel {
   background : #e6e6e6;
 }

@@ -78,7 +78,86 @@
           }
           ccursor = c;
         };
+      })(),
+
+      'rectangle' : (function() {
+        var startX = -1;
+        var startY = -1;
+        var rect = false;
+
+        return {
+          'show' : function(ev) {
+            if ( !rect ) {
+              $("#ContextRectangle").css({
+                'top'    : '-1000px',
+                'left'   : '-1000px',
+                'width'  : '0px',
+                'height' : '0px'
+              }).show();
+
+              startX = ev.pageX;
+              startY = ev.pageY;
+              rect = true;
+
+              ev.preventDefault();
+            }
+          },
+
+          'hide' : function(ev) {
+            if ( rect ) {
+              rect = false;
+              $("#ContextRectangle").hide();
+            }
+          },
+
+          'update' : function(ev) {
+            if ( rect ) {
+              var x = Math.min(ev.pageX, startX);
+              var y = Math.min(ev.pageY, startY);
+              var w = Math.abs(ev.pageX - startX);
+              var h = Math.abs(ev.pageY - startY);
+
+              $("#ContextRectangle").css({
+                'left'   : x + 'px',
+                'top'    : y + 'px',
+                'width'  : w + 'px',
+                'height' : h + 'px'
+              });
+
+              ev.preventDefault();
+            }
+          }
+
+        };
       })()
+      /*
+      (function() {
+
+        function _rectangle(x1, y1, x2, y2) {
+          console.log(arguments.length, arguments);
+          if ( arguments.length == 4 ) {
+          } else if ( arguments.length == 2 ) {
+          } else {
+          }
+        }
+
+        return function(action, ev) {
+          if ( action == "show" ) {
+            if ( !rect ) {
+              _rectangle(ev.clientX, ev.clientY);
+            }
+          } else if ( action == "update" ) {
+            if ( rect ) {
+              _rectangle(ev.clientX, ev.clientY, startX, startY);
+            }
+          } else {
+            if ( rect ) {
+              _rectangle();
+            }
+          }
+        };
+      })()
+      */
     },
 
     'system' : {
@@ -555,7 +634,8 @@
 
             //win.focus();
             if ( !win.is_minimized && !win.is_maximized ) {
-              $(win.$element).trigger("mousedown");
+              //$(win.$element).trigger("mousedown");
+              self.focusWindow(win);
             }
 
             self.panel.redraw(self, win, false);

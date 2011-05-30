@@ -118,8 +118,9 @@ header("Content-Type: text/html; charset=utf-8");
     </div>
   </div>
 
-  <div id="ContextMenu">
-  </div>
+  <div id="ContextMenu">&nbsp;</div>
+
+  <div id="ContextRectangle">&nbsp;</div>
 
   <!-- Content -->
 </div>
