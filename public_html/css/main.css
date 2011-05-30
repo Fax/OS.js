@@ -209,8 +209,10 @@ input.Disabled {
   z-index : 10;
   overflow : hidden;
 }
+/*
 .Window.Dragging {
 }
+*/
 .WindowTop {
   height : 28px;
   text-align : center;
@@ -237,8 +239,11 @@ input.Disabled {
   text-align : center;
   float : left;
 }
-.WindowTopController:hover {
+/*
+.WindowTopController:hover,
+.WindowTopController.Active {
 }
+  */
 .WindowMenu {
   height : 28px;
 }
@@ -258,8 +263,10 @@ input.Disabled {
   padding-right : 5px;
   position : relative;
 }
+/*
 .WindowMenu span.Top:hover {
 }
+*/
 .WindowMenu .Menu {
   z-index : 10000;
   padding : 2px;
@@ -282,8 +289,10 @@ input.Disabled {
 .WindowContent.HasBottom {
   bottom : 25px;
 }
+/*
 .WindowContentInner {
 }
+*/
 .WindowBottom {
   position : absolute;
   bottom : 4px;

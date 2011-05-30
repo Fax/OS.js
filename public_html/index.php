@@ -149,14 +149,14 @@ header("Pragma: no-cache");
         <span></span>
       </div>
       <div class="WindowTopControllers">
-        <div class="WindowTopController ActionMinimize">
-          <span>_</span>
+        <div class="WindowTopController">
+          <div class="ActionMinimize">&nbsp;</div>
         </div>
-        <div class="WindowTopController ActionMaximize">
-          <span>+</span>
+        <div class="WindowTopController">
+          <div class="ActionMaximize">&nbsp;</div>
         </div>
-        <div class="WindowTopController ActionClose">
-          <span>x</span>
+        <div class="WindowTopController">
+          <div class="ActionClose">&nbsp;</div>
         </div>
       </div>
     </div>

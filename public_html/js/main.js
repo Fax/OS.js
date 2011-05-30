@@ -1164,6 +1164,9 @@
         if ( this.is_minimized ) {
           $(el).hide();
         }
+        if ( this.is_maximized ) {
+          this.$element.find(".ActionMaximize").parent().addClass("Active");
+        }
       }
 
       this.created = true;
@@ -1275,8 +1278,9 @@
             }, {'duration' : ANIMATION_SPEED});
 
             this.last_attrs === null;
-
           }
+
+          this.$element.find(".ActionMaximize").parent().removeClass("Active");
           this.is_maximized = false;
         } else {
           this.last_attrs = {
@@ -1302,6 +1306,8 @@
           }, {'duration' : ANIMATION_SPEED}, function() {
             _Desktop.maximizeWidow(self);
           });
+
+          this.$element.find(".ActionMaximize").parent().addClass("Active");
           this.is_maximized = true;
         }
 

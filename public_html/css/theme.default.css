@@ -40,6 +40,34 @@ input.Disabled {
 .WindowTopController {
   cursor : pointer;
 }
+.WindowTopController {
+}
+.WindowTopController:hover,
+.WindowTopController.Active {
+  background : url('/img/theme.default/prelight_unfocused.png') no-repeat center center;
+}
+.WindowTopController:active {
+  background : url('/img/theme.default/prelight.png') no-repeat center center;
+}
+.WindowTopController .ActionMinimize {
+  background : url('/img/theme.default/minimize_unfocused.png') no-repeat center center;
+}
+.WindowTopController .ActionMinimize:hover {
+  background : url('/img/theme.default/minimize.png') no-repeat center center;
+}
+.WindowTopController .ActionMaximize {
+  background : url('/img/theme.default/maximize_unfocused.png') no-repeat center center;
+}
+.WindowTopController .ActionMaximize:hover {
+  background : url('/img/theme.default/maximize.png') no-repeat center center;
+}
+.WindowTopController .ActionClose {
+  background : url('/img/theme.default/close_unfocused.png') no-repeat center center;
+}
+.WindowTopController .ActionClose:hover {
+  background : url('/img/theme.default/close.png') no-repeat center center;
+}
+
 .WindowMenu {
   background : #4f4f4f;
 }
