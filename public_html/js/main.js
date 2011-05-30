@@ -4,8 +4,6 @@
  * TODO: jQuery UI Stacking
  * TODO: Finish Login screen
  * TODO: Session: Store minimized/maximized etc.
- * TODO: Key bindings:
- *       - ESC on dialogs
  *
  * Creates a desktop environment inside the browser.
  * Applications can be loaded via the server.
@@ -733,7 +731,9 @@
           var bottom = $(document).height() - self.$element.height() - 5;
           var pos = self.$element.offset();
           if ( pos.top > top && pos.top < bottom ) {
-            self.$element.offset({'left' : 0, 'top' : oldPos.top});
+            self.$element.removeClass("Bottom");
+          } else {
+            self.$element.addClass("Bottom");
           }
 
           if ( pos.top <= top ) {
@@ -744,14 +744,10 @@
         }
       });
 
-      $(window).resize(function() {
-        if ( self.pos == "bottom" ) {
-          var bottom = $(document).height() - self.$element.height() - 1;
-          self.$element.css({"top" : bottom + "px"});
-        }
-      });
-      if ( self.pos == "bottom" ) {
-        $(window).resize();
+      if ( this.pos == "bottom" ) {
+        this.$element.addClass("Bottom");
+      } else {
+        this.$element.removeClass("Bottom");
       }
     },
 
@@ -846,6 +842,8 @@
       this.is_closable    = true;
       this.width          = -1;
       this.height         = -1;
+      this.top            = -1;
+      this.left           = -1;
       this.gravity        = "none";
 
       // Window hooks FIXME: Event listeners on_XXX
@@ -910,7 +908,20 @@
         mcallback = mcallback || function() {};
 
         var el = this.dialog ? $($("#Dialog").html()) : $($("#Window").html());
-        var adjustSize = true;
+        var fresh = true;
+
+        // Attributtes
+        el.attr("id", id);
+        el.css("z-index", zi);
+        el.find(".WindowContent").css("overflow", this.is_scrollable ? "auto" : "hidden");
+
+        // Apply default size
+        if ( !isNaN(this.width) && (this.width > 0) ) {
+          $(el).width(this.width + "px");
+        }
+        if ( !isNaN(this.height) && (this.height > 0) ) {
+          $(el).height(this.height + "px");
+        }
 
         // Create Menu
         if ( this.menu && sizeof(this.menu) ) {
@@ -965,36 +976,9 @@
           el.find(".WindowTopInner img").attr("src", "/img/icons/16x16/" + this.icon);
           el.find(".WindowContentInner").html(this.content);
 
-          /*
-          $(el).find(".WindowMenu li.Top").hover(function() {
-            $(this).find("ul").show();
-          }, function() {
-            $(this).find("ul").hide();
-          });
-          */
-
           $(el).find(".WindowMenu li.Top").click(function(ev) {
             var mmenu = $(this).find("span").html();
             return API.application.context_menu(ev, self.menus[mmenu], $(this), 1);
-          });
-        }
-
-        // Attributtes
-        el.attr("id", id);
-        el.css("z-index", zi);
-        el.find(".WindowContent").css("overflow", this.is_scrollable ? "auto" : "hidden");
-
-        if ( !isNaN(this.width) && (this.width > 0) ) {
-          $(el).css("width", this.width + "px");
-        }
-        if ( !isNaN(this.height) && (this.height > 0) ) {
-          $(el).css("height", (this.height) + "px");
-        }
-
-        if ( this.gravity === "center" ) {
-          $(el).css({
-            "top" : (($(document).height() / 2) - ($(el).height() / 2)) + "px",
-            "left" : (($(document).width() / 2) - ($(el).width() / 2)) + "px"
           });
         }
 
@@ -1027,23 +1011,53 @@
           el.find(".ActionMaximize").hide();
         }
 
+        //
+        // INSERT
+        //
+        desktop.$element.append(el);
+
+
+        //
+        // Size and dimension
+        //
+        if ( this.gravity === "center" ) {
+          this.top = (($(document).height() / 2) - ($(el).height() / 2));
+          this.left = (($(document).width() / 2) - ($(el).width() / 2));
+        } else {
+          // Find free space for new windows
+          this.top = 50;
+          this.left = 20;
+        }
+
+        // Check if window has any saved attributes for override (session restore etc)
         if ( this.attrs && sizeof(this.attrs) ) {
           if ( this.attrs.position instanceof Object ) {
-            el.offset(this.attrs.position);
+            this.top = this.attrs.position.top;
+            this.left = this.attrs.position.left;
           }
           if ( this.attrs.size instanceof Object ) {
             if ( this.attrs.restore ) {
-              adjustSize = false;
+              fresh = false;
             }
 
-            el.width(this.attrs.size.width + 'px');
-            el.height(this.attrs.size.height + 'px');
+            this.width = this.attrs.size.width;
+            this.height = this.attrs.size.height;
           }
         }
 
-        // DOM
-        desktop.$element.append(el);
-        this.$element = el;
+        if ( !isNaN(this.width) && (this.width > 0) ) {
+          $(el).width(this.width + "px");
+        }
+        if ( !isNaN(this.height) && (this.height > 0) ) {
+          $(el).height(this.height + "px");
+        }
+        if ( !isNaN(this.left) && (this.left > 0) && !isNaN(this.top) && (this.top > 0) ) {
+          $(el).offset({'left' : (this.left), 'top' : (this.top)});
+        }
+
+        //
+        // Apply fixes etc. after DOM insertion
+        //
 
         // Fix title alignment
         var lw = this.dialog ? 0 : 16;
@@ -1057,14 +1071,14 @@
           "padding-right" : hw + "px"
         });
 
-        // Adjustments after DOM
-        if ( adjustSize ) {
+        // Newly created windows needs their inner dimension fixed
+        if ( fresh ) {
           if ( !isNaN(this.height) && (this.height > 0) ) {
-            this.resize(this.width, this.height);
+            this.resize(this.width, this.height, el);
           }
         }
 
-        // Add Handlers
+        // Add jQuery UI Handlers
         if ( this.is_draggable ) {
           el.draggable({
             handle : ".WindowTop",
@@ -1091,7 +1105,9 @@
           });
         }
 
+        //
         // Run Dialog or Application
+        //
         if ( this.dialog ) {
           desktop.focusWindow(this);
 
@@ -1123,6 +1139,7 @@
           }, 0);
         }
 
+        this.$element = el;
       }
 
       this.created = true;
@@ -1134,9 +1151,9 @@
         $.post("/", {'ajax' : true, 'action' : 'load', 'app' : self.name}, function(data) {
           if ( data.success ) {
             _Resources.addResources(data.result.resources, function() {
-              self.setTitle(data.result.title);
-              self.setContent(data.result.content);
-              self.setIcon(data.result.icon);
+              self.title   = data.result.title;
+              self.content = data.result.content;
+              self.icon    = data.result.icon;
 
               self.uuid           = data.result.uuid;
               self.is_draggable   = data.result.is_draggable;
@@ -1263,20 +1280,21 @@
 
     },
 
-    resize : function(width, height) {
+    resize : function(width, height, el) {
+      el = el || this.$element;
       var appendWidth = 4;
-      var appendHeight = 4 + this.$element.find(".WindowTop").height();
+      var appendHeight = 4 + el.find(".WindowTop").height();
 
       if ( this.menubar ) {
-        appendHeight += this.$element.find(".WindowMenu").height();
+        appendHeight += el.find(".WindowMenu").height();
       }
 
       if ( this.statusbar ) {
-        appendHeight += this.$element.find(".WindowBottom").height();
+        appendHeight += el.find(".WindowBottom").height();
       }
 
-      this.$element.css("height", (height + appendHeight) + "px");
-      this.$element.css("width", (width + appendWidth) + "px");
+      el.css("height", (height + appendHeight) + "px");
+      el.css("width", (width + appendWidth) + "px");
     },
 
     setMenuItemAttribute : function(m, it, attribute) {
@@ -1303,18 +1321,6 @@
           }
         }
       }
-    },
-
-    setTitle : function(t) {
-      this.title = t;
-    },
-
-    setContent : function(c) {
-      this.content = c;
-    },
-
-    setIcon : function(i) {
-      this.icon = i;
     },
 
     getAttributes : function() {
@@ -1864,6 +1870,27 @@
   // MAIN
   /////////////////////////////////////////////////////////////////////////////
 
+
+  /**
+   * @unload()
+   */
+  $(window).unload(function() {
+    if ( _Desktop ) {
+      _Desktop.destroy();
+    }
+    if ( _Settings ) {
+      _Settings.destroy();
+    }
+    if ( _Resources ) {
+      _Resources.destroy();
+    }
+
+    __null();
+  });
+
+  /**
+   * @ready()
+   */
   $(window).ready(function() {
     if ( !supports_html5_storage() ) {
       alert("Your browser does not support WebStorage. Cannot continue...");
@@ -1871,12 +1898,7 @@
     }
 
 
-    /*
-    $(window).scroll(function(ev) {
-      $(window).scrollTop(0).scrollLeft(0);
-    });
-    */
-
+    // Global context-menu handler
     $(document).bind("contextmenu",function(e) {
       // TODO: Add parameter to DOM object if Context Menu
       if ( $(e.target).hasClass("ContextMenu") || $(e.target).hasClass("Menu") || $(e.target).parent().hasClass("ContextMenu") || $(e.target).parent().hasClass("Menu") ) {
@@ -1889,10 +1911,21 @@
       return true;
     });
 
+    // Global keydown handler
     $(document).keydown(function(ev) {
       var key = ev.keyCode || ev.which;
       var target = ev.target || ev.srcElement;
+
+      // ESC cancels dialogs
+      if ( key === 27 ) {
+        if ( _Window && _Window.dialog ) {
+          _Window.$element.find(".ActionClose").click();
+          return false;
+        }
+      }
+
       if ( target ) {
+        // TAB key only in textareas
         if ( key === 9 ) {
           if ( target.tagName.toLowerCase() == "textarea" ) {
             var cc = getCaret(target);
@@ -1911,6 +1944,7 @@
       return true;
     });
 
+    // Global mousedown handler (cancel bubbling)
     $("#Desktop, .DesktopPanel").mousedown(function(ev) {
       var t = ev.target || ev.srcElement;
       if ( t ) {
@@ -1923,6 +1957,7 @@
       ev.preventDefault();
     });
 
+    // Startup script
     var __LAUNCH = function()
     {
       _Resources = new ResourceManager();
@@ -1957,20 +1992,6 @@
       __LAUNCH();
     }
 
-  });
-
-  $(window).unload(function() {
-    if ( _Desktop ) {
-      _Desktop.destroy();
-    }
-    if ( _Settings ) {
-      _Settings.destroy();
-    }
-    if ( _Resources ) {
-      _Resources.destroy();
-    }
-
-    __null();
   });
 
 })($);

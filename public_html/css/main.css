@@ -42,8 +42,8 @@ input.Disabled {
 
 #Desktop {
   position : relative;
-  padding : 10px;
-  padding-top : 40px;
+  margin : 0;
+  padding : 0;
   height : 100%;
 }
 
@@ -80,6 +80,13 @@ input.Disabled {
   height : 30px;
   z-index : 10000000;
   display : none;
+}
+.DesktopPanel.Bottom {
+  top : auto;
+  bottom : 0px;
+  left : 0px;
+  right : 0px;
+  height : 30px;
 }
 
 /*
