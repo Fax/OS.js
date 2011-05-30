@@ -205,6 +205,13 @@
               }
             ).html(cm.$element).show();
 
+            var h = $("#ContextMenu").height();
+            var m = $(document).height();
+
+            if ( off.top + h > m ) {
+              $("#ContextMenu").css({"top" : (m - h - 40) + "px"});
+            }
+
             ev.stopPropagation();
             ev.preventDefault();
 
