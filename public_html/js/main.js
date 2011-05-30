@@ -1671,6 +1671,17 @@
         self.clb_finish(val);
       });
 
+      $(txt).keydown(function(ev) {
+        var keyCode = ev.which || ev.keyCode;
+        if ( keyCode == 13 ) {
+
+          self.$element.find(".DialogButtons .Ok").click();
+          return false;
+        }
+        return true;
+      });
+
+
       txt.focus();
       var tmp = txt.val().split(".");
       var len = 0;
