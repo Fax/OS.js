@@ -197,6 +197,13 @@ var ApplicationFilemanager = (function($, undefined) {
           }
         }
 
+
+
+        el.find(".ApplicationFilemanagerMain").mousedown(function(ev) {
+          api.ui.rectangle.init(ev, function(x, y, w, h) {
+          });
+        });
+
         $(el).click(function() {
           _selItem();
         });

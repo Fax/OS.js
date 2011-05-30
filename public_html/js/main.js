@@ -84,9 +84,10 @@
         var startX = -1;
         var startY = -1;
         var rect = false;
+        var callback = function() {};
 
         return {
-          'show' : function(ev) {
+          'init' : function(ev, c) {
             if ( !rect ) {
               $("#ContextRectangle").css({
                 'top'    : '-1000px',
@@ -98,8 +99,9 @@
               startX = ev.pageX;
               startY = ev.pageY;
               rect = true;
+              callback = c || function() {};
 
-              ev.preventDefault();
+              //ev.preventDefault();
             }
           },
 
@@ -107,6 +109,13 @@
             if ( rect ) {
               rect = false;
               $("#ContextRectangle").hide();
+
+              var x = Math.min(ev.pageX, startX);
+              var y = Math.min(ev.pageY, startY);
+              var w = Math.abs(ev.pageX - startX);
+              var h = Math.abs(ev.pageY - startY);
+
+              callback(x, y, w, h);
             }
           },
 
@@ -124,7 +133,7 @@
                 'height' : h + 'px'
               });
 
-              ev.preventDefault();
+              //ev.preventDefault();
             }
           }
 
@@ -2162,6 +2171,12 @@
       }
 
       return true;
+    });
+
+    $("body").mouseup(function(ev) {
+      API.ui.rectangle.hide(ev);
+    }).mousemove(function(ev) {
+      API.ui.rectangle.update(ev);
     });
 
     // Global mousedown handler (cancel bubbling)
