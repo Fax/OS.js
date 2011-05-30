@@ -186,7 +186,8 @@
             initied = true;
           }
 
-          if ( ev.which === which ) {
+          var ewhich = ev.which || 1;
+          if ( ewhich === which ) {
             _destroy();
 
             cm = new Menu(where);
@@ -208,6 +209,7 @@
             if ( off.top + h > m ) {
               $("#ContextMenu").css({"top" : (m - h - 40) + "px"});
             }
+
 
             ev.stopPropagation();
             ev.preventDefault();
@@ -692,6 +694,9 @@
       }
 
       $(".PanelItemMenu").click(function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+
         return API.application.context_menu(ev, menu_items, $(this), 1);
       });
 
