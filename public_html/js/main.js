@@ -1125,6 +1125,8 @@
           });
         }
 
+        this.$element = el;
+
         //
         // Run Dialog or Application
         //
@@ -1158,8 +1160,6 @@
             }
           }, 0);
         }
-
-        this.$element = el;
 
         if ( this.is_minimized ) {
           $(el).hide();
@@ -1624,7 +1624,7 @@
         value : 0
       });
 
-      var trigger = this.$element.find("button.Choose").show();
+      var trigger = this.$element.find(".DialogButtons .Choose").show();
       var pbar    = this.$element.find(".ProgressBar");
 
       this.uploader = new qq.FileUploader({

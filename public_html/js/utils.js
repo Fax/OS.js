@@ -148,7 +148,7 @@ function sizeof(foo) {
     }
     return i;
   }
-  return foo.length;
+  return foo.length ? foo.length : 0;
 }
 
 /**
