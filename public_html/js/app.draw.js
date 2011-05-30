@@ -107,13 +107,15 @@ var ApplicationDraw = (function($, undefined) {
     fill   : true,
     stroke : true,
 
-    onMouseDown : function(ev, doc) {
+    onMouseDown : function(ev, doc, api) {
       if ( this.type == "pencil" || this.type == "brush" ) {
         doc.context.beginPath();
         doc.context.moveTo(doc.draw_start[0], doc.draw_start[1]);
+      } else if ( this.type == "selection" ) {
+        api.ui.rectangle.init(ev);
       }
     },
-    onMouseMove : function(ev, doc) {
+    onMouseMove : function(ev, doc, api) {
       var startPosX = doc.draw_start[0];
       var startPosY = doc.draw_start[1];
       var mX        = doc.draw_current[0];
@@ -122,7 +124,9 @@ var ApplicationDraw = (function($, undefined) {
       var posX, posY;
       var x, y, w, h, r;
 
-      if ( this.type == "pencil" || this.type == "brush" ) {
+      if ( this.tool == "selection" ) {
+        return;
+      } else if ( this.type == "pencil" || this.type == "brush" ) {
         doc.context.lineTo(doc.draw_current[0], doc.draw_current[1]);
         doc.context.stroke();
       } else if ( this.type == "line" ) {
@@ -225,7 +229,7 @@ var ApplicationDraw = (function($, undefined) {
         }
       }
     },
-    onMouseUp : function(ev, doc) {
+    onMouseUp : function(ev, doc, api) {
       if ( this.type == "pick" ) {
         var startPosX = doc.draw_start[0];
         var startPosY = doc.draw_start[1];
@@ -241,7 +245,7 @@ var ApplicationDraw = (function($, undefined) {
       }
     },
 
-    onMouseClick : function(ev, doc) {
+    onMouseClick : function(ev, doc, api) {
       if ( this.type == "fill" ) {
         doc.context.fillRect(0, 0, doc.canvas.width, doc.canvas.height);
         doc.redraw();
@@ -256,7 +260,7 @@ var ApplicationDraw = (function($, undefined) {
    */
   var DrawDocument = {
 
-    init : function(el) {
+    init : function(el, api) {
       var self = this;
 
       this.loaded   = false;
@@ -279,16 +283,16 @@ var ApplicationDraw = (function($, undefined) {
       });
 
       $(this.canvas).mousedown(function(ev) {
-        self.onMouseDown(ev);
+        self.onMouseDown(ev, api);
       });
       $(this.canvas).mousemove(function(ev) {
-        self.onMouseMove(ev);
+        self.onMouseMove(ev, api);
       });
-      $(this.canvas).mouseup(function(ev) {
-        self.onMouseUp(ev);
+      $(document).mouseup(function(ev) {
+        self.onMouseUp(ev, api);
       });
       $(this.canvas).click(function(ev) {
-        self.onMouseClick(ev);
+        self.onMouseClick(ev, api);
       });
 
       $(this.canvas).bind("contextmenu",function(e) {
@@ -350,32 +354,32 @@ var ApplicationDraw = (function($, undefined) {
 
     /* MOUSE EVENTS */
 
-    onMouseDown : function(ev) {
+    onMouseDown : function(ev, api) {
       this.setStyle();
 
       if ( !this.draw_on ) {
         this.draw_on = true;
         this.draw_start = [mouseposX(ev), mouseposY(ev)];
 
-        Tool.onMouseDown(ev, this);
+        Tool.onMouseDown(ev, this, api);
       }
 
       ev.preventDefault();
     },
 
-    onMouseMove : function(ev) {
+    onMouseMove : function(ev, api) {
       if ( this.draw_on ) {
         this.draw_current = [mouseposX(ev), mouseposY(ev)];
 
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        Tool.onMouseMove(ev, this);
+        Tool.onMouseMove(ev, this, api);
       }
     },
 
-    onMouseUp : function(ev) {
+    onMouseUp : function(ev, api) {
       if ( this.draw_on ) {
-        Tool.onMouseUp(ev, this);
+        Tool.onMouseUp(ev, this, api);
 
         this.redraw();
 
@@ -385,8 +389,8 @@ var ApplicationDraw = (function($, undefined) {
       ev.preventDefault();
     },
 
-    onMouseClick : function(ev) {
-      Tool.onMouseClick(ev, this);
+    onMouseClick : function(ev, api) {
+      Tool.onMouseClick(ev, this, api);
 
       ev.preventDefault();
     },
@@ -581,7 +585,6 @@ var ApplicationDraw = (function($, undefined) {
           }
         });
 
-
         //
         // Menu items
         //
@@ -625,7 +628,7 @@ var ApplicationDraw = (function($, undefined) {
         Style.cap    = $(el).find(".select_LineCap").val();
         Style.join   = $(el).find(".select_LineJoin").val();
 
-        DrawDocument.init(el);
+        DrawDocument.init(el, api);
 
         var fname = null;
         if ( argv['path'] ) {

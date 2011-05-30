@@ -26,6 +26,7 @@ class ApplicationDraw
 <div class="ApplicationDraw">
   <div class="ApplicationDrawPanel">
     <div class="DrawToolButtons">
+      <button class="draw_Selection"><img alt="Selection" title="Selection" src="/img/app.draw/icons/stock-selection-16.png" /></button>
       <button class="draw_Pencil"><img alt="Pencil" title="Pencil" src="/img/app.draw/icons/stock-tool-pencil-16.png" /></button>
       <button class="draw_Line"><img alt="Line" title="Line" src="/img/app.draw/icons/stock-tool-path-16.png" /></button>
       <button class="draw_Square"><img alt="Square" title="Square" src="/img/app.draw/icons/stock-shape-square-16.png" /></button>

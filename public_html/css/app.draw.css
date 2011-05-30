@@ -140,6 +140,7 @@
   right : 0px;
   bottom : 0px;
   left : 101px;
+  overflow : auto;
 }
 
 .ApplicationDrawInner .Canvas {
