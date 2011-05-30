@@ -81,11 +81,12 @@
       })(),
 
       'rectangle' : (function() {
-        var startX = -1;
-        var startY = -1;
-        var rect = false;
+        var startX   = -1;
+        var startY   = -1;
+        var rect     = false;
         var callback = function() {};
 
+        // NOTE: Your 'mouseup' event must fire on global document object!!!
         return {
           'init' : function(ev, c) {
             if ( !rect ) {
@@ -107,15 +108,23 @@
 
           'hide' : function(ev) {
             if ( rect ) {
-              rect = false;
-              $("#ContextRectangle").hide();
-
               var x = Math.min(ev.pageX, startX);
               var y = Math.min(ev.pageY, startY);
               var w = Math.abs(ev.pageX - startX);
               var h = Math.abs(ev.pageY - startY);
 
               callback(x, y, w, h);
+
+              $("#ContextRectangle").css({
+                'top'    : '-1000px',
+                'left'   : '-1000px',
+                'width'  : '0px',
+                'height' : '0px'
+              }).hide();
+
+              startX = -1;
+              startY = -1;
+              rect = false;
             }
           },
 
@@ -2173,7 +2182,7 @@
       return true;
     });
 
-    $("body").mouseup(function(ev) {
+    $(document).mouseup(function(ev) {
       API.ui.rectangle.hide(ev);
     }).mousemove(function(ev) {
       API.ui.rectangle.update(ev);
