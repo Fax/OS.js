@@ -1122,7 +1122,13 @@
           el.resizable({
             handles : "se",
             start : function() {
+              if ( self.is_maximized ) {
+                API.ui.cursor("not-allowed");
+                return false;
+              }
               el.addClass("Blend");
+
+              return true;
             },
             stop : function() {
               el.removeClass("Blend");
@@ -1171,6 +1177,9 @@
         }
         if ( this.is_maximized ) {
           this.$element.find(".ActionMaximize").parent().addClass("Active");
+          if ( this.is_resizable ) {
+            this.$element.find(".ui-resizable-handle").hide();
+          }
         }
       }
 
@@ -1287,6 +1296,10 @@
 
           this.$element.find(".ActionMaximize").parent().removeClass("Active");
           this.is_maximized = false;
+
+          if ( this.is_resizable ) {
+            this.$element.find(".ui-resizable-handle").show();
+          }
         } else {
           this.last_attrs = {
             'size'     : {'width' : this.$element.width(), 'height' : this.$element.height()},
@@ -1314,6 +1327,10 @@
 
           this.$element.find(".ActionMaximize").parent().addClass("Active");
           this.is_maximized = true;
+
+          if ( this.is_resizable ) {
+            this.$element.find(".ui-resizable-handle").hide();
+          }
         }
 
       }
