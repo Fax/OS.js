@@ -24,7 +24,11 @@ class SystemSettings
   public function __construct() {
 
     $rows = "";
+    $ignore = Array("desktop.panel.position");
+
     foreach ( WindowManager::getSettings() as $k => $v ) {
+      if ( in_array($k, $ignore) )
+        continue;
 
       if ( isset($v['hidden']) && ($v['hidden'] === true) )
         continue;
