@@ -3,6 +3,7 @@
  *
  * TODO: jQuery UI Stacking ???
  * TODO: Finish Login screen
+ * TODO: PanelItem etc
  *
  * Creates a desktop environment inside the browser.
  * Applications can be loaded via the server.
@@ -65,7 +66,13 @@
       'cursor' : (function() {
         var ccursor = "default";
 
-        return function(c) {
+        return function(c, el) {
+          //var cname = "url('/img/cursors/" + c + "'.png), " + c;
+          if ( el ) {
+            $(el).css("cursor", c);
+            return;
+          }
+
           if ( c !== ccursor ) {
             $("body").css("cursor", c);
           }
@@ -1098,7 +1105,8 @@
         if ( this.is_draggable ) {
           el.draggable({
             handle : ".WindowTop",
-            start : function() {
+            start : function(ev) {
+
               if ( self.is_maximized ) {
                 API.ui.cursor("not-allowed");
                 return false;
@@ -1108,14 +1116,23 @@
 
               return true;
             },
-            stop : function() {
+            stop : function(ev) {
+
               el.removeClass("Blend");
               API.ui.cursor("default");
 
               self.left = self.$element.offset()['left'];
               self.top = self.$element.offset()['top'];
             }
-          });
+          }).touch({
+    animate: false,
+    sticky: false,
+    dragx: true,
+    dragy: true,
+    rotate: false,
+    resort: true,
+    scale: false
+});
         }
 
         if ( this.is_resizable ) {
@@ -1953,6 +1970,11 @@
       alert("Your browser does not support WebStorage. Cannot continue...");
       return;
     }
+
+    // Global touch-movment handler
+    $(document).bind('touchmove', function(e) {
+      e.preventDefault();
+    }, false);
 
 
     // Global context-menu handler
