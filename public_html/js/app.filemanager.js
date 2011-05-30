@@ -109,6 +109,8 @@ var ApplicationFilemanager = (function($, undefined) {
             ev.preventDefault();
 
             var pro = $(this).find("input[name=protected]").val() == "1";
+            var path = $(this).find("input[name='path']").val();
+            var fname = $(this).find("input[name='name']").val();
 
             if ( pro ) {
               return api.application.context_menu(ev, [
@@ -119,16 +121,26 @@ var ApplicationFilemanager = (function($, undefined) {
             } else {
               return api.application.context_menu(ev, [
                 {"title" : "Delete", "method" : function() {
-                  api.system.dialog("confirm", "Are you sure you want to delete this file?", null, function() {
-                    alert('Not implemented yet'); // TODO
+                  api.system.dialog("confirm", "Are you sure you want to delete '" + fname + "'?", null, function() {
+                    api.system.call("delete", path, function(result, error) {
+                      if ( error === null ) {
+                        chdir(_CurrentDir);
+                      }
+                    });
                   });
                 }},
                 {"title" : "Rename", "method" : function() {
-                  alert('Not implemented yet'); // TODO
-                }},
+                  api.system.dialog_rename(fname, function(nfname) {
+                    api.system.call("rename", [path, fname, nfname], function(result, error) {
+                      if ( error === null ) {
+                        chdir(_CurrentDir);
+                      }
+                    });
+                  });
+                }}/*,
                 {"title" : "Download", "method" : function() {
                   alert('Not implemented yet'); // TODO
-                }}
+                }}*/
               ], $(this));
             }
           });

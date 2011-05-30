@@ -149,6 +149,10 @@
         _Desktop.addWindow(new Dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
       },
 
+      'dialog_rename' : function(path, clb_finish) {
+        _Desktop.addWindow(new RenameOperationDialog(path, clb_finish));
+      },
+
       'dialog_upload' : function(path, clb_finish, clb_progress, clb_cancel) {
         _Desktop.addWindow(new UploadOperationDialog(path, clb_finish, clb_progress, clb_cancel));
       },
@@ -1609,10 +1613,11 @@
 
   var CopyOperationDialog = OperationDialog.extend({
 
-    init : function(type, message, argv, clb_finish, clb_progress, clb_cancel) {
+    init : function(src, dest, clb_finish, clb_progress, clb_cancel) {
       this._super("Copy");
 
-      this.aargv        = argv         || {};
+      this.src          = src          || null;
+      this.dest         = dest         || null;
       this.clb_finish   = clb_finish   || function() {};
       this.clb_progress = clb_progress || function() {};
       this.clb_cancel   = clb_cancel   || function() {};
@@ -1631,6 +1636,51 @@
       $(this.content).find(".ProgressBar").progressbar({
         value : 50
       });
+    }
+
+  });
+
+  var RenameOperationDialog = OperationDialog.extend({
+
+    init : function(src, clb_finish) {
+      this._super("Rename");
+
+      this.src          = src          || null;
+      this.clb_finish   = clb_finish   || function() {};
+
+      this.title    = "Copy file";
+      this.content  = $("#OperationDialogRename").html();
+      this.width    = 200;
+      this.height   = 100;
+    },
+
+
+    create : function(desktop, id, zi, method) {
+      var self = this;
+      this._super(desktop, id, zi, method);
+
+      var txt = this.$element.find(".OperationDialog input");
+      txt.val(this.src);
+
+      this.$element.find(".DialogButtons .Ok").show().click(function() {
+        var val = txt.val();
+        if ( !val ) {
+          alert("A filename is required!"); // FIXME
+          return;
+        }
+        self.clb_finish(val);
+      });
+
+      txt.focus();
+      var tmp = txt.val().split(".");
+      var len = 0;
+      if ( tmp.length > 1 ) {
+        tmp.pop();
+        len = tmp.join(".").length;
+      } else {
+        len = tmp[0].length;
+      }
+      setSelectionRangeX(txt.get(0), 0, len);
     }
 
   });

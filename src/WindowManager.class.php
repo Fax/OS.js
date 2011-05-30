@@ -206,6 +206,22 @@ class WindowManager
             } else {
               $json['error'] = "Failed to read '{$argv['path']}'";
             }
+          } else if ( $method == "rename" ) {
+            list($path, $src, $dst) = $argv;
+
+            if ( ApplicationAPI::rename($path, $src, $dst) ) {
+              $json['result'] = $dst;
+              $json['success'] = true;
+            } else {
+              $json['error'] = "Failed to rename '{$src}'";
+            }
+          } else if ( $method == "delete" ) {
+            if ( ApplicationAPI::delete($argv) ) {
+              $json['result'] = $argv;
+              $json['success'] = true;
+            } else {
+              $json['error'] = "Failed to rename '{$src}'";
+            }
           } else {
             if ( function_exists($method) ) {
               $json['result']  = call_user_func_array($method, $argv);

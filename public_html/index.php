@@ -203,8 +203,8 @@ header("Pragma: no-cache");
         </div>
         <div class="DialogButtons">
           <button class="Choose" style="display:none;">Choose</button>
-          <button class="Close">Close</button>
           <button class="Ok" style="display:none;">Ok</button>
+          <button class="Close">Close</button>
           <button class="Cancel" style="display:none;">Cancel</button>
         </div>
       </div>
@@ -238,6 +238,15 @@ header("Pragma: no-cache");
     <div class="OperationDialogInner">
       <p class="Status">0 of 0</p>
       <div class="ProgressBar"></div>
+    </div>
+  </div>
+</div>
+
+<div id="OperationDialogRename" style="display:none">
+  <div class="OperationDialog OperationDialogRename">
+    <h1>Rename file</h1>
+    <div class="OperationDialogInner">
+      <input type="text" />
     </div>
   </div>
 </div>

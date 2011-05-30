@@ -86,6 +86,42 @@ class ApplicationAPI
     return false;
   }
 
+  public static function delete($path) {
+    if ( $path ) {
+      foreach ( self::$ProtectedDirs as $k => $v ) {
+        if ( startsWith($path, $k) ) {
+          return false;
+        }
+      }
+      $dpath = PATH_PROJECT_HTML . "/media/" . $path;
+      if ( is_file($dpath) || is_dir($dpath) ) {
+        return unlink($dpath);
+      }
+    }
+    return null;
+  }
+
+  public static function rename($path, $src, $dest) {
+    if ( $dest ) {
+      foreach ( self::$ProtectedDirs as $k => $v ) {
+        if ( startsWith($path, $k) ) {
+          return false;
+        }
+      }
+
+      $old_path = PATH_PROJECT_HTML . "/media/" . $path;
+      $new_path = PATH_PROJECT_HTML . "/media/" . str_replace($src, $dest, $path);
+
+      if ( file_exists($new_path) ) {
+        return false;
+      }
+
+      return rename($old_path, $new_path);
+    }
+
+    return null;
+  }
+
   public static function readdir($path, Array $ignores = null, Array $mimes = Array()) {
     if ( $ignores === null ) {
       $ignores = Array(".", "..");
