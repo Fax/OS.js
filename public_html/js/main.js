@@ -1,6 +1,7 @@
 /**
  * JavaScript Window Manager
  *
+ * TODO: jQuery UI Stacking
  * TODO: Finish Login screen
  * TODO: Session: Store minimized/maximized etc.
  * TODO: Key bindings:
@@ -19,7 +20,7 @@
   // Override for browsers without console
   if (!window.console) console = {log:function() {}, error:function(){}};
 
-  var SETTING_REVISION = 1;
+  var SETTING_REVISION = 2;
   var ENABLE_LOGIN     = false;
   var ANIMATION_SPEED  = 400;
 
@@ -403,7 +404,7 @@
 
         var rev = localStorage.getItem("SETTING_REVISION");
         var force = false;
-        if ( rev !== SETTING_REVISION ) {
+        if ( parseInt(rev, 10) !== parseInt(SETTING_REVISION, 10) ) {
           force = true;
           localStorage.setItem("SETTING_REVISION", SETTING_REVISION);
         }
@@ -659,6 +660,7 @@
     init : function() {
       var self = this;
 
+      this.pos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
       this.$element = $("#Panel").show();
 
       // Fill menu
@@ -686,11 +688,12 @@
 
 
       // Start clock
-      setInterval(function() {
+      this.clock_interval = setInterval(function() {
         var d = new Date();
         $(".PanelItemClock span").html(sprintf("%02d/%02d/%02d %02d:%02s", d.getDate(), d.getMonth(), d.getYear(), d.getHours(), d.getMinutes()));
       }, 500);
 
+      // Static About dialog
       $(".PanelItemMenu li, .PanelItemLauncher").click(function(ev) {
         var app = $(this).find("span").attr("class").replace("launch_", "");
         if ( app == "About" ) {
@@ -703,9 +706,52 @@
           API.system.launch(app);
         }
       });
+
+      // Panel item dragging
+      var oldPos = {'top' : 0, 'left' : 0};
+      this.$element.draggable({
+        axis : "y",
+        snap : "body",
+        snapMode : "inner",
+        containment : "body",
+        start : function() {
+          self.$element.addClass("Blend");
+          API.ui.cursor("move");
+          oldPos = self.$element.offset();
+        },
+        stop : function() {
+          self.$element.removeClass("Blend");
+          API.ui.cursor("default");
+          var top = 0;
+          var bottom = $(document).height() - self.$element.height() - 5;
+          var pos = self.$element.offset();
+          if ( pos.top > top && pos.top < bottom ) {
+            self.$element.offset({'left' : 0, 'top' : oldPos.top});
+          }
+
+          if ( pos.top <= top ) {
+            _Settings._set("desktop.panel.position", "top");
+          } else {
+            _Settings._set("desktop.panel.position", "bottom");
+          }
+        }
+      });
+
+      $(window).resize(function() {
+        if ( self.pos == "bottom" ) {
+          var bottom = $(document).height() - self.$element.height() - 1;
+          self.$element.css({"top" : bottom + "px"});
+        }
+      });
+      if ( self.pos == "bottom" ) {
+        $(window).resize();
+      }
     },
 
     destroy : function() {
+      if ( this.clock_interval ) {
+        clearInterval(this.clock_interval);
+      }
       this.$element.empty().remove();
     },
 

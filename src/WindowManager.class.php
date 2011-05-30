@@ -65,6 +65,11 @@ class WindowManager
         "options" => Array("dark", "light"),
         "value"   => "dark"
       ),
+      "desktop.panel.position" => Array(
+        "type" => "array",
+        "options" => Array("top", "bottom"),
+        "value" => "top"
+      ),
       "system.app.registered" => Array(
         "type"    => "array",
         "options" => $apps,

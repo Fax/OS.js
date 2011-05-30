@@ -38,6 +38,12 @@ body {
   -moz-opacity: 0.98;       /* mozilla, netscape */
   opacity: 0.98;           /* fx, safari, opera */
 }
+.DesktopPanel.Blend {
+  filter: alpha(opacity=50); /* internet explorer */
+  -khtml-opacity: 0.50;      /* khtml, old safari */
+  -moz-opacity: 0.50;       /* mozilla, netscape */
+  opacity: 0.50;           /* fx, safari, opera */
+}
 
 .PanelItemWindow {
 }
