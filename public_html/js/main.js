@@ -1025,7 +1025,8 @@
           this.left = (($(document).width() / 2) - ($(el).width() / 2));
         } else {
           // Find free space for new windows
-          this.top = 50;
+          var ppos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
+          this.top = ppos == "top" ? 50 : 20;
           this.left = 20;
         }
 
