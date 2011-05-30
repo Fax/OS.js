@@ -1,7 +1,7 @@
 /**
  * Application: ApplicationFilemanager
  *
- * TODO: Upload to relative path
+ * TODO: Download files
  *
  * @package ajwm.Applications
  * @author Anders Evenrud <andersevenrud@gmail.com>

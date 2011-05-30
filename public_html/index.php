@@ -25,11 +25,14 @@ if ( !($json = $wm->doPOST($_POST)) === false ) {
 $now = new DateTime();
 $timestamp = $now->format("d/m/Y h:i:s"); // TODO: Timezone
 
-header("Content-Type: text/html");
-header("Expires: Fri, 01 Jan 2010 05:00:00 GMT");
-header("Cache-Control: maxage=1");
-header("Cache-Control: no-cache");
-header("Pragma: no-cache");
+if ( !ENV_PRODUCTION ) {
+  header("Expires: Fri, 01 Jan 2010 05:00:00 GMT");
+  header("Cache-Control: maxage=1");
+  header("Cache-Control: no-cache");
+  header("Pragma: no-cache");
+}
+
+header("Content-Type: text/html; charset=utf-8");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,17 +44,21 @@ header("Pragma: no-cache");
   @author  Anders Evenrud <andersevenrud@gmail.com>
   -->
   <title>Another JSWM</title>
+
+  <!-- Compability -->
+  <meta http-equiv="X-UA-Compatible" content="IE=9" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css; charset=utf-8" />
 
   <!-- Vendor libraries -->
+  <link rel="stylesheet" type="text/css" href="/css/ui-lightness/jquery-ui-1.8.13.custom.css" />
+
   <script type="text/javascript" src="/js/vendor/json2.js"></script>
   <script type="text/javascript" src="/js/vendor/sprintf-0.7-beta1.js"></script>
   <script type="text/javascript" src="/js/vendor/fileuploader.js"></script>
   <script type="text/javascript" src="/js/vendor/jquery-1.5.2.min.js"></script>
   <script type="text/javascript" src="/js/vendor/jquery-ui-1.8.13.custom.min.js"></script>
   <script type="text/javascript" src="/js/vendor/jquery.touch.compact.js"></script>
-
-  <link rel="stylesheet" type="text/css" href="/css/ui-lightness/jquery-ui-1.8.13.custom.css" />
 
   <!-- Main libraries -->
   <link rel="stylesheet" type="text/css" href="/css/main.css" />
@@ -68,6 +75,7 @@ header("Pragma: no-cache");
   <link rel="stylesheet" type="text/css" href="/css/sys.logout.css" />
   <link rel="stylesheet" type="text/css" href="/css/sys.terminal.css" />
 
+  <!--<script type="text/javascript" src="/js/sys.about.js"></script>-->
   <script type="text/javascript" src="/js/sys.user.js"></script>
   <script type="text/javascript" src="/js/sys.settings.js"></script>
   <script type="text/javascript" src="/js/sys.logout.js"></script>

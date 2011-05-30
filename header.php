@@ -13,6 +13,9 @@ define("PROJECT_AUTHOR",  "Anders Evenrud");
 define("PROJECT_CONTACT", "andersevenrud@gmail.com");
 define("PROJECT_VERSION", "0.2");
 
+// Environment
+define("ENV_PRODUCTION", false);
+
 // Path definitions
 define("PATH_PROJECT",           dirname(__FILE__));
 define("PATH_PROJECT_SRC",       PATH_PROJECT . "/src");
