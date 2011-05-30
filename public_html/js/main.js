@@ -521,6 +521,8 @@
 
       },
 
+      // WINDOWS
+
       addWindow : function(win) {
         if ( win instanceof Window ) {
           var self = this;
@@ -539,7 +541,7 @@
             self.stack.push(win);
 
             //win.focus();
-            if ( !win.is_minimized ) {
+            if ( !win.is_minimized && !win.is_maximized ) {
               $(win.$element).trigger("mousedown");
             }
 
@@ -590,16 +592,16 @@
         _Window = win;
       },
 
-      toggleWindow : function(win, state) {
-        if ( _Window === win ) {
-          _Window.blur();
-        }
-        if ( state ) {
-          win.focus();
-        }
-
-        this.panel.redraw(this, win);
+      restoreWindow : function(win) {
       },
+
+      maximizeWindow : function(win) {
+      },
+
+      minimizeWindow : function(win) {
+      },
+
+      // SETTINGS \ SESSION
 
       applySettings : function() {
         var wp = _Settings._get('desktop.wallpaper.path');
@@ -985,7 +987,7 @@
         }
 
         // Events
-        el.mousedown(function() {
+        el.bind('mousedown', function(ev) {
           desktop.focusWindow(self);
         });
 
@@ -1092,8 +1094,14 @@
           el.draggable({
             handle : ".WindowTop",
             start : function() {
+              if ( self.is_maximized ) {
+                API.ui.cursor("not-allowed");
+                return false;
+              }
               el.addClass("Blend");
               API.ui.cursor("move");
+
+              return true;
             },
             stop : function() {
               el.removeClass("Blend");
@@ -1203,7 +1211,9 @@
       if ( !this.current ) {
         _TopIndex++;
 
-        this.restore();
+        if ( this.is_minimized ) {
+          this.minimize();
+        }
 
         this.$element.css("z-index", _TopIndex);
         this.$element.addClass("Current");
@@ -1228,22 +1238,47 @@
 
     minimize : function() {
       if ( this.is_minimizable ) {
-        if ( !this.is_minimized ) {
-          var self = this;
-
-          this.$element.animate({opacity: 'hide', height: 'hide'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
-            _Desktop.toggleWindow(self, false);
+        var self = this;
+        if ( this.is_minimized ) {
+          this.$element.animate({opacity: 'show', height: 'show'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
+            _Desktop.restoreWindow(self);
           }});
 
+          this.is_minimized = false;
+        } else {
+          this.blur();
+
+          this.$element.animate({opacity: 'hide', height: 'hide'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
+            _Desktop.minimizeWindow(self);
+          }});
+
+          this.is_minimized = true;
         }
 
-        this.is_minimized = true;
       }
     },
 
     maximize : function() {
       if ( this.is_maximizable ) {
-        if ( !this.is_maximized ) {
+        if ( this.is_maximized ) {
+          if ( this.last_attrs !== null ) {
+            this.top = this.last_attrs.position.top;
+            this.left = this.last_attrs.position.left;
+            this.width = this.last_attrs.size.width;
+            this.height = this.last_attrs.size.height;
+
+            this.$element.animate({
+              'top'    : this.top + 'px',
+              'left'   : this.left + 'px',
+              'width'  : this.width + 'px',
+              'height' : this.height + 'px'
+            }, {'duration' : ANIMATION_SPEED});
+
+            this.last_attrs === null;
+
+          }
+          this.is_maximized = false;
+        } else {
           this.last_attrs = {
             'size'     : {'width' : this.$element.width(), 'height' : this.$element.height()},
             'position' : this.$element.offset()
@@ -1264,46 +1299,13 @@
           }).animate({
             'width'  : (this.width) + "px",
             'height' : (this.height)  + "px"
-          }, {'duration' : ANIMATION_SPEED});
+          }, {'duration' : ANIMATION_SPEED}, function() {
+            _Desktop.maximizeWidow(self);
+          });
           this.is_maximized = true;
-        } else {
-          this.restore();
         }
 
       }
-    },
-
-    restore : function() {
-      if ( this.is_minimized  ) {
-        var self = this;
-        this.$element.animate({opacity: 'show', height: 'show'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
-          _Desktop.toggleWindow(self, true);
-        }});
-
-        this.is_minimized = false;
-      }
-
-
-      if ( this.is_maximized ) {
-        if ( this.last_attrs !== null ) {
-          this.top = this.last_attrs.position.top;
-          this.left = this.last_attrs.position.left;
-          this.width = this.last_attrs.size.width;
-          this.height = this.last_attrs.size.height;
-
-          this.$element.animate({
-            'top'    : this.top + 'px',
-            'left'   : this.left + 'px',
-            'width'  : this.width + 'px',
-            'height' : this.height + 'px'
-          }, {'duration' : ANIMATION_SPEED});
-
-          this.last_attrs === null;
-
-        }
-        this.is_maximized = false;
-      }
-
     },
 
     resize : function(width, height, el) {
