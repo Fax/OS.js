@@ -922,6 +922,174 @@
   });
 
   /////////////////////////////////////////////////////////////////////////////
+  // PANEL ITEMS
+  /////////////////////////////////////////////////////////////////////////////
+
+  var PanelItem = Class.extend({
+  
+    init : function(name, align)  {
+      this.name = name;
+      this.align = align || "AlignLeft";
+      this.$element = null;
+    },
+
+    create : function() {
+      this.$element = $("<div></div>").attr("class", "PanelItem " + name);
+      if ( this.align == "right" ) {
+	this.$element.addClass("AlignRight");
+      }
+    },
+
+    redraw : function() {
+
+    },
+
+    destroy : function() {
+      if ( this.$element ) {
+	this.$element.empty();
+	this.$element.remove();
+      }
+    }
+
+  });
+
+  var PanelItemMenu = Class.extend({
+  
+    init : function()  {
+      this._super("PanelItemMenu");
+
+      var o;
+      var apps = _Settings._get("system.app.registered", true);
+      var menu_items = [];
+      for ( var a in apps ) {
+        if ( apps.hasOwnProperty(a) ) {
+          o = apps[a];
+          (function(apn) {
+            menu_items.push({
+              "title" : o.title,
+              "method" : function() {
+                API.system.launch(apn);
+              },
+              "icon" : o.icon
+            });
+          })(a);
+        }
+      }
+
+      this.menu = menu_items;
+    },
+
+    create : function() {
+      this._super();
+    },
+
+    redraw : function(desktop, win, remove) {
+      var self = this;
+
+      var id = win.$element.attr("id") + "_Shortcut";
+
+      if ( remove ) {
+        $("#" + id).empty().remove();
+      } else {
+
+        if ( !document.getElementById(id) ) {
+          var el = $("<div class=\"PanelItem Padded PanelItemWindow\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div>");
+          el.find("img").attr("src", "/img/icons/16x16/" + win.icon);
+          el.find("span").html(win.title);
+          el.attr("id", id);
+
+          if ( win.current ) {
+            el.addClass("Current");
+          }
+
+          (function(vel, wwin) {
+            vel.click(function() {
+              desktop.focusWindow(wwin);
+            });
+          })(el, win);
+
+          self.$element.find(".PanelWindowHolder").append(el);
+        }
+
+        if ( remove === undefined ) {
+          this.$element.find(".PanelItemWindow").removeClass("Current");
+          $("#" + id).addClass("Current");
+        }
+      }
+    },
+
+
+    destroy : function() {
+      if ( this.menu ) {
+	this.menu = null;
+      }
+      this._super();
+    }
+
+  });
+
+  var PanelItemSeparator = PanelItem.extend({
+  
+    init : function()  {
+      this._super("PanelItemSeparator");
+    },
+
+    create : function() {
+      this._super();
+    },
+
+
+    destroy : function() {
+      this._super();
+    }
+
+  });
+
+  var PanelItemWindowList = PanelItem.extend({
+  
+    init : function()  {
+      this._super("PanelItemWindowList", "left");
+    },
+
+    create : function() {
+      this._super();
+    },
+
+
+    destroy : function() {
+      this._super();
+    }
+  });
+
+  var PanelItemWindowClock = PanelItem.extend({
+  
+    init : function()  {
+      this._super("PanelItemWindowClock", "right");
+    },
+
+    create : function() {
+      this._super();
+
+      // Start clock
+      this.clock_interval = setInterval(function() {
+        var d = new Date();
+        $(".PanelItemClock span").html(sprintf("%02d/%02d/%02d %02d:%02s", d.getDate(), d.getMonth(), d.getYear(), d.getHours(), d.getMinutes()));
+      }, 500);
+
+    },
+
+
+    destroy : function() {
+      if ( this.clock_interval ) {
+        clearInterval(this.clock_interval);
+      }
+
+      this._super();
+    }
+  });
+
+
+  /////////////////////////////////////////////////////////////////////////////
   // WINDOW
   /////////////////////////////////////////////////////////////////////////////
 
