@@ -1,10 +1,15 @@
 <IfModule mod_headers.c>
   <FilesMatch "\.(js|css)$">
+    # Never
     Header unset Cache-Control
     Header unset ETag
     Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
     Header set Pragma "no-cache"
     Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+  </FilesMatch>
+  <FilesMatch "\.(jpg|jpeg|png|gif|swf)$">
+    # 1 Week
+    Header set Cache-Control "max-age=604800, public"
   </FilesMatch>
 </IfModule>
 
