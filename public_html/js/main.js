@@ -1594,7 +1594,9 @@
         // Events
         el.bind('mousedown', function(ev) {
           desktop.focusWindow(self);
-          ev.stopPropagation();
+          if ( ev.which > 1 ) { // Menu only NOTE
+            ev.stopPropagation();
+          }
         });
         if ( this.is_maximizable ) {
           el.find(".WindowTopInner").dblclick(function() {
