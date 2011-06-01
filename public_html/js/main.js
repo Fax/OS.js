@@ -1563,17 +1563,17 @@
 
           el.find(".WindowTopInner img").click(function(ev) {
             API.application.context_menu(ev, [
-              {"title" : (self.is_maximized ? "Restore" : "Maximize"), "disabled" : !self.is_maximizable, "method" : function() {
+              {"title" : (self.is_maximized ? "Restore" : "Maximize"), "icon" : "actions/window_fullscreen.png", "disabled" : !self.is_maximizable, "method" : function() {
                 if ( self.is_maximizable ) {
                   el.find(".ActionMaximize").click();
                 }
               }},
-              {"title" : (self.is_minimized ? "Show" : "Minimize"), "disabled" : !self.is_minimizable, "method" : function() {
+              {"title" : (self.is_minimized ? "Show" : "Minimize"), "icon" : "actions/window_nofullscreen.png", "disabled" : !self.is_minimizable, "method" : function() {
                 if ( self.is_minimizable ) {
                   el.find(".ActionMinimize").click();
                 }
               }},
-              {"title" : "Close", "disabled" : !self.is_closable, "method" : function() {
+              {"title" : "Close", "disabled" : !self.is_closable, "icon" : "actions/window-close.png", "method" : function() {
                 if ( self.is_closable ) {
                   el.find(".ActionClose").click();
                 }
