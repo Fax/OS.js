@@ -631,6 +631,40 @@
         this.stack = [];
         this.panel = null;
         this.running = false;
+
+        $("#Desktop").mousedown(function(ev) {
+          var t = ev.target || ev.srcElement;
+
+          if ( !t || !t.id == "Desktop" ) {
+            return true;
+          }
+
+          var ret = API.application.context_menu(ev, [
+            {"title" : "Desktop", "disabled" : true, "attribute" : "checked"},
+            {"title" : "Change wallpaper", "method" : function() {
+              var dir = _Settings._get("desktop.wallpaper.path");
+              if ( dir ) {
+                var tmp = dir.split("/");
+                if ( tmp.length > 1 ) {
+                  tmp.pop();
+                }
+                dir = tmp.join("/");
+              } else {
+                dir = "/";
+              }
+              API.system.dialog_file(function(fname) {
+                _Settings._set("desktop.wallpaper.path", fname);
+                _Desktop.applySettings();
+              }, ["image/*"], "open", dir);
+            }}
+
+          ], $(this), 3, true);
+
+          ev.preventDefault();
+
+          return ret;
+        });
+
       },
 
       destroy : function() {
@@ -1560,12 +1594,17 @@
         // Events
         el.bind('mousedown', function(ev) {
           desktop.focusWindow(self);
+          ev.stopPropagation();
         });
         if ( this.is_maximizable ) {
           el.find(".WindowTopInner").dblclick(function() {
             el.find(".ActionMaximize").click();
           });
         }
+
+        el.find(".WindowTop, .WindowMenu, .WindowBottom").bind("contextmenu",function(e) {
+          return false;
+        });
 
         if ( this.is_closable ) {
           el.find(".ActionClose").click(function() {
