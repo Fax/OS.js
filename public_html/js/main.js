@@ -622,7 +622,37 @@
 
       run : function(settings) {
         this.applySettings();
+
+        var dock_items = [
+          {
+            "title"  : "About",
+            "icon"   : "/img/icons/16x16/actions/gtk-about.png",
+            "launch" : "SystemAbout"
+          },
+          {
+            "title"  : "System Settings",
+            "icon"   : "/img/icons/16x16/categories/applications-system.png",
+            "launch" : "SystemSettings"
+          },
+          {
+            "title"  : "User Information",
+            "icon"   : "/img/icons/16x16/apps/user-info.png",
+            "launch" : "SystemUser"
+          },
+          {
+            "title"  : "Save and Quit",
+            "icon"   : "/img/icons/16x16/actions/gnome-logout.png",
+            "launch" : "SystemLogout"
+          }
+        ];
+
         this.panel = new Panel();
+        this.panel.addItem(new PanelItemMenu());
+        this.panel.addItem(new PanelItemSeparator());
+        this.panel.addItem(new PanelItemWindowList());
+        this.panel.addItem(new PanelItemClock(), "right");
+        this.panel.addItem(new PanelItemSeparator(), "right");
+        this.panel.addItem(new PanelItemDock(dock_items), "right");
 
         API.session.restore();
       },
@@ -769,8 +799,6 @@
 
   })();
 
-  var DesktopConsole = null; // TODO
-
   /////////////////////////////////////////////////////////////////////////////
   // PANEL
   /////////////////////////////////////////////////////////////////////////////
@@ -781,54 +809,8 @@
       var self = this;
 
       this.pos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
-      this.$element = $("#Panel").show();
-
-      // Fill menu
-      var o;
-      var apps = _Settings._get("system.app.registered", true);
-      var menu_items = [];
-      for ( var a in apps ) {
-        if ( apps.hasOwnProperty(a) ) {
-          o = apps[a];
-          (function(apn) {
-            menu_items.push({
-              "title" : o.title,
-              "method" : function() {
-                API.system.launch(apn);
-              },
-              "icon" : o.icon
-            });
-          })(a);
-        }
-      }
-
-      $(".PanelItemMenu").click(function(ev) {
-        ev.preventDefault();
-        ev.stopPropagation();
-
-        return API.application.context_menu(ev, menu_items, $(this), 1);
-      });
-
-
-      // Start clock
-      this.clock_interval = setInterval(function() {
-        var d = new Date();
-        $(".PanelItemClock span").html(sprintf("%02d/%02d/%02d %02d:%02s", d.getDate(), d.getMonth(), d.getYear(), d.getHours(), d.getMinutes()));
-      }, 500);
-
-      // Static About dialog
-      $(".PanelItemMenu li, .PanelItemLauncher").click(function(ev) {
-        var app = $(this).find("span").attr("class").replace("launch_", "");
-        if ( app == "About" ) {
-          $("#DialogAbout").show();
-          $("#DialogAbout").css({
-            "top" : (($(document).height() / 2) - ($("#DialogAbout").height() / 2)) + "px",
-            "left" : (($(document).width() / 2) - ($("#DialogAbout").width() / 2)) + "px"
-          });
-        } else {
-          API.system.launch(app);
-        }
-      });
+      this.$element = $("#Panel").html("").show();
+      this.items = [];
 
       // Panel item dragging
       var oldPos = {'top' : 0, 'left' : 0};
@@ -870,53 +852,57 @@
     },
 
     destroy : function() {
-      if ( this.clock_interval ) {
-        clearInterval(this.clock_interval);
+      for ( var i = 0; i < this.items.length; i++ ) {
+        this.items[i].destroy();
       }
+      this.items = null;
       this.$element.empty().remove();
     },
 
+    // FIXME: Generic handler
     redraw : function(desktop, win, remove) {
-      var self = this;
-
-      var id = win.$element.attr("id") + "_Shortcut";
-
-      if ( remove ) {
-        $("#" + id).empty().remove();
-      } else {
-
-        if ( !document.getElementById(id) ) {
-          var el = $("<div class=\"PanelItem Padded PanelItemWindow\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div>");
-          el.find("img").attr("src", "/img/icons/16x16/" + win.icon);
-          el.find("span").html(win.title);
-          el.attr("id", id);
-
-          if ( win.current ) {
-            el.addClass("Current");
-          }
-
-          (function(vel, wwin) {
-            vel.click(function() {
-              desktop.focusWindow(wwin);
-            });
-          })(el, win);
-
-          self.$element.find(".PanelWindowHolder").append(el);
-        }
-
-        if ( remove === undefined ) {
-          this.$element.find(".PanelItemWindow").removeClass("Current");
-          $("#" + id).addClass("Current");
-        }
+      var wpi = this.getItem("PanelItemWindowList", 0);
+      if ( wpi ) {
+        wpi.redraw(desktop, win, remove);
       }
     },
 
-    addItem : function() {
-
+    getItem : function(name, index) {
+      var results = [];
+      index = index >= 0 ? index : -1;
+      for ( var i = 0; i < this.items.length; i++ ) {
+        if ( this.items[i].name == name ) {
+          results.push(this.items[i]);
+        }
+      }
+      return results.length ? (index != -1 ? results[index] : results) : false;
     },
 
-    removeItem : function() {
+    addItem : function(i, pos) {
+      if ( i instanceof PanelItem ) {
+        this.items.push(i);
 
+        console.log("Panel", "Added item", i.name, i);
+
+        var el = i.create(pos);
+        if ( el ) {
+          this.$element.append(el);
+        }
+
+        return i;
+      }
+
+      return false;
+    },
+
+    removeItem : function(x) {
+      for ( var i = 0; i < this.items.length; i++ ) {
+        if ( this.items[i] === x ) {
+          this.items.splice(i, 1);
+          return true;
+        }
+      }
+      return false;
     }
 
   });
@@ -926,18 +912,22 @@
   /////////////////////////////////////////////////////////////////////////////
 
   var PanelItem = Class.extend({
-  
-    init : function(name, align)  {
+
+    init : function(name, align)  {
       this.name = name;
       this.align = align || "AlignLeft";
       this.$element = null;
     },
 
-    create : function() {
-      this.$element = $("<div></div>").attr("class", "PanelItem " + name);
-      if ( this.align == "right" ) {
-	this.$element.addClass("AlignRight");
+    create : function(pos) {
+      this.$element = $("<div></div>").attr("class", "PanelItem " + this.name);
+      if ( pos ) {
+        this.align = pos;
       }
+      if ( this.align == "right" ) {
+        this.$element.addClass("AlignRight");
+      }
+      return this.$element;
     },
 
     redraw : function() {
@@ -946,82 +936,62 @@
 
     destroy : function() {
       if ( this.$element ) {
-	this.$element.empty();
-	this.$element.remove();
+        this.$element.empty();
+        this.$element.remove();
       }
     }
 
   });
 
-  var PanelItemMenu = Class.extend({
-  
-    init : function()  {
+  var PanelItemMenu = PanelItem.extend({
+    init : function(title, icon, menu) {
       this._super("PanelItemMenu");
+      this.title = title || "Launch Application";
+      this.icon = icon || '/img/icons/16x16/categories/gnome-applications.png';
 
-      var o;
-      var apps = _Settings._get("system.app.registered", true);
-      var menu_items = [];
-      for ( var a in apps ) {
-        if ( apps.hasOwnProperty(a) ) {
-          o = apps[a];
-          (function(apn) {
-            menu_items.push({
-              "title" : o.title,
-              "method" : function() {
-                API.system.launch(apn);
-              },
-              "icon" : o.icon
-            });
-          })(a);
+      var menu_items = menu || null;
+      if ( menu_items === null ) {
+        var o;
+        var apps = _Settings._get("system.app.registered", true);
+        menu_items = [];
+        for ( var a in apps ) {
+          if ( apps.hasOwnProperty(a) ) {
+            o = apps[a];
+            (function(apn) {
+              menu_items.push({
+                "title" : o.title,
+                "method" : function() {
+                  API.system.launch(apn);
+                },
+                "icon" : o.icon
+              });
+            })(a);
+          }
         }
       }
 
       this.menu = menu_items;
     },
 
-    create : function() {
-      this._super();
-    },
-
-    redraw : function(desktop, win, remove) {
+    create : function(pos) {
       var self = this;
+      var el = this._super(pos);
+      var img = $("<img src=\"" + this.icon + "\" title=\"" + this.title + "\" />");
+      $(el).append(img);
 
-      var id = win.$element.attr("id") + "_Shortcut";
+      $(el).click(function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
 
-      if ( remove ) {
-        $("#" + id).empty().remove();
-      } else {
+        return API.application.context_menu(ev, self.menu, $(this), 1);
+      });
 
-        if ( !document.getElementById(id) ) {
-          var el = $("<div class=\"PanelItem Padded PanelItemWindow\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div>");
-          el.find("img").attr("src", "/img/icons/16x16/" + win.icon);
-          el.find("span").html(win.title);
-          el.attr("id", id);
-
-          if ( win.current ) {
-            el.addClass("Current");
-          }
-
-          (function(vel, wwin) {
-            vel.click(function() {
-              desktop.focusWindow(wwin);
-            });
-          })(el, win);
-
-          self.$element.find(".PanelWindowHolder").append(el);
-        }
-
-        if ( remove === undefined ) {
-          this.$element.find(".PanelItemWindow").removeClass("Current");
-          $("#" + id).addClass("Current");
-        }
-      }
+      return el;
     },
-
 
     destroy : function() {
       if ( this.menu ) {
-	this.menu = null;
+        this.menu = null;
       }
       this._super();
     }
@@ -1029,13 +999,12 @@
   });
 
   var PanelItemSeparator = PanelItem.extend({
-  
-    init : function()  {
+    init : function() {
       this._super("PanelItemSeparator");
     },
 
-    create : function() {
-      this._super();
+    create : function(pos) {
+      return this._super(pos);
     },
 
 
@@ -1046,13 +1015,47 @@
   });
 
   var PanelItemWindowList = PanelItem.extend({
-  
-    init : function()  {
+    init : function() {
       this._super("PanelItemWindowList", "left");
     },
 
-    create : function() {
-      this._super();
+    create : function(pos) {
+      return this._super(pos);
+    },
+
+    redraw : function(desktop, win, remove) {
+      var self = this;
+
+      var id = win.$element.attr("id") + "_Shortcut";
+
+      if ( remove ) {
+        $("#" + id).empty().remove();
+      } else {
+
+        if ( !document.getElementById(id) ) {
+          var el = $("<div class=\"PanelItem Padded PanelItemWindow\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div>");
+          el.find("img").attr("src", "/img/icons/16x16/" + win.icon);
+          el.find("span").html(win.title);
+          el.attr("id", id);
+
+          if ( win.current ) {
+            el.addClass("Current");
+          }
+
+          (function(vel, wwin) {
+            vel.click(function() {
+              desktop.focusWindow(wwin);
+            });
+          })(el, win);
+
+          self.$element.append(el);
+        }
+
+        if ( remove === undefined ) {
+          this.$element.find(".PanelItemWindow").removeClass("Current");
+          $("#" + id).addClass("Current");
+        }
+      }
     },
 
 
@@ -1061,21 +1064,25 @@
     }
   });
 
-  var PanelItemWindowClock = PanelItem.extend({
-  
-    init : function()  {
+  var PanelItemClock = PanelItem.extend({
+    init : function() {
       this._super("PanelItemWindowClock", "right");
     },
 
-    create : function() {
-      this._super();
+    create : function(pos) {
+      var ret = this._super(pos);
+      $(ret).append("<span></span>");
+
+      var d = new Date();
+      $(ret).find("span").html(sprintf("%02d/%02d/%02d %02d:%02s", d.getDate(), d.getMonth(), d.getYear(), d.getHours(), d.getMinutes()));
 
       // Start clock
       this.clock_interval = setInterval(function() {
         var d = new Date();
-        $(".PanelItemClock span").html(sprintf("%02d/%02d/%02d %02d:%02s", d.getDate(), d.getMonth(), d.getYear(), d.getHours(), d.getMinutes()));
+        $(ret).find("span").html(sprintf("%02d/%02d/%02d %02d:%02s", d.getDate(), d.getMonth(), d.getYear(), d.getHours(), d.getMinutes()));
       }, 500);
 
+      return ret;
     },
 
 
@@ -1086,6 +1093,49 @@
 
       this._super();
     }
+  });
+
+  var PanelItemDock = PanelItem.extend({
+    init : function(items) {
+      this._super("PanelItemDoc");
+      this.items = items || [];
+    },
+
+    create : function(pos) {
+      var el = this._super(pos);
+
+      var e, o;
+      for ( var i = 0; i < this.items.length; i++ ) {
+        e = this.items[i];
+        o = $("<div class=\"PanelItem PanelItemLauncher\"><span class=\"\"><img alt=\"\" src=\"/img/blank.gif\" title=\"\" ></span></div>");
+        o.find("span").addClass("launch_" + e.launch);
+        o.find("img").attr("src", e.icon);
+        o.find("img").attr("title", e.title);
+        el.append(o);
+      }
+
+      $(el).find(".PanelItemLauncher").click(function(ev) {
+        var app = $(this).find("span").attr("class").replace("launch_", "");
+        if ( app == "About" ) {
+          $("#DialogAbout").show();
+          $("#DialogAbout").css({
+            "top" : (($(document).height() / 2) - ($("#DialogAbout").height() / 2)) + "px",
+            "left" : (($(document).width() / 2) - ($("#DialogAbout").width() / 2)) + "px"
+          });
+        } else {
+          API.system.launch(app);
+        }
+      });
+
+
+      return el;
+    },
+
+
+    destroy : function() {
+      this._super();
+    }
+
   });
 
 

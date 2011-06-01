@@ -1,6 +1,8 @@
 /**
  * Application: Draw
  *
+ * TODO: Waiting when loading images
+ *
  * http://hacks.mozilla.org/2009/06/pushing-pixels-with-canvas/
  * http://beej.us/blog/2010/02/html5s-canvas-part-ii-pixel-manipulation/
  * https://developer.mozilla.org/En/Canvas_tutorial/Applying_styles_and_colors

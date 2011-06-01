@@ -128,10 +128,9 @@ input.Disabled {
   vertical-align : middle;
 }
 
-/*
 .PanelItemWindow {
+  margin : 0;
 }
-  */
 .PanelItemWindow img {
   vertical-align : middle;
   margin-right : 5px;
@@ -146,15 +145,17 @@ input.Disabled {
 
 }
 
-.PanelItemLauncher {
-
-}
   */
+.PanelItemLauncher {
+  margin : 0;
+  margin-left : 5px;
+  margin-right : 5px;
+}
 .PanelItemLauncher img {
-  padding : 2px;
+  vertical-align : middle;
 }
 
-.PanelWindowHolder {
+.PanelWindowList {
   overflow : hidden;
 }
 
