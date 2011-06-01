@@ -22,8 +22,6 @@ if ( !($json = $wm->doPOST($_POST)) === false ) {
   die($json);
 }
 
-$now = new DateTime();
-$timestamp = $now->format("d/m/Y h:i:s"); // TODO: Timezone
 
 if ( !ENV_PRODUCTION ) {
   header("Expires: Fri, 01 Jan 2010 05:00:00 GMT");

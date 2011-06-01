@@ -15,6 +15,7 @@ define("PROJECT_VERSION", "0.2");
 
 // Environment
 define("ENV_PRODUCTION", false);
+define("DEFAULT_TIMEZONE", "Europe/Oslo");
 
 // Path definitions
 define("PATH_PROJECT",           dirname(__FILE__));

@@ -29,11 +29,22 @@ require "apps/ApplicationViewer.class.php";
 class WindowManager
 {
 
+  protected $_oTime = null;
+  protected $_oZone = null;
   protected static $__Instance;
 
   protected function __construct() {
-    date_default_timezone_set("Europe/Oslo");
+
+    $user       = $this->getUser();
+    $zone       = $user->getTimezone();
+    $tz         = new DateTimeZone($zone);
+    $now        = new DateTime("now", $tz);
+
+    date_default_timezone_set($zone);
     session_start();
+
+    $this->_oTime = $now;
+    $this->_oZone = $tz;
   }
 
   public static function initialize() {

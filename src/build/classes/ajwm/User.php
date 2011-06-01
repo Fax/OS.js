@@ -96,4 +96,11 @@ class User extends BaseUser {
     return Utilities::date_diff(parent::getLastActivityOn(), new DateTime());
   }
 
+  public final function getTimezone() {
+    if ( !($tz = parent::getTimezone()) ) {
+      return DEFAULT_TIMEZONE;
+    }
+    return $tz;
+  }
+
 } // User

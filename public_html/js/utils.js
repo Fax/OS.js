@@ -329,3 +329,9 @@ function hexFromRGB(r, g, b) {
   });
   return hex.join( "" ).toUpperCase();
 }
+
+function TimezoneOffset(off) {
+  var now = new Date();
+  return new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (off * 3600000));
+}
+
