@@ -31,6 +31,7 @@ class DesktopApplication
   protected $is_minimizable  = true;
   protected $is_maximizable  = true;
   protected $is_closable     = true;
+  protected $is_orphan       = false;
   protected $width           = 500;
   protected $height          = 300;
   protected $gravity         = "";
@@ -63,6 +64,7 @@ class DesktopApplication
       "is_minimizable"  => $this->is_minimizable,
       "is_maximizable"  => $this->is_maximizable,
       "is_closable"     => $this->is_closable,
+      "is_orphan"       => $this->is_orphan,
       "resources"       => $this->resources,
       "width"           => $this->width,
       "height"          => $this->height,

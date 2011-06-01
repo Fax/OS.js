@@ -93,6 +93,7 @@ EOHTML;
     $this->height = 200;
     $this->is_maximizable = false;
     $this->is_resizable = false;
+    $this->is_orphan = true;
 
     parent::__construct(self::APP_TITLE, self::APP_ICON, self::APP_HIDDEN);
   }

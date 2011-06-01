@@ -52,6 +52,7 @@ EOHTML;
     $this->is_scrollable = false;
     $this->is_minimizable = false;
     $this->is_maximizable = false;
+    $this->is_orphan = true;
 
     parent::__construct(self::APP_TITLE, self::APP_ICON, self::APP_HIDDEN);
   }

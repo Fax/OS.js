@@ -1,5 +1,5 @@
 <IfModule mod_headers.c>
-  <FilesMatch "\.(js|css)$">
+  <FilesMatch "\.(php|js|css)$">
     # Never
     Header unset Cache-Control
     Header unset ETag

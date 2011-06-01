@@ -211,6 +211,17 @@
         }
         attrs = attrs || {};
 
+        var wins = _Desktop.stack;
+        for ( var i = 0; i < wins.length; i++ ) {
+          if ( wins[i].app && wins[i].app.name == app_name ) {
+            if ( wins[i].is_orphan ) {
+              console.log("API launch denied", "is_orphan");
+              _Desktop.focusWindow(wins[i]);
+              return;
+            }
+          }
+        }
+
         console.log("API launching", app_name, args);
         _Desktop.addWindow(new Window(app_name, false, args, attrs));
       },
@@ -1425,6 +1436,7 @@
       this.is_minimizable = this.dialog ? false : true;
       this.is_sessionable = this.dialog ? false : true;
       this.is_closable    = true;
+      this.is_orphan      = false;
       this.width          = -1;
       this.height         = -1;
       this.top            = -1;
@@ -1825,6 +1837,7 @@
               self.is_maximizable = data.result.is_maximizable;
               self.is_minimizable = data.result.is_minimizable;
               self.is_closable    = data.result.is_closable;
+              self.is_orphan      = data.result.is_orphan;
               self.menu           = data.result.menu;
               self.statusbar      = data.result.statusbar;
               self.width          = parseInt(data.result.width, 10);
