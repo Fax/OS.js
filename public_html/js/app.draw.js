@@ -302,25 +302,22 @@ var ApplicationDraw = (function($, undefined) {
       var _mousemove = function(ev) {
         self.onMouseMove(ev, api);
       };
-
       var _mouseup = function(ev) {
+        $(self.canvas).unbind('mousemove', _mousemove);
         self.onMouseUp(ev, api);
-
-        $(document).unbind('mousemove', _mousemove);
-        $(document).unbind('mouseup', _mouseup);
+      };
+      var _mousedown = function(ev) {
+        $(self.canvas).bind('mousemove', _mousemove);
+        self.onMouseDown(ev, api);
       };
 
-      $(this.canvas).mousedown(function(ev) {
-        $(document).bind('mousemove', _mousemove);
-        $(document).bind('mouseup', _mouseup);
 
-        self.onMouseDown(ev, api);
-      });
+      $(self.canvas).bind('mousedown', _mousedown);
+      $(document).bind('mouseup', _mouseup);
 
-      $(this.canvas).click(function(ev) {
+      $(this.canvas).bind("click", function(ev) {
         self.onMouseClick(ev, api);
       });
-
       $(this.canvas).bind("contextmenu",function(e) {
         return false;
       });
