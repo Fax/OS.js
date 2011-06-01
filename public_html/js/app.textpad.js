@@ -47,6 +47,8 @@ var ApplicationTextpad = (function() {
 
     function _updateStatusbar(el) {
       var txt = $(el).find("textarea");
+      var pos = getTextareaCoordinates(txt);
+/*
       var val = txt.val();
 
       // Line count
@@ -66,8 +68,9 @@ var ApplicationTextpad = (function() {
         ccpos += lines[i].length;
       }
       var col = Math.abs(ccpos - cpos) - (row - 1);
-      var text = sprintf("Row: %d, Col: %d, Lines: %d", row, col, lcount);
+*/
 
+      var text = sprintf("Row: %d, Col: %d, Lines: %d, Characters: %d", pos.y, pos.x, pos.lines, pos.length);
       $(el).find(".WindowBottomInner").html(text);
     }
 

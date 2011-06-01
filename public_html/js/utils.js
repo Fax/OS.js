@@ -1,6 +1,7 @@
 /**
  * Simple function to call constructor by apply
  *
+ * @author Anonymous
  * @return Class/Function
  */
 function construct(/*name, */constructor, args) {
@@ -156,6 +157,7 @@ function str_pad (input, pad_length, pad_string, pad_type) {
 /**
  * sizeof() for Object/Array
  *
+ * @author Anonymous
  * @return int
  */
 function sizeof(foo) {
@@ -177,6 +179,7 @@ function sizeof(foo) {
 /**
  * foreach() for Object/Array
  *
+ * @author Anonymous
  * @return void
  */
 function forEach(self, callback) {
@@ -197,6 +200,7 @@ function forEach(self, callback) {
  * Serialize an object
  * For jQuery
  *
+ * @author Anonymous
  * @return Object
  */
 $.fn.serializeObject = function()
@@ -216,19 +220,10 @@ $.fn.serializeObject = function()
     return o;
 };
 
-jQuery.fn.swap = function(b){ 
-    b = jQuery(b)[0]; 
-    var a = this[0]; 
-    var t = a.parentNode.insertBefore(document.createTextNode(''), a); 
-    b.parentNode.insertBefore(a, b); 
-    t.parentNode.insertBefore(b, t); 
-    t.parentNode.removeChild(t); 
-    return this; 
-};
-
 /**
  * Get carret position inside a textarea
  *
+ * @author Anonymous
  * @return int
  */
 function getCaret(el) { 
@@ -255,6 +250,7 @@ function getCaret(el) {
 /**
  * Get the input selection of a textarea
  *
+ * @author Anonymous
  * @return {start, end}
  */
 function getInputSelection(el) {
@@ -306,6 +302,7 @@ function getInputSelection(el) {
 /**
  * Set area of text selection in textarea
  *
+ * @author Anonymous
  * @return void
  */
 function setSelectionRangeX(input, selectionStart, selectionEnd) {
@@ -326,16 +323,29 @@ function setSelectionRangeX(input, selectionStart, selectionEnd) {
 /**
  * Check if browser supports localStorage
  *
+ * @author Anders Evenrud <andersevenrud@gmail.com>
  * @return bool
  */
 function supports_html5_storage() {
   return ('localStorage' in window) && window['localStorage'] !== null;
 }
 
+/**
+ * Capitalize first letter
+ *
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @return String
+ */
 String.prototype.capitalize = function() {
   return this.charAt(0).toUpperCase() + this.slice(1);
 };
 
+/**
+ * Convert to RGB from HEX
+ *
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @return {red, green, blue}
+ */
 function RGBFromHex(hex) {
   var rgb = parseInt(hex.replace("#", ""), 16);
   return {
@@ -345,6 +355,12 @@ function RGBFromHex(hex) {
   };
 }
 
+/**
+ * Convert HEX from RGB
+ *
+ * @author Anonymous
+ * @return String
+ */
 function hexFromRGB(r, g, b) {
   var hex = [
     r.toString( 16 ),
@@ -360,8 +376,48 @@ function hexFromRGB(r, g, b) {
   return hex.join( "" ).toUpperCase();
 }
 
+/**
+ * Convert timezone
+ *
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @return Date
+ */
 function TimezoneOffset(off) {
   var now = new Date();
   return new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (off * 3600000));
 }
 
+/**
+ * Get textarea coordinates
+ *
+ * A slow, but accurate method for finding caret position
+ * with actual line/row index for dynamic textareas.
+ *
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @return {x,y, lines}
+ */
+function getTextareaCoordinates(txt) {
+  txt = $(txt);
+  var val = txt.val();
+
+  // Line count
+  var lines   = val.split("\n");
+  var lcount  = lines.length;
+
+  // Caret pos
+  var cpos    = getCaret(txt.get(0));
+
+  // Get row
+  var back    = cpos > 0 ? val.substr(0, cpos) : "";
+  var row     = back.split("\n").length;
+
+  // Get column
+  var ccpos = 0;
+  for ( var i = 0; i < row - 1; i++ ) {
+    ccpos += lines[i].length;
+  }
+  var col = Math.abs(ccpos - cpos) - (row - 1);
+  var text = sprintf("Row: %d, Col: %d, Lines: %d", row, col, lcount);
+
+  return {'x' : col, 'y' : row, 'lines' : lcount, 'length' : val.length};
+}
