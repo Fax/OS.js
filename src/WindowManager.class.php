@@ -76,6 +76,38 @@ class WindowManager
         "options" => Array("dark", "light"),
         "value"   => "dark"
       ),
+      "desktop.panel.items" => Array(
+        "type" => "list",
+        "items" => Array(
+          Array("PanelItemMenu", Array(), "left"),
+          Array("PanelItemSeparator", Array(), "left"),
+          Array("PanelItemWindowList", Array(), "left"),
+          Array("PanelItemClock", Array(), "right"),
+          Array("PanelItemSeparator", Array(), "right"),
+          Array("PanelItemDock", Array(Array(
+            Array(
+              "title"  => "About",
+              "icon"   => "actions/gtk-about.png",
+              "launch" => "SystemAbout"
+            ),
+            Array(
+              "title"  => "System Settings",
+              "icon"   => "categories/applications-system.png",
+              "launch" => "SystemSettings"
+            ),
+            Array(
+              "title"  => "User Information",
+              "icon"   => "apps/user-info.png",
+              "launch" => "SystemUser"
+            ),
+            Array(
+              "title"  => "Save and Quit",
+              "icon"   => "actions/gnome-logout.png",
+              "launch" => "SystemLogout"
+            )
+          )), "right"),
+        ),
+      ),
       "desktop.panel.position" => Array(
         "type" => "array",
         "options" => Array("top", "bottom"),

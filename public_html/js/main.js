@@ -19,7 +19,7 @@
   /**
    * Local settings
    */
-  var SETTING_REVISION = 2;
+  var SETTING_REVISION = 8;
   var ENABLE_LOGIN     = false;
   var ANIMATION_SPEED  = 400;
 
@@ -544,9 +544,19 @@
           if ( _avail.hasOwnProperty(i) ) {
             if ( !_avail[i].hidden ) {
               if ( force || !localStorage.getItem(i) ) {
-                localStorage.setItem(i, _avail[i].value);
+                if ( _avail[i].type == "array" ) {
+                  localStorage.setItem(i, (_avail[i].value === undefined) ? _avail[i].options : _avail[i].value);
+                } else if ( _avail[i].type == "list" ) {
+                  localStorage.setItem(i, JSON.stringify(_avail[i].items));
+                } else {
+                  localStorage.setItem(i, _avail[i].value);
+                }
               }
               _stores.push(i);
+            } else {
+              if ( force ) {
+                localStorage.removeItem(i);
+              }
             }
           }
         }
@@ -573,7 +583,7 @@
         //  if (e == QUOTA_EXCEEDED_ERR) { (try/catch) // TODO
       },
 
-      _get : function(k, keys) {
+      _get : function(k, keys, jsn) {
         var ls = undefined;
         if ( _avail[k] !== undefined ) {
           ls = localStorage.getItem(k);
@@ -586,7 +596,7 @@
             }
           }
         }
-        return ls;
+        return jsn ? (ls ? (JSON.parse(ls)) : ls) : ls;
       },
 
       getSession : function() {
@@ -643,43 +653,43 @@
         }
       },
 
-      run : function(settings) {
+      run : function() {
         if ( this.running ) {
           return;
         }
 
         this.applySettings();
 
-        var dock_items = [
-          {
-            "title"  : "About",
-            "icon"   : "/img/icons/16x16/actions/gtk-about.png",
-            "launch" : "SystemAbout"
-          },
-          {
-            "title"  : "System Settings",
-            "icon"   : "/img/icons/16x16/categories/applications-system.png",
-            "launch" : "SystemSettings"
-          },
-          {
-            "title"  : "User Information",
-            "icon"   : "/img/icons/16x16/apps/user-info.png",
-            "launch" : "SystemUser"
-          },
-          {
-            "title"  : "Save and Quit",
-            "icon"   : "/img/icons/16x16/actions/gnome-logout.png",
-            "launch" : "SystemLogout"
-          }
-        ];
-
         this.panel = new Panel();
-        this.panel.addItem(new PanelItemMenu());
-        this.panel.addItem(new PanelItemSeparator());
-        this.panel.addItem(new PanelItemWindowList());
-        this.panel.addItem(new PanelItemClock(), "right");
-        this.panel.addItem(new PanelItemSeparator(), "right");
-        this.panel.addItem(new PanelItemDock(dock_items), "right");
+        var items = _Settings._get("desktop.panel.items", false, true);
+        var pavail = {
+          "PanelItemMenu" : function() {
+            return new PanelItemMenu();
+          },
+          "PanelItemSeparator" : function() {
+            return new PanelItemSeparator();
+          },
+          "PanelItemWindowList" : function() {
+            return new PanelItemWindowList();
+          },
+          "PanelItemClock" : function() {
+            return new PanelItemClock();
+          },
+          "PanelItemDock" : function() {
+            return new PanelItemDock(arguments[0]);
+          }
+        };
+
+        var el, iname, iargs, ialign;
+        for ( var i = 0; i < items.length; i++ ) {
+          el = items[i];
+          iname  = el[0];
+          iargs  = el[1];
+          ialign = el[2] || "left";
+
+          var item = pavail[iname].apply(this, iargs);
+          this.panel.addItem(item, ialign);
+        }
 
         API.session.restore();
 
@@ -1004,7 +1014,7 @@
     init : function(title, icon, menu) {
       this._super("PanelItemMenu");
       this.title = title || "Launch Application";
-      this.icon = icon || '/img/icons/16x16/categories/gnome-applications.png';
+      this.icon = '/img/icons/16x16/' + (icon || 'categories/gnome-applications.png');
 
       var menu_items = menu || null;
       if ( menu_items === null ) {
@@ -1189,7 +1199,7 @@
         e = this.items[i];
         o = $("<div class=\"PanelItem PanelItemLauncher\"><span class=\"\"><img alt=\"\" src=\"/img/blank.gif\" title=\"\" ></span></div>");
         o.find("span").addClass("launch_" + e.launch);
-        o.find("img").attr("src", e.icon);
+        o.find("img").attr("src", '/img/icons/16x16/' + e.icon);
         o.find("img").attr("title", e.title);
         el.append(o);
       }
