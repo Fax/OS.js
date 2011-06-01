@@ -307,7 +307,7 @@
 
             cm = new Menu(where);
             forEach(items, function(i, it) {
-              cm.create_item(it. title, it.icon, it.method, it.disabled, it.attribute === "checked");
+              cm.create_item(it. title, it.icon, it.method, it.disabled, it.attribute);
             });
 
             var off = mpos ? ({'left' : ev.pageX, 'top' : ev.pageY - 20}) : $(where).offset();
@@ -651,7 +651,7 @@
           }
 
           var ret = API.application.context_menu(ev, [
-            {"title" : "Desktop", "disabled" : true, "attribute" : "checked"},
+            {"title" : "Desktop", "disabled" : true, "attribute" : "header"},
             {"title" : "Change wallpaper", "method" : function() {
               var dir = _Settings._get("desktop.wallpaper.path");
               if ( dir ) {
@@ -943,7 +943,7 @@
       this.$element.mousedown(function(ev) {
 
         var ret = API.application.context_menu(ev, [
-          {"title" : "Panel", "disabled" : true, "attribute" : "checked"},
+          {"title" : "Panel", "disabled" : true, "attribute" : "header"},
           {"title" : "Add new item", "disabled" : true, "method" : function() {
           }}
 
@@ -1113,7 +1113,7 @@
       this.$element.mousedown(function(ev) {
 
         var ret = API.application.context_menu(ev, [
-          {"title" : self.named, "disabled" : true, "attribute" : "checked"},
+          {"title" : self.named, "disabled" : true, "attribute" : "header"},
           {"title" : (self.align == "left" ? "Align to right" : "Align to left"), "method" : function() {
             self.align = (self.align == "left") ? "right" : "left";
             self.update();
@@ -2066,7 +2066,7 @@
       }
     },
 
-    create_item : function(title, icon, method, disabled, checked) {
+    create_item : function(title, icon, method, disabled, aclass) {
       var self = this;
       var litem = $("<li><span><img alt=\"\" src=\"/img/blank.gif\" /></span></li>");
       if ( typeof method == "function" ) {
@@ -2076,13 +2076,15 @@
       }
       if ( icon ) {
         litem.find("img").attr("src", "/img/icons/16x16/" + icon);
+      } else {
+        litem.find("span").hide();
       }
       litem.append(title);
       if ( disabled ) {
         $(litem).addClass("Disabled");
       }
-      if ( checked ) {
-        $(litem).addClass("checked");
+      if ( aclass ) {
+        $(litem).addClass(aclass);
       }
 
       if ( method == "cmd_Close" ) {

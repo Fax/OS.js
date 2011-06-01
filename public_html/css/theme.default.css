@@ -133,6 +133,18 @@ textarea {
 .Menu li.checked {
   font-weight : bold;
 }
+.Menu li.header,
+.Menu li.header:hover {
+  font-weight : bold;
+  text-align : center;
+  background : #222;
+}
+.Menu li.header.Disabled {
+  color : #fff;
+}
+.Menu li.header span {
+  display : none;
+}
 
 .DialogContent.error {
   color : #ff0000;
