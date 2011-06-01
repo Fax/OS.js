@@ -14,7 +14,7 @@
 (function($, undefined) {
 
   // Override for browsers without console
-  if (!window.console) console = {log:function() {}, error:function(){}};
+  if (!window.console) console = {log:function() {}, info:function(){}, error:function(){}};
 
   /**
    * Local settings
@@ -55,7 +55,6 @@
    */
   var API = {
 
-    /*
     'loading' : {
       'show' : function() {
         $("#Loading").show();
@@ -63,7 +62,7 @@
 
       'hide' : function() {
         setTimeout(function() {
-          $("#LoadingBar").fadeOut(ANIMATION_SPEED);
+          $("#Loading").fadeOut(ANIMATION_SPEED);
         }, 100);
       },
 
@@ -73,7 +72,6 @@
         });
       }
     },
-    */
 
     //
     // API: USER INTEFACE
@@ -662,6 +660,8 @@
 
         this.applySettings();
 
+        API.loading.progress(30);
+
         // Create panel and items from localStorage
         this.panel = new Panel();
         var items = _Settings._get("desktop.panel.items", false, true);
@@ -680,11 +680,20 @@
           this.panel.addItem(item, ialign);
         }
 
+        API.loading.progress(40);
+
         setTimeout(function() {
           self.panel.update();
         },0);
 
         API.session.restore();
+
+        API.loading.progress(95);
+
+        setTimeout(function() {
+          API.loading.progress(100);
+          API.loading.hide();
+        },200);
 
         this.running = true;
       },
@@ -2638,6 +2647,10 @@
       return;
     }
 
+    if ( $("#Loading").length ) {
+      $("#LoadingBar").progressbar({"value" : 5});
+    }
+
     // Global touch-movment handler
     $(document).bind('touchmove', function(e) {
       e.preventDefault();
@@ -2716,7 +2729,10 @@
       $.post("/", {'ajax' : true, 'action' : 'init'}, function(data) {
         if ( data.success ) {
           _Settings = new SettingsManager(data.result.settings);
+          API.loading.progress(10);
+
           _Desktop = new Desktop();
+          API.loading.progress(15);
 
           _Desktop.run();
         } else {

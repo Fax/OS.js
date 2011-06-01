@@ -95,7 +95,7 @@ header("Content-Type: text/html; charset=utf-8");
 </div>
 
 <!-- Loading -->
-<div id="Loading" style="display:none">
+<div id="Loading">
   <div id="LoadingBar"></div>
 </div>
 

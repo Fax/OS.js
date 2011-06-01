@@ -21,6 +21,14 @@ input.Disabled {
   background : #e6e6e6;
 }
 
+#Loading {
+  background : #222;
+  color : #fff;
+}
+#LoadingBar {
+  background : #555;
+}
+
 #ContextRectangle {
   margin : -1px;
   background : #eee;
