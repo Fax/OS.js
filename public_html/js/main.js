@@ -1,9 +1,7 @@
 /**
  * JavaScript Window Manager
  *
- * TODO: jQuery UI Stacking ???
  * TODO: Finish Login screen
- * TODO: PanelItem etc
  *
  * Creates a desktop environment inside the browser.
  * Applications can be loaded via the server.
@@ -18,16 +16,26 @@
   // Override for browsers without console
   if (!window.console) console = {log:function() {}, error:function(){}};
 
+  /**
+   * Local settings
+   */
   var SETTING_REVISION = 2;
   var ENABLE_LOGIN     = false;
   var ANIMATION_SPEED  = 400;
 
+  /**
+   * Local references
+   */
   var _Resources       = null;
   var _Settings        = null;
   var _Desktop         = null;
   var _Window          = null;
   var _TopIndex        = 11;
 
+  /**
+   * NULL references
+   * @return void
+   */
   function __null() {
     _Resources         = null;
     _Settings          = null;
@@ -40,6 +48,10 @@
   // PUBLIC API
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Public API
+   * @object
+   */
   var API = {
 
     /*
@@ -61,6 +73,10 @@
       }
     },
     */
+
+    //
+    // API: USER INTEFACE
+    //
 
     'ui' : {
       'cursor' : (function() {
@@ -148,35 +164,11 @@
 
         };
       })()
-      /*
-      (function() {
-
-        function _rectangle(x1, y1, x2, y2) {
-          console.log(arguments.length, arguments);
-          if ( arguments.length == 4 ) {
-          } else if ( arguments.length == 2 ) {
-          } else {
-          }
-        }
-
-        return function(action, ev) {
-          if ( action == "show" ) {
-            if ( !rect ) {
-              _rectangle(ev.clientX, ev.clientY);
-            }
-          } else if ( action == "update" ) {
-            if ( rect ) {
-              _rectangle(ev.clientX, ev.clientY, startX, startY);
-            }
-          } else {
-            if ( rect ) {
-              _rectangle();
-            }
-          }
-        };
-      })()
-      */
     },
+
+    //
+    // API: SYSTEM
+    //
 
     'system' : {
       'run' : function(path, mime) {
@@ -267,6 +259,10 @@
       }
     },
 
+    //
+    // API: APPLICATION
+    //
+
     'application' : {
       'context_menu' : (function() {
 
@@ -331,6 +327,10 @@
       })()
     },
 
+    //
+    // API: USER
+    //
+
     'user' : {
       'settings' : {
         'save' : function(settings) {
@@ -351,6 +351,10 @@
         API.session.shutdown();
       }
     },
+
+    //
+    // API: SESSION
+    //
 
     'session' : {
       'save' : function(save) {
@@ -412,6 +416,12 @@
   // MANAGERS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Resource Manager
+   * Takes care of CSS, JavaScript loading etc.
+   *
+   * @class
+   */
   var ResourceManager = (function() {
 
     var _aResources = [];
@@ -507,6 +517,12 @@
   })();
 
 
+  /**
+   * SettingsManager
+   * Uses localSettings (WebStorage) to handle session data
+   *
+   * @class
+   */
   var SettingsManager = (function() {
 
     var _avail = {};
@@ -589,6 +605,12 @@
   // DESKTOP
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Desktop
+   * The desktop containing all elements
+   *
+   * @class
+   */
   var Desktop = (function() {
 
     var _oldTheme = null;
@@ -803,6 +825,12 @@
   // PANEL
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Panel
+   * Panels can be added to desktop. Contains PanelItem(s) or Widgets
+   *
+   * @class
+   */
   var Panel = Class.extend({
 
     init : function() {
@@ -911,6 +939,12 @@
   // PANEL ITEMS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * PanelItem
+   * Basis for a PanelItem
+   *
+   * @class
+   */
   var PanelItem = Class.extend({
 
     init : function(name, align)  {
@@ -943,6 +977,12 @@
 
   });
 
+
+  /**
+   * PanelItem: PanelItemMenu
+   *
+   * @class
+   */
   var PanelItemMenu = PanelItem.extend({
     init : function(title, icon, menu) {
       this._super("PanelItemMenu");
@@ -998,6 +1038,11 @@
 
   });
 
+  /**
+   * PanelItem: PanelItemSeparator
+   *
+   * @class
+   */
   var PanelItemSeparator = PanelItem.extend({
     init : function() {
       this._super("PanelItemSeparator");
@@ -1014,6 +1059,12 @@
 
   });
 
+
+  /**
+   * PanelItem: PanelItemWindowList
+   *
+   * @class
+   */
   var PanelItemWindowList = PanelItem.extend({
     init : function() {
       this._super("PanelItemWindowList", "left");
@@ -1064,6 +1115,12 @@
     }
   });
 
+
+  /**
+   * PanelItem: PanelItemClock
+   *
+   * @class
+   */
   var PanelItemClock = PanelItem.extend({
     init : function() {
       this._super("PanelItemWindowClock", "right");
@@ -1095,6 +1152,12 @@
     }
   });
 
+
+  /**
+   * PanelItem: PanelItemDock
+   *
+   * @class
+   */
   var PanelItemDock = PanelItem.extend({
     init : function(items) {
       this._super("PanelItemDoc");
@@ -1143,6 +1206,13 @@
   // WINDOW
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Window
+   * Basis for an Application or Dialog.
+   * This class does all the loading
+   *
+   * @class
+   */
   var Window = Class.extend({
 
     init : function(name, dialog, argv, attrs) {
@@ -1732,6 +1802,12 @@
   // MENU
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Menu
+   * Menu for Window and Context
+   *
+   * @class
+   */
   var Menu = Class.extend({
 
     init : function(att_window) {
@@ -1792,6 +1868,12 @@
   // DIALOG
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Dialog
+   * Used for Alert and Confirm messages etc.
+   *
+   * @class
+   */
   var Dialog = Window.extend({
 
     init : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
@@ -1838,6 +1920,12 @@
   // OPERATION DIALOG
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * OperationDialog
+   * Basis for extended variant of dialogs with interactions.
+   *
+   * @class
+   */
   var OperationDialog = Window.extend({
 
     init : function(type) {
@@ -1870,6 +1958,12 @@
 
   });
 
+  /**
+   * OperationDialog: ColorOperationDialog
+   * Color swatch, color picking etc.
+   *
+   * @class
+   */
   var ColorOperationDialog = OperationDialog.extend({
 
     init : function(start_color, clb_finish) {
@@ -1927,6 +2021,12 @@
     }
   });
 
+  /**
+   * OperationDialog: CopyOperationDialog
+   * Status dialog for copy/move operations for files
+   *
+   * @class
+   */
   var CopyOperationDialog = OperationDialog.extend({
 
     init : function(src, dest, clb_finish, clb_progress, clb_cancel) {
@@ -1956,6 +2056,12 @@
 
   });
 
+  /**
+   * OperationDialog: RenameOperationDialog
+   * Rename file dialog
+   *
+   * @class
+   */
   var RenameOperationDialog = OperationDialog.extend({
 
     init : function(src, clb_finish) {
@@ -2012,6 +2118,12 @@
 
   });
 
+  /**
+   * OperationDialog: UploadOperationDialog
+   * Upload file dialog
+   *
+   * @class
+   */
   var UploadOperationDialog = OperationDialog.extend({
 
     init : function(path, clb_finish, clb_progress, clb_cancel) {
@@ -2089,6 +2201,12 @@
 
   });
 
+  /**
+   * OperationDialog: FileOperationDialog
+   * Used for Open and Save operations.
+   *
+   * @class
+   */
   var FileOperationDialog = OperationDialog.extend({
 
     init : function(type, argv, clb_finish, cur_dir) {
@@ -2296,6 +2414,12 @@
   // APPLICATION
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Application
+   * Basis for application (empty)
+   *
+   * @class
+   */
   var Application = (function() {
 
     return Class.extend({
