@@ -54,6 +54,10 @@ var ApplicationTextpad = (function() {
         var self = this;
         var el = app.$element;
 
+        app.focus_hook = function() {
+          el.find("textarea").focus();
+        };
+
         function _read_file(file) {
           if ( typeof file == "string" && file ) {
             api.system.call("read", file, function(result, error) {

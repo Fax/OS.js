@@ -1847,6 +1847,7 @@
     },
 
     focus : function() {
+      var focused = false;
       if ( !this.current ) {
         _TopIndex++;
 
@@ -1857,9 +1858,11 @@
         this.$element.css("z-index", _TopIndex);
         this.$element.addClass("Current");
 
-        if ( this.focus_hook ) {
-          this.focus_hook();
-        }
+        focused = true;
+      }
+
+      if ( this.focus_hook ) {
+        this.focus_hook(focused);
       }
       this.current = true;
     },
@@ -1872,6 +1875,11 @@
           this.blur_hook();
         }
       }
+
+      this.$element.find("textarea, input, select, button").each(function() {
+        $(this).blur();
+      });
+
       this.current = false;
     },
 
