@@ -838,7 +838,7 @@
       var self = this;
 
       this.pos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
-      this.$element = $("#Panel").html("").show();
+      this.$element = $("#Panel").show();
       this.items = [];
 
       // Panel item dragging
@@ -914,7 +914,7 @@
 
         var el = i.create(pos);
         if ( el ) {
-          this.$element.append(el);
+          this.$element.find("ul").append(el);
         }
 
         return i;
@@ -926,6 +926,10 @@
     removeItem : function(x) {
       for ( var i = 0; i < this.items.length; i++ ) {
         if ( this.items[i] === x ) {
+          i.destroy();
+
+          console.log("Panel", "Removed item", x.name, x);
+
           this.items.splice(i, 1);
           return true;
         }
@@ -954,7 +958,7 @@
     },
 
     create : function(pos) {
-      this.$element = $("<div></div>").attr("class", "PanelItem " + this.name);
+      this.$element = $("<li></li>").attr("class", "PanelItem " + this.name);
       if ( pos ) {
         this.align = pos;
       }

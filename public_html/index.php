@@ -83,7 +83,7 @@ header("Content-Type: text/html; charset=utf-8");
 
 <div id="Desktop">
   <!-- Panel -->
-  <div class="DesktopPanel AlignTop" id="Panel">&nbsp;</div>
+  <div class="DesktopPanel AlignTop" id="Panel"><ul></ul></div>
 
   <div id="ContextMenu">&nbsp;</div>
 
