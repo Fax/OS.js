@@ -21,6 +21,11 @@ input.Disabled {
   background : #e6e6e6;
 }
 
+textarea {
+  font-family : Monospace;
+  font-size : 12px;
+}
+
 #Loading {
   background : #222;
   color : #fff;

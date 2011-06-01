@@ -45,6 +45,7 @@ EOHTML;
     );
     $this->width = 400;
     $this->height = 400;
+    $this->statusbar = true;
 
     parent::__construct(self::APP_TITLE, self::APP_ICON, self::APP_HIDDEN);
   }

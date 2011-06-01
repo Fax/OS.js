@@ -27,9 +27,13 @@ var ApplicationTextpad = (function() {
       }, ["text/*"], "save");
     }
 
-    function _open(callback) {
+    function _open(callback, el) {
       api.system.dialog_file(function(fname) {
         callback(fname);
+
+        setTimeout(function() {
+          setSelectionRangeX($(el).find("textarea"), 0, 0);
+        }, 0);
       }, ["text/*"]);
     }
 
@@ -38,6 +42,33 @@ var ApplicationTextpad = (function() {
       argv['path'] = file;
 
       $(el).find(".WindowTopInner span").html(app.title + ": " + (file || "New file"));
+      _updateStatusbar(el);
+    }
+
+    function _updateStatusbar(el) {
+      var txt = $(el).find("textarea");
+      var val = txt.val();
+
+      // Line count
+      var lines   = val.split("\n");
+      var lcount  = lines.length;
+
+      // Caret pos
+      var cpos    = getCaret(txt.get(0));
+
+      // Get row
+      var back    = cpos > 0 ? val.substr(0, cpos) : "";
+      var row     = back.split("\n").length;
+
+      // Get column
+      var ccpos = 0;
+      for ( var i = 0; i < row - 1; i++ ) {
+        ccpos += lines[i].length;
+      }
+      var col = Math.abs(ccpos - cpos) - (row - 1);
+      var text = sprintf("Row: %d, Col: %d, Lines: %d", row, col, lcount);
+
+      $(el).find(".WindowBottomInner").html(text);
     }
 
     // APP
@@ -56,14 +87,20 @@ var ApplicationTextpad = (function() {
 
         app.focus_hook = function() {
           el.find("textarea").focus();
+          _updateStatusbar(el);
         };
 
         function _read_file(file) {
+          var txt = el.find("textarea");
           if ( typeof file == "string" && file ) {
             api.system.call("read", file, function(result, error) {
               if ( error === null ) {
-                app.$element.find("textarea").val(result);
+                txt.val(result);
                 _update(file, el);
+
+                setTimeout(function() {
+                  setSelectionRangeX(txt.get(0), 0, 0);
+                }, 0);
               } else {
                 _update(null, el);
               }
@@ -71,6 +108,9 @@ var ApplicationTextpad = (function() {
           } else {
             _update(null, el);
           }
+
+          _updateStatusbar(el);
+          txt.focus();
         }
 
         _read_file(argv['path']);
@@ -78,7 +118,7 @@ var ApplicationTextpad = (function() {
         app.setMenuItemAction("File", "cmd_Open", function() {
           _open(function(fname) {
             _read_file(fname);
-          });
+          }, el);
         });
 
         app.setMenuItemAction("File", "cmd_Save", function() {
@@ -98,6 +138,15 @@ var ApplicationTextpad = (function() {
         app.setMenuItemAction("File", "cmd_New", function() {
           app.$element.find("textarea").val("");
           _update(null, el);
+        });
+
+        $(el).find("textarea").mousedown(function(ev) {
+          _updateStatusbar(el);
+          ev.stopPropagation();
+        }).focus(function() {
+          _updateStatusbar(el);
+        }).keyup(function() {
+          _updateStatusbar(el);
         });
 
         this._super();
