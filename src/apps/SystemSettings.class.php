@@ -24,7 +24,7 @@ class SystemSettings
   public function __construct() {
 
     $rows = "";
-    $ignore = Array("desktop.panel.position");
+    $ignore = Array("desktop.panel.position", "desktop.panel.items");
 
     foreach ( WindowManager::getSettings() as $k => $v ) {
       if ( in_array($k, $ignore) )
