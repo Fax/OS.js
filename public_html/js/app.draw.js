@@ -110,13 +110,43 @@ var ApplicationDraw = (function($, undefined) {
     stroke : true,
 
     onMouseDown : function(ev, doc, api) {
+      var button    = (ev.which <= 1) ? 1 : 2;
+
       if ( this.type == "pencil" || this.type == "brush" ) {
         doc.context.beginPath();
         doc.context.moveTo(doc.draw_start[0], doc.draw_start[1]);
+
+        if ( button == 2 ) {
+          console.log('x');
+          doc.context.strokeStyle = Style.fill.hex;
+        }
       } else if ( this.type == "selection" ) {
         api.ui.rectangle.init(ev);
       }
     },
+
+    onMouseUp : function(ev, doc, api) {
+      var button    = (ev.which <= 1) ? 1 : 2;
+
+      if ( this.type == "pick" ) {
+        var startPosX = doc.draw_start[0];
+        var startPosY = doc.draw_start[1];
+        var color = doc.getPixelColor(startPosX, startPosY);
+
+        if ( ev.which === 1 ) {
+          Style.stroke = color;
+          $(doc.root).find(".color_Foreground").css("background-color", "#" + Style.stroke.hex);
+        } else {
+          Style.fill = color;
+          $(doc.root).find(".color_Background").css("background-color", "#" + Style.fill.hex);
+        }
+      } else if ( this.type == "pencil" || this.type == "brush" ) {
+        if ( button == 2 ) {
+          doc.context.strokeStyle = Style.stroke.hex;
+        }
+      }
+    },
+
     onMouseMove : function(ev, doc, api) {
       var startPosX = doc.draw_start[0];
       var startPosY = doc.draw_start[1];
@@ -231,21 +261,6 @@ var ApplicationDraw = (function($, undefined) {
         }
       }
     },
-    onMouseUp : function(ev, doc, api) {
-      if ( this.type == "pick" ) {
-        var startPosX = doc.draw_start[0];
-        var startPosY = doc.draw_start[1];
-        var color = doc.getPixelColor(startPosX, startPosY);
-
-        if ( ev.which === 1 ) {
-          Style.stroke = color;
-          $(doc.root).find(".color_Foreground").css("background-color", "#" + Style.stroke.hex);
-        } else {
-          Style.fill = color;
-          $(doc.root).find(".color_Background").css("background-color", "#" + Style.fill.hex);
-        }
-      }
-    },
 
     onMouseClick : function(ev, doc, api) {
       if ( this.type == "fill" ) {
@@ -284,15 +299,24 @@ var ApplicationDraw = (function($, undefined) {
         "left"     : "0px"
       });
 
+      var _mousemove = function(ev) {
+        self.onMouseMove(ev, api);
+      };
+
+      var _mouseup = function(ev) {
+        self.onMouseUp(ev, api);
+
+        $(document).unbind('mousemove', _mousemove);
+        $(document).unbind('mouseup', _mouseup);
+      };
+
       $(this.canvas).mousedown(function(ev) {
+        $(document).bind('mousemove', _mousemove);
+        $(document).bind('mouseup', _mouseup);
+
         self.onMouseDown(ev, api);
       });
-      $(this.canvas).mousemove(function(ev) {
-        self.onMouseMove(ev, api);
-      });
-      $(document).mouseup(function(ev) {
-        self.onMouseUp(ev, api);
-      });
+
       $(this.canvas).click(function(ev) {
         self.onMouseClick(ev, api);
       });

@@ -44,9 +44,11 @@ header("Content-Type: text/html; charset=utf-8");
   <title>Another JSWM</title>
 
   <!-- Compability -->
+<!--
   <meta http-equiv="X-UA-Compatible" content="IE=9" />
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css; charset=utf-8" />
+-->
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
   <!-- Vendor libraries -->
   <link rel="stylesheet" type="text/css" href="/css/ui-lightness/jquery-ui-1.8.13.custom.css" />

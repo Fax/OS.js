@@ -621,6 +621,7 @@
         this.$element = $("#Desktop");
         this.stack = [];
         this.panel = null;
+        this.running = false;
       },
 
       destroy : function() {
@@ -643,6 +644,10 @@
       },
 
       run : function(settings) {
+        if ( this.running ) {
+          return;
+        }
+
         this.applySettings();
 
         var dock_items = [
@@ -677,6 +682,8 @@
         this.panel.addItem(new PanelItemDock(dock_items), "right");
 
         API.session.restore();
+
+        this.running = true;
       },
 
       redraw : function() {
@@ -907,16 +914,18 @@
 
     addItem : function(i, pos) {
       if ( i instanceof PanelItem ) {
-        this.items.push(i);
 
         console.log("Panel", "Added item", i.name, i);
 
         var el = i.create(pos);
         if ( el ) {
+          el.attr("id", "PanelItem" + this.items.length);
           this.$element.find("ul").append(el);
-        }
 
-        return i;
+          this.items.push(i);
+
+          return i;
+        }
       }
 
       return false;
@@ -2504,6 +2513,7 @@
    * @ready()
    */
   $(window).ready(function() {
+
     if ( !supports_html5_storage() ) {
       alert("Your browser does not support WebStorage. Cannot continue...");
       return;
