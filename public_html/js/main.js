@@ -50,6 +50,7 @@
 
   /**
    * Public API
+   *
    * @object
    */
   var API = {
@@ -855,19 +856,18 @@
         stop : function() {
           self.$element.removeClass("Blend");
           API.ui.cursor("default");
-          var top = 0;
-          var bottom = $(document).height() - self.$element.height() - 5;
+          var middle = Math.round(($(document).height() - self.$element.height()) / 2);
+          var bottom = $(document).height() - self.$element.height();
           var pos = self.$element.offset();
-          if ( pos.top > top && pos.top < bottom ) {
-            self.$element.removeClass("Bottom");
-          } else {
-            self.$element.addClass("Bottom");
-          }
 
-          if ( pos.top <= top ) {
+          if ( pos.top <= middle ) {
             _Settings._set("desktop.panel.position", "top");
+            self.$element.removeClass("Bottom");
+            self.$element.css({"top" : "0px"});
           } else {
             _Settings._set("desktop.panel.position", "bottom");
+            self.$element.addClass("Bottom");
+            self.$element.css({"top" : "auto", "bottom" : "0px"});
           }
         }
       });
