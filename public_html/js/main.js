@@ -953,7 +953,7 @@
    * @class
    */
   var PanelItem = {};
-  _PanelItem = Class.extend({
+  var _PanelItem = Class.extend({
 
     init : function(name, align)  {
       this.name = name;
