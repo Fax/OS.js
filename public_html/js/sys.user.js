@@ -7,6 +7,7 @@
  */
 var SystemUser = (function() {
   return function(Application, app, api, argv) {
+
     var _SystemUser = Application.extend({
       init : function() {
         this._super("SystemUser");
@@ -44,11 +45,18 @@ var SystemUser = (function() {
         for ( var i = 0; i < localStorage.length; i++ ) {
           var key = localStorage.key(i);
           var item = $("<li><span></span><div></div></li>");
+          var type = api.user.settings.type(key);
+          var value = localStorage.getItem(key);
+
+          if ( type == "list" || key == "session" ) {
+            value = JSON.stringify(JSON.parse(value), null, '\t');
+          }
+
           item.find("span").html(key);
-          item.find("div").html(localStorage.getItem(key));
+          item.find("div").html(value).addClass("upper");
           item.click(function() {
-            $(this).find("div").toggle();
-            if ( $(this).find("div").is(":visible") ) {
+            $(this).find("div.upper").toggle();
+            if ( $(this).find("div.upper").is(":visible") ) {
               $(this).addClass("toggled");
             } else {
               $(this).removeClass("toggled");

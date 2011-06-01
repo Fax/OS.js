@@ -258,6 +258,10 @@ header("Content-Type: text/html; charset=utf-8");
   <?php print PROJECT_AUTHOR; ?>
 
   &lt;<?php print PROJECT_CONTACT; ?>&gt;
+
+  |
+
+  <a href="/help.html" target="_blank">help</a>
 </div>
 
 </body>

@@ -348,6 +348,10 @@
           _Desktop.applySettings();
         },
 
+        'type' : function(k) {
+          return _Settings.getType(k);
+        },
+
         'get' : function(k) {
           return _Settings._get(k);
         }
@@ -607,6 +611,10 @@
           }
         }
         return jsn ? (ls ? (JSON.parse(ls)) : ls) : ls;
+      },
+
+      getType : function(key) {
+        return (_avail[key] ? (_avail[key].type) : null);
       },
 
       getSession : function() {

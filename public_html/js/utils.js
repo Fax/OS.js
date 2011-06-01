@@ -420,3 +420,4 @@ function getTextareaCoordinates(txt) {
 
   return {'x' : col, 'y' : row, 'lines' : lcount, 'length' : len};
 }
+
