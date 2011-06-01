@@ -965,6 +965,11 @@
       if ( this.align == "right" ) {
         this.$element.addClass("AlignRight");
       }
+
+      this.$element.mousedown(function(ev) {
+        ev.preventDefault();
+      });
+
       return this.$element;
     },
 
@@ -1396,6 +1401,12 @@
         el.bind('mousedown', function(ev) {
           desktop.focusWindow(self);
         });
+        if ( this.is_maximizable ) {
+          el.find(".WindowTopInner").dblclick(function() {
+            console.log('x');
+            el.find(".ActionMaximize").click();
+          });
+        }
 
         if ( this.is_closable ) {
           el.find(".ActionClose").click(function() {

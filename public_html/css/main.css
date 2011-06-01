@@ -91,14 +91,14 @@ input.Disabled {
 .DesktopPanel ul {
   margin : 0;
   padding : 0;
+  height : 30px;
   list-style-type : none;
+  position : relative;
 }
-/*
 .DesktopPanel li {
-  margin : 0;
-  padding : 0;
+  display : block;
+  position : relative;
 }
-  */
 
 /*
 .PanelButton {
@@ -106,7 +106,8 @@ input.Disabled {
 }
 */
 
-.PanelItem {
+.PanelItem,
+.DesktopPanel .ui-state-highlight {
   float : left;
   height : 20px;
   line-height : 20px;
@@ -130,10 +131,9 @@ input.Disabled {
   float : right;
 }
 
-/*
 .PanelItemMenu {
+  width : 20px;
 }
-  */
 
 .PanelItemMenu img {
   vertical-align : middle;
@@ -152,11 +152,12 @@ input.Disabled {
 .PanelItemWindow.Current {
 }
 
+  */
 .PanelItemClock {
-
+  width : 90px;
+  text-align : center;
 }
 
-  */
 .PanelItemLauncher {
   margin : 0;
   margin-left : 5px;
