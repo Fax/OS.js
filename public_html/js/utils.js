@@ -397,27 +397,26 @@ function TimezoneOffset(off) {
  * @return {x,y, lines}
  */
 function getTextareaCoordinates(txt) {
-  txt = $(txt);
-  var val = txt.val();
+  var val    = txt.val();
+  var len    = val.length;
+  var row    = 0;
+  var col    = 0;
+  var lcount = 0;
 
-  // Line count
-  var lines   = val.split("\n");
-  var lcount  = lines.length;
+  if ( len ) {
+    var cpos  = getCaret(txt.get(0));                  // Caret pos
+    var lines = val.split("\n");                       // All lines
+    var back  = cpos > 0 ? val.substr(0, cpos) : "";   // ... Get text behind caret
+    row       = back.split("\n").length;               // ... Calculate row based on previous newlines
+    lcount    = lines.length;                          // Total line count
 
-  // Caret pos
-  var cpos    = getCaret(txt.get(0));
-
-  // Get row
-  var back    = cpos > 0 ? val.substr(0, cpos) : "";
-  var row     = back.split("\n").length;
-
-  // Get column
-  var ccpos = 0;
-  for ( var i = 0; i < row - 1; i++ ) {
-    ccpos += lines[i].length;
+    // Now calculate column. Loop through rows behind caret and count chars
+    var ccpos = 0;
+    for ( var i = 0; i < row - 1; i++ ) {
+      ccpos += lines[i].length;
+    }
+    col = Math.abs(ccpos - cpos) - (row - 1);
   }
-  var col = Math.abs(ccpos - cpos) - (row - 1);
-  var text = sprintf("Row: %d, Col: %d, Lines: %d", row, col, lcount);
 
-  return {'x' : col, 'y' : row, 'lines' : lcount, 'length' : val.length};
+  return {'x' : col, 'y' : row, 'lines' : lcount, 'length' : len};
 }
