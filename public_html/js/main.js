@@ -315,7 +315,6 @@
               $("#ContextMenu").css({"top" : (m - h - 40) + "px"});
             }
 
-
             ev.stopPropagation();
             ev.preventDefault();
 
@@ -1391,6 +1390,30 @@
           el.find(".WindowTopInner img").attr("src", "/img/icons/16x16/" + this.icon);
           el.find(".WindowContentInner").html(this.content);
 
+          el.find(".WindowTopInner img").click(function(ev) {
+            API.application.context_menu(ev, [
+              {"title" : (self.is_maximized ? "Restore" : "Maximize"), "disabled" : !self.is_maximizable, "method" : function() {
+                if ( self.is_maximizable ) {
+                  el.find(".ActionMaximize").click();
+                }
+              }},
+              {"title" : (self.is_minimized ? "Show" : "Minimize"), "disabled" : !self.is_minimizable, "method" : function() {
+                if ( self.is_minimizable ) {
+                  el.find(".ActionMinimize").click();
+                }
+              }},
+              {"title" : "Close", "disabled" : !self.is_closable, "method" : function() {
+                if ( self.is_closable ) {
+                  el.find(".ActionClose").click();
+                }
+              }}
+
+            ], $(this), 1);
+
+            ev.stopPropagation();
+            ev.preventDefault();
+          });
+
           $(el).find(".WindowMenu li.Top").click(function(ev) {
             var mmenu = $(this).find("span").html();
             return API.application.context_menu(ev, self.menus[mmenu], $(this), 1);
@@ -1403,7 +1426,6 @@
         });
         if ( this.is_maximizable ) {
           el.find(".WindowTopInner").dblclick(function() {
-            console.log('x');
             el.find(".ActionMaximize").click();
           });
         }
