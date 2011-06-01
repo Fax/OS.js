@@ -28,6 +28,18 @@ class SystemUser
   <div class="SystemUserLoading">
   </div>
   <div class="SystemUserInner">
+    <ul>
+      <li><a href="#tabs-1">Profile</a></li>
+      <li><a href="#tabs-2">Session</a></li>
+    </ul>
+    <div id="tabs-1">
+    </div>
+    <div id="tabs-2">
+      <div class="SessionData">
+        <ul class="SessionDataList">
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -41,11 +53,11 @@ EOHTML;
      */
 
     $this->is_scrollable = false;
-    $this->is_resizable = false;
+    $this->is_resizable = true;
     $this->is_maximizable = false;
     $this->is_orphan = true;
-    $this->width = 200;
-    $this->height = 170;
+    $this->width = 400;
+    $this->height = 250;
 
     parent::__construct(self::APP_TITLE, self::APP_ICON, self::APP_HIDDEN);
   }
