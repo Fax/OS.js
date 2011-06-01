@@ -660,25 +660,9 @@
 
         this.applySettings();
 
+        // Create panel and items from localStorage
         this.panel = new Panel();
         var items = _Settings._get("desktop.panel.items", false, true);
-        var pavail = {
-          "PanelItemMenu" : function() {
-            return new PanelItemMenu();
-          },
-          "PanelItemSeparator" : function() {
-            return new PanelItemSeparator();
-          },
-          "PanelItemWindowList" : function() {
-            return new PanelItemWindowList();
-          },
-          "PanelItemClock" : function() {
-            return new PanelItemClock();
-          },
-          "PanelItemDock" : function() {
-            return new PanelItemDock(arguments[0]);
-          }
-        };
 
         var el, iname, iargs, ialign;
         for ( var i = 0; i < items.length; i++ ) {
@@ -687,7 +671,8 @@
           iargs  = el[1];
           ialign = el[2] || "left";
 
-          var item = pavail[iname].apply(this, iargs);
+          //var item = new PanelItem[iname]();
+          var item = construct(PanelItem[iname], iargs);
           this.panel.addItem(item, ialign);
         }
 
@@ -923,7 +908,7 @@
     },
 
     addItem : function(i, pos) {
-      if ( i instanceof PanelItem ) {
+      if ( i instanceof _PanelItem ) {
 
         console.log("Panel", "Added item", i.name, i);
 
@@ -967,7 +952,8 @@
    *
    * @class
    */
-  var PanelItem = Class.extend({
+  var PanelItem = {};
+  _PanelItem = Class.extend({
 
     init : function(name, align)  {
       this.name = name;
@@ -1010,7 +996,7 @@
    *
    * @class
    */
-  var PanelItemMenu = PanelItem.extend({
+  PanelItem.PanelItemMenu = _PanelItem.extend({
     init : function(title, icon, menu) {
       this._super("PanelItemMenu");
       this.title = title || "Launch Application";
@@ -1070,7 +1056,7 @@
    *
    * @class
    */
-  var PanelItemSeparator = PanelItem.extend({
+  PanelItem.PanelItemSeparator = _PanelItem.extend({
     init : function() {
       this._super("PanelItemSeparator");
     },
@@ -1092,7 +1078,7 @@
    *
    * @class
    */
-  var PanelItemWindowList = PanelItem.extend({
+  PanelItem.PanelItemWindowList = _PanelItem.extend({
     init : function() {
       this._super("PanelItemWindowList", "left");
     },
@@ -1148,7 +1134,7 @@
    *
    * @class
    */
-  var PanelItemClock = PanelItem.extend({
+  PanelItem.PanelItemClock = _PanelItem.extend({
     init : function() {
       this._super("PanelItemWindowClock", "right");
     },
@@ -1185,7 +1171,7 @@
    *
    * @class
    */
-  var PanelItemDock = PanelItem.extend({
+  PanelItem.PanelItemDock = _PanelItem.extend({
     init : function(items) {
       this._super("PanelItemDoc");
       this.items = items || [];

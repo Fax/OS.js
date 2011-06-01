@@ -1,4 +1,24 @@
 /**
+ * Simple function to call constructor by apply
+ *
+ * @return Class/Function
+ */
+function construct(/*name, */constructor, args) {
+  function F() {
+    return constructor.apply(this, args);
+  }
+  F.prototype = constructor.prototype;
+  return new F();
+  /*
+  this[name] = function() {
+    return constructor.apply(this, args);
+  };
+  this[name].prototype = constructor.prototype;
+  return new this[name]();
+  */
+}
+
+/**
  * Simple JavaScript Inheritance
  * Inspired by base2 and Prototype
  *
