@@ -19,7 +19,7 @@
   /**
    * Local settings
    */
-  var SETTING_REVISION = 8;
+  var SETTING_REVISION = 12;
   var ENABLE_LOGIN     = false;
   var ANIMATION_SPEED  = 400;
 
@@ -278,8 +278,9 @@
           cm = null;
         }
 
-        return function(ev, items, where, which) {
+        return function(ev, items, where, which, mpos) {
           which = which || 3;
+          mpos = mpos || false;
 
           if ( inited === false ) {
             $(document).click(function(ev) {
@@ -300,7 +301,7 @@
               cm.create_item(it. title, it.icon, it.method, it.disabled, it.attribute === "checked");
             });
 
-            var off = $(where).offset();
+            var off = mpos ? ({'left' : ev.pageX, 'top' : ev.pageY - 20}) : $(where).offset();
             $("#ContextMenu").css(
               {
                 "left" :off.left + "px",
@@ -654,6 +655,7 @@
       },
 
       run : function() {
+        var self = this;
         if ( this.running ) {
           return;
         }
@@ -673,8 +675,14 @@
 
           //var item = new PanelItem[iname]();
           var item = construct(PanelItem[iname], iargs);
+          item._panel = this.panel;
+          item._index = i;
           this.panel.addItem(item, ialign);
         }
+
+        setTimeout(function() {
+          self.panel.update();
+        },0);
 
         API.session.restore();
 
@@ -873,6 +881,25 @@
         }
       });
 
+      $(this.$element).bind("contextmenu",function(e) {
+        e.preventDefault();
+        return false;
+      });
+
+      this.$element.mousedown(function(ev) {
+
+        var ret = API.application.context_menu(ev, [
+          {"title" : "Panel", "disabled" : true, "attribute" : "checked"},
+          {"title" : "Add new item", "disabled" : true, "method" : function() {
+          }}
+
+        ], $(this), 3, true);
+
+        ev.preventDefault();
+
+        return ret;
+      });
+
       if ( this.pos == "bottom" ) {
         this.$element.addClass("Bottom");
       } else {
@@ -894,6 +921,42 @@
       if ( wpi ) {
         wpi.redraw(desktop, win, remove);
       }
+    },
+
+    update : function() {
+      /*
+      var w_p = $(this.$element).width();
+      var l_c = 0;
+      var r_c = 0;
+
+      // Convert from float to absolute
+      var el, w;
+      for ( var i = 0; i < this.items.length; i++ ) {
+        el = this.items[i];
+        w = el.$element.outerWidth(true);
+        console.log(w, el.$element);
+
+        if ( el.align == "left" ) {
+          $(el.$element).css({
+            "position" : "absolute",
+            "float"    : "none",
+            "left"     : l_c + "px"
+          });
+
+          l_c += w;
+        } else {
+
+          $(el.$element).css({
+            "position" : "absolute",
+            "float"    : "none",
+            "right"    : r_c + "px"
+          });
+
+          r_c += w;
+        }
+      }
+      */
+
     },
 
     getItem : function(name, index) {
@@ -926,10 +989,25 @@
       return false;
     },
 
+    moveItem : function(x, p) {
+      var y = (p > 0) ? x._index + 1 : x._index - 1;
+      var del = this.items[y];
+      if ( del ) {
+        if ( p > 0 ) {
+          $(x.$element).insertAfter(this.items[y].$element);
+          return 0;
+        } else {
+          $(x.$element).insertBefore(this.items[y].$element);
+        }
+        return true;
+      }
+      return false;
+    },
+
     removeItem : function(x) {
       for ( var i = 0; i < this.items.length; i++ ) {
         if ( this.items[i] === x ) {
-          i.destroy();
+          x.destroy();
 
           console.log("Panel", "Removed item", x.name, x);
 
@@ -956,12 +1034,20 @@
   var _PanelItem = Class.extend({
 
     init : function(name, align)  {
-      this.name = name;
-      this.align = align || "AlignLeft";
+      this.name     = name;
+      this.named    = name;
+      this.align    = align || "AlignLeft";
+      this.expand   = false;
+      this.dynamic  = false;
+      this.orphan   = true;
+      this._index   = -1;
+      this._panel   = null;
       this.$element = null;
     },
 
     create : function(pos) {
+      var self = this;
+
       this.$element = $("<li></li>").attr("class", "PanelItem " + this.name);
       if ( pos ) {
         this.align = pos;
@@ -971,10 +1057,41 @@
       }
 
       this.$element.mousedown(function(ev) {
+
+        var ret = API.application.context_menu(ev, [
+          {"title" : self.named, "disabled" : true, "attribute" : "checked"},
+          {"title" : (self.align == "left" ? "Align to right" : "Align to left"), "method" : function() {
+            self.align = (self.align == "left") ? "right" : "left";
+            self.update();
+          }},
+          {"title" : "Move left", "method" : function() {
+            self._panel.moveItem(self, -1);
+          }},
+          {"title" : "Move right", "method" : function() {
+            self._panel.moveItem(self, 1);
+          }},
+          {"title" : "Remove", "method" : function() {
+            API.system.dialog("confirm", "Are you sure you want to remove this item?", null, function() {
+              self._panel.removeItem(self); // TODO: Save
+            });
+          }}
+
+        ], $(this));
+
         ev.preventDefault();
+
+        return ret;
       });
 
       return this.$element;
+    },
+
+    update : function() {
+      if ( this.align == "right" ) {
+        this.$element.addClass("AlignRight");
+      } else {
+        this.$element.removeClass("AlignRight");
+      }
     },
 
     redraw : function() {
@@ -999,6 +1116,7 @@
   PanelItem.PanelItemMenu = _PanelItem.extend({
     init : function(title, icon, menu) {
       this._super("PanelItemMenu");
+      this.named = "Launcher Menu";
       this.title = title || "Launch Application";
       this.icon = '/img/icons/16x16/' + (icon || 'categories/gnome-applications.png');
 
@@ -1059,6 +1177,7 @@
   PanelItem.PanelItemSeparator = _PanelItem.extend({
     init : function() {
       this._super("PanelItemSeparator");
+      this.named = "Separator";
     },
 
     create : function(pos) {
@@ -1081,6 +1200,8 @@
   PanelItem.PanelItemWindowList = _PanelItem.extend({
     init : function() {
       this._super("PanelItemWindowList", "left");
+      this.named = "Window List";
+      this.expand = true;
     },
 
     create : function(pos) {
@@ -1137,6 +1258,7 @@
   PanelItem.PanelItemClock = _PanelItem.extend({
     init : function() {
       this._super("PanelItemWindowClock", "right");
+      this.named = "Clock";
     },
 
     create : function(pos) {
@@ -1173,8 +1295,10 @@
    */
   PanelItem.PanelItemDock = _PanelItem.extend({
     init : function(items) {
-      this._super("PanelItemDoc");
+      this._super("PanelItemDock");
       this.items = items || [];
+      this.named = "Launcher Dock";
+      this.dynamic = true;
     },
 
     create : function(pos) {
@@ -1202,7 +1326,6 @@
           API.system.launch(app);
         }
       });
-
 
       return el;
     },

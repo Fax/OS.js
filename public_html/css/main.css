@@ -132,7 +132,8 @@ input.Disabled {
 }
 
 .PanelItemMenu {
-  width : 20px;
+  width : 25px;
+  text-align : center;
 }
 
 .PanelItemMenu img {
