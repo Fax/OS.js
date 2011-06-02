@@ -61,7 +61,8 @@ class WindowManager
       if ( !constant("{$c}::APP_HIDDEN") ) {
         $apps[$c] = Array(
           "title" => constant("{$c}::APP_TITLE"),
-          "icon" => constant("{$c}::APP_ICON")
+          "icon"  => constant("{$c}::APP_ICON"),
+          "mime"  => $c::$MimeTypes
         );
       }
     }

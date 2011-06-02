@@ -20,6 +20,10 @@ class ApplicationTextpad
   const APP_TITLE = "TextPad";
   const APP_ICON = "apps/text-editor.png";
 
+  public static $MimeTypes = Array(
+    "text/*"
+  );
+
   public function __construct() {
     $this->menu = Array(
       "File" => Array(

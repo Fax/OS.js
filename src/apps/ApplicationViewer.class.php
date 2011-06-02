@@ -20,6 +20,12 @@ class ApplicationViewer
   const APP_TITLE  = "Viewer";
   const APP_ICON   = "categories/gnome-multimedia.png";
 
+  public static $MimeTypes = Array(
+    "image/*",
+    "video/*",
+    "application/ogg"
+  );
+
   public function __construct() {
     $this->menu = Array(
       "File" => Array(

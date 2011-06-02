@@ -20,6 +20,10 @@ body {
   font-family : MainFont, Arial;
 }
 
+#Desktop *[draggable=true] {
+  -khtml-user-drag: element;
+}
+
 #Loading {
   -moz-border-radius: 10px; /* Firefox */
   -webkit-border-radius: 10px; /* Safari, Chrome */

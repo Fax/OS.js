@@ -17,6 +17,10 @@ define("PROJECT_VERSION", "0.3");
 define("ENV_PRODUCTION", false);
 define("DEFAULT_TIMEZONE", "Europe/Oslo");
 
+// Server
+define("SERVER_HOST", "localhost");
+define("SERVER_PORT", 8888);
+
 // Path definitions
 define("PATH_PROJECT",           dirname(__FILE__));
 define("PATH_PROJECT_SRC",       PATH_PROJECT . "/src");

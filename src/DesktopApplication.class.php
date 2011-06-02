@@ -38,9 +38,11 @@ class DesktopApplication
   protected $resources       = Array();
   protected $menu            = Array();
   protected $statusbar       = false;
-  protected $accept_mime     = Array(); // TODO: Add here, remove from global?!
 
-  public static $Registered = Array(
+  public static $MimeTypes = Array( // Belongs to Application
+  );
+
+  public static $Registered = Array( // Belongs to Registry
   );
 
   public function __construct($title, $icon, $hidden) {

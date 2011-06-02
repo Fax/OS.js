@@ -20,6 +20,10 @@ class ApplicationDraw
   const APP_TITLE = "Draw";
   const APP_ICON = "categories/gnome-graphics.png";
 
+  public static $MimeTypes = Array(
+    "image/*",
+  );
+
   public function __construct() {
     $this->content = <<<EOHTML
 

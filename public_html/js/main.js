@@ -686,6 +686,30 @@
           return ret;
         });
 
+        /*
+        $("#Desktop").bind("dragover", function(ev) {
+          ev.preventDefault();
+          return false;
+        });
+        $("#Desktop").bind("dragleave", function(ev) {
+          ev.preventDefault();
+          return false;
+        });
+        $("#Desktop").bind("dragenter", function(ev) {
+          ev.preventDefault();
+          return false;
+        });
+        $("#Desktop").bind("drop", function(ev) {
+          ev.preventDefault();
+          var dt = ev.originalEvent.dataTransfer;
+          console.log(dt, dt.getData('Text'));
+          console.log(dt.getData('text/uri-list'));
+          console.log(dt.getData('text/plain'));
+          console.log(dt.getData('text/html'));
+          return false;
+        });
+        */
+
       },
 
       destroy : function() {
@@ -2654,6 +2678,41 @@
       readdir(this.init_dir);
 
 
+    }
+
+  });
+
+  /**
+   * OperationDialog: LaunchOperationDialog
+   * Select application for opening file
+   *
+   * @class
+   */
+  var LaunchOperationDialog = OperationDialog.extend({
+
+    init : function(src, dest, clb_finish, clb_progress, clb_cancel) {
+      this._super("Copy");
+
+      this.src          = src          || null;
+      this.dest         = dest         || null;
+      this.clb_finish   = clb_finish   || function() {};
+      this.clb_progress = clb_progress || function() {};
+      this.clb_cancel   = clb_cancel   || function() {};
+
+      this.title    = "Copy file";
+      this.content  = $("#OperationDialogCopy").html();
+      this.width    = 400;
+      this.height   = 170;
+    },
+
+
+    create : function(desktop, id, zi, method) {
+      var self = this;
+      this._super(desktop, id, zi, method);
+
+      $(this.content).find(".ProgressBar").progressbar({
+        value : 50
+      });
     }
 
   });
