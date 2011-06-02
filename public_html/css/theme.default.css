@@ -87,9 +87,11 @@ textarea {
   background : url('/img/theme.default/close.png') no-repeat center center;
 }
 
+/*
 .WindowMenu {
   background : #4f4f4f;
 }
+*/
 .WindowMenu li.Top {
   cursor : pointer;
 }
@@ -119,6 +121,34 @@ textarea {
 }
 .Window .ui-resizable-sw {
   cursor : sw-resize;
+}
+
+.Window .ui-tabs {
+  margin : 10px;
+}
+.Window .ui-tabs,
+.Window .ui-tabs-panel,
+.Window .ui-tabs-nav {
+  padding : 0;
+  border : 0 none;
+  background : transparent;
+  font-size : 12px;
+}
+.Window .ui-tabs-panel {
+  border : 1px solid #d1d4d7;
+  padding : 10px;
+  overflow : hidden;
+}
+.Window .ui-tabs li {
+  background : transparent;
+  border-color : #d1d4d7;
+}
+.Window .ui-tabs li a {
+  color : #222;
+  font-weight : normal;
+}
+.Window .ui-tabs li.ui-tabs-selected a {
+  font-weight : bold;
 }
 
 .Menu {

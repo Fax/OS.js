@@ -53,6 +53,9 @@ body.ThemeDark .WindowTop {
   background: -moz-linear-gradient(top,  #41454d,  #31363d); /* for firefox 3.6+ */ 
 
 }
+body.ThemeDark .WindowMenu {
+  background : #4f4f4f;
+}
 body.ThemeDark .WindowMenu span.Top {
   color : #fff;
 }

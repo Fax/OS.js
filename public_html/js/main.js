@@ -679,7 +679,9 @@
 
           ], $(this), 3, true);
 
-          ev.preventDefault();
+          if ( ev.which > 1 ) {
+            ev.preventDefault();
+          }
 
           return ret;
         });

@@ -22,11 +22,11 @@ body.ThemeLight {
 
 body.ThemeLight .DesktopPanel {
   background : #9c9c9e;
-  border-bottom : 1px solid #2a2a2b;
+  border-bottom : 1px solid #b1adad;
 }
 
 body.ThemeLight .PanelItem {
-  color : #b0c2c1;
+  color : #555;
 }
 body.ThemeLight .PanelItem:hover {
   color : #fff;
@@ -34,8 +34,9 @@ body.ThemeLight .PanelItem:hover {
 body.ThemeLight .PanelItem.Current {
 }
 body.ThemeLight .PanelItemSeparator {
-  border-left : 1px solid #363636;
-  border-right : 1px solid #3f4040;
+  background : #c4bfbf;
+  border-left : 1px solid #c4bfbf;
+  border-right : 1px solid #b1adad;
 }
 body.ThemeLight .PanelItemSeparator:hover,
 body.ThemeLight .PanelItemClock:hover {
@@ -51,6 +52,9 @@ body.ThemeLight .WindowTop {
   background-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20version%3D%221.0%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22gradient%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%20%23757c8b%3B%22/%3E%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%20%235c626d%3B%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20x%3D%220%22%20y%3D%220%22%20fill%3D%22url%28%23gradient%29%22%20width%3D%22100%25%22%20height%3D%22100%25%22%20/%3E%3C/svg%3E);
   background: -webkit-gradient(linear, left top, left bottom, from(#757c8b), to(#5c626d)); /* for webkit browsers */
   background: -moz-linear-gradient(top,  #757c8b,  #5c626d); /* for firefox 3.6+ */ 
+}
+body.ThemeLight .WindowMenu {
+  background : #a3a3a3;
 }
 body.ThemeLight .WindowMenu span.Top {
   color : #fff;

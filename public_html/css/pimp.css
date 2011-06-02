@@ -68,11 +68,30 @@ body {
 }
 
 /*
-.WindowTopInner span {
+.PanelItemWindow {
+  -moz-text-shadow: 0px 0px 2px #222;
+  -webkit-text-shadow: 0px 0px 2px #222;
+  text-shadow: 0px 0px 2px #222;
+}
+.PanelItemWindow.Current {
   -moz-text-shadow: 0px 0px 2px #444;
   -webkit-text-shadow: 0px 0px 2px #444;
   text-shadow: 0px 0px 2px #444;
 }
+  */
+
+.WindowTopInner span {
+  -moz-text-shadow: 0px 0px 2px #888;
+  -webkit-text-shadow: 0px 0px 2px #888;
+  text-shadow: 0px 0px 2px #888;
+}
+.Window.Current .WindowTopInner span {
+  -moz-text-shadow: 0px 0px 2px #aaa;
+  -webkit-text-shadow: 0px 0px 2px #aaa;
+  text-shadow: 0px 0px 2px #aaa;
+}
+
+/*
 .WindowTopController {
   -moz-text-shadow: 0px 0px 2px #444;
   -webkit-text-shadow: 0px 0px 2px #444;
