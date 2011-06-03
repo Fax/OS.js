@@ -1517,6 +1517,10 @@
       var span  = this.$element.find("span");
       var img   = this.$element.find("img");
 
+      span.attr("title", "Loading...");
+      span.html("Loading...");
+      img.attr("src", self.getImage("severe-alert"));
+
       $.post("/", {'ajax' : true, 'action' : 'call', 'method' : 'readurl', 'args' : url}, function(data) {
         if ( data.success ) {
           var xml = $(data.result);
@@ -1576,9 +1580,7 @@
       var self = this;
       var ret = this._super(pos);
 
-      var content = $("<img alt=\"\" src=\"/img/blank.gif\" /><span title=\"Nowhere, Somewhere\">Loading ...</span>");
-      $(ret).append(content);
-      $(ret).find("img").attr("src", this.getImage("severe-alert"));
+      $(ret).append("<img alt=\"\" src=\"/img/blank.gif\" /><span title=\"\">&nbsp;</span>");
 
       this.interval = setInterval(function() {
         self.poll();
