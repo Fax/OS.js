@@ -263,6 +263,13 @@ header("Content-Type: text/html; charset=utf-8");
   </div>
 </div>
 
+<div id="OperationDialogPanelItem" style="display:none">
+  <div class="OperationDialog OperationDialogPanelItem">
+    <div class="OperationDialogInner">
+    </div>
+  </div>
+</div>
+
 <!-- Version Stamp -->
 <div id="Version">
   JSWM Version <?php print PROJECT_VERSION; ?>

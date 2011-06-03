@@ -79,7 +79,7 @@ body.ThemeLight .Menu {
   background : #eeeeee;
   color : #222;
 }
-body.ThemeLight .Menu li:hover {
+body.ThemeDark .Menu li.Default:hover {
   color : #fff;
   background : #4f4f4f;
 }

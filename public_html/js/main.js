@@ -343,7 +343,11 @@
 
             cm = new Menu(where);
             forEach(items, function(i, it) {
-              cm.create_item(it. title, it.icon, it.method, it.disabled, it.attribute);
+              if ( it == "---" ) {
+                cm.create_separator();
+              } else {
+                cm.create_item(it. title, it.icon, it.method, it.disabled, it.attribute);
+              }
             });
 
             var off = mpos ? ({'left' : ev.pageX, 'top' : ev.pageY - 20}) : $(where).offset();
@@ -1187,15 +1191,17 @@
   var _PanelItem = Class.extend({
 
     init : function(name, align)  {
-      this.name     = name;
-      this.named    = name;
-      this.align    = align || "AlignLeft";
-      this.expand   = false;
-      this.dynamic  = false;
-      this.orphan   = true;
-      this._index   = -1;
-      this._panel   = null;
-      this.$element = null;
+      this.name         = name;
+      this.named        = name;
+      this.align        = align || "AlignLeft";
+      this.expand       = false;
+      this.dynamic      = false;
+      this.orphan       = true;
+      this.crashed      = false;
+      this.configurable = false;
+      this._index       = -1;
+      this._panel       = null;
+      this.$element     = null;
     },
 
     create : function(pos) {
@@ -1211,25 +1217,7 @@
 
       this.$element.mousedown(function(ev) {
 
-        var ret = API.application.context_menu(ev, [
-          {"title" : self.named, "disabled" : true, "attribute" : "header"},
-          {"title" : (self.align == "left" ? "Align to right" : "Align to left"), "method" : function() {
-            self.align = (self.align == "left") ? "right" : "left";
-            self.update();
-          }},
-          {"title" : "Move left", "method" : function() {
-            self._panel.moveItem(self, -1);
-          }},
-          {"title" : "Move right", "method" : function() {
-            self._panel.moveItem(self, 1);
-          }},
-          {"title" : "Remove", "method" : function() {
-            API.system.dialog("confirm", "Are you sure you want to remove this item?", null, function() {
-              self._panel.removeItem(self); // TODO: Save
-            });
-          }}
-
-        ], $(this));
+        var ret = API.application.context_menu(ev, self.getMenu(), $(this));
 
         ev.preventDefault();
 
@@ -1237,6 +1225,10 @@
       });
 
       return this.$element;
+    },
+
+    reload : function() {
+
     },
 
     update : function() {
@@ -1255,6 +1247,7 @@
       this.$element.find("*").remove();
       this.$element.addClass("Crashed");
       this.$element.html("<img alt=\"\" src=\"/img/icons/16x16/status/error.png\"/><span>" + error + "</span>");
+      this.crashed = true;
     },
 
     destroy : function() {
@@ -1262,6 +1255,49 @@
         this.$element.empty();
         this.$element.remove();
       }
+    },
+
+    configure : function() {
+      var self = this;
+      if ( self.configurable ) {
+        _Desktop.addWindow(new PanelItemOperationDialog(this, function() {
+          self.reload();
+        }));
+      }
+    },
+
+    getMenu : function() {
+      var self = this;
+      var menu = [
+        {"title" : self.named, "disabled" : true, "attribute" : "header"},
+        /*
+        {"title" : (self.align == "left" ? "Align to right" : "Align to left"), "method" : function() {
+          self.align = (self.align == "left") ? "right" : "left";
+          self.update();
+        }},
+        {"title" : "Move left", "method" : function() {
+          self._panel.moveItem(self, -1);
+        }},
+        {"title" : "Move right", "method" : function() {
+          self._panel.moveItem(self, 1);
+        }},*/
+        {"title" : "Remove", "method" : function() {
+          API.system.dialog("confirm", "Are you sure you want to remove this item?", null, function() {
+            self._panel.removeItem(self); // TODO: Save
+          });
+        }}
+      ];
+
+      if ( this.configurable ) {
+        menu.push({
+          'title' : "Configure",
+          'method' : function() {
+            self.configure();
+          }
+        });
+      }
+
+      return menu;
     }
 
   });
@@ -1504,8 +1540,10 @@
   PanelItem.PanelItemWeather = _PanelItem.extend({
     init : function() {
       this._super("PanelItemWeather", "right");
-      this.named = "Weather";
-      this.interval = null;
+
+      this.named        = "Weather";
+      this.interval     = null;
+      this.configurable = false;
     },
 
     getImage : function(img) {
@@ -1609,6 +1647,20 @@
       }
 
       this._super();
+    },
+
+    getMenu : function() {
+      var self = this;
+      var ret = this._super();
+
+      ret.push("---");
+      ret.push({
+        'title'    : 'Reload',
+        'disabled' : self.crashed,
+        'method'   : function() { self.poll(); }
+      });
+
+      return ret;
     }
   });
 
@@ -2291,6 +2343,12 @@
       }
     },
 
+    create_separator : function() {
+      var litem = $("<li><hr /></li>");
+        litem.addClass("separator");
+      this.$element.append(litem);
+    },
+
     create_item : function(title, icon, method, disabled, aclass) {
       var self = this;
       var litem = $("<li><span><img alt=\"\" src=\"/img/blank.gif\" /></span></li>");
@@ -2310,6 +2368,8 @@
       }
       if ( aclass ) {
         $(litem).addClass(aclass);
+      } else {
+        $(litem).addClass("Default");
       }
 
       if ( method == "cmd_Close" ) {
@@ -2934,6 +2994,35 @@
         }
       }).attr("disabled", "disabled");
       this.$element.find(".DialogButtons .Cancel").show();
+    }
+
+  });
+
+  /**
+   * OperationDialog: PanelItemOperationDialog
+   * Opereation dialog for handling panel and panel items
+   *
+   * @class
+   */
+  var PanelItemOperationDialog = OperationDialog.extend({
+
+    init : function(item, clb_finish) {
+      this._super("PanelItem");
+
+      this.item         = item         || null;
+      this.type         = item instanceof Panel ? "panel" : "item";
+      this.clb_finish   = clb_finish   || function() {};
+
+      this.title    = "Configure " + this.type;
+      this.content  = $("#OperationDialogPanelItem").html();
+      this.width    = 400;
+      this.height   = 170;
+    },
+
+
+    create : function(desktop, id, zi, method) {
+      var self = this;
+      this._super(desktop, id, zi, method);
     }
 
   });

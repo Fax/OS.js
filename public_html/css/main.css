@@ -193,7 +193,7 @@ input.Disabled {
   position : absolute;
   list-style-type : none;
   margin : 0;
-  padding : 5px;
+  padding : 0;
   top : 0px;
   left : 0;
   display : none;
@@ -203,6 +203,10 @@ input.Disabled {
 
 .Menu li {
   padding : 5px;
+}
+.Menu li.separator {
+  padding-top : 0;
+  padding-bottom : 0;
 }
 /*
 .Menu li.Disabled {
