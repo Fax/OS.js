@@ -1521,43 +1521,53 @@
       span.html("Loading...");
       img.attr("src", self.getImage("severe-alert"));
 
-      $.post("/", {'ajax' : true, 'action' : 'call', 'method' : 'readurl', 'args' : url}, function(data) {
-        if ( data.success ) {
-          var xml = $(data.result);
-          var forecast = xml.find("forecast tabular time").first();
-          if ( !forecast.length ) {
+      $.ajax({
+        'type' : 'post',
+        'url'  : '/',
+        'data' : {'ajax' : true, 'action' : 'call', 'method' : 'readurl', 'args' : url}, 
+        success : function(data) {
+          if ( data.success ) {
+            var xml = $(data.result);
+            var forecast = xml.find("forecast tabular time").first();
+            if ( !forecast.length ) {
+              self.crash("No Weather data");
+            }
+
+            var icon = "severe-alert";
+            var title = "No weather data found";
+            var icons = {
+              "Fair"          : "clear",
+              "Partly cloudy" : "few-clouds",
+              "Cloudy"        : "overcast",
+              "Heavy rain"    : "showers",
+              "Rain"          : "showers-scattered"
+            };
+
+            var loc         = xml.find("location");
+            var loc_name    = loc.find("name").html();
+            var loc_country = loc.find("country").html();
+
+            var period     = forecast.attr("from") + " " + forecast.attr("to");
+            var symbol     = forecast.find("symbol").attr("name");
+            var wind_dir   = forecast.find("windDirection");
+            var wind_speed = forecast.find("windSpeed");
+            var temp       = forecast.find("temperature").attr("value");
+            var tempu      = forecast.find("temperature").attr("unit").toUpperCase().substr(0, 1);
+            var pressure   = forecast.find("pressure");
+
+            if ( icons[symbol] ) {
+              icon = icons[symbol];
+            }
+
+            img.attr("src", self.getImage(icon));
+            span.attr("title", sprintf("%s, %s", loc_name, loc_country));
+            span.html(sprintf("%s &deg;%s %s", temp, tempu, symbol));
+          } else {
             self.crash("No Weather data");
           }
-
-          var icon = "severe-alert";
-          var title = "No weather data found";
-          var icons = {
-            "Fair"          : "clear",
-            "Partly cloudy" : "few-clouds",
-            "Cloudy"        : "overcast",
-            "Heavy rain"    : "showers",
-            "Rain"          : "showers-scattered"
-          };
-
-          var loc         = xml.find("location");
-          var loc_name    = loc.find("name").html();
-          var loc_country = loc.find("country").html();
-
-          var period     = forecast.attr("from") + " " + forecast.attr("to");
-          var symbol     = forecast.find("symbol").attr("name");
-          var wind_dir   = forecast.find("windDirection");
-          var wind_speed = forecast.find("windSpeed");
-          var temp       = forecast.find("temperature").attr("value");
-          var tempu      = forecast.find("temperature").attr("unit").toUpperCase().substr(0, 1);
-          var pressure   = forecast.find("pressure");
-
-          if ( icons[symbol] ) {
-            icon = icons[symbol];
-          }
-
-          img.attr("src", self.getImage(icon));
-          span.attr("title", sprintf("%s, %s", loc_name, loc_country));
-          span.html(sprintf("%s &deg;%s %s", temp, tempu, symbol));
+        },
+        error : function() {
+          self.crash("No Weather data");
         }
       });
     },
