@@ -192,7 +192,7 @@
                         list.push(app);
                       }
                     } else {
-                      if ( mime == check ) {
+                      if ( app.mime[check] == mime ) {
                         found.push(i);
                         list.push(app);
                       }
