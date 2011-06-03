@@ -180,6 +180,13 @@ input.Disabled {
   overflow : hidden;
 }
 
+.PanelItemWeather {
+}
+.PanelItemWeather img {
+  vertical-align : middle;
+  margin-right : 5px;
+}
+
 /* Menus */
 
 .Menu {

@@ -70,7 +70,7 @@ class WindowManager
     return Array(
       "desktop.wallpaper.path" => Array(
         "type"  => "filename",
-        "value" => "/System/Wallpapers/rqofigt.png"
+        "value" => "/System/Wallpapers/go2cxpb.png"
       ),
       "desktop.theme" => Array(
         "type"    => "array",
@@ -107,6 +107,8 @@ class WindowManager
               "launch" => "SystemLogout"
             )
           )), "right"),
+          Array("PanelItemSeparator", Array(), "right"),
+          Array("PanelItemWeather", Array(), "right")
         ),
       ),
       "desktop.panel.position" => Array(
@@ -262,6 +264,13 @@ class WindowManager
           } else if ( $method == "delete" ) {
             if ( ApplicationAPI::delete($argv) ) {
               $json['result'] = $argv;
+              $json['success'] = true;
+            } else {
+              $json['error'] = "Failed to rename '{$src}'";
+            }
+          } else if ( $method == "readurl" ) {
+            if ( $ret = ApplicationAPI::readurl($argv) ) {
+              $json['result'] = $ret;
               $json['success'] = true;
             } else {
               $json['error'] = "Failed to rename '{$src}'";

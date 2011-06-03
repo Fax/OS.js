@@ -2,8 +2,12 @@
  * JavaScript Window Manager
  *
  * TODO: Finish Login screen
+ *       Simpler and cleaner look
+ *       User avatar
+ * TODO: Tooltip
  * TODO: Fix onblur() for all applications
  * TODO: Finixh application hook interface
+ * TODO: Window ontop (sticky)
  *
  * Creates a desktop environment inside the browser.
  * Applications can be loaded via the server.
@@ -21,7 +25,7 @@
   /**
    * Local settings
    */
-  var SETTING_REVISION = 12;
+  var SETTING_REVISION = 15;
   var ENABLE_LOGIN     = false;
   var ANIMATION_SPEED  = 400;
 
@@ -1246,6 +1250,12 @@
 
     },
 
+    crash : function(error) {
+      this.$element.find("*").remove();
+      this.$element.addClass("Crashed");
+      this.$element.html("<img alt=\"\" src=\"/img/icons/16x16/status/error.png\"/><span>" + error + "</span>");
+    },
+
     destroy : function() {
       if ( this.$element ) {
         this.$element.empty();
@@ -1483,6 +1493,110 @@
       this._super();
     }
 
+  });
+
+  /**
+   * PanelItem: PanelItemWeather
+   *
+   * @class
+   */
+  PanelItem.PanelItemWeather = _PanelItem.extend({
+    init : function() {
+      this._super("PanelItemWeather", "right");
+      this.named = "Weather";
+      this.interval = null;
+    },
+
+    getImage : function(img) {
+      return sprintf("/img/icons/16x16/status/weather-%s.png", img);
+    },
+
+    parse : function() {
+      var self  = this;
+      var url   = "http://www.yr.no/place/Norway/Oslo/Oslo/Oslo/forecast.xml";
+      var span  = this.$element.find("span");
+      var img   = this.$element.find("img");
+
+      $.post("/", {'ajax' : true, 'action' : 'call', 'method' : 'readurl', 'args' : url}, function(data) {
+        if ( data.success ) {
+          var xml = $(data.result);
+          var forecast = xml.find("forecast tabular time").first();
+          if ( !forecast.length ) {
+            self.crash("No Weather data");
+          }
+
+          var icon = "severe-alert";
+          var title = "No weather data found";
+          var icons = {
+            "Fair"          : "clear",
+            "Partly cloudy" : "few-clouds",
+            "Cloudy"        : "overcast",
+            "Heavy rain"    : "showers",
+            "Rain"          : "showers-scattered"
+          };
+
+          var loc         = xml.find("location");
+          var loc_name    = loc.find("name").html();
+          var loc_country = loc.find("country").html();
+
+          var period     = forecast.attr("from") + " " + forecast.attr("to");
+          var symbol     = forecast.find("symbol").attr("name");
+          var wind_dir   = forecast.find("windDirection");
+          var wind_speed = forecast.find("windSpeed");
+          var temp       = forecast.find("temperature").attr("value");
+          var tempu      = forecast.find("temperature").attr("unit").toUpperCase().substr(0, 1);
+          var pressure   = forecast.find("pressure");
+
+          if ( icons[symbol] ) {
+            icon = icons[symbol];
+          }
+
+          img.attr("src", self.getImage(icon));
+          span.attr("title", sprintf("%s, %s", loc_name, loc_country));
+          span.html(sprintf("%s &deg;%s %s", temp, tempu, symbol));
+        }
+      });
+    },
+
+    poll : function() {
+      var self = this;
+
+      /*
+      navigator.geolocation.getCurrentPosition(function(position) {
+        console.log(position);
+      }, function() {
+        self.crash("No Weather data");
+      });
+      */
+
+      this.parse();
+    },
+
+    create : function(pos) {
+      var self = this;
+      var ret = this._super(pos);
+
+      var content = $("<img alt=\"\" src=\"/img/blank.gif\" /><span title=\"Nowhere, Somewhere\">Loading ...</span>");
+      $(ret).append(content);
+      $(ret).find("img").attr("src", this.getImage("severe-alert"));
+
+      this.interval = setInterval(function() {
+        self.poll();
+      }, 60 * 1000);
+
+      this.poll();
+
+      return ret;
+    },
+
+
+    destroy : function() {
+      if ( this.interval ) {
+        clearInterval(this.interval);
+      }
+
+      this._super();
+    }
   });
 
 
