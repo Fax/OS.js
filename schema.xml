@@ -45,4 +45,12 @@
     <column name="format" type="varchar" size="255" required="false" />
   </table>
 
+  <table name="location">
+    <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+    <column name="ccode" type="varchar" size="255" required="true" />
+    <column name="name" type="varchar" size="255" required="true" primaryString="true" />
+    <column name="country" type="varchar" size="255" required="true" />
+    <column name="url" type="varchar" size="255" required="true" />
+  </table>
+
 </database>
