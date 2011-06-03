@@ -73,6 +73,10 @@ body.ThemeDark .WindowTopController:hover {
 body.ThemeDark .Window.Current .WindowTopInner {
   color : #fff;
 }
+body.ThemeDark .PanelItemWindow.Current {
+  color : #fff;
+  font-weight : bold;
+}
 
 body.ThemeDark .Menu {
   border : 1px solid #30353d;
