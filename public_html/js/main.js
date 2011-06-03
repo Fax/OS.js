@@ -172,35 +172,54 @@
     'system' : {
       'run' : function(path, mime) {
         if ( mime ) {
-          var apps = _Settings._get("system.app.handlers", true);
-          forEach(apps, function(mt, mapp, mind, mlast) {
-            var mte = mt.split("/");
-            var mbase = mte.shift();
-            var mtype = mte.shift();
+          var apps = _Settings._get("system.app.registered", true);
+          var found = [];
+          var list = [];
+          var inmime = mime.split("/");
 
-            if ( mtype == "*" ) {
-              var ctbase = mime.split("/")[0];
-              if ( ctbase == mbase ) {
-                console.log("API found suited application for", mime, ":", mapp);
-
-                API.system.launch(mapp, {'path' : path, 'mime' : mime});
-                return false;
+          var app, check, mtype;
+          for ( var i in apps ) {
+            if ( apps.hasOwnProperty(i) ) {
+              app = apps[i];
+              app.name = i; // append
+              if ( app.mime.length ) {
+                for ( check in app.mime ) {
+                  if ( app.mime.hasOwnProperty(check) ) {
+                    mtype = app.mime[check].split("/");
+                    if ( mtype[1] == "*" ) {
+                      if ( mtype[0] == inmime[0] ) {
+                        found.push(i);
+                        list.push(app);
+                      }
+                    } else {
+                      if ( mime == check ) {
+                        found.push(i);
+                        list.push(app);
+                      }
+                    }
+                  }
+                }
               }
+            }
+          }
+
+          function __run(mapp) {
+            API.system.launch(mapp, {'path' : path, 'mime' : mime});
+          }
+
+          var browse = [];
+          if ( found.length ) {
+            console.log("API found suited application(s) for", mime, ":", found);
+            if ( found.length == 1 ) {
+              __run(found[0]);
             } else {
-              if ( mt == mime ) {
-                console.log("API found suited application for", mime, ":", mapp);
-
-                API.system.launch(mapp, {'path' : path, 'mime' : mime});
-                return false;
-              }
+              API.system.dialog_launch(list, function(mapp, set_default) {
+                __run(mapp);
+              });
             }
-
-            if ( mind == mlast ) {
-              API.system.dialog("error", "Found no suiting application for '" + path + "'");
-              // TODO Ask for new browser window to open in ?!
-            }
-            return true;
-          });
+          } else {
+            API.system.dialog("confirm", "Found no suiting application for '" + path + "'"); // TODO: Ask for app
+          }
         }
       },
 
@@ -262,6 +281,10 @@
         cur_dir = cur_dir || "/";
 
         _Desktop.addWindow(new FileOperationDialog(type, mime_filter, clb_finish, cur_dir));
+      },
+
+      'dialog_launch' : function(list, clb_finish) {
+        _Desktop.addWindow(new LaunchOperationDialog(list, clb_finish));
       },
 
       'dialog_color' : function(start_color, clb_finish) {
@@ -2690,17 +2713,14 @@
    */
   var LaunchOperationDialog = OperationDialog.extend({
 
-    init : function(src, dest, clb_finish, clb_progress, clb_cancel) {
-      this._super("Copy");
+    init : function(items, clb_finish) {
+      this._super("Launch");
 
-      this.src          = src          || null;
-      this.dest         = dest         || null;
+      this.list         = items        || [];
       this.clb_finish   = clb_finish   || function() {};
-      this.clb_progress = clb_progress || function() {};
-      this.clb_cancel   = clb_cancel   || function() {};
 
-      this.title    = "Copy file";
-      this.content  = $("#OperationDialogCopy").html();
+      this.title    = "Select an application";
+      this.content  = $("#OperationDialogLaunch").html();
       this.width    = 400;
       this.height   = 170;
     },
@@ -2710,9 +2730,42 @@
       var self = this;
       this._super(desktop, id, zi, method);
 
-      $(this.content).find(".ProgressBar").progressbar({
-        value : 50
-      });
+      var app, current;
+      var selected;
+      var set_default = false;
+
+      for ( var x = 0; x < this.list.length; x++ ) {
+        app = this.list[x];
+        var li = $("<li><img alt=\"\" src=\"/img/icons/16x16/" + app.icon + "\" /><span>" + app.title + "</span></li>");
+        li.addClass(x % 2 ? "odd" : "even");
+        (function(litem, mapp) {
+          li.click(function() {
+            if ( current && current !== this ) {
+              $(current).removeClass("current");
+            }
+            current = this;
+            selected = mapp.name; // must be appended
+
+            $(current).addClass("current");
+            self.$element.find(".Ok").removeAttr("disabled");
+          }).dblclick(function() {
+            if ( !self.$element.find(".Ok").attr("disabled") ) {
+              self.$element.find(".Ok").click();
+            }
+          });
+        })(li, app);
+        this.$element.find("ul").append(li);
+      }
+
+      this.$element.find(".DialogButtons .Close").hide();
+      this.$element.find(".DialogButtons .Ok").show().click(function() {
+        var chk = self.$element.find("input[type=checkbox]");
+        if ( selected ) {
+          set_default = (chk.attr("checked") || chk.val()) ? true : false;
+          self.clb_finish(selected, set_default);
+        }
+      }).attr("disabled", "disabled");
+      this.$element.find(".DialogButtons .Cancel").show();
     }
 
   });

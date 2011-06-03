@@ -209,6 +209,28 @@ textarea {
   font-weight : bold;
 }
 
+.OperationDialogLaunch ul {
+  margin : 0;
+  padding : 0;
+  list-style-type : none;
+  height : 80px;
+  overflow : auto;
+}
+.OperationDialogLaunch li {
+  margin : 0;
+  padding : 5px;
+}
+.OperationDialogLaunch li img {
+  vertical-align : middle;
+  margin-right : 5px;
+}
+.OperationDialogLaunch li:hover {
+  text-decoration : underline;
+}
+.OperationDialogLaunch li.current {
+  font-weight : bold;
+}
+
 #Version {
   color : #000;
   font-size : 10px;

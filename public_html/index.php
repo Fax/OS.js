@@ -251,6 +251,18 @@ header("Content-Type: text/html; charset=utf-8");
   </div>
 </div>
 
+<div id="OperationDialogLaunch" style="display:none">
+  <div class="OperationDialog OperationDialogLaunch">
+    <div class="OperationDialogInner">
+      <ul>
+      </ul>
+      <div>
+        <input type="checkbox" disabled="disabled" /> <label>Use this as default application</label>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Version Stamp -->
 <div id="Version">
   JSWM Version <?php print PROJECT_VERSION; ?>
