@@ -2,6 +2,8 @@
  * JavaScript Window Manager
  *
  * TODO: Finish Login screen
+ * TODO: Fix onblur() for all applications
+ * TODO: Finixh application hook interface
  *
  * Creates a desktop environment inside the browser.
  * Applications can be loaded via the server.
@@ -78,6 +80,12 @@
     //
 
     'ui' : {
+      'windows' : {
+        'tile' : function() {
+          _Desktop.sortWindows('tile');
+        }
+      },
+
       'cursor' : (function() {
         var ccursor = "default";
 
@@ -698,7 +706,11 @@
                 _Settings._set("desktop.wallpaper.path", fname);
                 _Desktop.applySettings();
               }, ["image/*"], "open", dir);
-            }}
+            }
+          },
+          {"title" : "Tile windows", "method" : function() { 
+            API.ui.windows.tile();
+          }}
 
           ], $(this), 3, true);
 
@@ -883,6 +895,31 @@
       },
 
       minimizeWindow : function(win) {
+      },
+
+      sortWindows : function(method) {
+        var ppos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
+        var top  = ppos == "top" ? 50 : 20;
+        var left = 20;
+
+        if ( method == "tile" ) {
+          var last;
+          for ( var i = 0; i < this.stack.length; i++ ) {
+            last = this.stack[i];
+
+            last.$element.css({
+              'left' : left + 'px',
+              'top'  : top + 'px'
+            });
+            last.left = left;
+            last.top  = top;
+
+            top += 20;
+            left += 20;
+
+            this.focusWindow(last); // FIXME
+          }
+        }
       },
 
       // SETTINGS \ SESSION
