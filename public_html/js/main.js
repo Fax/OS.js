@@ -322,9 +322,10 @@
           cm = null;
         }
 
-        return function(ev, items, where, which, mpos) {
+        return function(ev, items, where, which, mpos, mtop) {
           which = which || 3;
           mpos = mpos || false;
+          mtop = mtop || 20;
 
           if ( inited === false ) {
             $(document).click(function(ev) {
@@ -349,7 +350,7 @@
             $("#ContextMenu").css(
               {
                 "left" :off.left + "px",
-                "top" : off.top + "px"
+                "top" : off.top + mtop + "px"
               }
             ).html(cm.$element).show();
 
@@ -1820,7 +1821,11 @@
           $(el).find(".WindowMenu li.Top").click(function(ev) {
             var mmenu = $(this).find("span").html();
             return API.application.context_menu(ev, self.menus[mmenu], $(this), 1);
-          });
+          })/*.mouseover(function() {
+            if ( $("#ContextMenu").is(":visible") ) {
+              $(this).click();
+            }
+          })*/;
         }
 
         // Events
