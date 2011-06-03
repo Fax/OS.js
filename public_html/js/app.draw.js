@@ -287,6 +287,7 @@ var ApplicationDraw = (function($, undefined) {
       this.contexto = this.canvaso.getContext('2d');
       this.canvas   = $(this.canvaso).parent().append("<canvas></canvas>").find("canvas").get(1);
       this.context  = this.canvas.getContext('2d'); // This layer gets drawn to 'context' on update
+      this.loader   = el.find(".ApplicationDrawLoading");
 
       this.draw_on      = false;
       this.draw_start   = null;
@@ -327,6 +328,8 @@ var ApplicationDraw = (function($, undefined) {
       this.setStyle();
       this.clear();
 
+      this.loader.hide();
+
       this.loaded = true;
     },
 
@@ -344,7 +347,7 @@ var ApplicationDraw = (function($, undefined) {
       this.setSize(this.image_width, this.image_height);
     },
 
-    open : function(src, c_success, c_error) {
+    open : function(src, c_success, c_error, api) {
       this.clear();
 
       c_success = c_success || function() {};
@@ -352,6 +355,10 @@ var ApplicationDraw = (function($, undefined) {
 
       var self = this;
       var img = new Image();
+
+      api.ui.cursor("wait");
+      this.loader.show();
+
       img.onload = function() {
         self.canvas.width   = img.width;
         self.canvas.height  = img.height;
@@ -364,9 +371,15 @@ var ApplicationDraw = (function($, undefined) {
         self.redraw();
 
         c_success(src);
+
+        api.ui.cursor("default");
+        self.loader.hide();
       };
       img.onerror = function() {
         c_error(src);
+
+        api.ui.cursor("default");
+        self.loader.hide();
       };
       img.src = src;
     },
@@ -616,7 +629,7 @@ var ApplicationDraw = (function($, undefined) {
           _open(function(fname) {
             DrawDocument.open("/media/" + fname);
             _update(fname);
-          });
+          }, null, api);
         });
 
         app.setMenuItemAction("File", "cmd_Save", function() {
@@ -659,7 +672,7 @@ var ApplicationDraw = (function($, undefined) {
           fname = argv['path'];
           DrawDocument.open("/media/" + fname, function() {
             _update(fname);
-          });
+          }, null, api);
         } else {
           _update(fname);
         }

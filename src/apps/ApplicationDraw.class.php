@@ -86,6 +86,7 @@ class ApplicationDraw
     </div>
 
   </div>
+  <div class="ApplicationDrawLoading"></div>
   <div class="ApplicationDrawInner">
     <canvas class="Canvas"></canvas>
   </div>
