@@ -1425,6 +1425,7 @@
       this.height         = -1;
       this.top            = -1;
       this.left           = -1;
+      this.oldZindex      = -1;
       this.gravity        = "none";
 
       // Window hooks FIXME: Event listeners on_XXX
@@ -1564,6 +1565,9 @@
                   el.find(".ActionMaximize").click();
                 }
               }},
+              /*{"title" : (self.is_ontop ? "Same as other windows" : "Always on top"), "icon" : "actions/zoom-original.png", "method" : function() {
+                self.ontop();
+              }},*/
               {"title" : (self.is_minimized ? "Show" : "Minimize"), "icon" : "actions/window_nofullscreen.png", "disabled" : !self.is_minimizable, "method" : function() {
                 if ( self.is_minimizable ) {
                   el.find(".ActionMinimize").click();
@@ -1850,6 +1854,18 @@
 
     redraw : function() {
 
+    },
+
+    ontop : function() {
+      if ( this.is_ontop ) {
+        this.$element.css("z-index", this.oldZindex);
+      } else {
+        _OnTopIndex++;
+
+        this.$element.css("z-index", _OnTopIndex);
+      }
+
+      this.is_ontop = !this.is_ontop;
     },
 
     focus : function() {
