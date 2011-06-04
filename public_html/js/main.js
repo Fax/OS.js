@@ -1420,6 +1420,7 @@
       this.is_sessionable = this.dialog ? false : true;
       this.is_closable    = true;
       this.is_orphan      = false;
+      this.is_ontop       = false;
       this.width          = -1;
       this.height         = -1;
       this.top            = -1;
@@ -1854,7 +1855,9 @@
     focus : function() {
       var focused = false;
       if ( !this.current ) {
-        _TopIndex++;
+        if ( !this.is_ontop ) {
+          _TopIndex++; // FIXME: ZINDEX_WINDOW_MAX - roll-over
+        }
 
         if ( this.is_minimized ) {
           this.minimize();
