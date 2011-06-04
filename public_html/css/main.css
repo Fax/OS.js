@@ -294,6 +294,7 @@ input.Disabled {
 .WindowMenu span.Top:hover {
 }
 */
+/* DEPRECATED */
 .WindowMenu .Menu {
   z-index : 10000;
   padding : 2px;

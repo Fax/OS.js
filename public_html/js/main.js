@@ -27,6 +27,14 @@
   // Override for browsers without console
   if (!window.console) console = {log:function() {}, info:function(){}, error:function(){}};
 
+  var ZINDEX_MENU         = 100000000;
+  var ZINDEX_RECT         = 100000000;
+  var ZINDEX_PANEL        = 1000000;
+  var ZINDEX_WINDOW       = 10;
+  var ZINDEX_WINDOW_MAX   = 90000000;
+  var ZINDEX_WINDOW_ONTOP = 90000000;
+  var ZINDEX_LOADING      = 1000100;
+
   /**
    * Local settings
    */
@@ -41,7 +49,8 @@
   var _Settings        = null;
   var _Desktop         = null;
   var _Window          = null;
-  var _TopIndex        = 11;
+  var _TopIndex        = (ZINDEX_WINDOW + 1);
+  var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);
 
   /**
    * NULL references
