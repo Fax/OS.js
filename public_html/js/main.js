@@ -1433,7 +1433,7 @@
       }
     },
 
-    create : function(id, zi, method, mcallback) {
+    create : function(id, zi, appname, mcallback) {
       if ( !this.created ) {
         var self = this;
         mcallback = mcallback || function() {};
@@ -1720,8 +1720,8 @@
         } else {
           setTimeout(function() {
             //try {
-              if ( window[method] ) {
-                self.app = window[method](Application, self, API, self.argv);
+              if ( window[appname] ) {
+                self.app = window[appname](Application, self, API, self.argv);
               }
             //} catch ( e ) {
             //  cconsole.error("Window application creation failed...", e);
@@ -2079,9 +2079,9 @@
       this.cmd_cancel = cmd_cancel || function() {};
     },
 
-    create : function(id, zi, method) {
+    create : function(id, zi) {
       var self = this;
-      this._super(id, zi, method);
+      this._super(id, zi);
 
       if ( this.dialog_type == "confirm" ) {
         this.$element.find(".DialogButtons .Close").hide();
@@ -2130,8 +2130,8 @@
       this._super();
     },
 
-    create : function(id, zi, method) {
-      this._super(id, zi, method);
+    create : function(id, zi) {
+      this._super(id, zi);
 
       var self = this;
       self.$element.find(".DialogButtons .Close").click(function() {
@@ -2169,9 +2169,9 @@
       this.height   = 170;
     },
 
-    create : function(id, zi, method) {
+    create : function(id, zi) {
       var self = this;
-      this._super(id, zi, method);
+      this._super(id, zi);
 
       var desc      = $(self.$element).find(".CurrentColorDesc");
       var cube      = $(self.$element).find(".CurrentColor");
@@ -2234,9 +2234,9 @@
     },
 
 
-    create : function(id, zi, method) {
+    create : function(id, zi) {
       var self = this;
-      this._super(id, zi, method);
+      this._super(id, zi);
 
       $(this.content).find(".ProgressBar").progressbar({
         value : 50
@@ -2266,9 +2266,9 @@
     },
 
 
-    create : function(id, zi, method) {
+    create : function(id, zi) {
       var self = this;
-      this._super(id, zi, method);
+      this._super(id, zi);
 
       var txt = this.$element.find(".OperationDialog input");
       txt.val(this.src);
@@ -2333,8 +2333,8 @@
       this.uploader = null;
     },
 
-    create : function(id, zi, method) {
-      this._super(id, zi, method);
+    create : function(id, zi) {
+      this._super(id, zi);
 
       var self = this;
       $(this.$element).find(".ProgressBar").progressbar({
@@ -2416,10 +2416,10 @@
       this.height       = 300;
     },
 
-    create : function(id, zi, method) {
+    create : function(id, zi) {
       var self = this;
 
-      this._super(id, zi, method);
+      this._super(id, zi);
 
       var ul          = this.$element.find("ul");
       var inp         = this.$element.find("input[type='text']");
@@ -2620,9 +2620,9 @@
     },
 
 
-    create : function(id, zi, method) {
+    create : function(id, zi) {
       var self = this;
-      this._super(id, zi, method);
+      this._super(id, zi);
 
       var app, current;
       var selected;
@@ -2686,9 +2686,9 @@
     },
 
 
-    create : function(id, zi, method) {
+    create : function(id, zi) {
       var self = this;
-      this._super(id, zi, method);
+      this._super(id, zi);
     }
 
   });
