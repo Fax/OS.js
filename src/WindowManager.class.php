@@ -217,7 +217,12 @@ class WindowManager
             $action   = $instance['action'];
 
             $result = $cname::Event($uuid, $action, $aargs ? $aargs : Array());
-            $json = Array("success" => true, "error" => null, "result" => $result);
+
+            $success = ($result === true) || is_array($result);
+            $error   = $success ? null : (is_string($result) ? $result : "Unknown error");
+            $result  = $success ? $result : null;
+
+            $json = Array("success" => $success, "error" => $error, "result" => $result);
           }
         } else if ( $args['action'] == "call" && isset($args['method']) && isset($args['args']) ) {
           $method = $args['method'];

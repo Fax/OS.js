@@ -4,11 +4,12 @@
  * TODO: Finish Login screen
  *       Simpler and cleaner look
  *       User avatar
- * TODO: Tooltip
+ * TODO: Custom Tooltips
  * TODO: Fix onblur() for all applications
  * TODO: Finixh application hook interface
  * TODO: Window ontop (sticky)
  * TODO: Separate Operation dialogs
+ * TODO: Apps can append title to window list (panel item)
  *
  * Creates a desktop environment inside the browser.
  * Applications can be loaded via the server.
@@ -303,6 +304,8 @@
       'dialog_color' : function(start_color, clb_finish) {
         _Desktop.addWindow(new ColorOperationDialog(start_color, clb_finish));
       }
+
+
     },
 
     //
@@ -871,7 +874,11 @@
             API.ui.cursor("wait");
             win.load(callback);
           }
+
+          return win;
         }
+
+        return false;
       },
 
       removeWindow : function(win) {
@@ -2686,6 +2693,26 @@
    */
   var Application = (function() {
 
+    var _ApplicationDialog = Window.extend({
+
+      init : function(callback) {
+        this._super("ApplicationDialog", true, {'type' : 'ApplicationDialog'});
+        this.is_minimizable = true;
+        this.is_maximizable = true;
+        this.callback = callback || function() {};
+      },
+
+      destroy : function() {
+        this._super();
+      },
+
+      create : function(desktop, id, zi, method) {
+        this._super(desktop, id, zi, method);
+        this.callback(this.$element);
+      }
+
+    });
+
     return Class.extend({
       init : function(name) {
         this.name = name;
@@ -2699,6 +2726,10 @@
 
       run : function() {
         console.log("Application running", this.name, this);
+      },
+
+      createWindow : function(callback) {
+        _Desktop.addWindow(new _ApplicationDialog(callback));
       }
 
     });
