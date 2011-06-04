@@ -848,7 +848,7 @@
           var callback = function(method) {
             var id = "Window_" + self.stack.length;
 
-            win.create(self, id, _TopIndex, method, function() {
+            win.create(id, _TopIndex, method, function() {
               setTimeout(function() {
                 API.ui.cursor("default");
               }, 50);
@@ -1070,6 +1070,9 @@
         var ret = API.application.context_menu(ev, [
           {"title" : "Panel", "disabled" : true, "attribute" : "header"},
           {"title" : "Add new item", "disabled" : true, "method" : function() {
+            _Desktop.addWindow(new PanelItemOperationDialog(this, function() {
+              self.reload();
+            }));
           }}
 
         ], $(this), 3, true);
@@ -1430,7 +1433,7 @@
       }
     },
 
-    create : function(desktop, id, zi, method, mcallback) {
+    create : function(id, zi, method, mcallback) {
       if ( !this.created ) {
         var self = this;
         mcallback = mcallback || function() {};
@@ -1540,7 +1543,7 @@
 
         // Events
         el.bind('mousedown', function(ev) {
-          desktop.focusWindow(self);
+          _Desktop.focusWindow(self);
           if ( ev.which > 1 ) { // Menu only NOTE
             ev.stopPropagation();
           }
@@ -1557,7 +1560,7 @@
 
         if ( this.is_closable ) {
           el.find(".ActionClose").click(function() {
-            desktop.removeWindow(self);
+            _Desktop.removeWindow(self);
           });
         } else {
           el.find(".ActionClose").parent().hide();
@@ -1582,7 +1585,7 @@
         //
         // INSERT
         //
-        desktop.$element.append(el);
+        _Desktop.$element.append(el);
 
 
         //
@@ -1711,7 +1714,7 @@
         // Run Dialog or Application
         //
         if ( this.dialog ) {
-          desktop.focusWindow(this);
+          _Desktop.focusWindow(this);
 
           mcallback();
         } else {
@@ -2076,9 +2079,9 @@
       this.cmd_cancel = cmd_cancel || function() {};
     },
 
-    create : function(desktop, id, zi, method) {
+    create : function(id, zi, method) {
       var self = this;
-      this._super(desktop, id, zi, method);
+      this._super(id, zi, method);
 
       if ( this.dialog_type == "confirm" ) {
         this.$element.find(".DialogButtons .Close").hide();
@@ -2127,8 +2130,8 @@
       this._super();
     },
 
-    create : function(desktop, id, zi, method) {
-      this._super(desktop, id, zi, method);
+    create : function(id, zi, method) {
+      this._super(id, zi, method);
 
       var self = this;
       self.$element.find(".DialogButtons .Close").click(function() {
@@ -2166,9 +2169,9 @@
       this.height   = 170;
     },
 
-    create : function(desktop, id, zi, method) {
+    create : function(id, zi, method) {
       var self = this;
-      this._super(desktop, id, zi, method);
+      this._super(id, zi, method);
 
       var desc      = $(self.$element).find(".CurrentColorDesc");
       var cube      = $(self.$element).find(".CurrentColor");
@@ -2231,9 +2234,9 @@
     },
 
 
-    create : function(desktop, id, zi, method) {
+    create : function(id, zi, method) {
       var self = this;
-      this._super(desktop, id, zi, method);
+      this._super(id, zi, method);
 
       $(this.content).find(".ProgressBar").progressbar({
         value : 50
@@ -2263,9 +2266,9 @@
     },
 
 
-    create : function(desktop, id, zi, method) {
+    create : function(id, zi, method) {
       var self = this;
-      this._super(desktop, id, zi, method);
+      this._super(id, zi, method);
 
       var txt = this.$element.find(".OperationDialog input");
       txt.val(this.src);
@@ -2330,8 +2333,8 @@
       this.uploader = null;
     },
 
-    create : function(desktop, id, zi, method) {
-      this._super(desktop, id, zi, method);
+    create : function(id, zi, method) {
+      this._super(id, zi, method);
 
       var self = this;
       $(this.$element).find(".ProgressBar").progressbar({
@@ -2413,10 +2416,10 @@
       this.height       = 300;
     },
 
-    create : function(desktop, id, zi, method) {
+    create : function(id, zi, method) {
       var self = this;
 
-      this._super(desktop, id, zi, method);
+      this._super(id, zi, method);
 
       var ul          = this.$element.find("ul");
       var inp         = this.$element.find("input[type='text']");
@@ -2617,9 +2620,9 @@
     },
 
 
-    create : function(desktop, id, zi, method) {
+    create : function(id, zi, method) {
       var self = this;
-      this._super(desktop, id, zi, method);
+      this._super(id, zi, method);
 
       var app, current;
       var selected;
@@ -2683,9 +2686,9 @@
     },
 
 
-    create : function(desktop, id, zi, method) {
+    create : function(id, zi, method) {
       var self = this;
-      this._super(desktop, id, zi, method);
+      this._super(id, zi, method);
     }
 
   });
@@ -2715,8 +2718,8 @@
         this._super();
       },
 
-      create : function(desktop, id, zi, method) {
-        this._super(desktop, id, zi, method);
+      create : function(id, zi, method) {
+        this._super(id, zi, method);
         this.callback(this.$element);
       }
 

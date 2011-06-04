@@ -53,4 +53,36 @@
     <column name="url" type="varchar" size="255" required="true" />
   </table>
 
+  <!-- APPLICATIONS -->
+
+  <table name="app_email_mailbox">
+    <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+    <column name="name" type="varchar" size="255" required="true" primaryString="true" />
+    <column name="path" type="varchar" size="255" required="true" primaryString="true" />
+
+    <column name="user_id" type="integer" />
+    <foreign-key foreignTable="user" onDelete="cascade">
+      <reference local="user_id" foreign="id"/>
+    </foreign-key>
+  </table>
+
+  <table name="app_email_message">
+    <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+    <column name="message_id" type="varchar" size="1024" required="true"  />
+    <column name="mailbox_id" type="integer" required="true" />
+    <column name="user_id" type="integer" />
+    <column name="status" type="tinyint" size="1" default="0" required="true" />
+    <column name="from" type="varchar" size="255" required="true" />
+    <column name="date" type="varchar" size="255" required="true" />
+    <column name="subject" type="varchar" size="255" primaryString="true" />
+    <column name="message" type="longvarchar" />
+
+    <foreign-key foreignTable="user" onDelete="cascade">
+      <reference local="user_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="app_email_mailbox" onDelete="cascade">
+      <reference local="mailbox_id" foreign="id"/>
+    </foreign-key>
+  </table>
+
 </database>
