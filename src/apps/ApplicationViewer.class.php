@@ -22,6 +22,7 @@ class ApplicationViewer
 
   public static $MimeTypes = Array(
     "image/*",
+    "audio/*",
     "video/*",
     "application/ogg"
   );

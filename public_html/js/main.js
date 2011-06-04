@@ -8,6 +8,7 @@
  * TODO: Fix onblur() for all applications
  * TODO: Finixh application hook interface
  * TODO: Window ontop (sticky)
+ * TODO: Separate Operation dialogs
  *
  * Creates a desktop environment inside the browser.
  * Applications can be loaded via the server.
@@ -1082,7 +1083,7 @@
       this.$element.empty().remove();
     },
 
-    // FIXME: Generic handler
+    // FIXME: Generic handler, remove desktop ref
     redraw : function(desktop, win, remove) {
       var wpi = this.getItem("PanelItemWindowList", 0);
       if ( wpi ) {

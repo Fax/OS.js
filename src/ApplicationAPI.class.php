@@ -213,6 +213,9 @@ class ApplicationAPI
               case "video" :
                 $icon = "mimetypes/video-x-generic.png";
               break;
+              case "audio" :
+                $icon = "mimetypes/audio-x-generic.png";
+              break;
               case "text" :
                 $icon = "mimetypes/text-x-generic.png";
                 switch ( $mime ) {

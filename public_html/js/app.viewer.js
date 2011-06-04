@@ -38,12 +38,15 @@ var ApplicationViewer = (function() {
 
         var img;
         var video;
+        var audio;
 
         function _play(path, mime) {
           if ( img ) 
             $(img).remove();
           if ( video )
             $(video).remove();
+          if ( audio )
+            $(audio).remove();
 
           var source = "/media/" + path;
           var type = "image";
@@ -72,6 +75,36 @@ var ApplicationViewer = (function() {
 
             el.find(".ApplicationViewerImage").append(img);
             el.find(".WindowContent").css("overflow", "auto");
+          } else if ( type == "audio" ) {
+            // FIXME: removeEventListener, jquery ?!
+            audio = $("<audio>");
+            audio.attr("controls", "controls");
+            audio.attr("src", source);
+
+            _audio = audio[0];
+            _audio.addEventListener("loadeddata", function() {
+              loader.hide();
+
+              _audio.play();
+
+              setTimeout(function() {
+                _resize(audio, el, true);
+              }, 1);
+            }, true);
+            _audio.addEventListener("error", function() {
+              loader.hide();
+
+              setTimeout(function() {
+                _resize(audio, el, true);
+              }, 1);
+            }, true);
+
+            el.find(".ApplicationViewerImage").append(audio);
+            el.find(".WindowContent").css("overflow", "hidden");
+
+            setTimeout(function() {
+              _resize(audio, el, true);
+            }, 1);
           } else {
             // FIXME: removeEventListener, jquery ?!
             video = $("<video>");
