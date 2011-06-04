@@ -1070,7 +1070,8 @@
         var ret = API.application.context_menu(ev, [
           {"title" : "Panel", "disabled" : true, "attribute" : "header"},
           {"title" : "Add new item", "disabled" : true, "method" : function() {
-            _Desktop.addWindow(new PanelItemOperationDialog(this, function() {
+            _Desktop.addWindow(new PanelItemOperationDialog(this, function(diag) {
+            }, function() {
               self.reload();
             }));
           }}
@@ -2019,7 +2020,9 @@
       var self = this;
       var litem = $("<li><span><img alt=\"\" src=\"/img/blank.gif\" /></span></li>");
       if ( typeof method == "function" ) {
-        litem.click(method);
+        if ( !disabled ) {
+          litem.click(method);
+        }
       } else {
         litem.find("span").attr("class", method);
       }
@@ -2672,12 +2675,13 @@
    */
   var PanelItemOperationDialog = OperationDialog.extend({
 
-    init : function(item, clb_finish) {
+    init : function(item, clb_create, clb_finish) {
       this._super("PanelItem");
 
       this.item         = item         || null;
       this.type         = item instanceof Panel ? "panel" : "item";
       this.clb_finish   = clb_finish   || function() {};
+      this.clb_create   = clb_create   || function() {};
 
       this.title    = "Configure " + this.type;
       this.content  = $("#OperationDialogPanelItem").html();
@@ -2689,6 +2693,7 @@
     create : function(id, zi) {
       var self = this;
       this._super(id, zi);
+      this.clb_create(self);
     }
 
   });
