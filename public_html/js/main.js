@@ -872,7 +872,11 @@
             callback({});
           } else {
             API.ui.cursor("wait");
-            win.load(callback);
+            win.load(callback, function() {
+              setTimeout(function() {
+                API.ui.cursor("default");
+              }, 50);
+            });
           }
 
           return win;
@@ -1751,7 +1755,10 @@
       this.created = true;
     },
 
-    load : function(callback) {
+    load : function(callback, callback_error) {
+      callback = callback || function() {};
+      callback_error = callback_error || function() {};
+
       if ( !this.loaded ) {
         var self = this;
         $.post("/", {'ajax' : true, 'action' : 'load', 'app' : self.name}, function(data) {
@@ -1779,6 +1786,8 @@
             });
           } else {
             API.system.dialog("error", data.error);
+
+            callback_error(data.error);
           }
         });
       }
