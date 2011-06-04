@@ -10,6 +10,9 @@
  * TODO: Window ontop (sticky)
  * TODO: Separate Operation dialogs
  * TODO: Apps can append title to window list (panel item)
+ * TODO: Sortable panel items (use absolute, snap to direction as panel does)
+ * TODO: Rewrite settings manager
+ * TODO: Implement settings manager into applications
  *
  * Creates a desktop environment inside the browser.
  * Applications can be loaded via the server.
@@ -1340,6 +1343,8 @@
         {"title" : "Move right", "method" : function() {
           self._panel.moveItem(self, 1);
         }},*/
+        {"title" : "Move", "method" : function() {
+        }, "disabled" : true},
         {"title" : "Remove", "method" : function() {
           API.system.dialog("confirm", "Are you sure you want to remove this item?", null, function() {
             self._panel.removeItem(self); // TODO: Save
