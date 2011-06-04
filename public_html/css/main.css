@@ -469,6 +469,43 @@ input.Disabled {
   margin-left : 10px;
 }
 
+.OperationDialogPanelItemAdd {
+}
+.OperationDialogPanelItemAdd .Wrapper {
+  height : 240px;
+  overflow : auto;
+}
+.OperationDialogPanelItemAdd ul {
+  margin : 0;
+  padding : 0;
+  list-style-type : none;
+}
+.OperationDialogPanelItemAdd li {
+  margin : 0;
+  padding : 10px;
+  position : relative;
+  height : 40px;
+}
+/*
+.OperationDialogPanelItemAdd li.Current {
+}
+*/
+.OperationDialogPanelItemAdd li .Inner {
+  position : absolute;
+  left : 32px;
+  margin-left : 20px;
+
+}
+.OperationDialogPanelItemAdd li .Title {
+  font-weight : bold;
+}
+.OperationDialogPanelItemAdd li img {
+  position : absolute;
+}
+.OperationDialogPanelItemAdd li:Hover .Title {
+  text-decoration : underline;
+}
+
 
 #ContextMenu {
   position : absolute;

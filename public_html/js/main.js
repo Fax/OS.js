@@ -1069,11 +1069,45 @@
 
         var ret = API.application.context_menu(ev, [
           {"title" : "Panel", "disabled" : true, "attribute" : "header"},
-          {"title" : "Add new item", "disabled" : true, "method" : function() {
-            _Desktop.addWindow(new PanelItemOperationDialog(this, function(diag) {
+          {"title" : "Add new item", "method" : function() {
+            var pitem = new PanelItemOperationDialog(this, function(diag) {
+              diag.$element.find(".DialogButtons .Close").show();
+              diag.$element.find(".DialogButtons .Ok").show().click(function() {
+              }).attr("disabled", "disabled");
+
+              var items = _Settings._get("system.panel.registered", true);
+              var current;
+
+              for ( var name in items ) {
+                if ( items.hasOwnProperty(name) ) {
+                  var li = $("<li><img alt=\"/img/blank.gif\" /><div class=\"Inner\"><div class=\"Title\">Title</div><div class=\"Description\">Description</div></div></li>");
+                  li.find("img").attr("src", items[name].icon);
+                  li.find(".Title").html(items[name].title);
+                  li.find(".Description").html(items[name].description);
+
+                  (function(litem) {
+                    litem.click(function() {
+                      if ( current && current != this ) {
+                        $(current).removeClass("Current");
+                      }
+                      $(this).addClass("Current");
+                      current = this;
+                    });
+                  })(li);
+
+                  diag.$element.find(".DialogContent ul").append(li);
+                }
+              }
+
             }, function() {
               self.reload();
-            }));
+            }, "Add new panel item", $("#OperationDialogPanelItemAdd"));
+
+            pitem.height = 300;
+            pitem.gravity = "center";
+            pitem.icon = "categories/applications-utilities.png";
+
+            _Desktop.addWindow(pitem);
           }}
 
         ], $(this), 3, true);
@@ -2675,7 +2709,7 @@
    */
   var PanelItemOperationDialog = OperationDialog.extend({
 
-    init : function(item, clb_create, clb_finish) {
+    init : function(item, clb_create, clb_finish, title, copy) {
       this._super("PanelItem");
 
       this.item         = item         || null;
@@ -2683,8 +2717,8 @@
       this.clb_finish   = clb_finish   || function() {};
       this.clb_create   = clb_create   || function() {};
 
-      this.title    = "Configure " + this.type;
-      this.content  = $("#OperationDialogPanelItem").html();
+      this.title    = title || "Configure " + this.type;
+      this.content  = (copy || $("#OperationDialogPanelItem")).html();
       this.width    = 400;
       this.height   = 170;
     },
