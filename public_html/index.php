@@ -68,7 +68,7 @@ header("Content-Type: text/html; charset=utf-8");
   <script type="text/javascript" src="/js/utils.js"></script>
   <script type="text/javascript" src="/js/main.js"></script>
 
-  <!-- Preloaded applications -->
+  <!-- Preloaded resources -->
   <link rel="stylesheet" type="text/css" href="/css/sys.about.css" />
   <link rel="stylesheet" type="text/css" href="/css/sys.user.css" />
   <link rel="stylesheet" type="text/css" href="/css/sys.settings.css" />
@@ -82,7 +82,7 @@ header("Content-Type: text/html; charset=utf-8");
   <script type="text/javascript" src="/js/panel.dock.js"></script>
   <script type="text/javascript" src="/js/panel.weather.js"></script>
 
-  <!--<script type="text/javascript" src="/js/sys.about.js"></script>-->
+  <script type="text/javascript" src="/js/sys.about.js"></script>
   <script type="text/javascript" src="/js/sys.user.js"></script>
   <script type="text/javascript" src="/js/sys.settings.js"></script>
   <script type="text/javascript" src="/js/sys.logout.js"></script>
