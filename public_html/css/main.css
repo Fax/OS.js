@@ -55,6 +55,7 @@ input.Disabled {
   height : 22px;
   padding : 10px;
   z-index : 1000100;
+  display : none;
 }
 
 #LoadingBar {

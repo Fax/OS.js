@@ -461,6 +461,10 @@
             API.system.dialog("error", data.error);
           }
         });
+      },
+
+      'applications' : function() {
+        return  _Settings._get("system.app.registered", true);
       }
     }
 
@@ -797,10 +801,16 @@
           ialign = el[2] || "left";
 
           //var item = new PanelItem[iname]();
-          var item = construct(PanelItem[iname], iargs);
-          item._panel = this.panel;
-          item._index = i;
-          this.panel.addItem(item, ialign);
+          var item;
+          if ( window[iname] ) {
+            item = new window[iname](_PanelItem, self, API, iargs);
+          }
+
+          if ( item ) {
+            item._panel = this.panel;
+            item._index = i;
+            this.panel.addItem(item, ialign);
+          }
         }
 
         API.loading.progress(40);
@@ -1187,7 +1197,6 @@
    *
    * @class
    */
-  var PanelItem = {};
   var _PanelItem = Class.extend({
 
     init : function(name, align)  {
@@ -1301,379 +1310,6 @@
     }
 
   });
-
-
-  /**
-   * PanelItem: PanelItemMenu
-   *
-   * @class
-   */
-  PanelItem.PanelItemMenu = _PanelItem.extend({
-    init : function(title, icon, menu) {
-      this._super("PanelItemMenu");
-      this.named = "Launcher Menu";
-      this.title = title || "Launch Application";
-      this.icon = '/img/icons/16x16/' + (icon || 'categories/gnome-applications.png');
-
-      var menu_items = menu || null;
-      if ( menu_items === null ) {
-        var o;
-        var apps = _Settings._get("system.app.registered", true);
-        menu_items = [];
-        for ( var a in apps ) {
-          if ( apps.hasOwnProperty(a) ) {
-            o = apps[a];
-            (function(apn) {
-              menu_items.push({
-                "title" : o.title,
-                "method" : function() {
-                  API.system.launch(apn);
-                },
-                "icon" : o.icon
-              });
-            })(a);
-          }
-        }
-      }
-
-      this.menu = menu_items;
-    },
-
-    create : function(pos) {
-      var self = this;
-      var el = this._super(pos);
-      var img = $("<img src=\"" + this.icon + "\" title=\"" + this.title + "\" />");
-      $(el).append(img);
-
-      $(el).click(function(ev) {
-        ev.preventDefault();
-        ev.stopPropagation();
-
-        return API.application.context_menu(ev, self.menu, $(this), 1);
-      });
-
-      return el;
-    },
-
-    destroy : function() {
-      if ( this.menu ) {
-        this.menu = null;
-      }
-      this._super();
-    }
-
-  });
-
-  /**
-   * PanelItem: PanelItemSeparator
-   *
-   * @class
-   */
-  PanelItem.PanelItemSeparator = _PanelItem.extend({
-    init : function() {
-      this._super("PanelItemSeparator");
-      this.named = "Separator";
-    },
-
-    create : function(pos) {
-      return this._super(pos);
-    },
-
-
-    destroy : function() {
-      this._super();
-    }
-
-  });
-
-
-  /**
-   * PanelItem: PanelItemWindowList
-   *
-   * @class
-   */
-  PanelItem.PanelItemWindowList = _PanelItem.extend({
-    init : function() {
-      this._super("PanelItemWindowList", "left");
-      this.named = "Window List";
-      this.expand = true;
-    },
-
-    create : function(pos) {
-      return this._super(pos);
-    },
-
-    redraw : function(desktop, win, remove) {
-      var self = this;
-
-      var id = win.$element.attr("id") + "_Shortcut";
-
-      if ( remove ) {
-        $("#" + id).empty().remove();
-      } else {
-
-        if ( !document.getElementById(id) ) {
-          var el = $("<div class=\"PanelItem Padded PanelItemWindow\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div>");
-          el.find("img").attr("src", "/img/icons/16x16/" + win.icon);
-          el.find("span").html(win.title);
-          el.attr("id", id);
-
-          if ( win.current ) {
-            el.addClass("Current");
-          }
-
-          (function(vel, wwin) {
-            vel.click(function() {
-              desktop.focusWindow(wwin);
-            });
-          })(el, win);
-
-          self.$element.append(el);
-        }
-
-        if ( remove === undefined ) {
-          this.$element.find(".PanelItemWindow").removeClass("Current");
-          $("#" + id).addClass("Current");
-        }
-      }
-    },
-
-
-    destroy : function() {
-      this._super();
-    }
-  });
-
-
-  /**
-   * PanelItem: PanelItemClock
-   *
-   * @class
-   */
-  PanelItem.PanelItemClock = _PanelItem.extend({
-    init : function() {
-      this._super("PanelItemWindowClock", "right");
-      this.named = "Clock";
-    },
-
-    create : function(pos) {
-      var ret = this._super(pos);
-      $(ret).append("<span></span>");
-
-      var d = new Date();
-      $(ret).find("span").html(sprintf("%02d/%02d/%02d %02d:%02s", d.getDate(), d.getMonth(), d.getYear(), d.getHours(), d.getMinutes()));
-
-      // Start clock
-      this.clock_interval = setInterval(function() {
-        var d = new Date();
-        $(ret).find("span").html(sprintf("%02d/%02d/%02d %02d:%02s", d.getDate(), d.getMonth(), d.getYear(), d.getHours(), d.getMinutes()));
-      }, 500);
-
-      return ret;
-    },
-
-
-    destroy : function() {
-      if ( this.clock_interval ) {
-        clearInterval(this.clock_interval);
-      }
-
-      this._super();
-    }
-  });
-
-
-  /**
-   * PanelItem: PanelItemDock
-   *
-   * @class
-   */
-  PanelItem.PanelItemDock = _PanelItem.extend({
-    init : function(items) {
-      this._super("PanelItemDock");
-      this.items = items || [];
-      this.named = "Launcher Dock";
-      this.dynamic = true;
-    },
-
-    create : function(pos) {
-      var el = this._super(pos);
-
-      var e, o;
-      for ( var i = 0; i < this.items.length; i++ ) {
-        e = this.items[i];
-        o = $("<div class=\"PanelItem PanelItemLauncher\"><span class=\"\"><img alt=\"\" src=\"/img/blank.gif\" title=\"\" ></span></div>");
-        o.find("span").addClass("launch_" + e.launch);
-        o.find("img").attr("src", '/img/icons/16x16/' + e.icon);
-        o.find("img").attr("title", e.title);
-        el.append(o);
-      }
-
-      $(el).find(".PanelItemLauncher").click(function(ev) {
-        var app = $(this).find("span").attr("class").replace("launch_", "");
-        if ( app == "About" ) {
-          $("#DialogAbout").show();
-          $("#DialogAbout").css({
-            "top" : (($(document).height() / 2) - ($("#DialogAbout").height() / 2)) + "px",
-            "left" : (($(document).width() / 2) - ($("#DialogAbout").width() / 2)) + "px"
-          });
-        } else {
-          API.system.launch(app);
-        }
-      });
-
-      return el;
-    },
-
-
-    destroy : function() {
-      this._super();
-    }
-
-  });
-
-  /**
-   * PanelItem: PanelItemWeather
-   *
-   * Uses geolocation API and geonames to figure out weather
-   *
-   * @class
-   */
-  PanelItem.PanelItemWeather = _PanelItem.extend({
-    init : function() {
-      this._super("PanelItemWeather", "right");
-
-      this.named        = "Weather";
-      this.interval     = null;
-    },
-
-    getImage : function(img) {
-      return sprintf("/img/icons/16x16/status/weather-%s.png", img);
-    },
-
-    parse : function(lat, lng) {
-      var self  = this;
-      var url   = sprintf("http://api.geonames.org/findNearByWeatherJSON?lat=%s&lng=%s&username=demo", lat, lng);
-      var span  = this.$element.find("span");
-      var img   = this.$element.find("img");
-
-      span.attr("title", "Loading...");
-      span.html("Loading...");
-      img.attr("src", self.getImage("severe-alert"));
-
-      $.ajax({
-        'type' : 'post',
-        'url'  : '/',
-        'data' : {'ajax' : true, 'action' : 'call', 'method' : 'readurl', 'args' : url},
-        success : function(data) {
-          if ( data.success ) {
-            var result = null;
-            try {
-              result = JSON.parse(data.result);
-            } catch ( eee) {}
-
-            if ( result && result.weatherObservation ) {
-              var icon        = "severe-alert";
-
-              var loc_name    = result.weatherObservation.stationName;
-              var loc_country = result.weatherObservation.countryCode;
-              var temp        = result.weatherObservation.temperature;
-              var tempu       = "C";
-              var clouds      = result.weatherObservation.clouds;
-              var condition   = result.weatherObservation.weatherCondition;
-
-              var icons_clouds = {
-                "clear sky"             : "clear",
-                "clear sky"             : "clear",
-                "few clouds"            : "few-clouds",
-                "scattered clouds"      : "few-clouds",
-                "broken clouds"         : "few-clouds",
-                "overcast"              : "overcast",
-                "vertical visibility"   : "overcast"
-              };
-              var icons_conditions = {
-                "drizzle"      : "showers-scattered",
-                "rain"         : "showers",
-                "showers"      : "showers",
-                "show"         : "snow",
-                "snow grains"  : "snow",
-                "mist"         : "fog",
-                "fog"          : "fog",
-                "thunderstorm" : "storm"
-              };
-
-              if ( icons_clouds[clouds] ) {
-                icon = icon_clouds[clouds];
-              }
-              if ( icons_conditions[condition] ) {
-                icon = icon_conditions[condition];
-              }
-
-              img.attr("src", self.getImage(icon));
-              span.attr("title", sprintf("%s, %s", loc_name, loc_country));
-              span.html(sprintf("%s &deg;%s %s", temp, tempu, clouds));
-            } else {
-              self.crash("No Weather data");
-            }
-          } else {
-            self.crash("No Weather data");
-          }
-        },
-        error : function() {
-          self.crash("No Weather data");
-        }
-      });
-    },
-
-    poll : function() {
-      var self = this;
-
-      navigator.geolocation.getCurrentPosition(function(position) {
-        self.parse(position.coords.latitude, position.coords.longitude);
-      }, function() {
-        self.crash("No Weather data");
-      });
-
-    },
-
-    create : function(pos) {
-      var self = this;
-      var ret = this._super(pos);
-
-      $(ret).append("<img alt=\"\" src=\"/img/blank.gif\" /><span title=\"\">&nbsp;</span>");
-
-      this.interval = setInterval(function() {
-        self.poll();
-      }, 60 * 1000);
-
-      this.poll();
-
-      return ret;
-    },
-
-    destroy : function() {
-      if ( this.interval ) {
-        clearInterval(this.interval);
-      }
-
-      this._super();
-    },
-
-    getMenu : function() {
-      var self = this;
-      var ret = this._super();
-
-      ret.push("---");
-      ret.push({
-        'title'    : 'Reload',
-        'disabled' : self.crashed,
-        'method'   : function() { self.poll(); }
-      });
-
-      return ret;
-    }
-  });
-
 
   /////////////////////////////////////////////////////////////////////////////
   // WINDOW
@@ -3100,10 +2736,6 @@
       return;
     }
 
-    if ( $("#Loading").length ) {
-      $("#LoadingBar").progressbar({"value" : 5});
-    }
-
     // Global touch-movment handler
     $(document).bind('touchmove', function(e) {
       e.preventDefault();
@@ -3178,6 +2810,10 @@
     // Startup script
     var __LAUNCH = function()
     {
+
+      API.loading.show();
+      API.loading.progress(5);
+
       _Resources = new ResourceManager();
       $.post("/", {'ajax' : true, 'action' : 'init'}, function(data) {
         if ( data.success ) {

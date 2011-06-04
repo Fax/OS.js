@@ -75,6 +75,13 @@ header("Content-Type: text/html; charset=utf-8");
   <link rel="stylesheet" type="text/css" href="/css/sys.logout.css" />
   <link rel="stylesheet" type="text/css" href="/css/sys.terminal.css" />
 
+  <script type="text/javascript" src="/js/panel.separator.js"></script>
+  <script type="text/javascript" src="/js/panel.clock.js"></script>
+  <script type="text/javascript" src="/js/panel.menu.js"></script>
+  <script type="text/javascript" src="/js/panel.windowlist.js"></script>
+  <script type="text/javascript" src="/js/panel.dock.js"></script>
+  <script type="text/javascript" src="/js/panel.weather.js"></script>
+
   <!--<script type="text/javascript" src="/js/sys.about.js"></script>-->
   <script type="text/javascript" src="/js/sys.user.js"></script>
   <script type="text/javascript" src="/js/sys.settings.js"></script>
