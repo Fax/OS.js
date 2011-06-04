@@ -73,10 +73,10 @@ var PanelItemWeather = (function($, undefined) {
                 };
 
                 if ( icons_clouds[clouds] ) {
-                  icon = icon_clouds[clouds];
+                  icon = icons_clouds[clouds];
                 }
                 if ( icons_conditions[condition] ) {
-                  icon = icon_conditions[condition];
+                  icon = icons_conditions[condition];
                 }
 
                 img.attr("src", self.getImage(icon));
