@@ -21,6 +21,10 @@ var SystemLogout = (function() {
       run : function() {
         var el = app.$element;
 
+        $(el).find("label").click(function() {
+          $(el).find("input[type=checkbox]").click();
+        });
+
         $(el).find('button.Cancel').click(function() {
           $(el).find(".ActionClose").click();
         });
