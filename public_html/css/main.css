@@ -76,6 +76,11 @@ input.Disabled {
 .DesktopPanel {
   position : absolute;
   top : 0px;
+  /*
+  left : 50%;
+  margin-left : -450px;
+  width : 900px;
+  */
   left : 0px;
   right : 0px;
   height : 30px;
@@ -96,10 +101,11 @@ input.Disabled {
   list-style-type : none;
   position : relative;
 }
-.DesktopPanel li {
-  display : block;
-  position : relative;
+.DesktopPanel li { /* .PanelItem */
+  /*margin : 0;
+  padding : 0;*/
 }
+
 
 /*
 .PanelButton {
@@ -107,8 +113,7 @@ input.Disabled {
 }
 */
 
-.PanelItem,
-.DesktopPanel .ui-state-highlight {
+.PanelItem {
   float : left;
   height : 20px;
   line-height : 20px;
@@ -123,12 +128,6 @@ input.Disabled {
 }
 
 .PanelItem.AlignRight {
-  float : right;
-}
-.PanelItemHolder {
-  float : left;
-}
-.PanelItemHolder.AlignRight {
   float : right;
 }
 

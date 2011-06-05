@@ -13,6 +13,7 @@
  * TODO: Sortable panel items (use absolute, snap to direction as panel does)
  * TODO: Rewrite settings manager
  * TODO: Implement settings manager into applications
+ * TODO: Menu subitems
  *
  * Creates a desktop environment inside the browser.
  * Applications can be loaded via the server.
