@@ -2,6 +2,9 @@
  * Application: ApplicationFilemanager
  *
  * TODO: Download files
+ * TODO: Create new file from template
+ * TODO: Create new directories
+ * TODO: Edit menu (rename, copy, cut, paste, select all)
  *
  * @package ajwm.Applications
  * @author Anders Evenrud <andersevenrud@gmail.com>

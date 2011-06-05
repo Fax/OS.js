@@ -873,7 +873,7 @@
             //win.focus();
             if ( !win.is_minimized && !win.is_maximized ) {
               //$(win.$element).trigger("mousedown");
-              self.focusWindow(win);
+              self.focusWindow(win); // Always focus new windows
             }
 
             self.panel.redraw(self, win, false);
@@ -1565,9 +1565,9 @@
                   el.find(".ActionMaximize").click();
                 }
               }},
-              /*{"title" : (self.is_ontop ? "Same as other windows" : "Always on top"), "icon" : "actions/zoom-original.png", "method" : function() {
+              {"title" : (self.is_ontop ? "Same as other windows" : "Always on top"), "icon" : "actions/zoom-original.png", "method" : function() {
                 self.ontop();
-              }},*/
+              }},
               {"title" : (self.is_minimized ? "Show" : "Minimize"), "icon" : "actions/window_nofullscreen.png", "disabled" : !self.is_minimizable, "method" : function() {
                 if ( self.is_minimizable ) {
                   el.find(".ActionMinimize").click();
@@ -1673,6 +1673,9 @@
             if ( this.attrs.attribs && sizeof(this.attrs.attribs) ) {
               this.is_minimized = this.attrs.attribs.minimized;
               this.is_maximized = this.attrs.attribs.maximized;
+              if ( this.attrs.attribs.ontop !== undefined ) {
+                this.is_ontop   = this.attrs.attribs.ontop;
+              }
             }
           }
         }
@@ -1768,8 +1771,6 @@
         // Run Dialog or Application
         //
         if ( this.dialog ) {
-          _Desktop.focusWindow(this);
-
           mcallback();
         } else {
           setTimeout(function() {
@@ -1801,6 +1802,7 @@
         if ( this.is_minimized ) {
           $(el).hide();
         }
+
         if ( this.is_maximized ) {
           this.$element.find(".ActionMaximize").parent().addClass("Active");
           if ( this.is_resizable ) {
@@ -1871,15 +1873,22 @@
     focus : function() {
       var focused = false;
       if ( !this.current ) {
-        if ( !this.is_ontop ) {
-          _TopIndex++; // FIXME: ZINDEX_WINDOW_MAX - roll-over
-        }
 
         if ( this.is_minimized ) {
           this.minimize();
         }
 
-        this.$element.css("z-index", _TopIndex);
+        // FIXME: Roll-back values when max is reached
+        if ( this.is_ontop ) {
+          _OnTopIndex++;
+
+          this.$element.css("z-index", _OnTopIndex);
+        } else {
+          _TopIndex++;
+
+          this.$element.css("z-index", _TopIndex);
+        }
+
         this.$element.addClass("Current");
 
         focused = true;
@@ -2038,7 +2047,7 @@
         'name'     : this.name,
         'size'     : {'width' : this.$element.width(), 'height' : this.$element.height()},
         'position' : {'left' : this.left, 'top' : this.top},
-        'attribs'  : {'minimized' : this.is_minimized, 'maximized' : this.is_maximized},
+        'attribs'  : {'minimized' : this.is_minimized, 'maximized' : this.is_maximized, 'ontop' : this.is_ontop},
         'argv'     : this.argv
       };
     }
