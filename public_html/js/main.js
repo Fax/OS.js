@@ -1861,10 +1861,15 @@
 
     ontop : function() {
       if ( this.is_ontop ) {
-        this.$element.css("z-index", this.oldZindex);
+        if ( this.oldZindex > 0 ) {
+          this.$element.css("z-index", this.oldZindex);
+        } else {
+          _TopIndex++;
+          this.$element.css("z-index", _TopIndex);
+        }
       } else {
         _OnTopIndex++;
-
+        this.oldZindex = this.$element.css("z-index");
         this.$element.css("z-index", _OnTopIndex);
       }
 
