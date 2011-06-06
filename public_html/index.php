@@ -23,11 +23,14 @@ if ( !($json = $wm->doPOST($_POST)) === false ) {
 }
 
 
-if ( !ENV_PRODUCTION ) {
+$append = "";
+if ( !ENABLE_CACHE ) {
   header("Expires: Fri, 01 Jan 2010 05:00:00 GMT");
   header("Cache-Control: maxage=1");
   header("Cache-Control: no-cache");
   header("Pragma: no-cache");
+
+  $append = "?" . time();
 }
 
 header("Content-Type: text/html; charset=utf-8");
@@ -61,32 +64,32 @@ header("Content-Type: text/html; charset=utf-8");
   <script type="text/javascript" src="/js/vendor/jquery.touch.compact.js"></script>
 
   <!-- Main libraries -->
-  <link rel="stylesheet" type="text/css" href="/css/main.css" />
-  <link rel="stylesheet" type="text/css" href="/css/pimp.css" />
-  <link rel="stylesheet" type="text/css" href="/css/theme.default.css" />
+  <link rel="stylesheet" type="text/css" href="/css/main.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/css/pimp.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/css/theme.default.css<?php print $append; ?>" />
 
-  <script type="text/javascript" src="/js/utils.js"></script>
-  <script type="text/javascript" src="/js/main.js"></script>
+  <script type="text/javascript" src="/js/utils.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/js/main.js<?php print $append; ?>"></script>
 
   <!-- Preloaded resources -->
-  <link rel="stylesheet" type="text/css" href="/css/sys.about.css" />
-  <link rel="stylesheet" type="text/css" href="/css/sys.user.css" />
-  <link rel="stylesheet" type="text/css" href="/css/sys.settings.css" />
-  <link rel="stylesheet" type="text/css" href="/css/sys.logout.css" />
-  <link rel="stylesheet" type="text/css" href="/css/sys.terminal.css" />
+  <link rel="stylesheet" type="text/css" href="/css/sys.about.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/css/sys.user.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/css/sys.settings.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/css/sys.logout.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/css/sys.terminal.css<?php print $append; ?>" />
 
-  <script type="text/javascript" src="/js/panel.separator.js"></script>
-  <script type="text/javascript" src="/js/panel.clock.js"></script>
-  <script type="text/javascript" src="/js/panel.menu.js"></script>
-  <script type="text/javascript" src="/js/panel.windowlist.js"></script>
-  <script type="text/javascript" src="/js/panel.dock.js"></script>
-  <script type="text/javascript" src="/js/panel.weather.js"></script>
+  <script type="text/javascript" src="/js/panel.separator.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/js/panel.clock.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/js/panel.menu.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/js/panel.windowlist.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/js/panel.dock.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/js/panel.weather.js<?php print $append; ?>"></script>
 
-  <script type="text/javascript" src="/js/sys.about.js"></script>
-  <script type="text/javascript" src="/js/sys.user.js"></script>
-  <script type="text/javascript" src="/js/sys.settings.js"></script>
-  <script type="text/javascript" src="/js/sys.logout.js"></script>
-  <script type="text/javascript" src="/js/sys.terminal.js"></script>
+  <script type="text/javascript" src="/js/sys.about.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/js/sys.user.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/js/sys.settings.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/js/sys.logout.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/js/sys.terminal.js<?php print $append; ?>"></script>
 </head>
 <body>
 

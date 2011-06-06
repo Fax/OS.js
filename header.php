@@ -16,6 +16,7 @@ define("PROJECT_VERSION", "0.3");
 // Environment
 define("ENV_PRODUCTION", false);
 define("DEFAULT_TIMEZONE", "Europe/Oslo");
+define("ENABLE_CACHE", false);
 
 // Server
 define("SERVER_HOST", "localhost");

@@ -237,7 +237,10 @@ class WindowManager
         } else if ( $args['action'] == "init" ) {
 
           $json = Array("success" => true, "error" => null, "result" => Array(
-            "settings" => self::getSettings()
+            "settings" => self::getSettings(),
+            "config"   => Array(
+              "cacne" => ENABLE_CACHE
+            )
           ));
         } else if ( $args['action'] == "register" ) {
           if ( $uuid = $args['uuid'] ) {

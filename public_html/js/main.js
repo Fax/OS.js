@@ -28,6 +28,8 @@
   // Override for browsers without console
   if (!window.console) console = {log:function() {}, info:function(){}, error:function(){}};
 
+  var ENABLE_CACHE        = false;
+
   var ZINDEX_MENU         = 100000000;
   var ZINDEX_RECT         = 100000000;
   var ZINDEX_PANEL        = 1000000;
@@ -556,6 +558,10 @@
 
         var type = res.split(".");
         type = type[type.length - 1];
+
+        if ( !ENABLE_CACHE ) {
+          res += "?" + (new Date()).getTime();
+        }
 
         var el = null;
         if ( type == "js" ) {
@@ -2960,6 +2966,11 @@
       _Resources = new ResourceManager();
       $.post("/", {'ajax' : true, 'action' : 'init'}, function(data) {
         if ( data.success ) {
+
+          if ( data.result.config ) {
+            ENABLE_CACHE = data.result.config.cache;
+          }
+
           _Settings = new SettingsManager(data.result.settings);
           API.loading.progress(10);
 
