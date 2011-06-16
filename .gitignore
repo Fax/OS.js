@@ -1,11 +1,5 @@
 .git-old
 _work/
-src/build/classes/*/map/*
-src/build/classes/*/om/*
-src/build/conf/*-conf.php
-src/build/conf/classmap-*-conf.php
-src/build/sql/schema.sql
-src/build/sql/sqldb.map
 *.*.sw*
 .vimerr
 vim.session
@@ -13,23 +7,29 @@ template/*.php
 doc/doxygen.log
 doc/api/*
 
-_locations.php
+# Propel
+src/build/classes/*/map/*
+src/build/classes/*/om/*
+src/build/conf/*-conf.php
+src/build/conf/classmap-*-conf.php
+src/build/sql/schema.sql
+src/build/sql/sqldb.map
+
 count-lines.sh
-glade/
-public_html/css/app.email.css
-public_html/img/app.draw/icons/
-public_html/img/cursors/
-public_html/js/app.email.js
+
+# Touch support
 public_html/js/vendor/jquery-git.js
 public_html/js/vendor/jquery-ui.min.js
 public_html/js/vendor/jquery.touch.js.txt
 public_html/js/vendor/jquery.ui.touch-punch.min.js
-public_html/weather.php
+
+# Temp Applications
+public_html/css/app.email.css
+public_html/img/app.draw/icons/
+public_html/js/app.email.js
 server.php
 src/IMAP.class.php
 src/Server.class.php
-src/apps/ApplicationEmail.class.php
-src/apps/ApplicationYouTube.class.php
 src/build/classes/ajwm/AppEmailMailbox.php
 src/build/classes/ajwm/AppEmailMailboxPeer.php
 src/build/classes/ajwm/AppEmailMailboxQuery.php
@@ -41,6 +41,3 @@ src/build/classes/ajwm/LocationPeer.php
 src/build/classes/ajwm/LocationQuery.php
 src/build/migrations/PropelMigration_1307167424.php
 src/build/migrations/PropelMigration_1307167993.php
-test-imap.php
-verda.txt
-
