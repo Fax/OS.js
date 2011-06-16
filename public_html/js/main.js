@@ -14,6 +14,7 @@
  * TODO: Rewrite settings manager
  * TODO: Implement settings manager into applications
  * TODO: Menu subitems
+ * TODO: Do not bring windows to front when clicking window action buttons
  *
  * Creates a desktop environment inside the browser.
  * Applications can be loaded via the server.
