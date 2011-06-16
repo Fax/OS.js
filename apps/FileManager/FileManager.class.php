@@ -1,78 +1,31 @@
 <?php
 /*!
  * @file
- * Contains ApplicationFilemanager Class
+ * Contains FileManager Class
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @license GPLv3 (see http://www.gnu.org/licenses/gpl-3.0.txt)
- * @created 2011-05-23
+ * @created 2011-06-16
  */
 
-function unix_path() {
-  $args = func_get_args();
-  $paths = array();
-  foreach( $args as $arg ) {
-    $paths = array_merge( $paths, (array)$arg );
-  }
-  foreach( $paths as &$path ) {
-    $path = trim( $path, '/' );
-  }
-  if( substr( $args[0], 0, 1 ) == '/' ) {
-    $paths[0] = '/' . $paths[0];
-  }
-  return join('/', $paths);
-}
-
 /**
- * ApplicationFilemanager Class
+ * FileManager Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package MyApplication
  * @class
  */
-class ApplicationFilemanager
-  extends DesktopApplication
+class FileManager
+  extends Application
 {
-  const APP_TITLE = "File Manager";
-  const APP_ICON  = "apps/file-manager.png";
+  const APPLICATION_TITLE  = "File Manager";
+  const APPLICATION_ICON   = "apps/file-manager.png";
+  const APPLICATION_SYSTEM = false;
 
+  /**
+   * Create a new instance
+   */
   public function __construct() {
-    $this->statusbar = true;
-    $this->menu = Array(
-      "File" => Array(
-        "Upload" => "cmd_Upload",
-        "Close"  => "cmd_Close"
-      ),
-      "Edit" => Array(
-
-      ),
-      "View" => Array(
-        "Reload"        => "cmd_Reload",
-        "View as icons" => "cmd_View_Icons",
-        "View as list"  => "cmd_View_List"
-      ),
-      "Go" => Array(
-        "Home" => "cmd_Home"/*,
-        "Back" => "cmd_Back"*/
-      )
-    );
-
-    $this->content = <<<EOHTML
-
-<div class="ApplicationFilemanager">
-  <div class="ApplicationFilemanagerMain">
-    <ul class="icon">
-    </ul>
-  </div>
-</div>
-
-EOHTML;
-
-    $this->resources = Array(
-      "app.filemanager.js",
-      "app.filemanager.css"
-     );
-
-    parent::__construct(self::APP_TITLE, self::APP_ICON, self::APP_HIDDEN);
+    parent::__construct();
   }
 
   public static function Event($uuid, $action, Array $args) {
@@ -156,7 +109,7 @@ EOHTML;
 
 }
 
-DesktopApplication::$Registered[] = "ApplicationFilemanager";
+Application::Register("FileManager", __FILE__, Array("app.filemanager.js", "app.filemanager.css"));
 
 
 ?>

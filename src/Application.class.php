@@ -50,8 +50,14 @@ abstract class Application
   public function __toJSON() {
     $cname = get_class($this);
 
+    if ( preg_match("/^System/", $cname) ) {
+      $class = $this->name;
+    } else {
+      $class = "Application" . $cname;
+    }
+
     return array_merge(Array(
-      "class"     => $cname,
+      "class"     => $class,
       "uuid"      => $this->_sUUID,
       "content"   => self::$Registered[$cname]["html"],
       "resources" => self::$Registered[$cname]["resources"],
@@ -73,7 +79,7 @@ abstract class Application
     return new Application();
   }
 
-  public final static function Register($cname, $file, Array $resources, Array $mimes) {
+  public final static function Register($cname, $file, Array $resources = Array(), Array $mimes = Array()) {
     $html   = "";
     $window = Array();
 
@@ -97,8 +103,10 @@ abstract class Application
     );
 
     /*
+    if ( $cname == "FileManager" ) {
     var_dump($html);
     exit;
+    }
      */
   }
 

@@ -1,5 +1,5 @@
 /**
- * Application: ApplicationFilemanager
+ * Application: ApplicationFileManager
  *
  * TODO: Download files
  * TODO: Create new file from template
@@ -10,7 +10,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var ApplicationFilemanager = (function($, undefined) {
+var ApplicationFileManager = (function($, undefined) {
   return function(Application, app, api, argv) {
 
     if ( argv.view_type == undefined ) {
@@ -23,9 +23,9 @@ var ApplicationFilemanager = (function($, undefined) {
     var _CurrentDir = "/";
     var _History = [];
 
-    var _ApplicationFilemanager = Application.extend({
+    var _ApplicationFileManager = Application.extend({
       init : function() {
-        this._super("ApplicationFilemanager");
+        this._super("ApplicationFileManager");
         this.argv = argv;
       },
 
@@ -62,12 +62,12 @@ var ApplicationFilemanager = (function($, undefined) {
             var type = $(self).find("input[name='type']").val();
 
             if ( type == "dir" ) {
-              $(el).find(".WindowBottomInner").html(sprintf('"%s" %s', name, "folder"));
+              $(el).find(".statusbar1").html(sprintf('"%s" %s', name, "folder"));
             } else {
-              $(el).find(".WindowBottomInner").html(sprintf('"%s" (%s b) %s', name, size, mime));
+              $(el).find(".statusbar1").html(sprintf('"%s" (%s b) %s', name, size, mime));
             }
           } else {
-            $(el).find(".WindowBottomInner").html(_defaultStatusText);
+            $(el).find(".statusbar1").html(_defaultStatusText);
           }
 
           lastItem = self;
@@ -77,7 +77,7 @@ var ApplicationFilemanager = (function($, undefined) {
 
         var _initClick = function() { 
 
-          $(el).find(".ApplicationFilemanagerMain .Inner").bind('click', function(ev) {
+          $(el).find(".ApplicationFileManager .Inner").bind('click', function(ev) {
             //_selItem(this);
             $(document).click(); // Trigger this! (deselects context-menu)
             ev.stopPropagation();
@@ -148,18 +148,18 @@ var ApplicationFilemanager = (function($, undefined) {
             }
           });
 
-          $(el).find(".ApplicationFilemanagerMain li").addClass("ContextMenu");
-          $(el).find(".ApplicationFilemanagerMain td").addClass("ContextMenu");
+          $(el).find(".ApplicationFileManager li").addClass("ContextMenu");
+          $(el).find(".ApplicationFileManager td").addClass("ContextMenu");
         };
 
         var _destroyView = function() {
-          $(el).find(".ApplicationFilemanagerMain .Inner").unbind();
-          $(el).find(".ApplicationFilemanagerMain ul").die();
-          $(el).find(".ApplicationFilemanagerMain ul").unbind();
-          $(el).find(".ApplicationFilemanagerMain table").die();
-          $(el).find(".ApplicationFilemanagerMain table").unbind();
-          $(el).find(".ApplicationFilemanagerMain ul").remove();
-          $(el).find(".ApplicationFilemanagerMain table").remove();
+          $(el).find(".ApplicationFileManager .iconview1 .Inner").unbind();
+          $(el).find(".ApplicationFileManager .iconview1 ul").die();
+          $(el).find(".ApplicationFileManager .iconview1 ul").unbind();
+          $(el).find(".ApplicationFileManager .iconview1 table").die();
+          $(el).find(".ApplicationFileManager .iconview1 table").unbind();
+          $(el).find(".ApplicationFileManager .iconview1 ul").remove();
+          $(el).find(".ApplicationFileManager .iconview1 table").remove();
         };
 
         function chdir(dir, hist) {
@@ -172,14 +172,14 @@ var ApplicationFilemanager = (function($, undefined) {
 
               _defaultStatusText = "";
             } else {
-              $(el).find(".ApplicationFilemanagerMain").html(result.items);
+              $(el).find(".ApplicationFileManager .iconview1").html(result.items);
               $(el).find(".WindowTopInner span").html(app.title + ": " + result.path);
 
               _defaultStatusText = sprintf("%d items (%d bytes)", result.total, result.bytes);
 
               _initClick();
             }
-            $(el).find(".WindowBottomInner").html(_defaultStatusText);
+            $(el).find(".statusbar1").html(_defaultStatusText);
           });
 
           _CurrentDir = dir;
@@ -192,11 +192,11 @@ var ApplicationFilemanager = (function($, undefined) {
 
         function _updateMenu() {
           if ( self.argv.view_type == 'icon' ) {
-            app.setMenuItemAttribute("View", "cmd_View_List", "");
-            app.setMenuItemAttribute("View", "cmd_View_Icons", "checked");
+            el.find(".menuitem5").removeClass("Checked");
+            el.find(".menuitem4").addClass("Checked");
           } else {
-            app.setMenuItemAttribute("View", "cmd_View_List", "checked");
-            app.setMenuItemAttribute("View", "cmd_View_Icons", "");
+            el.find(".menuitem5").addClass("Checked");
+            el.find(".menuitem4").removeClass("Checked");
           }
         }
 
@@ -204,6 +204,7 @@ var ApplicationFilemanager = (function($, undefined) {
           _selItem();
         });
 
+        /* REFACTOR
         app.setMenuItemAction("Go", "cmd_Home", function() {
           if ( _CurrentDir != "/" ) {
             chdir("/");
@@ -233,17 +234,44 @@ var ApplicationFilemanager = (function($, undefined) {
           chdir(_CurrentDir);
           _updateMenu();
         });
-
-        _updateMenu();
-
-        /*
-        $(el).find(".WindowMenu .cmd_Back").click(function() {
-          if ( _History.length ) {
-            chdir(_History.shift(), false);
-          }
-        });
         */
 
+        el.find(".imagemenuitem1").click(function() {
+          api.system.dialog_upload(_CurrentDir, function() {
+            chdir(_CurrentDir);
+            //chdir("/");
+          });
+        });
+
+        el.find(".imagemenuitem4").click(function() {
+          el.find(".ActionClose").click();
+        });
+
+        el.find(".imagemenuitem6").click(function() {
+          if ( _CurrentDir != "/" ) {
+            chdir("/");
+            _History = [];
+            _CurrentDir = "/";
+          }
+        });
+
+        el.find(".menuitem5").click(function() {
+          self.argv.view_type = 'list';
+          chdir(_CurrentDir);
+          _updateMenu();
+        });
+
+        el.find(".menuitem4").click(function() {
+          self.argv.view_type = 'icon';
+          chdir(_CurrentDir);
+          _updateMenu();
+        });
+
+        el.find(".menuitem6").click(function() {
+          chdir(_CurrentDir);
+        });
+
+        _updateMenu();
 
         this._super();
 
@@ -251,6 +279,6 @@ var ApplicationFilemanager = (function($, undefined) {
       }
     });
 
-    return new _ApplicationFilemanager();
+    return new _ApplicationFileManager();
   };
 })($);

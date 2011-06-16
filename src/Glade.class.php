@@ -228,6 +228,7 @@ class Glade
         $n = $this->doc->createElement("ul");
       break;
       case "GtkImageMenuItem" :
+      case "GtkRadioMenuItem" :
         $n = $this->doc->createElement("li");
       break;
       case "GtkSeparatorMenuItem" :
@@ -315,7 +316,7 @@ class Glade
 
           if ( $class == "GtkButton" || $class == "GtkLabel" ) {
             $n->appendChild(new DomText($pv));
-          } else if ( $class == "GtkMenuItem" || $class == "GtkImageMenuItem" ) {
+          } else if ( $class == "GtkMenuItem" || $class == "GtkImageMenuItem" || $class == "GtkRadioMenuItem" ) {
             $span = $this->doc->createElement("span");
             if ( in_array("GtkMenuItem", $classes) ) {
               $span->setAttribute("class", "TopLevel");

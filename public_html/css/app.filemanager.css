@@ -1,30 +1,34 @@
 @charset "UTF-8";
 /**
- * Application: ApplicationFilemanager
+ * Application: ApplicationFileManager
  *
  * @package ajwm.Applications
  * @author Anders Evenrud <andersevenrud@gmail.com>
  */
 
-.ApplicationFilemanager {
+.ApplicationFileManager {
 }
-.Window.ApplicationFilemanager .WindowContent{
+/*
+.Window.ApplicationFileManager .WindowContent{
   background : #fff;
 }
-.ApplicationFilemanagerMain {
+  */
+.ApplicationFileManager .iconview1 {
+  /*
   position : absolute;
   top : 2px;
   left : 2px;
   right : 2px;
   bottom : 2px;
+  */
   background : #fff;
 }
-.ApplicationFilemanagerMain ul {
+.ApplicationFileManager .iconview1 ul {
   list-style-type : none;
   padding : 0;
   margin : 0;
 }
-.ApplicationFilemanagerMain li {
+.ApplicationFileManager .iconview1 li {
   float : left;
   margin : 0;
   padding : 10px;
@@ -35,38 +39,38 @@
   word-wrap : break-word
 }
 
-.ApplicationFilemanagerMain .Inner,
-.ApplicationFilemanagerMain .Inner * {
+.ApplicationFileManager .iconview1 .Inner,
+.ApplicationFileManager .iconview1 .Inner * {
   cursor : pointer;
 }
-.ApplicationFilemanagerMain .Current .Title {
+.ApplicationFileManager .iconview1 .Current .Title {
   background : #4f4f4f;
   color : #fff;
 }
-.ApplicationFilemanagerMain tr.Current,
-.ApplicationFilemanagerMain tr.odd.Current {
+.ApplicationFileManager .iconview1 tr.Current,
+.ApplicationFileManager .iconview1 tr.odd.Current {
   background : #4f4f4f;
   color : #fff;
 }
 
-.ApplicationFilemanagerMain table {
+.ApplicationFileManager .iconview1 table {
   border-collapse : collapse;
   width : 100%;
   background : #fff;
 }
-.ApplicationFilemanagerMain td {
+.ApplicationFileManager .iconview1 td {
   padding : 2px;
 }
-.ApplicationFilemanagerMain td.Image {
+.ApplicationFileManager .iconview1 td.Image {
   width : 16px;
 }
-.ApplicationFilemanagerMain td.Size {
+.ApplicationFileManager .iconview1 td.Size {
   width : 50px;
 }
-.ApplicationFilemanagerMain td.Type {
+.ApplicationFileManager .iconview1 td.Type {
   width : 50px;
 }
 
-.ApplicationFilemanagerMain tr.odd {
+.ApplicationFileManager .iconview1 tr.odd {
   background : #e6e6e6;
 }

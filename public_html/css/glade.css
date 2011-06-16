@@ -77,9 +77,10 @@
   background : #fff;
 }
 
-/* GtkStatusBar */
-.GtkStatusBar {
-  height : 20px;
+/* GtkStatusbar */
+.GtkStatusbar {
+  height : 10px;
+  padding : 5px;
   border-top : 1px solid #d1d4d7;
 }
 
@@ -135,6 +136,10 @@
       }
 
     .GtkWindow .GtkMenuBar .GtkSeparatorMenuItem {
+    }
+
+    .GtkWindow .GtkMenuBar .Checked {
+      font-weight : bold;
     }
 
 /* Gtk[Object] Sizing */
