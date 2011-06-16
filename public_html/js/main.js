@@ -1984,34 +1984,6 @@
       el.css("width", (width + appendWidth) + "px");
     },
 
-    /* REFACTOR
-    setMenuItemAttribute : function(m, it, attribute) {
-      if ( this.menus[m] ) {
-        for ( var i in this.menus[m] ) {
-          if ( this.menus[m].hasOwnProperty(i) ) {
-            if ( this.menus[m][i]['name'] == it ) {
-              this.menus[m][i]['attribute'] = attribute;
-              break;
-            }
-          }
-        }
-      }
-    },
-
-    setMenuItemAction : function(m, it, callback) {
-      if ( this.menus[m] ) {
-        for ( var i in this.menus[m] ) {
-          if ( this.menus[m].hasOwnProperty(i) ) {
-            if ( this.menus[m][i]['name'] == it ) {
-              this.menus[m][i]['method'] = callback;
-              break;
-            }
-          }
-        }
-      }
-    },
-    */
-
     getAttributes : function() {
       return {
         'name'     : this.name,
