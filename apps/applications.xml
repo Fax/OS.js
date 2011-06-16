@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<applications>
+  <application class="ApplicationDraw" type="normal">
+    <property name="html"><![CDATA[<div class="ApplicationDraw GtkWindow">
+  <table class="GtkBox box1 Vertical">
+    <tr>
+      <td class="Fill GtkBoxPosition Position_0">
+        <ul class="GtkMenuBar menubar1">
+          <li class="GtkMenuItem menuitem1">
+            <span class="TopLevel"><u>F</u>ile</span>
+            <ul class="GtkMenu menu1">
+              <li class="GtkImageMenuItem imagemenuitem1">
+                <img alt="gtk-new" src="/img/icons/16x16/actions/gtk-new.png"/>
+                <span>New</span>
+              </li>
+              <li class="GtkImageMenuItem imagemenuitem2">
+                <img alt="gtk-open" src="/img/icons/16x16/actions/gtk-open.png"/>
+                <span>Open</span>
+              </li>
+              <li class="GtkImageMenuItem imagemenuitem3">
+                <img alt="gtk-save" src="/img/icons/16x16/actions/gtk-save.png"/>
+                <span>Save</span>
+              </li>
+              <li class="GtkImageMenuItem imagemenuitem4">
+                <img alt="gtk-save-as" src="/img/icons/16x16/actions/gtk-save-as.png"/>
+                <span>Save as...</span>
+              </li>
+              <li class="GtkSeparatorMenuItem separatormenuitem1">
+                <hr/>
+              </li>
+              <li class="GtkImageMenuItem imagemenuitem5">
+                <img alt="gtk-quit" src="/img/icons/16x16/actions/gtk-quit.png"/>
+                <span>Quit</span>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td class="Fill GtkBoxPosition Position_1">
+        <ul class="GtkToolbar toolbar1">
+          <li class="GtkToggleToolButton toolbutton_stroke Checked">
+            <button>Enable Stroke</button>
+          </li>
+          <li class="GtkToggleToolButton toolbutton_fill Checked">
+            <button>Enable Fill</button>
+          </li>
+          <li class="GtkToolItem toolbutton1">
+            <div class=" "></div>
+          </li>
+          <li class="GtkToolItem toolbutton2">
+            <div class=" "></div>
+          </li>
+          <li class="GtkToolItem toolbutton3">
+            <div class=" "></div>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td class="Expand Fill GtkBoxPosition Position_2">
+        <table class="GtkBox box2 Horizontal">
+          <tr>
+            <td class="Fill GtkBoxPosition Position_0" style="width:100px">
+              <table class="GtkBox box3 Vertical">
+                <tr>
+                  <td class="Expand Fill GtkBoxPosition Position_0">
+                    <div class="GtkToolPalette toolpalette1 Vertical">
+                      <button class="GtkToolItemGroup toolitemgroup_select_rectangle"></button>
+                      <button class="GtkToolItemGroup toolitemgroup_pencil"></button>
+                      <button class="GtkToolItemGroup toolitemgroup_brush"></button>
+                      <button class="GtkToolItemGroup toolitemgroup_square"></button>
+                      <button class="GtkToolItemGroup toolitemgroup_rectangle"></button>
+                      <button class="GtkToolItemGroup toolitemgroup_circle"></button>
+                      <button class="GtkToolItemGroup toolitemgroup_ellipse"></button>
+                      <button class="GtkToolItemGroup toolitemgroup_bucket"></button>
+                      <button class="GtkToolItemGroup toolitemgroup_drop"></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="Fill GtkBoxPosition Position_1">
+                    <div class="GtkSeparator separator1">
+                      <hr/>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="Fill GtkBoxPosition Position_2" style="height:200px">
+                    <div class="GtkFixed fixed1">
+                      <div class="GtkColorButton colorbutton_background GtkObject" style="left:15px;top:15px;width:50px;height:50px"></div>
+                      <div class="GtkColorButton colorbutton_foreground GtkObject" style="left:30px;top:30px;width:50px;height:50px"></div>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+            <td class="Expand Fill GtkBoxPosition Position_1">
+              <div class="GtkViewport viewport1">
+                <canvas class="GtkDrawingArea drawingarea1 GtkObject Canvas"></canvas>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+]]></property>
+    <property name="window">{"title":"Draw","icon":"categories\/gnome-graphics.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":800,"height":500,"gravity":""}</property>
+  </application>
+  <application class="ApplicationTerminal" type="normal">
+    <property name="html"><![CDATA[<div class="ApplicationTerminal GtkWindow">
+  <textarea class="GtkTextView textview1 GtkObject"></textarea>
+</div>
+]]></property>
+    <property name="window">{"title":"Terminal","icon":"apps\/utilities-terminal.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":500,"height":300,"gravity":""}</property>
+  </application>
+  <application class="ApplicationFileManager" type="normal">
+    <property name="html"><![CDATA[<div class="ApplicationFileManager GtkWindow">
+  <table class="GtkBox box1 Vertical">
+    <tr>
+      <td class="Fill GtkBoxPosition Position_0">
+        <ul class="GtkMenuBar menubar1">
+          <li class="GtkMenuItem menuitem1">
+            <span class="TopLevel"><u>F</u>ile</span>
+            <ul class="GtkMenu menu1">
+              <li class="GtkImageMenuItem imagemenuitem1">
+                <img alt="gtk-new" src="/img/icons/16x16/actions/gtk-new.png"/>
+                <span>New</span>
+              </li>
+              <li class="GtkImageMenuItem imagemenuitem4">
+                <img alt="gtk-close" src="/img/icons/16x16/actions/gtk-close.png"/>
+                <span>Close</span>
+              </li>
+            </ul>
+          </li>
+          <li class="GtkMenuItem menuitem2">
+            <span class="TopLevel"><u>G</u>o</span>
+            <ul class="GtkMenu menu2">
+              <li class="GtkImageMenuItem imagemenuitem6">
+                <img alt="gtk-home" src="/img/icons/16x16/actions/gtk-home.png"/>
+                <span>Home</span>
+              </li>
+            </ul>
+          </li>
+          <li class="GtkMenuItem menuitem3">
+            <span class="TopLevel"><u>V</u>iew</span>
+            <ul class="GtkMenu menu3">
+              <li class="GtkImageMenuItem menuitem6">
+                <img alt="gtk-refresh" src="/img/icons/16x16/actions/gtk-refresh.png"/>
+                <span>Refresh</span>
+              </li>
+              <li class="GtkRadioMenuItem menuitem5">
+                <span>List view</span>
+              </li>
+              <li class="GtkRadioMenuItem menuitem4">
+                <span>Icon View</span>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td class="Expand Fill GtkBoxPosition Position_1">
+        <div class="GtkIconView iconview1 GtkObject"></div>
+      </td>
+    </tr>
+    <tr>
+      <td class="Fill GtkBoxPosition Position_2">
+        <div class="GtkStatusbar statusbar1"></div>
+      </td>
+    </tr>
+  </table>
+</div>
+]]></property>
+    <property name="window">{"title":"File Manager","icon":"apps\/file-manager.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":500,"height":500,"gravity":""}</property>
+  </application>
+  <application class="SystemLogout" type="system">
+    <property name="html"><![CDATA[<div class="SystemLogout GtkWindow">
+  <table class="GtkBox dialog-vbox1 Vertical">
+    <tr>
+      <td class="Expand Fill GtkBoxPosition Position_0">
+        <table class="GtkBox box1 Vertical">
+          <tr>
+            <td class="Expand Fill GtkBoxPosition Position_0">
+              <div class="GtkLabel label1 GtkObject">Are you sure you want to log out?</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="GtkBoxPosition Position_1">
+              <div class="GtkCheckButton checkbutton1 GtkObject">
+                <input type="checkbox" checked="checked"/>
+                <label>Save session for future logins</label>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td class="Fill GtkBoxPosition Position_1">
+        <table class="GtkButtonBox dialog-action_area1 Horizontal">
+          <tr>
+            <td class="Fill GtkBoxPosition Position_0">
+              <button class="GtkButton button1 GtkObject"><img alt="gtk-cancel" src="/img/icons/16x16/actions/gtk-cancel.png"/>Cancel</button>
+            </td>
+            <td class="Fill GtkBoxPosition Position_1">
+              <button class="GtkButton button2 GtkObject"><img alt="gtk-quit" src="/img/icons/16x16/actions/gtk-quit.png"/>Quit</button>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+]]></property>
+    <property name="window">{"title":"Logout","icon":"actions\/gnome-logout.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":300,"height":100,"gravity":"center"}</property>
+  </application>
+  <application class="ApplicationTextpad" type="normal">
+    <property name="html"><![CDATA[<div class="ApplicationTextpad GtkWindow">
+  <table class="GtkBox box1 Vertical">
+    <tr>
+      <td class="Fill GtkBoxPosition Position_0">
+        <ul class="GtkMenuBar menubar1">
+          <li class="GtkMenuItem menuitem1">
+            <span class="TopLevel"><u>F</u>ile</span>
+            <ul class="GtkMenu menu1">
+              <li class="GtkImageMenuItem imagemenuitem1">
+                <img alt="gtk-new" src="/img/icons/16x16/actions/gtk-new.png"/>
+                <span>New</span>
+              </li>
+              <li class="GtkImageMenuItem imagemenuitem2">
+                <img alt="gtk-open" src="/img/icons/16x16/actions/gtk-open.png"/>
+                <span>Open</span>
+              </li>
+              <li class="GtkImageMenuItem imagemenuitem3">
+                <img alt="gtk-save" src="/img/icons/16x16/actions/gtk-save.png"/>
+                <span>Save</span>
+              </li>
+              <li class="GtkImageMenuItem imagemenuitem4">
+                <img alt="gtk-save-as" src="/img/icons/16x16/actions/gtk-save-as.png"/>
+                <span>Save as...</span>
+              </li>
+              <li class="GtkSeparatorMenuItem separatormenuitem1">
+                <hr/>
+              </li>
+              <li class="GtkImageMenuItem imagemenuitem5">
+                <img alt="gtk-quit" src="/img/icons/16x16/actions/gtk-quit.png"/>
+                <span>Quit</span>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td class="Expand Fill GtkBoxPosition Position_1">
+        <textarea class="GtkTextView textview1 GtkObject"></textarea>
+      </td>
+    </tr>
+    <tr>
+      <td class="Fill GtkBoxPosition Position_2">
+        <div class="GtkStatusbar statusbar1"></div>
+      </td>
+    </tr>
+  </table>
+</div>
+]]></property>
+    <property name="window">{"title":"Textpad","icon":"apps\/text-editor.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":400,"height":400,"gravity":""}</property>
+  </application>
+</applications>

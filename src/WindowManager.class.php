@@ -32,6 +32,8 @@ class WindowManager
 
   protected $_oTime = null;
   protected $_oZone = null;
+
+  protected static $__ApplicationRegister = null;
   protected static $__Instance;
 
   protected function __construct() {
@@ -46,6 +48,20 @@ class WindowManager
 
     $this->_oTime = $now;
     $this->_oZone = $tz;
+  }
+
+  public static function getApplication($name) {
+    if ( !self::$__ApplicationRegister ) {
+      self::$__ApplicationRegister = new SimpleXMLElement(file_get_contents(PATH_APPS . "/applications.xml"));
+    }
+
+    foreach ( self::$__ApplicationRegister as $app ) {
+      if ( $app['class'] == $name ) {
+        return $app;
+      }
+    }
+
+    return null;
   }
 
   public static function initialize() {

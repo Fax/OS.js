@@ -1,0 +1,70 @@
+#!/usr/bin/env php
+<?php
+
+require "header.php";
+
+$root = dirname(__FILE__) . "/apps/";
+$config = dirname(__FILE__)  ."/apps/applications.xml";
+
+$doc = new DomDocument();
+$doc->xmlVersion    = "1.0";
+$doc->formatOutput  = true;
+$doc->encoding      = 'UTF-8';
+
+$root_node = $doc->createElement("applications");
+
+if ( $dh  = opendir($root) ) {
+  while (false !== ($filename = readdir($dh))) {
+    if ( preg_match("/^(Application|System)(.*)(\.glade)$/", $filename) ) {
+      echo "Building {$filename}...\n";
+
+      $cname = str_replace(".glade", "", $filename);
+
+      if ( constant("{$cname}::APPLICATION_ENABLED") === false ) {
+        echo "\tNot enabled!\n";
+        continue;
+      }
+
+      if ( $glade = Glade::convert($root . $filename) ) {
+        $html   = $glade->__toDocumentString();
+        $window = $glade->getApplicationProperties();
+
+        if ( !$window['title'] ) {
+          $window['title'] = constant("{$cname}::APPLICATION_TITLE");
+        }
+        if ( !$window['icon'] ) {
+          $window['icon'] = constant("{$cname}::APPLICATION_ICON");
+        }
+
+
+        $node = $doc->createElement("application");
+        $node->setAttribute("class", $cname);
+        $node->setAttribute("type", constant("{$cname}::APPLICATION_SYSTEM") ? "system" : "normal");
+
+        $p_html = $doc->createElement("property");
+        $p_html->setAttribute("name", "html");
+        //$p_html->appendChild(new DomText(htmlspecialchars($html)));
+        $p_html->appendChild($doc->createCDATASection($html));
+
+        $p_window = $doc->createElement("property");
+        $p_window->setAttribute("name", "window");
+        $p_window->appendChild(new DomText(json_encode($window)));
+
+        $node->appendChild($p_html);
+        $node->appendChild($p_window);
+
+        $root_node->appendChild($node);
+        echo "\tSuccess!\n";
+      } else {
+        echo "\tFailed!\n";
+      }
+
+    }
+  }
+}
+$doc->appendChild($root_node);
+
+$xml = $doc->saveXML();
+file_put_contents($config, $xml);
+
+?>

@@ -16,9 +16,10 @@
  */
 abstract class Application
 {
-  const APPLICATION_TITLE  = __CLASS__;
-  const APPLICATION_ICON   = "emblems/emblem-unreadable.png";
-  const APPLICATION_SYSTEM = false;
+  const APPLICATION_TITLE   = __CLASS__;
+  const APPLICATION_ICON    = "emblems/emblem-unreadable.png";
+  const APPLICATION_SYSTEM  = false;
+  const APPLICATION_ENABLED = true;
 
   /////////////////////////////////////////////////////////////////////////////
   // VARIABLES
@@ -81,16 +82,19 @@ abstract class Application
     $html   = "";
     $window = Array();
 
-    if ( $glade = Glade::convert(str_replace(".class.php", ".glade", $file)) ) {
-      $html   = $glade->__toDocumentString();
-      $window = $glade->getApplicationProperties();
+    $fname = str_replace(".class.php", "", basename($file));
+    if ( $app = WindowManager::getApplication($fname) ) {
+      foreach ( $app->property as $p ) {
+        $pk = (string) $p['name'];
+        $pv = (string) $p;
 
-      if ( !$window['title'] ) {
-        $window['title'] = constant("{$cname}::APPLICATION_TITLE");
+        if ( $pk == "html" ) {
+          $html = $pv;
+        } else if ( $pk == "window" ) {
+          $window = (Array) json_decode($pv);
+        }
       }
-      if ( !$window['icon'] ) {
-        $window['icon'] = constant("{$cname}::APPLICATION_ICON");
-      }
+
     }
 
     foreach ( $extra as $k => $v ) {
@@ -103,13 +107,6 @@ abstract class Application
       "resources" => $resources,
       "mime"      => $mimes
     );
-
-    /*
-    if ( $cname == "ApplicationDrawNew" ) {
-    var_dump($html);
-    exit;
-    }
-     */
   }
 
   /////////////////////////////////////////////////////////////////////////////
