@@ -6,7 +6,7 @@
  * @license GPLv3 (see http://www.gnu.org/licenses/gpl-3.0.txt)
  * @created 2011-05-22
  */
-
+/*
 require "apps/SystemAbout.class.php";
 require "apps/SystemUser.class.php";
 require "apps/SystemSettings.class.php";
@@ -18,7 +18,7 @@ require "apps/ApplicationFilemanager.class.php";
 require "apps/ApplicationTextpad.class.php";
 require "apps/ApplicationTerminal.class.php";
 require "apps/ApplicationViewer.class.php";
-
+ */
 /**
  * WindowManager Class
  *
@@ -57,12 +57,12 @@ class WindowManager
   public static function getSettings() {
     $apps = Array();
 
-    foreach ( DesktopApplication::$Registered as $c ) {
-      if ( !constant("{$c}::APP_HIDDEN") ) {
+    foreach ( Application::$Registered as $c => $opts ) {
+      if ( !constant("{$c}::APPLICATION_SYSTEM") ) {
         $apps[$c] = Array(
-          "title" => constant("{$c}::APP_TITLE"),
-          "icon"  => constant("{$c}::APP_ICON"),
-          "mime"  => $c::$MimeTypes
+          "title" => constant("{$c}::APPLICATION_TITLE"),
+          "icon"  => constant("{$c}::APPLICATION_ICON"),
+          "mime"  => $opts["mime"]
         );
       }
     }

@@ -28,6 +28,7 @@ define("PATH_PROJECT_SRC",       PATH_PROJECT . "/src");
 define("PATH_PROJECT_HTML",      PATH_PROJECT . "/public_html");
 define("PATH_PROJECT_BUILD",     PATH_PROJECT . "/src/build");
 define("PATH_PROJECT_LOG",       PATH_PROJECT . "/logs");
+define("PATH_APPS",              PATH_PROJECT . "/apps");
 
 // Propel Config
 $inifile = parse_ini_file(PATH_PROJECT . "/build.properties");
@@ -44,8 +45,9 @@ require "vendor/AjaxUpload.php";
 
 // Application
 require "src/UUID.class.php";
+require "src/Glade.class.php";
 require "src/ApplicationAPI.class.php";
-require "src/DesktopApplication.class.php";
+require "src/Application.class.php";
 require 'src/WindowManager.class.php';
 
 Propel::init(PROPEL_CONFIG);

@@ -1,0 +1,162 @@
+@charset "UTF-8";
+/**
+ * Glade Stylesheet
+ *
+ * @package ajwm.Styles
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ */
+
+.GtkWindow {
+  position : absolute;
+  top : 0px;
+  left : 2px;
+  right : 2px;
+  bottom : 0px;
+}
+
+/* GtkBox */
+.GtkWindow .GtkBox {
+  width : 100%;
+  height : 100%;
+}
+.GtkWindow .GtkBox tr,
+.GtkWindow .GtkBox td {
+  position : relative;
+  vertical-align: top;
+}
+.GtkWindow .GtkBox.Vertical {
+}
+.GtkWindow .GtkBox.Horizontal {
+}
+.GtkWindow .GtkBox .GtkBoxPosition {
+}
+
+/* GtkButtonBox */
+.GtkWindow .GtkButtonBox {
+  width : 100%;
+  height : 32px;
+}
+
+/* GtkLabel */
+.GtkLabel {
+  height : 20px;
+}
+
+/* GtkComboBox */
+.GtkWindow .GtkComboBox {
+  height : 20px;
+}
+
+/* GtkImage */
+.GtkWindow .GtkImage {
+}
+
+/* GtkTextView */
+.GtkWindow .GtkTextView {
+}
+
+/* GtkEntry */
+.GtkWindow .GtkEntry {
+  height : 20px;
+}
+
+/* GtkButton */
+.GtkWindow .GtkButton {
+  height : 32px;
+}
+.GtkWindow .GtkButton img {
+  vertical-align : middle;
+  margin-right : 5px;
+}
+.GtkWindow .GtkButton span {
+  vertical-align : middle;
+}
+
+/* GtkIconView */
+.GtkIconView {
+  background : #fff;
+}
+
+/* GtkStatusBar */
+.GtkStatusBar {
+  height : 20px;
+  border-top : 1px solid #d1d4d7;
+}
+
+/* GtkCheckButton */
+.GtkCheckButton {
+  height : 20px;
+}
+
+/* GtkMenuBar > GtkMenu */
+.GtkWindow .GtkMenuBar {
+  height : 20px;
+  margin : -5px;
+  padding : 0;
+}
+  .GtkWindow .GtkMenuBar .GtkMenuItem {
+    display : inline-block;
+    position : relative;
+    padding : 5px;
+  }
+  .GtkWindow .GtkMenuBar .GtkMenuItem ul {
+    margin : 0;
+    padding : 0;
+    list-style-type : none;
+    position : absolute;
+    min-width : 100px;
+    display : none;
+    z-index : 100000000;
+
+    background : #e6e6e6;
+    border : 1px solid;
+  }
+
+  .GtkWindow .GtkMenuItem span,
+  .GtkWindow .GtkMenuItem img {
+    vertical-align : middle;
+  }
+
+    .GtkWindow .GtkMenuBar .GtkMenuItem span.TopLevel {
+    }
+    .GtkWindow .GtkMenuBar .GtkMenuItem:hover span.TopLevel {
+      text-decoration : underline;
+    }
+    .GtkWindow .GtkMenuBar .GtkMenuItem .GtkMenu li:hover {
+      background : #222;
+      color : #fff;
+    }
+
+    .GtkWindow .GtkMenuBar .GtkMenu {
+      padding : 2px;
+    }
+      .GtkWindow .GtkMenuBar .GtkMenu li {
+        padding : 5px;
+      }
+
+    .GtkWindow .GtkMenuBar .GtkSeparatorMenuItem {
+    }
+
+/* Gtk[Object] Sizing */
+.GtkWindow .Fill {
+}
+.GtkWindow .Expand {
+}
+.GtkWindow .Expand.Fill {
+}
+
+.GtkWindow .Fill .GtkBox,
+.GtkWindow .Expand .GtkBox {
+}
+
+.GtkWindow .Fill .GtkObject,
+.GtkWindow .Expand .GtkObject {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 0px;
+}
+.GtkWindow .Expand .GtkObject {
+  height : auto;
+}

@@ -86,16 +86,7 @@ textarea {
   background : url('/img/theme.default/close.png') no-repeat center center;
 }
 
-/*
-.WindowMenu {
-  background : #4f4f4f;
-}
-*/
-.WindowMenu li.Top {
-  cursor : pointer;
-}
 .WindowBottomInner {
-  border-top : 1px solid #d1d4d7;
 }
 .Window .ui-resizable-n {
   cursor : n-resize;
@@ -244,4 +235,10 @@ textarea {
 #Version {
   color : #000;
   font-size : 10px;
+}
+
+/* Glade */
+
+.GtkWindow .GtkMenu li {
+  cursor : pointer;
 }

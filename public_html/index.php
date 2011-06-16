@@ -65,6 +65,7 @@ header("Content-Type: text/html; charset=utf-8");
 
   <!-- Main libraries -->
   <link rel="stylesheet" type="text/css" href="/css/main.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/css/glade.css<?php print $append; ?>" />
   <link rel="stylesheet" type="text/css" href="/css/pimp.css<?php print $append; ?>" />
   <link rel="stylesheet" type="text/css" href="/css/theme.default.css<?php print $append; ?>" />
 
@@ -149,24 +150,8 @@ header("Content-Type: text/html; charset=utf-8");
         </div>
       </div>
     </div>
-    <div class="WindowMenu">
-      <ul class="Top">
-        <!--
-        <li class="Top">
-          <span class="Top">File</span>
-          <ul class="Menu">
-            <li><span>Close</span></li>
-          </ul>
-        </li>
-        -->
-      </ul>
-    </div>
     <div class="WindowContent">
       <div class="WindowContentInner">
-      </div>
-    </div>
-    <div class="WindowBottom">
-      <div class="WindowBottomInner">
       </div>
     </div>
   </div>

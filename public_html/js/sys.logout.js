@@ -25,10 +25,10 @@ var SystemLogout = (function() {
           $(el).find("input[type=checkbox]").click();
         });
 
-        $(el).find('button.Cancel').click(function() {
+        $(el).find('button.button1').click(function() {
           $(el).find(".ActionClose").click();
         });
-        $(el).find('button.Logout').click(function() {
+        $(el).find('button.button2').click(function() {
           var chk = $(el).find("input").get(0);
           api.user.logout(chk.checked);
         });

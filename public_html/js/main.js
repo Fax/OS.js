@@ -888,7 +888,7 @@
           };
 
 
-          if ( win.dialog ) {
+          if ( win.dialog && !win.name.match(/^System/) ) {
             callback({});
           } else {
             API.ui.cursor("wait");
@@ -1425,9 +1425,6 @@
       this.dialog      = dialog ? true : false;
       this.argv        = argv;
       this.attrs       = attrs;
-      this.menu        = [];
-      this.menubar     = false;
-      this.statusbar   = false;
 
       // Window attributes
       this.is_resizable   = this.dialog ? false : true;
@@ -1454,7 +1451,6 @@
 
       // DOM Elements
       this.$element = null;
-      this.menus    = [];
 
       console.log("Window inited...", this);
     },
@@ -1466,15 +1462,6 @@
         $.post("/", {'ajax' : true, 'action' : 'flush', 'uuid' : self.uuid}, function(data) {
           console.log('Flushed Window', self, self.uuid, data);
         });
-      }
-
-      if ( sizeof(this.menus) ) {
-        /*
-        for ( var i = 0; i < this.menus.length; i++ ) {
-          this.menus[i].destroy();
-        }
-        */
-        this.menus = null;
       }
 
       this.focus_hook  = null;
@@ -1525,51 +1512,6 @@
           $(el).height(this.height + "px");
         }
 
-        // Create Menu
-        if ( this.menu && sizeof(this.menu) ) {
-          forEach(this.menu, function(ind, m) {
-            var mel = $("<li class=\"Top\"><span class=\"Top\"></span></li>");
-            mel.find("span").html(ind);
-
-            if ( m instanceof Object && sizeof(m) ) {
-              var menu_items = [];
-              for ( var x in m ) {
-                if ( m.hasOwnProperty(x) ) {
-                  menu_items.push({
-                    "title"  : x,
-                    "method" : m[x], // Can be changed!
-                    "name"   : m[x]
-                  });
-                }
-              }
-              if ( menu_items.length ) {
-                self.menus[ind] = menu_items;
-              }
-
-            } else {
-              mel.find("span").addClass(m);
-            }
-
-            el.find(".WindowMenu ul.Top").append(mel);
-          });
-        }
-
-        // Show/Hide Menu
-        if ( el.find(".WindowMenu li").length ) {
-          el.find(".WindowContent").addClass("HasMenu");
-          this.menubar = true;
-        } else {
-          el.find(".WindowMenu").hide();
-        }
-
-        // Show/Hide Statusbar
-        if ( this.statusbar ) {
-          el.find(".WindowBottom").show();
-          el.find(".WindowContent").addClass("HasBottom");
-        } else {
-          el.find(".WindowBottom").hide();
-        }
-
         // Content and buttons
         el.find(".WindowTopInner span").html(this.title);
         if ( this.dialog ) {
@@ -1604,15 +1546,6 @@
             ev.stopPropagation();
             ev.preventDefault();
           });
-
-          $(el).find(".WindowMenu li.Top").click(function(ev) {
-            var mmenu = $(this).find("span").html();
-            return API.application.context_menu(ev, self.menus[mmenu], $(this), 1);
-          })/*.mouseover(function() {
-            if ( $("#ContextMenu").is(":visible") ) {
-              $(this).click();
-            }
-          })*/;
         }
 
         // Events
@@ -1628,7 +1561,7 @@
           });
         }
 
-        el.find(".WindowTop, .WindowMenu, .WindowBottom").bind("contextmenu",function(e) {
+        el.find(".WindowTop").bind("contextmenu",function(e) {
           return false;
         });
 
@@ -1661,6 +1594,25 @@
         //
         _Desktop.$element.append(el);
 
+        el.find(".GtkMenuItem").each(function() {
+          $(this).hover(function() {
+            $(this).find(".GtkMenu").show();
+          }, function() {
+            $(this).find(".GtkMenu").hide();
+          });
+        });
+
+
+        //
+        // Box factors
+        //
+
+        el.find("td.Fill").each(function() {
+          if ( !$(this).hasClass("Expand") ) {
+            var height = parseInt($(this).find(":first-child").height(), 10);
+            $(this).parent().css("height", height + "px");
+          }
+        });
 
         //
         // Size and dimension
@@ -1790,7 +1742,7 @@
         //
         // Run Dialog or Application
         //
-        if ( this.dialog ) {
+        if ( appname === undefined ) {
           mcallback();
         } else {
           setTimeout(function() {
@@ -1843,6 +1795,7 @@
         $.post("/", {'ajax' : true, 'action' : 'load', 'app' : self.name}, function(data) {
           if ( data.success ) {
             _Resources.addResources(data.result.resources, function() {
+
               self.title   = data.result.title;
               self.content = data.result.content;
               self.icon    = data.result.icon;
@@ -1855,8 +1808,6 @@
               self.is_minimizable = data.result.is_minimizable;
               self.is_closable    = data.result.is_closable;
               self.is_orphan      = data.result.is_orphan;
-              self.menu           = data.result.menu;
-              self.statusbar      = data.result.statusbar;
               self.width          = parseInt(data.result.width, 10);
               self.height         = parseInt(data.result.height, 10);
               self.gravity        = data.result.gravity;
@@ -2029,18 +1980,11 @@
       var appendWidth = 4;
       var appendHeight = 4 + el.find(".WindowTop").height();
 
-      if ( this.menubar ) {
-        appendHeight += el.find(".WindowMenu").height();
-      }
-
-      if ( this.statusbar ) {
-        appendHeight += el.find(".WindowBottom").height();
-      }
-
       el.css("height", (height + appendHeight) + "px");
       el.css("width", (width + appendWidth) + "px");
     },
 
+    /* REFACTOR
     setMenuItemAttribute : function(m, it, attribute) {
       if ( this.menus[m] ) {
         for ( var i in this.menus[m] ) {
@@ -2066,6 +2010,7 @@
         }
       }
     },
+    */
 
     getAttributes : function() {
       return {
