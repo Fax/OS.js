@@ -204,38 +204,6 @@ var ApplicationFileManager = (function($, undefined) {
           _selItem();
         });
 
-        /* REFACTOR
-        app.setMenuItemAction("Go", "cmd_Home", function() {
-          if ( _CurrentDir != "/" ) {
-            chdir("/");
-            _History = [];
-            _CurrentDir = "/";
-          }
-        });
-
-        app.setMenuItemAction("File", "cmd_Upload", function() {
-          api.system.dialog_upload(_CurrentDir, function() {
-            chdir(_CurrentDir);
-            //chdir("/");
-          });
-        });
-
-        app.setMenuItemAction("View", "cmd_Reload", function() {
-          chdir(_CurrentDir);
-        });
-
-        app.setMenuItemAction("View", "cmd_View_List", function() {
-          self.argv.view_type = 'list';
-          chdir(_CurrentDir);
-          _updateMenu();
-        });
-        app.setMenuItemAction("View", "cmd_View_Icons", function() {
-          self.argv.view_type = 'icon';
-          chdir(_CurrentDir);
-          _updateMenu();
-        });
-        */
-
         el.find(".imagemenuitem1").click(function() {
           api.system.dialog_upload(_CurrentDir, function() {
             chdir(_CurrentDir);
