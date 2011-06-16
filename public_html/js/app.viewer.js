@@ -142,10 +142,14 @@ var ApplicationViewer = (function() {
           _play(argv.path, argv.mime);
         }
 
-        app.setMenuItemAction("File", "cmd_Open", function() {
+        el.find(".imagemenuitem2").click(function() {
           _open(function(fname, mtype) {
             _play(fname, mtype);
           });
+        });
+
+        el.find(".imagemenuitem5").click(function() {
+          el.find(".ActionClose").click();
         });
 
         this._super();

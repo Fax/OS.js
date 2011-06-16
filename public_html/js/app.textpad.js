@@ -143,6 +143,10 @@ var ApplicationTextpad = (function() {
           _update(null, el);
         });
 
+        el.find(".imagemenuitem5").click(function() {
+          el.find(".ActionClose").click();
+        });
+
         $(el).find("textarea").mousedown(function(ev) {
           _updateStatusbar(el);
           ev.stopPropagation();

@@ -21,6 +21,7 @@
   right : 2px;
   bottom : 2px;
   */
+  overflow : auto;
   background : #fff;
 }
 .ApplicationFileManager .iconview1 ul {

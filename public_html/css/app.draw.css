@@ -10,6 +10,12 @@
 
 }
 
+.ApplicationDrawWrapper {
+  position : relative;
+  margin-top : 10px;
+  clear : both;
+}
+
 /* Left panel */
 .ApplicationDrawPanel {
   position : absolute;

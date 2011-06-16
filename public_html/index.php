@@ -77,7 +77,6 @@ header("Content-Type: text/html; charset=utf-8");
   <link rel="stylesheet" type="text/css" href="/css/sys.user.css<?php print $append; ?>" />
   <link rel="stylesheet" type="text/css" href="/css/sys.settings.css<?php print $append; ?>" />
   <link rel="stylesheet" type="text/css" href="/css/sys.logout.css<?php print $append; ?>" />
-  <link rel="stylesheet" type="text/css" href="/css/sys.terminal.css<?php print $append; ?>" />
 
   <script type="text/javascript" src="/js/panel.separator.js<?php print $append; ?>"></script>
   <script type="text/javascript" src="/js/panel.clock.js<?php print $append; ?>"></script>
@@ -90,7 +89,6 @@ header("Content-Type: text/html; charset=utf-8");
   <script type="text/javascript" src="/js/sys.user.js<?php print $append; ?>"></script>
   <script type="text/javascript" src="/js/sys.settings.js<?php print $append; ?>"></script>
   <script type="text/javascript" src="/js/sys.logout.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/js/sys.terminal.js<?php print $append; ?>"></script>
 </head>
 <body>
 

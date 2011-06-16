@@ -37,7 +37,7 @@ class Glade
     "icon"            => "",
     "is_draggable"    => true,
     "is_resizable"    => true,
-    "is_scrollable"   => true,
+    "is_scrollable"   => false,
     "is_sessionable"  => true,
     "is_minimizable"  => true,
     "is_maximizable"  => true,

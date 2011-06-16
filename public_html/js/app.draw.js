@@ -625,21 +625,21 @@ var ApplicationDraw = (function($, undefined) {
         //
         // Menu items
         //
-        app.setMenuItemAction("File", "cmd_Open", function() {
+        el.find(".imagemenuitem2").click(function() {
           _open(function(fname) {
             DrawDocument.open("/media/" + fname);
             _update(fname);
           }, null, api);
         });
 
-        app.setMenuItemAction("File", "cmd_Save", function() {
+        el.find(".imagemenuitem3").click(function() {
           if ( argv && argv['path'] ) {
             _save(argv['path'], DrawDocument.getImage());
             _update(argv['path']);
           }
         });
 
-        app.setMenuItemAction("File", "cmd_SaveAs", function() {
+        el.find(".imagemenuitem4").click(function() {
           _saveAs(function(file, mime) {
             _save(file, DrawDocument.getImage(), function() {
               _update(file);
@@ -647,7 +647,7 @@ var ApplicationDraw = (function($, undefined) {
           });
         });
 
-        app.setMenuItemAction("File", "cmd_New", function() {
+        el.find(".imagemenuitem1").click(function() {
           DrawDocument.clear();
           _update(null);
         });
