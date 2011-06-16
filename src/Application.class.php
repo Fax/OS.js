@@ -7,10 +7,6 @@
  * @created 2011-06-16
  */
 
-require PATH_APPS . "/SystemLogout.class.php";
-require PATH_APPS . "/ApplicationClock.class.php";
-require PATH_APPS . "/ApplicationFileManager.class.php";
-
 /**
  * Application Class
  *

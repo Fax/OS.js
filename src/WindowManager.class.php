@@ -6,19 +6,15 @@
  * @license GPLv3 (see http://www.gnu.org/licenses/gpl-3.0.txt)
  * @created 2011-05-22
  */
-/*
-require "apps/SystemAbout.class.php";
-require "apps/SystemUser.class.php";
-require "apps/SystemSettings.class.php";
-require "apps/SystemLogout.class.php";
 
-require "apps/ApplicationClock.class.php";
-require "apps/ApplicationDraw.class.php";
-require "apps/ApplicationFilemanager.class.php";
-require "apps/ApplicationTextpad.class.php";
-require "apps/ApplicationTerminal.class.php";
-require "apps/ApplicationViewer.class.php";
- */
+require PATH_APPS . "/SystemAbout.class.php";
+require PATH_APPS . "/SystemUser.class.php";
+require PATH_APPS . "/SystemSettings.class.php";
+require PATH_APPS . "/SystemLogout.class.php";
+
+require PATH_APPS . "/ApplicationClock.class.php";
+require PATH_APPS . "/ApplicationFileManager.class.php";
+
 /**
  * WindowManager Class
  *
