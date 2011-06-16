@@ -1596,9 +1596,13 @@
         _Desktop.$element.append(el);
 
         if ( el.find(".GtkMenuItem").length ) {
+          var last_menu = null;
           el.find(".GtkMenuItem").each(function() {
             $(this).click(function() {
-              $(this).find(".GtkMenu").show();
+              if ( last_menu ) {
+                $(last_menu).hide();
+              }
+              last_menu = $(this).find(".GtkMenu").show();
             });
           });
 

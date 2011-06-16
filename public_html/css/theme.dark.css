@@ -71,12 +71,15 @@ body.ThemeDark .PanelItemWindow.Current {
   font-weight : bold;
 }
 
-body.ThemeDark .Menu {
+body.ThemeDark .Menu,
+body.ThemeDark .GtkWindow .GtkMenuBar .GtkMenuItem ul {
   border : 1px solid #30353d;
   background : #eeeeee;
   color : #222;
 }
-body.ThemeDark .Menu li.Default:hover {
+
+body.ThemeDark .Menu li.Default:hover,
+body.ThemeDark .GtkWindow .GtkMenuBar .GtkMenuItem .GtkMenu li:hover {
   color : #fff;
   background : #4f4f4f;
 }
