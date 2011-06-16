@@ -27,6 +27,7 @@ abstract class Application
 
   private $_sUUID = "";
 
+  protected static $__ApplicationRegister = null;
   public static $Registered = Array();
 
   /////////////////////////////////////////////////////////////////////////////
@@ -60,13 +61,20 @@ abstract class Application
   // STATIC METHODS
   /////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Create a new instance of Application
-   *
-   * @return Application
-   */
-  public final static function create() {
-    return new Application();
+  public static function getApplication($name) {
+    if ( !self::$__ApplicationRegister ) {
+      if ( file_exists(APPLICATION_BUILD) ) {
+        self::$__ApplicationRegister = new SimpleXMLElement(file_get_contents(APPLICATION_BUILD));
+      }
+    }
+
+    foreach ( self::$__ApplicationRegister as $app ) {
+      if ( $app['class'] == $name ) {
+        return $app;
+      }
+    }
+
+    return null;
   }
 
   public final static function RegisterStatic($cname, Array $window, $html, Array $resources = Array(), Array $mimes = Array()) {
@@ -83,7 +91,7 @@ abstract class Application
     $window = Array();
 
     $fname = str_replace(".class.php", "", basename($file));
-    if ( $app = WindowManager::getApplication($fname) ) {
+    if ( $app = self::getApplication($fname) ) {
       foreach ( $app->property as $p ) {
         $pk = (string) $p['name'];
         $pv = (string) $p;

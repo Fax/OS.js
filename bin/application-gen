@@ -4,7 +4,7 @@
 require "header.php";
 
 $root = PATH_APPS . "/";
-$config = PATH_PROJECT . "/applications.xml";
+$config = APPLICATION_BUILD;
 
 $doc = new DomDocument();
 $doc->xmlVersion    = "1.0";
