@@ -11,9 +11,12 @@
 }
 
 .ApplicationDrawWrapper {
-  position : relative;
-  margin-top : 10px;
   clear : both;
+  position : absolute;
+  top : 30px;
+  left : 0px;
+  right : 0px;
+  bottom : 0px;
 }
 
 /* Left panel */
