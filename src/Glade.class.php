@@ -175,8 +175,20 @@ class Glade
 
       case "GtkIconView" :
       case "GtkLabel" :
+      case "GtkColorButton" :
         $n = $this->doc->createElement("div");
         $classes[] = "GtkObject";
+      break;
+
+      case "GtkDrawingArea" :
+        $n = $this->doc->createElement("canvas");
+        $classes[] = "GtkObject";
+        $classes[] = "Canvas";
+      break;
+
+      case "GtkSeparator" :
+        $n = $this->doc->createElement("div");
+        $n->appendChild($this->doc->createElement("hr"));
       break;
 
       case "GtkBox" :
@@ -196,10 +208,16 @@ class Glade
         $n = $this->doc->createElement("select");
         $classes[] = "GtkObject";
         break;
+
+      case "GtkToolItemGroup" :
+        $n = $this->doc->createElement("button");
+      break;
+
       case "GtkButton" :
         $n = $this->doc->createElement("button");
         $classes[] = "GtkObject";
         break;
+
       case "GtkTextView" :
         $n = $this->doc->createElement("textarea");
         $classes[] = "GtkObject";
@@ -235,12 +253,24 @@ class Glade
         $n = $this->doc->createElement("li");
         $n->appendChild($this->doc->createElement("hr"));
       break;
+
+      case "GtkToolbar" :
+        $n = $this->doc->createElement("ul");
+        break;
+      case "GtkToolItem" :
+        $n = $this->doc->createElement("li");
+      break;
+
+      case "GtkToggleToolButton" :
+        $n = $this->doc->createElement("li");
+        $n->appendChild($this->doc->createElement("button"));
+        break;
     }
 
     return $n;
   }
 
-  protected function _parsePacking($c, $n, $class, &$classes) {
+  protected function _parsePacking($c, $n, $class, &$classes, &$styles) {
     $outer = false;
     if ( isset($c->packing) ) {
       foreach ( $c->packing->property as $p ) {
@@ -265,6 +295,13 @@ class Glade
             $classes[] = "GtkBoxPosition";
             $classes[] = "Position_{$pv}";
             break;
+
+          case "x" :
+            $styles["left"] = "{$pv}px";
+          break;
+          case "y" :
+            $styles["top"] = "{$pv}px";
+          break;
         }
       }
     }
@@ -272,9 +309,13 @@ class Glade
     return $outer;
   }
 
-  protected function _parseProperties($c, $n, $class, &$classes) {
+  protected function _parseProperties($c, $n, $class, &$classes, &$styles) {
 
     $orient = null;
+
+    if ( !isset($c->object->property) ) {
+      return in_array($class, self::$ShortTags);
+    }
 
     foreach ( $c->object->property as $p ) {
       $pk = (string) $p['name'];
@@ -286,6 +327,13 @@ class Glade
             $classes[] = "Hidden";
           }
           break;
+
+        case "width_request" :
+          $styles["width"] = $pv . "px";
+        break;
+        case "height_request" :
+          $styles["height"] = $pv . "px";
+        break;
 
         case 'label' :
           $icon = null;
@@ -316,6 +364,8 @@ class Glade
 
           if ( $class == "GtkButton" || $class == "GtkLabel" ) {
             $n->appendChild(new DomText($pv));
+          } else if ( $class == "GtkToggleToolButton") {
+            $n->getElementsByTagName("button")->item(0)->appendChild(new DomText($pv));
           } else if ( $class == "GtkMenuItem" || $class == "GtkImageMenuItem" || $class == "GtkRadioMenuItem" ) {
             $span = $this->doc->createElement("span");
             if ( in_array("GtkMenuItem", $classes) ) {
@@ -343,7 +393,11 @@ class Glade
 
         case "active" :
           if ( $pv == "True" ) {
-            $n->getElementsByTagName("input")->item(0)->setAttribute("checked", "checked");
+            if ( $it = $n->getElementsByTagName("input")->item(0) ) {
+              $it->setAttribute("checked", "checked");
+            } else if ( $it = $n->getElementsByTagName("button")->item(0) ) {
+              $classes[] = "Checked";
+            }
           }
         break;
 
@@ -366,15 +420,18 @@ class Glade
 
   protected function _parseSignals($c, $n, $class) {
 
-    $id = (string) $c->object['id'];
-    foreach ( $c->object->signal as $p ) {
-      $pk = (string) $p['name'];
-      $pv = (string) $p['handler'];
+    if ( isset($c->object->signal) ) {
+      $id = (string) $c->object['id'];
 
-      if ( !isset($this->app_signals[$id]) ) {
-        $this->app_signals[$id] = Array();
+      foreach ( $c->object->signal as $p ) {
+        $pk = (string) $p['name'];
+        $pv = (string) $p['handler'];
+
+        if ( !isset($this->app_signals[$id]) ) {
+          $this->app_signals[$id] = Array();
+        }
+        $this->app_signals[$id][$pk] = $pv;
       }
-      $this->app_signals[$id][$pk] = $pv;
     }
 
   }
@@ -388,14 +445,20 @@ class Glade
 
           $classes  = Array($class, $id);
           $oclasses = Array();
+          $styles   = Array();
 
           $n       = $this->_parseElement($class, $classes);
-          $packed  = $this->_parsePacking($c, $n, $class, $oclasses);
-          $short   = $this->_parseProperties($c, $n, $class ,$classes);
+          $packed  = $this->_parsePacking($c, $n, $class, $oclasses, $styles);
+          $short   = $this->_parseProperties($c, $n, $class, $classes, $styles);
 
           $this->_parseSignals($c, $n, $class);
 
           $n->setAttribute("class", implode(" ", $classes));
+
+          $sappend = Array();
+          foreach ( $styles as $sk => $sv ) {
+            $sappend[] = "{$sk}:{$sv}";
+          }
 
           if ( $packed ) {
             $dir = "horizontal";
@@ -431,8 +494,16 @@ class Glade
             $temp2->setAttribute("class", implode(" ", $oclasses));
             $temp2->appendChild($n);
 
+            if ( $sappend ) {
+              $temp2->setAttribute("style", implode(";", $sappend));
+            }
+
             $temp->appendChild($temp2);
           } else {
+            if ( $sappend ) {
+              $n->setAttribute("style", implode(";", $sappend));
+            }
+
             $node->appendChild($n);
           }
 

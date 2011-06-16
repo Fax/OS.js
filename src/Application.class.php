@@ -81,7 +81,7 @@ abstract class Application
     $html   = "";
     $window = Array();
 
-    if ( $glade = Glade::convert(dirname($file) . "/{$cname}.glade") ) {
+    if ( $glade = Glade::convert(str_replace(".class.php", ".glade", $file)) ) {
       $html   = $glade->__toDocumentString();
       $window = $glade->getApplicationProperties();
 
@@ -105,7 +105,7 @@ abstract class Application
     );
 
     /*
-    if ( $cname == "FileManager" ) {
+    if ( $cname == "ApplicationDrawNew" ) {
     var_dump($html);
     exit;
     }

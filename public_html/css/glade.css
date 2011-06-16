@@ -90,6 +90,65 @@
   height : 20px;
 }
 
+/* GtkToolPalette */
+.GtkToolPalette {
+}
+
+ .GtkToolItemGroup {
+  }
+
+/* GtkSeparator */
+.GtkSeparator {
+}
+
+/* GtkViewport */
+.GtkViewport {
+  overflow : auto;
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right  : 0px;
+  bottom : 0px;
+}
+
+/* GtkDrawingArea */
+.GtkDrawingArea {
+  position : relative;
+}
+
+/* GtkToolbar */
+.GtkToolbar {
+  height : 20px;
+  margin : -5px;
+  padding : 5px;
+  list-style-type : none;
+}
+
+  .GtkToolbar li {
+    float : left;
+    margin : 0;
+    padding : 5px;
+  }
+
+  .GtkToolbar .Checked button {
+    border-style : inset;
+  }
+
+/* GtkFixed */
+.GtkFixed {
+  position : relative;
+}
+
+  .GtkFixed .GtkObject {
+    position : absolute;
+  }
+
+/* GtkColorButton */
+.GtkColorButton {
+  border : 2px inset #fff;
+  background : #000;
+}
+
 /* GtkMenuBar > GtkMenu */
 .GtkWindow .GtkMenuBar {
   height : 28px;

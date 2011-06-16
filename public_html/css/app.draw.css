@@ -167,3 +167,29 @@
   bottom : 0px;
   z-index : 20;
 }
+
+
+
+.ApplicationDraw .colorbutton_foreground {
+  background : #000000;
+}
+.ApplicationDraw .colorbutton_background {
+  background-color : #ffffff;
+}
+.ApplicationDraw .GtkToolItemGroup {
+  height : 38px;
+  width : 38px;
+  float : left;
+  margin : 5px;
+  padding : 0;
+  display : block;
+}
+.ApplicationDraw .box3 {
+  border-right : 1px solid #d1d4d7;
+}
+.ApplicationDraw .Canvas {
+  background : url('/img/app.draw/checkerboard.png');
+}
+.ApplicationDraw .GtkViewport {
+  left : 10px;
+}

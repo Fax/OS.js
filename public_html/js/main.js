@@ -1604,7 +1604,6 @@
 
           $(document).click(function(ev) {
             var t = ev.target || ev.srcElement;
-            console.log(1, t);
             if ( !$(t).parents("ul").first().hasClass("GtkMenuBar") ) {
               el.find(".GtkMenuItem .GtkMenu").hide();
             }
