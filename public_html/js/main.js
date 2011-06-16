@@ -348,6 +348,7 @@
           mtop = mtop || 20;
 
           if ( inited === false ) {
+            // $("#ContextMenu").hide()
             $(document).click(function(ev) {
               if ( !$(ev.target).filter(function(){ return $(this).parents(".Menu").length; }).length ) {
                 _destroy();
@@ -1594,13 +1595,21 @@
         //
         _Desktop.$element.append(el);
 
-        el.find(".GtkMenuItem").each(function() {
-          $(this).hover(function() {
-            $(this).find(".GtkMenu").show();
-          }, function() {
-            $(this).find(".GtkMenu").hide();
+        if ( el.find(".GtkMenuItem").length ) {
+          el.find(".GtkMenuItem").each(function() {
+            $(this).click(function() {
+              $(this).find(".GtkMenu").show();
+            });
           });
-        });
+
+          $(document).click(function(ev) {
+            var t = ev.target || ev.srcElement;
+            console.log(1, t);
+            if ( !$(t).parents("ul").first().hasClass("GtkMenuBar") ) {
+              el.find(".GtkMenuItem .GtkMenu").hide();
+            }
+          });
+        }
 
 
         //

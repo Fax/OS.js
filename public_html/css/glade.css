@@ -122,6 +122,8 @@
   .GtkWindow .GtkMenuItem span,
   .GtkWindow .GtkMenuItem img {
     vertical-align : middle;
+
+    cursor : pointer;
   }
 
     .GtkWindow .GtkMenuBar .GtkMenuItem span.TopLevel {
