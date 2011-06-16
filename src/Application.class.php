@@ -7,10 +7,9 @@
  * @created 2011-06-16
  */
 
-require PATH_APPS . "/SystemLogout/SystemLogout.class.php";
-
-require PATH_APPS . "/GladeTest/GladeTest.class.php";
-require PATH_APPS . "/FileManager/FileManager.class.php";
+require PATH_APPS . "/SystemLogout.class.php";
+require PATH_APPS . "/ApplicationClock.class.php";
+require PATH_APPS . "/ApplicationFileManager.class.php";
 
 /**
  * Application Class
@@ -50,14 +49,8 @@ abstract class Application
   public function __toJSON() {
     $cname = get_class($this);
 
-    if ( preg_match("/^System/", $cname) ) {
-      $class = $this->name;
-    } else {
-      $class = "Application" . $cname;
-    }
-
     return array_merge(Array(
-      "class"     => $class,
+      "class"     => $cname,
       "uuid"      => $this->_sUUID,
       "content"   => self::$Registered[$cname]["html"],
       "resources" => self::$Registered[$cname]["resources"],
@@ -77,6 +70,15 @@ abstract class Application
    */
   public final static function create() {
     return new Application();
+  }
+
+  public final static function RegisterStatic($cname, Array $window, $html, Array $resources = Array(), Array $mimes = Array()) {
+    self::$Registered[$cname] = Array(
+      "html"      => $html,
+      "window"    => $window,
+      "resources" => $resources,
+      "mime"      => $mimes
+    );
   }
 
   public final static function Register($cname, $file, Array $resources = Array(), Array $mimes = Array()) {

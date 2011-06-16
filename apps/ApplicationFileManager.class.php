@@ -8,13 +8,13 @@
  */
 
 /**
- * FileManager Class
+ * ApplicationFileManager Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package MyApplication
  * @class
  */
-class FileManager
+class ApplicationFileManager
   extends Application
 {
   const APPLICATION_TITLE  = "File Manager";
@@ -109,7 +109,7 @@ EOHTML;
 
 }
 
-Application::Register("FileManager", __FILE__, Array("app.filemanager.js", "app.filemanager.css"));
+Application::Register("ApplicationFileManager", __FILE__, Array("app.filemanager.js", "app.filemanager.css"));
 
 
 ?>

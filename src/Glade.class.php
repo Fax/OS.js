@@ -446,14 +446,8 @@ class Glade
   protected function _parseRoot($root) {
     $type     = $root['class'] == "GtkWindow" ? "Window" : "Dialog";
 
-    if ( preg_match("/^System/", $this->name) ) {
-      $class = $this->name;
-    } else {
-      $class = "Application" . $this->name;
-    }
-
     $inner = $this->doc->createElement("div");
-    $inner->setAttribute("class", implode(" ", Array($class, "GtkWindow")));
+    $inner->setAttribute("class", implode(" ", Array($this->name, "GtkWindow")));
 
     // Properties
     foreach ( $root->property as $p ) {
