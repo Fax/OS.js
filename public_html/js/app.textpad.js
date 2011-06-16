@@ -71,7 +71,7 @@ var ApplicationTextpad = (function() {
 */
 
       var text = sprintf("Row: %d, Col: %d, Lines: %d, Characters: %d", pos.y, pos.x, pos.lines, pos.length);
-      $(el).find(".WindowBottomInner").html(text);
+      $(el).find(".statusbar1").html(text);
     }
 
     // APP
@@ -118,19 +118,19 @@ var ApplicationTextpad = (function() {
 
         _read_file(argv['path']);
 
-        app.setMenuItemAction("File", "cmd_Open", function() {
+        el.find(".imagemenuitem2").click(function() {
           _open(function(fname) {
             _read_file(fname);
           }, el);
         });
 
-        app.setMenuItemAction("File", "cmd_Save", function() {
+        el.find(".imagemenuitem3").click(function() {
           if ( argv && argv['path'] ) {
             _save(argv['path'], app.$element.find("textarea").val());
           }
         });
 
-        app.setMenuItemAction("File", "cmd_SaveAs", function() {
+        el.find(".imagemenuitem4").click(function() {
           _saveAs(function(file, mime) {
             _save(file, app.$element.find("textarea").val(), function() {
               _update(file, el);
@@ -138,7 +138,7 @@ var ApplicationTextpad = (function() {
           });
         });
 
-        app.setMenuItemAction("File", "cmd_New", function() {
+        el.find(".imagemenuitem1").click(function() {
           app.$element.find("textarea").val("");
           _update(null, el);
         });
