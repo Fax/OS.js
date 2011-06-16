@@ -77,7 +77,7 @@ abstract class Application
     );
   }
 
-  public final static function Register($cname, $file, Array $resources = Array(), Array $mimes = Array()) {
+  public final static function Register($cname, $file, Array $resources = Array(), Array $mimes = Array(), Array $extra = Array()) {
     $html   = "";
     $window = Array();
 
@@ -91,6 +91,10 @@ abstract class Application
       if ( !$window['icon'] ) {
         $window['icon'] = constant("{$cname}::APPLICATION_ICON");
       }
+    }
+
+    foreach ( $extra as $k => $v ) {
+      $window[$k] = $v;
     }
 
     self::$Registered[$cname] = Array(
