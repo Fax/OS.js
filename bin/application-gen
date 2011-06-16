@@ -11,6 +11,8 @@ $doc->xmlVersion    = "1.0";
 $doc->formatOutput  = true;
 $doc->encoding      = 'UTF-8';
 
+$build = isset($argv[1]) && $argv[1] == "build";
+
 $root_node = $doc->createElement("applications");
 
 if ( $dh  = opendir($root) ) {
@@ -47,9 +49,9 @@ EOJAVASCRIPT;
 
             $js_run .= <<<EOJAVASCRIPT
 
-        el.find(".{$obj}").bind("{$ev_type}").function(ev) {
+        el.find(".{$obj}").{$ev_type}(function(ev) {
           self.Event{$ev_handler}(ev);
-        },
+        });
 
 EOJAVASCRIPT;
 
@@ -67,6 +69,10 @@ EOJAVASCRIPT;
 var {$cname} = (function(\$, undefined) {
   return function(Application, app, api, argv) {
     var _{$cname} = Application.extend({
+
+
+      // !!! DO NOT TOUCH
+
       init : function() {
         this._super("{$cname}");
       },
@@ -86,10 +92,50 @@ var {$cname} = (function(\$, undefined) {
       }
     });
 
-    return new _{$cname}();
+    /// !!! READ-ONLY
+
+    ///////////////////////////////////////////////////////////////////////////
+    // APPLICATION
+    ///////////////////////////////////////////////////////////////////////////
+
+    var __{$cname} = _{$cname}.extend({
+
+      init : function() {
+        this._super();
+      },
+
+      destroy : function() {
+        this._super();
+      },
+
+      run : function() {
+        var el = app.\$element;
+
+        this._super();
+      }
+    });
+
+    return new __{$cname}();
   };
 })(\$);
 EOJAVASCRIPT;
+
+        $css = <<<EOCSS
+@charset "UTF-8";
+/**
+ * Application: {$cname}
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ */
+
+/* !!! READ-ONLY */
+
+.{$cname} {
+
+}
+
+EOCSS;
 
         if ( !$window['title'] ) {
           $window['title'] = constant("{$cname}::APPLICATION_TITLE");
@@ -98,6 +144,7 @@ EOJAVASCRIPT;
           $window['icon'] = constant("{$cname}::APPLICATION_ICON");
         }
 
+        $js = sprintf($js, $js_methods, $js_run);
 
         $node = $doc->createElement("application");
         $node->setAttribute("class", $cname);
@@ -113,11 +160,52 @@ EOJAVASCRIPT;
 
         $p_js = $doc->createElement("property");
         $p_js->setAttribute("name", "javascript");
-        $p_js->appendChild($doc->createCDATASection(sprintf($js, $js_methods, $js_run)));
+        $p_js->appendChild($doc->createCDATASection($js));
+
+        $p_css = $doc->createElement("property");
+        $p_css->setAttribute("name", "style");
+        $p_css->appendChild($doc->createCDATASection($css));
 
         $node->appendChild($p_window);
         $node->appendChild($p_html);
         $node->appendChild($p_js);
+        $node->appendChild($p_css);
+
+        if ( $build ) {
+          $ct = preg_match("/^System/", $cname) ? "sys" : "app";
+          $cn = strtolower(preg_match("/^System/", $cname) ? str_replace("System", "", $cname) : str_replace("Application", "", $cname));
+
+          $fname_js  = PATH_PROJECT . "/public_html/js/{$ct}.{$cn}.js";
+          $fname_css = PATH_PROJECT . "/public_html/css/{$ct}.{$cn}.css";
+
+          print "\tBuilding javascript: \n";
+          print "\t\t" . basename($fname_js) . "\n";
+
+          if ( !file_exists($fname_js) ) {
+            file_put_contents($fname_js, $js);
+            print "\t\tCREATED!\n";
+          } else {
+            $content = file_get_contents($fname_css);
+            $old = strstr($content, "/// !!! READ-ONLY", true);
+            $new = strstr($css, "/// !!! READ-ONLY", true);
+            file_put_contents($fname_css, str_replace($old, $new, $content));
+            print "\t\tUPDATED!\n";
+          }
+
+          print "\tBuilding stylesheets: \n";
+          print "\t\t" . basename($fname_css) . "\n";
+
+          if ( !file_exists($fname_css) ) {
+            file_put_contents($fname_css, $css);
+            print "\t\tCREATED!\n";
+          } else {
+            $content = file_get_contents($fname_css);
+            $old = strstr($content, "/* !!! READ-ONLY */", true);
+            $new = strstr($css, "/* !!! READ-ONLY */", true);
+            file_put_contents($fname_css, str_replace($old, $new, $content));
+            print "\t\tUPDATED!\n";
+          }
+        }
 
         $root_node->appendChild($node);
         echo "\tSuccess!\n";

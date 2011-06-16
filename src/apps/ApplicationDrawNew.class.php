@@ -25,6 +25,6 @@ class ApplicationDrawNew
   }
 }
 
-Application::Register("ApplicationDrawNew", str_replace("DrawNew", "Draw", __FILE__), Array("app.draw.js", "app.draw.css"), Array("image/*"));
+Application::Register("ApplicationDrawNew", __FILE__, Array("app.drawnew.js", "app.drawnew.css"), Array("image/*"));
 
 ?>
