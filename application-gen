@@ -3,8 +3,8 @@
 
 require "header.php";
 
-$root = dirname(__FILE__) . "/apps/";
-$config = dirname(__FILE__)  ."/apps/applications.xml";
+$root = PATH_APPS . "/";
+$config = PATH_APPS . "/applications.xml";
 
 $doc = new DomDocument();
 $doc->xmlVersion    = "1.0";
