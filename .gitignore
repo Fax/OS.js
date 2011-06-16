@@ -15,8 +15,6 @@ src/build/conf/classmap-*-conf.php
 src/build/sql/schema.sql
 src/build/sql/sqldb.map
 
-count-lines.sh
-
 # Touch support
 public_html/js/vendor/jquery-git.js
 public_html/js/vendor/jquery-ui.min.js

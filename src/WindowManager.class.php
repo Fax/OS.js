@@ -52,7 +52,10 @@ class WindowManager
 
   public static function getApplication($name) {
     if ( !self::$__ApplicationRegister ) {
-      self::$__ApplicationRegister = new SimpleXMLElement(file_get_contents(PATH_APPS . "/applications.xml"));
+      $fname = PATH_PROJECT . "/applications.xml";
+      if ( file_exists($fname) ) {
+        self::$__ApplicationRegister = new SimpleXMLElement(file_get_contents($fname));
+      }
     }
 
     foreach ( self::$__ApplicationRegister as $app ) {
