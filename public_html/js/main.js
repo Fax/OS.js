@@ -1602,6 +1602,7 @@
               if ( last_menu ) {
                 $(last_menu).hide();
               }
+
               last_menu = $(this).find(".GtkMenu").show();
             });
           });

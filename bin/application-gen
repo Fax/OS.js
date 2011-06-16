@@ -26,8 +26,70 @@ if ( $dh  = opendir($root) ) {
       }
 
       if ( $glade = Glade::convert($root . $filename) ) {
-        $html   = $glade->__toDocumentString();
-        $window = $glade->getApplicationProperties();
+        $html    = $glade->__toDocumentString();
+        $window  = $glade->getApplicationProperties();
+        $signals = $glade->getApplicationSignals();
+
+        $js_methods = "";
+        $js_run = "";
+
+        foreach ( $signals as $obj => $evs ) {
+          foreach ( $evs as $ev_type => $ev_handler ) {
+            $js_methods .= <<<EOJAVASCRIPT
+
+      Event{$ev_handler} : function(ev) {
+
+      },
+
+
+EOJAVASCRIPT;
+
+
+            $js_run .= <<<EOJAVASCRIPT
+
+        el.find(".{$obj}").bind("{$ev_type}").function(ev) {
+          self.Event{$ev_handler}(ev);
+        },
+
+EOJAVASCRIPT;
+
+          }
+        }
+
+        $js     = <<<EOJAVASCRIPT
+/**
+ * Application: {$cname}
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @class
+ */
+var {$cname} = (function(\$, undefined) {
+  return function(Application, app, api, argv) {
+    var _{$cname} = Application.extend({
+      init : function() {
+        this._super("{$cname}");
+      },
+
+      destroy : function() {
+        this._super();
+      },
+
+%s
+
+      run : function() {
+        var el = app.\$element;
+
+%s
+
+        this._super();
+      }
+    });
+
+    return new _{$cname}();
+  };
+})(\$);
+EOJAVASCRIPT;
 
         if ( !$window['title'] ) {
           $window['title'] = constant("{$cname}::APPLICATION_TITLE");
@@ -43,15 +105,19 @@ if ( $dh  = opendir($root) ) {
 
         $p_html = $doc->createElement("property");
         $p_html->setAttribute("name", "html");
-        //$p_html->appendChild(new DomText(htmlspecialchars($html)));
         $p_html->appendChild($doc->createCDATASection($html));
 
         $p_window = $doc->createElement("property");
         $p_window->setAttribute("name", "window");
         $p_window->appendChild(new DomText(json_encode($window)));
 
-        $node->appendChild($p_html);
+        $p_js = $doc->createElement("property");
+        $p_js->setAttribute("name", "javascript");
+        $p_js->appendChild($doc->createCDATASection(sprintf($js, $js_methods, $js_run)));
+
         $node->appendChild($p_window);
+        $node->appendChild($p_html);
+        $node->appendChild($p_js);
 
         $root_node->appendChild($node);
         echo "\tSuccess!\n";

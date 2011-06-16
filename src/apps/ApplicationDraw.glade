@@ -314,6 +314,7 @@
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="use_action_appearance">False</property>
+                        <signal name="clicked" handler="ChangeBackground" swapped="no"/>
                       </object>
                       <packing>
                         <property name="x">15</property>
@@ -328,6 +329,7 @@
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="use_action_appearance">False</property>
+                        <signal name="clicked" handler="ChangeForeground" swapped="no"/>
                       </object>
                       <packing>
                         <property name="x">30</property>

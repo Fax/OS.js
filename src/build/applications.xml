@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <applications>
   <application class="ApplicationDraw" type="normal">
+    <property name="window">{"title":"Draw","icon":"categories\/gnome-graphics.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":800,"height":500,"gravity":""}</property>
     <property name="html"><![CDATA[<div class="ApplicationDraw GtkWindow">
   <table class="GtkBox box1 Vertical">
     <tr>
@@ -108,16 +109,98 @@
   </table>
 </div>
 ]]></property>
-    <property name="window">{"title":"Draw","icon":"categories\/gnome-graphics.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":800,"height":500,"gravity":""}</property>
+    <property name="javascript"><![CDATA[/**
+ * Application: ApplicationDraw
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @class
+ */
+var ApplicationDraw = (function($, undefined) {
+  return function(Application, app, api, argv) {
+    var _ApplicationDraw = Application.extend({
+      init : function() {
+        this._super("ApplicationDraw");
+      },
+
+      destroy : function() {
+        this._super();
+      },
+
+      
+      EventChangeBackground : function(ev) {
+
+      },
+
+
+      EventChangeForeground : function(ev) {
+
+      },
+
+
+
+      run : function() {
+        var el = app.$element;
+
+
+        el.find(".colorbutton_background").bind("click").function(ev) {
+          self.EventChangeBackground(ev);
+        },
+
+        el.find(".colorbutton_foreground").bind("click").function(ev) {
+          self.EventChangeForeground(ev);
+        },
+
+
+        this._super();
+      }
+    });
+
+    return new _ApplicationDraw();
+  };
+})($);]]></property>
   </application>
   <application class="ApplicationTerminal" type="normal">
+    <property name="window">{"title":"Terminal","icon":"apps\/utilities-terminal.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":500,"height":300,"gravity":""}</property>
     <property name="html"><![CDATA[<div class="ApplicationTerminal GtkWindow">
   <textarea class="GtkTextView textview1 GtkObject"></textarea>
 </div>
 ]]></property>
-    <property name="window">{"title":"Terminal","icon":"apps\/utilities-terminal.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":500,"height":300,"gravity":""}</property>
+    <property name="javascript"><![CDATA[/**
+ * Application: ApplicationTerminal
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @class
+ */
+var ApplicationTerminal = (function($, undefined) {
+  return function(Application, app, api, argv) {
+    var _ApplicationTerminal = Application.extend({
+      init : function() {
+        this._super("ApplicationTerminal");
+      },
+
+      destroy : function() {
+        this._super();
+      },
+
+      
+
+      run : function() {
+        var el = app.$element;
+
+
+
+        this._super();
+      }
+    });
+
+    return new _ApplicationTerminal();
+  };
+})($);]]></property>
   </application>
   <application class="ApplicationFileManager" type="normal">
+    <property name="window">{"title":"File Manager","icon":"apps\/file-manager.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":500,"height":500,"gravity":""}</property>
     <property name="html"><![CDATA[<div class="ApplicationFileManager GtkWindow">
   <table class="GtkBox box1 Vertical">
     <tr>
@@ -176,9 +259,41 @@
   </table>
 </div>
 ]]></property>
-    <property name="window">{"title":"File Manager","icon":"apps\/file-manager.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":500,"height":500,"gravity":""}</property>
+    <property name="javascript"><![CDATA[/**
+ * Application: ApplicationFileManager
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @class
+ */
+var ApplicationFileManager = (function($, undefined) {
+  return function(Application, app, api, argv) {
+    var _ApplicationFileManager = Application.extend({
+      init : function() {
+        this._super("ApplicationFileManager");
+      },
+
+      destroy : function() {
+        this._super();
+      },
+
+      
+
+      run : function() {
+        var el = app.$element;
+
+
+
+        this._super();
+      }
+    });
+
+    return new _ApplicationFileManager();
+  };
+})($);]]></property>
   </application>
   <application class="SystemLogout" type="system">
+    <property name="window">{"title":"Logout","icon":"actions\/gnome-logout.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":300,"height":100,"gravity":"center"}</property>
     <property name="html"><![CDATA[<div class="SystemLogout GtkWindow">
   <table class="GtkBox dialog-vbox1 Vertical">
     <tr>
@@ -217,9 +332,41 @@
   </table>
 </div>
 ]]></property>
-    <property name="window">{"title":"Logout","icon":"actions\/gnome-logout.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":300,"height":100,"gravity":"center"}</property>
+    <property name="javascript"><![CDATA[/**
+ * Application: SystemLogout
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @class
+ */
+var SystemLogout = (function($, undefined) {
+  return function(Application, app, api, argv) {
+    var _SystemLogout = Application.extend({
+      init : function() {
+        this._super("SystemLogout");
+      },
+
+      destroy : function() {
+        this._super();
+      },
+
+      
+
+      run : function() {
+        var el = app.$element;
+
+
+
+        this._super();
+      }
+    });
+
+    return new _SystemLogout();
+  };
+})($);]]></property>
   </application>
   <application class="ApplicationTextpad" type="normal">
+    <property name="window">{"title":"Textpad","icon":"apps\/text-editor.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":400,"height":400,"gravity":""}</property>
     <property name="html"><![CDATA[<div class="ApplicationTextpad GtkWindow">
   <table class="GtkBox box1 Vertical">
     <tr>
@@ -269,6 +416,37 @@
   </table>
 </div>
 ]]></property>
-    <property name="window">{"title":"Textpad","icon":"apps\/text-editor.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":400,"height":400,"gravity":""}</property>
+    <property name="javascript"><![CDATA[/**
+ * Application: ApplicationTextpad
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @class
+ */
+var ApplicationTextpad = (function($, undefined) {
+  return function(Application, app, api, argv) {
+    var _ApplicationTextpad = Application.extend({
+      init : function() {
+        this._super("ApplicationTextpad");
+      },
+
+      destroy : function() {
+        this._super();
+      },
+
+      
+
+      run : function() {
+        var el = app.$element;
+
+
+
+        this._super();
+      }
+    });
+
+    return new _ApplicationTextpad();
+  };
+})($);]]></property>
   </application>
 </applications>

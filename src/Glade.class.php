@@ -427,6 +427,12 @@ class Glade
         $pk = (string) $p['name'];
         $pv = (string) $p['handler'];
 
+        switch ( $pk ) {
+          case "clicked" :
+            $pk = "click";
+            break;
+        }
+
         if ( !isset($this->app_signals[$id]) ) {
           $this->app_signals[$id] = Array();
         }
