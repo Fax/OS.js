@@ -28,7 +28,7 @@ define("PATH_PROJECT_SRC",       PATH_PROJECT . "/src");
 define("PATH_PROJECT_HTML",      PATH_PROJECT . "/public_html");
 define("PATH_PROJECT_BUILD",     PATH_PROJECT . "/src/build");
 define("PATH_PROJECT_LOG",       PATH_PROJECT . "/logs");
-define("PATH_APPS",              PATH_PROJECT . "/apps");
+define("PATH_APPS",              PATH_PROJECT . "/src/apps");
 
 // Propel Config
 $inifile = parse_ini_file(PATH_PROJECT . "/build.properties");
