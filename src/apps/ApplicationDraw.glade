@@ -87,6 +87,30 @@
                 </child>
               </object>
             </child>
+            <child>
+              <object class="GtkMenuItem" id="menuitem2">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="label" translatable="yes">_Effects</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="menu2">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkMenuItem" id="menuitem_effect_noise">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="label" translatable="yes">Noise</property>
+                        <property name="use_underline">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -248,7 +272,7 @@
                           <object class="GtkCellRendererText" id="cellrenderertext_butt"/>
                         </child>
                         <child>
-                          <object class="GtkCellRendererText" id="cellrenderertext_round"/>
+                          <object class="GtkCellRendererText" id="cellrenderertext_round1"/>
                         </child>
                         <child>
                           <object class="GtkCellRendererText" id="cellrenderertext_square"/>

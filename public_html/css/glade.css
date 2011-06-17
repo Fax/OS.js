@@ -204,6 +204,11 @@
     position : relative;
     padding : 6px;
   }
+
+  .GtkWindow .GtkMenuBar .GtkMenuItem .GtkMenuItem {
+    display : block;
+  }
+
   .GtkWindow .GtkMenuBar .GtkMenuItem ul {
     margin : 0;
     padding : 2px;
@@ -224,14 +229,28 @@
     cursor : pointer;
   }
 
-    .GtkWindow .GtkMenuBar .GtkMenuItem span.TopLevel {
+    .GtkWindow .GtkMenuBar .GtkMenuItem span {
       color : #fff;
     }
-    .GtkWindow .GtkMenuBar .GtkMenuItem:hover span.TopLevel {
+    .GtkWindow .GtkMenuBar .GtkMenuItem .GtkMenuItem span,
+    .GtkWindow .GtkMenuBar .GtkMenuItem .GtkImageMenuItem span {
+      color : #222;
+      text-decoration : none;
+    }
+    .GtkWindow .GtkMenuBar .GtkMenuItem:hover span {
       text-decoration : underline;
     }
-    .GtkWindow .GtkMenuBar .GtkMenuItem .GtkMenu li:hover {
+    .GtkWindow .GtkMenuBar .GtkMenuItem:hover .GtkMenuItem span,
+    .GtkWindow .GtkMenuBar .GtkMenuItem:hover .GtkImageMenuItem span {
+      text-decoration : none;
+    }
+
+    .GtkWindow .GtkMenuBar .GtkMenuItem .GtkMenuItem:hover,
+    .GtkWindow .GtkMenuBar .GtkMenuItem .GtkImageMenuItem:hover {
       background : #222;
+    }
+    .GtkWindow .GtkMenuBar .GtkMenuItem .GtkMenuItem:hover span,
+    .GtkWindow .GtkMenuBar .GtkMenuItem .GtkImageMenuItem:hover span {
       color : #fff;
     }
 

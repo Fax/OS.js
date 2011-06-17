@@ -8,7 +8,7 @@
       <td class="Fill GtkBoxPosition Position_0">
         <ul class="GtkMenuBar menubarMain">
           <li class="GtkMenuItem menuitem1">
-            <span class="TopLevel"><u>F</u>ile</span>
+            <span><u>F</u>ile</span>
             <ul class="GtkMenu menu1">
               <li class="GtkImageMenuItem imagemenuitem1">
                 <img alt="gtk-new" src="/img/icons/16x16/actions/gtk-new.png"/>
@@ -32,6 +32,14 @@
               <li class="GtkImageMenuItem imagemenuitem5">
                 <img alt="gtk-quit" src="/img/icons/16x16/actions/gtk-quit.png"/>
                 <span>Quit</span>
+              </li>
+            </ul>
+          </li>
+          <li class="GtkMenuItem menuitem2">
+            <span><u>E</u>ffects</span>
+            <ul class="GtkMenu menu2">
+              <li class="GtkMenuItem menuitem_effect_noise">
+                <span>Noise</span>
               </li>
             </ul>
           </li>
@@ -84,7 +92,7 @@
                 <td class="Fill GtkBoxPosition Position_1">
                   <select class="GtkComboBox combobox_linecap GtkObject">
                     <option value="butt" class="GtkCellRendererText cellrenderertext_butt">butt</option>
-                    <option value="round" class="GtkCellRendererText cellrenderertext_round">round</option>
+                    <option value="round1" class="GtkCellRendererText cellrenderertext_round1">round1</option>
                     <option value="square" class="GtkCellRendererText cellrenderertext_square">square</option>
                   </select>
                 </td>
@@ -346,7 +354,7 @@ var ApplicationTerminal = (function($, undefined) {
       <td class="Fill GtkBoxPosition Position_0">
         <ul class="GtkMenuBar menubar1">
           <li class="GtkMenuItem menuitem1">
-            <span class="TopLevel"><u>F</u>ile</span>
+            <span><u>F</u>ile</span>
             <ul class="GtkMenu menu1">
               <li class="GtkImageMenuItem imagemenuitem1">
                 <img alt="gtk-new" src="/img/icons/16x16/actions/gtk-new.png"/>
@@ -359,7 +367,7 @@ var ApplicationTerminal = (function($, undefined) {
             </ul>
           </li>
           <li class="GtkMenuItem menuitem2">
-            <span class="TopLevel"><u>G</u>o</span>
+            <span><u>G</u>o</span>
             <ul class="GtkMenu menu2">
               <li class="GtkImageMenuItem imagemenuitem6">
                 <img alt="gtk-home" src="/img/icons/16x16/actions/gtk-home.png"/>
@@ -368,7 +376,7 @@ var ApplicationTerminal = (function($, undefined) {
             </ul>
           </li>
           <li class="GtkMenuItem menuitem3">
-            <span class="TopLevel"><u>V</u>iew</span>
+            <span><u>V</u>iew</span>
             <ul class="GtkMenu menu3">
               <li class="GtkImageMenuItem menuitem6">
                 <img alt="gtk-refresh" src="/img/icons/16x16/actions/gtk-refresh.png"/>
@@ -602,7 +610,7 @@ var SystemLogout = (function($, undefined) {
       <td class="Fill GtkBoxPosition Position_0">
         <ul class="GtkMenuBar menubar1">
           <li class="GtkMenuItem menuitem1">
-            <span class="TopLevel"><u>F</u>ile</span>
+            <span><u>F</u>ile</span>
             <ul class="GtkMenu menu1">
               <li class="GtkImageMenuItem imagemenuitem1">
                 <img alt="gtk-new" src="/img/icons/16x16/actions/gtk-new.png"/>

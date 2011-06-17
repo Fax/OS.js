@@ -380,9 +380,7 @@ class Glade
             $n->getElementsByTagName("button")->item(0)->appendChild(new DomText($pv));
           } else if ( $class == "GtkMenuItem" || $class == "GtkImageMenuItem" || $class == "GtkRadioMenuItem" ) {
             $span = $this->doc->createElement("span");
-            if ( in_array("GtkMenuItem", $classes) ) {
-              $span->setAttribute("class", "TopLevel");
-            }
+            //if ( in_array("GtkMenuItem", $classes) ) {
             if ( ($sub = strstr($pv, "_")) !== false ) {
               $pre = str_replace($sub, "", $pv);
               $letter = substr($sub, 1, 1);
