@@ -107,6 +107,10 @@
  .GtkToolItemGroup {
   }
 
+  .GtkToolItemGroup.Checked {
+    border-style : inset;
+  }
+
 /* GtkSeparator */
 .GtkSeparator {
 }
@@ -142,6 +146,31 @@
 
   .GtkToolbar .Checked button {
     border-style : inset;
+  }
+
+  .GtkToolbar .GtkToggleToolButton {
+    height : 20px;
+  }
+
+  .GtkToolbar .GtkToolItem {
+    height : 20px;
+    min-width : 100px;
+    overflow : hidden;
+  }
+
+  .GtkToolbar .GtkToolItem .GtkBox {
+    width : 100%;
+    height : 100%;
+    margin : 3px !important;
+  }
+  .GtkToolbar .GtkToolItem .GtkBox,
+  .GtkToolbar .GtkToolItem .GtkBox tbody,
+  .GtkToolbar .GtkToolItem .GtkBox tr,
+  .GtkToolbar .GtkToolItem .GtkBox td {
+    vertical-align : middle;
+    margin : 0;
+    padding : 0;
+    border-collapse : collapse;
   }
 
 /* GtkFixed */

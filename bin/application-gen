@@ -39,8 +39,7 @@ if ( $dh  = opendir($root) ) {
           foreach ( $evs as $ev_type => $ev_handler ) {
             $js_methods .= <<<EOJAVASCRIPT
 
-      Event{$ev_handler} : function(ev) {
-
+      Event{$ev_handler} : function(el, ev) {
       },
 
 
@@ -50,7 +49,7 @@ EOJAVASCRIPT;
             $js_run .= <<<EOJAVASCRIPT
 
         el.find(".{$obj}").{$ev_type}(function(ev) {
-          self.Event{$ev_handler}(ev);
+          self.Event{$ev_handler}(this, ev);
         });
 
 EOJAVASCRIPT;
@@ -67,7 +66,7 @@ EOJAVASCRIPT;
  * @class
  */
 var {$cname} = (function(\$, undefined) {
-  return function(Application, app, api, argv) {
+  return function(Application, app, API, argv) {
     var _{$cname} = Application.extend({
 
 
@@ -85,14 +84,15 @@ var {$cname} = (function(\$, undefined) {
 
       run : function() {
         var el = app.\$element;
+        var self = this;
 
 %s
 
-        this._super();
+        this._super(el);
       }
     });
 
-    /// !!! READ-ONLY
+    // !!! READ-ONLY
 
     ///////////////////////////////////////////////////////////////////////////
     // APPLICATION
@@ -110,8 +110,11 @@ var {$cname} = (function(\$, undefined) {
 
       run : function() {
         var el = app.\$element;
+        var self = this;
 
         this._super();
+
+        // Do your stuff here
       }
     });
 
@@ -185,10 +188,10 @@ EOCSS;
             file_put_contents($fname_js, $js);
             print "\t\tCREATED!\n";
           } else {
-            $content = file_get_contents($fname_css);
-            $old = strstr($content, "/// !!! READ-ONLY", true);
-            $new = strstr($css, "/// !!! READ-ONLY", true);
-            file_put_contents($fname_css, str_replace($old, $new, $content));
+            $content = file_get_contents($fname_js);
+            $old = strstr($content, "    // !!! READ-ONLY", true);
+            $new = strstr($js, "    // !!! READ-ONLY", true);
+            file_put_contents($fname_js, str_replace($old, $new, $content));
             print "\t\tUPDATED!\n";
           }
 

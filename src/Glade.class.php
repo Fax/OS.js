@@ -167,10 +167,22 @@ class Glade
   // PARSER
   /////////////////////////////////////////////////////////////////////////////
 
-  protected function _parseElement($class, &$classes) {
+  protected function _parseElement($item, $class, &$classes) {
     switch ( $class ) {
       default :
         $n = $this->doc->createElement("div");
+      break;
+
+      case "GtkScale" :
+        $n = $this->doc->createElement("div");
+      break;
+
+      case "GtkCellRendererText" :
+        $n = $this->doc->createElement("option");
+        $id = (string) $item['id'];
+        $ex = explode("_", $id, 2);
+        $n->setAttribute("value", end($ex));
+        $n->appendChild(new DomText(end($ex)));
       break;
 
       case "GtkIconView" :
@@ -453,7 +465,7 @@ class Glade
           $oclasses = Array();
           $styles   = Array();
 
-          $n       = $this->_parseElement($class, $classes);
+          $n       = $this->_parseElement($c->object, $class, $classes);
           $packed  = $this->_parsePacking($c, $n, $class, $oclasses, $styles);
           $short   = $this->_parseProperties($c, $n, $class, $classes, $styles);
 

@@ -2772,7 +2772,30 @@
         console.log("Application destroyed", this.name, this);
       },
 
-      run : function() {
+      run : function(el) {
+
+        if ( el ) {
+          el.find(".GtkScale").slider();
+
+          el.find(".GtkToolItemGroup").click(function() {
+            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
+
+            if ( $(this).hasClass("Checked") ) {
+              $(this).removeClass("Checked");
+            } else {
+              $(this).addClass("Checked");
+            }
+          });
+
+          el.find(".GtkToggleToolButton button").click(function() {
+            if ( $(this).parent().hasClass("Checked") ) {
+              $(this).parent().removeClass("Checked");
+            } else {
+              $(this).parent().addClass("Checked");
+            }
+          });
+        }
+
         console.log("Application running", this.name, this);
       },
 

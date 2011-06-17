@@ -1,5 +1,259 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <applications>
+  <application class="ApplicationDraw" type="normal">
+    <property name="window">{"title":"Draw","icon":"categories\/gnome-graphics.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":800,"height":500,"gravity":""}</property>
+    <property name="html"><![CDATA[<div class="ApplicationDraw GtkWindow">
+  <table class="GtkBox boxMain Vertical">
+    <tr>
+      <td class="Fill GtkBoxPosition Position_0">
+        <ul class="GtkMenuBar menubarMain">
+          <li class="GtkMenuItem menuitem1">
+            <span class="TopLevel"><u>F</u>ile</span>
+            <ul class="GtkMenu menu1">
+              <li class="GtkImageMenuItem imagemenuitem1">
+                <img alt="gtk-new" src="/img/icons/16x16/actions/gtk-new.png"/>
+                <span>New</span>
+              </li>
+              <li class="GtkImageMenuItem imagemenuitem2">
+                <img alt="gtk-open" src="/img/icons/16x16/actions/gtk-open.png"/>
+                <span>Open</span>
+              </li>
+              <li class="GtkImageMenuItem imagemenuitem3">
+                <img alt="gtk-save" src="/img/icons/16x16/actions/gtk-save.png"/>
+                <span>Save</span>
+              </li>
+              <li class="GtkImageMenuItem imagemenuitem4">
+                <img alt="gtk-save-as" src="/img/icons/16x16/actions/gtk-save-as.png"/>
+                <span>Save as...</span>
+              </li>
+              <li class="GtkSeparatorMenuItem separatormenuitem1">
+                <hr/>
+              </li>
+              <li class="GtkImageMenuItem imagemenuitem5">
+                <img alt="gtk-quit" src="/img/icons/16x16/actions/gtk-quit.png"/>
+                <span>Quit</span>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td class="Fill GtkBoxPosition Position_1">
+        <ul class="GtkToolbar toolbarMain">
+          <li class="GtkToggleToolButton toolbutton_stroke Checked">
+            <button>Enable Stroke</button>
+          </li>
+          <li class="GtkToggleToolButton toolbutton_fill Checked">
+            <button>Enable Fill</button>
+          </li>
+          <li class="GtkToolItem toolbutton1">
+            <table class="GtkBox box1 Horizontal">
+              <tr>
+                <td class="Fill GtkBoxPosition Position_0">
+                  <div class="GtkLabel label1 GtkObject">Thickness</div>
+                </td>
+                <td class="Fill GtkBoxPosition Position_1">
+                  <div class="GtkScale scale1"></div>
+                </td>
+              </tr>
+            </table>
+          </li>
+          <li class="GtkToolItem toolbutton2">
+            <table class="GtkBox box2 Horizontal">
+              <tr>
+                <td class="Fill GtkBoxPosition Position_0">
+                  <div class="GtkLabel label2 GtkObject">Line Join</div>
+                </td>
+                <td class="Fill GtkBoxPosition Position_1">
+                  <select class="GtkComboBox combobox_linejoin GtkObject">
+                    <option value="milter" class="GtkCellRendererText cellrenderertext_milter">milter</option>
+                    <option value="bevel" class="GtkCellRendererText cellrenderertext_bevel">bevel</option>
+                    <option value="round" class="GtkCellRendererText cellrenderertext_round">round</option>
+                  </select>
+                </td>
+              </tr>
+            </table>
+          </li>
+          <li class="GtkToolItem toolbutton3">
+            <table class="GtkBox box4 Horizontal">
+              <tr>
+                <td class="Fill GtkBoxPosition Position_0">
+                  <div class="GtkLabel label3 GtkObject">Line Cap</div>
+                </td>
+                <td class="Fill GtkBoxPosition Position_1">
+                  <select class="GtkComboBox combobox_linecap GtkObject">
+                    <option value="butt" class="GtkCellRendererText cellrenderertext_butt">butt</option>
+                    <option value="round" class="GtkCellRendererText cellrenderertext_round">round</option>
+                    <option value="square" class="GtkCellRendererText cellrenderertext_square">square</option>
+                  </select>
+                </td>
+              </tr>
+            </table>
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td class="Expand Fill GtkBoxPosition Position_2">
+        <table class="GtkBox boxContent Horizontal">
+          <tr>
+            <td class="Fill GtkBoxPosition Position_0" style="width:100px">
+              <table class="GtkBox box3 Vertical">
+                <tr>
+                  <td class="Expand Fill GtkBoxPosition Position_0">
+                    <div class="GtkToolPalette toolpalette1 Vertical">
+                      <button class="GtkToolItemGroup toolitemgroup_selection"></button>
+                      <button class="GtkToolItemGroup toolitemgroup_pencil"></button>
+                      <button class="GtkToolItemGroup toolitemgroup_line"></button>
+                      <button class="GtkToolItemGroup toolitemgroup_square"></button>
+                      <button class="GtkToolItemGroup toolitemgroup_rectangle"></button>
+                      <button class="GtkToolItemGroup toolitemgroup_circle"></button>
+                      <button class="GtkToolItemGroup toolitemgroup_ellipse"></button>
+                      <button class="GtkToolItemGroup toolitemgroup_fill"></button>
+                      <button class="GtkToolItemGroup toolitemgroup_pick"></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="Fill GtkBoxPosition Position_1">
+                    <div class="GtkSeparator separator1">
+                      <hr/>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="Fill GtkBoxPosition Position_2" style="height:200px">
+                    <div class="GtkFixed fixed1">
+                      <div class="GtkColorButton colorbutton_background GtkObject" style="left:15px;top:15px;width:50px;height:50px"></div>
+                      <div class="GtkColorButton colorbutton_foreground GtkObject" style="left:30px;top:30px;width:50px;height:50px"></div>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+            <td class="Expand Fill GtkBoxPosition Position_1">
+              <div class="GtkViewport viewport1">
+                <canvas class="GtkDrawingArea drawingarea1 GtkObject Canvas"></canvas>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+]]></property>
+    <property name="javascript"><![CDATA[/**
+ * Application: ApplicationDraw
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @class
+ */
+var ApplicationDraw = (function($, undefined) {
+  return function(Application, app, API, argv) {
+    var _ApplicationDraw = Application.extend({
+
+
+      // !!! DO NOT TOUCH
+
+      init : function() {
+        this._super("ApplicationDraw");
+      },
+
+      destroy : function() {
+        this._super();
+      },
+
+
+      EventToggleStroke : function(el, ev) {
+      },
+
+
+      EventToggleFill : function(el, ev) {
+      },
+
+
+      EventChangeBackground : function(el, ev) {
+      },
+
+
+      EventChangeForeground : function(el, ev) {
+      },
+
+
+
+      run : function() {
+        var el = app.$element;
+        var self = this;
+
+
+        el.find(".toolbutton_stroke").click(function(ev) {
+          self.EventToggleStroke(this, ev);
+        });
+
+        el.find(".toolbutton_fill").click(function(ev) {
+          self.EventToggleFill(this, ev);
+        });
+
+        el.find(".colorbutton_background").click(function(ev) {
+          self.EventChangeBackground(this, ev);
+        });
+
+        el.find(".colorbutton_foreground").click(function(ev) {
+          self.EventChangeForeground(this, ev);
+        });
+
+
+        this._super(el);
+      }
+    });
+
+    // !!! READ-ONLY
+
+    ///////////////////////////////////////////////////////////////////////////
+    // APPLICATION
+    ///////////////////////////////////////////////////////////////////////////
+
+    var __ApplicationDraw = _ApplicationDraw.extend({
+
+      init : function() {
+        this._super();
+      },
+
+      destroy : function() {
+        this._super();
+      },
+
+      run : function() {
+        var el = app.$element;
+        var self = this;
+
+        this._super();
+
+        // Do your stuff here
+      }
+    });
+
+    return new __ApplicationDraw();
+  };
+})($);]]></property>
+    <property name="style"><![CDATA[@charset "UTF-8";
+/**
+ * Application: ApplicationDraw
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ */
+
+/* !!! READ-ONLY */
+
+.ApplicationDraw {
+
+}
+]]></property>
+  </application>
   <application class="ApplicationTerminal" type="normal">
     <property name="window">{"title":"Terminal","icon":"apps\/utilities-terminal.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":500,"height":300,"gravity":""}</property>
     <property name="html"><![CDATA[<div class="ApplicationTerminal GtkWindow">
@@ -14,7 +268,7 @@
  * @class
  */
 var ApplicationTerminal = (function($, undefined) {
-  return function(Application, app, api, argv) {
+  return function(Application, app, API, argv) {
     var _ApplicationTerminal = Application.extend({
 
 
@@ -32,14 +286,15 @@ var ApplicationTerminal = (function($, undefined) {
 
       run : function() {
         var el = app.$element;
+        var self = this;
 
 
 
-        this._super();
+        this._super(el);
       }
     });
 
-    /// !!! READ-ONLY
+    // !!! READ-ONLY
 
     ///////////////////////////////////////////////////////////////////////////
     // APPLICATION
@@ -57,8 +312,11 @@ var ApplicationTerminal = (function($, undefined) {
 
       run : function() {
         var el = app.$element;
+        var self = this;
 
         this._super();
+
+        // Do your stuff here
       }
     });
 
@@ -148,7 +406,7 @@ var ApplicationTerminal = (function($, undefined) {
  * @class
  */
 var ApplicationFileManager = (function($, undefined) {
-  return function(Application, app, api, argv) {
+  return function(Application, app, API, argv) {
     var _ApplicationFileManager = Application.extend({
 
 
@@ -166,14 +424,15 @@ var ApplicationFileManager = (function($, undefined) {
 
       run : function() {
         var el = app.$element;
+        var self = this;
 
 
 
-        this._super();
+        this._super(el);
       }
     });
 
-    /// !!! READ-ONLY
+    // !!! READ-ONLY
 
     ///////////////////////////////////////////////////////////////////////////
     // APPLICATION
@@ -191,8 +450,11 @@ var ApplicationFileManager = (function($, undefined) {
 
       run : function() {
         var el = app.$element;
+        var self = this;
 
         this._super();
+
+        // Do your stuff here
       }
     });
 
@@ -262,7 +524,7 @@ var ApplicationFileManager = (function($, undefined) {
  * @class
  */
 var SystemLogout = (function($, undefined) {
-  return function(Application, app, api, argv) {
+  return function(Application, app, API, argv) {
     var _SystemLogout = Application.extend({
 
 
@@ -280,14 +542,15 @@ var SystemLogout = (function($, undefined) {
 
       run : function() {
         var el = app.$element;
+        var self = this;
 
 
 
-        this._super();
+        this._super(el);
       }
     });
 
-    /// !!! READ-ONLY
+    // !!! READ-ONLY
 
     ///////////////////////////////////////////////////////////////////////////
     // APPLICATION
@@ -305,8 +568,11 @@ var SystemLogout = (function($, undefined) {
 
       run : function() {
         var el = app.$element;
+        var self = this;
 
         this._super();
+
+        // Do your stuff here
       }
     });
 
@@ -387,7 +653,7 @@ var SystemLogout = (function($, undefined) {
  * @class
  */
 var ApplicationTextpad = (function($, undefined) {
-  return function(Application, app, api, argv) {
+  return function(Application, app, API, argv) {
     var _ApplicationTextpad = Application.extend({
 
 
@@ -405,14 +671,15 @@ var ApplicationTextpad = (function($, undefined) {
 
       run : function() {
         var el = app.$element;
+        var self = this;
 
 
 
-        this._super();
+        this._super(el);
       }
     });
 
-    /// !!! READ-ONLY
+    // !!! READ-ONLY
 
     ///////////////////////////////////////////////////////////////////////////
     // APPLICATION
@@ -430,8 +697,11 @@ var ApplicationTextpad = (function($, undefined) {
 
       run : function() {
         var el = app.$element;
+        var self = this;
 
         this._super();
+
+        // Do your stuff here
       }
     });
 
@@ -449,225 +719,6 @@ var ApplicationTextpad = (function($, undefined) {
 /* !!! READ-ONLY */
 
 .ApplicationTextpad {
-
-}
-]]></property>
-  </application>
-  <application class="ApplicationDrawNew" type="normal">
-    <property name="window">{"title":"Draw","icon":"categories\/gnome-graphics.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":800,"height":500,"gravity":""}</property>
-    <property name="html"><![CDATA[<div class="ApplicationDrawNew GtkWindow">
-  <table class="GtkBox boxMain Vertical">
-    <tr>
-      <td class="Fill GtkBoxPosition Position_0">
-        <ul class="GtkMenuBar menubarMain">
-          <li class="GtkMenuItem menuitem1">
-            <span class="TopLevel"><u>F</u>ile</span>
-            <ul class="GtkMenu menu1">
-              <li class="GtkImageMenuItem imagemenuitem1">
-                <img alt="gtk-new" src="/img/icons/16x16/actions/gtk-new.png"/>
-                <span>New</span>
-              </li>
-              <li class="GtkImageMenuItem imagemenuitem2">
-                <img alt="gtk-open" src="/img/icons/16x16/actions/gtk-open.png"/>
-                <span>Open</span>
-              </li>
-              <li class="GtkImageMenuItem imagemenuitem3">
-                <img alt="gtk-save" src="/img/icons/16x16/actions/gtk-save.png"/>
-                <span>Save</span>
-              </li>
-              <li class="GtkImageMenuItem imagemenuitem4">
-                <img alt="gtk-save-as" src="/img/icons/16x16/actions/gtk-save-as.png"/>
-                <span>Save as...</span>
-              </li>
-              <li class="GtkSeparatorMenuItem separatormenuitem1">
-                <hr/>
-              </li>
-              <li class="GtkImageMenuItem imagemenuitem5">
-                <img alt="gtk-quit" src="/img/icons/16x16/actions/gtk-quit.png"/>
-                <span>Quit</span>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td class="Fill GtkBoxPosition Position_1">
-        <ul class="GtkToolbar toolbarMain">
-          <li class="GtkToggleToolButton toolbutton_stroke Checked">
-            <button>Enable Stroke</button>
-          </li>
-          <li class="GtkToggleToolButton toolbutton_fill Checked">
-            <button>Enable Fill</button>
-          </li>
-          <li class="GtkToolItem toolbutton1">
-            <div class=" "></div>
-          </li>
-          <li class="GtkToolItem toolbutton2">
-            <div class=" "></div>
-          </li>
-          <li class="GtkToolItem toolbutton3">
-            <div class=" "></div>
-          </li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td class="Expand Fill GtkBoxPosition Position_2">
-        <table class="GtkBox boxContent Horizontal">
-          <tr>
-            <td class="Fill GtkBoxPosition Position_0" style="width:100px">
-              <table class="GtkBox box3 Vertical">
-                <tr>
-                  <td class="Expand Fill GtkBoxPosition Position_0">
-                    <div class="GtkToolPalette toolpalette1 Vertical">
-                      <button class="GtkToolItemGroup toolitemgroup_select_rectangle"></button>
-                      <button class="GtkToolItemGroup toolitemgroup_pencil"></button>
-                      <button class="GtkToolItemGroup toolitemgroup_brush"></button>
-                      <button class="GtkToolItemGroup toolitemgroup_square"></button>
-                      <button class="GtkToolItemGroup toolitemgroup_rectangle"></button>
-                      <button class="GtkToolItemGroup toolitemgroup_circle"></button>
-                      <button class="GtkToolItemGroup toolitemgroup_ellipse"></button>
-                      <button class="GtkToolItemGroup toolitemgroup_bucket"></button>
-                      <button class="GtkToolItemGroup toolitemgroup_drop"></button>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="Fill GtkBoxPosition Position_1">
-                    <div class="GtkSeparator separator1">
-                      <hr/>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="Fill GtkBoxPosition Position_2" style="height:200px">
-                    <div class="GtkFixed fixed1">
-                      <div class="GtkColorButton colorbutton_background GtkObject" style="left:15px;top:15px;width:50px;height:50px"></div>
-                      <div class="GtkColorButton colorbutton_foreground GtkObject" style="left:30px;top:30px;width:50px;height:50px"></div>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </td>
-            <td class="Expand Fill GtkBoxPosition Position_1">
-              <div class="GtkViewport viewport1">
-                <canvas class="GtkDrawingArea drawingarea1 GtkObject Canvas"></canvas>
-              </div>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</div>
-]]></property>
-    <property name="javascript"><![CDATA[/**
- * Application: ApplicationDrawNew
- *
- * @package ajwm.Applications
- * @author Anders Evenrud <andersevenrud@gmail.com>
- * @class
- */
-var ApplicationDrawNew = (function($, undefined) {
-  return function(Application, app, api, argv) {
-    var _ApplicationDrawNew = Application.extend({
-
-
-      // !!! DO NOT TOUCH
-
-      init : function() {
-        this._super("ApplicationDrawNew");
-      },
-
-      destroy : function() {
-        this._super();
-      },
-
-
-      EventToggleStroke : function(ev) {
-
-      },
-
-
-      EventToggleFill : function(ev) {
-
-      },
-
-
-      EventChangeBackground : function(ev) {
-
-      },
-
-
-      EventChangeForeground : function(ev) {
-
-      },
-
-
-
-      run : function() {
-        var el = app.$element;
-
-
-        el.find(".toolbutton_stroke").click(function(ev) {
-          self.EventToggleStroke(ev);
-        });
-
-        el.find(".toolbutton_fill").click(function(ev) {
-          self.EventToggleFill(ev);
-        });
-
-        el.find(".colorbutton_background").click(function(ev) {
-          self.EventChangeBackground(ev);
-        });
-
-        el.find(".colorbutton_foreground").click(function(ev) {
-          self.EventChangeForeground(ev);
-        });
-
-
-        this._super();
-      }
-    });
-
-    /// !!! READ-ONLY
-
-    ///////////////////////////////////////////////////////////////////////////
-    // APPLICATION
-    ///////////////////////////////////////////////////////////////////////////
-
-    var __ApplicationDrawNew = _ApplicationDrawNew.extend({
-
-      init : function() {
-        this._super();
-      },
-
-      destroy : function() {
-        this._super();
-      },
-
-      run : function() {
-        var el = app.$element;
-
-        this._super();
-      }
-    });
-
-    return new __ApplicationDrawNew();
-  };
-})($);]]></property>
-    <property name="style"><![CDATA[@charset "UTF-8";
-/**
- * Application: ApplicationDrawNew
- *
- * @package ajwm.Applications
- * @author Anders Evenrud <andersevenrud@gmail.com>
- */
-
-/* !!! READ-ONLY */
-
-.ApplicationDrawNew {
 
 }
 ]]></property>

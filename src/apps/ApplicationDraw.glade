@@ -134,7 +134,35 @@
                 <property name="can_focus">False</property>
                 <property name="use_action_appearance">False</property>
                 <child>
-                  <placeholder/>
+                  <object class="GtkBox" id="box1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkLabel" id="label1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Thickness</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScale" id="scale1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="digits">2</property>
+                        <property name="draw_value">False</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
                 </child>
               </object>
               <packing>
@@ -148,7 +176,42 @@
                 <property name="can_focus">False</property>
                 <property name="use_action_appearance">False</property>
                 <child>
-                  <placeholder/>
+                  <object class="GtkBox" id="box2">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkLabel" id="label2">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Line Join</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkComboBox" id="combobox_linejoin">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="cellrenderertext_milter"/>
+                        </child>
+                        <child>
+                          <object class="GtkCellRendererText" id="cellrenderertext_bevel"/>
+                        </child>
+                        <child>
+                          <object class="GtkCellRendererText" id="cellrenderertext_round"/>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
                 </child>
               </object>
               <packing>
@@ -162,7 +225,42 @@
                 <property name="can_focus">False</property>
                 <property name="use_action_appearance">False</property>
                 <child>
-                  <placeholder/>
+                  <object class="GtkBox" id="box4">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkLabel" id="label3">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Line Cap</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkComboBox" id="combobox_linecap">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="cellrenderertext_butt"/>
+                        </child>
+                        <child>
+                          <object class="GtkCellRendererText" id="cellrenderertext_round"/>
+                        </child>
+                        <child>
+                          <object class="GtkCellRendererText" id="cellrenderertext_square"/>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
                 </child>
               </object>
               <packing>
@@ -195,7 +293,7 @@
                     <property name="icon_size">large-toolbar</property>
                     <property name="toolbar_style">icons</property>
                     <child>
-                      <object class="GtkToolItemGroup" id="toolitemgroup_select_rectangle">
+                      <object class="GtkToolItemGroup" id="toolitemgroup_selection">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Selection Rectangle</property>
@@ -216,7 +314,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkToolItemGroup" id="toolitemgroup_brush">
+                      <object class="GtkToolItemGroup" id="toolitemgroup_line">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Brush</property>
@@ -266,7 +364,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkToolItemGroup" id="toolitemgroup_bucket">
+                      <object class="GtkToolItemGroup" id="toolitemgroup_fill">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Bucket</property>
@@ -276,10 +374,10 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkToolItemGroup" id="toolitemgroup_drop">
+                      <object class="GtkToolItemGroup" id="toolitemgroup_pick">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Drop</property>
+                        <property name="label" translatable="yes">Pick</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
