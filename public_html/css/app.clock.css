@@ -6,6 +6,8 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  */
 
+/* !!! READ-ONLY */
+
 .ApplicationClock .Clock {
   position : relative;
   width : 200px;
