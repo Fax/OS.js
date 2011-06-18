@@ -136,8 +136,8 @@ var SystemUser = (function($, undefined) {
 
         this._super(self);
 
-        var root_window = new Window_window1();
-        root_window.show(self);
+        var root_window = new Window_window1(self);
+        root_window.show();
 
         // Do your stuff here
       }

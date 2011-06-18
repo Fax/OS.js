@@ -22,8 +22,8 @@ function create_js_root($cname, $windows) {
   if ( $windows ) {
     $win = reset(array_keys($windows));
     $code = <<<EOJAVASCRIPT
-        var root_window = new Window_{$win}();
-        root_window.show(self);
+        var root_window = new Window_{$win}(self);
+        root_window.show();
 EOJAVASCRIPT;
   }
 
@@ -269,6 +269,13 @@ if ( $dh  = opendir($root) ) {
           $res_node = $doc->createElement("resource");
           $res_node->appendChild(new DomText($r));
           $node->appendChild($res_node);
+        }
+
+        foreach ( $xml->mime as $r ) {
+          $r = (string) $r;
+          $mime_node = $doc->createElement("mime");
+          $mime_node->appendChild(new DomText($r));
+          $node->appendChild($mime_node);
         }
 
         $script = create_js_root($cname, $wins);

@@ -159,16 +159,6 @@ class WindowManager
         "type"    => "array",
         "options" => $pitems,
         "hidden"  => true
-      ),
-      "system.app.handlers" => Array(
-        "type" => "array",
-        "hidden" => true,
-        "options" => Array(
-          "text/*"  => "ApplicationTextpad",
-          "image/*" => "ApplicationViewer",
-          "video/*" => "ApplicationViewer",
-          "application/ogg" => "ApplicationViewer"
-        )
       )
     );
   }
@@ -240,7 +230,7 @@ class WindowManager
           $json = Array("success" => true, "error" => null, "result" => Array(
             "settings" => self::getSettings(),
             "config"   => Array(
-              "cacne" => ENABLE_CACHE
+              "cache" => ENABLE_CACHE
             )
           ));
         } else if ( $args['action'] == "register" ) {

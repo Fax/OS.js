@@ -102,8 +102,8 @@ var SystemLogout = (function($, undefined) {
 
         this._super(self);
 
-        var root_window = new Window_dialog1();
-        root_window.show(self);
+        var root_window = new Window_dialog1(self);
+        root_window.show();
 
         // Do your stuff here
       }

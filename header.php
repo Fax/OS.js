@@ -102,7 +102,7 @@ if ( $xml = file_get_contents(PATH_PROJECT_BUILD . "/applications.xml") ) {
         }
       }
 
-      foreach ( $app->mimes as $mime ) {
+      foreach ( $app->mime as $mime ) {
         $mimes[] = (string) $mime;
       }
 

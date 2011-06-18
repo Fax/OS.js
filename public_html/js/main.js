@@ -42,7 +42,7 @@
   /**
    * Local settings
    */
-  var SETTING_REVISION = 15;
+  var SETTING_REVISION = 16;
   var ENABLE_LOGIN     = false;
   var ANIMATION_SPEED  = 400;
 
@@ -460,6 +460,8 @@
       'save' : function(save) {
         save = save || false;
         var sess = save ? _Desktop.getSession() : {};
+
+        alert("SESSION IS CURRENTLY BROKEN! FIX IS UNDER WAY!"); // TODO REFACOR
 
         localStorage.setItem('session', JSON.stringify(sess));
       },
@@ -1022,18 +1024,7 @@
       },
 
       getSession : function() {
-        var windows = [];
-
-        var stack = this.stack;
-        for ( var i = 0; i < stack.length; i++ ) {
-          if ( stack[i].is_sessionable ) {
-            windows.push(stack[i].getAttributes());
-          }
-        }
-
-        return {
-          "windows" : windows
-        };
+        return {}; // TODO Refactor
       }
 
 
@@ -1510,7 +1501,7 @@
         // Content and buttons
         el.find(".WindowTopInner span").html(this.title);
         if ( this.dialog ) {
-          el.find(".DialogContent").html(this.content).addClass(this.argv.type);
+          el.find(".DialogContent").html(this.content).addClass(this.argv.type); // REFACTOR
         } else {
           el.find(".WindowTopInner img").attr("src", "/img/icons/16x16/" + this.icon);
           el.find(".WindowContentInner").html(this.content);
@@ -1922,16 +1913,6 @@
 
       el.css("height", (height + appendHeight) + "px");
       el.css("width", (width + appendWidth) + "px");
-    },
-
-    getAttributes : function() {
-      return {
-        'name'     : this.name,
-        'size'     : {'width' : this.$element.width(), 'height' : this.$element.height()},
-        'position' : {'left' : this.left, 'top' : this.top},
-        'attribs'  : {'minimized' : this.is_minimized, 'maximized' : this.is_maximized, 'ontop' : this.is_ontop}/*,
-        'argv'     : this.argv REFACTOR */
-      };
     }
 
   });
