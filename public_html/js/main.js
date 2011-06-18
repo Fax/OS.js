@@ -298,7 +298,6 @@
 
         console.log("API launching", app_name, args);
         LaunchApplication(app_name, args);
-        //_Desktop.addWindow(new Window(app_name, false, args, attrs));
       },
 
       'call' : function(method, argv, callback, show_alert) {
@@ -1765,47 +1764,6 @@
 
       return el;
     },
-
-    /*
-    load : function(callback, callback_error) {
-      callback = callback || function() {};
-      callback_error = callback_error || function() {};
-
-      if ( !this.loaded ) {
-        var self = this;
-        $.post("/", {'ajax' : true, 'action' : 'load', 'app' : self.name}, function(data) {
-          if ( data.success ) {
-            _Resources.addResources(data.result.resources, function() {
-
-              self.title   = data.result.title;
-              self.content = data.result.content;
-              self.icon    = data.result.icon;
-
-              self.uuid           = data.result.uuid;
-              self.is_draggable   = data.result.is_draggable;
-              self.is_resizable   = data.result.is_resizable;
-              self.is_scrollable  = data.result.is_scrollable;
-              self.is_maximizable = data.result.is_maximizable;
-              self.is_minimizable = data.result.is_minimizable;
-              self.is_closable    = data.result.is_closable;
-              self.is_orphan      = data.result.is_orphan;
-              self.width          = parseInt(data.result.width, 10);
-              self.height         = parseInt(data.result.height, 10);
-              self.gravity        = data.result.gravity;
-
-              callback(data.result['class']);
-            });
-          } else {
-            API.system.dialog("error", data.error);
-
-            callback_error(data.error);
-          }
-        });
-      }
-
-      this.loaded = true;
-    },
-    */
 
     redraw : function() {
 

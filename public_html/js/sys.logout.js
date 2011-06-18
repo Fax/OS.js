@@ -14,17 +14,17 @@ var SystemLogout = (function($, undefined) {
 
       init : function(app) {
         this._super("SystemLogout", false, {}, {});
-        this.content = $("<div class=\"dialog1\"> <div class=\"GtkDialog SystemLogout dialog1\"> <table class=\"GtkBox Vertical dialog-vbox1\"> <tr> <td class=\"Expand Fill GtkBoxPosition Position_0\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Expand Fill GtkBoxPosition Position_0\"> <div class=\"GtkLabel GtkObject label1\">Are you sure you want to log out?</div> </td> </tr> <tr> <td class=\"GtkBoxPosition Position_1\"> <input checked=\"checked\" class=\"GtkCheckButton GtkObject checkbutton1\" type=\"checkbox\"> <label>Save session for future logins</label> </input> </td> </tr> </table> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <table class=\"GtkButtonBox Horizontal dialog-action_area1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <button class=\"GtkButton GtkObject button1\"><img alt=\"gtk-cancel\" src=\"/img/icons/16x16/actions/gtk-cancel.png\"/>Cancel</button> </td> <td class=\"Fill GtkBoxPosition Position_1\"> <button class=\"GtkButton GtkObject button2\"><img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/>Quit</button> </td> </tr> </table> </td> </tr> </table> </div> </div> ").html();
+        this.content = $("<div class=\"dialog1\"> <div class=\"GtkDialog SystemLogout dialog1\"> <table class=\"GtkBox Vertical dialog-vbox1\"> <tr> <td class=\"Expand Fill GtkBoxPosition Position_0\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Expand Fill GtkBoxPosition Position_0\"> <div class=\"GtkLabel GtkObject label1\">Are you sure you want to log out?</div> </td> </tr> <tr> <td class=\"GtkBoxPosition Position_1\"> <div class=\"GtkCheckButton checkbutton1\"> <input checked=\"checked\" type=\"checkbox\"> <label>Save session for future logins</label> </input> </div> </td> </tr> </table> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <table class=\"GtkButtonBox Horizontal dialog-action_area1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <button class=\"GtkButton GtkObject button1\"><img alt=\"gtk-cancel\" src=\"/img/icons/16x16/actions/gtk-cancel.png\"/>Cancel</button> </td> <td class=\"Fill GtkBoxPosition Position_1\"> <button class=\"GtkButton GtkObject button2\"><img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/>Quit</button> </td> </tr> </table> </td> </tr> </table> </div> </div> ").html();
         this.title = 'Logout';
         this.icon = 'actions/gnome-logout.png';
         this.is_draggable = true;
         this.is_resizable = false;
         this.is_scrollable = false;
-        this.is_sessionable = true;
-        this.is_minimizable = true;
-        this.is_maximizable = true;
+        this.is_sessionable = false;
+        this.is_minimizable = false;
+        this.is_maximizable = false;
         this.is_closable = true;
-        this.is_orphan = false;
+        this.is_orphan = true;
         this.width = 300;
         this.height = 100;
         this.gravity = 'center';

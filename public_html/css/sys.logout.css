@@ -11,3 +11,7 @@
 .SystemLogout {
   padding : 10px;
 }
+
+.SystemLogout .checkbutton1 {
+  margin-top : 10px;
+}

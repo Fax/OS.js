@@ -65,7 +65,8 @@ class Glade
     "GtkCheckButton" => Array(
       "element" => "input",
       "type"    => "checkbox",
-      "gobject" => true
+      "wrapped" => true
+      //"gobject" => true
     ),
 
     "GtkComboBox" => Array(
@@ -289,6 +290,7 @@ class Glade
           $ostyles  = Array();
 
           $inner = null;
+          $outer = null;
           $node_type = "div";
 
           // Apply built-in attributes
@@ -314,6 +316,10 @@ class Glade
 
             if ( isset(self::$ClassMap[$class]["inner"]) ) {
               $inner = $doc->createElement(self::$ClassMap[$class]["inner"]);
+            }
+
+            if ( isset(self::$ClassMap[$class]["wrapped"]) ) {
+              $outer = $doc->createElement("div");
             }
           }
 
@@ -474,7 +480,11 @@ class Glade
 
           // Apply information gathered
           if ( $classes ) {
-            $node->setAttribute("class", implode(" ", $classes));
+            if ( $outer ) {
+              $outer->setAttribute("class", implode(" ", $classes));
+            } else {
+              $node->setAttribute("class", implode(" ", $classes));
+            }
           }
 
           if ( $inner !== null ) {
@@ -517,13 +527,24 @@ class Glade
             if ( $styles ) {
               $temp2->setAttribute("style", implode(";", $styles));
             }
-            $temp2->appendChild($node);
+            if ( $outer ) {
+              $outer->appendChild($node);
+              $temp2->appendChild($outer);
+            } else {
+              $temp2->appendChild($node);
+            }
             $temp->appendChild($temp2);
           } else {
             if ( $styles ) {
               $node->setAttribute("style", implode(";", $styles));
             }
-            $doc_node->appendChild($node);
+
+            if ( $outer ) {
+              $outer->appendChild($node);
+              $doc_node->appendChild($outer);
+            } else {
+              $doc_node->appendChild($node);
+            }
           }
 
           $this->_parseChild($doc, $node, $gl_node, $c->object, $signals);

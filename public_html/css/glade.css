@@ -10,8 +10,9 @@
 .GtkObject {
 }
 
-/* GtkWindow */
-.GtkWindow {
+/* GtkWindow GtkDialog */
+.GtkWindow,
+.GtkDialog {
   position : absolute;
   top : 5px;
   left : 5px;
@@ -20,38 +21,46 @@
 }
 
   /* Gtk[Object] Sizing */
-  .GtkWindow .Fill {
+  .GtkWindow .Fill,
+  .GtkDialog .Fill {
   }
-  .GtkWindow .Expand {
+  .GtkWindow .Expand,
+  .GtkDialog .Expand {
   }
-    .GtkWindow .Expand.Fill {
+    .GtkWindow .Expand.Fill,
+    .GtkDialog .Expand.Fill {
     }
 
     .GtkWindow .Fill .GtkBox,
-    .GtkWindow .Expand .GtkBox {
+    .GtkWindow .Expand .GtkBox,
+    .GtkDialog .Fill .GtkBox,
+    .GtkDialog .Expand .GtkBox {
     }
 
     .GtkWindow .Fill .GtkObject,
-    .GtkWindow .Expand .GtkObject {
+    .GtkWindow .Expand .GtkObject,
+    .GtkDialog .Fill .GtkObject,
+    .GtkDialog .Expand .GtkObject {
       position : absolute;
       top : 0px;
       left : 0px;
       right : 0px;
       bottom : 0px;
     }
-    .GtkWindow .Expand .GtkObject {
+    .GtkWindow .Expand .GtkObject,
+    .GtkDialog .Expand .GtkObject {
       height : auto;
     }
 
 /* GtkBox */
-.GtkWindow .GtkBox {
+.GtkBox {
   width : 100%;
   height : 100%;
   border-collapse : collapse;
   border : 0 none;
 }
-  .GtkWindow .GtkBox tr,
-  .GtkWindow .GtkBox td {
+  .GtkBox tr,
+  .GtkBox td {
     position : relative;
     vertical-align: top;
   }
@@ -128,6 +137,9 @@
 .GtkCheckButton {
   height : 20px;
 }
+  .GtkCheckButton * {
+    vertical-align : middle;
+  }
 
 /* GtkToolPalette */
 .GtkToolPalette {
