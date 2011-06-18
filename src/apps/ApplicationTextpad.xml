@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application name="Textpad" file="ApplicationTextpad.class.php" schema="ApplicationTextpad.glade">
+  <property name="enabled">true</property>
+  <resource>app.textpad.css</resource>
+  <resource>app.textpad.js</resource>
+  <mime>text/*</mime>
+</application>

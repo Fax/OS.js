@@ -1,0 +1,7 @@
+<application name="Settings" file="SystemSettings.class.php" schema="SystemSettings.glade">
+  <property name="enabled">true</property>
+  <!--
+  <resource>sys.settings.css</resource>
+  <resource>sys.settings.js</resource>
+  -->
+</application>

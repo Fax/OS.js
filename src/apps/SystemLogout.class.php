@@ -30,6 +30,4 @@ class SystemLogout
 
 }
 
-Application::Register("SystemLogout", __FILE__, Array(), Array());
-
 ?>

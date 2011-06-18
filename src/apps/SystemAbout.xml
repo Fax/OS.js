@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application name="About" file="SystemAbout.class.php" schema="SystemAbout.glade">
+  <property name="enabled">true</property>
+  <!--
+  <resource>sys.about.css</resource>
+  <resource>sys.about.js</resource>
+  -->
+</application>

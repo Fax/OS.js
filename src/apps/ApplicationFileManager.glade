@@ -27,23 +27,25 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem1">
+                      <object class="GtkImageMenuItem" id="imagemenuitem_new">
                         <property name="label">gtk-new</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="select" handler="MenuNew" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem4">
+                      <object class="GtkImageMenuItem" id="imagemenuitem_close">
                         <property name="label">gtk-close</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="select" handler="MenuClose" swapped="no"/>
                       </object>
                     </child>
                   </object>
@@ -62,13 +64,14 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkImageMenuItem" id="imagemenuitem6">
+                      <object class="GtkImageMenuItem" id="imagemenuitem_home">
                         <property name="label">gtk-home</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="select" handler="MenuHome" swapped="no"/>
                       </object>
                     </child>
                   </object>
@@ -87,33 +90,36 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkImageMenuItem" id="menuitem6">
+                      <object class="GtkImageMenuItem" id="menuitem_refresh">
                         <property name="label">gtk-refresh</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="select" handler="Refresh" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkRadioMenuItem" id="menuitem5">
+                      <object class="GtkRadioMenuItem" id="menuitem_list">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">List view</property>
                         <property name="use_underline">True</property>
                         <property name="draw_as_radio">True</property>
+                        <signal name="group-changed" handler="MenuListToggle" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkRadioMenuItem" id="menuitem4">
+                      <object class="GtkRadioMenuItem" id="menuitem_icon">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">Icon View</property>
                         <property name="use_underline">True</property>
                         <property name="draw_as_radio">True</property>
+                        <signal name="group-changed" handler="MenuIconToggle" swapped="no"/>
                       </object>
                     </child>
                   </object>
@@ -131,6 +137,7 @@
           <object class="GtkIconView" id="iconview1">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <signal name="item-activated" handler="IconviewSelect" swapped="no"/>
           </object>
           <packing>
             <property name="expand">True</property>

@@ -53,4 +53,72 @@ require "src/Application.class.php";
 require 'src/WindowManager.class.php';
 
 Propel::init(PROPEL_CONFIG);
+
+// Parse application data
+if ( $xml = file_get_contents(PATH_PROJECT_BUILD . "/applications.xml") ) {
+  if ( $xml = new SimpleXmlElement($xml) ) {
+    foreach ( $xml->application as $app ) {
+      $app_name  = (string) $app['name'];
+      $app_title = (string) $app['title'];
+      $app_icon  = (string) $app['icon'];
+      $app_class = (string) $app['class'];
+
+      $windows   = Array();
+      $resources = Array();
+      $mimes     = Array();
+
+      foreach ( $app->window as $win ) {
+        $win_id    = (string) $win['id'];
+        $win_props = Array();
+        $win_html  = "";
+
+        foreach ( $win->property as $p ) {
+          $pk = (string) $p['name'];
+          $pv = (string) $p;
+
+          switch ( $pk ) {
+            case "properties" :
+              $win_props = json_decode($pv);
+              break;
+            case "content" :
+              $win_html = $pv;
+              break;
+          }
+        }
+        $windows[$win_id] = Array(
+          "properties" => $win_props,
+          "html"       => $win_html
+        );
+      }
+
+      foreach ( $app->resource as $res ) {
+        $res = (string) $res;
+
+        $type = preg_match("/\.css$/", $res) ? "css" : "js";
+        $path = sprintf("%s/%s/%s", PATH_PROJECT_HTML, $type, $res);
+
+        if ( file_exists($path) ) {
+          $resources[] = $res;
+        }
+      }
+
+      foreach ( $app->mimes as $mime ) {
+        $mimes[] = (string) $mime;
+      }
+
+      Application::$Registered[$app_class] = Array(
+        "name"      => $app_name,
+        "title"     => $app_title,
+        "icon"      => $app_icon,
+        "class"     => $app_class,
+        "windows"   => $windows,
+        "resources" => $resources,
+        "mimes"     => $mimes
+      );
+    }
+  }
+} else {
+  die("Failed to read application build-data!");
+}
+
 ?>

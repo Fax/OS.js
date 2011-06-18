@@ -17,41 +17,108 @@ function get_inner_html( $node ) {
     return $innerHTML; 
 } 
 
-/**
- * Glade Class
- *
- * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package MyApplication
- * @class
- */
 class Glade
 {
-
-  private $name;
-  private $doc;
-  private $app;
-  private $xml;
-
-  private $app_properties = Array(
-    "title"           => "",
-    "icon"            => "",
-    "is_draggable"    => true,
-    "is_resizable"    => true,
-    "is_scrollable"   => false,
-    "is_sessionable"  => true,
-    "is_minimizable"  => true,
-    "is_maximizable"  => true,
-    "is_closable"     => true,
-    "is_orphan"       => false,
-    "width"           => 500,
-    "height"          => 300,
-    "gravity"         => ""
-  );
-
-  private $app_signals = Array();
+  private $_aWindows = Array();
 
   protected static $ShortTags = Array(
     "GtkImage", "GtkEntry"
+  );
+
+  public static $ClassMap = Array(
+    "GtkScale" => Array(
+      "element" => "div"
+    ),
+    "GtkCellRendererText" => Array(
+      "element" => "option"
+    ),
+    "GtkIconView" => Array(
+      "element" => "div",
+      "gobject" => true
+    ),
+    "GtkLabel" => Array(
+      "element" => "div",
+      "gobject" => true
+    ),
+    "GtkColorButton" => Array(
+      "element" => "div",
+      "gobject" => true
+    ),
+
+    "GtkDrawingArea" => Array(
+      "element" => "canvas",
+      "classes" => Array("Canvas")
+    ),
+
+    "GtkSeparator" => Array(
+      "element" => "div",
+      "inner"   => "hr"
+    ),
+
+    "GtkBox" => Array(
+      "element" => "table"
+    ),
+    "GtkButtonBox" => Array(
+      "element" => "table"
+    ),
+
+    "GtkCheckButton" => Array(
+      "element" => "input",
+      "type"    => "checkbox",
+      "gobject" => true
+    ),
+
+    "GtkComboBox" => Array(
+      "element" => "select",
+      "gobject" => true
+    ),
+
+    "GtkToolItemGroup" => Array(
+      "element" => "button"
+    ),
+    "GtkButton" => Array(
+      "element" => "button",
+      "gobject" => true
+    ),
+    "GtkTextView" => Array(
+      "element" => "textarea",
+      "gobject" => true
+    ),
+    "GtkImage" => Array(
+      "element" => "img",
+      "src"     => "/img/blank.gif",
+      "gobject" => true
+    ),
+    "GtkEntry" => Array(
+      "element" => "input",
+      "type"    => "text",
+      "gobject" => true
+    ),
+    "GtkMenuBar" => Array(
+      "element" => "ul"
+    ),
+    "GtkMenuItem" => Array(
+      "element" => "li"
+    ),
+    "GtkMenu" => Array(
+      "element" => "ul"
+    ),
+    "GtkImageMenuItem" => Array(
+      "element" => "li"
+    ),
+    "GtkRadioMenuItem" => Array(
+      "element" => "li"
+    ),
+    "GtkToolbar" => Array(
+      "element" => "ul"
+    ),
+    "GtkToolItem" => Array(
+      "element" => "li"
+    ),
+    "GtkToggleToolButton" => Array(
+      "element" => "li",
+      "inner"   => "button"
+    )
   );
 
   protected static $Stock = Array(
@@ -113,511 +180,414 @@ class Glade
     )
   );
 
-  /////////////////////////////////////////////////////////////////////////////
-  // MAGICK
-  /////////////////////////////////////////////////////////////////////////////
+  public function __construct($filename, $xml_data) {
+    $cn = str_replace(".glade", "", basename($filename)); // FIXME
 
-  protected function __construct($name, $file, $full) {
-    $this->name = $name;
+    foreach ( $xml_data->object as $root ) {
+      $class = (string) $root['class'];
+      $id    = (string) $root['id'];
 
-    $x = new DOMImplementation();
-    $this->doc = $x->createDocument();
-    $this->doc->xmlVersion    = "1.0";
-    $this->doc->formatOutput  = true;
-    $this->doc->encoding      = 'UTF-8';
+      // Properties
+      $properties = Array(
+        "type"            => $class == "GtkWindow" ? "window" : "dialog",
+        "title"           => "",
+        "icon"            => "",
+        "is_draggable"    => true,
+        "is_resizable"    => true,
+        "is_scrollable"   => false,
+        "is_sessionable"  => true,
+        "is_minimizable"  => true,
+        "is_maximizable"  => true,
+        "is_closable"     => true,
+        "is_orphan"       => false,
+        "width"           => 500,
+        "height"          => 300,
+        "gravity"         => ""
+      );
 
-    $this->app = new DomDocument();
-    $this->app->xmlVersion    = "1.0";
-    $this->app->formatOutput  = true;
-    $this->app->encoding      = 'UTF-8';
-
-    $this->xml = new SimpleXMLElement($file);
-
-    $this->_parse($full);
-  }
-
-  public function __toDocumentString() {
-    $out = $this->doc->saveXML();
-    return str_replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "", $out);
-  }
-
-  public function __toApplicationString() {
-    return $this->app->saveXML();
-  }
-
-  public final static function convert($file, $full = false) {
-    if ( file_exists($file) ) {
-      return new self(str_replace(".glade", "", basename($file)), file_get_contents($file), $full);
-    }
-
-    throw new Exception("'$file' is not a valid Glade document");
-  }
-
-  /////////////////////////////////////////////////////////////////////////////
-  // HELPERS
-  /////////////////////////////////////////////////////////////////////////////
-
-  protected function _fill($node, $short = false) {
-    if ( !$node->hasChildNodes() && !$short ) {
-      $node->appendChild($this->doc->createTextNode(''));
-    }
-  }
-
-  /////////////////////////////////////////////////////////////////////////////
-  // PARSER
-  /////////////////////////////////////////////////////////////////////////////
-
-  protected function _parseElement($item, $class, &$classes) {
-    switch ( $class ) {
-      default :
-        $n = $this->doc->createElement("div");
-      break;
-
-      case "GtkScale" :
-        $n = $this->doc->createElement("div");
-      break;
-
-      case "GtkCellRendererText" :
-        $n = $this->doc->createElement("option");
-        $id = (string) $item['id'];
-        $ex = explode("_", $id, 2);
-        $n->setAttribute("value", end($ex));
-        $n->appendChild(new DomText(end($ex)));
-      break;
-
-      case "GtkIconView" :
-      case "GtkLabel" :
-      case "GtkColorButton" :
-        $n = $this->doc->createElement("div");
-        $classes[] = "GtkObject";
-      break;
-
-      case "GtkDrawingArea" :
-        $n = $this->doc->createElement("canvas");
-        $classes[] = "GtkObject";
-        $classes[] = "Canvas";
-      break;
-
-      case "GtkSeparator" :
-        $n = $this->doc->createElement("div");
-        $n->appendChild($this->doc->createElement("hr"));
-      break;
-
-      case "GtkBox" :
-      case "GtkButtonBox" :
-        $n = $this->doc->createElement("table");
-        break;
-      case "GtkCheckButton" :
-        $n = $this->doc->createElement("div");
-        $chk = $this->doc->createElement("input");
-        $chk->setAttribute("type", "checkbox");
-        $label = $this->doc->createElement("label");
-        $n->appendChild($chk);
-        $n->appendChild($label);
-        $classes[] = "GtkObject";
-        break;
-      case "GtkComboBox" :
-        $n = $this->doc->createElement("select");
-        $classes[] = "GtkObject";
-        break;
-
-      case "GtkToolItemGroup" :
-        $n = $this->doc->createElement("button");
-      break;
-
-      case "GtkButton" :
-        $n = $this->doc->createElement("button");
-        $classes[] = "GtkObject";
-        break;
-
-      case "GtkTextView" :
-        $n = $this->doc->createElement("textarea");
-        $classes[] = "GtkObject";
-        break;
-      case "GtkImage" :
-        $n = $this->doc->createElement("img");
-        $n->setAttribute("alt", "");
-        $n->setAttribute("src", "/img/blank.gif");
-        $classes[] = "GtkObject";
-        break;
-      case "GtkEntry" :
-        $n = $this->doc->createElement("input");
-        $n->setAttribute("type", "text");
-        $n->setAttribute("value", "");
-        $classes[] = "GtkObject";
-        break;
-
-      case "GtkMenuBar" :
-        $n = $this->doc->createElement("ul");
-      break;
-      case "GtkMenuItem" :
-        $n = $this->doc->createElement("li");
-      break;
-
-      case "GtkMenu" :
-        $n = $this->doc->createElement("ul");
-      break;
-      case "GtkImageMenuItem" :
-      case "GtkRadioMenuItem" :
-        $n = $this->doc->createElement("li");
-      break;
-      case "GtkSeparatorMenuItem" :
-        $n = $this->doc->createElement("li");
-        $n->appendChild($this->doc->createElement("hr"));
-      break;
-
-      case "GtkToolbar" :
-        $n = $this->doc->createElement("ul");
-        break;
-      case "GtkToolItem" :
-        $n = $this->doc->createElement("li");
-      break;
-
-      case "GtkToggleToolButton" :
-        $n = $this->doc->createElement("li");
-        $n->appendChild($this->doc->createElement("button"));
-        break;
-    }
-
-    return $n;
-  }
-
-  protected function _parsePacking($c, $n, $class, &$classes, &$styles) {
-    $outer = false;
-    if ( isset($c->packing) ) {
-      foreach ( $c->packing->property as $p ) {
-        $pk = (string) $p['name'];
+      foreach ( $root->property as $p ) {
         $pv = (string) $p;
-
-        switch ( $pk ) {
-          case 'expand' :
-            if ( $pv == "True" ) {
-              $classes[] = "Expand";
-            }
-          break;
-
-          case 'fill' :
-            if ( $pv == "True" ) {
-              $classes[] = "Fill";
+        switch ( (string) $p['name'] ) {
+          case 'resizable' :
+            if ( $pv == "False" ) {
+              $properties['is_resizable'] = false;
             }
             break;
-
-          case 'position' :
-            $outer = true;
-            $classes[] = "GtkBoxPosition";
-            $classes[] = "Position_{$pv}";
-            break;
-
-          case "x" :
-            $styles["left"] = "{$pv}px";
+          case 'title' :
+            if ( $pv ) {
+              $properties['title'] = $pv;
+            }
           break;
-          case "y" :
-            $styles["top"] = "{$pv}px";
+          case 'icon' :
+            if ( $pv ) {
+              $properties['icon'] = $pv;
+            }
+          break;
+          case 'default_width' :
+            $properties['width'] = (int) $pv;
+          break;
+          case 'default_height' :
+            $properties['height'] = (int) $pv;
+          break;
+          case 'window_position' :
+            $properties['gravity'] = $pv;
           break;
         }
       }
-    }
 
-    return $outer;
+      $classes = Array($class, $cn, $id);
+
+      // Window HTML document
+      $x = new DOMImplementation();
+      $doc = $x->createDocument();
+      $doc->xmlVersion    = "1.0";
+      $doc->formatOutput  = true;
+      $doc->encoding      = 'UTF-8';
+
+      $n_window = $doc->createElement("div");
+      $n_window->setAttribute("class", $id);
+
+      $n_content = $doc->createElement("div");
+      $n_content->setAttribute("class", implode(" ", $classes));
+
+      $n_window->appendChild($n_content);
+
+      // Parse Glade document childs
+      $signals = $this->_parseChild($doc, $n_content, $root, $root);
+
+      $doc->appendChild($n_window);
+
+      // Append window to registry
+      $html = str_replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "", $doc->saveXML());
+      $this->_aWindows[$id] = Array(
+        "properties" => $properties,
+        "signals"    => $signals,
+        "content"    => $html
+      );
+
+    }
   }
 
-  protected function _parseProperties($c, $n, $class, &$classes, &$styles) {
-
-    $orient = null;
-
-    if ( !isset($c->object->property) ) {
-      return in_array($class, self::$ShortTags);
+  protected function _fill($doc, $node, $short = false) {
+    if ( !$node->hasChildNodes() && !$short ) {
+      $node->appendChild($doc->createTextNode(''));
     }
-
-    foreach ( $c->object->property as $p ) {
-      $pk = (string) $p['name'];
-      $pv = (string) $p;
-
-      switch ( $pk ) {
-        case 'visible' :
-          if ( $pv == "False" ) {
-            $classes[] = "Hidden";
-          }
-          break;
-
-        case "width_request" :
-          $styles["width"] = $pv . "px";
-        break;
-        case "height_request" :
-          $styles["height"] = $pv . "px";
-        break;
-
-        case 'label' :
-          $icon = null;
-          $size = "16x16";
-          $stock = $pv;
-          $tooltip = "";
-
-          if ( isset(self::$Stock[$stock]) ) {
-            $pv   = self::$Stock[$stock]['label'];
-            $icon = self::$Stock[$stock]['icon'];
-            if ( isset(self::$Stock[$stock]['tooltip']) ) {
-              $tooltip = self::$Stock[$stock]['tooltip'];
-            }
-          }
-
-          if ( $icon ) {
-            $path = sprintf("/img/icons/%s/%s", $size, $icon);
-            $img = $this->doc->createElement("img");
-            $img->setAttribute("alt", $stock);
-            $img->setAttribute("src", $path);
-            $n->appendChild($img);
-          }
-
-          if ( $tooltip ) {
-            $n->setAttribute("title", $tooltip);
-          }
-
-
-          if ( $class == "GtkButton" || $class == "GtkLabel" ) {
-            $n->appendChild(new DomText($pv));
-          } else if ( $class == "GtkToggleToolButton") {
-            $n->getElementsByTagName("button")->item(0)->appendChild(new DomText($pv));
-          } else if ( $class == "GtkMenuItem" || $class == "GtkImageMenuItem" || $class == "GtkRadioMenuItem" ) {
-            $span = $this->doc->createElement("span");
-            //if ( in_array("GtkMenuItem", $classes) ) {
-            if ( ($sub = strstr($pv, "_")) !== false ) {
-              $pre = str_replace($sub, "", $pv);
-              $letter = substr($sub, 1, 1);
-              $after = substr($sub, 2, strlen($sub));
-
-              $inner = $this->doc->createElement("u");
-              $inner->appendChild(new DomText($letter));
-
-              $span->appendChild(new DomText($pre));
-              $span->appendChild($inner);
-              $span->appendChild(new DomText($after));
-            } else {
-              $span->appendChild(new DomText($pv));
-            }
-            $n->appendChild($span);
-          } else if ( $class == "GtkCheckButton" ) {
-            $n->getElementsByTagName("label")->item(0)->appendChild(new DomText($pv));
-          }
-        break;
-
-        case "active" :
-          if ( $pv == "True" ) {
-            if ( $it = $n->getElementsByTagName("input")->item(0) ) {
-              $it->setAttribute("checked", "checked");
-            } else if ( $it = $n->getElementsByTagName("button")->item(0) ) {
-              $classes[] = "Checked";
-            }
-          }
-        break;
-
-        case 'orientation' :
-          $orient = ucfirst($pv);
-        break;
-      }
-    }
-
-    if ( $orient !== null ) {
-      $classes[] = $orient;
-    } else {
-      if ( $class == "GtkBox" || $class == "GtkButtonBox" ) {
-        $classes[] = "Horizontal";
-      }
-    }
-
-    return in_array($class, self::$ShortTags);
   }
 
-  protected function _parseSignals($c, $n, $class) {
-
-    if ( isset($c->object->signal) ) {
-      $id = (string) $c->object['id'];
-
-      foreach ( $c->object->signal as $p ) {
-        $pk = (string) $p['name'];
-        $pv = (string) $p['handler'];
-
-        switch ( $pk ) {
-          case "clicked" :
-            $pk = "click";
-            break;
-        }
-
-        if ( !isset($this->app_signals[$id]) ) {
-          $this->app_signals[$id] = Array();
-        }
-        $this->app_signals[$id][$pk] = $pv;
-      }
-    }
-
-  }
-
-  protected function _parseChild($node, $root, $oroot) {
-    if  ( isset($root->child) ) {
-      if ( $children = $root->child ) {
+  protected final function _parseChild($doc, $doc_node, $gl_root, $gl_node, Array &$signals = Array()) {
+    if  ( isset($gl_node->child) ) {
+      if ( $children = $gl_node->child ) {
         foreach  ( $children as $c ) {
           $class    = (string) $c->object['class'];
           $id       = (string) $c->object['id'];
 
-          $classes  = Array($class, $id);
-          $oclasses = Array();
+          $classes  = Array($class);
           $styles   = Array();
+          $attribs  = Array();
 
-          $n       = $this->_parseElement($c->object, $class, $classes);
-          $packed  = $this->_parsePacking($c, $n, $class, $oclasses, $styles);
-          $short   = $this->_parseProperties($c, $n, $class, $classes, $styles);
+          $oclasses = Array();
+          $ostyles  = Array();
 
-          $this->_parseSignals($c, $n, $class);
+          $inner = null;
+          $node_type = "div";
 
-          $n->setAttribute("class", implode(" ", $classes));
+          // Apply built-in attributes
+          if ( isset(self::$ClassMap[$class]) ) {
+            $node_type = self::$ClassMap[$class]["element"];
 
-          $sappend = Array();
-          foreach ( $styles as $sk => $sv ) {
-            $sappend[] = "{$sk}:{$sv}";
+            if ( isset(self::$ClassMap[$class]["gobject"]) ) {
+              if ( self::$ClassMap[$class]["gobject"] ) {
+                $classes[] = "GtkObject";
+              }
+            }
+            if ( isset(self::$ClassMap[$class]["classes"]) ) {
+              $classes = array_merge($classes, self::$ClassMap[$class]["classes"]);
+            }
+
+            if ( isset(self::$ClassMap[$class]["type"]) ) {
+              $attribs["type"] = self::$ClassMap[$class]["type"];
+            }
+
+            if ( isset(self::$ClassMap[$class]["value"]) ) {
+              $attribs["value"] = self::$ClassMap[$class]["value"];
+            }
+
+            if ( isset(self::$ClassMap[$class]["inner"]) ) {
+              $inner = $doc->createElement(self::$ClassMap[$class]["inner"]);
+            }
+          }
+
+          // Create HTML node
+          $node = $doc->createElement($node_type);
+
+          if ( $class == "GtkCheckButton" ) {
+            //$chk = $doc->createElement("input");
+            //$chk->setAttribute("type", "checkbox");
+            $label = $doc->createElement("label");
+
+            //$node->appendChild($chk);
+            $node->appendChild($label);
+            $inner = $label;
+          } else if ( $class == "GtkCellRendererText" ) {
+            $ex = explode("_", $id, 2);
+            $node->setAttribute("value", end($ex));
+            $node->appendChild(new DomText(end($ex)));
+          }
+
+          // Parse Glade element signals
+          if ( isset($c->object->signal) ) {
+            foreach ( $c->object->signal as $p ) {
+              $pk = (string) $p['name'];
+              $pv = (string) $p['handler'];
+
+              switch ( $pk ) {
+                case "item-activated" :
+                case "group-changed" :
+                case "select" :
+                case "activate" :
+                case "clicked" :
+                  $pk = "click";
+                  break;
+              }
+
+              if ( !isset($signals[$id]) ) {
+                $signals[$id] = Array();
+              }
+              $signals[$id][$pk] = $pv;
+            }
+          }
+
+          // Parse Glade element packing
+          $packed = false;
+          if ( isset($c->packing) ) {
+            foreach ( $c->packing->property as $p ) {
+              $pk = (string) $p['name'];
+              $pv = (string) $p;
+
+              switch ( $pk ) {
+                case "expand" :
+                  if ( $pv == "True" ) {
+                    $oclasses[] = "Expand";
+                  }
+                  break;
+
+                case "fill" :
+                  if ( $pv == "True" ) {
+                    $oclasses[] = "Fill";
+                  }
+                  break;
+
+                case "position" :
+                  $packed = true;
+                  $oclasses[] = "GtkBoxPosition";
+                  $oclasses[] = "Position_{$pv}";
+                  break;
+
+                case "x" :
+                  $styles[] = "left:{$pv}px";
+                  break;
+
+                case "y" :
+                  $styles[] = "top:{$pv}px";
+                  break;
+              }
+            }
+          }
+
+          // Parse Glade element attributes
+          $orient = "";
+          if ( isset($c->object->property) ) {
+            foreach ( $c->object->property as $p ) {
+              $pk = (string) $p['name'];
+              $pv = (string) $p;
+
+              switch ( $pk ) {
+                case "visible" :
+                  if ( $pv == "False" ) {
+                    $classes[] = "Hidden";
+                  }
+                  break;
+
+                case "width_request" :
+                  $styles[] = "width:{$pv}px";
+                  break;
+
+                case "height_request" :
+                  $styles[] = "height:{$pv}px";
+                  break;
+
+                case "active" :
+                  if ( $pv == "True" ) {
+                    if ( $node_type == "input" ) {
+                      $node->setAttribute("checked", "checked");
+                    } else {
+                      $classes[] = "Checked";
+                    }
+                  }
+                  break;
+
+                case "orientation" :
+                  $orient = ucfirst($pv);
+                  break;
+
+                case "label" :
+                  $icon    = null;
+                  $tooltip = null;
+                  $orig    = $pv;
+
+                  if ( ($stock = $this->_getStockImage($orig)) !== null ) {
+                    list($pv, $icon, $tooltop) = $stock;
+                  }
+
+                  if ( $icon ) {
+                    $img = $doc->createElement("img");
+                    $img->setAttribute("alt", $orig);
+                    $img->setAttribute("src", $icon);
+                    $node->appendChild($img);
+                  }
+
+                  if ( $tooltip ) {
+                    $node->setAttribute("title", $tooltip);
+                  }
+
+                  if ( $class == "GtkButton" || $class == "GtkLabel" ) {
+                    $node->appendChild(new DomText($pv));
+                  } else if ( $class == "GtkToggleToolButton" || $class == "GtkCheckButton" ) {
+                    $inner->appendChild(new DomText($pv));
+                  } else if ( $class == "GtkMenuItem" || $class == "GtkImageMenuItem" || $class == "GtkRadioMenuItem" ) {
+                    $node->appendChild(self::_getHotkeyed($doc, $pv));
+                  }
+                  break;
+              }
+            }
+          }
+
+          if ( $orient )  {
+            $classes[] = $orient;
+          } else {
+            if ( $class == "GtkBox" || $class == "GtkButtonBox" ) {
+              $classes[] = "Horizontal";
+            }
+          }
+
+          $classes[] = $id; // Append element ID lastly
+
+          // Apply information gathered
+          if ( $classes ) {
+            $node->setAttribute("class", implode(" ", $classes));
+          }
+
+          if ( $inner !== null ) {
+            $node->appendChild($inner);
+          }
+
+          foreach ( $attribs as $ak => $av ) {
+            $node->setAttribute($ak, $av);
           }
 
           if ( $packed ) {
-            $dir = "horizontal";
-            if ( $oroot['class'] == "GtkBox" ) {
-              foreach ( $oroot->property as $p ) {
-                if ( (string)$p['name'] == "orientation" ) {
-                  if ( !($dir = (string) $p) ) {
-                    $dir = "horizontal";
-                  }
-                }
-              }
-            } else {
-              foreach ( $root->property as $p ) {
-                if ( (string)$p['name'] == "orientation" ) {
-                  if ( !($dir = (string) $p) ) {
-                    $dir = "horizontal";
+
+            if ( !$orient ) {
+              $orient = "Horizontal";
+              if ( $gl_node['class'] == "GtkBox" ) {
+                foreach ( $gl_node->property as $p ) {
+                  if ( (string) $p['name'] == "orientation" ) {
+                    if ( $d = (string) $p ) {
+                      $orient = ucfirst($d);
+                    }
+                    break;
                   }
                 }
               }
             }
 
-            if ( $dir != "vertical" ) {
-              if ( !($temp = $node->getElementsByTagName("tr")->item(0)) ) {
-                $temp = $this->doc->createElement("tr");
-                $node->appendChild($temp);
+            if ( $orient != "Vertical" ) {
+              if ( !($temp = $doc_node->getElementsByTagName("tr")->item(0)) ) {
+                $temp = $doc->createElement("tr");
+                $doc_node->appendChild($temp);
               }
             } else {
-              $temp = $this->doc->createElement("tr");
-              $node->appendChild($temp);
+              $temp = $doc->createElement("tr");
+              $doc_node->appendChild($temp);
             }
 
-            $temp2 = $this->doc->createElement("td");
+
+            $temp2 = $doc->createElement("td");
             $temp2->setAttribute("class", implode(" ", $oclasses));
-            $temp2->appendChild($n);
-
-            if ( $sappend ) {
-              $temp2->setAttribute("style", implode(";", $sappend));
+            if ( $styles ) {
+              $temp2->setAttribute("style", implode(";", $styles));
             }
-
+            $temp2->appendChild($node);
             $temp->appendChild($temp2);
           } else {
-            if ( $sappend ) {
-              $n->setAttribute("style", implode(";", $sappend));
+            if ( $styles ) {
+              $node->setAttribute("style", implode(";", $styles));
             }
-
-            $node->appendChild($n);
+            $doc_node->appendChild($node);
           }
 
-          $this->_parseChild($n, $c->object, $oroot);
-          $this->_fill($n, $short);
-        }
-      }
-    }
-  }
+          $this->_parseChild($doc, $node, $gl_node, $c->object, $signals);
 
-  protected function _parseRoot($root) {
-    $type     = $root['class'] == "GtkWindow" ? "Window" : "Dialog";
-
-    $inner = $this->doc->createElement("div");
-    $inner->setAttribute("class", implode(" ", Array($this->name, "GtkWindow")));
-
-    // Properties
-    foreach ( $root->property as $p ) {
-      $pv = (string) $p;
-      switch ( (string) $p['name'] ) {
-        case 'resizable' :
-          if ( $pv == "False" ) {
-            $this->app_properties['is_resizable'] = false;
+          if ( !in_array($class, self::$ShortTags) ) {
+            $this->_fill($doc, $node);
           }
-          break;
-        case 'title' :
-          $this->app_properties['title'] = $pv;
-        break;
-        case 'icon' :
-          $this->app_properties['icon'] = $pv;
-        break;
-        case 'default_width' :
-          $this->app_properties['width'] = (int) $pv;
-        break;
-        case 'default_height' :
-          $this->app_properties['height'] = (int) $pv;
-        break;
-        case 'window_position' :
-          $this->app_properties['gravity'] = $pv;
-        break;
-      }
-    }
-
-    $this->doc->appendChild($inner);
-
-    $this->_parseChild($inner, $root, $root);
-
-    return $inner;
-  }
-
-  protected function _parse($full) {
-    $app_node = $this->app->createElement("application");
-    $app_node->setAttribute("name", $this->name);
-
-    if ( sizeof($this->xml->object) > 1 ) {
-      throw new Exception("Cannot create more than one window!");
-    }
-
-    foreach ( $this->xml->object as $root ) {
-      $this->doc->appendChild($this->_parseRoot($root));
-      break;
-    }
-
-    if ( $full ) {
-      foreach ( $this->app_properties as $pk => $pv) {
-        $n = $this->app->createElement("property");
-        $n->setAttribute("name", $pk);
-        if ( is_bool($pv) ) {
-          $pv = $pv ? "true" : "false";
-        } else if ( is_array($pv) ) {
-          $pv = json_encode($pv);
-        }
-        $n->appendChild(new DomText($pv));
-        $app_node->appendChild($n);
-      }
-
-      foreach ( $this->app_signals as $object => $events ) {
-        foreach ( $events as $trigger => $handler ) {
-          $n = $this->app->createElement("event");
-          $n->setAttribute("object", $object);
-          $n->setAttribute("event", $trigger);
-          $n->setAttribute("handler", $handler);
-          $app_node->appendChild($n);
         }
       }
     }
 
-    $this->app->appendChild($app_node);
-
+    return $signals;
   }
 
-  public function getApplicationProperties() {
-    return $this->app_properties;
+  protected final static function _getStockImage($stock, $size = "16x16") {
+    if ( isset(self::$Stock[$stock]) ) {
+      $label   = self::$Stock[$stock]['label'];
+      $icon    = self::$Stock[$stock]['icon'];
+      $tooltip = null;
+      if ( isset(self::$Stock[$stock]['tooltip']) ) {
+        $tooltip = self::$Stock[$stock]['tooltip'];
+      }
+
+      $path = sprintf("/img/icons/%s/%s", $size, $icon);
+      return Array($label, $path, $tooltip);
+    }
+
+    return null;
   }
 
-  public function getApplicationSignals() {
-    return $this->app_signals;
+  protected final static function _getHotkeyed($doc, $pv) {
+    $span = $doc->createElement("span");
+    if ( ($sub = strstr($pv, "_")) !== false ) {
+      $pre = str_replace($sub, "", $pv);
+      $letter = substr($sub, 1, 1);
+      $after = substr($sub, 2, strlen($sub));
+
+      $inner = $doc->createElement("u");
+      $inner->appendChild(new DomText($letter));
+
+      $span->appendChild(new DomText($pre));
+      $span->appendChild($inner);
+      $span->appendChild(new DomText($after));
+    } else {
+      $span->appendChild(new DomText($pv));
+    }
+
+    return $span;
   }
+
+  public final static function parse($file) {
+    if ( file_exists($file) && ($content = file_get_contents($file)) ) {
+      if ( $xml = new SimpleXMLElement($content) ) {
+        return new self($file, $xml);
+      }
+    }
+
+    throw new Exception("Failed to read glade file.");
+  }
+
+  public final function getWindows() {
+    return $this->_aWindows;
+  }
+
 }
 
 ?>

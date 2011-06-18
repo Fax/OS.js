@@ -28,9 +28,6 @@ class ApplicationTerminal
     parent::__construct();
   }
 
-
 }
-
-Application::Register("ApplicationTerminal", __FILE__, Array("app.terminal.js", "app.terminal.css"), Array(), Array("is_scrollable" => false));
 
 ?>

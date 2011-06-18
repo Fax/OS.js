@@ -68,6 +68,31 @@
     _TopIndex          = 11;
   }
 
+  function LaunchApplication(app_name, args, callback, callback_error) {
+    callback = callback || function() {};
+    callback_error = callback_error || function() {};
+
+    $.post("/", {'ajax' : true, 'action' : 'load', 'app' : app_name}, function(data) {
+      if ( data.success ) {
+        _Resources.addResources(data.result.resources, function() {
+
+          if ( window[app_name] ) {
+            var application = new window[app_name](Window, Application, API, args);
+            application.uuid = data.result.uuid;
+            application.run();
+          } else {
+            var error = "Application Script not found!";
+            API.system.dialog("error", error);
+            callback_error(error);
+          }
+        });
+      } else {
+        API.system.dialog("error", data.error);
+        callback_error(data.error);
+      }
+    });
+  }
+
   /////////////////////////////////////////////////////////////////////////////
   // PUBLIC API
   /////////////////////////////////////////////////////////////////////////////
@@ -272,7 +297,8 @@
         }
 
         console.log("API launching", app_name, args);
-        _Desktop.addWindow(new Window(app_name, false, args, attrs));
+        LaunchApplication(app_name, args);
+        //_Desktop.addWindow(new Window(app_name, false, args, attrs));
       },
 
       'call' : function(method, argv, callback, show_alert) {
@@ -866,39 +892,24 @@
         if ( win instanceof Window ) {
           var self = this;
 
-          var callback = function(method) {
-            var id = "Window_" + self.stack.length;
+          var id = "Window_" + self.stack.length;
+          win.create(id, _TopIndex, function() {
+            setTimeout(function() {
+              API.ui.cursor("default");
+            }, 50);
+          });
 
-            win.create(id, _TopIndex, method, function() {
-              setTimeout(function() {
-                API.ui.cursor("default");
-              }, 50);
-            });
+          _TopIndex++;
 
-            _TopIndex++;
+          self.stack.push(win);
 
-            self.stack.push(win);
-
-            //win.focus();
-            if ( !win.is_minimized && !win.is_maximized ) {
-              //$(win.$element).trigger("mousedown");
-              self.focusWindow(win); // Always focus new windows
-            }
-
-            self.panel.redraw(self, win, false);
-          };
-
-
-          if ( win.dialog && !win.name.match(/^System/) ) {
-            callback({});
-          } else {
-            API.ui.cursor("wait");
-            win.load(callback, function() {
-              setTimeout(function() {
-                API.ui.cursor("default");
-              }, 50);
-            });
+          //win.focus();
+          if ( !win.is_minimized && !win.is_maximized ) {
+            //$(win.$element).trigger("mousedown");
+            self.focusWindow(win); // Always focus new windows
           }
+
+          self.panel.redraw(self, win, false);
 
           return win;
         }
@@ -1415,7 +1426,6 @@
       this.loaded          = false;
       this.current         = false;
       this.app             = null;
-      this.uuid            = null;
       this.last_attrs      = null;
 
       // Window main attributes
@@ -1424,7 +1434,7 @@
       this.content     = "";
       this.icon        = "emblems/emblem-unreadable.png";
       this.dialog      = dialog ? true : false;
-      this.argv        = argv;
+      this.argv        = argv; // REFACTOR
       this.attrs       = attrs;
 
       // Window attributes
@@ -1459,12 +1469,6 @@
     destroy : function() {
       var self = this;
 
-      if ( this.uuid ) {
-        $.post("/", {'ajax' : true, 'action' : 'flush', 'uuid' : self.uuid}, function(data) {
-          console.log('Flushed Window', self, self.uuid, data);
-        });
-      }
-
       this.focus_hook  = null;
       this.blur_hook   = null;
 
@@ -1479,20 +1483,11 @@
       console.log("Window destroyed...", this);
     },
 
-    event : function(app, ev, args, callback) {
-
-      if ( this.uuid ) {
-        var self = this;
-        var pargs = {'ajax' : true, 'action' : 'event', 'cname' : app.name ,'uuid' : self.uuid, 'instance' : {'name' : self.name, 'action' : ev, 'args' : args }};
-        $.post("/", pargs, function(data) {
-          console.log('Event Window', self, self.uuid, pargs, data);
-
-          callback(data.result, data.error);
-        });
-      }
+    show : function() {
+      _Desktop.addWindow(this);
     },
 
-    create : function(id, zi, appname, mcallback) {
+    create : function(id, zi, mcallback) {
       if ( !this.created ) {
         var self = this;
         mcallback = mcallback || function() {};
@@ -1752,37 +1747,7 @@
 
         this.$element = el;
 
-        //
-        // Run Dialog or Application
-        //
-        if ( appname === undefined ) {
-          mcallback();
-        } else {
-          setTimeout(function() {
-            //try {
-              if ( window[appname] ) {
-                self.app = window[appname](Application, self, API, self.argv);
-              }
-            //} catch ( e ) {
-            //  cconsole.error("Window application creation failed...", e);
-            //  return;
-            //}
-
-            if ( self.uuid ) {
-              $.post("/", {'ajax' : true, 'action' : 'register', 'uuid' : self.uuid, 'instance' : {'name' : self.name}}, function(data) {
-                console.log('Registered Window', self, self.uuid, data);
-
-                mcallback();
-              });
-            }
-
-            if ( self.app ) {
-              setTimeout(function() {
-                self.app.run();
-              }, 100);
-            }
-          }, 0);
-        }
+        mcallback();
 
         if ( this.is_minimized ) {
           $(el).hide();
@@ -1797,8 +1762,11 @@
       }
 
       this.created = true;
+
+      return el;
     },
 
+    /*
     load : function(callback, callback_error) {
       callback = callback || function() {};
       callback_error = callback_error || function() {};
@@ -1837,6 +1805,7 @@
 
       this.loaded = true;
     },
+    */
 
     redraw : function() {
 
@@ -2002,8 +1971,8 @@
         'name'     : this.name,
         'size'     : {'width' : this.$element.width(), 'height' : this.$element.height()},
         'position' : {'left' : this.left, 'top' : this.top},
-        'attribs'  : {'minimized' : this.is_minimized, 'maximized' : this.is_maximized, 'ontop' : this.is_ontop},
-        'argv'     : this.argv
+        'attribs'  : {'minimized' : this.is_minimized, 'maximized' : this.is_maximized, 'ontop' : this.is_ontop}/*,
+        'argv'     : this.argv REFACTOR */
       };
     }
 
@@ -2739,73 +2708,45 @@
    *
    * @class
    */
-  var Application = (function() {
-
-    var _ApplicationDialog = Window.extend({
-
-      init : function(callback) {
-        this._super("ApplicationDialog", true, {'type' : 'ApplicationDialog'});
-        this.is_minimizable = true;
-        this.is_maximizable = true;
-        this.callback = callback || function() {};
-      },
-
-      destroy : function() {
-        this._super();
-      },
-
-      create : function(id, zi, method) {
-        this._super(id, zi, method);
-        this.callback(this.$element);
-      }
-
-    });
-
-    return Class.extend({
-      init : function(name) {
+  var Application = Class.extend({
+      init : function(name, argv) {
         this.name = name;
+        this.argv = argv;
+        this.uuid = null;
 
-        console.log("Application created", this.name, this);
+        console.log("Application created", this.name, this, arguments);
       },
 
       destroy : function() {
-        console.log("Application destroyed", this.name, this);
-      },
+        var self = this;
 
-      run : function(el) {
-
-        if ( el ) {
-          el.find(".GtkScale").slider();
-
-          el.find(".GtkToolItemGroup").click(function() {
-            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
-
-            if ( $(this).hasClass("Checked") ) {
-              $(this).removeClass("Checked");
-            } else {
-              $(this).addClass("Checked");
-            }
-          });
-
-          el.find(".GtkToggleToolButton button").click(function() {
-            if ( $(this).parent().hasClass("Checked") ) {
-              $(this).parent().removeClass("Checked");
-            } else {
-              $(this).parent().addClass("Checked");
-            }
+        if ( this.uuid ) {
+          $.post("/", {'ajax' : true, 'action' : 'flush', 'uuid' : self.uuid}, function(data) {
+            console.log('Application Window', self, self.uuid, data);
           });
         }
 
+        console.log("Application destroyed", this.name, this);
+      },
+
+      run : function() {
         console.log("Application running", this.name, this);
       },
 
-      createWindow : function(callback) {
-        _Desktop.addWindow(new _ApplicationDialog(callback));
+
+      event : function(win, ev, args, callback) {
+        var self = this;
+        if ( this.uuid ) {
+          var pargs = {'ajax' : true, 'action' : 'event', 'cname' : self.name ,'uuid' : self.uuid, 'instance' : {'name' : self.name, 'action' : ev, 'args' : args }};
+          $.post("/", pargs, function(data) {
+            console.log('Event Application', win, self.uuid, pargs, data);
+
+            callback(data.result, data.error);
+          });
+        }
       }
 
-    });
-
-  })();
+  });
 
   /////////////////////////////////////////////////////////////////////////////
   // MAIN

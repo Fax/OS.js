@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application name="Clock" file="ApplicationClock.class.php" schema="ApplicationClock.glade">
+  <property name="enabled">true</property>
+  <resource>app.clock.css</resource>
+  <resource>app.clock.js</resource>
+</application>

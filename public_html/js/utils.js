@@ -397,7 +397,7 @@ function TimezoneOffset(off) {
  * @return {x,y, lines}
  */
 function getTextareaCoordinates(txt) {
-  var val    = txt.val();
+  var val    = txt.val() || "";
   var len    = val.length;
   var row    = 0;
   var col    = 0;

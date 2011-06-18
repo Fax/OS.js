@@ -1,0 +1,7 @@
+<application name="Logout" file="SystemLogout.class.php" schema="SystemLogout.glade">
+  <property name="enabled">true</property>
+  <!--
+  <resource>sys.logout.css</resource>
+  <resource>sys.logout.js</resource>
+  -->
+</application>

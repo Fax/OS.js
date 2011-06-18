@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application name="Draw" file="ApplicationDraw.class.php" schema="ApplicationDraw.glade">
+  <property name="enabled">true</property>
+  <resource>app.draw.css</resource>
+  <resource>app.draw.js</resource>
+  <mime>image/*</mime>
+</application>

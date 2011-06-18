@@ -109,7 +109,4 @@ EOHTML;
 
 }
 
-Application::Register("ApplicationFileManager", __FILE__, Array("app.filemanager.js", "app.filemanager.css"));
-
-
 ?>

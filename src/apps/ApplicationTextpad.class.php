@@ -19,7 +19,6 @@ class ApplicationTextpad
 {
   const APPLICATION_TITLE  = "Textpad";
   const APPLICATION_ICON   = "apps/text-editor.png";
-  const APPLICATION_SYSTEM = false;
 
   /**
    * Create a new instance
@@ -30,7 +29,5 @@ class ApplicationTextpad
 
 
 }
-
-Application::Register("ApplicationTextpad", __FILE__, Array("app.textpad.js", "app.textpad.css"), Array("text/*"));
 
 ?>

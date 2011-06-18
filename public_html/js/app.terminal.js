@@ -1,5 +1,5 @@
 /**
- * Application: Terminal
+ * Application: ApplicationTerminal
  *
  * @package ajwm.Applications
  * @author Anders Evenrud <andersevenrud@gmail.com>
@@ -16,7 +16,9 @@ var ApplicationTerminal = (function($, undefined) {
   var KEY_RIGHT = 39;
   var KEY_DOWN = 40;
 
-  return function(Application, app, api, argv) {
+
+  return function(Window, Application, API, argv) {
+
 
 
     var CurrentDir = null;
@@ -31,7 +33,7 @@ var ApplicationTerminal = (function($, undefined) {
       }
 
       if ( dir != CurrentDir ) {
-        api.system.call("readdir", {'path' : dir}, function(result, error) {
+        API.system.call("readdir", {'path' : dir}, function(result, error) {
           if ( result ) {
             CurrentPath = result;
             CurrentDir = dir;
@@ -76,9 +78,175 @@ var ApplicationTerminal = (function($, undefined) {
       }
     };
 
-    var _ApplicationTerminal = Application.extend({
+
+    var Window_window1 = Window.extend({
+
+      init : function(app) {
+        this._super("ApplicationTerminal", false, {}, {});
+        this.content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationTerminal window1\"> <textarea class=\"GtkTextView GtkObject textview1\"></textarea> </div> </div> ").html();
+        this.title = 'Terminal';
+        this.icon = 'apps/utilities-terminal.png';
+        this.is_draggable = true;
+        this.is_resizable = true;
+        this.is_scrollable = false;
+        this.is_sessionable = true;
+        this.is_minimizable = true;
+        this.is_maximizable = true;
+        this.is_closable = true;
+        this.is_orphan = false;
+        this.width = 500;
+        this.height = 300;
+        this.gravity = null;
+
+
+        this.app = app;
+      },
+
+      destroy : function() {
+        this._super();
+      },
+
+
+
+      create : function(id, zi, mcallback) {
+        var el = this._super(id, zi, mcallback);
+        var self = this;
+
+        if ( el ) {
+          el.find(".GtkScale").slider();
+
+          el.find(".GtkToolItemGroup").click(function() {
+            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
+
+            if ( $(this).hasClass("Checked") ) {
+              $(this).removeClass("Checked");
+            } else {
+              $(this).addClass("Checked");
+            }
+          });
+
+          el.find(".GtkToggleToolButton button").click(function() {
+            if ( $(this).parent().hasClass("Checked") ) {
+              $(this).parent().removeClass("Checked");
+            } else {
+              $(this).parent().addClass("Checked");
+            }
+          });
+
+
+
+          // Do your stuff here
+          var txt = $(el).find("textarea");
+          var inpbuffer = [];
+          var history = [];
+
+          this.focus_hook = function() {
+            $(txt).focus();
+            var l = $(txt).val().length - 1;
+            setSelectionRangeX($(txt).get(0), l, l);
+          };
+
+          this.blur_hook = function() {
+            $(txt).blur();
+          };
+
+          $(txt).mousedown(function(ev) {
+            ev.preventDefault();
+          }).dblclick(function(ev) {
+            ev.preventDefault();
+          });
+
+          $(txt).val("");
+          this.focus_hook();
+
+          var execute = function(cmd) {
+            if ( !cmd ) {
+              put("\n");
+              return;
+            }
+
+            var out = null;
+            var args = [];
+
+            var tmp = cmd.split(" ");
+            cmd = tmp[0];
+            if ( tmp.length > 1 ) {
+              tmp.shift();
+              args = tmp;
+            }
+
+            var callback = function(out) {
+              put((out ? ("\n" + out) : out) + "\n");
+            };
+
+            if ( Commands[cmd] ) {
+              out = Commands[cmd].call(this, args, $(txt), callback);
+            } else {
+              out = "Bad command or filename '" + cmd + "'!";
+            }
+
+            if ( out ) {
+              put((out ? ("\n" + out) : out) + "\n");
+            }
+          };
+
+          var put = function(v) {
+            v = v || "";
+            $(txt).val($(txt).val() + v + "~" + CurrentDir + " > ");
+            $(txt).attr({ scrollTop: $(txt).attr("scrollHeight") });
+          };
+
+          $(txt).keydown(function(ev) {
+            var keyCode = ev.which || ev.keyCode;
+            if ( !ev.shiftKey && (keyCode >= 65 && keyCode <= 90) ) {
+              keyCode += 32;
+            }
+
+            var ch = String.fromCharCode(keyCode);
+
+            if ( keyCode == KEY_BACKSPACE ) {
+              if ( inpbuffer.length ) {
+                inpbuffer.pop();
+                return true;
+              }
+              return false;
+            } else if ( keyCode == KEY_TAB ) {
+              return false;
+            } else if ( keyCode == KEY_ENTER ) {
+              execute(inpbuffer.join(""));
+              inpbuffer = [];
+              return false;
+            } else if ( keyCode === 0 || keyCode == 16 || keyCode == 17 || keyCode == 18 || keyCode == 91 ) {
+              return false;
+            } else if ( keyCode == KEY_UP || keyCode == KEY_DOWN || keyCode == KEY_LEFT || keyCode == KEY_RIGHT ) {
+              return false;
+            }
+
+            if ( ch && ch !== "" ) {
+              inpbuffer.push(ch);
+            }
+
+            return true;
+          });
+
+          ChDir("/", function(out) {
+            put(out === true ? null : out);
+          });
+
+        }
+
+      }
+    });
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    // APPLICATION
+    ///////////////////////////////////////////////////////////////////////////
+
+    var __ApplicationTerminal = Application.extend({
+
       init : function() {
-        this._super("ApplicationTerminal");
+        this._super("ApplicationTerminal", argv);
       },
 
       destroy : function() {
@@ -86,108 +254,18 @@ var ApplicationTerminal = (function($, undefined) {
       },
 
       run : function() {
-        var el = app.$element;
-        var txt = $(el).find("textarea");
-        var inpbuffer = [];
-        var history = [];
+        var self = this;
 
-        app.focus_hook = function() {
-          $(txt).focus();
-          var l = $(txt).val().length - 1;
-          setSelectionRangeX($(txt).get(0), l, l);
-        };
+        this._super(self);
 
-        app.blur_hook = function() {
-          $(txt).blur();
-        };
+        var root_window = new Window_window1();
+        root_window.show(self);
 
-        $(txt).mousedown(function(ev) {
-          ev.preventDefault();
-        }).dblclick(function(ev) {
-          ev.preventDefault();
-        });
-
-        $(txt).val("");
-        app.focus_hook();
-
-        var execute = function(cmd) {
-          if ( !cmd ) {
-            put("\n");
-            return;
-          }
-
-          var out = null;
-          var args = [];
-
-          var tmp = cmd.split(" ");
-          cmd = tmp[0];
-          if ( tmp.length > 1 ) {
-            tmp.shift();
-            args = tmp;
-          }
-
-          var callback = function(out) {
-            put((out ? ("\n" + out) : out) + "\n");
-          };
-
-          if ( Commands[cmd] ) {
-            out = Commands[cmd].call(this, args, $(txt), callback);
-          } else {
-            out = "Bad command or filename '" + cmd + "'!";
-          }
-
-          if ( out ) {
-            put((out ? ("\n" + out) : out) + "\n");
-          }
-        };
-
-        var put = function(v) {
-          v = v || "";
-          $(txt).val($(txt).val() + v + "~" + CurrentDir + " > ");
-          $(txt).attr({ scrollTop: $(txt).attr("scrollHeight") });
-        };
-
-        $(txt).keydown(function(ev) {
-          var keyCode = ev.which || ev.keyCode;
-          if ( !ev.shiftKey && (keyCode >= 65 && keyCode <= 90) ) {
-            keyCode += 32;
-          }
-
-          var ch = String.fromCharCode(keyCode);
-
-          if ( keyCode == KEY_BACKSPACE ) {
-            if ( inpbuffer.length ) {
-              inpbuffer.pop();
-              return true;
-            }
-            return false;
-          } else if ( keyCode == KEY_TAB ) {
-            return false;
-          } else if ( keyCode == KEY_ENTER ) {
-            execute(inpbuffer.join(""));
-            inpbuffer = [];
-            return false;
-          } else if ( keyCode === 0 || keyCode == 16 || keyCode == 17 || keyCode == 18 || keyCode == 91 ) {
-            return false;
-          } else if ( keyCode == KEY_UP || keyCode == KEY_DOWN || keyCode == KEY_LEFT || keyCode == KEY_RIGHT ) {
-            return false;
-          }
-
-          if ( ch && ch !== "" ) {
-            inpbuffer.push(ch);
-          }
-
-          return true;
-        });
-
-        ChDir("/", function(out) {
-          put(out === true ? null : out);
-        });
-
-        this._super();
+        // Do your stuff here
       }
     });
 
-    return new _ApplicationTerminal();
+    return new __ApplicationTerminal();
   };
 })($);
+

@@ -15,28 +15,148 @@ $build = isset($argv[1]) && $argv[1] == "build";
 
 $root_node = $doc->createElement("applications");
 
-if ( $dh  = opendir($root) ) {
-  while (false !== ($filename = readdir($dh))) {
-    if ( preg_match("/^(Application|System)(.*)(\.glade)$/", $filename) ) {
-      echo "Building {$filename}...\n";
+function create_js_root($cname, $windows) {
+  $wins = implode("\n", $windows);
+  $code = "";
 
-      $cname = str_replace(".glade", "", $filename);
+  if ( $windows ) {
+    $win = reset(array_keys($windows));
+    $code = <<<EOJAVASCRIPT
+        var root_window = new Window_{$win}();
+        root_window.show(self);
+EOJAVASCRIPT;
+  }
 
-      if ( constant("{$cname}::APPLICATION_ENABLED") === false ) {
-        echo "\tNot enabled!\n";
-        continue;
+
+  $template = <<<EOJAVASCRIPT
+/**
+ * Application: {$cname}
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @class
+ */
+var {$cname} = (function(\$, undefined) {
+  return function(Window, Application, API, argv) {
+
+
+%s
+
+    ///////////////////////////////////////////////////////////////////////////
+    // APPLICATION
+    ///////////////////////////////////////////////////////////////////////////
+
+    var __{$cname} = Application.extend({
+
+      init : function() {
+        this._super("{$cname}", argv);
+      },
+
+      destroy : function() {
+        this._super();
+      },
+
+      run : function() {
+        var self = this;
+
+        this._super(self);
+
+%s
+
+        // Do your stuff here
       }
+    });
 
-      if ( $glade = Glade::convert($root . $filename) ) {
-        $html    = $glade->__toDocumentString();
-        $window  = $glade->getApplicationProperties();
-        $signals = $glade->getApplicationSignals();
+    return new __{$cname}();
+  };
+})(\$);
 
-        $js_methods = "";
-        $js_run = "";
+EOJAVASCRIPT;
 
-        foreach ( $signals as $obj => $evs ) {
-          foreach ( $evs as $ev_type => $ev_handler ) {
+  return sprintf($template, $wins, $code);
+}
+
+function create_js($cname, $window, $content, $properties, $signals) {
+  $dialog = $properties['type'] == "dialog" ? 'true' : 'false';
+  $content = addslashes(str_replace("\n", "", preg_replace("/\s+/", " ", $content)));
+  $template = <<<EOJAVASCRIPT
+
+    var Window_{$window} = Window.extend({
+
+      init : function(app) {
+        this._super("{$cname}", $dialog, {}, {});
+        this.content = $("{$content}").html();
+%s
+
+        this.app = app;
+      },
+
+      destroy : function() {
+        this._super();
+      },
+
+%s
+
+      create : function(id, zi, mcallback) {
+        var el = this._super(id, zi, mcallback);
+        var self = this;
+
+        if ( el ) {
+          el.find(".GtkScale").slider();
+
+          el.find(".GtkToolItemGroup").click(function() {
+            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
+
+            if ( $(this).hasClass("Checked") ) {
+              $(this).removeClass("Checked");
+            } else {
+              $(this).addClass("Checked");
+            }
+          });
+
+          el.find(".GtkToggleToolButton button").click(function() {
+            if ( $(this).parent().hasClass("Checked") ) {
+              $(this).parent().removeClass("Checked");
+            } else {
+              $(this).parent().addClass("Checked");
+            }
+          });
+
+
+%s
+          // Do your stuff here
+
+        }
+
+      }
+    });
+
+EOJAVASCRIPT;
+
+  $js_methods = "";
+  $js_run = "";
+  $js_init = "";
+  foreach ( $properties as $pk => $pv ) {
+    if ( in_array($pk, Array("type")) ) {
+      continue;
+    }
+
+    if ( is_bool($pv) ) {
+      $pv = $pv ? 'true' : 'false';
+    } else {
+      if ( !$pv ) {
+        $pv = "null";
+      } else {
+        if ( !is_numeric($pv) ) {
+          $pv = "'{$pv}'";
+        }
+      }
+    }
+    $js_init .= "        this.{$pk} = $pv;\n";
+  }
+
+  foreach ( $signals as $obj => $evs ) {
+    foreach ( $evs as $ev_type => $ev_handler ) {
             $js_methods .= <<<EOJAVASCRIPT
 
       Event{$ev_handler} : function(el, ev) {
@@ -48,82 +168,21 @@ EOJAVASCRIPT;
 
             $js_run .= <<<EOJAVASCRIPT
 
-        el.find(".{$obj}").{$ev_type}(function(ev) {
-          self.Event{$ev_handler}(this, ev);
-        });
+          el.find(".{$obj}").{$ev_type}(function(ev) {
+            self.Event{$ev_handler}(this, ev);
+          });
 
 EOJAVASCRIPT;
 
-          }
-        }
 
-        $js     = <<<EOJAVASCRIPT
-/**
- * Application: {$cname}
- *
- * @package ajwm.Applications
- * @author Anders Evenrud <andersevenrud@gmail.com>
- * @class
- */
-var {$cname} = (function(\$, undefined) {
-  return function(Application, app, API, argv) {
-    var _{$cname} = Application.extend({
+    }
+  }
 
+  return sprintf($template, $js_init, $js_methods, $js_run);
+}
 
-      // !!! DO NOT TOUCH
-
-      init : function() {
-        this._super("{$cname}");
-      },
-
-      destroy : function() {
-        this._super();
-      },
-
-%s
-
-      run : function() {
-        var el = app.\$element;
-        var self = this;
-
-%s
-
-        this._super(el);
-      }
-    });
-
-    // !!! READ-ONLY
-
-    ///////////////////////////////////////////////////////////////////////////
-    // APPLICATION
-    ///////////////////////////////////////////////////////////////////////////
-
-    var __{$cname} = _{$cname}.extend({
-
-      init : function() {
-        this._super();
-      },
-
-      destroy : function() {
-        this._super();
-      },
-
-      run : function() {
-        var el = app.\$element;
-        var self = this;
-
-        this._super();
-
-        // Do your stuff here
-      }
-    });
-
-    return new __{$cname}();
-  };
-})(\$);
-EOJAVASCRIPT;
-
-        $css = <<<EOCSS
+function create_css($cname) {
+  return <<<EOCSS
 @charset "UTF-8";
 /**
  * Application: {$cname}
@@ -132,83 +191,95 @@ EOJAVASCRIPT;
  * @author Anders Evenrud <andersevenrud@gmail.com>
  */
 
-/* !!! READ-ONLY */
-
 .{$cname} {
 
 }
 
 EOCSS;
+}
 
-        if ( !$window['title'] ) {
-          $window['title'] = constant("{$cname}::APPLICATION_TITLE");
-        }
-        if ( !$window['icon'] ) {
-          $window['icon'] = constant("{$cname}::APPLICATION_ICON");
-        }
+if ( $dh  = opendir($root) ) {
+  while (false !== ($filename = readdir($dh))) {
+    if ( preg_match("/^(Application|System)(.*)(\.xml)$/", $filename) ) {
 
-        $js = sprintf($js, $js_methods, $js_run);
+      $path = $root . $filename;
+      $xml = new SimpleXmlElement(file_get_contents($path));
+
+      $gfilename = str_replace(basename($filename), ((string) $xml['schema']), $filename);
+      $cname = str_replace(".xml", "", $filename);
+
+      echo "Building {$filename} ($gfilename)...\n";
+
+      $break = false;
+      foreach ( $xml->property as $p ) {
+        if ( (string) $p['name'] == "enabled" ) {
+          if ( (string) $p !== "true" ) {
+            $break = true;
+            break;
+          }
+        }
+      }
+
+      if ( $break ) {
+        print "\tSkipped!\n";
+        break;
+      }
+
+      // TODO: Enabled state
+
+      if ( $glade = Glade::parse($root . $gfilename) ) {
+        $windows = $glade->getWindows();
 
         $node = $doc->createElement("application");
+        $node->setAttribute("name", $xml['name']);
+
+        $node->setAttribute("title", constant("{$cname}::APPLICATION_TITLE"));
+        $node->setAttribute("icon", constant("{$cname}::APPLICATION_ICON"));
         $node->setAttribute("class", $cname);
-        $node->setAttribute("type", constant("{$cname}::APPLICATION_SYSTEM") ? "system" : "normal");
 
-        $p_html = $doc->createElement("property");
-        $p_html->setAttribute("name", "html");
-        $p_html->appendChild($doc->createCDATASection($html));
-
-        $p_window = $doc->createElement("property");
-        $p_window->setAttribute("name", "window");
-        $p_window->appendChild(new DomText(json_encode($window)));
-
-        $p_js = $doc->createElement("property");
-        $p_js->setAttribute("name", "javascript");
-        $p_js->appendChild($doc->createCDATASection($js));
-
-        $p_css = $doc->createElement("property");
-        $p_css->setAttribute("name", "style");
-        $p_css->appendChild($doc->createCDATASection($css));
-
-        $node->appendChild($p_window);
-        $node->appendChild($p_html);
-        $node->appendChild($p_js);
-        $node->appendChild($p_css);
-
-        if ( $build ) {
-          $ct = preg_match("/^System/", $cname) ? "sys" : "app";
-          $cn = strtolower(preg_match("/^System/", $cname) ? str_replace("System", "", $cname) : str_replace("Application", "", $cname));
-
-          $fname_js  = PATH_PROJECT . "/public_html/js/{$ct}.{$cn}.js";
-          $fname_css = PATH_PROJECT . "/public_html/css/{$ct}.{$cn}.css";
-
-          print "\tBuilding javascript: \n";
-          print "\t\t" . basename($fname_js) . "\n";
-
-          if ( !file_exists($fname_js) ) {
-            file_put_contents($fname_js, $js);
-            print "\t\tCREATED!\n";
-          } else {
-            $content = file_get_contents($fname_js);
-            $old = strstr($content, "    // !!! READ-ONLY", true);
-            $new = strstr($js, "    // !!! READ-ONLY", true);
-            file_put_contents($fname_js, str_replace($old, $new, $content));
-            print "\t\tUPDATED!\n";
+        $wins = Array();
+        foreach ( $windows as $id => $window ) {
+          if ( !$window['properties']['title'] ) {
+            $window['properties']['title'] = constant("{$cname}::APPLICATION_TITLE");
+          }
+          if ( !$window['properties']['icon'] ) {
+            $window['properties']['icon'] = constant("{$cname}::APPLICATION_ICON");
           }
 
-          print "\tBuilding stylesheets: \n";
-          print "\t\t" . basename($fname_css) . "\n";
+          $wins[$id] = create_js($cname, $id, $window['content'], $window['properties'], $window['signals']);
 
-          if ( !file_exists($fname_css) ) {
-            file_put_contents($fname_css, $css);
-            print "\t\tCREATED!\n";
-          } else {
-            $content = file_get_contents($fname_css);
-            $old = strstr($content, "/* !!! READ-ONLY */", true);
-            $new = strstr($css, "/* !!! READ-ONLY */", true);
-            file_put_contents($fname_css, str_replace($old, $new, $content));
-            print "\t\tUPDATED!\n";
-          }
+          $win_node = $doc->createElement("window");
+          $win_node->setAttribute("id", $id);
+
+          $prop_node = $doc->createElement("property");
+          $prop_node->setAttribute("name", "properties");
+          $prop_node->appendChild($doc->createCDATASection(json_encode($window['properties'])));
+          $win_node->appendChild($prop_node);
+
+          $html_node = $doc->createElement("property");
+          $html_node->setAttribute("name", "content");
+          $html_node->appendChild($doc->createCDATASection($window['content']));
+          $win_node->appendChild($html_node);
+
+          $node->appendChild($win_node);
         }
+
+        foreach ( $xml->resource as $r ) {
+          $r = (string) $r;
+          $res_node = $doc->createElement("resource");
+          $res_node->appendChild(new DomText($r));
+          $node->appendChild($res_node);
+        }
+
+        $script = create_js_root($cname, $wins);
+        $script_node = $doc->createElement("script");
+        $script_node->appendChild($doc->createCDATASection($script));
+        $node->appendChild($script_node);
+
+        $style = create_css($cname);
+        $style_node = $doc->createElement("style");
+        $style_node->appendChild($doc->createCDATASection($style));
+        $node->appendChild($style_node);
 
         $root_node->appendChild($node);
         echo "\tSuccess!\n";

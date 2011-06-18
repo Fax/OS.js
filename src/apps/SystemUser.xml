@@ -1,0 +1,7 @@
+<application name="User" file="SystemUser.class.php" schema="SystemUser.glade">
+  <property name="enabled">true</property>
+  <!--
+  <resource>sys.user.css</resource>
+  <resource>sys.user.js</resource>
+  -->
+</application>

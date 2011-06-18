@@ -5,14 +5,39 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var ApplicationTextpad = (function() {
-  return function(Application, app, api, argv) {
+var ApplicationTextpad = (function($, undefined) {
+  return function(Window, Application, API, argv) {
+
+    var WindowTitle = "";
+
+    function _read_file(el, file) {
+      var txt = el.find("textarea");
+      if ( typeof file == "string" && file ) {
+        API.system.call("read", file, function(result, error) {
+          if ( error === null ) {
+            txt.val(result);
+            _update(file, el);
+
+            setTimeout(function() {
+              setSelectionRangeX(txt.get(0), 0, 0);
+            }, 0);
+          } else {
+            _update(null, el);
+          }
+        });
+      } else {
+        _update(null, el);
+      }
+
+      _updateStatusbar(el);
+      txt.focus();
+    }
 
     function _save(file, content, callback) {
       callback = callback || function() {};
 
       if ( typeof file == "string" && file ) {
-        api.system.call("write", {'file' : file, 'content' : content}, function(result, error) {
+        API.system.call("write", {'file' : file, 'content' : content}, function(result, error) {
           // SYSTEM HANDLES ERRORS
           if ( result ) {
             callback(file);
@@ -22,13 +47,13 @@ var ApplicationTextpad = (function() {
     }
 
     function _saveAs(callback) {
-      api.system.dialog_file(function(file, mime) {
+      API.system.dialog_file(function(file, mime) {
         callback(file, mime);
       }, ["text/*"], "save");
     }
 
     function _open(callback, el) {
-      api.system.dialog_file(function(fname) {
+      API.system.dialog_file(function(fname) {
         callback(fname);
 
         setTimeout(function() {
@@ -38,10 +63,10 @@ var ApplicationTextpad = (function() {
     }
 
     function _update(file, el) {
-      app.opts = file;
+      //app.opts = file; // FIXME
       argv['path'] = file;
 
-      $(el).find(".WindowTopInner span").html(app.title + ": " + (file || "New file"));
+      $(el).find(".WindowTopInner span").html(WindowTitle + ": " + (file || "New file"));
       _updateStatusbar(el);
     }
 
@@ -74,10 +99,154 @@ var ApplicationTextpad = (function() {
       $(el).find(".statusbar1").html(text);
     }
 
-    // APP
-    var _ApplicationTextpad = Application.extend({
+
+    var Window_window1 = Window.extend({
+
+      init : function(app) {
+        this._super("ApplicationTextpad", false, {}, {});
+        this.content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationTextpad window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_open\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_save\"> <img alt=\"gtk-save\" src=\"/img/icons/16x16/actions/gtk-save.png\"/> <span>Save</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_saveas\"> <img alt=\"gtk-save-as\" src=\"/img/icons/16x16/actions/gtk-save-as.png\"/> <span>Save as...</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <textarea class=\"GtkTextView GtkObject textview1\"></textarea> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"GtkStatusbar statusbar1\"></div> </td> </tr> </table> </div> </div> ").html();
+        this.title = 'Textpad';
+        this.icon = 'apps/text-editor.png';
+        this.is_draggable = true;
+        this.is_resizable = true;
+        this.is_scrollable = false;
+        this.is_sessionable = true;
+        this.is_minimizable = true;
+        this.is_maximizable = true;
+        this.is_closable = true;
+        this.is_orphan = false;
+        this.width = 400;
+        this.height = 400;
+        this.gravity = null;
+
+
+        this.app = app;
+
+        WindowTitle = this.title;
+      },
+
+      destroy : function() {
+        this._super();
+      },
+
+
+      EventMenuNew : function(el, ev) {
+        this.$element.find("textarea").val("");
+        _update(null, el);
+      },
+
+
+      EventMenuOpen : function(el, ev) {
+        var self = this;
+
+        _open(function(fname) {
+          _read_file(self.$element, fname);
+        }, el);
+      },
+
+
+      EventMenuSave : function(el, ev) {
+        var self = this;
+        if ( argv && argv['path'] ) {
+          _save(argv['path'], self.$element.find("textarea").val());
+        }
+      },
+
+
+      EventMenuSaveAs : function(el, ev) {
+        var self = this;
+        _saveAs(function(file, mime) {
+          _save(file, self.$element.find("textarea").val(), function() {
+            _update(file, el);
+          });
+        });
+      },
+
+
+      EventMenuQuit : function(el, ev) {
+        this.$element.find(".ActionClose").click();
+      },
+
+
+
+      create : function(id, zi, mcallback) {
+        var el = this._super(id, zi, mcallback);
+        var self = this;
+
+        if ( el ) {
+          el.find(".GtkScale").slider();
+
+          el.find(".GtkToolItemGroup").click(function() {
+            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
+
+            if ( $(this).hasClass("Checked") ) {
+              $(this).removeClass("Checked");
+            } else {
+              $(this).addClass("Checked");
+            }
+          });
+
+          el.find(".GtkToggleToolButton button").click(function() {
+            if ( $(this).parent().hasClass("Checked") ) {
+              $(this).parent().removeClass("Checked");
+            } else {
+              $(this).parent().addClass("Checked");
+            }
+          });
+
+
+
+          el.find(".imagemenuitem_new").click(function(ev) {
+            self.EventMenuNew(this, ev);
+          });
+
+          el.find(".imagemenuitem_open").click(function(ev) {
+            self.EventMenuOpen(this, ev);
+          });
+
+          el.find(".imagemenuitem_save").click(function(ev) {
+            self.EventMenuSave(this, ev);
+          });
+
+          el.find(".imagemenuitem_saveas").click(function(ev) {
+            self.EventMenuSaveAs(this, ev);
+          });
+
+          el.find(".imagemenuitem_quit").click(function(ev) {
+            self.EventMenuQuit(this, ev);
+          });
+
+          // Do your stuff here
+
+          this.focus_hook = function() {
+            el.find("textarea").focus();
+            _updateStatusbar(el);
+          };
+
+          _read_file(el, argv['path']);
+
+          $(el).find("textarea").mousedown(function(ev) {
+            _updateStatusbar(el);
+            ev.stopPropagation();
+          }).focus(function() {
+            _updateStatusbar(el);
+          }).keyup(function() {
+            _updateStatusbar(el);
+          });
+        }
+
+      }
+    });
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    // APPLICATION
+    ///////////////////////////////////////////////////////////////////////////
+
+    var __ApplicationTextpad = Application.extend({
+
       init : function() {
-        this._super("ApplicationTextpad");
+        this._super("ApplicationTextpad", argv);
       },
 
       destroy : function() {
@@ -86,80 +255,16 @@ var ApplicationTextpad = (function() {
 
       run : function() {
         var self = this;
-        var el = app.$element;
 
-        app.focus_hook = function() {
-          el.find("textarea").focus();
-          _updateStatusbar(el);
-        };
+        this._super(self);
 
-        function _read_file(file) {
-          var txt = el.find("textarea");
-          if ( typeof file == "string" && file ) {
-            api.system.call("read", file, function(result, error) {
-              if ( error === null ) {
-                txt.val(result);
-                _update(file, el);
+        var root_window = new Window_window1();
+        root_window.show(self);
 
-                setTimeout(function() {
-                  setSelectionRangeX(txt.get(0), 0, 0);
-                }, 0);
-              } else {
-                _update(null, el);
-              }
-            });
-          } else {
-            _update(null, el);
-          }
-
-          _updateStatusbar(el);
-          txt.focus();
-        }
-
-        _read_file(argv['path']);
-
-        el.find(".imagemenuitem2").click(function() {
-          _open(function(fname) {
-            _read_file(fname);
-          }, el);
-        });
-
-        el.find(".imagemenuitem3").click(function() {
-          if ( argv && argv['path'] ) {
-            _save(argv['path'], app.$element.find("textarea").val());
-          }
-        });
-
-        el.find(".imagemenuitem4").click(function() {
-          _saveAs(function(file, mime) {
-            _save(file, app.$element.find("textarea").val(), function() {
-              _update(file, el);
-            });
-          });
-        });
-
-        el.find(".imagemenuitem1").click(function() {
-          app.$element.find("textarea").val("");
-          _update(null, el);
-        });
-
-        el.find(".imagemenuitem5").click(function() {
-          el.find(".ActionClose").click();
-        });
-
-        $(el).find("textarea").mousedown(function(ev) {
-          _updateStatusbar(el);
-          ev.stopPropagation();
-        }).focus(function() {
-          _updateStatusbar(el);
-        }).keyup(function() {
-          _updateStatusbar(el);
-        });
-
-        this._super();
+        // Do your stuff here
       }
     });
 
-    return new _ApplicationTextpad();
+    return new __ApplicationTextpad();
   };
-})();
+})($);

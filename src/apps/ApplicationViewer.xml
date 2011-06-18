@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application name="Viewer" file="ApplicationViewer.class.php" schema="ApplicationViewer.glade">
+  <property name="enabled">true</property>
+  <resource>app.viewer.css</resource>
+  <resource>app.viewer.js</resource>
+  <mime>image/*</mime>
+  <mime>audio/*</mime>
+  <mime>video/*</mime>
+  <mime>application/ogg</mime>
+</application>

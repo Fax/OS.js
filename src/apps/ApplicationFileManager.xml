@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application name="FileManager" file="ApplicationFileManager.class.php" schema="ApplicationFileManager.glade">
+  <property name="enabled">true</property>
+  <resource>app.filemanager.css</resource>
+  <resource>app.filemanager.js</resource>
+</application>

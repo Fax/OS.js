@@ -6,65 +6,7 @@
  * @class
  */
 var ApplicationDraw = (function($, undefined) {
-  return function(Application, app, API, argv) {
-    var _ApplicationDraw = Application.extend({
-
-
-      // !!! DO NOT TOUCH
-
-      init : function() {
-        this._super("ApplicationDraw");
-      },
-
-      destroy : function() {
-        this._super();
-      },
-
-
-      EventToggleStroke : function(el, ev) {
-      },
-
-
-      EventToggleFill : function(el, ev) {
-      },
-
-
-      EventChangeBackground : function(el, ev) {
-      },
-
-
-      EventChangeForeground : function(el, ev) {
-      },
-
-
-
-      run : function() {
-        var el = app.$element;
-        var self = this;
-
-
-        el.find(".toolbutton_stroke").click(function(ev) {
-          self.EventToggleStroke(this, ev);
-        });
-
-        el.find(".toolbutton_fill").click(function(ev) {
-          self.EventToggleFill(this, ev);
-        });
-
-        el.find(".colorbutton_background").click(function(ev) {
-          self.EventChangeBackground(this, ev);
-        });
-
-        el.find(".colorbutton_foreground").click(function(ev) {
-          self.EventChangeForeground(this, ev);
-        });
-
-
-        this._super(el);
-      }
-    });
-
-    // !!! READ-ONLY
+  return function(Window, Application, API, argv) {
 
     var Icons = {
       "selection"  : "/img/app.draw/icons/stock-selection-16.png",
@@ -558,20 +500,91 @@ var ApplicationDraw = (function($, undefined) {
 
     };
 
-    ///////////////////////////////////////////////////////////////////////////
-    // APPLICATION
-    ///////////////////////////////////////////////////////////////////////////
+    //
+    // Helpers
+    //
 
-    var __ApplicationDraw = _ApplicationDraw.extend({
+    var Window_window1 = Window.extend({
 
-      init : function() {
-        this._super();
+      init : function(app) {
+        this._super("ApplicationDraw", false, {}, {});
+        this.content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationDraw window1\"> <table class=\"GtkBox Vertical boxMain\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <ul class=\"GtkMenuBar menubarMain\"> <li class=\"GtkMenuItem menuitem_open\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_open\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_save\"> <img alt=\"gtk-save\" src=\"/img/icons/16x16/actions/gtk-save.png\"/> <span>Save</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_saveas\"> <img alt=\"gtk-save-as\" src=\"/img/icons/16x16/actions/gtk-save-as.png\"/> <span>Save as...</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem2\"> <span><u>E</u>ffects</span> <ul class=\"GtkMenu menu2\"> <li class=\"GtkMenuItem menuitem_effect_noise\"> <span>Noise</span> </li> </ul> </li> </ul> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <ul class=\"GtkToolbar toolbarMain\"> <li class=\"GtkToggleToolButton Checked toolbutton_stroke\"> <button>Enable Stroke</button> </li> <li class=\"GtkToggleToolButton Checked toolbutton_fill\"> <button>Enable Fill</button> </li> <li class=\"GtkToolItem toolbutton1\"> <table class=\"GtkBox Horizontal box1\" style=\"width:120px\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\" style=\"width:80px\"> <div class=\"GtkLabel GtkObject label1\">Thickness</div> </td> <td class=\"Fill GtkBoxPosition Position_1\" style=\"width:100px\"> <div class=\"GtkScale scale1\"></div> </td> </tr> </table> </li> <li class=\"GtkToolItem toolbutton2\"> <table class=\"GtkBox Horizontal box2\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"GtkLabel GtkObject label2\">Line Join</div> </td> <td class=\"Fill GtkBoxPosition Position_1\"> <select class=\"GtkComboBox GtkObject combobox_linejoin\"> <option value=\"milter\" class=\"GtkCellRendererText cellrenderertext_milter\">milter</option> <option value=\"bevel\" class=\"GtkCellRendererText cellrenderertext_bevel\">bevel</option> <option value=\"round\" class=\"GtkCellRendererText cellrenderertext_round\">round</option> </select> </td> </tr> </table> </li> <li class=\"GtkToolItem toolbutton3\"> <table class=\"GtkBox Horizontal box4\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"GtkLabel GtkObject label3\">Line Cap</div> </td> <td class=\"Fill GtkBoxPosition Position_1\"> <select class=\"GtkComboBox GtkObject combobox_linecap\"> <option value=\"butt\" class=\"GtkCellRendererText cellrenderertext_butt\">butt</option> <option value=\"round1\" class=\"GtkCellRendererText cellrenderertext_round1\">round1</option> <option value=\"square\" class=\"GtkCellRendererText cellrenderertext_square\">square</option> </select> </td> </tr> </table> </li> </ul> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_2\"> <table class=\"GtkBox Horizontal boxContent\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\" style=\"width:100px\"> <table class=\"GtkBox Vertical box3\"> <tr> <td class=\"Expand Fill GtkBoxPosition Position_0\"> <div class=\"GtkToolPalette Vertical toolpalette1\"> <button class=\"GtkToolItemGroup toolitemgroup_selection\"></button> <button class=\"GtkToolItemGroup toolitemgroup_pencil\"></button> <button class=\"GtkToolItemGroup toolitemgroup_line\"></button> <button class=\"GtkToolItemGroup toolitemgroup_square\"></button> <button class=\"GtkToolItemGroup toolitemgroup_rectangle\"></button> <button class=\"GtkToolItemGroup toolitemgroup_circle\"></button> <button class=\"GtkToolItemGroup toolitemgroup_ellipse\"></button> <button class=\"GtkToolItemGroup toolitemgroup_fill\"></button> <button class=\"GtkToolItemGroup toolitemgroup_pick\"></button> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <div class=\"GtkSeparator separator1\"> <hr/> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\" style=\"height:200px\"> <div class=\"GtkFixed fixed1\"> <div class=\"GtkColorButton GtkObject colorbutton_background\" style=\"left:15px;top:15px;width:50px;height:50px\"></div> <div class=\"GtkColorButton GtkObject colorbutton_foreground\" style=\"left:30px;top:30px;width:50px;height:50px\"></div> </div> </td> </tr> </table> </td> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"GtkViewport viewport1\"> <canvas class=\"GtkDrawingArea Canvas drawingarea1\"></canvas> </div> </td> </tr> </table> </td> </tr> </table> </div> </div> ").html();
+        this.title = 'Draw';
+        this.icon = 'categories/gnome-graphics.png';
+        this.is_draggable = true;
+        this.is_resizable = true;
+        this.is_scrollable = false;
+        this.is_sessionable = true;
+        this.is_minimizable = true;
+        this.is_maximizable = true;
+        this.is_closable = true;
+        this.is_orphan = false;
+        this.width = 800;
+        this.height = 500;
+        this.gravity = null;
+        this.app = app;
       },
 
       destroy : function() {
         DrawDocument.destroy();
 
         this._super();
+      },
+
+      EventMenuNew : function(el, ev) {
+        DrawDocument.clear();
+        this._update(null);
+      },
+
+
+      EventMenuOpen : function(el, ev) {
+        var self = this;
+        self._open(function(fname) {
+          DrawDocument.open("/media/" + fname);
+          self._update(fname);
+        }, null);
+      },
+
+
+      EventMenuSave : function(el, ev) {
+        var self = this;
+        if ( argv && argv['path'] ) {
+          self._save(argv['path'], DrawDocument.getImage());
+          self._update(argv['path']);
+        }
+      },
+
+
+      EventMenuSaveAs : function(el, ev) {
+        var self = this;
+        self._saveAs(function(file, mime) {
+          self._save(file, DrawDocument.getImage(), function() {
+            self._update(file);
+          });
+        });
+      },
+
+
+      EventMenuQuit : function(el, ev) {
+        this.$element.find(".ActionClose").click();
+      },
+
+
+      EventToggleStroke : function(el, ev) {
+        var checked = true;
+        if ( !$(el).hasClass("Checked") ) {
+          checked = false;
+        }
+        Tool.stroke = checked ? true : false;
+      },
+
+
+      EventToggleFill : function(el, ev) {
+        var checked = true;
+        if ( !$(el).hasClass("Checked") ) {
+          checked = false;
+        }
+        Tool.fill = checked ? true : false;
       },
 
 
@@ -591,170 +604,196 @@ var ApplicationDraw = (function($, undefined) {
         });
       },
 
-      EventToggleStroke : function(el, ev) {
-        var checked = true;
-        if ( !$(el).hasClass("Checked") ) {
-          checked = false;
-        }
-        Tool.stroke = checked ? true : false;
+
+      _update : function(file) {
+        argv['path']  = file;
+        this.opts     = file;
+        this.argv     = argv;
+
+        this.$element.find(".WindowTopInner span").html(this.title + ": " + (file || " file"));
       },
 
+      _save : function(file, content, callback) {
+        callback = callback || function() {};
 
-      EventToggleFill : function(el, ev) {
-        var checked = true;
-        if ( !$(el).hasClass("Checked") ) {
-          checked = false;
+        if ( typeof file == "string" && file ) {
+          API.system.call("write", {'file' : file, 'content' : content, 'encoding' : 'data:image/png;base64'}, function(result, error) {
+            // SYSTEM HANDLES ERRORS
+            if ( result ) {
+              callback(file);
+            }
+          });
         }
-        Tool.fill = checked ? true : false;
+      },
+
+      _saveAs : function(callback) {
+        API.system.dialog_file(function(file, mime) {
+          callback(file, mime);
+        }, ["image/*"], "save");
+      },
+
+      _open : function(callback) {
+        API.system.dialog_file(function(fname) {
+          callback(fname);
+        }, ["image/*"]);
+      },
+
+      create : function(id, zi, mcallback) {
+        var el = this._super(id, zi, mcallback);
+        var self = this;
+
+        if ( el ) {
+          el.find(".GtkScale").slider();
+
+          el.find(".GtkToolItemGroup").click(function() {
+            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
+
+            if ( $(this).hasClass("Checked") ) {
+              $(this).removeClass("Checked");
+            } else {
+              $(this).addClass("Checked");
+            }
+          });
+
+          el.find(".GtkToggleToolButton button").click(function() {
+            if ( $(this).parent().hasClass("Checked") ) {
+              $(this).parent().removeClass("Checked");
+            } else {
+              $(this).parent().addClass("Checked");
+            }
+          });
+
+
+
+          el.find(".imagemenuitem_new").click(function(ev) {
+            self.EventMenuNew(this, ev);
+          });
+
+          el.find(".imagemenuitem_open").click(function(ev) {
+            self.EventMenuOpen(this, ev);
+          });
+
+          el.find(".imagemenuitem_save").click(function(ev) {
+            self.EventMenuSave(this, ev);
+          });
+
+          el.find(".imagemenuitem_saveas").click(function(ev) {
+            self.EventMenuSaveAs(this, ev);
+          });
+
+          el.find(".imagemenuitem_quit").click(function(ev) {
+            self.EventMenuQuit(this, ev);
+          });
+
+          el.find(".toolbutton_stroke").click(function(ev) {
+            self.EventToggleStroke(this, ev);
+          });
+
+          el.find(".toolbutton_fill").click(function(ev) {
+            self.EventToggleFill(this, ev);
+          });
+
+          el.find(".colorbutton_background").click(function(ev) {
+            self.EventChangeBackground(this, ev);
+          });
+
+          el.find(".colorbutton_foreground").click(function(ev) {
+            self.EventChangeForeground(this, ev);
+          });
+
+          // Do your stuff here
+
+          // Tool buttons
+          $(el).find(".toolpalette1 .GtkToolItemGroup").each(function() {
+            var name = $(this).attr("class");
+            var namem = name.match(/toolitemgroup\_(.*)/);
+            if ( namem.length > 1 ) {
+              name = namem[1].replace("select_", "");
+            }
+
+            var img = sprintf('<img alt="" src="%s" />', Icons[name]);
+            $(this).html(img);
+
+            $(this).click(function() {
+              Tool.type = name;
+            });
+
+          });
+
+          $(el).find(".GtkToolItemGroup").first().click();
+
+          // Tool props
+          $(el).find(".combobox_linecap").change(function() {
+            Style.cap = $(el).find(".combobox_linecap").val();
+          });
+          $(el).find(".combobox_linejoin").change(function() {
+            Style.join = $(el).find(".combobox_linejoin").val();
+          });
+
+          // Tool thickness
+          $(el).find(".scale1").slider({
+            'min'    : 1,
+            'max'    : 50,
+            'value'  : 1,
+            'step'   : 1,
+            'change' : function() {
+              Style.width = $(el).find(".scale1").slider("value");
+            },
+            'slide'  : function() {
+              Style.width = $(el).find(".scale1").slider("value");
+            }
+          });
+
+          Tool.fill    = $(el).find(".toolbutton_fill").hasClass("Checked");
+          Tool.stroke  = $(el).find(".toolbutton_stroke").hasClass("Checked");
+
+          Style.stroke = DrawColor($(el).find(".colorbutton_foreground").css("background-color"));
+          Style.fill   = DrawColor($(el).find(".colorbutton_background").css("background-color"));
+          Style.width  = $(el).find(".scale1").slider("value");
+          Style.cap    = $(el).find(".combobox_linecap").val();
+          Style.join   = $(el).find(".combobox_linejoin").val();
+
+          DrawDocument.init(el);
+
+          var fname = null;
+          if ( argv['path'] ) {
+            fname = argv['path'];
+            DrawDocument.open("/media/" + fname, function() {
+              self._update(fname);
+            }, null);
+          } else {
+            self._update(fname);
+          }
+
+        }
+
+      }
+    });
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    // APPLICATION
+    ///////////////////////////////////////////////////////////////////////////
+
+    var __ApplicationDraw = Application.extend({
+
+      init : function() {
+        this._super("ApplicationDraw", argv);
+      },
+
+      destroy : function() {
+        this._super();
       },
 
       run : function() {
-        var el = app.$element;
         var self = this;
 
         this._super();
 
-        //
-        // Helpers
-        //
+        var root_window = new Window_window1(self);
+        root_window.show();
 
-        function _update(file) {
-          app.opts     = file;
-          argv['path'] = file;
-          app.argv     = argv;
-
-          $(el).find(".WindowTopInner span").html(app.title + ": " + (file || " file"));
-        }
-
-        function _save(file, content, callback) {
-          callback = callback || function() {};
-
-          if ( typeof file == "string" && file ) {
-            API.system.call("write", {'file' : file, 'content' : content, 'encoding' : 'data:image/png;base64'}, function(result, error) {
-              // SYSTEM HANDLES ERRORS
-              if ( result ) {
-                callback(file);
-              }
-            });
-          }
-        }
-
-        function _saveAs(callback) {
-          API.system.dialog_file(function(file, mime) {
-            callback(file, mime);
-          }, ["image/*"], "save");
-        }
-
-        function _open(callback) {
-          API.system.dialog_file(function(fname) {
-            callback(fname);
-          }, ["image/*"]);
-        }
-
-        //
-        // UI items
-        //
-
-        // Tool buttons
-        $(el).find(".toolpalette1 .GtkToolItemGroup").each(function() {
-          var name = $(this).attr("class");
-          var namem = name.match(/toolitemgroup\_(.*)/);
-          if ( namem.length > 1 ) {
-            name = namem[1].replace("select_", "");
-          }
-
-          var img = sprintf('<img alt="" src="%s" />', Icons[name]);
-          $(this).html(img);
-
-          $(this).click(function() {
-            Tool.type = name;
-          });
-
-        });
-
-        $(el).find(".GtkToolItemGroup").first().click();
-
-        // Tool props
-        $(el).find(".combobox_linecap").change(function() {
-          Style.cap = $(el).find(".combobox_linecap").val();
-        });
-        $(el).find(".combobox_linejoin").change(function() {
-          Style.join = $(el).find(".combobox_linejoin").val();
-        });
-
-        // Tool thickness
-        $(el).find(".scale1").slider({
-          'min'    : 1,
-          'max'    : 50,
-          'value'  : 1,
-          'step'   : 1,
-          'change' : function() {
-            Style.width = $(el).find(".scale1").slider("value");
-          },
-          'slide'  : function() {
-            Style.width = $(el).find(".scale1").slider("value");
-          }
-        });
-
-        //
-        // Menu items
-        //
-        el.find(".imagemenuitem2").click(function() {
-          _open(function(fname) {
-            DrawDocument.open("/media/" + fname);
-            _update(fname);
-          }, null);
-        });
-
-        el.find(".imagemenuitem3").click(function() {
-          if ( argv && argv['path'] ) {
-            _save(argv['path'], DrawDocument.getImage());
-            _update(argv['path']);
-          }
-        });
-
-        el.find(".imagemenuitem4").click(function() {
-          _saveAs(function(file, mime) {
-            _save(file, DrawDocument.getImage(), function() {
-              _update(file);
-            });
-          });
-        });
-
-        el.find(".imagemenuitem1").click(function() {
-          DrawDocument.clear();
-          _update(null);
-        });
-
-        el.find(".imagemenuitem5").click(function() {
-          el.find(".ActionClose").click();
-        });
-
-        //
-        // Initialization
-        //
-
-        Tool.fill    = $(el).find(".toolbutton_fill").hasClass("Checked");
-        Tool.stroke  = $(el).find(".toolbutton_stroke").hasClass("Checked");
-
-        Style.stroke = DrawColor($(el).find(".colorbutton_foreground").css("background-color"));
-        Style.fill   = DrawColor($(el).find(".colorbutton_background").css("background-color"));
-        Style.width  = $(el).find(".scale1").slider("value");
-        Style.cap    = $(el).find(".combobox_linecap").val();
-        Style.join   = $(el).find(".combobox_linejoin").val();
-
-        DrawDocument.init(el);
-
-        var fname = null;
-        if ( argv['path'] ) {
-          fname = argv['path'];
-          DrawDocument.open("/media/" + fname, function() {
-            _update(fname);
-          }, null);
-        } else {
-          _update(fname);
-        }
-
+        // Do your stuff here
       }
     });
 

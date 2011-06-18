@@ -262,6 +262,7 @@
       color : #fff;
     }
     .GtkMenuBar .GtkMenuItem .GtkMenuItem span,
+    .GtkMenuBar .GtkMenuItem .GtkRadioMenuItem span,
     .GtkMenuBar .GtkMenuItem .GtkImageMenuItem span {
       color : #222;
       text-decoration : none;
@@ -270,15 +271,18 @@
       text-decoration : underline;
     }
     .GtkMenuBar .GtkMenuItem:hover .GtkMenuItem span,
+    .GtkMenuBar .GtkMenuItem:hover .GtkRadioMenuItem span,
     .GtkMenuBar .GtkMenuItem:hover .GtkImageMenuItem span {
       text-decoration : none;
     }
 
     .GtkMenuBar .GtkMenuItem .GtkMenuItem:hover,
+    .GtkMenuBar .GtkMenuItem .GtkRadioMenuItem:hover,
     .GtkMenuBar .GtkMenuItem .GtkImageMenuItem:hover {
       background : #222;
     }
     .GtkMenuBar .GtkMenuItem .GtkMenuItem:hover span,
+    .GtkMenuBar .GtkMenuItem .GtkRadioMenuItem:hover span,
     .GtkMenuBar .GtkMenuItem .GtkImageMenuItem:hover span {
       color : #fff;
     }

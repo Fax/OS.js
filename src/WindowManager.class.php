@@ -63,7 +63,7 @@ class WindowManager
         $apps[$c] = Array(
           "title" => constant("{$c}::APPLICATION_TITLE"),
           "icon"  => constant("{$c}::APPLICATION_ICON"),
-          "mime"  => $opts["mime"]
+          "mime"  => $opts["mimes"]
         );
       }
     }
