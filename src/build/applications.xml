@@ -58,7 +58,7 @@
           <li class="GtkToolItem toolbutton1">
             <table class="GtkBox box1 Horizontal">
               <tr>
-                <td class="Fill GtkBoxPosition Position_0">
+                <td class="Fill GtkBoxPosition Position_0" style="width:80px">
                   <div class="GtkLabel label1 GtkObject">Thickness</div>
                 </td>
                 <td class="Fill GtkBoxPosition Position_1">

@@ -6,6 +6,11 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  */
 
+/* GtkObject */
+.GtkObject {
+}
+
+/* GtkWindow */
 .GtkWindow {
   position : absolute;
   top : 5px;
@@ -14,6 +19,30 @@
   bottom : 5px;
 }
 
+  /* Gtk[Object] Sizing */
+  .GtkWindow .Fill {
+  }
+  .GtkWindow .Expand {
+  }
+    .GtkWindow .Expand.Fill {
+    }
+
+    .GtkWindow .Fill .GtkBox,
+    .GtkWindow .Expand .GtkBox {
+    }
+
+    .GtkWindow .Fill .GtkObject,
+    .GtkWindow .Expand .GtkObject {
+      position : absolute;
+      top : 0px;
+      left : 0px;
+      right : 0px;
+      bottom : 0px;
+    }
+    .GtkWindow .Expand .GtkObject {
+      height : auto;
+    }
+
 /* GtkBox */
 .GtkWindow .GtkBox {
   width : 100%;
@@ -21,29 +50,29 @@
   border-collapse : collapse;
   border : 0 none;
 }
-.GtkWindow .GtkBox tr,
-.GtkWindow .GtkBox td {
-  position : relative;
-  vertical-align: top;
-}
-.GtkWindow .GtkBox.Vertical {
-}
-.GtkWindow .GtkBox.Horizontal {
-}
-.GtkWindow .GtkBox .GtkBoxPosition {
-}
+  .GtkWindow .GtkBox tr,
+  .GtkWindow .GtkBox td {
+    position : relative;
+    vertical-align: top;
+  }
+  .GtkBox.Vertical {
+  }
+  .GtkBox.Horizontal {
+  }
+  .GtkBox .GtkBoxPosition {
+  }
 
-.GtkBox,
-.GtkBox tbody,
-.GtkBox tr,
-.GtkBox td {
-  border : 0 none;
-  margin : 0;
-  padding : 0;
-}
+  .GtkBox,
+  .GtkBox tbody,
+  .GtkBox tr,
+  .GtkBox td {
+    border : 0 none;
+    margin : 0;
+    padding : 0;
+  }
 
 /* GtkButtonBox */
-.GtkWindow .GtkButtonBox {
+.GtkButtonBox {
   width : 100%;
   height : 32px;
 }
@@ -54,32 +83,32 @@
 }
 
 /* GtkComboBox */
-.GtkWindow .GtkComboBox {
+.GtkComboBox {
   height : 20px;
 }
 
 /* GtkImage */
-.GtkWindow .GtkImage {
+.GtkImage {
 }
 
 /* GtkTextView */
-.GtkWindow .GtkTextView {
+.GtkTextView {
 }
 
 /* GtkEntry */
-.GtkWindow .GtkEntry {
+.GtkEntry {
   height : 20px;
 }
 
 /* GtkButton */
-.GtkWindow .GtkButton {
+.GtkButton {
   height : 32px;
 }
-.GtkWindow .GtkButton img {
+.GtkButton img {
   vertical-align : middle;
   margin-right : 5px;
 }
-.GtkWindow .GtkButton span {
+.GtkButton span {
   vertical-align : middle;
 }
 
@@ -189,7 +218,7 @@
 }
 
 /* GtkMenuBar > GtkMenu */
-.GtkWindow .GtkMenuBar {
+.GtkMenuBar {
   height : 28px;
   margin : -5px;
   padding : 0;
@@ -199,17 +228,17 @@
   font-size : 90%;
   background : #4f4f4f;
 }
-  .GtkWindow .GtkMenuBar .GtkMenuItem {
+  .GtkMenuBar .GtkMenuItem {
     display : inline-block;
     position : relative;
     padding : 6px;
   }
 
-  .GtkWindow .GtkMenuBar .GtkMenuItem .GtkMenuItem {
+  .GtkMenuBar .GtkMenuItem .GtkMenuItem {
     display : block;
   }
 
-  .GtkWindow .GtkMenuBar .GtkMenuItem ul {
+  .GtkMenuBar .GtkMenuItem ul {
     margin : 0;
     padding : 2px;
     list-style-type : none;
@@ -222,75 +251,51 @@
     border : 1px solid;
   }
 
-  .GtkWindow .GtkMenuItem span,
-  .GtkWindow .GtkMenuItem img {
+  .GtkMenuItem span,
+  .GtkMenuItem img {
     vertical-align : middle;
 
     cursor : pointer;
   }
 
-    .GtkWindow .GtkMenuBar .GtkMenuItem span {
+    .GtkMenuBar .GtkMenuItem span {
       color : #fff;
     }
-    .GtkWindow .GtkMenuBar .GtkMenuItem .GtkMenuItem span,
-    .GtkWindow .GtkMenuBar .GtkMenuItem .GtkImageMenuItem span {
+    .GtkMenuBar .GtkMenuItem .GtkMenuItem span,
+    .GtkMenuBar .GtkMenuItem .GtkImageMenuItem span {
       color : #222;
       text-decoration : none;
     }
-    .GtkWindow .GtkMenuBar .GtkMenuItem:hover span {
+    .GtkMenuBar .GtkMenuItem:hover span {
       text-decoration : underline;
     }
-    .GtkWindow .GtkMenuBar .GtkMenuItem:hover .GtkMenuItem span,
-    .GtkWindow .GtkMenuBar .GtkMenuItem:hover .GtkImageMenuItem span {
+    .GtkMenuBar .GtkMenuItem:hover .GtkMenuItem span,
+    .GtkMenuBar .GtkMenuItem:hover .GtkImageMenuItem span {
       text-decoration : none;
     }
 
-    .GtkWindow .GtkMenuBar .GtkMenuItem .GtkMenuItem:hover,
-    .GtkWindow .GtkMenuBar .GtkMenuItem .GtkImageMenuItem:hover {
+    .GtkMenuBar .GtkMenuItem .GtkMenuItem:hover,
+    .GtkMenuBar .GtkMenuItem .GtkImageMenuItem:hover {
       background : #222;
     }
-    .GtkWindow .GtkMenuBar .GtkMenuItem .GtkMenuItem:hover span,
-    .GtkWindow .GtkMenuBar .GtkMenuItem .GtkImageMenuItem:hover span {
+    .GtkMenuBar .GtkMenuItem .GtkMenuItem:hover span,
+    .GtkMenuBar .GtkMenuItem .GtkImageMenuItem:hover span {
       color : #fff;
     }
 
-    .GtkWindow .GtkMenuBar .GtkMenu {
+    .GtkMenuBar .GtkMenu {
       padding : 2px;
     }
-      .GtkWindow .GtkMenuBar .GtkMenu li {
+      .GtkMenuBar .GtkMenu li {
         padding : 5px;
       }
 
-    .GtkWindow .GtkMenuBar .GtkSeparatorMenuItem {
+    .GtkMenuBar .GtkSeparatorMenuItem {
     }
 
-    .GtkWindow .GtkMenuBar .Checked {
+    .GtkMenuBar .Checked {
       font-weight : bold;
     }
-    .GtkWindow .GtkMenuBar .Disabled {
+    .GtkMenuBar .Disabled {
       color : #fff;
     }
-
-/* Gtk[Object] Sizing */
-.GtkWindow .Fill {
-}
-.GtkWindow .Expand {
-}
-.GtkWindow .Expand.Fill {
-}
-
-.GtkWindow .Fill .GtkBox,
-.GtkWindow .Expand .GtkBox {
-}
-
-.GtkWindow .Fill .GtkObject,
-.GtkWindow .Expand .GtkObject {
-  position : absolute;
-  top : 0px;
-  left : 0px;
-  right : 0px;
-  bottom : 0px;
-}
-.GtkWindow .Expand .GtkObject {
-  height : auto;
-}

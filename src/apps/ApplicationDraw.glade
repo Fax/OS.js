@@ -159,10 +159,12 @@
                 <property name="use_action_appearance">False</property>
                 <child>
                   <object class="GtkBox" id="box1">
+                    <property name="width_request">120</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
                       <object class="GtkLabel" id="label1">
+                        <property name="width_request">80</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Thickness</property>
@@ -175,6 +177,7 @@
                     </child>
                     <child>
                       <object class="GtkScale" id="scale1">
+                        <property name="width_request">100</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="digits">2</property>
