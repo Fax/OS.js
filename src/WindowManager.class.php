@@ -7,18 +7,6 @@
  * @created 2011-05-22
  */
 
-require PATH_APPS . "/SystemAbout.class.php";
-require PATH_APPS . "/SystemUser.class.php";
-require PATH_APPS . "/SystemSettings.class.php";
-require PATH_APPS . "/SystemLogout.class.php";
-
-require PATH_APPS . "/ApplicationClock.class.php";
-require PATH_APPS . "/ApplicationDraw.class.php";
-require PATH_APPS . "/ApplicationFileManager.class.php";
-require PATH_APPS . "/ApplicationTerminal.class.php";
-require PATH_APPS . "/ApplicationTextpad.class.php";
-require PATH_APPS . "/ApplicationViewer.class.php";
-
 /**
  * WindowManager Class
  *

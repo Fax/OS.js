@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <applications>
-  <application name="FileManager" title="File Manager" icon="apps/file-manager.png" class="ApplicationFileManager">
+  <application name="FileManager" title="File Manager" icon="apps/file-manager.png" class="ApplicationFileManager" file="ApplicationFileManager.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"File Manager","icon":"apps\/file-manager.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":500,"height":500,"gravity":""}]]></property>
       <property name="content"><![CDATA[<div class="window1">
@@ -241,7 +241,7 @@ var ApplicationFileManager = (function($, undefined) {
 }
 ]]></style>
   </application>
-  <application name="Viewer" title="Viewer" icon="categories/gnome-multimedia.png" class="ApplicationViewer">
+  <application name="Viewer" title="Viewer" icon="categories/gnome-multimedia.png" class="ApplicationViewer" file="ApplicationViewer.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"Viewer","icon":"categories\/gnome-multimedia.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":300,"height":200,"gravity":""}]]></property>
       <property name="content"><![CDATA[<div class="window1">
@@ -418,7 +418,7 @@ var ApplicationViewer = (function($, undefined) {
 }
 ]]></style>
   </application>
-  <application name="Terminal" title="Terminal" icon="apps/utilities-terminal.png" class="ApplicationTerminal">
+  <application name="Terminal" title="Terminal" icon="apps/utilities-terminal.png" class="ApplicationTerminal" file="ApplicationTerminal.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"Terminal","icon":"apps\/utilities-terminal.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":500,"height":300,"gravity":""}]]></property>
       <property name="content"><![CDATA[<div class="window1">
@@ -549,7 +549,7 @@ var ApplicationTerminal = (function($, undefined) {
 }
 ]]></style>
   </application>
-  <application name="Clock" title="Clock" icon="status/appointment-soon.png" class="ApplicationClock">
+  <application name="Clock" title="Clock" icon="status/appointment-soon.png" class="ApplicationClock" file="ApplicationClock.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"Clock","icon":"status\/appointment-soon.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":200,"height":200,"gravity":"center"}]]></property>
       <property name="content"><![CDATA[<div class="window1">
@@ -680,7 +680,7 @@ var ApplicationClock = (function($, undefined) {
 }
 ]]></style>
   </application>
-  <application name="Textpad" title="Textpad" icon="apps/text-editor.png" class="ApplicationTextpad">
+  <application name="Textpad" title="Textpad" icon="apps/text-editor.png" class="ApplicationTextpad" file="ApplicationTextpad.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"Textpad","icon":"apps\/text-editor.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":400,"height":400,"gravity":""}]]></property>
       <property name="content"><![CDATA[<div class="window1">
@@ -895,7 +895,7 @@ var ApplicationTextpad = (function($, undefined) {
 }
 ]]></style>
   </application>
-  <application name="About" title="About" icon="actions/gtk-about.png" class="SystemAbout">
+  <application name="About" title="About" icon="actions/gtk-about.png" class="SystemAbout" file="SystemAbout.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"About","icon":"actions\/gtk-about.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":220,"height":120,"gravity":"center"}]]></property>
       <property name="content"><![CDATA[<div class="window1">
@@ -1024,7 +1024,7 @@ var SystemAbout = (function($, undefined) {
 }
 ]]></style>
   </application>
-  <application name="Settings" title="Settings" icon="categories/applications-system.png" class="SystemSettings">
+  <application name="Settings" title="Settings" icon="categories/applications-system.png" class="SystemSettings" file="SystemSettings.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"Settings","icon":"categories\/applications-system.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":400,"height":200,"gravity":"center"}]]></property>
       <property name="content"><![CDATA[<div class="window1">
@@ -1153,7 +1153,7 @@ var SystemSettings = (function($, undefined) {
 }
 ]]></style>
   </application>
-  <application name="Logout" title="Logout" icon="actions/gnome-logout.png" class="SystemLogout">
+  <application name="Logout" title="Logout" icon="actions/gnome-logout.png" class="SystemLogout" file="SystemLogout.class.php">
     <window id="dialog1">
       <property name="properties"><![CDATA[{"type":"dialog","title":"Logout","icon":"actions\/gnome-logout.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":300,"height":100,"gravity":"center"}]]></property>
       <property name="content"><![CDATA[<div class="dialog1">
@@ -1317,7 +1317,7 @@ var SystemLogout = (function($, undefined) {
 }
 ]]></style>
   </application>
-  <application name="User" title="User Information" icon="apps/user-info.png" class="SystemUser">
+  <application name="User" title="User Information" icon="apps/user-info.png" class="SystemUser" file="SystemUser.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"User Information","icon":"apps\/user-info.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":400,"height":250,"gravity":"center"}]]></property>
       <property name="content"><![CDATA[<div class="window1">
@@ -1446,7 +1446,7 @@ var SystemUser = (function($, undefined) {
 }
 ]]></style>
   </application>
-  <application name="Draw" title="Draw" icon="categories/gnome-graphics.png" class="ApplicationDraw">
+  <application name="Draw" title="Draw" icon="categories/gnome-graphics.png" class="ApplicationDraw" file="ApplicationDraw.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"Draw","icon":"categories\/gnome-graphics.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":800,"height":500,"gravity":""}]]></property>
       <property name="content"><![CDATA[<div class="window1">

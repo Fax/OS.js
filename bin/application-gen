@@ -207,6 +207,9 @@ if ( $dh  = opendir($root) ) {
 
       $gfilename = str_replace(basename($filename), ((string) $xml['schema']), $filename);
       $cname = str_replace(".xml", "", $filename);
+      $class_file = (string) $xml['file'];
+
+      require PATH_APPS . "/{$class_file}";
 
       echo "Building {$filename} ($gfilename)...\n";
 
@@ -234,6 +237,7 @@ if ( $dh  = opendir($root) ) {
         $node->setAttribute("title", constant("{$cname}::APPLICATION_TITLE"));
         $node->setAttribute("icon", constant("{$cname}::APPLICATION_ICON"));
         $node->setAttribute("class", $cname);
+        $node->setAttribute("file", $class_file);
 
         $wins = Array();
         foreach ( $windows as $id => $window ) {

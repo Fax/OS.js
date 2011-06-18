@@ -62,6 +62,7 @@ if ( $xml = file_get_contents(PATH_PROJECT_BUILD . "/applications.xml") ) {
       $app_title = (string) $app['title'];
       $app_icon  = (string) $app['icon'];
       $app_class = (string) $app['class'];
+      $app_file  = (string) $app['file'];
 
       $windows   = Array();
       $resources = Array();
@@ -115,6 +116,8 @@ if ( $xml = file_get_contents(PATH_PROJECT_BUILD . "/applications.xml") ) {
         "resources" => $resources,
         "mimes"     => $mimes
       );
+
+      require PATH_APPS . "/{$app_file}";
     }
   }
 } else {
