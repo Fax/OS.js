@@ -11,7 +11,7 @@ error_reporting(E_ALL | E_STRICT);
 // Project
 define("PROJECT_AUTHOR",  "Anders Evenrud");
 define("PROJECT_CONTACT", "andersevenrud@gmail.com");
-define("PROJECT_VERSION", "0.4-r2");
+define("PROJECT_VERSION", "0.4-r3");
 
 // Environment
 define("ENV_PRODUCTION", false);
