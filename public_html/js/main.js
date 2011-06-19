@@ -897,6 +897,7 @@
           _TopIndex++;
 
           var id = "Window_" + this.stack.length;
+
           win.create(id, _TopIndex, function() {
             setTimeout(function() {
               API.ui.cursor("default");
@@ -1502,8 +1503,6 @@
     show : function() {
       if ( !this.showing ) {
         _Desktop.addWindow(this);
-
-        this.showing = true;
       }
     },
 
@@ -1516,6 +1515,7 @@
     create : function(id, zi, mcallback) {
       if ( !this.created ) {
         this.id = id;
+        this.showing = true;
 
         var self = this;
         mcallback = mcallback || function() {};
@@ -2167,7 +2167,9 @@
         self.$element.find(".ActionClose").click();
       });
       self.$element.find(".DialogButtons .Ok").click(function() {
+
         self.$element.find(".ActionClose").click();
+        console.log(self.$element.find(".ActionClose"));
       });
       self.$element.find(".DialogButtons .Cancel").click(function() {
         self.$element.find(".ActionClose").click();

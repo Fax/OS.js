@@ -16,7 +16,7 @@ var ApplicationViewer = (function($, undefined) {
       w = (force ? w : (w > 800 ? 800 : w));
       h = ((force ? h : (h > 600 ? 600 : h)));
 
-      win.resize(w, h);
+      win.resize(w + 8, h + 35);
     }
 
     function _open(callback) {
