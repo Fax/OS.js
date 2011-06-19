@@ -1,0 +1,3 @@
+#!/bin/bash
+#
+./bin/propel-gen && ./bin/propel-gen diff && ./bin/propel-gen migrate
