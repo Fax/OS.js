@@ -1492,6 +1492,7 @@
       this.focus_hook  = null;
       this.blur_hook   = null;
       this.die_hook    = null;
+      this.resize_hook = null;
 
       // DOM Elements
       this.$element = null;
@@ -1783,6 +1784,10 @@
 
               self.width = parseInt(self.$element.width(), 10);
               self.height = parseInt(self.$element.height(), 10);
+
+              if ( self.resize_hook ) {
+                self.resize_hook();
+              }
             }
           });
         }

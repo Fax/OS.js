@@ -6,7 +6,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  */
 
-/* GtkObject */
+/* GtkObject : Custom */
 .GtkObject {
 }
 
@@ -125,6 +125,12 @@
 .GtkIconView {
   background : #fff;
 }
+
+  /* GtkIconViewHeader : Custom */
+  .GtkIconViewHeader {
+    /* theme.* for more */
+    color : #222;
+  }
 
 /* GtkStatusbar */
 .GtkStatusbar {
@@ -315,3 +321,4 @@
     .GtkMenuBar .Disabled {
       color : #fff;
     }
+

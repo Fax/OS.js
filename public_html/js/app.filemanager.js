@@ -109,6 +109,9 @@ var ApplicationFileManager = (function($, undefined) {
 
             self._initClick();
           }
+
+          self.resize_hook();
+
           self.$element.find(".statusbar1").html(_defaultStatusText);
         });
 
@@ -118,6 +121,17 @@ var ApplicationFileManager = (function($, undefined) {
         /*if ( hist !== false ) {
           _History.push(_CurrentDir);
         }*/
+      },
+
+      _updateTable : function() {
+        console.log();
+        var self = this;
+        this.$element.find(".iconview1 table.TableHead td").each(function(ind, el) {
+          var pel = self.$element.find(".iconview1 table.TableBody tr:first-child td").get(ind);
+          if ( pel ) {
+            $(el).css("width", $(pel).width() + "px");
+          }
+        });
       },
 
       _initClick : function () {
@@ -193,13 +207,16 @@ var ApplicationFileManager = (function($, undefined) {
           }
         });
 
-        this.$element.find(".ApplicationFileManager li").addClass("ContextMenu");
-        this.$element.find(".ApplicationFileManager td").addClass("ContextMenu");
+        //this.$element.find(".ApplicationFileManager li").addClass("ContextMenu");
+        //this.$element.find(".ApplicationFileManager td").addClass("ContextMenu");
       },
 
 
       _selItem : function(t) {
         var self = this;
+        if ( !$(t).parents(".TableBody").get(0) ) {
+          return;
+        }
 
         if ( lastItem ) {
           if ( t && t.tagName.toLowerCase() == "tr" ) {
@@ -293,6 +310,12 @@ var ApplicationFileManager = (function($, undefined) {
           el.addClass(this.name);
 
 
+          this.resize_hook = function() {
+            if ( self.app.argv.view_type == "list" ) {
+              self._updateTable();
+            }
+          };
+
 
           $(el).click(function() {
             self._selItem();
@@ -301,7 +324,6 @@ var ApplicationFileManager = (function($, undefined) {
 
           this._updateMenu();
           this.chdir(argv.path);
-
         }
 
       }

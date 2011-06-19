@@ -23,8 +23,8 @@
   right : 2px;
   bottom : 2px;
   */
-  overflow : auto;
   background : #fff;
+  overflow : auto;
 }
 .ApplicationFileManager .iconview1 ul {
   list-style-type : none;
@@ -59,10 +59,10 @@
 .ApplicationFileManager .iconview1 table {
   border-collapse : collapse;
   width : 100%;
-  background : #fff;
 }
 .ApplicationFileManager .iconview1 td {
   padding : 2px;
+  white-space : nowrap;
 }
 .ApplicationFileManager .iconview1 td.Image {
   width : 16px;
@@ -76,4 +76,22 @@
 
 .ApplicationFileManager .iconview1 tr.odd {
   background : #e6e6e6;
+}
+
+
+.ApplicationFileManager .iconview1 table.TableHead {
+  height : 20px;
+  padding-top :5px;
+  padding-bottom : 5px;
+  overflow : hidden;
+  display : block;
+}
+.ApplicationFileManager .iconview1 table.TableBody {
+  background : #fff;
+}
+
+.ApplicationFileManager .TableWrap {
+}
+
+.ApplicationFileManager .TableBodyWrap {
 }

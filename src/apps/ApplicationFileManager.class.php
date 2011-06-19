@@ -66,10 +66,10 @@ EOHTML;
             $mime = $info['type'] == "dir" ? "" : $info['mime'];
             $result[] = <<<EOHTML
         <tr class="type_{$info['type']} {$class} Inner">
-          <td class="Image"><img alt="" src="/img/icons/16x16/{$info['icon']}" /></td>
-          <td class="Title">{$file}</td>
-          <td class="Size">{$size}</td>
-          <td class="Type">{$mime}</td>
+          <td class="Image Space First"><img alt="" src="/img/icons/16x16/{$info['icon']}" /></td>
+          <td class="Title Space">{$file}</td>
+          <td class="Size Space">{$size}</td>
+          <td class="Type Space Last">{$mime}</td>
           <td class="Info" style="display:none;">
             <input type="hidden" name="type" value="{$info['type']}" />
             <input type="hidden" name="mime" value="{$info['mime']}" />
@@ -92,7 +92,29 @@ EOHTML;
       if ( $view == "icon" ) {
         $out = "<ul>" . implode("", $result) . "</ul>";
       } else {
-        $out = "<table>" . implode("", $result) . "</table>";
+        $rows = implode("", $result);
+        $out = <<<EOHTML
+<div class="TableWrap">
+  <table class="TableHead GtkIconViewHeader">
+    <tbody>
+      <tr class="">
+        <td class="Image Space First">&nbsp;</td>
+        <td class="Title Space">Filename</td>
+        <td class="Size Space">Size</td>
+        <td class="Type Space Last">Type</td>
+        <td class="Info" style="display:none;">&nbsp;</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="TableBodyWrap">
+    <table class="TableBody">
+      <tbody>
+    {$rows}
+      </tbody>
+    </table>
+  </div>
+</div>
+EOHTML;
       }
 
       return Array("items" => $out, "total" => $total, "bytes" => $bytes, "path" => ($path == "/" ? "Home" : $path));
