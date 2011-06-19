@@ -40,7 +40,7 @@ EOJAVASCRIPT;
  * @class
  */
 var {$cname} = (function(\$, undefined) {
-  return function(Window, Application, API, argv) {
+  return function(GtkWindow, Application, API, argv, windows) {
 
 
 %s
@@ -84,10 +84,10 @@ function create_js($cname, $window, $content, $properties, $signals) {
   $content = addslashes(str_replace("\n", "", preg_replace("/\s+/", " ", $content)));
   $template = <<<EOJAVASCRIPT
 
-    var Window_{$window} = Window.extend({
+    var Window_{$window} = GtkWindow.extend({
 
       init : function(app) {
-        this._super("{$cname}", $dialog, app);
+        this._super("{$cname}", $dialog, app, windows);
         this.content = $("{$content}").html();
 %s
       },

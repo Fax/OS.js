@@ -69,7 +69,7 @@
     _TopIndex          = 11;
   }
 
-  function LaunchApplication(app_name, args, callback, callback_error) {
+  function LaunchApplication(app_name, args, windows, callback, callback_error) {
     callback = callback || function() {};
     callback_error = callback_error || function() {};
 
@@ -78,7 +78,7 @@
         _Resources.addResources(data.result.resources, function() {
 
           if ( window[app_name] ) {
-            var application = new window[app_name](GtkWindow, Application, API, args);
+            var application = new window[app_name](GtkWindow, Application, API, args, windows);
             application.uuid  = data.result.uuid;
             application.run();
           } else {
@@ -279,12 +279,12 @@
         }
       },
 
-      'launch' : function(app_name, args, attrs) {
+      'launch' : function(app_name, args, windows) {
         args = args || {};
         if ( args.length !== undefined && !args.length ) {
           args = {};
         }
-        attrs = attrs || {};
+        windows = windows || {};
 
         var wins = _Desktop.stack;
         for ( var i = 0; i < wins.length; i++ ) {
@@ -298,7 +298,7 @@
         }
 
         console.log("API launching", app_name, args);
-        LaunchApplication(app_name, args);
+        LaunchApplication(app_name, args, windows);
       },
 
       'call' : function(method, argv, callback, show_alert) {
@@ -462,8 +462,6 @@
         save = save || false;
         var sess = save ? _Desktop.getSession() : {};
 
-        alert("SESSION IS CURRENTLY BROKEN! FIX IS UNDER WAY!"); // TODO REFACOR
-
         localStorage.setItem('session', JSON.stringify(sess));
       },
 
@@ -476,21 +474,17 @@
 
             console.log("API restore session", session);
 
-            var el;
-            var autolaunch = session.windows;
-            if ( autolaunch ) {
-              for ( var i = 0; i < autolaunch.length; i++ ) {
-                el = autolaunch[i];
-                var argv = el.argv || [];
-                var attrs = {
-                  'position' : el.position,
-                  'size'     : el.size,
-                  'attribs'  : el.attribs,
-                  'restore'  : true
-                };
-                API.system.launch(el.name, argv, attrs);
+            var i = 0;
+            var l = session.length;
+            var s;
+
+            for ( i; i < l; i++ ) {
+              s = session[i];
+              if ( s ) {
+                API.system.launch(s.name, s.argv, s.windows);
               }
             }
+
           }
         }
 
@@ -1044,7 +1038,22 @@
       },
 
       getSession : function() {
-        return {}; // TODO Refactor
+        var sess = [];
+
+        var i = 0;
+        var l = _Processes.length;
+        var p, s;
+        for ( i; i < l; i++ ) {
+          p = _Processes[i];
+          if ( p !== undefined ) {
+            s = p.getSession();
+            if ( s !== false ) {
+              sess.push(s);
+            }
+          }
+        }
+
+        return sess;
       }
 
 
@@ -1442,6 +1451,10 @@
       this.showing         = false;
       this.last_attrs      = null;
 
+      if ( attrs.length ) {
+        attrs = attrs[0]; // FIXME
+      }
+
       // Window main attributes
       this.id          = null;
       this.name        = name;
@@ -1468,6 +1481,7 @@
       this.top            = -1;
       this.left           = -1;
       this.oldZindex      = -1;
+      this.zindex         = -1;
       this.gravity        = "none";
 
       // Window hooks FIXME: Event listeners on_XXX
@@ -1665,27 +1679,16 @@
 
         // Check if window has any saved attributes for override (session restore etc)
         if ( this.attrs && sizeof(this.attrs) ) {
-          if ( this.attrs.position instanceof Object ) {
-            this.top = this.attrs.position.top;
-            this.left = this.attrs.position.left;
-          }
-          if ( this.attrs.size instanceof Object ) {
-            if ( this.attrs.restore ) {
-              fresh = false;
-            }
+          this.top          = this.attrs.top;
+          this.left         = this.attrs.left;
+          this.width        = this.attrs.width;
+          this.height       = this.attrs.height;
+          this.is_minimized = this.attrs.is_minimized;
+          this.is_maximized = this.attrs.is_maximized;
+          this.is_ontop     = this.attrs.is_ontop;
+          this.zindex       = this.attrs.zindex;
 
-            this.width = this.attrs.size.width;
-            this.height = this.attrs.size.height;
-          }
-          if ( this.attrs.restore ) {
-            if ( this.attrs.attribs && sizeof(this.attrs.attribs) ) {
-              this.is_minimized = this.attrs.attribs.minimized;
-              this.is_maximized = this.attrs.attribs.maximized;
-              if ( this.attrs.attribs.ontop !== undefined ) {
-                this.is_ontop   = this.attrs.attribs.ontop;
-              }
-            }
-          }
+          fresh = false;
         }
 
         if ( !isNaN(this.width) && (this.width > 0) ) {
@@ -1781,6 +1784,10 @@
           $(el).hide();
         }
 
+        if ( this.zindex && this.zindex > 0 ) {
+          this.shuffle(this.zindex);
+        }
+
         if ( this.is_maximized ) {
           this.$element.find(".ActionMaximize").parent().addClass("Active");
           if ( this.is_resizable ) {
@@ -1794,6 +1801,18 @@
       return el;
     },
 
+    shuffle : function(zi, old) {
+      if ( old ) {
+        this.oldZindex = this.zindex;
+      }
+
+      zi = parseInt(zi, 10);
+      if ( !isNaN(zi) && (zi > 0) ) {
+        this.$element.css("z-index", zi);
+        this.zindex = zi;
+      }
+    },
+
     redraw : function() {
 
     },
@@ -1801,15 +1820,14 @@
     ontop : function() {
       if ( this.is_ontop ) {
         if ( this.oldZindex > 0 ) {
-          this.$element.css("z-index", this.oldZindex);
+          this.shuffle(this.oldZindex);
         } else {
           _TopIndex++;
-          this.$element.css("z-index", _TopIndex);
+          this.shuffle(_TopIndex);
         }
       } else {
         _OnTopIndex++;
-        this.oldZindex = this.$element.css("z-index");
-        this.$element.css("z-index", _OnTopIndex);
+        this.shuffle(_OnTopIndex, true);
       }
 
       this.is_ontop = !this.is_ontop;
@@ -1826,12 +1844,10 @@
         // FIXME: Roll-back values when max is reached
         if ( this.is_ontop ) {
           _OnTopIndex++;
-
-          this.$element.css("z-index", _OnTopIndex);
+          this.shuffle(_OnTopIndex);
         } else {
           _TopIndex++;
-
-          this.$element.css("z-index", _TopIndex);
+          this.shuffle(_TopIndex);
         }
 
         this.$element.addClass("Current");
@@ -1951,7 +1967,24 @@
 
       el.css("height", (height + appendHeight) + "px");
       el.css("width", (width + appendWidth) + "px");
-    }
+    },
+
+    getSession : function() {
+      if ( !this.is_sessionable ) {
+        return false;
+      }
+
+      return {
+        is_maximized : this.is_maximized,
+        is_minimized : this.is_minimized,
+        is_ontop     : this.is_ontop,
+        width        : this.width,
+        height       : this.height,
+        top          : this.top,
+        left         : this.left,
+        zindex       : this.zindex
+      };
+   }
 
   });
 
@@ -1967,10 +2000,10 @@
    */
   var GtkWindow = Window.extend({
 
-    init : function(window_name, window_dialog, app) {
+    init : function(window_name, window_dialog, app, attrs) {
       this.app = app;
 
-      this._super(window_name, window_dialog, {}, {});
+      this._super(window_name, window_dialog, attrs);
     },
 
     create : function(id, zi, mcallback) {
@@ -2776,7 +2809,7 @@
           root_window.die_hook = function() {
 
 
-            self.stop();
+            self.__stop();
           };
         }
 
@@ -2786,7 +2819,7 @@
       }
     },
 
-    stop : function() {
+    __stop : function() {
       if ( this.running ) {
         this.destroy();
       }
@@ -2805,10 +2838,18 @@
     },
 
     getSession : function() {
-      return {
-        "name"    : this.name,
-        "argv"    : this.argv
-      };
+      if ( this.root_window ) {
+        var win = this.root_window.getSession();
+        if ( win !== false ) {
+          return {
+            "name"    : this.name,
+            "argv"    : this.argv,
+            "windows" : [win]
+          };
+        }
+      }
+
+      return false;
     }
 
   });

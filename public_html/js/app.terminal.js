@@ -17,7 +17,7 @@ var ApplicationTerminal = (function($, undefined) {
   var KEY_DOWN = 40;
 
 
-  return function(GtkWindow, Application, API, argv) {
+  return function(GtkWindow, Application, API, argv, windows) {
 
 
 
@@ -82,7 +82,7 @@ var ApplicationTerminal = (function($, undefined) {
     var Window_window1 = GtkWindow.extend({
 
       init : function(app) {
-        this._super("ApplicationTerminal", false, app);
+        this._super("ApplicationTerminal", false, app, windows);
         this.content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationTerminal window1\"> <textarea class=\"GtkTextView GtkObject textview1\"></textarea> </div> </div> ").html();
         this.title = 'Terminal';
         this.icon = 'apps/utilities-terminal.png';
