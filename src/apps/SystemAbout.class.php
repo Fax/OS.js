@@ -17,9 +17,6 @@
 class SystemAbout
   extends Application
 {
-  const APPLICATION_TITLE  = "About";
-  const APPLICATION_ICON   = "actions/gtk-about.png";
-  const APPLICATION_SYSTEM = true;
 
   /**
    * Create a new instance

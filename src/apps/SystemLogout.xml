@@ -1,5 +1,9 @@
 <application name="Logout" file="SystemLogout.class.php" schema="SystemLogout.glade">
   <property name="enabled">true</property>
+  <property name="title">Logout</property>
+  <property name="icon">actions/gnome-logout.png</property>
+  <property name="system">true</property>
+
   <!--
   <resource>sys.logout.css</resource>
   <resource>sys.logout.js</resource>

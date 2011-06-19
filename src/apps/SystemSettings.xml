@@ -1,5 +1,9 @@
 <application name="Settings" file="SystemSettings.class.php" schema="SystemSettings.glade">
   <property name="enabled">true</property>
+  <property name="title">Settings</property>
+  <property name="icon">categories/applications-system.png</property>
+  <property name="system">true</property>
+
   <!--
   <resource>sys.settings.css</resource>
   <resource>sys.settings.js</resource>

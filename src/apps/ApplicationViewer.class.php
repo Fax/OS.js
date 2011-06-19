@@ -17,8 +17,6 @@
 class ApplicationViewer
   extends Application
 {
-  const APPLICATION_TITLE  = "Viewer";
-  const APPLICATION_ICON   = "categories/gnome-multimedia.png";
 
   /**
    * Create a new instance

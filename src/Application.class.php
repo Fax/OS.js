@@ -18,7 +18,6 @@ abstract class Application
 {
   const APPLICATION_TITLE   = __CLASS__;
   const APPLICATION_ICON    = "emblems/emblem-unreadable.png";
-  const APPLICATION_SYSTEM  = false;
 
   /////////////////////////////////////////////////////////////////////////////
   // VARIABLES

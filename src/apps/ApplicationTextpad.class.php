@@ -17,8 +17,6 @@
 class ApplicationTextpad
   extends Application
 {
-  const APPLICATION_TITLE  = "Textpad";
-  const APPLICATION_ICON   = "apps/text-editor.png";
 
   /**
    * Create a new instance

@@ -17,9 +17,6 @@
 class ApplicationFileManager
   extends Application
 {
-  const APPLICATION_TITLE  = "File Manager";
-  const APPLICATION_ICON   = "apps/file-manager.png";
-  const APPLICATION_SYSTEM = false;
 
   /**
    * Create a new instance

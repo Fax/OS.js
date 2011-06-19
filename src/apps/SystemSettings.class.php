@@ -17,9 +17,6 @@
 class SystemSettings
   extends Application
 {
-  const APPLICATION_TITLE  = "Settings";
-  const APPLICATION_ICON   = "categories/applications-system.png";
-  const APPLICATION_SYSTEM = true;
 
   /**
    * Create a new instance

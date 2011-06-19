@@ -7,7 +7,6 @@
  * TODO: Custom Tooltips
  * TODO: Fix onblur() for all applications
  * TODO: Finixh application hook interface
- * TODO: Window ontop (sticky)
  * TODO: Separate Operation dialogs
  * TODO: Apps can append title to window list (panel item)
  * TODO: Sortable panel items (use absolute, snap to direction as panel does)
@@ -42,7 +41,7 @@
   /**
    * Local settings
    */
-  var SETTING_REVISION = 16;
+  var SETTING_REVISION = 17;
   var ENABLE_LOGIN     = false;
   var ANIMATION_SPEED  = 400;
 
@@ -53,6 +52,7 @@
   var _Settings        = null;
   var _Desktop         = null;
   var _Window          = null;
+  var _Processes       = [];
   var _TopIndex        = (ZINDEX_WINDOW + 1);
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);
 
@@ -65,6 +65,7 @@
     _Settings          = null;
     _Desktop           = null;
     _Window            = null;
+    _Processes         = [];
     _TopIndex          = 11;
   }
 
@@ -77,8 +78,8 @@
         _Resources.addResources(data.result.resources, function() {
 
           if ( window[app_name] ) {
-            var application = new window[app_name](Window, Application, API, args);
-            application.uuid = data.result.uuid;
+            var application = new window[app_name](GtkWindow, Application, API, args);
+            application.uuid  = data.result.uuid;
             application.run();
           } else {
             var error = "Application Script not found!";
@@ -893,24 +894,24 @@
         if ( win instanceof Window ) {
           var self = this;
 
-          var id = "Window_" + self.stack.length;
+          _TopIndex++;
+
+          var id = "Window_" + this.stack.length;
           win.create(id, _TopIndex, function() {
             setTimeout(function() {
               API.ui.cursor("default");
             }, 50);
           });
 
-          _TopIndex++;
-
-          self.stack.push(win);
+          this.stack.push(win);
 
           //win.focus();
           if ( !win.is_minimized && !win.is_maximized ) {
             //$(win.$element).trigger("mousedown");
-            self.focusWindow(win); // Always focus new windows
+            this.focusWindow(win); // Always focus new windows
           }
 
-          self.panel.redraw(self, win, false);
+          this.panel.redraw(self, win, false);
 
           return win;
         }
@@ -918,18 +919,36 @@
         return false;
       },
 
-      removeWindow : function(win) {
+      removeApplication : function(app) {
+        var i = 0;
+        var l = this.stack.length;
+        var a;
+        for ( i; i < l; i++ ) {
+          a = this.stack[i];
+          if ( a.app && a.app.uuid == app.uuid ) {
+            if ( a !== app.root_window ) {
+              this.removeWindow(a, i);
+            }
+          }
+        }
+      },
+
+      removeWindow : function(win, index) {
         if ( win instanceof Window ) {
           win.destroy();
 
-          var i = 0;
-          var l = this.stack.length;
-          for ( i; i < l; i++ ) {
-            if ( this.stack[i] == win ) {
-              this.stack.splice(i, 1);
-              break;
+          if ( index === undefined ) {
+            var i = 0;
+            var l = this.stack.length;
+            for ( i; i < l; i++ ) {
+              if ( this.stack[i] == win ) {
+                index = i;
+                break;
+              }
             }
           }
+
+          this.stack.splice(index, 1);
 
           this.panel.redraw(this, win, true);
         }
@@ -1410,21 +1429,25 @@
    */
   var Window = Class.extend({
 
-    init : function(name, dialog, argv, attrs) {
+    /**
+     * @param String   name       Name of window
+     * @param String   dialog     Dialog type if any
+     * @param Object   attrs      Extra win attributes (used to restore from sleep etc)
+     */
+    init : function(name, dialog, attrs) {
       // Various properties
       this.created         = false;
-      this.loaded          = false;
       this.current         = false;
-      this.app             = null;
+      this.showing         = false;
       this.last_attrs      = null;
 
       // Window main attributes
+      this.id          = null;
       this.name        = name;
       this.title       = this.dialog ? "Dialog" : "Window";
       this.content     = "";
       this.icon        = "emblems/emblem-unreadable.png";
-      this.dialog      = dialog ? true : false;
-      this.argv        = argv; // REFACTOR
+      this.dialog      = dialog ? dialog : false;
       this.attrs       = attrs;
 
       // Window attributes
@@ -1449,6 +1472,7 @@
       // Window hooks FIXME: Event listeners on_XXX
       this.focus_hook  = null;
       this.blur_hook   = null;
+      this.die_hook    = null;
 
       // DOM Elements
       this.$element = null;
@@ -1459,12 +1483,14 @@
     destroy : function() {
       var self = this;
 
+      if ( this.die_hook ) {
+        this.die_hook();
+      }
+
       this.focus_hook  = null;
       this.blur_hook   = null;
-
-      if ( this.app ) {
-        this.app.destroy();
-      }
+      this.die_hook    = null;
+      this.showing     = false;
 
       $(this.$element).fadeOut(ANIMATION_SPEED, function() {
         $(self.$element).empty().remove();
@@ -1474,11 +1500,23 @@
     },
 
     show : function() {
-      _Desktop.addWindow(this);
+      if ( !this.showing ) {
+        _Desktop.addWindow(this);
+
+        this.showing = true;
+      }
+    },
+
+    close : function() {
+      if ( this.showing ) {
+        _Desktop.removeWindow(this);
+      }
     },
 
     create : function(id, zi, mcallback) {
       if ( !this.created ) {
+        this.id = id;
+
         var self = this;
         mcallback = mcallback || function() {};
 
@@ -1501,7 +1539,7 @@
         // Content and buttons
         el.find(".WindowTopInner span").html(this.title);
         if ( this.dialog ) {
-          el.find(".DialogContent").html(this.content).addClass(this.argv.type); // REFACTOR
+          el.find(".DialogContent").html(this.content).addClass(this.dialog); // REFACTOR
         } else {
           el.find(".WindowTopInner img").attr("src", "/img/icons/16x16/" + this.icon);
           el.find(".WindowContentInner").html(this.content);
@@ -1553,7 +1591,7 @@
 
         if ( this.is_closable ) {
           el.find(".ActionClose").click(function() {
-            _Desktop.removeWindow(self);
+            self.close();
           });
         } else {
           el.find(".ActionClose").parent().hide();
@@ -1918,6 +1956,55 @@
   });
 
   /////////////////////////////////////////////////////////////////////////////
+  // GTK+ Implementations
+  /////////////////////////////////////////////////////////////////////////////
+
+
+  /**
+   * Gtk+: GtkWindow
+   *
+   * @class
+   */
+  var GtkWindow = Window.extend({
+
+    init : function(window_name, window_dialog, app) {
+      this.app = app;
+
+      this._super(window_name, window_dialog, {}, {});
+    },
+
+    create : function(id, zi, mcallback) {
+      var el = this._super(id, zi, mcallback);
+      var self = this;
+
+      if ( el ) {
+        el.find(".GtkScale").slider();
+
+        el.find(".GtkToolItemGroup").click(function() {
+          $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
+
+          if ( $(this).hasClass("Checked") ) {
+            $(this).removeClass("Checked");
+          } else {
+            $(this).addClass("Checked");
+          }
+        });
+
+        el.find(".GtkToggleToolButton button").click(function() {
+          if ( $(this).parent().hasClass("Checked") ) {
+            $(this).parent().removeClass("Checked");
+          } else {
+            $(this).parent().addClass("Checked");
+          }
+        });
+      }
+
+      return el;
+    }
+
+  });
+
+  /////////////////////////////////////////////////////////////////////////////
   // MENU
   /////////////////////////////////////////////////////////////////////////////
 
@@ -2008,7 +2095,7 @@
   var Dialog = Window.extend({
 
     init : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
-      this._super("Dialog", true, {'type' : type});
+      this._super("Dialog", type);
 
       this.width = 200;
       this.height = 70;
@@ -2060,7 +2147,7 @@
   var OperationDialog = Window.extend({
 
     init : function(type) {
-      this._super("OperationDialog", true, {'type' : type});
+      this._super("OperationDialog", type);
 
       this.width          = 400;
       this.height         = 200;
@@ -2648,42 +2735,81 @@
    * @class
    */
   var Application = Class.extend({
-      init : function(name, argv) {
-        this.name = name;
-        this.argv = argv;
-        this.uuid = null;
+    init : function(name, argv) {
+      this.name         = name;
+      this.argv         = argv;
+      this.uuid         = null;
+      this.index        = (_Processes.push(this) - 1);
+      this.running      = false;
+      this.root_window  = null;
 
-        console.log("Application created", this.name, this, arguments);
-      },
+      console.log("Application created", this.name, this, arguments);
+    },
 
-      destroy : function() {
-        var self = this;
-
+    destroy : function() {
+      var self = this;
+      if ( this.running ) {
         if ( this.uuid ) {
           $.post("/", {'ajax' : true, 'action' : 'flush', 'uuid' : self.uuid}, function(data) {
-            console.log('Application Window', self, self.uuid, data);
+            console.log('Application flush', self, self.uuid, data);
           });
         }
+
+        //_Desktop.removeWindowApplication(this.name, this.root_window);
+        _Desktop.removeApplication(self);
 
         console.log("Application destroyed", this.name, this);
-      },
 
-      run : function() {
-        console.log("Application running", this.name, this);
-      },
+        this.running = false;
 
-
-      event : function(win, ev, args, callback) {
-        var self = this;
-        if ( this.uuid ) {
-          var pargs = {'ajax' : true, 'action' : 'event', 'cname' : self.name ,'uuid' : self.uuid, 'instance' : {'name' : self.name, 'action' : ev, 'args' : args }};
-          $.post("/", pargs, function(data) {
-            console.log('Event Application', win, self.uuid, pargs, data);
-
-            callback(data.result, data.error);
-          });
-        }
+        _Processes[this.index] = undefined; //_Processes = _Processes.splice(this.index, 1);
       }
+    },
+
+    run : function(root_window) {
+      var self = this;
+
+      if ( !this.running ) {
+        this.root_window = root_window;
+
+        if ( root_window instanceof Window ) {
+          root_window.die_hook = function() {
+
+
+            self.stop();
+          };
+        }
+
+        console.log("Application running", this.name, this);
+
+        this.running = true;
+      }
+    },
+
+    stop : function() {
+      if ( this.running ) {
+        this.destroy();
+      }
+    },
+
+    event : function(win, ev, args, callback) {
+      var self = this;
+      if ( this.uuid ) {
+        var pargs = {'ajax' : true, 'action' : 'event', 'cname' : self.name ,'uuid' : self.uuid, 'instance' : {'name' : self.name, 'action' : ev, 'args' : args }};
+        $.post("/", pargs, function(data) {
+          console.log('Event Application', win, self.uuid, pargs, data);
+
+          callback(data.result, data.error);
+        });
+      }
+    },
+
+    getSession : function() {
+      return {
+        "name"    : this.name,
+        "argv"    : this.argv
+      };
+    }
 
   });
 

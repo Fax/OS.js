@@ -6,13 +6,13 @@
  * @class
  */
 var SystemSettings = (function($, undefined) {
-  return function(Window, Application, API, argv) {
+  return function(GtkWindow, Application, API, argv) {
 
 
-    var Window_window1 = Window.extend({
+    var Window_window1 = GtkWindow.extend({
 
       init : function(app) {
-        this._super("SystemSettings", false, {}, {});
+        this._super("SystemSettings", false, app);
         this.content = $("<div class=\"window1\"> <div class=\"GtkWindow SystemSettings window1\"> <div class=\"SystemSettings\"><div class=\"SystemSettingsLoading\"></div><div class=\"SystemSettingsInner\"><div class=\"SystemSettingsForm\"><form method=\"post\" action=\"/\" onsubmit=\"return false;\"><div><h1>Wallpaper</h1><input type=\"text\" name=\"fake_desktop.wallpaper.path\" value=\"\" disabled=\"disabled\" /><input type=\"hidden\" name=\"desktop.wallpaper.path\" value=\"\" /><button>...</button></div><div><h1>Theme</h1><select name=\"desktop.theme\"><option value=\"dark\">Dark</option><option value=\"light\">Light</option></select></div></form></div><div class=\"SystemSettingsButtons\"><button class=\"Save\">Save</button><button class=\"Close\">Close</button></div></div></div> </div> </div> ").html();
         this.title = 'Settings';
         this.icon = 'categories/applications-system.png';
@@ -27,8 +27,6 @@ var SystemSettings = (function($, undefined) {
         this.width = 400;
         this.height = 200;
         this.gravity = 'center';
-
-        this.app = app;
       },
 
       destroy : function() {
@@ -42,27 +40,6 @@ var SystemSettings = (function($, undefined) {
         var self = this;
 
         if ( el ) {
-          el.find(".GtkScale").slider();
-
-          el.find(".GtkToolItemGroup").click(function() {
-            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
-
-            if ( $(this).hasClass("Checked") ) {
-              $(this).removeClass("Checked");
-            } else {
-              $(this).addClass("Checked");
-            }
-          });
-
-          el.find(".GtkToggleToolButton button").click(function() {
-            if ( $(this).parent().hasClass("Checked") ) {
-              $(this).parent().removeClass("Checked");
-            } else {
-              $(this).parent().addClass("Checked");
-            }
-          });
-
-
 
           // Do your stuff here
           var form = $(el).find("form");
@@ -129,10 +106,10 @@ var SystemSettings = (function($, undefined) {
       run : function() {
         var self = this;
 
-        this._super(self);
-
         var root_window = new Window_window1(self);
         root_window.show();
+
+        this._super(root_window);
 
         // Do your stuff here
       }

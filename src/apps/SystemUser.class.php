@@ -17,9 +17,6 @@
 class SystemUser
   extends Application
 {
-  const APPLICATION_TITLE  = "User Information";
-  const APPLICATION_ICON   = "apps/user-info.png";
-  const APPLICATION_SYSTEM = true;
 
   /**
    * Create a new instance

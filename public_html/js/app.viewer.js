@@ -6,7 +6,7 @@
  * @class
  */
 var ApplicationViewer = (function($, undefined) {
-  return function(Window, Application, API, argv) {
+  return function(GtkWindow, Application, API, argv) {
 
 
     function _resize(win, img, el, force) {
@@ -128,10 +128,10 @@ var ApplicationViewer = (function($, undefined) {
     }
 
 
-    var Window_window1 = Window.extend({
+    var Window_window1 = GtkWindow.extend({
 
       init : function(app) {
-        this._super("ApplicationViewer", false, {}, {});
+        this._super("ApplicationViewer", false, app);
         this.content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationViewer window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_open\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <div class=\"GtkFixed fixed1\"></div> </td> </tr> </table> </div> </div> ").html();
         this.title = 'Viewer';
         this.icon = 'categories/gnome-multimedia.png';
@@ -146,9 +146,6 @@ var ApplicationViewer = (function($, undefined) {
         this.width = 300;
         this.height = 200;
         this.gravity = null;
-
-
-        this.app = app;
       },
 
       destroy : function() {
@@ -175,28 +172,6 @@ var ApplicationViewer = (function($, undefined) {
         var self = this;
 
         if ( el ) {
-          el.find(".GtkScale").slider();
-
-          el.find(".GtkToolItemGroup").click(function() {
-            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
-
-            if ( $(this).hasClass("Checked") ) {
-              $(this).removeClass("Checked");
-            } else {
-              $(this).addClass("Checked");
-            }
-          });
-
-          el.find(".GtkToggleToolButton button").click(function() {
-            if ( $(this).parent().hasClass("Checked") ) {
-              $(this).parent().removeClass("Checked");
-            } else {
-              $(this).parent().addClass("Checked");
-            }
-          });
-
-
-
           el.find(".imagemenuitem_open").click(function(ev) {
             self.EventMenuOpen(this, ev);
           });
@@ -233,10 +208,10 @@ var ApplicationViewer = (function($, undefined) {
       run : function() {
         var self = this;
 
-        this._super(self);
-
         var root_window = new Window_window1(self);
         root_window.show();
+
+        this._super(root_window);
 
         // Do your stuff here
       }

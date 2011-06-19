@@ -17,8 +17,6 @@
 class ApplicationClock
   extends Application
 {
-  const APPLICATION_TITLE = "Clock";
-  const APPLICATION_ICON  = "status/appointment-soon.png";
 
   /**
    * Create a new instance

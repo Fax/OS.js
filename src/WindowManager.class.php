@@ -47,10 +47,10 @@ class WindowManager
     $apps = Array();
 
     foreach ( Application::$Registered as $c => $opts ) {
-      if ( !constant("{$c}::APPLICATION_SYSTEM") ) {
+      if ( !$opts['system'] ) {
         $apps[$c] = Array(
-          "title" => constant("{$c}::APPLICATION_TITLE"),
-          "icon"  => constant("{$c}::APPLICATION_ICON"),
+          "title" => $opts['title'], //constant("{$c}::APPLICATION_TITLE"),
+          "icon"  => $opts['icon'], //constant("{$c}::APPLICATION_ICON"),
           "mime"  => $opts["mimes"]
         );
       }

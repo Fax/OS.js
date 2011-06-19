@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <applications>
-  <application name="FileManager" title="File Manager" icon="apps/file-manager.png" class="ApplicationFileManager" file="ApplicationFileManager.class.php">
+  <application name="FileManager" title="File Manager" icon="apps/file-manager.png" system="false" class="ApplicationFileManager" file="ApplicationFileManager.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"File Manager","icon":"apps\/file-manager.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":500,"height":500,"gravity":""}]]></property>
       <property name="content"><![CDATA[<div class="window1">
@@ -81,7 +81,7 @@ var ApplicationFileManager = (function($, undefined) {
     var Window_window1 = Window.extend({
 
       init : function(app) {
-        this._super("ApplicationFileManager", false, {}, {});
+        this._super("ApplicationFileManager", false, app);
         this.content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationFileManager window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_close\"> <img alt=\"gtk-close\" src=\"/img/icons/16x16/actions/gtk-close.png\"/> <span>Close</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem2\"> <span><u>G</u>o</span> <ul class=\"GtkMenu menu2\"> <li class=\"GtkImageMenuItem imagemenuitem_home\"> <img alt=\"gtk-home\" src=\"/img/icons/16x16/actions/gtk-home.png\"/> <span>Home</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem3\"> <span><u>V</u>iew</span> <ul class=\"GtkMenu menu3\"> <li class=\"GtkImageMenuItem menuitem_refresh\"> <img alt=\"gtk-refresh\" src=\"/img/icons/16x16/actions/gtk-refresh.png\"/> <span>Refresh</span> </li> <li class=\"GtkRadioMenuItem menuitem_list\"> <span>List view</span> </li> <li class=\"GtkRadioMenuItem menuitem_icon\"> <span>Icon View</span> </li> </ul> </li> </ul> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"GtkIconView GtkObject iconview1\"></div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"GtkStatusbar statusbar1\"></div> </td> </tr> </table> </div> </div> ").html();
         this.title = 'File Manager';
         this.icon = 'apps/file-manager.png';
@@ -97,8 +97,6 @@ var ApplicationFileManager = (function($, undefined) {
         this.height = 500;
         this.gravity = null;
 
-
-        this.app = app;
       },
 
       destroy : function() {
@@ -140,27 +138,6 @@ var ApplicationFileManager = (function($, undefined) {
         var self = this;
 
         if ( el ) {
-          el.find(".GtkScale").slider();
-
-          el.find(".GtkToolItemGroup").click(function() {
-            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
-
-            if ( $(this).hasClass("Checked") ) {
-              $(this).removeClass("Checked");
-            } else {
-              $(this).addClass("Checked");
-            }
-          });
-
-          el.find(".GtkToggleToolButton button").click(function() {
-            if ( $(this).parent().hasClass("Checked") ) {
-              $(this).parent().removeClass("Checked");
-            } else {
-              $(this).parent().addClass("Checked");
-            }
-          });
-
-
 
           el.find(".imagemenuitem_new").click(function(ev) {
             self.EventMenuNew(this, ev);
@@ -215,10 +192,10 @@ var ApplicationFileManager = (function($, undefined) {
       run : function() {
         var self = this;
 
-        this._super(self);
-
         var root_window = new Window_window1(self);
         root_window.show();
+
+        this._super(root_window);
 
         // Do your stuff here
       }
@@ -241,7 +218,7 @@ var ApplicationFileManager = (function($, undefined) {
 }
 ]]></style>
   </application>
-  <application name="Viewer" title="Viewer" icon="categories/gnome-multimedia.png" class="ApplicationViewer" file="ApplicationViewer.class.php">
+  <application name="Viewer" title="Viewer" icon="categories/gnome-multimedia.png" system="false" class="ApplicationViewer" file="ApplicationViewer.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"Viewer","icon":"categories\/gnome-multimedia.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":300,"height":200,"gravity":""}]]></property>
       <property name="content"><![CDATA[<div class="window1">
@@ -298,7 +275,7 @@ var ApplicationViewer = (function($, undefined) {
     var Window_window1 = Window.extend({
 
       init : function(app) {
-        this._super("ApplicationViewer", false, {}, {});
+        this._super("ApplicationViewer", false, app);
         this.content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationViewer window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_open\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <div class=\"GtkFixed fixed1\"></div> </td> </tr> </table> </div> </div> ").html();
         this.title = 'Viewer';
         this.icon = 'categories/gnome-multimedia.png';
@@ -314,8 +291,6 @@ var ApplicationViewer = (function($, undefined) {
         this.height = 200;
         this.gravity = null;
 
-
-        this.app = app;
       },
 
       destroy : function() {
@@ -337,27 +312,6 @@ var ApplicationViewer = (function($, undefined) {
         var self = this;
 
         if ( el ) {
-          el.find(".GtkScale").slider();
-
-          el.find(".GtkToolItemGroup").click(function() {
-            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
-
-            if ( $(this).hasClass("Checked") ) {
-              $(this).removeClass("Checked");
-            } else {
-              $(this).addClass("Checked");
-            }
-          });
-
-          el.find(".GtkToggleToolButton button").click(function() {
-            if ( $(this).parent().hasClass("Checked") ) {
-              $(this).parent().removeClass("Checked");
-            } else {
-              $(this).parent().addClass("Checked");
-            }
-          });
-
-
 
           el.find(".imagemenuitem_open").click(function(ev) {
             self.EventMenuOpen(this, ev);
@@ -392,10 +346,10 @@ var ApplicationViewer = (function($, undefined) {
       run : function() {
         var self = this;
 
-        this._super(self);
-
         var root_window = new Window_window1(self);
         root_window.show();
+
+        this._super(root_window);
 
         // Do your stuff here
       }
@@ -418,7 +372,7 @@ var ApplicationViewer = (function($, undefined) {
 }
 ]]></style>
   </application>
-  <application name="Terminal" title="Terminal" icon="apps/utilities-terminal.png" class="ApplicationTerminal" file="ApplicationTerminal.class.php">
+  <application name="Terminal" title="Terminal" icon="apps/utilities-terminal.png" system="false" class="ApplicationTerminal" file="ApplicationTerminal.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"Terminal","icon":"apps\/utilities-terminal.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":500,"height":300,"gravity":""}]]></property>
       <property name="content"><![CDATA[<div class="window1">
@@ -445,7 +399,7 @@ var ApplicationTerminal = (function($, undefined) {
     var Window_window1 = Window.extend({
 
       init : function(app) {
-        this._super("ApplicationTerminal", false, {}, {});
+        this._super("ApplicationTerminal", false, app);
         this.content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationTerminal window1\"> <textarea class=\"GtkTextView GtkObject textview1\"></textarea> </div> </div> ").html();
         this.title = 'Terminal';
         this.icon = 'apps/utilities-terminal.png';
@@ -461,8 +415,6 @@ var ApplicationTerminal = (function($, undefined) {
         this.height = 300;
         this.gravity = null;
 
-
-        this.app = app;
       },
 
       destroy : function() {
@@ -476,27 +428,6 @@ var ApplicationTerminal = (function($, undefined) {
         var self = this;
 
         if ( el ) {
-          el.find(".GtkScale").slider();
-
-          el.find(".GtkToolItemGroup").click(function() {
-            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
-
-            if ( $(this).hasClass("Checked") ) {
-              $(this).removeClass("Checked");
-            } else {
-              $(this).addClass("Checked");
-            }
-          });
-
-          el.find(".GtkToggleToolButton button").click(function() {
-            if ( $(this).parent().hasClass("Checked") ) {
-              $(this).parent().removeClass("Checked");
-            } else {
-              $(this).parent().addClass("Checked");
-            }
-          });
-
-
 
           // Do your stuff here
 
@@ -523,10 +454,10 @@ var ApplicationTerminal = (function($, undefined) {
       run : function() {
         var self = this;
 
-        this._super(self);
-
         var root_window = new Window_window1(self);
         root_window.show();
+
+        this._super(root_window);
 
         // Do your stuff here
       }
@@ -549,7 +480,7 @@ var ApplicationTerminal = (function($, undefined) {
 }
 ]]></style>
   </application>
-  <application name="Clock" title="Clock" icon="status/appointment-soon.png" class="ApplicationClock" file="ApplicationClock.class.php">
+  <application name="Clock" title="Clock" icon="status/appointment-soon.png" system="false" class="ApplicationClock" file="ApplicationClock.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"Clock","icon":"status\/appointment-soon.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":200,"height":200,"gravity":"center"}]]></property>
       <property name="content"><![CDATA[<div class="window1">
@@ -576,7 +507,7 @@ var ApplicationClock = (function($, undefined) {
     var Window_window1 = Window.extend({
 
       init : function(app) {
-        this._super("ApplicationClock", false, {}, {});
+        this._super("ApplicationClock", false, app);
         this.content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationClock window1\"> <div class=\"GtkFixed fixed1\"></div> </div> </div> ").html();
         this.title = 'Clock';
         this.icon = 'status/appointment-soon.png';
@@ -592,8 +523,6 @@ var ApplicationClock = (function($, undefined) {
         this.height = 200;
         this.gravity = 'center';
 
-
-        this.app = app;
       },
 
       destroy : function() {
@@ -607,27 +536,6 @@ var ApplicationClock = (function($, undefined) {
         var self = this;
 
         if ( el ) {
-          el.find(".GtkScale").slider();
-
-          el.find(".GtkToolItemGroup").click(function() {
-            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
-
-            if ( $(this).hasClass("Checked") ) {
-              $(this).removeClass("Checked");
-            } else {
-              $(this).addClass("Checked");
-            }
-          });
-
-          el.find(".GtkToggleToolButton button").click(function() {
-            if ( $(this).parent().hasClass("Checked") ) {
-              $(this).parent().removeClass("Checked");
-            } else {
-              $(this).parent().addClass("Checked");
-            }
-          });
-
-
 
           // Do your stuff here
 
@@ -654,10 +562,10 @@ var ApplicationClock = (function($, undefined) {
       run : function() {
         var self = this;
 
-        this._super(self);
-
         var root_window = new Window_window1(self);
         root_window.show();
+
+        this._super(root_window);
 
         // Do your stuff here
       }
@@ -680,7 +588,7 @@ var ApplicationClock = (function($, undefined) {
 }
 ]]></style>
   </application>
-  <application name="Textpad" title="Textpad" icon="apps/text-editor.png" class="ApplicationTextpad" file="ApplicationTextpad.class.php">
+  <application name="Textpad" title="Textpad" icon="apps/text-editor.png" system="false" class="ApplicationTextpad" file="ApplicationTextpad.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"Textpad","icon":"apps\/text-editor.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":400,"height":400,"gravity":""}]]></property>
       <property name="content"><![CDATA[<div class="window1">
@@ -751,7 +659,7 @@ var ApplicationTextpad = (function($, undefined) {
     var Window_window1 = Window.extend({
 
       init : function(app) {
-        this._super("ApplicationTextpad", false, {}, {});
+        this._super("ApplicationTextpad", false, app);
         this.content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationTextpad window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_open\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_save\"> <img alt=\"gtk-save\" src=\"/img/icons/16x16/actions/gtk-save.png\"/> <span>Save</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_saveas\"> <img alt=\"gtk-save-as\" src=\"/img/icons/16x16/actions/gtk-save-as.png\"/> <span>Save as...</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <textarea class=\"GtkTextView GtkObject textview1\"></textarea> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"GtkStatusbar statusbar1\"></div> </td> </tr> </table> </div> </div> ").html();
         this.title = 'Textpad';
         this.icon = 'apps/text-editor.png';
@@ -767,8 +675,6 @@ var ApplicationTextpad = (function($, undefined) {
         this.height = 400;
         this.gravity = null;
 
-
-        this.app = app;
       },
 
       destroy : function() {
@@ -802,27 +708,6 @@ var ApplicationTextpad = (function($, undefined) {
         var self = this;
 
         if ( el ) {
-          el.find(".GtkScale").slider();
-
-          el.find(".GtkToolItemGroup").click(function() {
-            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
-
-            if ( $(this).hasClass("Checked") ) {
-              $(this).removeClass("Checked");
-            } else {
-              $(this).addClass("Checked");
-            }
-          });
-
-          el.find(".GtkToggleToolButton button").click(function() {
-            if ( $(this).parent().hasClass("Checked") ) {
-              $(this).parent().removeClass("Checked");
-            } else {
-              $(this).parent().addClass("Checked");
-            }
-          });
-
-
 
           el.find(".imagemenuitem_new").click(function(ev) {
             self.EventMenuNew(this, ev);
@@ -869,10 +754,10 @@ var ApplicationTextpad = (function($, undefined) {
       run : function() {
         var self = this;
 
-        this._super(self);
-
         var root_window = new Window_window1(self);
         root_window.show();
+
+        this._super(root_window);
 
         // Do your stuff here
       }
@@ -895,7 +780,7 @@ var ApplicationTextpad = (function($, undefined) {
 }
 ]]></style>
   </application>
-  <application name="About" title="About" icon="actions/gtk-about.png" class="SystemAbout" file="SystemAbout.class.php">
+  <application name="About" title="About" icon="actions/gtk-about.png" system="true" class="SystemAbout" file="SystemAbout.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"About","icon":"actions\/gtk-about.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":220,"height":120,"gravity":"center"}]]></property>
       <property name="content"><![CDATA[<div class="window1">
@@ -920,7 +805,7 @@ var SystemAbout = (function($, undefined) {
     var Window_window1 = Window.extend({
 
       init : function(app) {
-        this._super("SystemAbout", false, {}, {});
+        this._super("SystemAbout", false, app);
         this.content = $("<div class=\"window1\"> <div class=\"GtkWindow SystemAbout window1\"> <div class=\" \"></div> </div> </div> ").html();
         this.title = 'About';
         this.icon = 'actions/gtk-about.png';
@@ -936,8 +821,6 @@ var SystemAbout = (function($, undefined) {
         this.height = 120;
         this.gravity = 'center';
 
-
-        this.app = app;
       },
 
       destroy : function() {
@@ -951,27 +834,6 @@ var SystemAbout = (function($, undefined) {
         var self = this;
 
         if ( el ) {
-          el.find(".GtkScale").slider();
-
-          el.find(".GtkToolItemGroup").click(function() {
-            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
-
-            if ( $(this).hasClass("Checked") ) {
-              $(this).removeClass("Checked");
-            } else {
-              $(this).addClass("Checked");
-            }
-          });
-
-          el.find(".GtkToggleToolButton button").click(function() {
-            if ( $(this).parent().hasClass("Checked") ) {
-              $(this).parent().removeClass("Checked");
-            } else {
-              $(this).parent().addClass("Checked");
-            }
-          });
-
-
 
           // Do your stuff here
 
@@ -998,10 +860,10 @@ var SystemAbout = (function($, undefined) {
       run : function() {
         var self = this;
 
-        this._super(self);
-
         var root_window = new Window_window1(self);
         root_window.show();
+
+        this._super(root_window);
 
         // Do your stuff here
       }
@@ -1024,7 +886,7 @@ var SystemAbout = (function($, undefined) {
 }
 ]]></style>
   </application>
-  <application name="Settings" title="Settings" icon="categories/applications-system.png" class="SystemSettings" file="SystemSettings.class.php">
+  <application name="Settings" title="Settings" icon="categories/applications-system.png" system="true" class="SystemSettings" file="SystemSettings.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"Settings","icon":"categories\/applications-system.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":400,"height":200,"gravity":"center"}]]></property>
       <property name="content"><![CDATA[<div class="window1">
@@ -1049,7 +911,7 @@ var SystemSettings = (function($, undefined) {
     var Window_window1 = Window.extend({
 
       init : function(app) {
-        this._super("SystemSettings", false, {}, {});
+        this._super("SystemSettings", false, app);
         this.content = $("<div class=\"window1\"> <div class=\"GtkWindow SystemSettings window1\"> <div class=\" \"></div> </div> </div> ").html();
         this.title = 'Settings';
         this.icon = 'categories/applications-system.png';
@@ -1065,8 +927,6 @@ var SystemSettings = (function($, undefined) {
         this.height = 200;
         this.gravity = 'center';
 
-
-        this.app = app;
       },
 
       destroy : function() {
@@ -1080,27 +940,6 @@ var SystemSettings = (function($, undefined) {
         var self = this;
 
         if ( el ) {
-          el.find(".GtkScale").slider();
-
-          el.find(".GtkToolItemGroup").click(function() {
-            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
-
-            if ( $(this).hasClass("Checked") ) {
-              $(this).removeClass("Checked");
-            } else {
-              $(this).addClass("Checked");
-            }
-          });
-
-          el.find(".GtkToggleToolButton button").click(function() {
-            if ( $(this).parent().hasClass("Checked") ) {
-              $(this).parent().removeClass("Checked");
-            } else {
-              $(this).parent().addClass("Checked");
-            }
-          });
-
-
 
           // Do your stuff here
 
@@ -1127,10 +966,10 @@ var SystemSettings = (function($, undefined) {
       run : function() {
         var self = this;
 
-        this._super(self);
-
         var root_window = new Window_window1(self);
         root_window.show();
+
+        this._super(root_window);
 
         // Do your stuff here
       }
@@ -1153,7 +992,7 @@ var SystemSettings = (function($, undefined) {
 }
 ]]></style>
   </application>
-  <application name="Logout" title="Logout" icon="actions/gnome-logout.png" class="SystemLogout" file="SystemLogout.class.php">
+  <application name="Logout" title="Logout" icon="actions/gnome-logout.png" system="true" class="SystemLogout" file="SystemLogout.class.php">
     <window id="dialog1">
       <property name="properties"><![CDATA[{"type":"dialog","title":"Logout","icon":"actions\/gnome-logout.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":300,"height":100,"gravity":"center"}]]></property>
       <property name="content"><![CDATA[<div class="dialog1">
@@ -1213,7 +1052,7 @@ var SystemLogout = (function($, undefined) {
     var Window_dialog1 = Window.extend({
 
       init : function(app) {
-        this._super("SystemLogout", true, {}, {});
+        this._super("SystemLogout", true, app);
         this.content = $("<div class=\"dialog1\"> <div class=\"GtkDialog SystemLogout dialog1\"> <table class=\"GtkBox Vertical dialog-vbox1\"> <tr> <td class=\"Expand Fill GtkBoxPosition Position_0\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Expand Fill GtkBoxPosition Position_0\"> <div class=\"GtkLabel GtkObject label1\">Are you sure you want to log out?</div> </td> </tr> <tr> <td class=\"GtkBoxPosition Position_1\"> <div class=\"GtkCheckButton checkbutton1\"> <input checked=\"checked\" type=\"checkbox\"> <label>Save session for future logins</label> </input> </div> </td> </tr> </table> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <table class=\"GtkButtonBox Horizontal dialog-action_area1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <button class=\"GtkButton GtkObject button1\"><img alt=\"gtk-cancel\" src=\"/img/icons/16x16/actions/gtk-cancel.png\"/>Cancel</button> </td> <td class=\"Fill GtkBoxPosition Position_1\"> <button class=\"GtkButton GtkObject button2\"><img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/>Quit</button> </td> </tr> </table> </td> </tr> </table> </div> </div> ").html();
         this.title = 'Logout';
         this.icon = 'actions/gnome-logout.png';
@@ -1229,8 +1068,6 @@ var SystemLogout = (function($, undefined) {
         this.height = 100;
         this.gravity = 'center';
 
-
-        this.app = app;
       },
 
       destroy : function() {
@@ -1244,27 +1081,6 @@ var SystemLogout = (function($, undefined) {
         var self = this;
 
         if ( el ) {
-          el.find(".GtkScale").slider();
-
-          el.find(".GtkToolItemGroup").click(function() {
-            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
-
-            if ( $(this).hasClass("Checked") ) {
-              $(this).removeClass("Checked");
-            } else {
-              $(this).addClass("Checked");
-            }
-          });
-
-          el.find(".GtkToggleToolButton button").click(function() {
-            if ( $(this).parent().hasClass("Checked") ) {
-              $(this).parent().removeClass("Checked");
-            } else {
-              $(this).parent().addClass("Checked");
-            }
-          });
-
-
 
           // Do your stuff here
 
@@ -1291,10 +1107,10 @@ var SystemLogout = (function($, undefined) {
       run : function() {
         var self = this;
 
-        this._super(self);
-
         var root_window = new Window_dialog1(self);
         root_window.show();
+
+        this._super(root_window);
 
         // Do your stuff here
       }
@@ -1313,483 +1129,6 @@ var SystemLogout = (function($, undefined) {
  */
 
 .SystemLogout {
-
-}
-]]></style>
-  </application>
-  <application name="User" title="User Information" icon="apps/user-info.png" class="SystemUser" file="SystemUser.class.php">
-    <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"User Information","icon":"apps\/user-info.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":400,"height":250,"gravity":"center"}]]></property>
-      <property name="content"><![CDATA[<div class="window1">
-  <div class="GtkWindow SystemUser window1">
-    <div class=" "></div>
-  </div>
-</div>
-]]></property>
-    </window>
-    <script><![CDATA[/**
- * Application: SystemUser
- *
- * @package ajwm.Applications
- * @author Anders Evenrud <andersevenrud@gmail.com>
- * @class
- */
-var SystemUser = (function($, undefined) {
-  return function(Window, Application, API, argv) {
-
-
-
-    var Window_window1 = Window.extend({
-
-      init : function(app) {
-        this._super("SystemUser", false, {}, {});
-        this.content = $("<div class=\"window1\"> <div class=\"GtkWindow SystemUser window1\"> <div class=\" \"></div> </div> </div> ").html();
-        this.title = 'User Information';
-        this.icon = 'apps/user-info.png';
-        this.is_draggable = true;
-        this.is_resizable = true;
-        this.is_scrollable = false;
-        this.is_sessionable = true;
-        this.is_minimizable = true;
-        this.is_maximizable = true;
-        this.is_closable = true;
-        this.is_orphan = false;
-        this.width = 400;
-        this.height = 250;
-        this.gravity = 'center';
-
-
-        this.app = app;
-      },
-
-      destroy : function() {
-        this._super();
-      },
-
-
-
-      create : function(id, zi, mcallback) {
-        var el = this._super(id, zi, mcallback);
-        var self = this;
-
-        if ( el ) {
-          el.find(".GtkScale").slider();
-
-          el.find(".GtkToolItemGroup").click(function() {
-            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
-
-            if ( $(this).hasClass("Checked") ) {
-              $(this).removeClass("Checked");
-            } else {
-              $(this).addClass("Checked");
-            }
-          });
-
-          el.find(".GtkToggleToolButton button").click(function() {
-            if ( $(this).parent().hasClass("Checked") ) {
-              $(this).parent().removeClass("Checked");
-            } else {
-              $(this).parent().addClass("Checked");
-            }
-          });
-
-
-
-          // Do your stuff here
-
-        }
-
-      }
-    });
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    // APPLICATION
-    ///////////////////////////////////////////////////////////////////////////
-
-    var __SystemUser = Application.extend({
-
-      init : function() {
-        this._super("SystemUser", argv);
-      },
-
-      destroy : function() {
-        this._super();
-      },
-
-      run : function() {
-        var self = this;
-
-        this._super(self);
-
-        var root_window = new Window_window1(self);
-        root_window.show();
-
-        // Do your stuff here
-      }
-    });
-
-    return new __SystemUser();
-  };
-})($);
-]]></script>
-    <style><![CDATA[@charset "UTF-8";
-/**
- * Application: SystemUser
- *
- * @package ajwm.Applications
- * @author Anders Evenrud <andersevenrud@gmail.com>
- */
-
-.SystemUser {
-
-}
-]]></style>
-  </application>
-  <application name="Draw" title="Draw" icon="categories/gnome-graphics.png" class="ApplicationDraw" file="ApplicationDraw.class.php">
-    <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"Draw","icon":"categories\/gnome-graphics.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":800,"height":500,"gravity":""}]]></property>
-      <property name="content"><![CDATA[<div class="window1">
-  <div class="GtkWindow ApplicationDraw window1">
-    <table class="GtkBox Vertical boxMain">
-      <tr>
-        <td class="Fill GtkBoxPosition Position_0">
-          <ul class="GtkMenuBar menubarMain">
-            <li class="GtkMenuItem menuitem_open">
-              <span><u>F</u>ile</span>
-              <ul class="GtkMenu menu1">
-                <li class="GtkImageMenuItem imagemenuitem_new">
-                  <img alt="gtk-new" src="/img/icons/16x16/actions/gtk-new.png"/>
-                  <span>New</span>
-                </li>
-                <li class="GtkImageMenuItem imagemenuitem_open">
-                  <img alt="gtk-open" src="/img/icons/16x16/actions/gtk-open.png"/>
-                  <span>Open</span>
-                </li>
-                <li class="GtkImageMenuItem imagemenuitem_save">
-                  <img alt="gtk-save" src="/img/icons/16x16/actions/gtk-save.png"/>
-                  <span>Save</span>
-                </li>
-                <li class="GtkImageMenuItem imagemenuitem_saveas">
-                  <img alt="gtk-save-as" src="/img/icons/16x16/actions/gtk-save-as.png"/>
-                  <span>Save as...</span>
-                </li>
-                <div class="GtkSeparatorMenuItem separatormenuitem1"></div>
-                <li class="GtkImageMenuItem imagemenuitem_quit">
-                  <img alt="gtk-quit" src="/img/icons/16x16/actions/gtk-quit.png"/>
-                  <span>Quit</span>
-                </li>
-              </ul>
-            </li>
-            <li class="GtkMenuItem menuitem2">
-              <span><u>E</u>ffects</span>
-              <ul class="GtkMenu menu2">
-                <li class="GtkMenuItem menuitem_effect_noise">
-                  <span>Noise</span>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </td>
-      </tr>
-      <tr>
-        <td class="Fill GtkBoxPosition Position_1">
-          <ul class="GtkToolbar toolbarMain">
-            <li class="GtkToggleToolButton Checked toolbutton_stroke">
-              <button>Enable Stroke</button>
-            </li>
-            <li class="GtkToggleToolButton Checked toolbutton_fill">
-              <button>Enable Fill</button>
-            </li>
-            <li class="GtkToolItem toolbutton1">
-              <table class="GtkBox Horizontal box1" style="width:120px">
-                <tr>
-                  <td class="Fill GtkBoxPosition Position_0" style="width:80px">
-                    <div class="GtkLabel GtkObject label1">Thickness</div>
-                  </td>
-                  <td class="Fill GtkBoxPosition Position_1" style="width:100px">
-                    <div class="GtkScale scale1"></div>
-                  </td>
-                </tr>
-              </table>
-            </li>
-            <li class="GtkToolItem toolbutton2">
-              <table class="GtkBox Horizontal box2">
-                <tr>
-                  <td class="Fill GtkBoxPosition Position_0">
-                    <div class="GtkLabel GtkObject label2">Line Join</div>
-                  </td>
-                  <td class="Fill GtkBoxPosition Position_1">
-                    <select class="GtkComboBox GtkObject combobox_linejoin">
-                      <option value="milter" class="GtkCellRendererText cellrenderertext_milter">milter</option>
-                      <option value="bevel" class="GtkCellRendererText cellrenderertext_bevel">bevel</option>
-                      <option value="round" class="GtkCellRendererText cellrenderertext_round">round</option>
-                    </select>
-                  </td>
-                </tr>
-              </table>
-            </li>
-            <li class="GtkToolItem toolbutton3">
-              <table class="GtkBox Horizontal box4">
-                <tr>
-                  <td class="Fill GtkBoxPosition Position_0">
-                    <div class="GtkLabel GtkObject label3">Line Cap</div>
-                  </td>
-                  <td class="Fill GtkBoxPosition Position_1">
-                    <select class="GtkComboBox GtkObject combobox_linecap">
-                      <option value="butt" class="GtkCellRendererText cellrenderertext_butt">butt</option>
-                      <option value="round1" class="GtkCellRendererText cellrenderertext_round1">round1</option>
-                      <option value="square" class="GtkCellRendererText cellrenderertext_square">square</option>
-                    </select>
-                  </td>
-                </tr>
-              </table>
-            </li>
-          </ul>
-        </td>
-      </tr>
-      <tr>
-        <td class="Expand Fill GtkBoxPosition Position_2">
-          <table class="GtkBox Horizontal boxContent">
-            <tr>
-              <td class="Fill GtkBoxPosition Position_0" style="width:100px">
-                <table class="GtkBox Vertical box3">
-                  <tr>
-                    <td class="Expand Fill GtkBoxPosition Position_0">
-                      <div class="GtkToolPalette Vertical toolpalette1">
-                        <button class="GtkToolItemGroup toolitemgroup_selection"></button>
-                        <button class="GtkToolItemGroup toolitemgroup_pencil"></button>
-                        <button class="GtkToolItemGroup toolitemgroup_line"></button>
-                        <button class="GtkToolItemGroup toolitemgroup_square"></button>
-                        <button class="GtkToolItemGroup toolitemgroup_rectangle"></button>
-                        <button class="GtkToolItemGroup toolitemgroup_circle"></button>
-                        <button class="GtkToolItemGroup toolitemgroup_ellipse"></button>
-                        <button class="GtkToolItemGroup toolitemgroup_fill"></button>
-                        <button class="GtkToolItemGroup toolitemgroup_pick"></button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="Fill GtkBoxPosition Position_1">
-                      <div class="GtkSeparator separator1">
-                        <hr/>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="Fill GtkBoxPosition Position_2" style="height:200px">
-                      <div class="GtkFixed fixed1">
-                        <div class="GtkColorButton GtkObject colorbutton_background" style="left:15px;top:15px;width:50px;height:50px"></div>
-                        <div class="GtkColorButton GtkObject colorbutton_foreground" style="left:30px;top:30px;width:50px;height:50px"></div>
-                      </div>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-              <td class="Expand Fill GtkBoxPosition Position_1">
-                <div class="GtkViewport viewport1">
-                  <canvas class="GtkDrawingArea Canvas drawingarea1"></canvas>
-                </div>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </div>
-</div>
-]]></property>
-    </window>
-    <resource>app.draw.css</resource>
-    <resource>app.draw.js</resource>
-    <mime>image/*</mime>
-    <script><![CDATA[/**
- * Application: ApplicationDraw
- *
- * @package ajwm.Applications
- * @author Anders Evenrud <andersevenrud@gmail.com>
- * @class
- */
-var ApplicationDraw = (function($, undefined) {
-  return function(Window, Application, API, argv) {
-
-
-
-    var Window_window1 = Window.extend({
-
-      init : function(app) {
-        this._super("ApplicationDraw", false, {}, {});
-        this.content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationDraw window1\"> <table class=\"GtkBox Vertical boxMain\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <ul class=\"GtkMenuBar menubarMain\"> <li class=\"GtkMenuItem menuitem_open\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_open\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_save\"> <img alt=\"gtk-save\" src=\"/img/icons/16x16/actions/gtk-save.png\"/> <span>Save</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_saveas\"> <img alt=\"gtk-save-as\" src=\"/img/icons/16x16/actions/gtk-save-as.png\"/> <span>Save as...</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem2\"> <span><u>E</u>ffects</span> <ul class=\"GtkMenu menu2\"> <li class=\"GtkMenuItem menuitem_effect_noise\"> <span>Noise</span> </li> </ul> </li> </ul> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <ul class=\"GtkToolbar toolbarMain\"> <li class=\"GtkToggleToolButton Checked toolbutton_stroke\"> <button>Enable Stroke</button> </li> <li class=\"GtkToggleToolButton Checked toolbutton_fill\"> <button>Enable Fill</button> </li> <li class=\"GtkToolItem toolbutton1\"> <table class=\"GtkBox Horizontal box1\" style=\"width:120px\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\" style=\"width:80px\"> <div class=\"GtkLabel GtkObject label1\">Thickness</div> </td> <td class=\"Fill GtkBoxPosition Position_1\" style=\"width:100px\"> <div class=\"GtkScale scale1\"></div> </td> </tr> </table> </li> <li class=\"GtkToolItem toolbutton2\"> <table class=\"GtkBox Horizontal box2\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"GtkLabel GtkObject label2\">Line Join</div> </td> <td class=\"Fill GtkBoxPosition Position_1\"> <select class=\"GtkComboBox GtkObject combobox_linejoin\"> <option value=\"milter\" class=\"GtkCellRendererText cellrenderertext_milter\">milter</option> <option value=\"bevel\" class=\"GtkCellRendererText cellrenderertext_bevel\">bevel</option> <option value=\"round\" class=\"GtkCellRendererText cellrenderertext_round\">round</option> </select> </td> </tr> </table> </li> <li class=\"GtkToolItem toolbutton3\"> <table class=\"GtkBox Horizontal box4\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"GtkLabel GtkObject label3\">Line Cap</div> </td> <td class=\"Fill GtkBoxPosition Position_1\"> <select class=\"GtkComboBox GtkObject combobox_linecap\"> <option value=\"butt\" class=\"GtkCellRendererText cellrenderertext_butt\">butt</option> <option value=\"round1\" class=\"GtkCellRendererText cellrenderertext_round1\">round1</option> <option value=\"square\" class=\"GtkCellRendererText cellrenderertext_square\">square</option> </select> </td> </tr> </table> </li> </ul> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_2\"> <table class=\"GtkBox Horizontal boxContent\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\" style=\"width:100px\"> <table class=\"GtkBox Vertical box3\"> <tr> <td class=\"Expand Fill GtkBoxPosition Position_0\"> <div class=\"GtkToolPalette Vertical toolpalette1\"> <button class=\"GtkToolItemGroup toolitemgroup_selection\"></button> <button class=\"GtkToolItemGroup toolitemgroup_pencil\"></button> <button class=\"GtkToolItemGroup toolitemgroup_line\"></button> <button class=\"GtkToolItemGroup toolitemgroup_square\"></button> <button class=\"GtkToolItemGroup toolitemgroup_rectangle\"></button> <button class=\"GtkToolItemGroup toolitemgroup_circle\"></button> <button class=\"GtkToolItemGroup toolitemgroup_ellipse\"></button> <button class=\"GtkToolItemGroup toolitemgroup_fill\"></button> <button class=\"GtkToolItemGroup toolitemgroup_pick\"></button> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <div class=\"GtkSeparator separator1\"> <hr/> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\" style=\"height:200px\"> <div class=\"GtkFixed fixed1\"> <div class=\"GtkColorButton GtkObject colorbutton_background\" style=\"left:15px;top:15px;width:50px;height:50px\"></div> <div class=\"GtkColorButton GtkObject colorbutton_foreground\" style=\"left:30px;top:30px;width:50px;height:50px\"></div> </div> </td> </tr> </table> </td> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"GtkViewport viewport1\"> <canvas class=\"GtkDrawingArea Canvas drawingarea1\"></canvas> </div> </td> </tr> </table> </td> </tr> </table> </div> </div> ").html();
-        this.title = 'Draw';
-        this.icon = 'categories/gnome-graphics.png';
-        this.is_draggable = true;
-        this.is_resizable = true;
-        this.is_scrollable = false;
-        this.is_sessionable = true;
-        this.is_minimizable = true;
-        this.is_maximizable = true;
-        this.is_closable = true;
-        this.is_orphan = false;
-        this.width = 800;
-        this.height = 500;
-        this.gravity = null;
-
-
-        this.app = app;
-      },
-
-      destroy : function() {
-        this._super();
-      },
-
-
-      EventMenuNew : function(el, ev) {
-      },
-
-
-      EventMenuOpen : function(el, ev) {
-      },
-
-
-      EventMenuSave : function(el, ev) {
-      },
-
-
-      EventMenuSaveAs : function(el, ev) {
-      },
-
-
-      EventMenuQuit : function(el, ev) {
-      },
-
-
-      EventToggleStroke : function(el, ev) {
-      },
-
-
-      EventToggleFill : function(el, ev) {
-      },
-
-
-      EventChangeBackground : function(el, ev) {
-      },
-
-
-      EventChangeForeground : function(el, ev) {
-      },
-
-
-
-      create : function(id, zi, mcallback) {
-        var el = this._super(id, zi, mcallback);
-        var self = this;
-
-        if ( el ) {
-          el.find(".GtkScale").slider();
-
-          el.find(".GtkToolItemGroup").click(function() {
-            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
-
-            if ( $(this).hasClass("Checked") ) {
-              $(this).removeClass("Checked");
-            } else {
-              $(this).addClass("Checked");
-            }
-          });
-
-          el.find(".GtkToggleToolButton button").click(function() {
-            if ( $(this).parent().hasClass("Checked") ) {
-              $(this).parent().removeClass("Checked");
-            } else {
-              $(this).parent().addClass("Checked");
-            }
-          });
-
-
-
-          el.find(".imagemenuitem_new").click(function(ev) {
-            self.EventMenuNew(this, ev);
-          });
-
-          el.find(".imagemenuitem_open").click(function(ev) {
-            self.EventMenuOpen(this, ev);
-          });
-
-          el.find(".imagemenuitem_save").click(function(ev) {
-            self.EventMenuSave(this, ev);
-          });
-
-          el.find(".imagemenuitem_saveas").click(function(ev) {
-            self.EventMenuSaveAs(this, ev);
-          });
-
-          el.find(".imagemenuitem_quit").click(function(ev) {
-            self.EventMenuQuit(this, ev);
-          });
-
-          el.find(".toolbutton_stroke").click(function(ev) {
-            self.EventToggleStroke(this, ev);
-          });
-
-          el.find(".toolbutton_fill").click(function(ev) {
-            self.EventToggleFill(this, ev);
-          });
-
-          el.find(".colorbutton_background").click(function(ev) {
-            self.EventChangeBackground(this, ev);
-          });
-
-          el.find(".colorbutton_foreground").click(function(ev) {
-            self.EventChangeForeground(this, ev);
-          });
-
-          // Do your stuff here
-
-        }
-
-      }
-    });
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    // APPLICATION
-    ///////////////////////////////////////////////////////////////////////////
-
-    var __ApplicationDraw = Application.extend({
-
-      init : function() {
-        this._super("ApplicationDraw", argv);
-      },
-
-      destroy : function() {
-        this._super();
-      },
-
-      run : function() {
-        var self = this;
-
-        this._super(self);
-
-        var root_window = new Window_window1(self);
-        root_window.show();
-
-        // Do your stuff here
-      }
-    });
-
-    return new __ApplicationDraw();
-  };
-})($);
-]]></script>
-    <style><![CDATA[@charset "UTF-8";
-/**
- * Application: ApplicationDraw
- *
- * @package ajwm.Applications
- * @author Anders Evenrud <andersevenrud@gmail.com>
- */
-
-.ApplicationDraw {
 
 }
 ]]></style>

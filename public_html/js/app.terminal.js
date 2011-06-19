@@ -17,7 +17,7 @@ var ApplicationTerminal = (function($, undefined) {
   var KEY_DOWN = 40;
 
 
-  return function(Window, Application, API, argv) {
+  return function(GtkWindow, Application, API, argv) {
 
 
 
@@ -79,10 +79,10 @@ var ApplicationTerminal = (function($, undefined) {
     };
 
 
-    var Window_window1 = Window.extend({
+    var Window_window1 = GtkWindow.extend({
 
       init : function(app) {
-        this._super("ApplicationTerminal", false, {}, {});
+        this._super("ApplicationTerminal", false, app);
         this.content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationTerminal window1\"> <textarea class=\"GtkTextView GtkObject textview1\"></textarea> </div> </div> ").html();
         this.title = 'Terminal';
         this.icon = 'apps/utilities-terminal.png';
@@ -97,9 +97,6 @@ var ApplicationTerminal = (function($, undefined) {
         this.width = 500;
         this.height = 300;
         this.gravity = null;
-
-
-        this.app = app;
       },
 
       destroy : function() {
@@ -113,28 +110,6 @@ var ApplicationTerminal = (function($, undefined) {
         var self = this;
 
         if ( el ) {
-          el.find(".GtkScale").slider();
-
-          el.find(".GtkToolItemGroup").click(function() {
-            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
-
-            if ( $(this).hasClass("Checked") ) {
-              $(this).removeClass("Checked");
-            } else {
-              $(this).addClass("Checked");
-            }
-          });
-
-          el.find(".GtkToggleToolButton button").click(function() {
-            if ( $(this).parent().hasClass("Checked") ) {
-              $(this).parent().removeClass("Checked");
-            } else {
-              $(this).parent().addClass("Checked");
-            }
-          });
-
-
-
           // Do your stuff here
           var txt = $(el).find("textarea");
           var inpbuffer = [];
@@ -256,10 +231,10 @@ var ApplicationTerminal = (function($, undefined) {
       run : function() {
         var self = this;
 
-        this._super(self);
-
         var root_window = new Window_window1();
         root_window.show(self);
+
+        this._super(root_window);
 
         // Do your stuff here
       }

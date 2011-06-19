@@ -17,8 +17,6 @@
 class ApplicationDraw
   extends Application
 {
-  const APPLICATION_TITLE = "Draw";
-  const APPLICATION_ICON  = "categories/gnome-graphics.png";
 
   /**
    * Create a new instance

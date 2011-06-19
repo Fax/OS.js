@@ -18,9 +18,12 @@ $root_node = $doc->createElement("applications");
 function create_js_root($cname, $windows) {
   $wins = implode("\n", $windows);
   $code = "";
+  $root_window = "";
 
   if ( $windows ) {
-    $win = reset(array_keys($windows));
+    $keys = array_keys($windows);
+    $win = reset($keys);
+    $root_window = "root_window";
     $code = <<<EOJAVASCRIPT
         var root_window = new Window_{$win}(self);
         root_window.show();
@@ -59,9 +62,9 @@ var {$cname} = (function(\$, undefined) {
       run : function() {
         var self = this;
 
-        this._super(self);
-
 %s
+
+        this._super({$root_window});
 
         // Do your stuff here
       }
@@ -84,11 +87,9 @@ function create_js($cname, $window, $content, $properties, $signals) {
     var Window_{$window} = Window.extend({
 
       init : function(app) {
-        this._super("{$cname}", $dialog, {}, {});
+        this._super("{$cname}", $dialog, app);
         this.content = $("{$content}").html();
 %s
-
-        this.app = app;
       },
 
       destroy : function() {
@@ -102,27 +103,6 @@ function create_js($cname, $window, $content, $properties, $signals) {
         var self = this;
 
         if ( el ) {
-          el.find(".GtkScale").slider();
-
-          el.find(".GtkToolItemGroup").click(function() {
-            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
-
-            if ( $(this).hasClass("Checked") ) {
-              $(this).removeClass("Checked");
-            } else {
-              $(this).addClass("Checked");
-            }
-          });
-
-          el.find(".GtkToggleToolButton button").click(function() {
-            if ( $(this).parent().hasClass("Checked") ) {
-              $(this).parent().removeClass("Checked");
-            } else {
-              $(this).parent().addClass("Checked");
-            }
-          });
-
-
 %s
           // Do your stuff here
 
@@ -209,17 +189,39 @@ if ( $dh  = opendir($root) ) {
       $cname = str_replace(".xml", "", $filename);
       $class_file = (string) $xml['file'];
 
-      require PATH_APPS . "/{$class_file}";
+      require_once PATH_APPS . "/{$class_file}";
 
       echo "Building {$filename} ($gfilename)...\n";
 
+      $xml_app_title  = Application::APPLICATION_TITLE;
+      $xml_app_icon   = Application::APPLICATION_ICON;
+      $xml_app_system = false;
+
       $break = false;
       foreach ( $xml->property as $p ) {
-        if ( (string) $p['name'] == "enabled" ) {
-          if ( (string) $p !== "true" ) {
-            $break = true;
+        $val = (string) $p;
+        switch ( (string) $p['name'] ) {
+          case "enabled" :
+            if ( $val == "false" ) {
+              $break = true;
+              break;
+            }
             break;
-          }
+          case "title" :
+            if ( $val ) {
+              $xml_app_title = $val;
+            }
+            break;
+          case "icon" :
+            if ( $val ) {
+              $xml_app_icon = $val;
+            }
+            break;
+          case "system" :
+            if ( $val == "true" ) {
+              $xml_app_system = true;
+            }
+            break;
         }
       }
 
@@ -234,18 +236,21 @@ if ( $dh  = opendir($root) ) {
         $node = $doc->createElement("application");
         $node->setAttribute("name", $xml['name']);
 
-        $node->setAttribute("title", constant("{$cname}::APPLICATION_TITLE"));
-        $node->setAttribute("icon", constant("{$cname}::APPLICATION_ICON"));
+        $node->setAttribute("title", $xml_app_title); //constant("{$cname}::APPLICATION_TITLE"));
+        $node->setAttribute("icon", $xml_app_icon); //constant("{$cname}::APPLICATION_ICON"));
+        $node->setAttribute("system", $xml_app_system ? "true" : "false");
         $node->setAttribute("class", $cname);
         $node->setAttribute("file", $class_file);
 
         $wins = Array();
         foreach ( $windows as $id => $window ) {
           if ( !$window['properties']['title'] ) {
-            $window['properties']['title'] = constant("{$cname}::APPLICATION_TITLE");
+            $window['properties']['title'] = $xml_app_title;
+            //$window['properties']['title'] = constant("{$cname}::APPLICATION_TITLE");
           }
           if ( !$window['properties']['icon'] ) {
-            $window['properties']['icon'] = constant("{$cname}::APPLICATION_ICON");
+            $window['properties']['icon'] = $xml_app_icon;
+            //$window['properties']['icon'] = constant("{$cname}::APPLICATION_ICON");
           }
 
           $wins[$id] = create_js($cname, $id, $window['content'], $window['properties'], $window['signals']);
@@ -289,6 +294,15 @@ if ( $dh  = opendir($root) ) {
         $style_node = $doc->createElement("style");
         $style_node->appendChild($doc->createCDATASection($style));
         $node->appendChild($style_node);
+
+        $utype = preg_match("/^System/", $cname) ? "sys" : "app";
+        $ucase = strtolower(preg_replace("/^System|Application/", "", $cname));
+
+        $css_path = PATH_PROJECT_BUILD . "/apps/{$utype}.{$ucase}.css";
+        $js_path  = PATH_PROJECT_BUILD . "/apps/{$utype}.{$ucase}.js";
+
+        file_put_contents($css_path, $style);
+        file_put_contents($js_path, $script);
 
         $root_node->appendChild($node);
         echo "\tSuccess!\n";

@@ -58,11 +58,12 @@ Propel::init(PROPEL_CONFIG);
 if ( $xml = file_get_contents(PATH_PROJECT_BUILD . "/applications.xml") ) {
   if ( $xml = new SimpleXmlElement($xml) ) {
     foreach ( $xml->application as $app ) {
-      $app_name  = (string) $app['name'];
-      $app_title = (string) $app['title'];
-      $app_icon  = (string) $app['icon'];
-      $app_class = (string) $app['class'];
-      $app_file  = (string) $app['file'];
+      $app_name   = (string) $app['name'];
+      $app_title  = (string) $app['title'];
+      $app_icon   = (string) $app['icon'];
+      $app_class  = (string) $app['class'];
+      $app_file   = (string) $app['file'];
+      $app_system = (string) $app['system'] == "true";
 
       $windows   = Array();
       $resources = Array();
@@ -114,12 +115,15 @@ if ( $xml = file_get_contents(PATH_PROJECT_BUILD . "/applications.xml") ) {
         "class"     => $app_class,
         "windows"   => $windows,
         "resources" => $resources,
-        "mimes"     => $mimes
+        "mimes"     => $mimes,
+        "system"    => $app_system
       );
 
       require PATH_APPS . "/{$app_file}";
     }
   }
+
+  ksort(Application::$Registered);
 } else {
   die("Failed to read application build-data!");
 }

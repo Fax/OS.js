@@ -6,14 +6,14 @@
  * @class
  */
 var ApplicationClock = (function($, undefined) {
-  return function(Window, Application, API, argv) {
+  return function(GtkWindow, Application, API, argv) {
 
 
 
-    var Window_window1 = Window.extend({
+    var Window_window1 = GtkWindow.extend({
 
       init : function(app) {
-        this._super("ApplicationClock", false, {}, {});
+        this._super("ApplicationClock", false, app);
         this.content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationClock window1\"> <div class=\"Clock\"><div class=\"HourShadow\"></div><div class=\"Hour\"></div><div class=\"MinuteShadow\"></div><div class=\"Minute\"></div><div class=\"SecondShadow\"></div><div class=\"Second\"></div></div> </div> </div> ").html();
         this.title = 'Clock';
         this.icon = 'status/appointment-soon.png';
@@ -28,8 +28,6 @@ var ApplicationClock = (function($, undefined) {
         this.width = 200;
         this.height = 200;
         this.gravity = 'center';
-
-        this.app = app;
 
         this.int_sec = null;
         this.int_min = null;
@@ -51,28 +49,6 @@ var ApplicationClock = (function($, undefined) {
         var self = this;
 
         if ( el ) {
-          el.find(".GtkScale").slider();
-
-          el.find(".GtkToolItemGroup").click(function() {
-            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
-
-            if ( $(this).hasClass("Checked") ) {
-              $(this).removeClass("Checked");
-            } else {
-              $(this).addClass("Checked");
-            }
-          });
-
-          el.find(".GtkToggleToolButton button").click(function() {
-            if ( $(this).parent().hasClass("Checked") ) {
-              $(this).parent().removeClass("Checked");
-            } else {
-              $(this).parent().addClass("Checked");
-            }
-          });
-
-
-
           // Do your stuff here
 
           var hour = $(el).find(".Hour, .HourShadow");
@@ -131,10 +107,10 @@ var ApplicationClock = (function($, undefined) {
       run : function() {
         var self = this;
 
-        this._super(self);
-
         var root_window = new Window_window1(self);
         root_window.show();
+
+        this._super(root_window);
 
         // Do your stuff here
       }

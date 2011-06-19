@@ -6,13 +6,13 @@
  * @class
  */
 var SystemUser = (function($, undefined) {
-  return function(Window, Application, API, argv) {
+  return function(GtkWindow, Application, API, argv) {
 
 
-    var Window_window1 = Window.extend({
+    var Window_window1 = GtkWindow.extend({
 
       init : function(app) {
-        this._super("SystemUser", false, {}, {});
+        this._super("SystemUser", false, app);
         this.content = $("<div class=\"window1\"> <div class=\"GtkWindow SystemUser window1\"> <div class=\"SystemUser\"><div class=\"SystemUserLoading\"></div><div class=\"SystemUserInner\"><ul><li><a href=\"#tabs-1\">Profile</a></li><li><a href=\"#tabs-2\">Session</a></li></ul><div id=\"tabs-1\"></div><div id=\"tabs-2\"><div class=\"SessionData\"><ul class=\"SessionDataList\"></ul></div></div></div></div> </div> </div> ").html();
         this.title = 'User Information';
         this.icon = 'apps/user-info.png';
@@ -27,9 +27,6 @@ var SystemUser = (function($, undefined) {
         this.width = 400;
         this.height = 250;
         this.gravity = 'center';
-
-
-        this.app = app;
       },
 
       destroy : function() {
@@ -43,27 +40,6 @@ var SystemUser = (function($, undefined) {
         var self = this;
 
         if ( el ) {
-          el.find(".GtkScale").slider();
-
-          el.find(".GtkToolItemGroup").click(function() {
-            $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
-
-            if ( $(this).hasClass("Checked") ) {
-              $(this).removeClass("Checked");
-            } else {
-              $(this).addClass("Checked");
-            }
-          });
-
-          el.find(".GtkToggleToolButton button").click(function() {
-            if ( $(this).parent().hasClass("Checked") ) {
-              $(this).parent().removeClass("Checked");
-            } else {
-              $(this).parent().addClass("Checked");
-            }
-          });
-
-
           var loader = this.$element.find(".SystemUserLoading");
           var inner = this.$element.find(".SystemUserInner");
 
@@ -134,10 +110,10 @@ var SystemUser = (function($, undefined) {
       run : function() {
         var self = this;
 
-        this._super(self);
-
         var root_window = new Window_window1(self);
         root_window.show();
+
+        this._super(root_window);
 
         // Do your stuff here
       }

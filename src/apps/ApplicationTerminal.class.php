@@ -17,9 +17,6 @@
 class ApplicationTerminal
   extends Application
 {
-  const APPLICATION_TITLE  = "Terminal";
-  const APPLICATION_ICON   = "apps/utilities-terminal.png";
-  const APPLICATION_SYSTEM = false;
 
   /**
    * Create a new instance

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <application name="Terminal" file="ApplicationTerminal.class.php" schema="ApplicationTerminal.glade">
   <property name="enabled">true</property>
+  <property name="title">Terminal</property>
+  <property name="icon">apps/utilities-terminal.png</property>
+  <property name="system">false</property>
+
   <resource>app.terminal.css</resource>
   <resource>app.terminal.js</resource>
 </application>

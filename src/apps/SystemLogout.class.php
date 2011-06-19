@@ -17,9 +17,6 @@
 class SystemLogout
   extends Application
 {
-  const APPLICATION_TITLE  = "Logout";
-  const APPLICATION_ICON   = "actions/gnome-logout.png";
-  const APPLICATION_SYSTEM = true;
 
   /**
    * Create a new instance
