@@ -2152,9 +2152,9 @@
       this.cmd_cancel = cmd_cancel || function() {};
     },
 
-    create : function(id) {
+    create : function(id, mcallback) {
       var self = this;
-      this._super(id);
+      this._super(id, mcallback);
 
       if ( this.dialog_type == "confirm" ) {
         this.$element.find(".DialogButtons .Close").hide();
@@ -2203,8 +2203,8 @@
       this._super();
     },
 
-    create : function(id) {
-      this._super(id);
+    create : function(id, mcallback) {
+      this._super(id, mcallback);
 
       var self = this;
       self.$element.find(".DialogButtons .Close").click(function() {
@@ -2242,9 +2242,9 @@
       this.height   = 170;
     },
 
-    create : function(id) {
+    create : function(id, mcallback) {
       var self = this;
-      this._super(id);
+      this._super(id, mcallback);
 
       var desc      = $(self.$element).find(".CurrentColorDesc");
       var cube      = $(self.$element).find(".CurrentColor");
@@ -2307,9 +2307,9 @@
     },
 
 
-    create : function(id) {
+    create : function(id, mcallback) {
       var self = this;
-      this._super(id);
+      this._super(id, mcallback);
 
       $(this.content).find(".ProgressBar").progressbar({
         value : 50
@@ -2339,9 +2339,9 @@
     },
 
 
-    create : function(id) {
+    create : function(id, mcallback) {
       var self = this;
-      this._super(id);
+      this._super(id, mcallback);
 
       var txt = this.$element.find(".OperationDialog input");
       txt.val(this.src);
@@ -2406,8 +2406,8 @@
       this.uploader = null;
     },
 
-    create : function(id) {
-      this._super(id);
+    create : function(id, mcallback) {
+      this._super(id, mcallback);
 
       var self = this;
       $(this.$element).find(".ProgressBar").progressbar({
@@ -2489,10 +2489,10 @@
       this.height       = 300;
     },
 
-    create : function(id) {
+    create : function(id, mcallback) {
       var self = this;
 
-      this._super(id);
+      this._super(id, mcallback);
 
       var ul          = this.$element.find("ul");
       var inp         = this.$element.find("input[type='text']");
@@ -2693,9 +2693,9 @@
     },
 
 
-    create : function(id) {
+    create : function(id, mcallback) {
       var self = this;
-      this._super(id);
+      this._super(id, mcallback);
 
       var app, current;
       var selected;
@@ -2760,9 +2760,9 @@
     },
 
 
-    create : function(id) {
+    create : function(id, mcallback) {
       var self = this;
-      this._super(id);
+      this._super(id, mcallback);
       this.clb_create(self);
     }
 
