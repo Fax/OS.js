@@ -88,8 +88,7 @@ if ( $xml = file_get_contents(PATH_PROJECT_BUILD . "/applications.xml") ) {
           }
         }
         $windows[$win_id] = Array(
-          "properties" => $win_props,
-          "html"       => $win_html
+          "properties" => $win_props
         );
       }
 

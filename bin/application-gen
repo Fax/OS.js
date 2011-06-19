@@ -263,10 +263,12 @@ if ( $dh  = opendir($root) ) {
           $prop_node->appendChild($doc->createCDATASection(json_encode($window['properties'])));
           $win_node->appendChild($prop_node);
 
+          /*
           $html_node = $doc->createElement("property");
           $html_node->setAttribute("name", "content");
           $html_node->appendChild($doc->createCDATASection($window['content']));
           $win_node->appendChild($html_node);
+           */
 
           $node->appendChild($win_node);
         }
@@ -286,14 +288,16 @@ if ( $dh  = opendir($root) ) {
         }
 
         $script = create_js_root($cname, $wins);
+        $style = create_css($cname);
+        /*
         $script_node = $doc->createElement("script");
         $script_node->appendChild($doc->createCDATASection($script));
         $node->appendChild($script_node);
 
-        $style = create_css($cname);
         $style_node = $doc->createElement("style");
         $style_node->appendChild($doc->createCDATASection($style));
         $node->appendChild($style_node);
+         */
 
         $utype = preg_match("/^System/", $cname) ? "sys" : "app";
         $ucase = strtolower(preg_replace("/^System|Application/", "", $cname));

@@ -41,7 +41,7 @@
   /**
    * Local settings
    */
-  var SETTING_REVISION = 17;
+  var SETTING_REVISION = 18;
   var ENABLE_LOGIN     = false;
   var ANIMATION_SPEED  = 400;
 
