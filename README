@@ -5,7 +5,7 @@ Features an Application compiler inspired by Freedesktop.org standards.
 
 Uses Glade (Gtk+ 3) to build HTML, JSON, CSS and JavaScript data.
 
-Communication is performed via AJAX to a PHP+MySQL backend.
+Communication is done via AJAX to a PHP+MySQL backend.
 
 
 Features and Highlights:
@@ -35,30 +35,43 @@ Built-In Applications, Dialogs and Panel Items:
 * System: User Information
 * System: Settings
 * System: Logout
-* Panel: Menu
-* Panel: Separator
-* Panel: Window List
-* Panel: Weather Information (HTML5-Geolocation)
-* Panel: Launcher Dock
-* Panel: Clock
+* Panel Item: Menu
+* Panel Item: Separator
+* Panel Item: Window List
+* Panel Item: Weather Information (HTML5-Geolocation)
+* Panel Item: Launcher Dock
+* Panel Item: Clock
 * Dialog: Color Picker
 * Dialog: File Copy, Upload
 * Dialog: File Open, Save, Rename
 * Dialog: Lauch Application
-* Dialog: Modify Panel
+* Dialog: Modify Panel/PanelItem
 
 TODOs:
 -------------------------------------------------------------------------------
-* PNG Cursors
-* Finish up VFS
-* Finish up panel (Multiple, Sorting of Elements)
+* Core: Login Screen
+* Core: PNG Cursors
+* Core: Finish up VFS
+* Core: Tooltips
+* Panel: Finish up panel (Multiple, Sorting of Elements)
+* Application: Implement SettingsManager into Application
+* application-gen: Add db-schema to Application xml
 
 Building applications:
 -------------------------------------------------------------------------------
 Look at the example files to see how this is done.
 
-* Create an ApplicationXXX class that extends 'Application' class
-* Create XML build-file
+New Application:
+* Create an ApplicationXXX class that extends 'Application' class in 'src/apps/'
+* Create Glade Interface file, place in 'src/apps/'
+* Create XML build-file, place in 'src/apps/'
+* Update Database schema 'schema.xml' if needed
 * Run './bin/application-gen'
-* Copy './src/build/apps/app.XXX.js' to './public_html/js/'
-* Copy './src/build/apps/app.XXX.css' to './public_html/css/'
+* Run './bin/database-gen' if database schema was updated
+* Copy 'src/build/apps/app.XXX.js' to 'public_html/js/'
+* Copy 'src/build/apps/app.XXX.css' to 'public_html/css/'
+
+Update:
+* Run './bin/application-gen'
+* Run './bin/database-gen' if database schema was updated
+* Update your CSS and JS with new code found in 'src/build/app.FOO.BAR'
