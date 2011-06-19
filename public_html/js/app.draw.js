@@ -336,7 +336,6 @@ var ApplicationDraw = (function($, undefined) {
       },
 
       destroy : function() {
-        this._super();
       },
 
       clear : function() {
