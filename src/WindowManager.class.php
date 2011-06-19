@@ -206,6 +206,8 @@ class WindowManager
             $json['error'] = "You are not logged in!";
           }
         } else if ( $args['action'] == "load" ) {
+          Application::init(APPLICATION_BUILD);
+
           $class = $args['app'];
           if ( class_exists($class) ) {
             $res = new $class();
@@ -214,6 +216,7 @@ class WindowManager
             $json['error'] = "Application '$class' does not exist";
           }
         } else if ( $args['action'] == "init" ) {
+          Application::init(APPLICATION_BUILD);
 
           $json = Array("success" => true, "error" => null, "result" => Array(
             "settings" => self::getSettings(),
@@ -225,16 +228,24 @@ class WindowManager
           if ( $uuid = $args['uuid'] ) {
             $_SESSION[$uuid] = $args['instance'];
           }
+
+          $json['success'] = true;
+          $json['error'] = null;
         } else if ( $args['action'] == "flush" ) {
           if ( $uuid = $args['uuid'] ) {
             unset($_SESSION[$uuid]);
           }
+
+          $json['success'] = true;
+          $json['error'] = null;
         } else if ( $args['action'] == "event" ) {
           if ( ($uuid = $args['uuid']) && ($action = $args['action']) ) {
             $instance = $args['instance'];
             $cname    = $instance['name'];
             $aargs    = $instance['args'];
             $action   = $instance['action'];
+
+            Application::init(APPLICATION_BUILD, $cname);
 
             $result = $cname::Event($uuid, $action, $aargs ? $aargs : Array());
 
