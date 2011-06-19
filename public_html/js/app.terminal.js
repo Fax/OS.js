@@ -105,8 +105,8 @@ var ApplicationTerminal = (function($, undefined) {
 
 
 
-      create : function(id, zi, mcallback) {
-        var el = this._super(id, zi, mcallback);
+      create : function(id, mcallback) {
+        var el = this._super(id, mcallback);
         var self = this;
 
         if ( el ) {

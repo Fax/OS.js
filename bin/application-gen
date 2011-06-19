@@ -40,8 +40,19 @@ EOJAVASCRIPT;
  * @class
  */
 var {$cname} = (function(\$, undefined) {
+  /**
+   * @param GtkWindow     GtkWindow            GtkWindow API Reference
+   * @param Application   Application          Application API Reference
+   * @param API           API                  Public API Reference
+   * @param Object        argv                 Application arguments (like cmd)
+   * @param Array         windows              Application windows from session (restoration)
+   */
   return function(GtkWindow, Application, API, argv, windows) {
 
+
+    ///////////////////////////////////////////////////////////////////////////
+    // WINDOWS
+    ///////////////////////////////////////////////////////////////////////////
 
 %s
 
@@ -49,6 +60,10 @@ var {$cname} = (function(\$, undefined) {
     // APPLICATION
     ///////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Main Application Class
+     * @class
+     */
     var __{$cname} = Application.extend({
 
       init : function() {
@@ -84,6 +99,10 @@ function create_js($cname, $window, $content, $properties, $signals) {
   $content = addslashes(str_replace("\n", "", preg_replace("/\s+/", " ", $content)));
   $template = <<<EOJAVASCRIPT
 
+    /**
+     * GtkWindow Class
+     * @class
+     */
     var Window_{$window} = GtkWindow.extend({
 
       init : function(app) {
@@ -98,16 +117,18 @@ function create_js($cname, $window, $content, $properties, $signals) {
 
 %s
 
-      create : function(id, zi, mcallback) {
-        var el = this._super(id, zi, mcallback);
+      create : function(id, mcallback) {
+        var el = this._super(id, mcallback);
         var self = this;
 
         if ( el ) {
 %s
           // Do your stuff here
 
+          return true;
         }
 
+        return false;
       }
     });
 

@@ -73,6 +73,8 @@
     callback = callback || function() {};
     callback_error = callback_error || function() {};
 
+    API.ui.cursor("wait");
+
     $.post("/", {'ajax' : true, 'action' : 'load', 'app' : app_name}, function(data) {
       if ( data.success ) {
         _Resources.addResources(data.result.resources, function() {
@@ -86,10 +88,18 @@
             API.system.dialog("error", error);
             callback_error(error);
           }
+
+          setTimeout(function() {
+            API.ui.cursor("default");
+          }, 50);
         });
       } else {
         API.system.dialog("error", data.error);
         callback_error(data.error);
+
+        setTimeout(function() {
+          API.ui.cursor("default");
+        }, 50);
       }
     });
   }
@@ -888,24 +898,17 @@
         if ( win instanceof Window ) {
           var self = this;
 
-          _TopIndex++;
+          var AddWindowCallback = function(fresh) {
+            if ( fresh ) {
+              if ( !win.is_minimized && !win.is_maximized ) {
+                self.focusWindow(win); // Always focus new windows
+              }
+            }
+          };
 
-          var id = "Window_" + this.stack.length;
-
-          win.create(id, _TopIndex, function() {
-            setTimeout(function() {
-              API.ui.cursor("default");
-            }, 50);
-          });
+          win.create(("Window_" + this.stack.length), AddWindowCallback);
 
           this.stack.push(win);
-
-          //win.focus();
-          if ( !win.is_minimized && !win.is_maximized ) {
-            //$(win.$element).trigger("mousedown");
-            this.focusWindow(win); // Always focus new windows
-          }
-
           this.panel.redraw(self, win, false);
 
           return win;
@@ -1526,20 +1529,20 @@
       }
     },
 
-    create : function(id, zi, mcallback) {
+    create : function(id, mcallback) {
+      var self = this;
+
+      mcallback = mcallback || function() {};
+
       if ( !this.created ) {
-        this.id = id;
+        this.id      = id;
         this.showing = true;
 
-        var self = this;
-        mcallback = mcallback || function() {};
-
-        var el = this.dialog ? $($("#Dialog").html()) : $($("#Window").html());
         var fresh = true;
+        var el    = this.dialog ? $($("#Dialog").html()) : $($("#Window").html());
 
         // Attributtes
         el.attr("id", id);
-        el.css("z-index", zi);
         el.find(".WindowContent").css("overflow", this.is_scrollable ? "auto" : "hidden");
 
         // Apply default size
@@ -1688,6 +1691,10 @@
           this.is_ontop     = this.attrs.is_ontop;
           this.zindex       = this.attrs.zindex;
 
+          if ( _TopIndex < this.zindex ) {
+            _TopIndex = this.zindex;
+          }
+
           fresh = false;
         }
 
@@ -1778,7 +1785,7 @@
 
         this.$element = el;
 
-        mcallback();
+        mcallback(fresh);
 
         if ( this.is_minimized ) {
           $(el).hide();
@@ -2006,8 +2013,8 @@
       this._super(window_name, window_dialog, attrs);
     },
 
-    create : function(id, zi, mcallback) {
-      var el = this._super(id, zi, mcallback);
+    create : function(id, mcallback) {
+      var el = this._super(id, mcallback);
       var self = this;
 
       if ( el ) {
@@ -2141,9 +2148,9 @@
       this.cmd_cancel = cmd_cancel || function() {};
     },
 
-    create : function(id, zi) {
+    create : function(id) {
       var self = this;
-      this._super(id, zi);
+      this._super(id);
 
       if ( this.dialog_type == "confirm" ) {
         this.$element.find(".DialogButtons .Close").hide();
@@ -2192,8 +2199,8 @@
       this._super();
     },
 
-    create : function(id, zi) {
-      this._super(id, zi);
+    create : function(id) {
+      this._super(id);
 
       var self = this;
       self.$element.find(".DialogButtons .Close").click(function() {
@@ -2231,9 +2238,9 @@
       this.height   = 170;
     },
 
-    create : function(id, zi) {
+    create : function(id) {
       var self = this;
-      this._super(id, zi);
+      this._super(id);
 
       var desc      = $(self.$element).find(".CurrentColorDesc");
       var cube      = $(self.$element).find(".CurrentColor");
@@ -2296,9 +2303,9 @@
     },
 
 
-    create : function(id, zi) {
+    create : function(id) {
       var self = this;
-      this._super(id, zi);
+      this._super(id);
 
       $(this.content).find(".ProgressBar").progressbar({
         value : 50
@@ -2328,9 +2335,9 @@
     },
 
 
-    create : function(id, zi) {
+    create : function(id) {
       var self = this;
-      this._super(id, zi);
+      this._super(id);
 
       var txt = this.$element.find(".OperationDialog input");
       txt.val(this.src);
@@ -2395,8 +2402,8 @@
       this.uploader = null;
     },
 
-    create : function(id, zi) {
-      this._super(id, zi);
+    create : function(id) {
+      this._super(id);
 
       var self = this;
       $(this.$element).find(".ProgressBar").progressbar({
@@ -2478,10 +2485,10 @@
       this.height       = 300;
     },
 
-    create : function(id, zi) {
+    create : function(id) {
       var self = this;
 
-      this._super(id, zi);
+      this._super(id);
 
       var ul          = this.$element.find("ul");
       var inp         = this.$element.find("input[type='text']");
@@ -2682,9 +2689,9 @@
     },
 
 
-    create : function(id, zi) {
+    create : function(id) {
       var self = this;
-      this._super(id, zi);
+      this._super(id);
 
       var app, current;
       var selected;
@@ -2749,9 +2756,9 @@
     },
 
 
-    create : function(id, zi) {
+    create : function(id) {
       var self = this;
-      this._super(id, zi);
+      this._super(id);
       this.clb_create(self);
     }
 
