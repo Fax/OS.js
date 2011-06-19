@@ -1780,6 +1780,9 @@
             },
             stop : function() {
               el.removeClass("Blend");
+
+              self.width = parseInt(self.$element.width(), 10);
+              self.height = parseInt(self.$element.height(), 10);
             }
           });
         }
