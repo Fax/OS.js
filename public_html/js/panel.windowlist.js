@@ -23,6 +23,8 @@ var PanelItemWindowList = (function($, undefined) {
 
         var id = win.$element.attr("id") + "_Shortcut";
 
+        this.$element.find(".PanelItemWindow").removeClass("Current");
+
         if ( remove ) {
           $("#" + id).empty().remove();
         } else {
@@ -44,12 +46,12 @@ var PanelItemWindowList = (function($, undefined) {
             })(el, win);
 
             self.$element.append(el);
+          } else {
+            if ( win.current ) {
+              $("#" + id).addClass("Current");
+            }
           }
 
-          if ( remove === undefined ) {
-            this.$element.find(".PanelItemWindow").removeClass("Current");
-            $("#" + id).addClass("Current");
-          }
         }
       },
 

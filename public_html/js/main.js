@@ -976,6 +976,7 @@
       },
 
       minimizeWindow : function(win) {
+        this.panel.redraw(this, win);
       },
 
       sortWindows : function(method) {
