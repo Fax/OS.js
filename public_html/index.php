@@ -282,7 +282,7 @@ header("Content-Type: text/html; charset=utf-8");
 
   |
 
-  <a href="/help.html" target="_blank">help</a>
+  <a href="/help.php" target="_blank">help</a>
 </div>
 
 </body>

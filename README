@@ -1,17 +1,64 @@
 About:
 -------------------------------------------------------------------------------
 JavaScript Window Manager (and simple desktop environment) for modern browsers.
-Uses PHP+MySQL backend and Glade for frontend. AJAX is used to perform events
-and access the Application API.
+Features an Application compiler inspired by Freedesktop.org standards.
+
+Uses Glade (Gtk+ 3) to build HTML, JSON, CSS and JavaScript data.
+
+Communication is performed via AJAX to a PHP+MySQL backend.
+
+
+Features and Highlights:
+-------------------------------------------------------------------------------
+* Window Managment
+* Desktop Environment
+* Windows, Dialogs, Panels + PanelItems
+* Custom Error and Exception handling
+* Saving and Restoration of Desktop Sessions
+* User Environment settings (WebStorage and SQL backup)
+
+* Light-weight server and client code
+* Application Compiler, Glade Templates
+* Application/System API and Event handling
+* Uses HTML5 and CSS2+
+* Follows strict coding standards
+
+Built-In Applications, Dialogs and Panel Items:
+-------------------------------------------------------------------------------
+* Application: Clock (HTML5-SVG)
+* Application: Draw (HTML5-Canvas)
+* Application: File Manager
+* Application: Terminal
+* Application: Textpad
+* Application: Viewer (HTML5-Audio, HTML5-Video, Images)
+* System: About
+* System: User Information
+* System: Settings
+* System: Logout
+* Panel: Menu
+* Panel: Separator
+* Panel: Window List
+* Panel: Weather Information (HTML5-Geolocation)
+* Panel: Launcher Dock
+* Panel: Clock
+* Dialog: Color Picker
+* Dialog: File Copy, Upload
+* Dialog: File Open, Save, Rename
+* Dialog: Lauch Application
+* Dialog: Modify Panel
+
+TODOs:
+-------------------------------------------------------------------------------
+* PNG Cursors
+* Finish up VFS
+* Finish up panel (Multiple, Sorting of Elements)
 
 Building applications:
 -------------------------------------------------------------------------------
-Follow the example. After modifications you have to run './bin/application-gen'
+Look at the example files to see how this is done.
 
-Notes for author:
--------------------------------------------------------------------------------
-Touch devices:
-* http://forum.jquery.com/topic/jquery-ui-and-touch-devices
-  * http://code.google.com/p/jquery-ui-for-ipad-and-iphone/
-  * https://github.com/furf/jquery-ui-touch-punch
-
+* Create an ApplicationXXX class that extends 'Application' class
+* Create XML build-file
+* Run './bin/application-gen'
+* Copy './src/build/apps/app.XXX.js' to './public_html/js/'
+* Copy './src/build/apps/app.XXX.css' to './public_html/css/'
