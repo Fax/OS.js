@@ -227,7 +227,7 @@ if ( $dh  = opendir($root) ) {
 
       if ( $break ) {
         print "\tSkipped!\n";
-        break;
+        continue;
       }
 
       if ( $glade = Glade::parse($root . $gfilename) ) {

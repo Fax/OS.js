@@ -55,4 +55,17 @@
       <property name="properties"><![CDATA[{"type":"dialog","title":"Logout","icon":"actions\/gnome-logout.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":300,"height":100,"gravity":"center"}]]></property>
     </window>
   </application>
+  <application name="User" title="User Information" icon="apps/user-info.png" system="true" class="SystemUser" file="SystemUser.class.php">
+    <window id="window1">
+      <property name="properties"><![CDATA[{"type":"window","title":"User Information","icon":"apps\/user-info.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":400,"height":250,"gravity":"center"}]]></property>
+    </window>
+  </application>
+  <application name="Draw" title="Draw" icon="categories/gnome-graphics.png" system="false" class="ApplicationDraw" file="ApplicationDraw.class.php">
+    <window id="window1">
+      <property name="properties"><![CDATA[{"type":"window","title":"Draw","icon":"categories\/gnome-graphics.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":800,"height":500,"gravity":""}]]></property>
+    </window>
+    <resource>app.draw.css</resource>
+    <resource>app.draw.js</resource>
+    <mime>image/*</mime>
+  </application>
 </applications>

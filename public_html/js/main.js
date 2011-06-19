@@ -1451,7 +1451,7 @@
       this.showing         = false;
       this.last_attrs      = null;
 
-      if ( attrs.length ) {
+      if ( (attrs instanceof Array) && attrs.length ) {
         attrs = attrs[0]; // FIXME
       }
 
