@@ -162,7 +162,7 @@ class WindowManager
   public function doGET(Array $args) {
     // Upload "POST"
     if ( isset($args['ajax']) && isset($args['action']) && isset($args['qqfile']) && isset($args['path']) ) {
-      return json_encode(ApplicationAPI::upload($args['path']));
+      return json_encode(ApplicationVFS::upload($args['path']));
     }
 
     return false;
@@ -268,7 +268,7 @@ class WindowManager
 
           if ( $method == "read" ) {
             if ( is_string($argv) ) {
-              if ( ($content = ApplicationAPI::readfile($argv)) !== false ) {
+              if ( ($content = ApplicationVFS::cat($argv)) !== false ) {
                 $json['result'] = $content;
                 $json['success'] = true;
               } else {
@@ -278,7 +278,7 @@ class WindowManager
               $json['error'] = "Invalid argument";
             }
           } else if ( $method == "write" ) {
-            if ( ApplicationAPI::writefile($argv) ) {
+            if ( ApplicationVFS::put($argv) ) {
               $json['success'] = true;
               $json['result'] = true;
             } else {
@@ -289,34 +289,34 @@ class WindowManager
             $ignores = isset($argv['ignore']) ? $argv['ignore'] : null;
             $mime    = isset($argv['mime']) ? ($argv['mime'] ? $argv['mime'] : Array()) : Array();
 
-            if ( ($items = ApplicationAPI::readdir($path, $ignores, $mime)) !== false) {
+            if ( ($items = ApplicationVFS::ls($path, $ignores, $mime)) !== false) {
               $json['result'] = $items;
               $json['success'] = true;
             } else {
-              $json['error'] = "Failed to read '{$argv['path']}'";
+              $json['error'] = "Failed to read directory '{$argv['path']}'";
             }
           } else if ( $method == "rename" ) {
             list($path, $src, $dst) = $argv;
 
-            if ( ApplicationAPI::rename($path, $src, $dst) ) {
+            if ( ApplicationAPI::mv($path, $src, $dst) ) {
               $json['result'] = $dst;
               $json['success'] = true;
             } else {
               $json['error'] = "Failed to rename '{$src}'";
             }
           } else if ( $method == "delete" ) {
-            if ( ApplicationAPI::delete($argv) ) {
+            if ( ApplicationVFS::rm($argv) ) {
               $json['result'] = $argv;
               $json['success'] = true;
             } else {
-              $json['error'] = "Failed to rename '{$src}'";
+              $json['error'] = "Failed to delete '{$src}'";
             }
           } else if ( $method == "readurl" ) {
             if ( $ret = ApplicationAPI::readurl($argv) ) {
               $json['result'] = $ret;
               $json['success'] = true;
             } else {
-              $json['error'] = "Failed to rename '{$src}'";
+              $json['error'] = "Failed to read '{$src}'";
             }
           } else {
             if ( function_exists($method) ) {

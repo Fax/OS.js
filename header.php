@@ -46,8 +46,10 @@ require 'vendor/Propel/runtime/lib/Propel.php';
 require "vendor/AjaxUpload.php";
 
 // Application
+require "src/Functions.php";
 require "src/UUID.class.php";
 require "src/Glade.class.php";
+require "src/ApplicationVFS.class.php";
 require "src/ApplicationAPI.class.php";
 require "src/Application.class.php";
 require 'src/WindowManager.class.php';

@@ -39,7 +39,7 @@ class ApplicationFileManager
         $ignores[] = "..";
       }
 
-      if ( ($items = ApplicationAPI::readdir($path, $ignores)) !== false ) {
+      if ( ($items = ApplicationVFS::ls($path, $ignores)) !== false ) {
         $i = 0;
         foreach ( $items as $file => $info ) {
 
