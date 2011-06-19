@@ -598,7 +598,7 @@
 
         console.log("ResourceManager", "addResource", res, type, el);
 
-        this.resources.push(res);
+        this.resources.push(res.split("?")[0]);
         this.links.push(el);
 
         // FIXME: Add timeout here !!!
