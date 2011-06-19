@@ -37,20 +37,6 @@ abstract class Application
     $this->_sUUID = UUID::v4();
   }
 
-  /**
-   * @return String
-   */
-  public function __toJSON() {
-    $cname = get_class($this);
-    return Array(
-      "uuid"      => $this->_sUUID,
-      "title"     => self::$Registered[$cname]['title'],
-      "icon"      => self::$Registered[$cname]['icon'],
-      "resources" => self::$Registered[$cname]['resources'],
-      "mime"      => self::$Registered[$cname]['mimes']
-    );
-  }
-
   /////////////////////////////////////////////////////////////////////////////
   // CLASS METHODS
   /////////////////////////////////////////////////////////////////////////////
@@ -63,6 +49,69 @@ abstract class Application
     return Array();
   }
 
+  /**
+   * Load an application
+   * @return Mixed
+   */
+  public static function Load($classname) {
+    Application::init(APPLICATION_BUILD, $classname);
+    if ( class_exists($classname) ) {
+      $instance = new $classname();
+      return $instance->getJSON();
+    }
+
+    return false;
+  }
+
+  /**
+   * Register an application
+   * @return bool
+   */
+  public static function Register($uuid, $instance) {
+    if ( $uuid ) {
+      $_SESSION[$uuid] = $instance;
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Flush an application
+   * @return bool
+   */
+  public static function Flush($uuid) {
+    if ( $uuid ) {
+      unset($_SESSION[$uuid]);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Handle an application event
+   * @return Mixed
+   */
+  public static function Handle($uuid, $action, $instance) {
+    if ( $uuid && $action && $instance ) {
+      $cname    = $instance['name'];
+      $aargs    = $instance['args'];
+      $action   = $instance['action'];
+
+      Application::init(APPLICATION_BUILD, $cname);
+
+      if ( class_exists($cname) ) {
+        return $cname::Event($uuid, $action, $aargs ? $aargs : Array());
+      }
+
+    }
+
+    return false;
+  }
+
+  /**
+   * Initialize application(s)
+   * @return void
+   */
   public static function init($config, $classname = null) {
 
     // Parse application data
@@ -146,6 +195,20 @@ abstract class Application
   /////////////////////////////////////////////////////////////////////////////
   // SET / GET
   /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * @return Array
+   */
+  public function getJSON() {
+    $cname = get_class($this);
+    return Array(
+      "uuid"      => $this->_sUUID,
+      "title"     => self::$Registered[$cname]['title'],
+      "icon"      => self::$Registered[$cname]['icon'],
+      "resources" => self::$Registered[$cname]['resources'],
+      "mime"      => self::$Registered[$cname]['mimes']
+    );
+  }
 
 }
 

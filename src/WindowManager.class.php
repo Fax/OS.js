@@ -49,8 +49,8 @@ class WindowManager
     foreach ( Application::$Registered as $c => $opts ) {
       if ( !$opts['system'] ) {
         $apps[$c] = Array(
-          "title" => $opts['title'], //constant("{$c}::APPLICATION_TITLE"),
-          "icon"  => $opts['icon'], //constant("{$c}::APPLICATION_ICON"),
+          "title" => $opts['title'],
+          "icon"  => $opts['icon'],
           "mime"  => $opts["mimes"]
         );
       }
@@ -174,6 +174,9 @@ class WindowManager
       if ( isset($args['ajax']) ) {
         $json = Array("success" => false, "error" => "Unknown error", "result" => null);
 
+        /**
+         * MAIN
+         */
         if ( $args['action'] == "boot" ) {
 
         } else if ( $args['action'] == "shutdown" ) {
@@ -191,7 +194,21 @@ class WindowManager
             $json['result'] = true;
             $json['success'] = true;
           }
-        } else if ( $args['action'] == "user" ) {
+        } else if ( $args['action'] == "init" ) {
+          Application::init(APPLICATION_BUILD);
+
+          $json = Array("success" => true, "error" => null, "result" => Array(
+            "settings" => self::getSettings(),
+            "config"   => Array(
+              "cache" => ENABLE_CACHE
+            )
+          ));
+        }
+
+        /**
+         * USER
+         */
+        else if ( $args['action'] == "user" ) {
           if ( $user = $this->getUser() ) {
             $json['success'] = true;
             $json['result'] = Array(
@@ -205,57 +222,47 @@ class WindowManager
           } else {
             $json['error'] = "You are not logged in!";
           }
-        } else if ( $args['action'] == "load" ) {
-          Application::init(APPLICATION_BUILD);
+        }
 
-          $class = $args['app'];
-          if ( class_exists($class) ) {
-            $res = new $class();
-            $json = Array("success" => true, "error" => null, "result" => $res->__toJSON());
+        /**
+         * APPLICATIONS
+         */
+        else if ( $args['action'] == "load" ) {
+          if ( $app = Application::Load($args['app']) ) {
+            $json['success'] = true;
+            $json['result']  = $app;
+            $json['error']   = null;
           } else {
-            $json['error'] = "Application '$class' does not exist";
+            $json['error'] = "Application '{$args['app']}' does not exist";
           }
-        } else if ( $args['action'] == "init" ) {
-          Application::init(APPLICATION_BUILD);
-
-          $json = Array("success" => true, "error" => null, "result" => Array(
-            "settings" => self::getSettings(),
-            "config"   => Array(
-              "cache" => ENABLE_CACHE
-            )
-          ));
         } else if ( $args['action'] == "register" ) {
-          if ( $uuid = $args['uuid'] ) {
-            $_SESSION[$uuid] = $args['instance'];
+          if ( Application::Register($args['uuid'], $args['instance']) ) {
+            $json['success'] = true;
+            $json['error']   = null;
+          } else {
+            $json['error'] = "Failed to flush application";
           }
-
-          $json['success'] = true;
-          $json['error'] = null;
         } else if ( $args['action'] == "flush" ) {
-          if ( $uuid = $args['uuid'] ) {
-            unset($_SESSION[$uuid]);
+          if ( Application::Flush($args['uuid']) ) {
+            $json['success'] = true;
+            $json['error']   = null;
+          } else {
+            $json['error'] = "Failed to flush application";
           }
-
-          $json['success'] = true;
-          $json['error'] = null;
         } else if ( $args['action'] == "event" ) {
-          if ( ($uuid = $args['uuid']) && ($action = $args['action']) ) {
-            $instance = $args['instance'];
-            $cname    = $instance['name'];
-            $aargs    = $instance['args'];
-            $action   = $instance['action'];
-
-            Application::init(APPLICATION_BUILD, $cname);
-
-            $result = $cname::Event($uuid, $action, $aargs ? $aargs : Array());
-
-            $success = ($result === true) || is_array($result);
-            $error   = $success ? null : (is_string($result) ? $result : "Unknown error");
-            $result  = $success ? $result : null;
-
-            $json = Array("success" => $success, "error" => $error, "result" => $result);
+          if ( ($result = Application::Handle($args['uuid'], $args['action'], $args['instance'])) ) {
+            $json['success'] = ($result === true) || is_array($result);
+            $json['error']   = $json['success'] ? null : (is_string($result) ? $result : "Unknown error");
+            $json['result']  = $json['success'] ? $result : null;
+          } else {
+            $json['error'] = "Failed to handle application";
           }
-        } else if ( $args['action'] == "call" && isset($args['method']) && isset($args['args']) ) {
+        }
+
+        /**
+         * API
+         */
+        else if ( $args['action'] == "call" && isset($args['method']) && isset($args['args']) ) {
           $method = $args['method'];
           $argv   = $args['args'];
 

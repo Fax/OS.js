@@ -2167,9 +2167,7 @@
         self.$element.find(".ActionClose").click();
       });
       self.$element.find(".DialogButtons .Ok").click(function() {
-
         self.$element.find(".ActionClose").click();
-        console.log(self.$element.find(".ActionClose"));
       });
       self.$element.find(".DialogButtons .Cancel").click(function() {
         self.$element.find(".ActionClose").click();
