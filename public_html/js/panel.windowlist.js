@@ -32,7 +32,7 @@ var PanelItemWindowList = (function($, undefined) {
           if ( !document.getElementById(id) ) {
             var el = $("<div class=\"PanelItem Padded PanelItemWindow\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div>");
             el.find("img").attr("src", "/img/icons/16x16/" + win._icon);
-            el.find("span").html(win.title);
+            el.find("span").html(win._title);
             el.attr("id", id);
 
             if ( win._current ) {
