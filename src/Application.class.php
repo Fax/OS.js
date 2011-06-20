@@ -182,7 +182,7 @@ abstract class Application
             "system"    => $app_system
           );
 
-          require PATH_APPS . "/{$app_file}";
+          require_once PATH_APPS . "/{$app_file}";
         }
       }
 

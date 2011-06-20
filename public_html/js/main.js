@@ -257,6 +257,13 @@
     'system' : {
       'run' : function(path, mime) {
         if ( mime ) {
+          if ( mime == "ajwm/application" ) {
+            var expl = path.split("/");
+            var name = expl[expl.length - 1];
+            API.system.launch(name);
+            return;
+          }
+
           var apps = _Settings._get("system.app.registered", true);
           var found = [];
           var list = [];

@@ -33,7 +33,7 @@ class ApplicationFileManager
       $view  = $args['view'];
       $total = 0;
       $bytes = 0;
-      $ignores = Array(".");
+      $ignores = Array(".", ".gitignore");
 
       if ( $path == "/" ) {
         $ignores[] = "..";

@@ -22,6 +22,11 @@ class ApplicationVFS
   /////////////////////////////////////////////////////////////////////////////
 
   protected static $VirtualDirs = Array(
+    "/System/Applications" => Array(
+      "type" => "applications",
+      "attr" => "r",
+      "icon" => "places/user-bookmarks.png"
+    ),
     "/System" => Array(
       "type" => "core",
       "attr" => "r",
@@ -153,11 +158,52 @@ class ApplicationVFS
    */
   public static function ls($path, Array $ignores = null, Array $mimes = Array()) {
     if ( $ignores === null ) {
-      $ignores = Array(".", "..");
+      $ignores = Array(".", "..", ".gitignore", ".git", ".cvs");
     }
 
     $base     = PATH_PROJECT_HTML . "/media";
     $absolute = "{$base}{$path}";
+
+    $apps = false;
+    foreach ( self::$VirtualDirs as $k => $v ) {
+      if ( startsWith($path, $k) ) {
+        if ( $v['type'] == "applications" ) {
+          $apps = true;
+        }
+        break;
+      }
+    }
+
+    if ( $apps ) {
+      $items = Array();
+      $xpath = explode("/", $path);
+      array_pop($xpath);
+      $fpath = implode("/", $xpath);
+
+      $items[".."] = Array(
+          "path"       => $fpath,
+          "size"       => 0,
+          "mime"       => "",
+          "icon"       => "status/folder-visiting.png",
+          "type"       => "dir",
+          "protected"  => 1,
+      );
+
+      Application::init(APPLICATION_BUILD);
+      foreach ( Application::$Registered as $c => $opts ) {
+        $items["{$opts['title']} ($c)"] = Array(
+          "path"       => "{$path}/{$c}",
+          "size"       => 0,
+          "mime"       => "ajwm/application",
+          "icon"       => $opts['icon'],
+          "type"       => "file",
+          "protected"  => 1,
+        );
+      }
+
+      return $items;
+    }
+
 
     if ( is_dir($absolute) && $handle = opendir($absolute)) {
       $items = Array("dir" => Array(), "file" => Array());
