@@ -44,6 +44,7 @@
   var SETTING_REVISION = 18;
   var ENABLE_LOGIN     = false;
   var ANIMATION_SPEED  = 400;
+  var TEMP_COUNTER     = 1;
 
   /**
    * Local references
@@ -2045,6 +2046,28 @@
           } else {
             $(this).parent().addClass("Checked");
           }
+        });
+
+        var CreateId = function() {
+          var cn = "";
+          var test = "";
+          while ( !cn ) {
+            test = "tabs-" + TEMP_COUNTER;
+            if ( !document.getElementById(test) ) {
+              cn = test;
+            }
+            TEMP_COUNTER++;
+          }
+          return cn;
+        };
+
+        el.find(".GtkNotebook ul:first-child li a").each(function(ind, el) {
+          var href = $(el).attr("href").replace("#", "");
+          var old = document.getElementById(href);
+          var newn = CreateId();
+
+          $(el).attr("href", "#" + newn);
+          $(old).attr("id", newn);
         });
 
         el.find(".GtkNotebook").tabs();
