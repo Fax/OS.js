@@ -322,3 +322,38 @@
       color : #fff;
     }
 
+/* GtkNotebook */
+.GtkNotebook {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 0px;
+}
+
+  .GtkNotebook .ui-tabs {
+    position : absolute;
+    top : 0px;
+    right : 0px;
+    left : 0px;
+    bottom : 0px;
+    z-index : 1;
+  }
+
+  .GtkNotebook .ui-tabs-nav .ui-state-default {
+    cursor : pointer;
+  }
+
+  /* ^ theme.default for more */
+
+  /* GtkTab : Custom */
+  .GtkTab {
+    position : absolute;
+    top : 22px;
+    left : 0px;
+    right : 0px;
+    bottom : 0px;
+    z-index : 2;
+  }
+
+

@@ -18,64 +18,45 @@
   bottom : 0px;
 }
 
-.SystemUserInner {
+.SystemUser .notepad1 {
 }
 
-.SystemUserInner td {
+.SystemUser .notepad1 td {
   padding : 5px;
 }
 
-.SystemUserInner.ui-tabs {
-  position : absolute;
-  top : 0px;
-  right : 0px;
-  left : 0px;
-  bottom : 0px;
-}
-
-.SystemUserInner ul.ui-tabs-nav {
-  position : absolute;
-  z-index : 2;
-}
-
-.SystemUserInner li.ui-tabs-selected {
+.SystemUser .notepad1 li.ui-tabs-selected {
   background : #fff;
 }
 
-.SystemUserInner #tabs-1,
-.SystemUserInner #tabs-2 {
+.SystemUser .GtkTab,
+.SystemUser .GtkTab {
   background : #fff;
-  position : absolute;
-  top : 29px;
-  right : 0px;
-  left : 0px;
-  bottom : 0px;
-  z-index : 1;
 }
-.SystemUserInner #tabs-2 {
+.SystemUser .fixed2 {
   overflow-y : auto;
 }
-.SystemUserInner #tabs-2 ul {
+.SystemUser .fixed2 ul {
   list-style-type : none;
   margin : 0;
   padding : 0;
 }
-.SystemUserInner #tabs-2 li {
+.SystemUser .fixed2 li {
   margin : 0;
   padding : 5px;
   padding-left : 20px;
   background : url('/img/icons/16x16/actions/down.png') no-repeat left 5px;
 }
-.SystemUserInner #tabs-2 li.toggled {
+.SystemUser .fixed2 li.toggled {
   background : url('/img/icons/16x16/actions/up.png') no-repeat left 5px;
 }
-.SystemUserInner #tabs-2 li div {
+.SystemUser .fixed2 li div {
   display : none;
   border : 1px solid #e6e6e6;
   padding : 10px;
   white-space : pre;
 }
-.SystemUserInner #tabs-2 span {
+.SystemUser .fixed2 span {
   font-weight : bold;
   cursor : pointer;
 }

@@ -2046,6 +2046,8 @@
             $(this).parent().addClass("Checked");
           }
         });
+
+        el.find(".GtkNotebook").tabs();
       }
 
       return el;

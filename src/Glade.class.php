@@ -19,7 +19,10 @@ function get_inner_html( $node ) {
 
 class Glade
 {
+  private $_sClassName = "";
   private $_aWindows = Array();
+
+  protected static $Counter = 0;
 
   protected static $ShortTags = Array(
     "GtkImage", "GtkEntry"
@@ -119,6 +122,11 @@ class Glade
     "GtkToggleToolButton" => Array(
       "element" => "li",
       "inner"   => "button"
+    ),
+
+    "GtkNotebook" => Array(
+      "element" => "div",
+      "inner"   => "ul"
     )
   );
 
@@ -183,6 +191,7 @@ class Glade
 
   public function __construct($filename, $xml_data) {
     $cn = str_replace(".glade", "", basename($filename)); // FIXME
+    $this->_sClassName = $cn;
 
     foreach ( $xml_data->object as $root ) {
       $class = (string) $root['class'];
@@ -282,6 +291,7 @@ class Glade
           $class    = (string) $c->object['class'];
           $id       = (string) $c->object['id'];
 
+          $elid     = "";
           $classes  = Array($class);
           $styles   = Array();
           $attribs  = Array();
@@ -293,7 +303,12 @@ class Glade
           $outer = null;
           $node_type = "div";
 
+          $append_root = $doc_node;
+
           // Apply built-in attributes
+          $advanced_ui = false;
+          $tabbed_ui = false;
+
           if ( isset(self::$ClassMap[$class]) ) {
             $node_type = self::$ClassMap[$class]["element"];
 
@@ -338,6 +353,21 @@ class Glade
             $ex = explode("_", $id, 2);
             $node->setAttribute("value", end($ex));
             $node->appendChild(new DomText(end($ex)));
+          } else if ( $class == "GtkNotebook" ) {
+            // FIXME
+          } else {
+            if ( isset($c['type']) && ((string)$c['type'] == "tab") ) {
+              $append_root = $doc_node->getElementsByTagName("ul")->item(0); //->appendChild($li);
+              $outer = $doc->createElement("li");
+              $advanced_ui = true;
+              $tabbed_ui = "tab-" . (self::$Counter++);
+            } else {
+              if ( $gl_node['class'] == "GtkNotebook" ) {
+                $advanced_ui = true;
+                $elid = "tab-" . (self::$Counter);
+                $classes[] = "GtkTab";
+              }
+            }
           }
 
           // Parse Glade element signals
@@ -365,37 +395,39 @@ class Glade
 
           // Parse Glade element packing
           $packed = false;
-          if ( isset($c->packing) ) {
-            foreach ( $c->packing->property as $p ) {
-              $pk = (string) $p['name'];
-              $pv = (string) $p;
+          if ( !$advanced_ui ) {
+            if ( isset($c->packing) ) {
+              foreach ( $c->packing->property as $p ) {
+                $pk = (string) $p['name'];
+                $pv = (string) $p;
 
-              switch ( $pk ) {
-                case "expand" :
-                  if ( $pv == "True" ) {
-                    $oclasses[] = "Expand";
-                  }
-                  break;
+                switch ( $pk ) {
+                  case "expand" :
+                    if ( $pv == "True" ) {
+                      $oclasses[] = "Expand";
+                    }
+                    break;
 
-                case "fill" :
-                  if ( $pv == "True" ) {
-                    $oclasses[] = "Fill";
-                  }
-                  break;
+                  case "fill" :
+                    if ( $pv == "True" ) {
+                      $oclasses[] = "Fill";
+                    }
+                    break;
 
-                case "position" :
-                  $packed = true;
-                  $oclasses[] = "GtkBoxPosition";
-                  $oclasses[] = "Position_{$pv}";
-                  break;
+                  case "position" :
+                    $packed = true;
+                    $oclasses[] = "GtkBoxPosition";
+                    $oclasses[] = "Position_{$pv}";
+                    break;
 
-                case "x" :
-                  $styles[] = "left:{$pv}px";
-                  break;
+                  case "x" :
+                    $styles[] = "left:{$pv}px";
+                    break;
 
-                case "y" :
-                  $styles[] = "top:{$pv}px";
-                  break;
+                  case "y" :
+                    $styles[] = "top:{$pv}px";
+                    break;
+                }
               }
             }
           }
@@ -457,7 +489,14 @@ class Glade
                   }
 
                   if ( $class == "GtkButton" || $class == "GtkLabel" ) {
-                    $node->appendChild(new DomText($pv));
+                    if ( $class == "GtkLabel" && $tabbed_ui ) {
+                      $link = $doc->createElement("a");
+                      $link->appendChild(new DomText($pv));
+                      $link->setAttribute("href", "#{$tabbed_ui}");
+                      $node->appendChild($link);
+                    } else {
+                      $node->appendChild(new DomText($pv));
+                    }
                   } else if ( $class == "GtkToggleToolButton" || $class == "GtkCheckButton" ) {
                     $inner->appendChild(new DomText($pv));
                   } else if ( $class == "GtkMenuItem" || $class == "GtkImageMenuItem" || $class == "GtkRadioMenuItem" ) {
@@ -514,11 +553,11 @@ class Glade
             if ( $orient != "Vertical" ) {
               if ( !($temp = $doc_node->getElementsByTagName("tr")->item(0)) ) {
                 $temp = $doc->createElement("tr");
-                $doc_node->appendChild($temp);
+                $append_root->appendChild($temp);
               }
             } else {
               $temp = $doc->createElement("tr");
-              $doc_node->appendChild($temp);
+              $append_root->appendChild($temp);
             }
 
 
@@ -526,6 +565,9 @@ class Glade
             $temp2->setAttribute("class", implode(" ", $oclasses));
             if ( $styles ) {
               $temp2->setAttribute("style", implode(";", $styles));
+            }
+            if ( $elid ) {
+              $temp2->setAttribute("id", $elid);
             }
             if ( $outer ) {
               $outer->appendChild($node);
@@ -538,12 +580,15 @@ class Glade
             if ( $styles ) {
               $node->setAttribute("style", implode(";", $styles));
             }
+            if ( $elid ) {
+              $node->setAttribute("id", $elid);
+            }
 
             if ( $outer ) {
               $outer->appendChild($node);
-              $doc_node->appendChild($outer);
+              $append_root->appendChild($outer);
             } else {
-              $doc_node->appendChild($node);
+              $append_root->appendChild($node);
             }
           }
 

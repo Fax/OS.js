@@ -264,6 +264,8 @@ if ( $dh  = opendir($root) ) {
         $node->setAttribute("file", $class_file);
 
         $wins = Array();
+        $html = Array();
+
         foreach ( $windows as $id => $window ) {
           if ( !$window['properties']['title'] ) {
             $window['properties']['title'] = $xml_app_title;
@@ -290,6 +292,7 @@ if ( $dh  = opendir($root) ) {
           $html_node->appendChild($doc->createCDATASection($window['content']));
           $win_node->appendChild($html_node);
            */
+          $html[] = $window['content'];
 
           $node->appendChild($win_node);
         }
@@ -310,6 +313,7 @@ if ( $dh  = opendir($root) ) {
 
         $script = create_js_root($cname, $wins);
         $style = create_css($cname);
+        $html = implode("\n", $html);
         /*
         $script_node = $doc->createElement("script");
         $script_node->appendChild($doc->createCDATASection($script));
@@ -323,11 +327,13 @@ if ( $dh  = opendir($root) ) {
         $utype = preg_match("/^System/", $cname) ? "sys" : "app";
         $ucase = strtolower(preg_replace("/^System|Application/", "", $cname));
 
-        $css_path = PATH_PROJECT_BUILD . "/apps/{$utype}.{$ucase}.css";
-        $js_path  = PATH_PROJECT_BUILD . "/apps/{$utype}.{$ucase}.js";
+        $css_path  = PATH_PROJECT_BUILD . "/apps/{$utype}.{$ucase}.css";
+        $js_path   = PATH_PROJECT_BUILD . "/apps/{$utype}.{$ucase}.js";
+        $html_path = PATH_PROJECT_BUILD . "/apps/{$utype}.{$ucase}.html";
 
         file_put_contents($css_path, $style);
         file_put_contents($js_path, $script);
+        file_put_contents($html_path, $html);
 
         $root_node->appendChild($node);
         echo "\tSuccess!\n";

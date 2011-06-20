@@ -207,8 +207,8 @@ var ApplicationFileManager = (function($, undefined) {
           }
         });
 
-        //this.$element.find(".ApplicationFileManager li").addClass("ContextMenu");
-        //this.$element.find(".ApplicationFileManager td").addClass("ContextMenu");
+        this.$element.find(".ApplicationFileManager li").addClass("ContextMenu");
+        this.$element.find(".ApplicationFileManager td").addClass("ContextMenu");
       },
 
 

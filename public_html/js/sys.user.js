@@ -13,7 +13,7 @@ var SystemUser = (function($, undefined) {
 
       init : function(app) {
         this._super("SystemUser", false, app, windows);
-        this.content = $("<div class=\"window1\"> <div class=\"GtkWindow SystemUser window1\"> <div class=\"SystemUser\"><div class=\"SystemUserLoading\"></div><div class=\"SystemUserInner\"><ul><li><a href=\"#tabs-1\">Profile</a></li><li><a href=\"#tabs-2\">Session</a></li></ul><div id=\"tabs-1\"></div><div id=\"tabs-2\"><div class=\"SessionData\"><ul class=\"SessionDataList\"></ul></div></div></div></div> </div> </div> ").html();
+        this.content = $("<div class=\"window1\"> <div class=\"GtkWindow SystemUser window1\"> <div class=\"GtkNotebook notebook1\"> <ul> <li class=\"GtkLabel GtkObject label1\"> <div> <a href=\"#tab-0\">Profile</a> </div> </li> <li class=\"GtkLabel GtkObject label2\"> <div> <a href=\"#tab-1\">Session</a> </div> </li> <li class=\"GtkLabel GtkObject label3\"> <div> <a href=\"#tab-2\">Processes</a> </div> </li> </ul> <div class=\"GtkFixed GtkTab fixed1\" id=\"tab-0\"></div> <div class=\"GtkFixed GtkTab fixed2\" id=\"tab-1\"></div> <div class=\"GtkIconView GtkObject GtkTab iconview1\" id=\"tab-2\"></div> </div> </div> </div> ").html();
         this.title = 'User Information';
         this.icon = 'apps/user-info.png';
         this.is_draggable = true;
@@ -40,14 +40,16 @@ var SystemUser = (function($, undefined) {
         var self = this;
 
         if ( el ) {
-          var loader = this.$element.find(".SystemUserLoading");
-          var inner = this.$element.find(".SystemUserInner");
+          var inner = this.$element.find(".fixed1");
+
+          var table = $("<table></table>");
+
+          el.find(".fixed1").append(table);
+          el.find(".fixed2").append("<ul></ul>");
 
           $.post("/", {'ajax' : true, 'action' : 'user'}, function(data) {
 
             if ( data.success ) {
-              var table = $("<table></table>");
-              $("#tabs-1").append(table);
               forEach(data.result, function(key, val) {
                 $(table).append($(sprintf("<tr><td class=\"pri\">%s</td><td class=\"sec\">%s</td></tr>", key, val)));
               });
@@ -55,10 +57,7 @@ var SystemUser = (function($, undefined) {
               API.system.dialog("error", data.error);
             }
 
-            $(inner).tabs();
-
-            loader.hide();
-
+            //$(inner).tabs();
           });
 
           var items = "";
@@ -82,7 +81,7 @@ var SystemUser = (function($, undefined) {
                 $(this).removeClass("toggled");
               }
             });
-            $("#tabs-2").find("ul").append(item);
+            el.find(".fixed2 ul").append(item);
           }
 
           // Do your stuff here
