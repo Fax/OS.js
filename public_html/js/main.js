@@ -4,7 +4,6 @@
  * TODOs:
  *   TODO: Tooltips
  *   TODO: Sortable panel items (use absolute, snap to direction as panel does)
- *   TODO: Implement settings manager into applications
  *   TODO: Menu subitems
  *   FIXME: Move all Window attributes/properties into Enums
  *
@@ -318,7 +317,7 @@
 
         var wins = _Desktop.stack;
         for ( var i = 0; i < wins.length; i++ ) {
-          if ( wins[i].app && wins[i].app.name == app_name ) {
+          if ( wins[i].app && wins[i].app._name == app_name ) {
             if ( wins[i]._is_orphan ) {
               console.info("=> API launch denied", "is_orphan");
               _Desktop.focusWindow(wins[i]);
@@ -695,6 +694,10 @@
           localStorage.setItem("SETTING_REVISION", SETTING_REVISION);
         }
 
+        if ( !localStorage.getItem("applications") ) {
+          localStorage.setItem("applications", JSON.stringify({}));
+        }
+
         for ( var i in _avail ) {
           if ( _avail.hasOwnProperty(i) ) {
             if ( !_avail[i].hidden ) {
@@ -724,6 +727,40 @@
 
       destroy : function() {
         _avail = null;
+      },
+
+      saveApp : function(name, props) {
+        var storage = localStorage.getItem("applications");
+        console.log("storage", storage);
+        if ( !storage ) {
+          storage = {};
+        } else {
+          try {
+            storage = JSON.parse(storage);
+            console.log("AOK", storage);
+          } catch ( e ) {
+            storage = {};
+          }
+        }
+        storage[name] = props;
+
+        localStorage.setItem("applications", JSON.stringify(storage));
+      },
+
+      loadApp : function(name) {
+        var storage = localStorage.getItem("applications");
+        var res;
+        if ( storage ) {
+          try {
+            res = JSON.parse(storage);
+          } catch ( e ) {}
+        }
+        if ( (res instanceof Array) && (res instanceof Object) ) {
+          if ( res[name] ) {
+            return res[name];
+          }
+        }
+        return {};
       },
 
       _apply : function(settings) {
@@ -2830,7 +2867,7 @@
    * @class
    */
   var Application = Class.extend({
-    init : function(name, argv) {
+    init : function(name, argv, restore) {
       this.argv         = argv;
 
       this._name         = name;
@@ -2839,6 +2876,11 @@
       this._running      = false;
       this._root_window  = null;
       this._started      = new Date();
+      this._storage      = {};
+
+      if ( restore === undefined || restore === true ) {
+        this._restoreStorage();
+      }
 
       console.log("Application::" + this._name + "::NULL::init()");
     },
@@ -2854,11 +2896,14 @@
           });
         }
 
+        this._saveStorage();
+
         _Desktop.removeApplication(self);
 
         console.log("Application::" + this._name + "::" + this._uuid + "::destroy()");
 
-        this.running = false;
+        this._running = false;
+        this._storage = null;
 
         _Processes[this._index] = undefined;
       }
@@ -2885,6 +2930,30 @@
     _stop : function() {
       if ( this._running ) {
         this.destroy();
+      }
+    },
+
+    _saveStorage : function() {
+      if ( this._name ) {
+        _Settings.saveApp(this._name, this._storage);
+      }
+
+      console.log('_saveStorage', this._storage);
+    },
+
+    _restoreStorage : function() {
+      if ( this._name ) {
+        this._storage = _Settings.loadApp(this._name);
+      }
+
+      console.log('_restoreStorage', this._storage);
+    },
+
+    _flushStorage : function() {
+      if ( this._name ) {
+        this._storage = {};
+
+        _Settings.saveApp(this._name, this._storage);
       }
     },
 

@@ -13,9 +13,11 @@ Features and Highlights:
 * Window Managment
 * Desktop Environment
 * Windows, Dialogs, Panels + PanelItems
+* Application WebStorage (for settings etc)
 * Custom Error and Exception handling
 * Saving and Restoration of Desktop Sessions
 * User Environment settings (WebStorage and SQL backup)
+* API, System calls, Virtual filesystem
 
 * Light-weight server and client code
 * Application Compiler, Glade Templates
@@ -51,11 +53,8 @@ TODOs:
 -------------------------------------------------------------------------------
 * Core: Login Screen
 * Core: PNG Cursors
-* Core: Finish up VFS
 * Core: Tooltips
 * Panel: Finish up panel (Multiple, Sorting of Elements)
-* Application: Implement SettingsManager into Application
-* application-gen: Add db-schema to Application xml
 
 Building applications:
 -------------------------------------------------------------------------------
