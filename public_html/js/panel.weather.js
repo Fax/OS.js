@@ -112,11 +112,15 @@ var PanelItemWeather = (function($, undefined) {
 
         $(ret).append("<img alt=\"\" src=\"/img/blank.gif\" /><span title=\"\">&nbsp;</span>");
 
-        this.interval = setInterval(function() {
-          self.poll();
-        }, 60 * 1000);
+        if ( navigator && navigator.geolocation ) {
+          this.interval = setInterval(function() {
+            self.poll();
+          }, 60 * 1000);
 
-        this.poll();
+          this.poll();
+        } else {
+          self.crash("Not supported!");
+        }
 
         return ret;
       },

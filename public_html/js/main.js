@@ -26,6 +26,12 @@
 
   // Override for browsers without console
   if (!window.console) console = {log:function() {}, info:function(){}, error:function(){}};
+  if ( !window.console.group ) {
+    window.console.group = function() { console.log(arguments); };
+  }
+  if ( !window.console.groupEnd ) {
+    window.console.groupEnd = function() { console.log(arguments); };
+  }
 
   var ENABLE_CACHE        = false;
 
@@ -647,25 +653,28 @@
         }
 
         var el = null;
+        var ie = false;
         if ( type == "js" ) {
           el = $("<script type=\"text/javascript\" src=\"/js/" + res + "\"></script>");
         } else {
-          el = $("<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/" + res + "\" />");
+          if ( document.createStyleSheet ) {
+            ie = true;
+            el = document.createStyleSheet("/css/" + res);
+          } else {
+            el = $("<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/" + res + "\" />");
+          }
         }
 
-        $("head").append(el);
+        if ( !ie ) {
+          $("head").append(el);
+        }
 
         console.group("ResourceManager::addResource()");
-        console.log(el.get(0));
+        console.log(ie ? el : el.get(0));
         console.groupEnd();
 
         this.resources.push(res.split("?")[0]);
         this.links.push(el);
-
-        // FIXME: Add timeout here !!!
-        if ($.browser.msie) {
-          $('head').html($('head').html());
-        }
       },
 
       addResources : function(res, callback) {
@@ -3144,7 +3153,6 @@
    * @ready()
    */
   $(window).ready(function() {
-
     if ( !supports_html5_storage() ) {
       alert("Your browser does not support WebStorage. Cannot continue...");
       return;
