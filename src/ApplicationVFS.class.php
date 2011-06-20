@@ -27,6 +27,16 @@ class ApplicationVFS
       "attr" => "r",
       "icon" => "places/user-bookmarks.png"
     ),
+    "/System/Wallpapers" => Array(
+      "type" => "core",
+      "attr" => "r",
+      "icon" => "places/folder-pictures.png"
+    ),
+    "/System/Fonts" => Array(
+      "type" => "core",
+      "attr" => "r",
+      "icon" => "places/user-desktop.png"
+    ),
     "/System" => Array(
       "type" => "core",
       "attr" => "r",
