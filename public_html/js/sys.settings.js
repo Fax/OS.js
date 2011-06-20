@@ -24,8 +24,8 @@ var SystemSettings = (function($, undefined) {
         this._is_maximizable = false;
         this._is_closable = true;
         this._is_orphan = true;
-        this.width = 400;
-        this.height = 200;
+        this._width = 400;
+        this._height = 200;
         this._gravity = 'center';
       },
 

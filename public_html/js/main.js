@@ -1551,11 +1551,10 @@
       this._oldZindex      = -1;
       this._zindex         = -1;
       this._gravity        = "none";
-
-      this.width          = -1;
-      this.height         = -1;
-      this.top            = -1;
-      this.left           = -1;
+      this._width          = -1;
+      this._height         = -1;
+      this._top            = -1;
+      this._left           = -1;
 
       console.log("Window::" + name + "::init()");
     },
@@ -1621,11 +1620,11 @@
         el.find(".WindowContent").css("overflow", this._is_scrollable ? "auto" : "hidden");
 
         // Apply default size
-        if ( !isNaN(this.width) && (this.width > 0) ) {
-          $(el).width(this.width + "px");
+        if ( !isNaN(this._width) && (this._width > 0) ) {
+          $(el).width(this._width + "px");
         }
-        if ( !isNaN(this.height) && (this.height > 0) ) {
-          $(el).height(this.height + "px");
+        if ( !isNaN(this._height) && (this._height > 0) ) {
+          $(el).height(this._height + "px");
         }
 
         // Content and buttons
@@ -1750,25 +1749,25 @@
         // Size and dimension
         //
         if ( this._gravity === "center" ) {
-          this.top = (($(document).height() / 2) - ($(el).height() / 2));
-          this.left = (($(document).width() / 2) - ($(el).width() / 2));
+          this._top = (($(document).height() / 2) - ($(el).height() / 2));
+          this._left = (($(document).width() / 2) - ($(el).width() / 2));
         } else {
           // Find free space for new windows
           var ppos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
-          this.top = ppos == "top" ? 50 : 20;
-          this.left = 20;
+          this._top = ppos == "top" ? 50 : 20;
+          this._left = 20;
         }
 
         // Check if window has any saved attributes for override (session restore etc)
         if ( this._attrs_restore && sizeof(this._attrs_restore) ) {
-          this.top          = this._attrs_restore.top;
-          this.left         = this._attrs_restore.left;
-          this.width        = this._attrs_restore.width;
-          this.height       = this._attrs_restore.height;
-          this._is_minimized = this._attrs_restore._is_minimized;
-          this._is_maximized = this._attrs_restore._is_maximized;
-          this._is_ontop     = this._attrs_restore._is_ontop;
-          this._zindex       = this._attrs_restore._zindex;
+          this._top          = this._attrs_restore.top;
+          this._left         = this._attrs_restore.left;
+          this._width        = this._attrs_restore.width;
+          this._height       = this._attrs_restore.height;
+          this._is_minimized = this._attrs_restore.is_minimized;
+          this._is_maximized = this._attrs_restore.is_maximized;
+          this._is_ontop     = this._attrs_restore.is_ontop;
+          this._zindex       = this._attrs_restore.zindex;
 
           if ( _TopIndex < this._zindex ) {
             _TopIndex = this._zindex;
@@ -1777,14 +1776,14 @@
           fresh = false;
         }
 
-        if ( !isNaN(this.width) && (this.width > 0) ) {
-          $(el).width(this.width + "px");
+        if ( !isNaN(this._width) && (this._width > 0) ) {
+          $(el).width(this._width + "px");
         }
-        if ( !isNaN(this.height) && (this.height > 0) ) {
-          $(el).height(this.height + "px");
+        if ( !isNaN(this._height) && (this._height > 0) ) {
+          $(el).height(this._height + "px");
         }
-        if ( !isNaN(this.left) && (this.left > 0) && !isNaN(this.top) && (this.top > 0) ) {
-          $(el).offset({'left' : (this.left), 'top' : (this.top)});
+        if ( !isNaN(this._left) && (this._left > 0) && !isNaN(this._top) && (this._top > 0) ) {
+          $(el).offset({'left' : (this._left), 'top' : (this._top)});
         }
 
         //
@@ -1805,8 +1804,8 @@
 
         // Newly created windows needs their inner dimension fixed
         if ( fresh ) {
-          if ( !isNaN(this.height) && (this.height > 0) ) {
-            this._resize(this.width, this.height, el);
+          if ( !isNaN(this._height) && (this._height > 0) ) {
+            this._resize(this._width, this._height, el);
           }
         }
 
@@ -1830,8 +1829,8 @@
               el.removeClass("Blend");
               API.ui.cursor("default");
 
-              self.left = self.$element.offset()['left'];
-              self.top = self.$element.offset()['top'];
+              self._left = self.$element.offset()['left'];
+              self._top = self.$element.offset()['top'];
             }
           }).touch({
             animate: false,
@@ -1859,8 +1858,8 @@
             stop : function() {
               el.removeClass("Blend");
 
-              self.width = parseInt(self.$element.width(), 10);
-              self.height = parseInt(self.$element.height(), 10);
+              self._width = parseInt(self.$element.width(), 10);
+              self._height = parseInt(self.$element.height(), 10);
 
               self._call("resize");
             }
@@ -1990,16 +1989,16 @@
       if ( this._is_maximizable ) {
         if ( this._is_maximized ) {
           if ( this._attrs_temp !== null ) {
-            this.top = this._attrs_temp.position.top;
-            this.left = this._attrs_temp.position.left;
-            this.width = this._attrs_temp.size.width;
-            this.height = this._attrs_temp.size.height;
+            this._top = this._attrs_temp.position.top;
+            this._left = this._attrs_temp.position.left;
+            this._width = this._attrs_temp.size.width;
+            this._height = this._attrs_temp.size.height;
 
             this.$element.animate({
-              'top'    : this.top + 'px',
-              'left'   : this.left + 'px',
-              'width'  : this.width + 'px',
-              'height' : this.height + 'px'
+              'top'    : this._top + 'px',
+              'left'   : this._left + 'px',
+              'width'  : this._width + 'px',
+              'height' : this._height + 'px'
             }, {'duration' : ANIMATION_SPEED});
 
             this._attrs_temp === null;
@@ -2021,17 +2020,17 @@
           var w = parseInt($(document).width(), 10);
           var h = parseInt($(document).height(), 10);
 
-          this.top = ppos == "top" ? 40 : 10;
-          this.left = 10;
-          this.width = w - 20;
-          this.height = h - 50;
+          this._top = ppos == "top" ? 40 : 10;
+          this._left = 10;
+          this._width = w - 20;
+          this._height = h - 50;
 
           this.$element.css({
-            'top'    : (this.top) + 'px',
-            'left'   : (this.left) + 'px'
+            'top'    : (this._top) + 'px',
+            'left'   : (this._left) + 'px'
           }).animate({
-            'width'  : (this.width) + "px",
-            'height' : (this.height)  + "px"
+            'width'  : (this._width) + "px",
+            'height' : (this._height)  + "px"
           }, {'duration' : ANIMATION_SPEED}, function() {
             _Desktop.maximizeWidow(self);
           });
@@ -2066,10 +2065,10 @@
         is_minimized : this._is_minimized,
         is_ontop     : this._is_ontop,
         zindex       : this._zindex,
-        width        : this.width,
-        height       : this.height,
-        top          : this.top,
-        left         : this.left
+        width        : this._width,
+        height       : this._height,
+        top          : this._top,
+        left         : this._left
       };
    }
 

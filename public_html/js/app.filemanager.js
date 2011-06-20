@@ -35,8 +35,8 @@ var ApplicationFileManager = (function($, undefined) {
         this._is_maximizable = true;
         this._is_closable = true;
         this._is_orphan = false;
-        this.width = 500;
-        this.height = 500;
+        this._width = 500;
+        this._height = 500;
         this._gravity = null;
       },
 

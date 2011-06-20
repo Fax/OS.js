@@ -94,8 +94,8 @@ var ApplicationTerminal = (function($, undefined) {
         this._is_maximizable = true;
         this._is_closable = true;
         this._is_orphan = false;
-        this.width = 500;
-        this.height = 300;
+        this._width = 500;
+        this._height = 300;
         this._gravity = null;
       },
 

@@ -518,8 +518,8 @@ var ApplicationDraw = (function($, undefined) {
         this._is_maximizable = true;
         this._is_closable = true;
         this._is_orphan = false;
-        this.width = 800;
-        this.height = 500;
+        this._width = 800;
+        this._height = 500;
         this._gravity = null;
       },
 

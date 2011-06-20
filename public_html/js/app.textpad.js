@@ -115,8 +115,8 @@ var ApplicationTextpad = (function($, undefined) {
         this._is_maximizable = true;
         this._is_closable = true;
         this._is_orphan = false;
-        this.width = 400;
-        this.height = 400;
+        this._width = 400;
+        this._height = 400;
         this._gravity = null;
 
         WindowTitle = this._title;

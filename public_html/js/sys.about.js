@@ -26,8 +26,8 @@ var SystemAbout = (function($, undefined) {
         this._is_maximizable = false;
         this._is_closable = true;
         this._is_orphan = true;
-        this.width = 220;
-        this.height = 120;
+        this._width = 220;
+        this._height = 120;
         this._gravity = "center";
       },
 

@@ -142,9 +142,7 @@ EOJAVASCRIPT;
       continue;
     }
 
-    if ( !in_array($pk, Array("width", "height", "top", "left")) ) {
-      $pk = "_{$pk}";
-    }
+    $pk = "_{$pk}";
 
     if ( is_bool($pv) ) {
       $pv = $pv ? 'true' : 'false';

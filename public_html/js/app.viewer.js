@@ -143,8 +143,8 @@ var ApplicationViewer = (function($, undefined) {
         this._is_maximizable = true;
         this._is_closable = true;
         this._is_orphan = false;
-        this.width = 300;
-        this.height = 200;
+        this._width = 300;
+        this._height = 200;
         this._gravity = null;
       },
 

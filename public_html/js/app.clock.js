@@ -25,8 +25,8 @@ var ApplicationClock = (function($, undefined) {
         this._is_maximizable = false;
         this._is_closable = true;
         this._is_orphan = false;
-        this.width = 200;
-        this.height = 200;
+        this._width = 200;
+        this._height = 200;
         this._gravity = 'center';
 
         this.int_sec = null;
