@@ -42,7 +42,7 @@ var PanelItemMenu = (function($, undefined) {
       create : function(pos) {
         var self = this;
         var el = this._super(pos);
-        var img = $("<img src=\"" + this.icon + "\" title=\"" + this.title + "\" />");
+        var img = $("<img src=\"" + this.icon + "\" title=\"" + this.title + "\" class=\"TT\" />");
         $(el).append(img);
 
         $(el).click(function(ev) {

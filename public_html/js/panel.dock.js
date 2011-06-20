@@ -24,12 +24,12 @@ var PanelItemDock = (function($, undefined) {
           o = $("<div class=\"PanelItem PanelItemLauncher\"><span class=\"\"><img alt=\"\" src=\"/img/blank.gif\" title=\"\" ></span></div>");
           o.find("span").addClass("launch_" + e.launch);
           o.find("img").attr("src", '/img/icons/16x16/' + e.icon);
-          o.find("img").attr("title", e.title);
+          o.find("img").attr("title", e.title).addClass("TT");
           el.append(o);
         }
 
         $(el).find(".PanelItemLauncher").click(function(ev) {
-          var app = $(this).find("span").attr("class").replace("launch_", "");
+          var app = $(this).find("span").attr("class").replace("launch_", ""); //.replace("TT", "").replace(" ", "");
           if ( app == "About" ) {
             $("#DialogAbout").show();
             $("#DialogAbout").css({

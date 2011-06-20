@@ -2,7 +2,6 @@
  * JavaScript Window Manager
  *
  * TODOs:
- *   TODO: Tooltips
  *   TODO: Sortable panel items (use absolute, snap to direction as panel does)
  *   TODO: Menu subitems
  *   FIXME: Move all Window attributes/properties into Enums
@@ -32,6 +31,7 @@
 
   var ZINDEX_MENU         = 100000000;
   var ZINDEX_RECT         = 100000000;
+  var ZINDEX_TOOLTIP      = 100000001;
   var ZINDEX_PANEL        = 1000000;
   var ZINDEX_WINDOW       = 10;
   var ZINDEX_WINDOW_MAX   = 88888889;
@@ -45,6 +45,7 @@
   var ENABLE_LOGIN     = false;
   var ANIMATION_SPEED  = 400;
   var TEMP_COUNTER     = 1;
+  var TOOLTIP_TIMEOUT  = 300;
 
   /**
    * Local references
@@ -53,6 +54,7 @@
   var _Settings        = null;
   var _Desktop         = null;
   var _Window          = null;
+  var _Tooltip         = null;
   var _Processes       = [];
   var _TopIndex        = (ZINDEX_WINDOW + 1);
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);
@@ -66,6 +68,7 @@
     _Settings          = null;
     _Desktop           = null;
     _Window            = null;
+    _Tooltip           = null;
     _Processes         = [];
     _TopIndex          = 11;
   }
@@ -464,6 +467,8 @@
 
             ev.stopPropagation();
             ev.preventDefault();
+
+            _Tooltip.hide();
 
             return false;
           }
@@ -1160,6 +1165,85 @@
   })();
 
   /////////////////////////////////////////////////////////////////////////////
+  // TOOLTIP
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Custom Tooltip Class
+   *
+   * @class
+   */
+  var Tooltip = Class.extend({
+
+    init : function() {
+      this.$element = $("#Tooltip");
+
+      this.ttimeout = null;
+    },
+
+    destroy : function() {
+    },
+
+    initRoot : function(root) {
+      root.find(".TT").each(function() {
+        var tip = $(this).attr("title");
+        if ( tip ) {
+          $(this).removeAttr("title");
+
+          $(this).hover(function(ev) {
+            _Tooltip.hoverOn(tip, this, ev);
+          }, function(ev) {
+            _Tooltip.hoverOff(this, ev);
+          });
+        }
+      });
+    },
+
+    hoverOn : function(tip, el, ev) {
+      if ( this.ttimeout ) {
+        clearTimeout(this.ttimeout);
+      }
+
+      this.ttimeout = setTimeout(function() {
+        _Tooltip.show(tip, null, ev);
+      }, TOOLTIP_TIMEOUT);
+    },
+
+    hoverOff : function(el, ev) {
+      if ( this.ttimeout ) {
+        clearTimeout(this.ttimeout);
+      }
+
+      this.ttimeout = setTimeout(function() {
+        _Tooltip.hide();
+      }, TOOLTIP_TIMEOUT);
+    },
+
+    show : function(tip, el, ev) {
+      var posX = 0;
+      var posY = 0;
+
+      if ( el ) {
+        posX = $(el).offset()['left'];
+        posY = $(el).offset()['top'];
+      } else if ( ev ) {
+        posX = ev.pageX;
+        posY = ev.pageY;
+      }
+
+      this.$element.css({
+        "top" : (posY + 2) + "px",
+        "left" : (posX + 2) + "px"
+      }).show().html(tip);
+    },
+
+    hide : function() {
+      this.$element.hide();
+    }
+
+  });
+
+  /////////////////////////////////////////////////////////////////////////////
   // PANEL
   /////////////////////////////////////////////////////////////////////////////
 
@@ -1327,6 +1411,8 @@
           el.attr("id", "PanelItem" + this.items.length);
           this.$element.find("ul").append(el);
 
+          i.run();
+
           this.items.push(i);
 
           return i;
@@ -1399,6 +1485,7 @@
       var self = this;
 
       this.$element = $("<li></li>").attr("class", "PanelItem " + this.name);
+
       if ( pos ) {
         this.align = pos;
       }
@@ -1416,6 +1503,10 @@
       });
 
       return this.$element;
+    },
+
+    run : function() {
+      _Tooltip.initRoot(this.$element);
     },
 
     reload : function() {
@@ -1666,6 +1757,8 @@
             ev.preventDefault();
           });
         }
+
+        _Tooltip.initRoot(el.find(".WindowContent"));
 
         // Events
         el.bind('mousedown', function(ev) {
@@ -2974,16 +3067,12 @@
       if ( this._name ) {
         _Settings.saveApp(this._name, this._storage);
       }
-
-      console.log('_saveStorage', this._storage);
     },
 
     _restoreStorage : function() {
       if ( this._name ) {
         this._storage = _Settings.loadApp(this._name);
       }
-
-      console.log('_restoreStorage', this._storage);
     },
 
     _flushStorage : function() {
@@ -3035,6 +3124,9 @@
    * @unload()
    */
   $(window).unload(function() {
+    if ( _Tooltip ) {
+      _Tooltip.destroy();
+    }
     if ( _Desktop ) {
       _Desktop.destroy();
     }
@@ -3147,6 +3239,7 @@
           _Settings = new SettingsManager(data.result.settings);
           API.loading.progress(10);
 
+          _Tooltip = new Tooltip();
           _Desktop = new Desktop();
           API.loading.progress(15);
 

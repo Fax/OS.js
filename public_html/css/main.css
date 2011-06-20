@@ -474,6 +474,17 @@ input.Disabled {
   display : block;
 }
 
+#Tooltip {
+  position : absolute;
+  top : -1000px;
+  left : -1000px;
+  z-index : 100000001;
+  padding : 2px;
+  padding-left : 5px;
+  padding-right : 5px;
+  min-width : 20px;
+}
+
 #ContextRectangle {
   position : absolute;
   top : -1000px;

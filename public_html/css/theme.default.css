@@ -40,6 +40,12 @@ textarea {
   border : 1px solid #222;
 }
 
+#Tooltip {
+  border : 1px solid #000;
+  background : #e6e6e6;
+  white-space : nowrap;
+}
+
 .DesktopPanel {
   background : #e6e6e6;
 }

@@ -100,6 +100,8 @@ header("Content-Type: text/html; charset=utf-8");
 
   <div id="ContextRectangle">&nbsp;</div>
 
+  <div id="Tooltip">&nbsp;</div>
+
   <!-- Content -->
 </div>
 
