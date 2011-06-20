@@ -194,10 +194,10 @@ var ApplicationTextpad = (function($, undefined) {
 
           // Do your stuff here
 
-          this.focus_hook = function() {
+          this._bind("focus", function() {
             el.find("textarea").focus();
             _updateStatusbar(el);
-          };
+          });
 
           _read_file(el, argv['path']);
 

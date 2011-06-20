@@ -9,7 +9,6 @@
  *   FIXME: Move all Window attributes/properties into Enums
  *
  * Fixes:
- *   TODO: Application hook interface
  *   TODO: Rewrite settings manager
  *   TODO: Update WindowList panel item with updated titles
  *
@@ -1470,6 +1469,12 @@
       // Various properties
       this._created         = false;
       this._showing         = false;
+      this._bindings        = {
+        "die"    : [],
+        "focus"  : [],
+        "blur"   : [],
+        "resize" : []
+      };
 
       this.current         = false;
       this.last_attrs      = null;
@@ -1507,12 +1512,6 @@
       this.zindex         = -1;
       this.gravity        = "none";
 
-      // Window hooks FIXME: Event listeners on_XXX
-      this.focus_hook  = null;
-      this.blur_hook   = null;
-      this.die_hook    = null;
-      this.resize_hook = null;
-
       // DOM Elements
       this.$element = null;
 
@@ -1522,20 +1521,29 @@
     destroy : function() {
       var self = this;
 
-      if ( this.die_hook ) {
-        this.die_hook();
-      }
+      this._call("die");
 
-      this.focus_hook  = null;
-      this.blur_hook   = null;
-      this.die_hook    = null;
-      this._showing     = false;
+      this._showing    = false;
+      this._bindings   = null;
 
       $(this.$element).fadeOut(ANIMATION_SPEED, function() {
         $(self.$element).empty().remove();
       });
 
       console.log("Window::" + this.name + "::destroy()");
+    },
+
+    _bind : function(mname, mfunc) {
+      this._bindings[mname].push(mfunc);
+    },
+
+    _call : function(mname) {
+      var fs = this._bindings[mname];
+      if ( fs ) {
+        for ( var i = 0; i < fs.length; i++ ) {
+          fs[i]();
+        }
+      }
     },
 
     show : function() {
@@ -1804,9 +1812,7 @@
               self.width = parseInt(self.$element.width(), 10);
               self.height = parseInt(self.$element.height(), 10);
 
-              if ( self.resize_hook ) {
-                self.resize_hook();
-              }
+              self._call("resize");
             }
           });
         }
@@ -1890,9 +1896,7 @@
         focused = true;
       }
 
-      if ( this.focus_hook ) {
-        this.focus_hook(focused);
-      }
+      this._call("focus");
       this.current = true;
     },
 
@@ -1900,9 +1904,7 @@
       if ( this.current ) {
         this.$element.removeClass("Current");
 
-        if ( this.blur_hook ) {
-          this.blur_hook();
-        }
+        this._call("blur");
       }
 
       this.$element.find("textarea, input, select, button").each(function() {
@@ -2868,11 +2870,9 @@
         this._root_window = root_window;
 
         if ( root_window instanceof Window ) {
-          root_window.die_hook = function() {
-
-
+          root_window._bind("die", function() {
             self._stop();
-          };
+          });
         }
 
         console.log("Application::" + this._name + "::" + this._uuid + "::run()");

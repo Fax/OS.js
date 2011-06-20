@@ -115,15 +115,15 @@ var ApplicationTerminal = (function($, undefined) {
           var inpbuffer = [];
           var history = [];
 
-          this.focus_hook = function() {
+          this._bind("focus", function() {
             $(txt).focus();
             var l = $(txt).val().length - 1;
             setSelectionRangeX($(txt).get(0), l, l);
-          };
+          });
 
-          this.blur_hook = function() {
+          this._bind("blur", function() {
             $(txt).blur();
-          };
+          });
 
           $(txt).mousedown(function(ev) {
             ev.preventDefault();
@@ -132,7 +132,7 @@ var ApplicationTerminal = (function($, undefined) {
           });
 
           $(txt).val("");
-          this.focus_hook();
+          this._call("focus");
 
           var execute = function(cmd) {
             if ( !cmd ) {

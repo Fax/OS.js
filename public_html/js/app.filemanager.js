@@ -110,7 +110,7 @@ var ApplicationFileManager = (function($, undefined) {
             self._initClick();
           }
 
-          self.resize_hook();
+          self._call("resize");
 
           self.$element.find(".statusbar1").html(_defaultStatusText);
         });
@@ -310,11 +310,11 @@ var ApplicationFileManager = (function($, undefined) {
           el.addClass(this.name);
 
 
-          this.resize_hook = function() {
+          this._bind("resize", function() {
             if ( self.app.argv.view_type == "list" ) {
               self._updateTable();
             }
-          };
+          });
 
 
           $(el).click(function() {
