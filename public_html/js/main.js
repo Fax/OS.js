@@ -319,7 +319,7 @@
         var wins = _Desktop.stack;
         for ( var i = 0; i < wins.length; i++ ) {
           if ( wins[i].app && wins[i].app.name == app_name ) {
-            if ( wins[i].is_orphan ) {
+            if ( wins[i]._is_orphan ) {
               console.info("=> API launch denied", "is_orphan");
               _Desktop.focusWindow(wins[i]);
               return;
@@ -943,7 +943,7 @@
 
           var AddWindowCallback = function(fresh) {
             if ( fresh ) {
-              if ( !win.is_minimized && !win.is_maximized ) {
+              if ( !win._is_minimized && !win._is_maximized ) {
                 self.focusWindow(win); // Always focus new windows
               }
             }
@@ -1217,7 +1217,7 @@
             }, "Add new panel item", $("#OperationDialogPanelItemAdd"));
 
             pitem.height = 300;
-            pitem.gravity = "center";
+            pitem._gravity = "center";
             pitem.icon = "categories/applications-utilities.png";
 
             _Desktop.addWindow(pitem);
@@ -1466,7 +1466,17 @@
      * @param Object   attrs      Extra win attributes (used to restore from sleep etc)
      */
     init : function(name, dialog, attrs) {
-      // Various properties
+      if ( (attrs instanceof Array) && attrs.length ) {
+        attrs = attrs[0]; // FIXME
+      }
+
+      // DOM Elements
+      this.$element = null;
+
+      // Windot temp attributes
+      this._current         = false;
+      this._attrs_temp      = null; // FIXME: Refactor
+      this._attrs_restore   = attrs;
       this._created         = false;
       this._showing         = false;
       this._bindings        = {
@@ -1476,44 +1486,32 @@
         "resize" : []
       };
 
-      this.current         = false;
-      this.last_attrs      = null;
-
-      if ( (attrs instanceof Array) && attrs.length ) {
-        attrs = attrs[0]; // FIXME
-      }
-
-      // Window main attributes
-      this.id          = null;
-      this.name        = name;
-      this.title       = this.dialog ? "Dialog" : "Window";
-      this.content     = "";
-      this.icon        = "emblems/emblem-unreadable.png";
-      this.dialog      = dialog ? dialog : false;
-      this.attrs       = attrs;
-
       // Window attributes
-      this.is_resizable   = this.dialog ? false : true;
-      this.is_draggable   = true;
-      this.is_scrollable  = this.dialog ? false :true;
-      this.is_maximized   = false;
-      this.is_maximizable = this.dialog ? false : true;
-      this.is_minimized   = false;
-      this.is_minimizable = this.dialog ? false : true;
-      this.is_sessionable = this.dialog ? false : true;
-      this.is_closable    = true;
-      this.is_orphan      = false;
-      this.is_ontop       = false;
+      this._id             = null;
+      this._name           = name;
+      this._title          = dialog ? "Dialog" : "Window";
+      this._content        = "";
+      this._icon           = "emblems/emblem-unreadable.png";
+      this._is_dialog      = dialog ? dialog : false;
+      this._is_resizable   = dialog ? false : true;
+      this._is_draggable   = true;
+      this._is_scrollable  = dialog ? false :true;
+      this._is_maximized   = false;
+      this._is_maximizable = dialog ? false : true;
+      this._is_minimized   = false;
+      this._is_minimizable = dialog ? false : true;
+      this._is_sessionable = dialog ? false : true;
+      this._is_closable    = true;
+      this._is_orphan      = false;
+      this._is_ontop       = false;
+      this._oldZindex      = -1;
+      this._zindex         = -1;
+      this._gravity        = "none";
+
       this.width          = -1;
       this.height         = -1;
       this.top            = -1;
       this.left           = -1;
-      this.oldZindex      = -1;
-      this.zindex         = -1;
-      this.gravity        = "none";
-
-      // DOM Elements
-      this.$element = null;
 
       console.log("Window::" + name + "::init()");
     },
@@ -1521,16 +1519,18 @@
     destroy : function() {
       var self = this;
 
-      this._call("die");
+      if ( this._created ) {
+        this._call("die");
 
-      this._showing    = false;
-      this._bindings   = null;
+        this._showing    = false;
+        this._bindings   = null;
 
-      $(this.$element).fadeOut(ANIMATION_SPEED, function() {
-        $(self.$element).empty().remove();
-      });
+        $(this.$element).fadeOut(ANIMATION_SPEED, function() {
+          $(self.$element).empty().remove();
+        });
+      }
 
-      console.log("Window::" + this.name + "::destroy()");
+      console.log("Window::" + this._name + "::destroy()");
     },
 
     _bind : function(mname, mfunc) {
@@ -1538,10 +1538,12 @@
     },
 
     _call : function(mname) {
-      var fs = this._bindings[mname];
-      if ( fs ) {
-        for ( var i = 0; i < fs.length; i++ ) {
-          fs[i]();
+      if ( this._bindings ) {
+        var fs = this._bindings[mname];
+        if ( fs ) {
+          for ( var i = 0; i < fs.length; i++ ) {
+            fs[i]();
+          }
         }
       }
     },
@@ -1564,15 +1566,15 @@
       mcallback = mcallback || function() {};
 
       if ( !this._created ) {
-        this.id       = id;
+        this._id      = id;
         this._showing = true;
 
         var fresh = true;
-        var el    = this.dialog ? $($("#Dialog").html()) : $($("#Window").html());
+        var el    = this._is_dialog ? $($("#Dialog").html()) : $($("#Window").html());
 
         // Attributtes
         el.attr("id", id);
-        el.find(".WindowContent").css("overflow", this.is_scrollable ? "auto" : "hidden");
+        el.find(".WindowContent").css("overflow", this._is_scrollable ? "auto" : "hidden");
 
         // Apply default size
         if ( !isNaN(this.width) && (this.width > 0) ) {
@@ -1583,30 +1585,30 @@
         }
 
         // Content and buttons
-        el.find(".WindowTopInner span").html(this.title);
-        if ( this.dialog ) {
-          el.find(".DialogContent").html(this.content).addClass(this.dialog); // REFACTOR
+        el.find(".WindowTopInner span").html(this._title);
+        if ( this._is_dialog ) {
+          el.find(".DialogContent").html(this._content).addClass(this._is_dialog);
         } else {
-          el.find(".WindowTopInner img").attr("src", "/img/icons/16x16/" + this.icon);
-          el.find(".WindowContentInner").html(this.content);
+          el.find(".WindowTopInner img").attr("src", "/img/icons/16x16/" + this._icon);
+          el.find(".WindowContentInner").html(this._content);
 
           el.find(".WindowTopInner img").click(function(ev) {
             API.application.context_menu(ev, [
-              {"title" : (self.is_maximized ? "Restore" : "Maximize"), "icon" : "actions/window_fullscreen.png", "disabled" : !self.is_maximizable, "method" : function() {
-                if ( self.is_maximizable ) {
+              {"title" : (self._is_maximized ? "Restore" : "Maximize"), "icon" : "actions/window_fullscreen.png", "disabled" : !self._is_maximizable, "method" : function() {
+                if ( self._is_maximizable ) {
                   el.find(".ActionMaximize").click();
                 }
               }},
-              {"title" : (self.is_ontop ? "Same as other windows" : "Always on top"), "icon" : "actions/zoom-original.png", "method" : function() {
+              {"title" : (self._is_ontop ? "Same as other windows" : "Always on top"), "icon" : "actions/zoom-original.png", "method" : function() {
                 self._ontop();
               }},
-              {"title" : (self.is_minimized ? "Show" : "Minimize"), "icon" : "actions/window_nofullscreen.png", "disabled" : !self.is_minimizable, "method" : function() {
-                if ( self.is_minimizable ) {
+              {"title" : (self._is_minimized ? "Show" : "Minimize"), "icon" : "actions/window_nofullscreen.png", "disabled" : !self._is_minimizable, "method" : function() {
+                if ( self._is_minimizable ) {
                   el.find(".ActionMinimize").click();
                 }
               }},
-              {"title" : "Close", "disabled" : !self.is_closable, "icon" : "actions/window-close.png", "method" : function() {
-                if ( self.is_closable ) {
+              {"title" : "Close", "disabled" : !self._is_closable, "icon" : "actions/window-close.png", "method" : function() {
+                if ( self._is_closable ) {
                   el.find(".ActionClose").click();
                 }
               }}
@@ -1625,7 +1627,7 @@
             ev.stopPropagation();
           }
         });
-        if ( this.is_maximizable ) {
+        if ( this._is_maximizable ) {
           el.find(".WindowTopInner").dblclick(function() {
             el.find(".ActionMaximize").click();
           });
@@ -1635,7 +1637,7 @@
           return false;
         });
 
-        if ( this.is_closable ) {
+        if ( this._is_closable ) {
           el.find(".ActionClose").click(function() {
             self.close();
           });
@@ -1643,7 +1645,7 @@
           el.find(".ActionClose").parent().hide();
         }
 
-        if ( this.is_minimizable ) {
+        if ( this._is_minimizable ) {
           el.find(".ActionMinimize").click(function() {
             self._minimize();
           });
@@ -1651,7 +1653,7 @@
           el.find(".ActionMinimize").parent().hide();
         }
 
-        if ( this.is_maximizable ) {
+        if ( this._is_maximizable ) {
           el.find(".ActionMaximize").click(function() {
             self._maximize();
           });
@@ -1699,7 +1701,7 @@
         //
         // Size and dimension
         //
-        if ( this.gravity === "center" ) {
+        if ( this._gravity === "center" ) {
           this.top = (($(document).height() / 2) - ($(el).height() / 2));
           this.left = (($(document).width() / 2) - ($(el).width() / 2));
         } else {
@@ -1710,18 +1712,18 @@
         }
 
         // Check if window has any saved attributes for override (session restore etc)
-        if ( this.attrs && sizeof(this.attrs) ) {
-          this.top          = this.attrs.top;
-          this.left         = this.attrs.left;
-          this.width        = this.attrs.width;
-          this.height       = this.attrs.height;
-          this.is_minimized = this.attrs.is_minimized;
-          this.is_maximized = this.attrs.is_maximized;
-          this.is_ontop     = this.attrs.is_ontop;
-          this.zindex       = this.attrs.zindex;
+        if ( this._attrs_restore && sizeof(this._attrs_restore) ) {
+          this.top          = this._attrs_restore.top;
+          this.left         = this._attrs_restore.left;
+          this.width        = this._attrs_restore.width;
+          this.height       = this._attrs_restore.height;
+          this._is_minimized = this._attrs_restore._is_minimized;
+          this._is_maximized = this._attrs_restore._is_maximized;
+          this._is_ontop     = this._attrs_restore._is_ontop;
+          this._zindex       = this._attrs_restore._zindex;
 
-          if ( _TopIndex < this.zindex ) {
-            _TopIndex = this.zindex;
+          if ( _TopIndex < this._zindex ) {
+            _TopIndex = this._zindex;
           }
 
           fresh = false;
@@ -1742,7 +1744,7 @@
         //
 
         // Fix title alignment
-        var lw = this.dialog ? 0 : 16;
+        var lw = this._is_dialog ? 0 : 16;
         var hw = 0;
         $(el).find(".WindowTop .WindowTopController").filter(":visible").each(function() {
           hw += parseInt($(this).width(), 10);
@@ -1761,12 +1763,12 @@
         }
 
         // Add jQuery UI Handlers
-        if ( this.is_draggable ) {
+        if ( this._is_draggable ) {
           el.draggable({
             handle : ".WindowTop",
             start : function(ev) {
 
-              if ( self.is_maximized ) {
+              if ( self._is_maximized ) {
                 API.ui.cursor("not-allowed");
                 return false;
               }
@@ -1794,11 +1796,11 @@
           });
         }
 
-        if ( this.is_resizable ) {
+        if ( this._is_resizable ) {
           el.resizable({
             handles : "se",
             start : function() {
-              if ( self.is_maximized ) {
+              if ( self._is_maximized ) {
                 API.ui.cursor("not-allowed");
                 return false;
               }
@@ -1821,17 +1823,17 @@
 
         mcallback(fresh);
 
-        if ( this.is_minimized ) {
+        if ( this._is_minimized ) {
           $(el).hide();
         }
 
-        if ( this.zindex && this.zindex > 0 ) {
-          this._shuffle(this.zindex);
+        if ( this._zindex && this._zindex > 0 ) {
+          this._shuffle(this._zindex);
         }
 
-        if ( this.is_maximized ) {
+        if ( this._is_maximized ) {
           this.$element.find(".ActionMaximize").parent().addClass("Active");
-          if ( this.is_resizable ) {
+          if ( this._is_resizable ) {
             this.$element.find(".ui-resizable-handle").hide();
           }
         }
@@ -1839,7 +1841,7 @@
 
       this._created = true;
 
-      console.group("Window::" + this.name + "::create()");
+      console.group("Window::" + this._name + "::create()");
       console.log(el);
       console.groupEnd();
 
@@ -1848,20 +1850,20 @@
 
     _shuffle : function(zi, old) {
       if ( old ) {
-        this.oldZindex = this.zindex;
+        this._oldZindex = this._zindex;
       }
 
       zi = parseInt(zi, 10);
       if ( !isNaN(zi) && (zi > 0) ) {
         this.$element.css("z-index", zi);
-        this.zindex = zi;
+        this._zindex = zi;
       }
     },
 
     _ontop : function() {
-      if ( this.is_ontop ) {
-        if ( this.oldZindex > 0 ) {
-          this._shuffle(this.oldZindex);
+      if ( this._is_ontop ) {
+        if ( this._oldZindex > 0 ) {
+          this._shuffle(this._oldZindex);
         } else {
           _TopIndex++;
           this._shuffle(_TopIndex);
@@ -1871,19 +1873,19 @@
         this._shuffle(_OnTopIndex, true);
       }
 
-      this.is_ontop = !this.is_ontop;
+      this._is_ontop = !this._is_ontop;
     },
 
     _focus : function() {
       var focused = false;
-      if ( !this.current ) {
+      if ( !this._current ) {
 
-        if ( this.is_minimized ) {
+        if ( this._is_minimized ) {
           this._minimize();
         }
 
         // FIXME: Roll-back values when max is reached
-        if ( this.is_ontop ) {
+        if ( this._is_ontop ) {
           _OnTopIndex++;
           this._shuffle(_OnTopIndex);
         } else {
@@ -1897,11 +1899,11 @@
       }
 
       this._call("focus");
-      this.current = true;
+      this._current = true;
     },
 
     _blur : function() {
-      if ( this.current ) {
+      if ( this._current ) {
         this.$element.removeClass("Current");
 
         this._call("blur");
@@ -1911,18 +1913,18 @@
         $(this).blur();
       });
 
-      this.current = false;
+      this._current = false;
     },
 
     _minimize : function() {
-      if ( this.is_minimizable ) {
+      if ( this._is_minimizable ) {
         var self = this;
-        if ( this.is_minimized ) {
+        if ( this._is_minimized ) {
           this.$element.animate({opacity: 'show', height: 'show'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
             _Desktop.restoreWindow(self);
           }});
 
-          this.is_minimized = false;
+          this._is_minimized = false;
         } else {
           this._blur();
 
@@ -1930,20 +1932,20 @@
             _Desktop.minimizeWindow(self);
           }});
 
-          this.is_minimized = true;
+          this._is_minimized = true;
         }
 
       }
     },
 
     _maximize : function() {
-      if ( this.is_maximizable ) {
-        if ( this.is_maximized ) {
-          if ( this.last_attrs !== null ) {
-            this.top = this.last_attrs.position.top;
-            this.left = this.last_attrs.position.left;
-            this.width = this.last_attrs.size.width;
-            this.height = this.last_attrs.size.height;
+      if ( this._is_maximizable ) {
+        if ( this._is_maximized ) {
+          if ( this._attrs_temp !== null ) {
+            this.top = this._attrs_temp.position.top;
+            this.left = this._attrs_temp.position.left;
+            this.width = this._attrs_temp.size.width;
+            this.height = this._attrs_temp.size.height;
 
             this.$element.animate({
               'top'    : this.top + 'px',
@@ -1952,17 +1954,17 @@
               'height' : this.height + 'px'
             }, {'duration' : ANIMATION_SPEED});
 
-            this.last_attrs === null;
+            this._attrs_temp === null;
           }
 
           this.$element.find(".ActionMaximize").parent().removeClass("Active");
-          this.is_maximized = false;
+          this._is_maximized = false;
 
-          if ( this.is_resizable ) {
+          if ( this._is_resizable ) {
             this.$element.find(".ui-resizable-handle").show();
           }
         } else {
-          this.last_attrs = {
+          this._attrs_temp = {
             'size'     : {'width' : this.$element.width(), 'height' : this.$element.height()},
             'position' : this.$element.offset()
           };
@@ -1987,9 +1989,9 @@
           });
 
           this.$element.find(".ActionMaximize").parent().addClass("Active");
-          this.is_maximized = true;
+          this._is_maximized = true;
 
-          if ( this.is_resizable ) {
+          if ( this._is_resizable ) {
             this.$element.find(".ui-resizable-handle").hide();
           }
         }
@@ -2007,19 +2009,19 @@
     },
 
     _getSession : function() {
-      if ( !this.is_sessionable ) {
+      if ( !this._is_sessionable ) {
         return false;
       }
 
       return {
-        is_maximized : this.is_maximized,
-        is_minimized : this.is_minimized,
-        is_ontop     : this.is_ontop,
+        is_maximized : this._is_maximized,
+        is_minimized : this._is_minimized,
+        is_ontop     : this._is_ontop,
+        zindex       : this._zindex,
         width        : this.width,
         height       : this.height,
         top          : this.top,
-        left         : this.left,
-        zindex       : this.zindex
+        left         : this.left
       };
    }
 
@@ -2193,9 +2195,8 @@
 
       this.width = 200;
       this.height = 70;
-      this.gravity = "center";
-      this.content = message;
-      this.dialog_type = type;
+      this._gravity = "center";
+      this._content = message;
 
       this.cmd_close  = cmd_close  || function() {};
       this.cmd_ok     = cmd_ok     || function() {};
@@ -2206,7 +2207,7 @@
       var self = this;
       this._super(id, mcallback);
 
-      if ( this.dialog_type == "confirm" ) {
+      if ( this._is_dialog == "confirm" ) {
         this.$element.find(".DialogButtons .Close").hide();
         this.$element.find(".DialogButtons .Ok").show();
         this.$element.find(".DialogButtons .Cancel").show();
@@ -2245,8 +2246,8 @@
 
       this.width          = 400;
       this.height         = 200;
-      this.gravity        = "center";
-      this.is_minimizable = true;
+      this._gravity        = "center";
+      this._is_minimizable = true;
     },
 
     destroy : function() {
@@ -2285,9 +2286,9 @@
       this.clb_finish = clb_finish   || function() {};
       this.colorObj   = RGBFromHex(start_color  || "#ffffff");
 
-      this.title    = "Choose color...";
-      this.icon     = "apps/style.png";
-      this.content  = $("#OperationDialogColor").html();
+      this._title    = "Choose color...";
+      this._icon     = "apps/style.png";
+      this._content  = $("#OperationDialogColor").html();
       this.width    = 400;
       this.height   = 170;
     },
@@ -2350,8 +2351,8 @@
       this.clb_progress = clb_progress || function() {};
       this.clb_cancel   = clb_cancel   || function() {};
 
-      this.title    = "Copy file";
-      this.content  = $("#OperationDialogCopy").html();
+      this._title    = "Copy file";
+      this._content  = $("#OperationDialogCopy").html();
       this.width    = 400;
       this.height   = 170;
     },
@@ -2361,7 +2362,7 @@
       var self = this;
       this._super(id, mcallback);
 
-      $(this.content).find(".ProgressBar").progressbar({
+      $(this._content).find(".ProgressBar").progressbar({
         value : 50
       });
     }
@@ -2382,8 +2383,8 @@
       this.src          = src          || null;
       this.clb_finish   = clb_finish   || function() {};
 
-      this.title    = "Copy file";
-      this.content  = $("#OperationDialogRename").html();
+      this._title    = "Copy file";
+      this._content  = $("#OperationDialogRename").html();
       this.width    = 200;
       this.height   = 100;
     },
@@ -2448,9 +2449,9 @@
       this.clb_progress = clb_progress || function() {};
       this.clb_cancel   = clb_cancel   || function() {};
 
-      this.title    = "Upload file";
-      this.icon     = "actions/up.png";
-      this.content  = $("#OperationDialogUpload").html();
+      this._title    = "Upload file";
+      this._icon     = "actions/up.png";
+      this._content  = $("#OperationDialogUpload").html();
       this.width    = 400;
       this.height   = 140;
       this.uploader = null;
@@ -2531,10 +2532,10 @@
 
       this._super("File");
 
-      this.title        = type == "save" ? "Save As..." : "Open File";
-      this.icon         = type == "save" ? "actions/document-save.png" : "actions/document-open.png";
-      this.content      = $("#OperationDialogFile").html();
-      this.is_resizable = true;
+      this._title        = type == "save" ? "Save As..." : "Open File";
+      this._icon         = type == "save" ? "actions/document-save.png" : "actions/document-open.png";
+      this._content      = $("#OperationDialogFile").html();
+      this._is_resizable = true;
       this.width        = 400;
       this.height       = 300;
     },
@@ -2736,8 +2737,8 @@
       this.list         = items        || [];
       this.clb_finish   = clb_finish   || function() {};
 
-      this.title    = "Select an application";
-      this.content  = $("#OperationDialogLaunch").html();
+      this._title    = "Select an application";
+      this._content  = $("#OperationDialogLaunch").html();
       this.width    = 400;
       this.height   = 170;
     },
@@ -2803,8 +2804,8 @@
       this.clb_finish   = clb_finish   || function() {};
       this.clb_create   = clb_create   || function() {};
 
-      this.title    = title || "Configure " + this.type;
-      this.content  = (copy || $("#OperationDialogPanelItem")).html();
+      this._title    = title || "Configure " + this.type;
+      this._content  = (copy || $("#OperationDialogPanelItem")).html();
       this.width    = 400;
       this.height   = 170;
     },
@@ -2977,7 +2978,7 @@
 
       // ESC cancels dialogs
       if ( key === 27 ) {
-        if ( _Window && _Window.dialog ) {
+        if ( _Window && _Window._is_dialog ) {
           _Window.$element.find(".ActionClose").click();
           return false;
         }

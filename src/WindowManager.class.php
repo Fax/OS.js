@@ -298,7 +298,7 @@ class WindowManager
           } else if ( $method == "rename" ) {
             list($path, $src, $dst) = $argv;
 
-            if ( ApplicationAPI::mv($path, $src, $dst) ) {
+            if ( ApplicationVFS::mv($path, $src, $dst) ) {
               $json['result'] = $dst;
               $json['success'] = true;
             } else {

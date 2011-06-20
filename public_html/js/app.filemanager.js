@@ -24,20 +24,20 @@ var ApplicationFileManager = (function($, undefined) {
 
       init : function(app) {
         this._super("ApplicationFileManager", false, app, windows);
-        this.content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationFileManager window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem_new\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_close\"> <img alt=\"gtk-close\" src=\"/img/icons/16x16/actions/gtk-close.png\"/> <span>Close</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem2\"> <span><u>G</u>o</span> <ul class=\"GtkMenu menu2\"> <li class=\"GtkImageMenuItem imagemenuitem_home\"> <img alt=\"gtk-home\" src=\"/img/icons/16x16/actions/gtk-home.png\"/> <span>Home</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem3\"> <span><u>V</u>iew</span> <ul class=\"GtkMenu menu3\"> <li class=\"GtkImageMenuItem menuitem_refresh\"> <img alt=\"gtk-refresh\" src=\"/img/icons/16x16/actions/gtk-refresh.png\"/> <span>Refresh</span> </li> <li class=\"GtkRadioMenuItem menuitem_list\"> <span>List view</span> </li> <li class=\"GtkRadioMenuItem menuitem_icon\"> <span>Icon View</span> </li> </ul> </li> </ul> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"GtkIconView GtkObject iconview1\"></div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"GtkStatusbar statusbar1\"></div> </td> </tr> </table> </div> </div> ").html();
-        this.title = 'File Manager';
-        this.icon = 'apps/file-manager.png';
-        this.is_draggable = true;
-        this.is_resizable = true;
-        this.is_scrollable = false;
-        this.is_sessionable = true;
-        this.is_minimizable = true;
-        this.is_maximizable = true;
-        this.is_closable = true;
-        this.is_orphan = false;
+        this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationFileManager window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem_new\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_close\"> <img alt=\"gtk-close\" src=\"/img/icons/16x16/actions/gtk-close.png\"/> <span>Close</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem2\"> <span><u>G</u>o</span> <ul class=\"GtkMenu menu2\"> <li class=\"GtkImageMenuItem imagemenuitem_home\"> <img alt=\"gtk-home\" src=\"/img/icons/16x16/actions/gtk-home.png\"/> <span>Home</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem3\"> <span><u>V</u>iew</span> <ul class=\"GtkMenu menu3\"> <li class=\"GtkImageMenuItem menuitem_refresh\"> <img alt=\"gtk-refresh\" src=\"/img/icons/16x16/actions/gtk-refresh.png\"/> <span>Refresh</span> </li> <li class=\"GtkRadioMenuItem menuitem_list\"> <span>List view</span> </li> <li class=\"GtkRadioMenuItem menuitem_icon\"> <span>Icon View</span> </li> </ul> </li> </ul> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"GtkIconView GtkObject iconview1\"></div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"GtkStatusbar statusbar1\"></div> </td> </tr> </table> </div> </div> ").html();
+        this._title = 'File Manager';
+        this._icon = 'apps/file-manager.png';
+        this._is_draggable = true;
+        this._is_resizable = true;
+        this._is_scrollable = false;
+        this._is_sessionable = true;
+        this._is_minimizable = true;
+        this._is_maximizable = true;
+        this._is_closable = true;
+        this._is_orphan = false;
         this.width = 500;
         this.height = 500;
-        this.gravity = null;
+        this._gravity = null;
       },
 
       destroy : function() {
@@ -98,12 +98,12 @@ var ApplicationFileManager = (function($, undefined) {
 
           if ( error ) {
             API.system.dialog("error", error);
-            this.$element.find(".WindowTopInner span").html(self.title);
+            this.$element.find(".WindowTopInner span").html(self._title);
 
             _defaultStatusText = "";
           } else {
             self.$element.find(".ApplicationFileManager .iconview1").html(result.items);
-            self.$element.find(".WindowTopInner span").html(self.title + ": " + result.path);
+            self.$element.find(".WindowTopInner span").html(self._title + ": " + result.path);
 
             _defaultStatusText = sprintf("%d items (%d bytes)", result.total, result.bytes);
 

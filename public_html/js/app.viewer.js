@@ -16,7 +16,7 @@ var ApplicationViewer = (function($, undefined) {
       w = (force ? w : (w > 800 ? 800 : w));
       h = ((force ? h : (h > 600 ? 600 : h)));
 
-      win.resize(w + 8, h + 35);
+      win._resize(w + 8, h + 35);
     }
 
     function _open(callback) {
@@ -132,20 +132,20 @@ var ApplicationViewer = (function($, undefined) {
 
       init : function(app) {
         this._super("ApplicationViewer", false, app, windows);
-        this.content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationViewer window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_open\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <div class=\"GtkFixed fixed1\"></div> </td> </tr> </table> </div> </div> ").html();
-        this.title = 'Viewer';
-        this.icon = 'categories/gnome-multimedia.png';
-        this.is_draggable = true;
-        this.is_resizable = true;
-        this.is_scrollable = false;
-        this.is_sessionable = true;
-        this.is_minimizable = true;
-        this.is_maximizable = true;
-        this.is_closable = true;
-        this.is_orphan = false;
+        this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationViewer window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_open\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <div class=\"GtkFixed fixed1\"></div> </td> </tr> </table> </div> </div> ").html();
+        this._title = 'Viewer';
+        this._icon = 'categories/gnome-multimedia.png';
+        this._is_draggable = true;
+        this._is_resizable = true;
+        this._is_scrollable = false;
+        this._is_sessionable = true;
+        this._is_minimizable = true;
+        this._is_maximizable = true;
+        this._is_closable = true;
+        this._is_orphan = false;
         this.width = 300;
         this.height = 200;
-        this.gravity = null;
+        this._gravity = null;
       },
 
       destroy : function() {

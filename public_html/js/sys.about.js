@@ -15,20 +15,20 @@ var SystemAbout = (function($, undefined) {
 
       init : function(app) {
         this._super("SystemAbout", false, app, windows);
-        this.content = $("<div class=\"window1\"> <div class=\"GtkWindow SystemAbout window1\"> <div class=\"SystemAbout\"><div class=\"SystemAboutInner\"><span>Created by Anders Evenrud</span><a href=\"http://no.linkedin.com/in/andersevenrud\" target=\"_blank\">LinkedIn</a><br /><a href=\"https://www.facebook.com/anders.evenrud\" target=\"_blank\">Facebook</a><br /><a href=\"mailto:andersevenrud@gmail.com\" target=\"_blank\">&lt;andersevenrud@gmail.com&gt;</a><br /><br />Icons from Gnome<br />Theme inspired by GTK</div></div> </div> </div> ").html();
-        this.title = 'About';
-        this.icon = 'actions/gtk-about.png';
-        this.is_draggable = true;
-        this.is_resizable = false;
-        this.is_scrollable = false;
-        this.is_sessionable = false;
-        this.is_minimizable = false;
-        this.is_maximizable = false;
-        this.is_closable = true;
-        this.is_orphan = true;
+        this._content = $("<div class=\"window1\"> <div class=\"GtkWindow SystemAbout window1\"> <div class=\"SystemAbout\"><div class=\"SystemAboutInner\"><span>Created by Anders Evenrud</span><a href=\"http://no.linkedin.com/in/andersevenrud\" target=\"_blank\">LinkedIn</a><br /><a href=\"https://www.facebook.com/anders.evenrud\" target=\"_blank\">Facebook</a><br /><a href=\"mailto:andersevenrud@gmail.com\" target=\"_blank\">&lt;andersevenrud@gmail.com&gt;</a><br /><br />Icons from Gnome<br />Theme inspired by GTK</div></div> </div> </div> ").html();
+        this._title = 'About';
+        this._icon = 'actions/gtk-about.png';
+        this._is_draggable = true;
+        this._is_resizable = false;
+        this._is_scrollable = false;
+        this._is_sessionable = false;
+        this._is_minimizable = false;
+        this._is_maximizable = false;
+        this._is_closable = true;
+        this._is_orphan = true;
         this.width = 220;
         this.height = 120;
-        this.gravity = "center";
+        this._gravity = "center";
       },
 
       destroy : function() {

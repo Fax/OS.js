@@ -83,20 +83,20 @@ var ApplicationTerminal = (function($, undefined) {
 
       init : function(app) {
         this._super("ApplicationTerminal", false, app, windows);
-        this.content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationTerminal window1\"> <textarea class=\"GtkTextView GtkObject textview1\"></textarea> </div> </div> ").html();
-        this.title = 'Terminal';
-        this.icon = 'apps/utilities-terminal.png';
-        this.is_draggable = true;
-        this.is_resizable = true;
-        this.is_scrollable = false;
-        this.is_sessionable = true;
-        this.is_minimizable = true;
-        this.is_maximizable = true;
-        this.is_closable = true;
-        this.is_orphan = false;
+        this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationTerminal window1\"> <textarea class=\"GtkTextView GtkObject textview1\"></textarea> </div> </div> ").html();
+        this._title = 'Terminal';
+        this._icon = 'apps/utilities-terminal.png';
+        this._is_draggable = true;
+        this._is_resizable = true;
+        this._is_scrollable = false;
+        this._is_sessionable = true;
+        this._is_minimizable = true;
+        this._is_maximizable = true;
+        this._is_closable = true;
+        this._is_orphan = false;
         this.width = 500;
         this.height = 300;
-        this.gravity = null;
+        this._gravity = null;
       },
 
       destroy : function() {

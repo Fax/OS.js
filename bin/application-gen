@@ -107,7 +107,7 @@ function create_js($cname, $window, $content, $properties, $signals) {
 
       init : function(app) {
         this._super("{$cname}", $dialog, app, windows);
-        this.content = $("{$content}").html();
+        this._content = $("{$content}").html();
 %s
       },
 
@@ -140,6 +140,10 @@ EOJAVASCRIPT;
   foreach ( $properties as $pk => $pv ) {
     if ( in_array($pk, Array("type")) ) {
       continue;
+    }
+
+    if ( !in_array($pk, Array("width", "height", "top", "left")) ) {
+      $pk = "_{$pk}";
     }
 
     if ( is_bool($pv) ) {

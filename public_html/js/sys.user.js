@@ -13,20 +13,20 @@ var SystemUser = (function($, undefined) {
 
       init : function(app) {
         this._super("SystemUser", false, app, windows);
-        this.content = $("<div class=\"window1\"> <div class=\"GtkWindow SystemUser window1\"> <div class=\"GtkNotebook notebook1\"> <ul> <li class=\"GtkLabel GtkObject label1\"> <div> <a href=\"#tab-0\">Profile</a> </div> </li> <li class=\"GtkLabel GtkObject label2\"> <div> <a href=\"#tab-1\">Session</a> </div> </li> <li class=\"GtkLabel GtkObject label3\"> <div> <a href=\"#tab-2\">Processes</a> </div> </li> </ul> <div class=\"GtkFixed GtkTab fixed1\" id=\"tab-0\"></div> <div class=\"GtkFixed GtkTab fixed2\" id=\"tab-1\"></div> <div class=\"GtkIconView GtkObject GtkTab iconview1\" id=\"tab-2\"></div> </div> </div> </div> ").html();
-        this.title = 'User Information';
-        this.icon = 'apps/user-info.png';
-        this.is_draggable = true;
-        this.is_resizable = true;
-        this.is_scrollable = false;
-        this.is_sessionable = true;
-        this.is_minimizable = false;
-        this.is_maximizable = false;
-        this.is_closable = true;
-        this.is_orphan = true;
+        this._content = $("<div class=\"window1\"> <div class=\"GtkWindow SystemUser window1\"> <div class=\"GtkNotebook notebook1\"> <ul> <li class=\"GtkLabel GtkObject label1\"> <div> <a href=\"#tab-0\">Profile</a> </div> </li> <li class=\"GtkLabel GtkObject label2\"> <div> <a href=\"#tab-1\">Session</a> </div> </li> <li class=\"GtkLabel GtkObject label3\"> <div> <a href=\"#tab-2\">Processes</a> </div> </li> </ul> <div class=\"GtkFixed GtkTab fixed1\" id=\"tab-0\"></div> <div class=\"GtkFixed GtkTab fixed2\" id=\"tab-1\"></div> <div class=\"GtkIconView GtkObject GtkTab iconview1\" id=\"tab-2\"></div> </div> </div> </div> ").html();
+        this._title = 'User Information';
+        this._icon = 'apps/user-info.png';
+        this._is_draggable = true;
+        this._is_resizable = true;
+        this._is_scrollable = false;
+        this._is_sessionable = true;
+        this._is_minimizable = false;
+        this._is_maximizable = false;
+        this._is_closable = true;
+        this._is_orphan = true;
         this.width = 400;
         this.height = 250;
-        this.gravity = 'center';
+        this._gravity = 'center';
       },
 
       destroy : function() {

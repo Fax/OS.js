@@ -14,20 +14,20 @@ var ApplicationClock = (function($, undefined) {
 
       init : function(app) {
         this._super("ApplicationClock", false, app, windows);
-        this.content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationClock window1\"> <div class=\"Clock\"><div class=\"HourShadow\"></div><div class=\"Hour\"></div><div class=\"MinuteShadow\"></div><div class=\"Minute\"></div><div class=\"SecondShadow\"></div><div class=\"Second\"></div></div> </div> </div> ").html();
-        this.title = 'Clock';
-        this.icon = 'status/appointment-soon.png';
-        this.is_draggable = true;
-        this.is_resizable = false;
-        this.is_scrollable = false;
-        this.is_sessionable = true;
-        this.is_minimizable = false;
-        this.is_maximizable = false;
-        this.is_closable = true;
-        this.is_orphan = false;
+        this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationClock window1\"> <div class=\"Clock\"><div class=\"HourShadow\"></div><div class=\"Hour\"></div><div class=\"MinuteShadow\"></div><div class=\"Minute\"></div><div class=\"SecondShadow\"></div><div class=\"Second\"></div></div> </div> </div> ").html();
+        this._title = 'Clock';
+        this._icon = 'status/appointment-soon.png';
+        this._is_draggable = true;
+        this._is_resizable = false;
+        this._is_scrollable = false;
+        this._is_sessionable = true;
+        this._is_minimizable = false;
+        this._is_maximizable = false;
+        this._is_closable = true;
+        this._is_orphan = false;
         this.width = 200;
         this.height = 200;
-        this.gravity = 'center';
+        this._gravity = 'center';
 
         this.int_sec = null;
         this.int_min = null;
