@@ -1,19 +1,21 @@
 /**
  * JavaScript Window Manager
  *
- * TODO: Finish Login screen
- *       Simpler and cleaner look
- *       User avatar
- * TODO: Custom Tooltips
- * TODO: Fix onblur() for all applications
- * TODO: Finixh application hook interface
- * TODO: Separate Operation dialogs
- * TODO: Apps can append title to window list (panel item)
- * TODO: Sortable panel items (use absolute, snap to direction as panel does)
- * TODO: Rewrite settings manager
- * TODO: Implement settings manager into applications
- * TODO: Menu subitems
- * TODO: Do not bring windows to front when clicking window action buttons
+ * TODOs:
+ *   TODO: Tooltips
+ *   TODO: Sortable panel items (use absolute, snap to direction as panel does)
+ *   TODO: Implement settings manager into applications
+ *   TODO: Menu subitems
+ *   FIXME: Move all Window attributes/properties into Enums
+ *
+ * Fixes:
+ *   TODO: Application hook interface
+ *   TODO: Rewrite settings manager
+ *   TODO: Update WindowList panel item with updated titles
+ *
+ * Release:
+ *   TODO: Convert Dialog to Glade and Separate JS files
+ *   TODO: Check and fix Window::onblur() for all applications
  *
  * Creates a desktop environment inside the browser.
  * Applications can be loaded via the server.
@@ -70,6 +72,24 @@
     _TopIndex          = 11;
   }
 
+  /*
+  setInterval(function() {
+    var now = (new Date()).getTime();
+
+    var i = 0;
+    var l = _Processes.length;
+    var p, s;
+    if ( l ) {
+      for ( i; i < l; i++ ) {
+        p = _Processes[i];
+        if ( p !== undefined ) {
+          console.info("=> Process Alive", i, p._uuid, p, sprintf("alive %dms", (now - p._started.getTime())));
+        }
+      }
+    }
+  }, 5000);
+  */
+
   function LaunchApplication(app_name, args, windows, callback, callback_error) {
     callback = callback || function() {};
     callback_error = callback_error || function() {};
@@ -82,7 +102,7 @@
 
           if ( window[app_name] ) {
             var application = new window[app_name](GtkWindow, Application, API, args, windows);
-            application.uuid  = data.result.uuid;
+            application._uuid  = data.result.uuid;
             application.run();
           } else {
             var error = "Application Script not found!";
@@ -276,7 +296,7 @@
 
           var browse = [];
           if ( found.length ) {
-            console.log("API found suited application(s) for", mime, ":", found);
+            console.info("=> API found suited application(s) for", mime, ":", found);
             if ( found.length == 1 ) {
               __run(found[0]);
             } else {
@@ -301,14 +321,14 @@
         for ( var i = 0; i < wins.length; i++ ) {
           if ( wins[i].app && wins[i].app.name == app_name ) {
             if ( wins[i].is_orphan ) {
-              console.log("API launch denied", "is_orphan");
+              console.info("=> API launch denied", "is_orphan");
               _Desktop.focusWindow(wins[i]);
               return;
             }
           }
         }
 
-        console.log("API launching", app_name, args);
+        console.info("=> API launching", app_name, args);
         LaunchApplication(app_name, args, windows);
       },
 
@@ -325,6 +345,8 @@
             callback(null, data.error);
           }
         });
+
+        console.info("=> API Call", method, argv);
       },
 
       'dialog' : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
@@ -332,14 +354,20 @@
         message = message || "Unknown error";
 
         _Desktop.addWindow(new Dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
+
+        console.info("=> API Dialog", type);
       },
 
       'dialog_rename' : function(path, clb_finish) {
         _Desktop.addWindow(new RenameOperationDialog(path, clb_finish));
+
+        console.info("=> API Rename Dialog");
       },
 
       'dialog_upload' : function(path, clb_finish, clb_progress, clb_cancel) {
         _Desktop.addWindow(new UploadOperationDialog(path, clb_finish, clb_progress, clb_cancel));
+
+        console.info("=> API Upload Dialog");
       },
 
       'dialog_file' : function(clb_finish, mime_filter, type, cur_dir) {
@@ -348,14 +376,20 @@
         cur_dir = cur_dir || "/";
 
         _Desktop.addWindow(new FileOperationDialog(type, mime_filter, clb_finish, cur_dir));
+
+        console.info("=> API File Dialog");
       },
 
       'dialog_launch' : function(list, clb_finish) {
         _Desktop.addWindow(new LaunchOperationDialog(list, clb_finish));
+
+        console.info("=> API Launch Dialog");
       },
 
       'dialog_color' : function(start_color, clb_finish) {
         _Desktop.addWindow(new ColorOperationDialog(start_color, clb_finish));
+
+        console.info("=> API Color Dialog");
       }
 
 
@@ -456,7 +490,7 @@
       },
 
       'logout' : function(save) {
-        console.log("API logging out", save);
+        console.info("=> API logging out", save);
 
         API.session.save(save);
 
@@ -473,6 +507,8 @@
         save = save || false;
         var sess = save ? _Desktop.getSession() : {};
 
+        console.info("=> API Session save");
+
         localStorage.setItem('session', JSON.stringify(sess));
       },
 
@@ -483,7 +519,7 @@
           if ( item ) {
             var session = JSON.parse(item);
 
-            console.log("API restore session", session);
+            console.info("=> API restore session", session);
 
             var i = 0;
             var l = session.length;
@@ -504,6 +540,8 @@
       'shutdown' : function() {
         var ssess = _Desktop.getSession();
         var ssett = _Settings.getSession();
+
+        console.info("=> API Shutdown session");
 
         $.post("/", {'ajax' : true, 'action' : 'shutdown', 'session' : ssess, 'settings' : ssett}, function(data) {
           if ( data.success ) {
@@ -607,7 +645,9 @@
 
         $("head").append(el);
 
-        console.log("ResourceManager", "addResource", res, type, el);
+        console.group("ResourceManager::addResource()");
+        console.log(el.get(0));
+        console.groupEnd();
 
         this.resources.push(res.split("?")[0]);
         this.links.push(el);
@@ -677,7 +717,10 @@
           }
         }
 
-        console.log("SettingsManager initialized...", this, _avail, _stores);
+        console.group("SettingsManager::init()");
+        console.log(_avail);
+        console.log(_stores);
+        console.groupEnd();
       },
 
       destroy : function() {
@@ -924,8 +967,8 @@
         var a;
         for ( i; i < l; i++ ) {
           a = this.stack[i];
-          if ( a.app && a.app.uuid == app.uuid ) {
-            if ( a !== app.root_window ) {
+          if ( a.app && a.app._uuid == app._uuid ) {
+            if ( a !== app._root_window ) {
               this.removeWindow(a, i);
             }
           }
@@ -956,12 +999,12 @@
       focusWindow : function(win) {
         if ( _Window !== null ) {
           if ( win != _Window ) {
-            _Window.blur();
+            _Window._blur();
           }
         }
 
 
-        win.focus();
+        win._focus();
 
         if ( _Window !== win ) {
           this.panel.redraw(this, win);
@@ -1017,7 +1060,10 @@
           this.setTheme(theme);
         }
 
-        console.log("Applied user settings", [wp, theme]);
+        console.group("Applied used settings");
+        console.log("wallpaper", wp);
+        console.log("theme", theme);
+        console.groupEnd();
       },
 
       setWallpaper : function(wp) {
@@ -1051,7 +1097,7 @@
         for ( i; i < l; i++ ) {
           p = _Processes[i];
           if ( p !== undefined ) {
-            s = p.getSession();
+            s = p._getSession();
             if ( s !== false ) {
               sess.push(s);
             }
@@ -1209,39 +1255,6 @@
     },
 
     update : function() {
-      /*
-      var w_p = $(this.$element).width();
-      var l_c = 0;
-      var r_c = 0;
-
-      // Convert from float to absolute
-      var el, w;
-      for ( var i = 0; i < this.items.length; i++ ) {
-        el = this.items[i];
-        w = el.$element.outerWidth(true);
-        console.log(w, el.$element);
-
-        if ( el.align == "left" ) {
-          $(el.$element).css({
-            "position" : "absolute",
-            "float"    : "none",
-            "left"     : l_c + "px"
-          });
-
-          l_c += w;
-        } else {
-
-          $(el.$element).css({
-            "position" : "absolute",
-            "float"    : "none",
-            "right"    : r_c + "px"
-          });
-
-          r_c += w;
-        }
-      }
-      */
-
     },
 
     getItem : function(name, index) {
@@ -1258,7 +1271,9 @@
     addItem : function(i, pos) {
       if ( i instanceof _PanelItem ) {
 
-        console.log("Panel", "Added item", i.name, i);
+        console.group("Panel::addItem()");
+        console.log(i.name, i);
+        console.groupEnd();
 
         var el = i.create(pos);
         if ( el ) {
@@ -1294,7 +1309,9 @@
         if ( this.items[i] === x ) {
           x.destroy();
 
-          console.log("Panel", "Removed item", x.name, x);
+          console.group("Panel::removeItem()");
+          console.log(x.name, x);
+          console.groupEnd();
 
           this.items.splice(i, 1);
           return true;
@@ -1451,9 +1468,10 @@
      */
     init : function(name, dialog, attrs) {
       // Various properties
-      this.created         = false;
+      this._created         = false;
+      this._showing         = false;
+
       this.current         = false;
-      this.showing         = false;
       this.last_attrs      = null;
 
       if ( (attrs instanceof Array) && attrs.length ) {
@@ -1498,7 +1516,7 @@
       // DOM Elements
       this.$element = null;
 
-      console.log("Window inited...", this);
+      console.log("Window::" + name + "::init()");
     },
 
     destroy : function() {
@@ -1511,23 +1529,23 @@
       this.focus_hook  = null;
       this.blur_hook   = null;
       this.die_hook    = null;
-      this.showing     = false;
+      this._showing     = false;
 
       $(this.$element).fadeOut(ANIMATION_SPEED, function() {
         $(self.$element).empty().remove();
       });
 
-      console.log("Window destroyed...", this);
+      console.log("Window::" + this.name + "::destroy()");
     },
 
     show : function() {
-      if ( !this.showing ) {
+      if ( !this._showing ) {
         _Desktop.addWindow(this);
       }
     },
 
     close : function() {
-      if ( this.showing ) {
+      if ( this._showing ) {
         _Desktop.removeWindow(this);
       }
     },
@@ -1537,9 +1555,9 @@
 
       mcallback = mcallback || function() {};
 
-      if ( !this.created ) {
-        this.id      = id;
-        this.showing = true;
+      if ( !this._created ) {
+        this.id       = id;
+        this._showing = true;
 
         var fresh = true;
         var el    = this.dialog ? $($("#Dialog").html()) : $($("#Window").html());
@@ -1572,7 +1590,7 @@
                 }
               }},
               {"title" : (self.is_ontop ? "Same as other windows" : "Always on top"), "icon" : "actions/zoom-original.png", "method" : function() {
-                self.ontop();
+                self._ontop();
               }},
               {"title" : (self.is_minimized ? "Show" : "Minimize"), "icon" : "actions/window_nofullscreen.png", "disabled" : !self.is_minimizable, "method" : function() {
                 if ( self.is_minimizable ) {
@@ -1619,7 +1637,7 @@
 
         if ( this.is_minimizable ) {
           el.find(".ActionMinimize").click(function() {
-            self.minimize();
+            self._minimize();
           });
         } else {
           el.find(".ActionMinimize").parent().hide();
@@ -1627,7 +1645,7 @@
 
         if ( this.is_maximizable ) {
           el.find(".ActionMaximize").click(function() {
-            self.maximize();
+            self._maximize();
           });
         } else {
           el.find(".ActionMaximize").parent().hide();
@@ -1730,7 +1748,7 @@
         // Newly created windows needs their inner dimension fixed
         if ( fresh ) {
           if ( !isNaN(this.height) && (this.height > 0) ) {
-            this.resize(this.width, this.height, el);
+            this._resize(this.width, this.height, el);
           }
         }
 
@@ -1802,7 +1820,7 @@
         }
 
         if ( this.zindex && this.zindex > 0 ) {
-          this.shuffle(this.zindex);
+          this._shuffle(this.zindex);
         }
 
         if ( this.is_maximized ) {
@@ -1813,12 +1831,16 @@
         }
       }
 
-      this.created = true;
+      this._created = true;
+
+      console.group("Window::" + this.name + "::create()");
+      console.log(el);
+      console.groupEnd();
 
       return el;
     },
 
-    shuffle : function(zi, old) {
+    _shuffle : function(zi, old) {
       if ( old ) {
         this.oldZindex = this.zindex;
       }
@@ -1830,41 +1852,37 @@
       }
     },
 
-    redraw : function() {
-
-    },
-
-    ontop : function() {
+    _ontop : function() {
       if ( this.is_ontop ) {
         if ( this.oldZindex > 0 ) {
-          this.shuffle(this.oldZindex);
+          this._shuffle(this.oldZindex);
         } else {
           _TopIndex++;
-          this.shuffle(_TopIndex);
+          this._shuffle(_TopIndex);
         }
       } else {
         _OnTopIndex++;
-        this.shuffle(_OnTopIndex, true);
+        this._shuffle(_OnTopIndex, true);
       }
 
       this.is_ontop = !this.is_ontop;
     },
 
-    focus : function() {
+    _focus : function() {
       var focused = false;
       if ( !this.current ) {
 
         if ( this.is_minimized ) {
-          this.minimize();
+          this._minimize();
         }
 
         // FIXME: Roll-back values when max is reached
         if ( this.is_ontop ) {
           _OnTopIndex++;
-          this.shuffle(_OnTopIndex);
+          this._shuffle(_OnTopIndex);
         } else {
           _TopIndex++;
-          this.shuffle(_TopIndex);
+          this._shuffle(_TopIndex);
         }
 
         this.$element.addClass("Current");
@@ -1878,7 +1896,7 @@
       this.current = true;
     },
 
-    blur : function() {
+    _blur : function() {
       if ( this.current ) {
         this.$element.removeClass("Current");
 
@@ -1894,7 +1912,7 @@
       this.current = false;
     },
 
-    minimize : function() {
+    _minimize : function() {
       if ( this.is_minimizable ) {
         var self = this;
         if ( this.is_minimized ) {
@@ -1904,7 +1922,7 @@
 
           this.is_minimized = false;
         } else {
-          this.blur();
+          this._blur();
 
           this.$element.animate({opacity: 'hide', height: 'hide'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
             _Desktop.minimizeWindow(self);
@@ -1916,7 +1934,7 @@
       }
     },
 
-    maximize : function() {
+    _maximize : function() {
       if ( this.is_maximizable ) {
         if ( this.is_maximized ) {
           if ( this.last_attrs !== null ) {
@@ -1977,7 +1995,7 @@
       }
     },
 
-    resize : function(width, height, el) {
+    _resize : function(width, height, el) {
       el = el || this.$element;
       var appendWidth = 4;
       var appendHeight = 4 + el.find(".WindowTop").height();
@@ -1986,7 +2004,7 @@
       el.css("width", (width + appendWidth) + "px");
     },
 
-    getSession : function() {
+    _getSession : function() {
       if ( !this.is_sessionable ) {
         return false;
       }
@@ -2810,80 +2828,86 @@
    */
   var Application = Class.extend({
     init : function(name, argv) {
-      this.name         = name;
       this.argv         = argv;
-      this.uuid         = null;
-      this.index        = (_Processes.push(this) - 1);
-      this.running      = false;
-      this.root_window  = null;
 
-      console.log("Application created", this.name, this, arguments);
+      this._name         = name;
+      this._uuid         = null;
+      this._index        = (_Processes.push(this) - 1);
+      this._running      = false;
+      this._root_window  = null;
+      this._started      = new Date();
+
+      console.log("Application::" + this._name + "::NULL::init()");
     },
 
     destroy : function() {
       var self = this;
-      if ( this.running ) {
-        if ( this.uuid ) {
-          $.post("/", {'ajax' : true, 'action' : 'flush', 'uuid' : self.uuid}, function(data) {
-            console.log('Application flush', self, self.uuid, data);
+      if ( this._running ) {
+        if ( this._uuid ) {
+          $.post("/", {'ajax' : true, 'action' : 'flush', 'uuid' : self._uuid}, function(data) {
+            console.group("Application::" + self._name + "::" + self._uuid + "::destroy()");
+            console.log("flushed", data);
+            console.groupEnd();
           });
         }
 
-        //_Desktop.removeWindowApplication(this.name, this.root_window);
         _Desktop.removeApplication(self);
 
-        console.log("Application destroyed", this.name, this);
+        console.log("Application::" + this._name + "::" + this._uuid + "::destroy()");
 
         this.running = false;
 
-        _Processes[this.index] = undefined; //_Processes = _Processes.splice(this.index, 1);
+        _Processes[this._index] = undefined;
       }
     },
 
     run : function(root_window) {
       var self = this;
 
-      if ( !this.running ) {
-        this.root_window = root_window;
+      if ( !this._running ) {
+        this._root_window = root_window;
 
         if ( root_window instanceof Window ) {
           root_window.die_hook = function() {
 
 
-            self.__stop();
+            self._stop();
           };
         }
 
-        console.log("Application running", this.name, this);
+        console.log("Application::" + this._name + "::" + this._uuid + "::run()");
 
-        this.running = true;
+        this._running = true;
       }
     },
 
-    __stop : function() {
-      if ( this.running ) {
+    _stop : function() {
+      if ( this._running ) {
         this.destroy();
       }
     },
 
-    event : function(win, ev, args, callback) {
+    _event : function(win, ev, args, callback) {
       var self = this;
-      if ( this.uuid ) {
-        var pargs = {'ajax' : true, 'action' : 'event', 'cname' : self.name ,'uuid' : self.uuid, 'instance' : {'name' : self.name, 'action' : ev, 'args' : args }};
+      if ( this._uuid ) {
+        var pargs = {'ajax' : true, 'action' : 'event', 'cname' : self._name ,'uuid' : self._uuid, 'instance' : {'name' : self._name, 'action' : ev, 'args' : args }};
         $.post("/", pargs, function(data) {
-          console.log('Event Application', win, self.uuid, pargs, data);
+
+          console.group("Application::" + self._name + "::" + self._uuid + "::_event()");
+          console.log(ev, args, data);
+          console.groupEnd();
 
           callback(data.result, data.error);
         });
       }
     },
 
-    getSession : function() {
-      if ( this.root_window ) {
-        var win = this.root_window.getSession();
+    _getSession : function() {
+      if ( this._root_window ) {
+        var win = this._root_window._getSession();
         if ( win !== false ) {
           return {
-            "name"    : this.name,
+            "name"    : this._name,
             "argv"    : this.argv,
             "windows" : [win]
           };

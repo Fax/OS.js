@@ -40,10 +40,11 @@ var SystemUser = (function($, undefined) {
         var self = this;
 
         if ( el ) {
+          // Do your stuff here
           var inner = this.$element.find(".fixed1");
 
+          // User info
           var table = $("<table></table>");
-
           el.find(".fixed1").append(table);
           el.find(".fixed2").append("<ul></ul>");
 
@@ -60,6 +61,7 @@ var SystemUser = (function($, undefined) {
             //$(inner).tabs();
           });
 
+          // Session info
           var items = "";
           for ( var i = 0; i < localStorage.length; i++ ) {
             var key = localStorage.key(i);
@@ -83,8 +85,6 @@ var SystemUser = (function($, undefined) {
             });
             el.find(".fixed2 ul").append(item);
           }
-
-          // Do your stuff here
 
         }
 
