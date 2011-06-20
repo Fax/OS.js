@@ -8,12 +8,12 @@
 
 @font-face {
   font-family : MainFont;
-  src: url('/css/Sansation_Regular.ttf');
+  src: url('/media/System/Fonts/Sansation_Regular.ttf');
 }
 @font-face {
   font-family : MainFont;
   font-weight : bold;
-  src: url('/css/Sansation_Bold.ttf');
+  src: url('/media/System/Fonts/Sansation_Bold.ttf');
 }
 
 body {
