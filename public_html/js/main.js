@@ -4,15 +4,16 @@
  * TODOs:
  *   TODO: Sortable panel items (use absolute, snap to direction as panel does)
  *   TODO: Menu subitems
- *   FIXME: Move all Window attributes/properties into Enums
- *
- * Fixes:
  *   TODO: Rewrite settings manager
  *   TODO: Update WindowList panel item with updated titles
  *
  * Release:
  *   TODO: Convert Dialog to Glade and Separate JS files
  *   TODO: Check and fix Window::onblur() for all applications
+ *
+ * Browsers:
+ *   FIXME: Chrome bug TableCellWrapper is to far up
+ *   FIXME: Various Opera bugs
  *
  * Creates a desktop environment inside the browser.
  * Applications can be loaded via the server.

@@ -40,7 +40,6 @@ var SystemSettings = (function($, undefined) {
         var self = this;
 
         if ( el ) {
-
           // Do your stuff here
           var form = $(el).find("form");
 

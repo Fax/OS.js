@@ -563,6 +563,9 @@ class Glade
 
             $temp2 = $doc->createElement("td");
             $temp2->setAttribute("class", implode(" ", $oclasses));
+            $temp3 = $doc->createElement("div");
+            $temp3->setAttribute("class", "TableCellWrap");
+
             if ( $styles ) {
               $temp2->setAttribute("style", implode(";", $styles));
             }
@@ -571,10 +574,11 @@ class Glade
             }
             if ( $outer ) {
               $outer->appendChild($node);
-              $temp2->appendChild($outer);
+              $temp3->appendChild($outer);
             } else {
-              $temp2->appendChild($node);
+              $temp3->appendChild($node);
             }
+            $temp2->appendChild($temp3);
             $temp->appendChild($temp2);
           } else {
             if ( $styles ) {

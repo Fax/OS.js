@@ -49,7 +49,7 @@
     }
     .GtkWindow .Expand .GtkObject,
     .GtkDialog .Expand .GtkObject {
-      height : auto;
+      /*height : auto;*/
     }
 
 /* GtkBox */
@@ -59,10 +59,14 @@
   border-collapse : collapse;
   border : 0 none;
 }
+
   .GtkBox tr,
   .GtkBox td {
     position : relative;
     vertical-align: top;
+  }
+  .GtkBox td.Expand.Fill {
+    height : 100%;
   }
   .GtkBox.Vertical {
   }

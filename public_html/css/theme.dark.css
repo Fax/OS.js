@@ -73,7 +73,7 @@ body.ThemeDark .GtkIconViewHeader td.Space {
   border-left : 1px solid #eef1f3;
 }
 body.ThemeDark .GtkIconViewHeader td.Space.First {
-  border-left  0 none;
+  border-left :  0 none;
 }
 body.ThemeDark .GtkIconViewHeader td.Space.Last {
   border-right : 0 none;
