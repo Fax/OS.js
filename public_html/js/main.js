@@ -1713,19 +1713,23 @@
         if ( el.find(".GtkMenuItem").length ) {
           var last_menu = null;
           el.find(".GtkMenuItem").each(function() {
-            $(this).click(function() {
+            $(this).click(function(ev) {
+              var t = ev.target || ev.srcElement;
+
               if ( last_menu ) {
                 $(last_menu).hide();
               }
 
-              last_menu = $(this).find(".GtkMenu").show();
+              last_menu = $(this).find(".GtkMenu").first().show();
             });
           });
 
           $(document).click(function(ev) {
             var t = ev.target || ev.srcElement;
             if ( !$(t).parents("ul").first().hasClass("GtkMenuBar") ) {
-              el.find(".GtkMenuItem .GtkMenu").hide();
+              //if ( !$(t).parents(".GtkMenu").get(0) ) {
+                el.find(".GtkMenuItem .GtkMenu").hide();
+              //}
             }
           });
         }

@@ -92,7 +92,7 @@ class ApplicationVFS
     $content = $argv['content'];
 
     foreach ( self::$VirtualDirs as $k => $v ) {
-      if ( startsWith($path, $k) ) {
+      if ( startsWith($argv['file'], $k) ) {
         if ( $v['attr'] != "rw" ) {
           return false; // TODO: Exception
         }
