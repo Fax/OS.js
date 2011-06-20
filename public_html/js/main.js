@@ -996,7 +996,9 @@
           win.create(("Window_" + this.stack.length), AddWindowCallback);
 
           this.stack.push(win);
-          this.panel.redraw(self, win, false);
+          if ( this.panel ) {
+            this.panel.redraw(self, win, false);
+          }
 
           return win;
         }
@@ -1049,8 +1051,10 @@
 
         win._focus();
 
-        if ( _Window !== win ) {
-          this.panel.redraw(this, win);
+        if ( this.panel ) {
+          if ( _Window !== win ) {
+            this.panel.redraw(this, win);
+          }
         }
 
         _Window = win;
@@ -2046,13 +2050,37 @@
       }
     },
 
+    _gravitate : function(dir) {
+      dir = dir || this._gravity;
+      if ( dir == "center" ) {
+        var el = this.$element;
+        this._move(
+          (($(document).width() / 2) - ($(el).width() / 2)),
+          (($(document).height() / 2) - ($(el).height() / 2)) );
+      }
+    },
+
+    _move : function(left, top) {
+      this._left = left;
+      this._top = top;
+
+      this.$element.css({
+        "left" : left + "px",
+        "top" : top + "px"
+      });
+    },
+
     _resize : function(width, height, el) {
       el = el || this.$element;
       var appendWidth = 4;
       var appendHeight = 4 + el.find(".WindowTop").height();
 
-      el.css("height", (height + appendHeight) + "px");
-      el.css("width", (width + appendWidth) + "px");
+      if ( height ) {
+        el.css("height", (height + appendHeight) + "px");
+      }
+      if ( width ) {
+        el.css("width", (width + appendWidth) + "px");
+      }
     },
 
     _getSession : function() {
@@ -2238,21 +2266,31 @@
   var Dialog = Window.extend({
 
     init : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
-      this._super("Dialog", type);
-
-      this.width = 200;
-      this.height = 70;
-      this._gravity = "center";
-      this._content = message;
-
       this.cmd_close  = cmd_close  || function() {};
       this.cmd_ok     = cmd_ok     || function() {};
       this.cmd_cancel = cmd_cancel || function() {};
+
+      this._super("Dialog", type);
+      this._width    = 200;
+      this._height   = 70;
+      this._gravity  = "center";
+      this._content  = message;
+      this._is_ontop = true;
     },
 
     create : function(id, mcallback) {
       var self = this;
-      this._super(id, mcallback);
+      var el = this._super(id, mcallback);
+
+      var dc = el.find(".DialogContent").css({
+        "top" : "auto",
+        "left" : "auto",
+        "bottom" : "auto",
+        "right" : "auto"
+      }).addClass("Message");
+
+      this._resize(dc.width() + 20, dc.height() + 50);
+      this._gravitate();
 
       if ( this._is_dialog == "confirm" ) {
         this.$element.find(".DialogButtons .Close").hide();
@@ -2290,9 +2328,8 @@
 
     init : function(type) {
       this._super("OperationDialog", type);
-
-      this.width          = 400;
-      this.height         = 200;
+      this._width          = 400;
+      this._height         = 200;
       this._gravity        = "center";
       this._is_minimizable = true;
     },
@@ -2327,17 +2364,15 @@
   var ColorOperationDialog = OperationDialog.extend({
 
     init : function(start_color, clb_finish) {
-
-      this._super("Color");
-
       this.clb_finish = clb_finish   || function() {};
       this.colorObj   = RGBFromHex(start_color  || "#ffffff");
 
+      this._super("Color");
       this._title    = "Choose color...";
       this._icon     = "apps/style.png";
       this._content  = $("#OperationDialogColor").html();
-      this.width    = 400;
-      this.height   = 170;
+      this._width    = 400;
+      this._height   = 170;
     },
 
     create : function(id, mcallback) {
@@ -2390,18 +2425,17 @@
   var CopyOperationDialog = OperationDialog.extend({
 
     init : function(src, dest, clb_finish, clb_progress, clb_cancel) {
-      this._super("Copy");
-
       this.src          = src          || null;
       this.dest         = dest         || null;
       this.clb_finish   = clb_finish   || function() {};
       this.clb_progress = clb_progress || function() {};
       this.clb_cancel   = clb_cancel   || function() {};
 
+      this._super("Copy");
       this._title    = "Copy file";
       this._content  = $("#OperationDialogCopy").html();
-      this.width    = 400;
-      this.height   = 170;
+      this._width    = 400;
+      this._height   = 170;
     },
 
 
@@ -2425,15 +2459,14 @@
   var RenameOperationDialog = OperationDialog.extend({
 
     init : function(src, clb_finish) {
-      this._super("Rename");
-
       this.src          = src          || null;
       this.clb_finish   = clb_finish   || function() {};
 
+      this._super("Rename");
       this._title    = "Copy file";
       this._content  = $("#OperationDialogRename").html();
-      this.width    = 200;
-      this.height   = 100;
+      this._width    = 200;
+      this._height   = 100;
     },
 
 
@@ -2487,21 +2520,18 @@
   var UploadOperationDialog = OperationDialog.extend({
 
     init : function(path, clb_finish, clb_progress, clb_cancel) {
-      var self = this;
-
-      this._super("Upload");
-
+      this.uploader = null;
       this.upload_path  = path;
       this.clb_finish   = clb_finish   || function() {};
       this.clb_progress = clb_progress || function() {};
       this.clb_cancel   = clb_cancel   || function() {};
 
+      this._super("Upload");
       this._title    = "Upload file";
       this._icon     = "actions/up.png";
       this._content  = $("#OperationDialogUpload").html();
-      this.width    = 400;
-      this.height   = 140;
-      this.uploader = null;
+      this._width    = 400;
+      this._height   = 140;
     },
 
     create : function(id, mcallback) {
@@ -2570,7 +2600,6 @@
   var FileOperationDialog = OperationDialog.extend({
 
     init : function(type, argv, clb_finish, cur_dir) {
-
       this.aargv         = argv         || {};
       this.atype         = type         || "open";
       this.clb_finish    = clb_finish   || function() {};
@@ -2578,13 +2607,12 @@
       this.init_dir      = cur_dir      || "/";
 
       this._super("File");
-
       this._title        = type == "save" ? "Save As..." : "Open File";
       this._icon         = type == "save" ? "actions/document-save.png" : "actions/document-open.png";
       this._content      = $("#OperationDialogFile").html();
       this._is_resizable = true;
-      this.width        = 400;
-      this.height       = 300;
+      this._width        = 400;
+      this._height       = 300;
     },
 
     create : function(id, mcallback) {
@@ -2779,15 +2807,14 @@
   var LaunchOperationDialog = OperationDialog.extend({
 
     init : function(items, clb_finish) {
-      this._super("Launch");
-
       this.list         = items        || [];
       this.clb_finish   = clb_finish   || function() {};
 
+      this._super("Launch");
       this._title    = "Select an application";
       this._content  = $("#OperationDialogLaunch").html();
-      this.width    = 400;
-      this.height   = 170;
+      this._width    = 400;
+      this._height   = 170;
     },
 
 
@@ -2844,17 +2871,17 @@
   var PanelItemOperationDialog = OperationDialog.extend({
 
     init : function(item, clb_create, clb_finish, title, copy) {
-      this._super("PanelItem");
-
       this.item         = item         || null;
       this.type         = item instanceof Panel ? "panel" : "item";
       this.clb_finish   = clb_finish   || function() {};
       this.clb_create   = clb_create   || function() {};
 
+
+      this._super("PanelItem");
       this._title    = title || "Configure " + this.type;
       this._content  = (copy || $("#OperationDialogPanelItem")).html();
-      this.width    = 400;
-      this.height   = 170;
+      this._width    = 400;
+      this._height   = 170;
     },
 
 

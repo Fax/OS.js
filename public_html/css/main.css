@@ -316,6 +316,9 @@ input.Disabled {
   right : 5px;
   left : 5px;
 }
+.DialogContent.Message {
+  padding : 10px;
+}
 /*
 .DialogContent.error {
 }
