@@ -214,8 +214,10 @@ var ApplicationFileManager = (function($, undefined) {
 
       _selItem : function(t) {
         var self = this;
-        if ( !$(t).parents(".TableBody").get(0) ) {
-          return;
+        if ( this.app.argv.view_type != 'icon' ) {
+          if ( !$(t).parents(".TableBody").get(0) ) {
+            return;
+          }
         }
 
         if ( lastItem ) {

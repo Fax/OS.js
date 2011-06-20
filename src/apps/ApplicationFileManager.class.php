@@ -90,7 +90,7 @@ EOHTML;
       }
 
       if ( $view == "icon" ) {
-        $out = "<ul>" . implode("", $result) . "</ul>";
+        $out = "<ul class=\"ListWrap\">" . implode("", $result) . "</ul>";
       } else {
         $rows = implode("", $result);
         $out = <<<EOHTML
