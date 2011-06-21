@@ -305,6 +305,12 @@
     background : #4f4f4f;
   }
 
+  .GtkMenuBar .Checked {
+    font-weight : bold;
+  }
+  .GtkMenuBar .Disabled {
+  }
+
 /* GtkNotebook */
 .GtkNotebook {
   position : absolute;

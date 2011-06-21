@@ -2426,7 +2426,7 @@
         if ( el.find(".GtkMenuBar").length ) {
           var last_menu = null;
 
-          el.find(".GtkMenuItem, .GtkImageMenuItem").each(function() {
+          el.find(".GtkMenuItem, .GtkImageMenuItem, .GtkRadioMenuItem").each(function() {
             var level = ($(this).parents(".GtkMenu").length);
 
             $(this).hover(function() {
