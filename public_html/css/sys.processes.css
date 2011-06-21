@@ -1,0 +1,45 @@
+@charset "UTF-8";
+/**
+ * Application: SystemProcesses
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ */
+
+.SystemProcesses {
+
+}
+.SystemProcesses .iconview1 {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 0px;
+  overflow : auto;
+}
+
+.SystemProcesses .iconview1 table.TableHead {
+  height : 20px;
+  padding-top :5px;
+  padding-bottom : 5px;
+  overflow : hidden;
+  width : 100%;
+}
+.SystemProcesses .iconview1 .TableWrap {
+  overflow : auto;
+  height : 100%;
+}
+.SystemProcesses .iconview1 table.TableBody {
+  background : #fff;
+  width : 100%;
+}
+.SystemProcesses .iconview1 table.TableBody .win {
+  font-style : italic;
+}
+.SystemProcesses .PID {
+  width : 40px;
+}
+.SystemProcesses .Alive {
+  width : 100px;
+  text-align : right;
+}

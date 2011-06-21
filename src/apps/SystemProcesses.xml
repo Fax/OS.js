@@ -1,0 +1,9 @@
+<application name="Processes" file="SystemProcesses.class.php" schema="SystemProcesses.glade">
+  <property name="enabled">true</property>
+  <property name="title">Processes Information</property>
+  <property name="icon">actions/system-run.png</property>
+  <property name="system">true</property>
+
+  <resource>sys.processes.css</resource>
+  <resource>sys.processes.js</resource>
+</application>

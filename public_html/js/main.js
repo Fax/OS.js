@@ -1476,7 +1476,7 @@
       if ( i instanceof _PanelItem ) {
 
         console.group("Panel::addItem()");
-        console.log(i.name, i);
+        console.log(i._name, i);
         console.groupEnd();
 
         var el = i.create(pos);
@@ -1516,7 +1516,7 @@
           x.destroy();
 
           console.group("Panel::removeItem()");
-          console.log(x.name, x);
+          console.log(x._name, x);
           console.groupEnd();
 
           this.items.splice(i, 1);
