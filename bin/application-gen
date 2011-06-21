@@ -273,7 +273,12 @@ if ( $dh  = opendir($root) ) {
 
       $xml_app_title  = Application::APPLICATION_TITLE;
       $xml_app_icon   = Application::APPLICATION_ICON;
+      $xml_app_cat    = "unknown";
       $xml_app_system = false;
+
+      if ( isset($xml['category']) ) {
+        $xml_app_cat = (string) $xml['category'];
+      }
 
       $break = false;
       foreach ( $xml->property as $p ) {
@@ -298,6 +303,7 @@ if ( $dh  = opendir($root) ) {
           case "system" :
             if ( $val == "true" ) {
               $xml_app_system = true;
+              $xml_app_cat = "system";
             }
             break;
         }
@@ -314,9 +320,10 @@ if ( $dh  = opendir($root) ) {
         $node = $doc->createElement("application");
         $node->setAttribute("name", $xml['name']);
 
-        $node->setAttribute("title", $xml_app_title); //constant("{$cname}::APPLICATION_TITLE"));
-        $node->setAttribute("icon", $xml_app_icon); //constant("{$cname}::APPLICATION_ICON"));
+        $node->setAttribute("title", $xml_app_title);
+        $node->setAttribute("icon", $xml_app_icon);
         $node->setAttribute("system", $xml_app_system ? "true" : "false");
+        $node->setAttribute("category", $xml_app_cat);
         $node->setAttribute("class", $cname);
         $node->setAttribute("file", $class_file);
 

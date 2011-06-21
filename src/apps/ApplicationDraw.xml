@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application name="Draw" file="ApplicationDraw.class.php" schema="ApplicationDraw.glade">
+<application name="Draw" file="ApplicationDraw.class.php" schema="ApplicationDraw.glade" category="graphics">
   <property name="enabled">true</property>
   <property name="title">Draw</property>
   <property name="icon">categories/gnome-graphics.png</property>

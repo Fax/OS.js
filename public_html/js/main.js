@@ -3,9 +3,10 @@
  *
  * TODOs:
  *   TODO: Sortable panel items (use absolute, snap to direction as panel does)
- *   TODO: Menu subitems
  *   TODO: Rewrite settings manager
  *   TODO: Refactor _PanelItem class variable name scope
+ *   FIXME: Menu subitems
+ *   TODO: Global Menu
  *
  * Release:
  *   TODO: Convert Dialog to Glade and Separate JS files
@@ -1362,7 +1363,12 @@
   var Tooltip = Class.extend({
 
     init : function() {
+      var self = this;
       this.$element = $("#Tooltip");
+
+      $(document).click(function(ev) {
+        self.hide();
+      });
 
       this.ttimeout = null;
     },
@@ -1587,7 +1593,7 @@
         var el = i.create(pos);
         if ( el ) {
           el.attr("id", "PanelItem" + this.items.length);
-          this.$element.find("ul").append(el);
+          this.$element.find("ul").first().append(el);
 
           i.run();
 
@@ -2005,6 +2011,16 @@
           this._is_maximized = this._attrs_restore.is_maximized;
           this._is_ontop     = this._attrs_restore.is_ontop;
           this._zindex       = this._attrs_restore.zindex;
+
+          if ( this._is_ontop ) {
+            if ( this._zindex > _OnTopIndex ) {
+              _OnTopIndex = this._zindex;
+            }
+          } else {
+            if ( this._zindex > _TopIndex ) {
+              _TopIndex = this._zindex;
+            }
+          }
 
           fresh = false;
         }

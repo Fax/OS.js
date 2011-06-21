@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application name="Textpad" file="ApplicationTextpad.class.php" schema="ApplicationTextpad.glade">
+<application name="Textpad" file="ApplicationTextpad.class.php" schema="ApplicationTextpad.glade" category="utilities">
   <property name="enabled">true</property>
   <property name="title">Textpad</property>
   <property name="icon">apps/text-editor.png</property>

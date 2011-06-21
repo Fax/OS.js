@@ -118,12 +118,13 @@ abstract class Application
     if ( $xml = file_get_contents($config) ) {
       if ( $xml = new SimpleXmlElement($xml) ) {
         foreach ( $xml->application as $app ) {
-          $app_name   = (string) $app['name'];
-          $app_title  = (string) $app['title'];
-          $app_icon   = (string) $app['icon'];
-          $app_class  = (string) $app['class'];
-          $app_file   = (string) $app['file'];
-          $app_system = (string) $app['system'] == "true";
+          $app_name     = (string) $app['name'];
+          $app_title    = (string) $app['title'];
+          $app_icon     = (string) $app['icon'];
+          $app_class    = (string) $app['class'];
+          $app_file     = (string) $app['file'];
+          $app_system   = (string) $app['system'] == "true";
+          $app_category = (string) $app['category'];
 
           if ( $classname !== null && $classname !== $app_class ) {
             continue;
@@ -176,6 +177,7 @@ abstract class Application
             "title"     => $app_title,
             "icon"      => $app_icon,
             "class"     => $app_class,
+            "category"  => $app_category,
             "windows"   => $windows,
             "resources" => $resources,
             "mimes"     => $mimes,

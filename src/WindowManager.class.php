@@ -47,13 +47,12 @@ class WindowManager
     $apps = Array();
 
     foreach ( Application::$Registered as $c => $opts ) {
-      if ( !$opts['system'] ) {
-        $apps[$c] = Array(
-          "title" => $opts['title'],
-          "icon"  => $opts['icon'],
-          "mime"  => $opts["mimes"]
-        );
-      }
+      $apps[$c] = Array(
+        "title" => $opts['title'],
+        "icon"  => $opts['icon'],
+        "mime"  => $opts["mimes"],
+        "cat"   => $opts['category']
+      );
     }
 
     $pitems = Array(

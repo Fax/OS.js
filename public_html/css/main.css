@@ -111,6 +111,9 @@ input.Disabled {
   /*margin : 0;
   padding : 0;*/
 }
+.DesktopPanel ul ul {
+  height : auto;
+}
 
 
 /*
@@ -140,6 +143,9 @@ input.Disabled {
 .PanelItemMenu {
   width : 25px;
   text-align : center;
+}
+.PanelItemMenu ul {
+  text-align : left;
 }
 
 .PanelItemMenu img {
