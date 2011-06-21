@@ -15,7 +15,6 @@
 .ApplicationDraw .boxContent {
   margin-top : 10px;
 }
-
 .ApplicationDraw .colorbutton_foreground {
   background : #000000;
 }
@@ -38,4 +37,5 @@
 }
 .ApplicationDraw .GtkViewport {
   left : 10px;
+  overflow : hidden;
 }
