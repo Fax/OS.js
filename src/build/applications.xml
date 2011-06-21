@@ -2,14 +2,14 @@
 <applications>
   <application name="FileManager" title="File Manager" icon="apps/file-manager.png" system="false" class="ApplicationFileManager" file="ApplicationFileManager.class.php">
     <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"File Manager","icon":"apps\/file-manager.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":500,"height":500,"gravity":""}]]></property>
+      <property name="properties"><![CDATA[{"type":"window","title":"File Manager","icon":"apps\/file-manager.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":500,"height":500,"gravity":""}]]></property>
     </window>
     <resource>app.filemanager.css</resource>
     <resource>app.filemanager.js</resource>
   </application>
   <application name="Viewer" title="Viewer" icon="categories/gnome-multimedia.png" system="false" class="ApplicationViewer" file="ApplicationViewer.class.php">
     <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"Viewer","icon":"categories\/gnome-multimedia.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":300,"height":200,"gravity":""}]]></property>
+      <property name="properties"><![CDATA[{"type":"window","title":"Viewer","icon":"categories\/gnome-multimedia.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":300,"height":200,"gravity":""}]]></property>
     </window>
     <resource>app.viewer.css</resource>
     <resource>app.viewer.js</resource>
@@ -20,21 +20,21 @@
   </application>
   <application name="Terminal" title="Terminal" icon="apps/utilities-terminal.png" system="false" class="ApplicationTerminal" file="ApplicationTerminal.class.php">
     <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"Terminal","icon":"apps\/utilities-terminal.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":500,"height":300,"gravity":""}]]></property>
+      <property name="properties"><![CDATA[{"type":"window","title":"Terminal","icon":"apps\/utilities-terminal.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":500,"height":300,"gravity":""}]]></property>
     </window>
     <resource>app.terminal.css</resource>
     <resource>app.terminal.js</resource>
   </application>
   <application name="Clock" title="Clock" icon="status/appointment-soon.png" system="false" class="ApplicationClock" file="ApplicationClock.class.php">
     <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"Clock","icon":"status\/appointment-soon.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":200,"height":200,"gravity":"center"}]]></property>
+      <property name="properties"><![CDATA[{"type":"window","title":"Clock","icon":"status\/appointment-soon.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":200,"height":200,"gravity":"center"}]]></property>
     </window>
     <resource>app.clock.css</resource>
     <resource>app.clock.js</resource>
   </application>
   <application name="Textpad" title="Textpad" icon="apps/text-editor.png" system="false" class="ApplicationTextpad" file="ApplicationTextpad.class.php">
     <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"Textpad","icon":"apps\/text-editor.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":400,"height":400,"gravity":""}]]></property>
+      <property name="properties"><![CDATA[{"type":"window","title":"Textpad","icon":"apps\/text-editor.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":400,"height":400,"gravity":""}]]></property>
     </window>
     <resource>app.textpad.css</resource>
     <resource>app.textpad.js</resource>
@@ -42,27 +42,27 @@
   </application>
   <application name="About" title="About" icon="actions/gtk-about.png" system="true" class="SystemAbout" file="SystemAbout.class.php">
     <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"About","icon":"actions\/gtk-about.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":220,"height":120,"gravity":"center"}]]></property>
+      <property name="properties"><![CDATA[{"type":"window","title":"About","icon":"actions\/gtk-about.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":220,"height":120,"gravity":"center"}]]></property>
     </window>
   </application>
   <application name="Settings" title="Settings" icon="categories/applications-system.png" system="true" class="SystemSettings" file="SystemSettings.class.php">
     <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"Settings","icon":"categories\/applications-system.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":400,"height":200,"gravity":"center"}]]></property>
+      <property name="properties"><![CDATA[{"type":"window","title":"Settings","icon":"categories\/applications-system.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":400,"height":200,"gravity":"center"}]]></property>
     </window>
   </application>
   <application name="Logout" title="Logout" icon="actions/gnome-logout.png" system="true" class="SystemLogout" file="SystemLogout.class.php">
     <window id="dialog1">
-      <property name="properties"><![CDATA[{"type":"dialog","title":"Logout","icon":"actions\/gnome-logout.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":300,"height":100,"gravity":"center"}]]></property>
+      <property name="properties"><![CDATA[{"type":"dialog","title":"Logout","icon":"actions\/gnome-logout.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":300,"height":100,"gravity":"center"}]]></property>
     </window>
   </application>
   <application name="User" title="User Information" icon="apps/user-info.png" system="true" class="SystemUser" file="SystemUser.class.php">
     <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"User Information","icon":"apps\/user-info.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":400,"height":250,"gravity":"center"}]]></property>
+      <property name="properties"><![CDATA[{"type":"window","title":"User Information","icon":"apps\/user-info.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":400,"height":250,"gravity":"center"}]]></property>
     </window>
   </application>
   <application name="Draw" title="Draw" icon="categories/gnome-graphics.png" system="false" class="ApplicationDraw" file="ApplicationDraw.class.php">
     <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"Draw","icon":"categories\/gnome-graphics.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":800,"height":500,"gravity":""}]]></property>
+      <property name="properties"><![CDATA[{"type":"window","title":"Draw","icon":"categories\/gnome-graphics.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":800,"height":500,"gravity":""}]]></property>
     </window>
     <resource>app.draw.css</resource>
     <resource>app.draw.js</resource>
@@ -70,7 +70,7 @@
   </application>
   <application name="Processes" title="Processes Information" icon="apps/utilities-system-monitor.png" system="true" class="SystemProcesses" file="SystemProcesses.class.php">
     <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"Processes","icon":"apps\/utilities-system-monitor.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":500,"height":400,"gravity":""}]]></property>
+      <property name="properties"><![CDATA[{"type":"window","title":"Processes","icon":"apps\/utilities-system-monitor.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":true,"skip_pager":true,"width":500,"height":400,"gravity":""}]]></property>
     </window>
     <resource>sys.processes.css</resource>
     <resource>sys.processes.js</resource>

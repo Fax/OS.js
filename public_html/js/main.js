@@ -1826,6 +1826,8 @@
       this._is_closable    = true;
       this._is_orphan      = false;
       this._is_ontop       = false;
+      this._skip_taskbar   = false;
+      this._skip_pager     = false;
       this._oldZindex      = -1;
       this._zindex         = -1;
       this._gravity        = "none";
@@ -2647,6 +2649,7 @@
       this._height         = 200;
       this._gravity        = "center";
       this._is_minimizable = true;
+      this._skip_taskbar   = true;
     },
 
     destroy : function() {

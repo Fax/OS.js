@@ -6,6 +6,8 @@
     <property name="title" translatable="yes">Processes</property>
     <property name="default_width">500</property>
     <property name="default_height">400</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="skip_pager_hint">True</property>
     <child>
       <object class="GtkIconView" id="iconview1">
         <property name="visible">True</property>

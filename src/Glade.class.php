@@ -210,6 +210,8 @@ class Glade
         "is_maximizable"  => true,
         "is_closable"     => true,
         "is_orphan"       => false,
+        "skip_taskbar"    => false,
+        "skip_pager"      => false,
         "width"           => 500,
         "height"          => 300,
         "gravity"         => ""
@@ -241,6 +243,16 @@ class Glade
           break;
           case 'window_position' :
             $properties['gravity'] = $pv;
+          break;
+          case 'skip_taskbar_hint' :
+            if ( $pv == "True" ) {
+              $properties['skip_taskbar'] = true;
+            }
+          break;
+          case 'skip_pager_hint' :
+            if ( $pv == "True" ) {
+              $properties['skip_pager'] = true;
+            }
           break;
         }
       }

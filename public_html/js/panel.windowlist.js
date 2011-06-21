@@ -25,6 +25,10 @@ var PanelItemWindowList = (function($, undefined) {
         var win = eargs;
         var id  = win.$element.attr("id") + "_Shortcut";
 
+        if ( !win || win._skip_taskbar ) {
+          return;
+        }
+
         var getTitle = function(w) {
           w = w.getTitle();
           if ( w.length > 20 ) {
