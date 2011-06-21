@@ -6,6 +6,7 @@
  *   TODO: Menu subitems
  *   TODO: Rewrite settings manager
  *   TODO: Update WindowList panel item with updated titles
+ *   TODO: Refactor _PanelItem class variable name scope
  *
  * Release:
  *   TODO: Convert Dialog to Glade and Separate JS files
@@ -849,10 +850,18 @@
     return Class.extend({
 
       init : function() {
+        var self = this;
+
         this.$element = $("#Desktop");
-        this.stack = [];
-        this.panel = null;
-        this.running = false;
+        this.stack    = [];
+        this.panel    = null;
+        this.running  = false;
+        this.bindings = {
+          "window_add"    : [self.defaultHandler],
+          "window_remove" : [self.defaultHandler],
+          "window_focus"  : [self.defaultHandler],
+          "window_blur"   : [self.defaultHandler]
+        };
 
         $("#Desktop").mousedown(function(ev) {
           var t = ev.target || ev.srcElement;
@@ -919,6 +928,23 @@
 
       },
 
+      bind : function(mname, mfunc) {
+        if ( this.bindings ) {
+          if ( this.bindings[mname] ) {
+            this.bindings[mname].push(mfunc);
+          }
+        }
+      },
+
+      call : function(mname, margs) {
+        if ( this.bindings && this.bindings[mname] ) {
+          var r;
+          for ( var i = 0; i < this.bindings[mname].length; i++ ) {
+            r = this.bindings[mname][i].call(this, mname, margs);
+          }
+        }
+      },
+
       destroy : function() {
         try {
           $("*").unbind();
@@ -930,6 +956,8 @@
         if ( this.panel ) {
           this.panel.destroy();
         }
+
+        this.bindings = null;
 
         var i = 0;
         var l = this.stack.length;
@@ -974,10 +1002,6 @@
 
         API.loading.progress(40);
 
-        setTimeout(function() {
-          self.panel.update();
-        },0);
-
         API.session.restore();
 
         API.loading.progress(95);
@@ -990,8 +1014,18 @@
         this.running = true;
       },
 
-      redraw : function() {
+      // HANDLERS
 
+      defaultHandler : function(ev, eargs) {
+        if ( this.panel ) {
+          if ( ev.match(/^window/) ) {
+            this.panel.redraw(ev, eargs);
+          }
+
+          return true;
+        }
+
+        return false;
       },
 
       // WINDOWS
@@ -1003,7 +1037,10 @@
           var AddWindowCallback = function(fresh) {
             if ( fresh ) {
               if ( !win._is_minimized && !win._is_maximized ) {
-                self.focusWindow(win); // Always focus new windows
+                setTimeout(function() {  // NOTE: Timeout required for Panel items to be
+                                         // Correctly redrawed
+                  self.focusWindow(win); // Always focus new windows
+                }, 0);
               }
             }
           };
@@ -1011,9 +1048,8 @@
           win.create(("Window_" + this.stack.length), AddWindowCallback);
 
           this.stack.push(win);
-          if ( this.panel ) {
-            this.panel.redraw(self, win, false);
-          }
+
+          this.call("window_add", win);
 
           return win;
         }
@@ -1050,39 +1086,43 @@
             }
           }
 
+          this.call("window_remove", win);
           this.stack.splice(index, 1);
-
-          this.panel.redraw(this, win, true);
         }
+      },
+
+      blurWindow : function(win) {
+        win._blur();
+
+        this.call("window_blur", win);
       },
 
       focusWindow : function(win) {
         if ( _Window !== null ) {
           if ( win != _Window ) {
-            _Window._blur();
+            this.blurWindow(_Window);
           }
         }
 
+        if ( _Window !== win ) {
+          win._focus();
 
-        win._focus();
+          this.call("window_focus", win);
 
-        if ( this.panel ) {
-          if ( _Window !== win ) {
-            this.panel.redraw(this, win);
-          }
+          _Window = win;
         }
-
-        _Window = win;
       },
 
       restoreWindow : function(win) {
+        this.focusWindow(win);
       },
 
       maximizeWindow : function(win) {
+        this.focusWindow(win);
       },
 
       minimizeWindow : function(win) {
-        this.panel.redraw(this, win);
+        this.blurWindow(win);
       },
 
       sortWindows : function(method) {
@@ -1387,26 +1427,14 @@
       this.$element.empty().remove();
     },
 
-    // FIXME: Generic handler, remove desktop ref
-    redraw : function(desktop, win, remove) {
-      var wpi = this.getItem("PanelItemWindowList", 0);
-      if ( wpi ) {
-        wpi.redraw(desktop, win, remove);
-      }
-    },
-
-    update : function() {
-    },
-
-    getItem : function(name, index) {
-      var results = [];
-      index = index >= 0 ? index : -1;
+    redraw : function(ev, eargs) {
+      var pi;
       for ( var i = 0; i < this.items.length; i++ ) {
-        if ( this.items[i].name == name ) {
-          results.push(this.items[i]);
+        pi = this.items[i];
+        if ( pi.redrawable ) {
+          pi.redraw(ev, eargs);
         }
       }
-      return results.length ? (index != -1 ? results[index] : results) : false;
     },
 
     addItem : function(i, pos) {
@@ -1486,6 +1514,7 @@
       this.orphan       = true;
       this.crashed      = false;
       this.configurable = false;
+      this.redrawable   = false;
       this._index       = -1;
       this._panel       = null;
       this.$element     = null;
@@ -1532,7 +1561,6 @@
     },
 
     redraw : function() {
-
     },
 
     crash : function(error) {
@@ -1696,18 +1724,6 @@
       }
     },
 
-    show : function() {
-      if ( !this._showing ) {
-        _Desktop.addWindow(this);
-      }
-    },
-
-    close : function() {
-      if ( this._showing ) {
-        _Desktop.removeWindow(this);
-      }
-    },
-
     create : function(id, mcallback) {
       var self = this;
 
@@ -1772,7 +1788,7 @@
 
         // Events
         el.bind('mousedown', function(ev) {
-          _Desktop.focusWindow(self);
+          self.focus();
           if ( ev.which > 1 ) { // Menu only NOTE
             ev.stopPropagation();
           }
@@ -1975,8 +1991,6 @@
 
         this.$element = el;
 
-        mcallback(fresh);
-
         if ( this._is_minimized ) {
           $(el).hide();
         }
@@ -1991,16 +2005,48 @@
             this.$element.find(".ui-resizable-handle").hide();
           }
         }
+
+        this._created = true;
+
+        console.group("Window::" + this._name + "::create()");
+        console.log(el);
+        console.groupEnd();
+
+        mcallback(fresh);
+
+        return el;
       }
 
-      this._created = true;
-
-      console.group("Window::" + this._name + "::create()");
-      console.log(el);
-      console.groupEnd();
-
-      return el;
+      return null;
     },
+
+    //
+    // EVENTS
+    //
+
+    show : function() {
+      if ( !this._showing ) {
+        _Desktop.addWindow(this);
+      }
+    },
+
+    close : function() {
+      if ( this._showing ) {
+        _Desktop.removeWindow(this);
+      }
+    },
+
+    focus : function() {
+      _Desktop.focusWindow(this);
+    },
+
+    blur : function() {
+      _Desktop.blurWindow(this);
+    },
+
+    //
+    // INTERNAL METHODS
+    //
 
     _shuffle : function(zi, old) {
       if ( old ) {
@@ -2080,8 +2126,6 @@
 
           this._is_minimized = false;
         } else {
-          this._blur();
-
           this.$element.animate({opacity: 'hide', height: 'hide'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
             _Desktop.minimizeWindow(self);
           }});

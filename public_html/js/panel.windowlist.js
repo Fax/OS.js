@@ -12,49 +12,46 @@ var PanelItemWindowList = (function($, undefined) {
         this._super("PanelItemWindowList", "left");
         this.named = "Window List";
         this.expand = true;
+        this.redrawable = true;
       },
 
       create : function(pos) {
         return this._super(pos);
       },
 
-      redraw : function(desktop, win, remove) {
+      redraw : function(ev, eargs) {
         var self = this;
 
-        var id = win.$element.attr("id") + "_Shortcut";
+        var win = eargs;
+        var id  = win.$element.attr("id") + "_Shortcut";
 
-        this.$element.find(".PanelItemWindow").removeClass("Current");
-
-        if ( remove ) {
-          $("#" + id).empty().remove();
-        } else {
-
+        if ( ev == "window_add" ) {
           if ( !document.getElementById(id) ) {
             var el = $("<div class=\"PanelItem Padded PanelItemWindow\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div>");
             el.find("img").attr("src", "/img/icons/16x16/" + win._icon);
             el.find("span").html(win._title);
             el.attr("id", id);
+            el.click(function() {
+              win.focus();
+            });
 
-            if ( win._current ) {
-              el.addClass("Current");
-            }
-
-            (function(vel, wwin) {
-              vel.click(function() {
-                desktop.focusWindow(wwin);
-              });
-            })(el, win);
-
-            self.$element.append(el);
-          } else {
-            if ( win._current ) {
-              $("#" + id).addClass("Current");
-            }
+            this.$element.append(el);
           }
-
+        } else if ( ev == "window_remove" ) {
+          if ( document.getElementById(id) ) {
+            $("#" + id).empty().remove();
+          }
+        } else if ( ev == "window_focus" ) {
+          this.$element.find("PanelItemWindow").removeClass("Current");
+          if ( document.getElementById(id) ) {
+            $("#" + id).addClass("Current");
+          }
+        } else if ( ev == "window_blur" ) {
+          if ( document.getElementById(id) ) {
+            $("#" + id).removeClass("Current");
+          }
         }
       },
-
 
       destroy : function() {
         this._super();
