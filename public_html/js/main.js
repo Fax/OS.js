@@ -511,14 +511,15 @@
               })(p);
 
               procs.push({
-                'pid'    : p._pid,
-                'name'   : p._name,
-                'uuid'   : p._uuid,
-                'time'   : (now - p._started.getTime()),
-                'icon'   : p._proc_icon,
-                'title'  : p._proc_name,
-                'locked' : p._locked,
-                'kill'   : ckill
+                'pid'     : p._pid,
+                'name'    : p._name,
+                'uuid'    : p._uuid,
+                'time'    : (now - p._started.getTime()),
+                'icon'    : p._proc_icon,
+                'title'   : p._proc_name,
+                'locked'  : p._locked,
+                //'windows' : (p instanceof Application ? p._windows : []),
+                'kill'    : ckill
               });
             }
           }
@@ -2005,10 +2006,6 @@
           this._is_ontop     = this._attrs_restore.is_ontop;
           this._zindex       = this._attrs_restore.zindex;
 
-          if ( _TopIndex < this._zindex ) {
-            _TopIndex = this._zindex;
-          }
-
           fresh = false;
         }
 
@@ -2110,6 +2107,10 @@
 
         if ( this._zindex && this._zindex > 0 ) {
           this._shuffle(this._zindex);
+        } else {
+          if ( this._is_ontop ) {
+            this._ontop(true);
+          }
         }
 
         if ( this._is_maximized ) {
@@ -2185,20 +2186,22 @@
       }
     },
 
-    _ontop : function() {
-      if ( this._is_ontop ) {
+    _ontop : function(t) {
+      t = (t === undefined) ? this._is_ontop : t;
+      if ( !t ) {
         if ( this._oldZindex > 0 ) {
           this._shuffle(this._oldZindex);
         } else {
           _TopIndex++;
           this._shuffle(_TopIndex);
         }
+
+        this._is_ontop = false;
       } else {
         _OnTopIndex++;
         this._shuffle(_OnTopIndex, true);
+        this._is_ontop = true;
       }
-
-      this._is_ontop = !this._is_ontop;
     },
 
     _focus : function() {

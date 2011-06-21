@@ -40,6 +40,7 @@ var SystemProcesses = (function($, undefined) {
         this._is_maximizable = true;
         this._is_closable = true;
         this._is_orphan = false;
+        this._is_ontop = true;
         this._skip_taskbar = true;
         this._skip_pager = true;
         this._width = 500;
@@ -74,10 +75,13 @@ var SystemProcesses = (function($, undefined) {
             for ( var x = 0; x < list.length; x++ ) {
               p = list[x];
 
-              row = $(sprintf("<tr><td class=\"PID\">%s</td><td><img alt=\"\" src=\"/img/icons/16x16/%s\" />&nbsp; %s</td><td class=\"Alive\">%sms</td><td class=\"Oper\"><img alt=\"\" src=\"/img/icons/16x16/actions/stop.png\" class=\"TT\" title=\"Kill process\" /></td></tr>", p.pid, p.icon, p.title || p.name, p.time));
+              row = $(sprintf("<tr><td class=\"PID\">%s</td><td class=\"Name\"><img alt=\"\" src=\"/img/icons/16x16/%s\" />&nbsp; %s</td><td class=\"Alive\">%sms</td><td class=\"Oper\"><img alt=\"\" src=\"/img/icons/16x16/actions/stop.png\" class=\"TT\" title=\"Kill process\" /></td></tr>", p.pid, p.icon, p.title || p.name, p.time));
               if ( p.locked ) {
                 row.find(".TT").hide();
+                row.addClass("Locked");
               }
+
+
               (function(rel, proc) {
                 rel.find(".TT").click(function() {
                   if ( confirm(sprintf("Are you sure you want to kill process \"%s\" (pid:%s)", proc.title || proc.name, proc.pid)) ) { // FIXME
@@ -87,7 +91,19 @@ var SystemProcesses = (function($, undefined) {
                   }
                 });
               })(row, p);
+
               el.find(".iconview1 table.TableBody tbody").append(row);
+
+              /*
+              if ( p.windows.length ) {
+                var w;
+                for ( var y = 0; y < p.windows.length; y++ ) {
+                  w = p.windows[y];
+                  var srow = $(sprintf("<tr><td class=\"PID\">%s</td><td class=\"Name\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img alt=\"\" src=\"/img/icons/16x16/%s\" />&nbsp; %s</td><td class=\"Alive\"></td><td class=\"Oper\">&nbsp;</td></tr>", "&nbsp;", "emblems/emblem-unreadable.png", w._name, "-"));
+                  el.find(".iconview1 table.TableBody tbody").append(srow);
+                }
+              }
+              */
             }
           };
 
