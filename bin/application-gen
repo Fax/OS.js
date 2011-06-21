@@ -160,9 +160,56 @@ EOJAVASCRIPT;
 
   foreach ( $signals as $obj => $evs ) {
     foreach ( $evs as $ev_type => $ev_handler ) {
-            $js_methods .= <<<EOJAVASCRIPT
+      $ev_code = "";
+
+      if ( $ev_handler == "MenuOpen" ) {
+        $ev_code = <<<EOJAVASCRIPT
+
+        var my_callback = function(fname) {}; // FIXME
+        var my_mimes    = []; // FIXME
+
+        API.system.dialog_file(function(fname) {
+          my_callback(fname);
+        }, my_mimes);
+
+EOJAVASCRIPT;
+      } else if ( $ev_handler == "MenuSave" ) {
+        $ev_code = <<<EOJAVASCRIPT
+
+        var my_filename = ""; // FIXME
+        var my_content  = ""; // FIXME
+        var my_callback = function(fname) {}; // FIXME
+
+        API.system.call("write", {'file' : my_filename, 'content' : my_content}, function(result, error) {
+          if ( result ) {
+            my_callback(my_filename); // Core handled errors...
+          }
+        });
+
+EOJAVASCRIPT;
+      } else if ( $ev_handler == "MenuSaveAs" ) {
+        $ev_code = <<<EOJAVASCRIPT
+
+        var my_callback = function(fname, mime) {}; // FIXME
+        var my_mimes    = []; // FIXME
+
+        API.system.dialog_file(function(file, mime) {
+          my_callback(file, mime);
+        }, my_mimes, "save");
+
+EOJAVASCRIPT;
+      } else if ( $ev_handler == "MenuClose" || $ev_handler == "MenuQuit" ) {
+        $ev_code = <<<EOJAVASCRIPT
+
+        this.\$element.find(".ActionClose").click();
+
+EOJAVASCRIPT;
+      }
+
+      $js_methods .= <<<EOJAVASCRIPT
 
       Event{$ev_handler} : function(el, ev) {
+{$ev_code}
       },
 
 

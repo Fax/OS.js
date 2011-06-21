@@ -73,3 +73,7 @@ Update:
 * Run './bin/application-gen'
 * Run './bin/database-gen' if database schema was updated
 * Update your CSS and JS with new code found in 'src/build/app.FOO.BAR'
+
+Tips:
+* Signals named 'MenuOpen', 'MenuSave', 'MenuSaveAs', 'MenuQuit', 'MenuClose'
+  automatically creates code for dialogs.
