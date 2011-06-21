@@ -36,10 +36,21 @@
 .SystemProcesses .iconview1 table.TableBody .win {
   font-style : italic;
 }
+.SystemProcess td {
+  white-space : nowrap;
+  vertical-align : middle;
+}
 .SystemProcesses .PID {
   width : 40px;
 }
 .SystemProcesses .Alive {
   width : 100px;
   text-align : right;
+}
+.SystemProcesses .Oper {
+  width : 20px;
+  text-align : center;
+}
+.SystemProcesses .TT {
+  cursor : pointer;
 }

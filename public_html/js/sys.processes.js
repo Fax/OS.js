@@ -31,7 +31,7 @@ var SystemProcesses = (function($, undefined) {
         this._super("SystemProcesses", false, app, windows);
         this._content = $("<div class=\"window1\"> <div class=\"GtkWindow SystemProcesses window1\"> <div class=\"GtkIconView GtkObject iconview1\"></div> </div> </div> ").html();
         this._title = 'Processes';
-        this._icon = 'actions/system-run.png';
+        this._icon = 'apps/utilities-system-monitor.png';
         this._is_draggable = true;
         this._is_resizable = true;
         this._is_scrollable = false;
@@ -61,7 +61,7 @@ var SystemProcesses = (function($, undefined) {
         if ( el ) {
 
           // Do your stuff here
-          var table2 = $("<div class=\"TableWrap\"><table class=\"TableHead GtkIconViewHeader\"><tbody><tr><td class=\"PID\">PID</td><td>Application</td><td class=\"Alive\">Alive</td></tr></tbody></table><div class=\"TableBodyWrap\"><table class=\"TableBody\"><tbody></tbody></table></div></div>");
+          var table2 = $("<div class=\"TableWrap\"><table class=\"TableHead GtkIconViewHeader\"><tbody><tr><td class=\"PID\">PID</td><td>Application</td><td class=\"Alive\">Alive</td><td class=\"Oper\">&nbsp;</td></tr></tbody></table><div class=\"TableBodyWrap\"><table class=\"TableBody\"><tbody></tbody></table></div></div>");
           el.find(".iconview1").append(table2);
 
           var UpdateTable = function() {
@@ -72,7 +72,19 @@ var SystemProcesses = (function($, undefined) {
             for ( var x = 0; x < list.length; x++ ) {
               p = list[x];
 
-              row = $(sprintf("<tr><td class=\"PID\">%s</td><td><img alt=\"\" src=\"/img/icons/16x16/%s\" />&nbsp; %s</td><td class=\"Alive\">%sms</td></tr>", p.id, p.icon, p.title || p.name, p.time));
+              row = $(sprintf("<tr><td class=\"PID\">%s</td><td><img alt=\"\" src=\"/img/icons/16x16/%s\" />&nbsp; %s</td><td class=\"Alive\">%sms</td><td class=\"Oper\"><img alt=\"\" src=\"/img/icons/16x16/actions/stop.png\" class=\"TT\" title=\"Kill process\" /></td></tr>", p.pid, p.icon, p.title || p.name, p.time));
+              if ( p.locked ) {
+                row.find(".TT").hide();
+              }
+              (function(rel, proc) {
+                rel.find(".TT").click(function() {
+                  if ( confirm(sprintf("Are you sure you want to kill process \"%s\" (pid:%s)", proc.title || proc.name, proc.pid)) ) { // FIXME
+                    if ( !proc.kill() ) {
+                      alert("Failed to kill process!"); // FIXME
+                    }
+                  }
+                });
+              })(row, p);
               el.find(".iconview1 table.TableBody tbody").append(row);
             }
           };

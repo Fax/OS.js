@@ -68,9 +68,9 @@
     <resource>app.draw.js</resource>
     <mime>image/*</mime>
   </application>
-  <application name="Processes" title="Processes Information" icon="actions/system-run.png" system="true" class="SystemProcesses" file="SystemProcesses.class.php">
+  <application name="Processes" title="Processes Information" icon="apps/utilities-system-monitor.png" system="true" class="SystemProcesses" file="SystemProcesses.class.php">
     <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"Processes","icon":"actions\/system-run.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":500,"height":400,"gravity":""}]]></property>
+      <property name="properties"><![CDATA[{"type":"window","title":"Processes","icon":"apps\/utilities-system-monitor.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"width":500,"height":400,"gravity":""}]]></property>
     </window>
     <resource>sys.processes.css</resource>
     <resource>sys.processes.js</resource>

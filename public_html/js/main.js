@@ -57,6 +57,7 @@
   /**
    * Local references
    */
+  var _Core            = null;
   var _Resources       = null;
   var _Settings        = null;
   var _Desktop         = null;
@@ -65,20 +66,6 @@
   var _Processes       = [];
   var _TopIndex        = (ZINDEX_WINDOW + 1);
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);
-
-  /**
-   * NULL references
-   * @return void
-   */
-  function __null() {
-    _Resources         = null;
-    _Settings          = null;
-    _Desktop           = null;
-    _Window            = null;
-    _Tooltip           = null;
-    _Processes         = [];
-    _TopIndex          = 11;
-  }
 
   function LaunchApplication(app_name, args, windows, callback, callback_error) {
     callback = callback || function() {};
@@ -518,12 +505,22 @@
 
             if ( p !== undefined ) {
               procs.push({
-                'id'     : i,
+                'pid'    : p._pid,
                 'name'   : p._name,
                 'uuid'   : p._uuid,
                 'time'   : (now - p._started.getTime()),
                 'icon'   : p._proc_icon,
-                'title'  : p._proc_name
+                'title'  : p._proc_name,
+                'locked' : p._locked,
+                'kill'   : (function(pp) {
+                  return function() {
+                    if ( !pp._locked ) {
+                      pp.destroy();
+                      return true;
+                    }
+                    return false;
+                  };
+                })(p)
               });
             }
           }
@@ -602,11 +599,12 @@
    */
   var Process = Class.extend({
 
-    init : function(name, icon) {
+    init : function(name, icon, locked) {
       this._pid       = (_Processes.push(this) - 1);
       this._started   = new Date();
       this._proc_name = name || "(unknown)";
       this._proc_icon = icon || "mimetypes/exec.png";
+      this._locked    = locked || false;
     },
 
     destroy : function() {
@@ -617,6 +615,69 @@
       this._started = null;
     }
 
+  });
+
+  /////////////////////////////////////////////////////////////////////////////
+  // CORE
+  /////////////////////////////////////////////////////////////////////////////
+
+  var Core = Process.extend({
+    init : function() {
+      this._super("(Core)", "status/computer-fail.png", true);
+
+      API.loading.show();
+      API.loading.progress(5);
+
+      _Resources = new ResourceManager();
+
+      $.post("/", {'ajax' : true, 'action' : 'init'}, function(data) {
+        if ( data.success ) {
+
+          if ( data.result.config ) {
+            ENABLE_CACHE = data.result.config.cache;
+          }
+
+          _Settings = new SettingsManager(data.result.settings);
+          API.loading.progress(10);
+
+          _Tooltip = new Tooltip();
+          _Desktop = new Desktop();
+          API.loading.progress(15);
+
+          _Desktop.run();
+        } else {
+          alert(data.error);
+        }
+
+      });
+    },
+
+
+    destroy : function() {
+      if ( _Tooltip ) {
+        _Tooltip.destroy();
+      }
+      if ( _Desktop ) {
+        _Desktop.destroy();
+      }
+      if ( _Settings ) {
+        _Settings.destroy();
+      }
+      if ( _Resources ) {
+        _Resources.destroy();
+      }
+
+      _Core       = null;
+      _Resources  = null;
+      _Settings   = null;
+      _Desktop    = null;
+      _Window     = null;
+      _Tooltip    = null;
+      _Processes  = [];
+      _TopIndex   = 11;
+
+      this._super();
+    }
   });
 
   /////////////////////////////////////////////////////////////////////////////
@@ -633,7 +694,7 @@
 
     var _aResources = [];
 
-    return Class.extend({
+    return Process.extend({
       init : function() {
         this.resources = [];
         this.links = [];
@@ -647,6 +708,8 @@
           }
         }, true);
         */
+
+        this._super("(ResourceManager)", "apps/system-software-install.png", true);
       },
 
       destroy : function() {
@@ -656,6 +719,8 @@
 
         this.resources = null;
         this.links = null;
+
+        this._super();
       },
 
       updateManifest : function() {
@@ -744,7 +809,7 @@
     var _avail = {};
     var _stores = [];
 
-    return Class.extend({
+    return Process.extend({
 
       init : function(defaults) {
         _avail = defaults;
@@ -785,10 +850,14 @@
         console.log(_avail);
         console.log(_stores);
         console.groupEnd();
+
+        this._super("(SettingsManager)", "apps/system-software-update.png", true);
       },
 
       destroy : function() {
         _avail = null;
+
+        this._super();
       },
 
       saveApp : function(name, props) {
@@ -964,7 +1033,7 @@
         });
         */
 
-        this._super("Desktop", "places/desktop.png");
+        this._super("(Desktop)", "places/desktop.png");
       },
 
       bind : function(mname, mfunc) {
@@ -3289,30 +3358,30 @@
    * @unload()
    */
   $(window).unload(function() {
-    if ( _Tooltip ) {
-      _Tooltip.destroy();
+    if ( _Core ) {
+      _Core.destroy();
+      _Core = null;
     }
-    if ( _Desktop ) {
-      _Desktop.destroy();
-    }
-    if ( _Settings ) {
-      _Settings.destroy();
-    }
-    if ( _Resources ) {
-      _Resources.destroy();
-    }
-
-    __null();
   });
 
   /**
    * @ready()
    */
   $(window).ready(function() {
+
+    //
+    // COMPABILITY CHECK
+    //
+
     if ( !supports_html5_storage() ) {
       alert("Your browser does not support WebStorage. Cannot continue...");
-      return;
+
+      return false;
     }
+
+    //
+    // GLOBAL EVENTS
+    //
 
     // Global touch-movment handler
     $(document).bind('touchmove', function(e) {
@@ -3385,54 +3454,13 @@
       ev.preventDefault();
     });
 
-    // Startup script
-    var __LAUNCH = function()
-    {
+    //
+    // MAIN
+    //
 
-      API.loading.show();
-      API.loading.progress(5);
+    _Core = new Core();
 
-      _Resources = new ResourceManager();
-      $.post("/", {'ajax' : true, 'action' : 'init'}, function(data) {
-        if ( data.success ) {
-
-          if ( data.result.config ) {
-            ENABLE_CACHE = data.result.config.cache;
-          }
-
-          _Settings = new SettingsManager(data.result.settings);
-          API.loading.progress(10);
-
-          _Tooltip = new Tooltip();
-          _Desktop = new Desktop();
-          API.loading.progress(15);
-
-          _Desktop.run();
-        } else {
-          alert(data.error);
-        }
-
-      });
-    };
-
-
-    if ( ENABLE_LOGIN ) {
-      var el = $("#LoginWindow");
-      $(el).show().css({
-        "top" : parseInt(($(document).height() / 2) - ($(el).height() / 2), 10) - 80 + "px",
-        "left" : parseInt(($(document).width() / 2) - ($(el).width() / 2), 10) + "px"
-      });
-
-      $(el).find("input[type=password]").focus();
-      $(el).find("form").submit(function() {
-        $(el).hide();
-        __LAUNCH();
-        return false;
-      });
-    } else {
-      __LAUNCH();
-    }
-
+    return true;
   });
 
 })($);
