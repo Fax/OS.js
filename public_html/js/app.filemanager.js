@@ -74,14 +74,14 @@ var ApplicationFileManager = (function($, undefined) {
 
 
       EventMenuListToggle : function(el, ev) {
-        this.app.argv.view_type = 'list';
+        this.app._argv.view_type = 'list';
         this.chdir(_CurrentDir);
         this._updateMenu();
       },
 
 
       EventMenuIconToggle : function(el, ev) {
-        this.app.argv.view_type = 'icon';
+        this.app._argv.view_type = 'icon';
         this.chdir(_CurrentDir);
         this._updateMenu();
       },
@@ -93,7 +93,7 @@ var ApplicationFileManager = (function($, undefined) {
       chdir : function(dir, hist) {
         var self = this;
 
-        this.app._event(self, "browse", {"path" : dir, "view" : self.app.argv['view_type']}, function(result, error) {
+        this.app._event(self, "browse", {"path" : dir, "view" : self.app._argv['view_type']}, function(result, error) {
           self._destroyView();
 
           if ( error ) {
@@ -116,7 +116,7 @@ var ApplicationFileManager = (function($, undefined) {
         });
 
         _CurrentDir = dir;
-        self.app.argv['path'] = _CurrentDir;
+        self.app._argv['path'] = _CurrentDir;
 
         /*if ( hist !== false ) {
           _History.push(_CurrentDir);
@@ -214,7 +214,7 @@ var ApplicationFileManager = (function($, undefined) {
 
       _selItem : function(t) {
         var self = this;
-        if ( this.app.argv.view_type != 'icon' ) {
+        if ( this.app._argv.view_type != 'icon' ) {
           if ( !$(t).parents(".TableBody").get(0) ) {
             return;
           }
@@ -263,7 +263,7 @@ var ApplicationFileManager = (function($, undefined) {
       },
 
       _updateMenu : function() {
-        if ( this.app.argv.view_type == 'icon' ) {
+        if ( this.app._argv.view_type == 'icon' ) {
           this.$element.find(".menuitem_list").removeClass("Checked");
           this.$element.find(".menuitem_icon").addClass("Checked");
         } else {
@@ -313,7 +313,7 @@ var ApplicationFileManager = (function($, undefined) {
 
 
           this._bind("resize", function() {
-            if ( self.app.argv.view_type == "list" ) {
+            if ( self.app._argv.view_type == "list" ) {
               self._updateTable();
             }
           });

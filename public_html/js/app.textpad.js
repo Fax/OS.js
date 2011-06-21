@@ -61,7 +61,6 @@ var ApplicationTextpad = (function($, undefined) {
     }
 
     function _update(file, win) {
-      //app.opts = file; // FIXME
       argv['path'] = file;
 
       win.setTitle(win._origtitle + ": " + (file || "New file"));

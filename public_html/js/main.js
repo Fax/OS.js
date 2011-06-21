@@ -1833,50 +1833,14 @@
           el.find(".ActionMaximize").parent().hide();
         }
 
-        //
-        // INSERT
-        //
+        // Insert into DOM
         _Desktop.$element.append(el);
 
-        if ( el.find(".GtkMenuItem").length ) {
-          var last_menu = null;
-          el.find(".GtkMenuItem").each(function() {
-            $(this).click(function(ev) {
-              var t = ev.target || ev.srcElement;
-
-              if ( last_menu ) {
-                $(last_menu).hide();
-              }
-
-              last_menu = $(this).find(".GtkMenu").first().show();
-            });
-          });
-
-          $(document).click(function(ev) {
-            var t = ev.target || ev.srcElement;
-            if ( !$(t).parents("ul").first().hasClass("GtkMenuBar") ) {
-              //if ( !$(t).parents(".GtkMenu").get(0) ) {
-                el.find(".GtkMenuItem .GtkMenu").hide();
-              //}
-            }
-          });
-        }
-
-
         //
-        // Box factors
+        // Apply sizes, dimensions etc.
         //
 
-        el.find("td.Fill").each(function() {
-          if ( !$(this).hasClass("Expand") ) {
-            var height = parseInt($(this).find(":first-child").height(), 10);
-            $(this).parent().css("height", height + "px");
-          }
-        });
-
-        //
         // Size and dimension
-        //
         if ( this._gravity === "center" ) {
           this._top = (($(document).height() / 2) - ($(el).height() / 2));
           this._left = (($(document).width() / 2) - ($(el).width() / 2));
@@ -2290,6 +2254,51 @@
       var self = this;
 
       if ( el ) {
+
+        //
+        // Menus
+        //
+
+        if ( el.find(".GtkMenuItem").length ) {
+          var last_menu = null;
+          el.find(".GtkMenuItem").each(function() {
+            $(this).click(function(ev) {
+              var t = ev.target || ev.srcElement;
+
+              if ( last_menu ) {
+                $(last_menu).hide();
+              }
+
+              last_menu = $(this).find(".GtkMenu").first().show();
+            });
+          });
+
+          $(document).click(function(ev) {
+            var t = ev.target || ev.srcElement;
+            if ( !$(t).parents("ul").first().hasClass("GtkMenuBar") ) {
+              //if ( !$(t).parents(".GtkMenu").get(0) ) {
+                el.find(".GtkMenuItem .GtkMenu").hide();
+              //}
+            }
+          });
+        }
+
+
+        //
+        // Box factors
+        //
+
+        el.find("td.Fill").each(function() {
+          if ( !$(this).hasClass("Expand") ) {
+            var height = parseInt($(this).find(":first-child").height(), 10);
+            $(this).parent().css("height", height + "px");
+          }
+        });
+
+        //
+        // Elements
+        //
+
         el.find(".GtkScale").slider();
 
         el.find(".GtkToolItemGroup").click(function() {
@@ -3070,8 +3079,7 @@
    */
   var Application = Class.extend({
     init : function(name, argv, restore) {
-      this.argv         = argv;
-
+      this._argv         = argv;
       this._name         = name;
       this._uuid         = null;
       this._index        = (_Processes.push(this) - 1);
@@ -3176,7 +3184,7 @@
         if ( win !== false ) {
           return {
             "name"    : this._name,
-            "argv"    : this.argv,
+            "argv"    : this._argv,
             "windows" : [win]
           };
         }

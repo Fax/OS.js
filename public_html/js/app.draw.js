@@ -605,8 +605,7 @@ var ApplicationDraw = (function($, undefined) {
 
       _update : function(file) {
         argv['path']  = file;
-        this.opts     = file;
-        this.argv     = argv;
+        this._argv    = argv;
 
         this.setTitle(this._origtitle + ": " + (file || " file"));
       },

@@ -242,93 +242,64 @@
 /* GtkMenuBar > GtkMenu */
 .GtkMenuBar {
   height : 30px;
-  margin-top : -5px;
-  margin-left : -5px;
-  margin-right : -5px;
-  margin-bottom : 0;
+  margin : -5px;
   padding : 0;
   padding-left : 5px;
   padding-right : 5px;
-
+  list-style-type : none;
   font-size : 90%;
   background : #4f4f4f;
 }
-  .GtkMenuBar .GtkMenuItem {
+  .GtkMenuBar li {
     display : inline-block;
     position : relative;
-    padding : 6px;
+    padding : 5px;
+    height : 20px;
+    line-height : 20px;
   }
 
-  .GtkMenuBar .GtkMenuItem .GtkMenuItem {
-    display : block;
-  }
-
-  .GtkMenuBar .GtkMenuItem ul {
-    margin : 0;
-    padding : 2px;
-    list-style-type : none;
-    position : absolute;
-    min-width : 100px;
-    display : none;
-    z-index : 100000000;
-
-    background : #e6e6e6;
-    border : 1px solid;
-  }
-
-  .GtkMenuItem span,
-  .GtkMenuItem img {
-    vertical-align : middle;
-
-    cursor : pointer;
-  }
-
-    .GtkMenuBar .GtkMenuItem span {
-      color : #fff;
-      vertical-align : middle;
-    }
-    .GtkMenuBar .GtkMenuItem .GtkMenuItem span,
-    .GtkMenuBar .GtkMenuItem .GtkRadioMenuItem span,
-    .GtkMenuBar .GtkMenuItem .GtkImageMenuItem span {
-      color : #222;
-      text-decoration : none;
-    }
-    .GtkMenuBar .GtkMenuItem:hover span {
-      text-decoration : underline;
-    }
-    .GtkMenuBar .GtkMenuItem:hover .GtkMenuItem span,
-    .GtkMenuBar .GtkMenuItem:hover .GtkRadioMenuItem span,
-    .GtkMenuBar .GtkMenuItem:hover .GtkImageMenuItem span {
-      text-decoration : none;
-    }
-
-    .GtkMenuBar .GtkMenuItem .GtkMenuItem:hover,
-    .GtkMenuBar .GtkMenuItem .GtkRadioMenuItem:hover,
-    .GtkMenuBar .GtkMenuItem .GtkImageMenuItem:hover {
-      background : #222;
-    }
-    .GtkMenuBar .GtkMenuItem .GtkMenuItem:hover span,
-    .GtkMenuBar .GtkMenuItem .GtkRadioMenuItem:hover span,
-    .GtkMenuBar .GtkMenuItem .GtkImageMenuItem:hover span {
-      color : #fff;
-    }
-
-    .GtkMenuBar .GtkMenu {
+    .GtkMenuBar ul {
+      margin : 0;
       padding : 2px;
+      list-style-type : none;
+      position : absolute;
+      min-width : 100px;
+      display : none;
+      z-index : 100000000;
+
+      background : #e6e6e6;
+      border : 1px solid;
     }
-      .GtkMenuBar .GtkMenu li {
-        padding : 5px;
+      .GtkMenuBar li li {
+        display : block;
       }
 
-    .GtkMenuBar .GtkSeparatorMenuItem {
-    }
+  .GtkMenuItem img {
+    margin-right : 5px;
+    vertical-align : text-bottom;
+  }
+  .GtkMenuItem span {
+    color : #fff;
+  }
+  .GtkMenuItem ul span {
+    color : #222;
+  }
+  .GtkMenuBar li:hover span {
+    text-decoration : underline;
+  }
+  .GtkMenuBar li:hover ul span {
+    text-decoration : none;
+  }
+  .GtkMenuBar ul li:hover span {
+    color : #fff;
+  }
 
-    .GtkMenuBar .Checked {
-      font-weight : bold;
-    }
-    .GtkMenuBar .Disabled {
-      color : #fff;
-    }
+  .GtkMenuBar .Checked {
+    font-weight : bold;
+  }
+  .GtkMenuBar .Disabled {
+    color : #fff;
+  }
 
 /* GtkNotebook */
 .GtkNotebook {

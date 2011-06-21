@@ -25,6 +25,12 @@ body {
   height : 100%;
 }
 
+.TableCellWrap {
+  position : relative;
+  width : 100%;
+  height: 100%; /* IE6: treated as min-height*/
+}
+
 /*
 input.Disabled {
 }
@@ -193,7 +199,7 @@ input.Disabled {
   position : absolute;
   list-style-type : none;
   margin : 0;
-  padding : 0;
+  padding : 2px;
   top : 0px;
   left : 0;
   display : none;
@@ -469,7 +475,6 @@ input.Disabled {
   display : none;
 }
 #ContextMenu .Menu {
-  padding : 2px;
   position : relative;
   display : block;
 }
@@ -544,9 +549,3 @@ input.Disabled {
 .Window .ui-tabs li.ui-tabs-selected a {
 }
 */
-
-.TableCellWrap {
-  position : relative;
-  width : 100%;
-  height: 100%; /* IE6: treated as min-height*/
-}
