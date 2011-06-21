@@ -25,11 +25,19 @@ var PanelItemWindowList = (function($, undefined) {
         var win = eargs;
         var id  = win.$element.attr("id") + "_Shortcut";
 
+        var getTitle = function(w) {
+          w = w.getTitle();
+          if ( w.length > 20 ) {
+            w = w.substr(0, 20) + "...";
+          }
+          return w;
+        };
+
         if ( ev == "window_add" ) {
           if ( !document.getElementById(id) ) {
             var el = $("<div class=\"PanelItem Padded PanelItemWindow\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div>");
             el.find("img").attr("src", "/img/icons/16x16/" + win._icon);
-            el.find("span").html(win._title);
+            el.find("span").html(getTitle(win));
             el.attr("id", id);
             el.click(function() {
               win.focus();
@@ -49,6 +57,10 @@ var PanelItemWindowList = (function($, undefined) {
         } else if ( ev == "window_blur" ) {
           if ( document.getElementById(id) ) {
             $("#" + id).removeClass("Current");
+          }
+        } else if ( ev == "window_updated" ) {
+          if ( document.getElementById(id) ) {
+            $("#" + id).find("span").html(getTitle(win));
           }
         }
       },

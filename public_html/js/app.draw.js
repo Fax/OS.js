@@ -608,7 +608,7 @@ var ApplicationDraw = (function($, undefined) {
         this.opts     = file;
         this.argv     = argv;
 
-        this.$element.find(".WindowTopInner span").html(this._title + ": " + (file || " file"));
+        this.setTitle(this._origtitle + ": " + (file || " file"));
       },
 
       _save : function(file, content, callback) {

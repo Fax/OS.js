@@ -98,12 +98,12 @@ var ApplicationFileManager = (function($, undefined) {
 
           if ( error ) {
             API.system.dialog("error", error);
-            this.$element.find(".WindowTopInner span").html(self._title);
+            self.setTitle(self._origtitle);
 
             _defaultStatusText = "";
           } else {
             self.$element.find(".ApplicationFileManager .iconview1").html(result.items);
-            self.$element.find(".WindowTopInner span").html(self._title + ": " + result.path);
+            self.setTitle(self._origtitle + ": " + result.path);
 
             _defaultStatusText = sprintf("%d items (%d bytes)", result.total, result.bytes);
 

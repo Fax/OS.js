@@ -8,28 +8,26 @@
 var ApplicationTextpad = (function($, undefined) {
   return function(GtkWindow, Application, API, argv, windows) {
 
-    var WindowTitle = "";
-
-    function _read_file(el, file) {
-      var txt = el.find("textarea");
+    function _read_file(win,file) {
+      var txt = win.$element.find("textarea");
       if ( typeof file == "string" && file ) {
         API.system.call("read", file, function(result, error) {
           if ( error === null ) {
             txt.val(result);
-            _update(file, el);
+            _update(file, win);
 
             setTimeout(function() {
               setSelectionRangeX(txt.get(0), 0, 0);
             }, 0);
           } else {
-            _update(null, el);
+            _update(null, win);
           }
         });
       } else {
-        _update(null, el);
+        _update(null, win);
       }
 
-      _updateStatusbar(el);
+      _updateStatusbar(win.$element);
       txt.focus();
     }
 
@@ -62,39 +60,18 @@ var ApplicationTextpad = (function($, undefined) {
       }, ["text/*"]);
     }
 
-    function _update(file, el) {
+    function _update(file, win) {
       //app.opts = file; // FIXME
       argv['path'] = file;
 
-      $(el).find(".WindowTopInner span").html(WindowTitle + ": " + (file || "New file"));
-      _updateStatusbar(el);
+      win.setTitle(win._origtitle + ": " + (file || "New file"));
+
+      _updateStatusbar(win.$element);
     }
 
     function _updateStatusbar(el) {
       var txt = $(el).find("textarea");
       var pos = getTextareaCoordinates(txt);
-/*
-      var val = txt.val();
-
-      // Line count
-      var lines   = val.split("\n");
-      var lcount  = lines.length;
-
-      // Caret pos
-      var cpos    = getCaret(txt.get(0));
-
-      // Get row
-      var back    = cpos > 0 ? val.substr(0, cpos) : "";
-      var row     = back.split("\n").length;
-
-      // Get column
-      var ccpos = 0;
-      for ( var i = 0; i < row - 1; i++ ) {
-        ccpos += lines[i].length;
-      }
-      var col = Math.abs(ccpos - cpos) - (row - 1);
-*/
-
       var text = sprintf("Row: %d, Col: %d, Lines: %d, Characters: %d", pos.y, pos.x, pos.lines, pos.length);
       $(el).find(".statusbar1").html(text);
     }
@@ -118,8 +95,6 @@ var ApplicationTextpad = (function($, undefined) {
         this._width = 400;
         this._height = 400;
         this._gravity = null;
-
-        WindowTitle = this._title;
       },
 
       destroy : function() {
@@ -129,7 +104,7 @@ var ApplicationTextpad = (function($, undefined) {
 
       EventMenuNew : function(el, ev) {
         this.$element.find("textarea").val("");
-        _update(null, el);
+        _update(null, this);
       },
 
 
@@ -137,7 +112,7 @@ var ApplicationTextpad = (function($, undefined) {
         var self = this;
 
         _open(function(fname) {
-          _read_file(self.$element, fname);
+          _read_file(self, fname);
         }, el);
       },
 
@@ -154,7 +129,7 @@ var ApplicationTextpad = (function($, undefined) {
         var self = this;
         _saveAs(function(file, mime) {
           _save(file, self.$element.find("textarea").val(), function() {
-            _update(file, el);
+            _update(file, self);
           });
         });
       },
@@ -199,7 +174,7 @@ var ApplicationTextpad = (function($, undefined) {
             _updateStatusbar(el);
           });
 
-          _read_file(el, argv['path']);
+          _read_file(self, argv['path']);
 
           $(el).find("textarea").mousedown(function(ev) {
             _updateStatusbar(el);

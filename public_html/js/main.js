@@ -5,7 +5,6 @@
  *   TODO: Sortable panel items (use absolute, snap to direction as panel does)
  *   TODO: Menu subitems
  *   TODO: Rewrite settings manager
- *   TODO: Update WindowList panel item with updated titles
  *   TODO: Refactor _PanelItem class variable name scope
  *
  * Release:
@@ -857,10 +856,11 @@
         this.panel    = null;
         this.running  = false;
         this.bindings = {
-          "window_add"    : [self.defaultHandler],
-          "window_remove" : [self.defaultHandler],
-          "window_focus"  : [self.defaultHandler],
-          "window_blur"   : [self.defaultHandler]
+          "window_add"     : [self.defaultHandler],
+          "window_remove"  : [self.defaultHandler],
+          "window_focus"   : [self.defaultHandler],
+          "window_blur"    : [self.defaultHandler],
+          "window_updated" : [self.defaultHandler]
         };
 
         $("#Desktop").mousedown(function(ev) {
@@ -1123,6 +1123,10 @@
 
       minimizeWindow : function(win) {
         this.blurWindow(win);
+      },
+
+      updateWindow : function(win) {
+        this.call("window_updated", win);
       },
 
       sortWindows : function(method) {
@@ -1656,6 +1660,7 @@
       this._attrs_restore   = attrs;
       this._created         = false;
       this._showing         = false;
+      this._origtitle       = "";
       this._bindings        = {
         "die"    : [],
         "focus"  : [],
@@ -1730,8 +1735,9 @@
       mcallback = mcallback || function() {};
 
       if ( !this._created ) {
-        this._id      = id;
-        this._showing = true;
+        this._id        = id;
+        this._showing   = true;
+        this._origtitle = this._title;
 
         var fresh = true;
         var el    = this._is_dialog ? $($("#Dialog").html()) : $($("#Window").html());
@@ -2042,6 +2048,18 @@
 
     blur : function() {
       _Desktop.blurWindow(this);
+    },
+
+    setTitle : function(t) {
+      if ( t != this._title ) {
+        this._title = t;
+        this.$element.find(".WindowTopInner span").html(this._title);
+        _Desktop.updateWindow(this);
+      }
+    },
+
+    getTitle : function() {
+      return this._title;
     },
 
     //
