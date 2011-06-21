@@ -5,8 +5,10 @@
  *   TODO: Sortable panel items (use absolute, snap to direction as panel does)
  *   TODO: Rewrite settings manager
  *   TODO: Refactor _PanelItem class variable name scope
- *   FIXME: Menu subitems
- *   TODO: Global Menu
+ *   TODO: Refactor ContextMenu
+ *   TODO: Only one menu at a time, Global var, Global click handler
+ *   FIXME: replace parents() with closest()
+ *
  *
  * Release:
  *   TODO: Convert Dialog to Glade and Separate JS files
@@ -2421,26 +2423,50 @@
         // Menus
         //
 
-        if ( el.find(".GtkMenuItem").length ) {
+        if ( el.find(".GtkMenuBar").length ) {
           var last_menu = null;
-          el.find(".GtkMenuItem").each(function() {
-            $(this).click(function(ev) {
-              var t = ev.target || ev.srcElement;
 
-              if ( last_menu ) {
-                $(last_menu).hide();
+          el.find(".GtkMenuItem, .GtkImageMenuItem").each(function() {
+            var level = ($(this).parents(".GtkMenu").length);
+
+            $(this).hover(function() {
+              $(this).addClass("Hover").find("span:first").addClass("Hover");
+            }, function() {
+              $(this).removeClass("Hover").find("span:first").removeClass("Hover");
+            });
+
+            $(this).addClass("Level_" + level);
+            if ( level > 0 ) {
+              $(this).addClass("SubItem");
+            }
+
+            $(this).click(function(ev) {
+              var t = $(ev.target || ev.srcElement);
+              var c = $(this).find(".GtkMenu").first();
+
+              if ( last_menu !== c ) {
+                if ( $(this).parent().hasClass("GtkMenuBar") ) {
+                  $(this).parent().find(".GtkMenu").hide();
+                }
+              }
+              c.show();
+
+              last_menu = c;
+
+              if ( level > 0 ) {
+                ev.stopPropagation();
               }
 
-              last_menu = $(this).find(".GtkMenu").first().show();
+              if ( !$(this).find(".GtkMenu").length ) {
+                el.find(".GtkMenuItem .GtkMenu").hide();
+              }
             });
           });
 
           $(document).click(function(ev) {
-            var t = ev.target || ev.srcElement;
-            if ( !$(t).parents("ul").first().hasClass("GtkMenuBar") ) {
-              //if ( !$(t).parents(".GtkMenu").get(0) ) {
-                el.find(".GtkMenuItem .GtkMenu").hide();
-              //}
+            var t = $(ev.target || ev.srcElement);
+            if ( !$(t).closest(".GtkMenuBar").get(0) ) {
+              el.find(".GtkMenuItem .GtkMenu").hide();
             }
           });
         }
@@ -2526,7 +2552,6 @@
     init : function(att_window) {
       this.$element = $("<ul></ul>");
       this.$element.attr("class", "Menu");
-      this.$window = att_window ? ($(att_window).parents(".Window")) : null;
     },
 
     destroy : function() {
@@ -2574,15 +2599,9 @@
         $(litem).addClass("Default");
       }
 
-      if ( method == "cmd_Close" ) {
-        $(litem).click(function() {
-          $(self.$window).find(".ActionClose").click();
-        });
-      } else {
-        $(litem).click(function() {
-          $(this).parents("ul.Menu").hide();
-        });
-      }
+      $(litem).click(function() {
+        $(this).parents("ul.Menu").hide();
+      });
 
       this.$element.append(litem);
     }

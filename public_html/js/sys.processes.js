@@ -93,17 +93,6 @@ var SystemProcesses = (function($, undefined) {
               })(row, p);
 
               el.find(".iconview1 table.TableBody tbody").append(row);
-
-              /*
-              if ( p.windows.length ) {
-                var w;
-                for ( var y = 0; y < p.windows.length; y++ ) {
-                  w = p.windows[y];
-                  var srow = $(sprintf("<tr><td class=\"PID\">%s</td><td class=\"Name\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img alt=\"\" src=\"/img/icons/16x16/%s\" />&nbsp; %s</td><td class=\"Alive\"></td><td class=\"Oper\">&nbsp;</td></tr>", "&nbsp;", "emblems/emblem-unreadable.png", w._name, "-"));
-                  el.find(".iconview1 table.TableBody tbody").append(srow);
-                }
-              }
-              */
             }
           };
 

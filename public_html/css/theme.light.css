@@ -28,7 +28,7 @@ body.ThemeLight .DesktopPanel {
 body.ThemeLight .PanelItem {
   color : #555;
 }
-body.ThemeLight .PanelItem:hover {
+body.ThemeLight .PanelItemWindow:hover {
   color : #fff;
 }
 body.ThemeLight .PanelItem.Current {

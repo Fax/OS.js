@@ -7,6 +7,32 @@
  */
 var PanelItemMenu = (function($, undefined) {
   return function(_PanelItem, panel, api, argv) {
+
+    function CreateMenu(items) {
+      var ul = $("<ul class=\"GtkMenu\"></ul>");
+      if ( items && items.length ) {
+        var it, li;
+        for ( var i = 0; i < items.length; i++ ) {
+          it = items[i];
+
+          li = $("<li class=\"GtkImageMenuItem\"></li>");
+          li.append(sprintf("<img alt=\"\" src=\"/img/icons/16x16/%s\" /><span>%s</span>", it.icon, it.title));
+          if ( it.items && it.items.length ) {
+            li.append(CreateMenu(it.items));
+          }
+
+          if ( it.method ) {
+            li.click(function() {
+              it.method();
+            });
+          }
+
+          ul.append(li);
+        }
+      }
+      return ul;
+    }
+
     var _PanelItemMenu = _PanelItem.extend({
 
       init : function(title, icon, menu) {
@@ -73,37 +99,57 @@ var PanelItemMenu = (function($, undefined) {
       create : function(pos) {
         var self = this;
         var el = this._super(pos);
+
+        var menu = CreateMenu(this.menu);
+
         var img = $("<img src=\"" + this.icon + "\" title=\"" + this.title + "\" class=\"TT\" />");
+        $(el).addClass("GtkCustomMenu");
         $(el).append(img);
-
-        var tmp = $("<ul class=\"Menu\"></ul>");
-        for ( var i = 0; i < this.menu.length; i++ ) {
-          var sub = this.menu[i].items;
-
-          var li = $(sprintf("<li class=\"Default\"><img alt=\"\" src=\"/img/icons/16x16/%s\" /><span>%s</span></li>", this.menu[i].icon, this.menu[i].title));
-          tmp.append(li);
-
-          (function(li, sub) {
-            li.click(function(ev) {
-              return api.application.context_menu(ev, sub, $(this), 1);
-            });
-          })(li ,sub);
-        }
-        el.append(tmp);
-
-        $(document).click(function(ev) {
-          var t = ev.target || ev.srcElement;
-          if ( !$(t).parents(".PanelItemMenu").get(0) ) {
-            el.find(".Menu").hide();
-          }
+        $(el).append(menu);
+        $(el).click(function() {
+          $(el).find(".GtkMenu:first").show();
         });
 
-        $(el).click(function(ev) {
-          ev.preventDefault();
-          //ev.stopPropagation();
+        var last_menu = null;
+        el.find(".GtkImageMenuItem").each(function() {
+          var level = ($(this).parents(".GtkMenu").length);
 
-          tmp.show();
+          $(this).hover(function() {
+            $(this).addClass("Hover").find("span:first").addClass("Hover");
+          }, function() {
+            $(this).removeClass("Hover").find("span:first").removeClass("Hover");
+          });
 
+          $(this).addClass("Level_" + level);
+          if ( level > 0 ) {
+            $(this).addClass("SubItem");
+          }
+
+          $(this).click(function(ev) {
+            var t = $(ev.target || ev.srcElement);
+            var c = $(this).find(".GtkMenu").first();
+
+            if ( last_menu !== c ) {
+              if ( $(this).hasClass("Level_1") ) {
+                $(this).parent().find(".GtkMenu").hide();
+              }
+            }
+            c.show();
+
+            last_menu = c;
+
+            ev.stopPropagation();
+            if ( !$(this).find(".GtkMenu").length ) {
+              el.find(".GtkMenu").hide();
+            }
+          });
+        });
+
+        $(document).click(function(ev) {
+          var t = $(ev.target || ev.srcElement);
+          if ( !$(t).closest(".GtkCustomMenu").get(0) || $(t).closest("li").hasClass("Level_1") ) {
+            el.find(".GtkMenu").hide();
+          }
         });
 
         return el;

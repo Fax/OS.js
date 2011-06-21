@@ -30,7 +30,7 @@ body.ThemeDark .DesktopPanel {
 body.ThemeDark .PanelItem {
   color : #b0c2c1;
 }
-body.ThemeDark .PanelItem:hover {
+body.ThemeDark .PanelItemWindow:hover {
   color : #fff;
 }
 body.ThemeDark .PanelItem.Current {
@@ -101,8 +101,7 @@ body.ThemeDark .GtkWindow .GtkMenuBar .GtkMenuItem ul {
   color : #222;
 }
 
-body.ThemeDark .Menu li.Default:hover,
-body.ThemeDark .GtkWindow .GtkMenuBar .GtkMenuItem .GtkMenu li:hover {
+body.ThemeDark .Menu li.Default:hover {
   color : #fff;
   background : #4f4f4f;
 }

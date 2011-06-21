@@ -250,15 +250,24 @@
   font-size : 90%;
   background : #4f4f4f;
 }
-  .GtkMenuBar li {
+.GtkCustomMenu .GtkMenu { /* Custom */
+  color : #222;
+}
+  .GtkMenuBar li,
+  .GtkCustomMenu li { /* Custom */
     display : inline-block;
     position : relative;
     padding : 5px;
     height : 20px;
     line-height : 20px;
+    white-space : nowrap;
+  }
+  .GtkCustomMenu li { /* Custom */
+    display : block;
   }
 
-    .GtkMenuBar ul {
+    .GtkMenuBar ul,
+    .GtkCustomMenu ul { /* Custom */
       margin : 0;
       padding : 2px;
       list-style-type : none;
@@ -270,35 +279,30 @@
       background : #e6e6e6;
       border : 1px solid;
     }
-      .GtkMenuBar li li {
+      .GtkMenuBar li li,
+      .GtkCustomMenu li li { /* Custom */
         display : block;
       }
 
-  .GtkMenuItem img {
+  .GtkMenuItem img,
+  .GtkCustomMenu img { /* Custom */
     margin-right : 5px;
     vertical-align : text-bottom;
   }
-  .GtkMenuItem span {
-    color : #fff;
-  }
-  .GtkMenuItem ul span {
-    color : #222;
-  }
-  .GtkMenuBar li:hover span {
-    text-decoration : underline;
-  }
-  .GtkMenuBar li:hover ul span {
-    text-decoration : none;
-  }
-  .GtkMenuBar ul li:hover span {
+
+  .GtkMenuBar .Level_0 {
     color : #fff;
   }
 
-  .GtkMenuBar .Checked {
-    font-weight : bold;
+  .GtkMenuBar span.Hover,
+  .GtkCustomMenu span.Hover { /* Custom */
+    text-decoration : underline;
   }
-  .GtkMenuBar .Disabled {
+
+  .GtkMenuBar .SubItem.Hover,
+  .GtkCustomMenu .SubItem.Hover { /* Custom */
     color : #fff;
+    background : #4f4f4f;
   }
 
 /* GtkNotebook */
