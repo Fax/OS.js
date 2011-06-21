@@ -22,9 +22,11 @@ var PanelItemMenu = (function($, undefined) {
           }
 
           if ( it.method ) {
-            li.click(function() {
-              it.method();
-            });
+            (function(li, it) {
+              li.click(function() {
+                it.method();
+              });
+            })(li, it);
           }
 
           ul.append(li);
