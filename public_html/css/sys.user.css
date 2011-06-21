@@ -60,3 +60,23 @@
   font-weight : bold;
   cursor : pointer;
 }
+
+.SystemUser .iconview1 table.TableHead {
+  height : 20px;
+  padding-top :5px;
+  padding-bottom : 5px;
+  overflow : hidden;
+  display : block;
+  width : 100%;
+}
+.SystemUser .iconview1 .TableWrap {
+  overflow : auto;
+  height : 100%;
+}
+.SystemUser .iconview1 table.TableBody {
+  background : #fff;
+  width : 100%;
+}
+.SystemUser .iconview1 table.TableBody .win {
+  font-style : italic;
+}

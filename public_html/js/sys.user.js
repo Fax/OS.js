@@ -27,9 +27,12 @@ var SystemUser = (function($, undefined) {
         this._width = 400;
         this._height = 250;
         this._gravity = 'center';
+
+        this.pinterval = null;
       },
 
       destroy : function() {
+        clearInterval(this.pinterval);
         this._super();
       },
 
@@ -45,8 +48,11 @@ var SystemUser = (function($, undefined) {
 
           // User info
           var table = $("<table></table>");
+          var table2 = $("<div class=\"TableWrap\"><table class=\"TableHead GtkIconViewHeader\"><tbody><tr><td>PID</td><td>Application</td><td>Alive</td></tr></tbody></table><div class=\"TableBodyWrap\"><table class=\"TableBody\"><tbody></tbody></table></div></div>");
+
           el.find(".fixed1").append(table);
           el.find(".fixed2").append("<ul></ul>");
+          el.find(".iconview1").append(table2);
 
           $.post("/", {'ajax' : true, 'action' : 'user'}, function(data) {
 
@@ -85,6 +91,29 @@ var SystemUser = (function($, undefined) {
             });
             el.find(".fixed2 ul").append(item);
           }
+
+          // Processes info
+          this.pinterval = setInterval(function() {
+            table2.find(".TableBody tbody").html("");
+
+            var list = API.session.processes();
+            var p, row;
+            for ( var x = 0; x < list.length; x++ ) {
+              p = list[x];
+
+              row = $(sprintf("<tr><td>%s</td><td><img alt=\"\" src=\"/img/icons/16x16/%s\" />&nbsp; %s</td><td>%sms</td></tr>", p.id, p.icon, p.title || p.name, p.time));
+              el.find(".iconview1 table.TableBody tbody").append(row);
+            }
+
+            el.find(".iconview1 table.TableHead td").each(function(ind, el) {
+              var pel = self.$element.find(".iconview1 table.TableBody tr:first-child td").get(ind);
+              if ( pel ) {
+                $(el).css("width", $(pel).width() + "px");
+              }
+            });
+
+          }, 3000);
+
 
         }
 

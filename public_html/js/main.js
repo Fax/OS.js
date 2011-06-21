@@ -80,24 +80,6 @@
     _TopIndex          = 11;
   }
 
-  /*
-  setInterval(function() {
-    var now = (new Date()).getTime();
-
-    var i = 0;
-    var l = _Processes.length;
-    var p, s;
-    if ( l ) {
-      for ( i; i < l; i++ ) {
-        p = _Processes[i];
-        if ( p !== undefined ) {
-          console.info("=> Process Alive", i, p._uuid, p, sprintf("alive %dms", (now - p._started.getTime())));
-        }
-      }
-    }
-  }, 5000);
-  */
-
   function LaunchApplication(app_name, args, windows, callback, callback_error) {
     callback = callback || function() {};
     callback_error = callback_error || function() {};
@@ -523,6 +505,33 @@
     //
 
     'session' : {
+      'processes' : function() {
+        var now = (new Date()).getTime();
+        var procs = [];
+
+        var i = 0;
+        var l = _Processes.length;
+        var p, icon, title;
+        if ( l ) {
+          for ( i; i < l; i++ ) {
+            p = _Processes[i];
+
+            if ( p !== undefined ) {
+              procs.push({
+                'id'     : i,
+                'name'   : p._name,
+                'uuid'   : p._uuid,
+                'time'   : (now - p._started.getTime()),
+                'icon'   : p._proc_icon,
+                'title'  : p._proc_name
+              });
+            }
+          }
+        }
+
+        return procs;
+      },
+
       'save' : function(save) {
         save = save || false;
         var sess = save ? _Desktop.getSession() : {};
@@ -581,6 +590,34 @@
     }
 
   };
+
+  /////////////////////////////////////////////////////////////////////////////
+  // PROCESS
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Process
+   *
+   * @class
+   */
+  var Process = Class.extend({
+
+    init : function(name, icon) {
+      this._pid       = (_Processes.push(this) - 1);
+      this._started   = new Date();
+      this._proc_name = name || "(unknown)";
+      this._proc_icon = icon || "mimetypes/exec.png";
+    },
+
+    destroy : function() {
+      if ( this._pid >= 0 ) {
+        _Processes[this._pid] = undefined;
+      }
+
+      this._started = null;
+    }
+
+  });
 
   /////////////////////////////////////////////////////////////////////////////
   // MANAGERS
@@ -756,13 +793,11 @@
 
       saveApp : function(name, props) {
         var storage = localStorage.getItem("applications");
-        console.log("storage", storage);
         if ( !storage ) {
           storage = {};
         } else {
           try {
             storage = JSON.parse(storage);
-            console.log("AOK", storage);
           } catch ( e ) {
             storage = {};
           }
@@ -849,7 +884,7 @@
 
     var _oldTheme = null;
 
-    return Class.extend({
+    return Process.extend({
 
       init : function() {
         var self = this;
@@ -929,6 +964,7 @@
         });
         */
 
+        this._super("Desktop", "places/desktop.png");
       },
 
       bind : function(mname, mfunc) {
@@ -967,6 +1003,8 @@
         for ( i; i < l; i++ ) {
           this.stack[i].destroy();
         }
+
+        this._super();
       },
 
       run : function() {
@@ -1191,7 +1229,7 @@
         var p, s;
         for ( i; i < l; i++ ) {
           p = _Processes[i];
-          if ( p !== undefined ) {
+          if ( p !== undefined && (p instanceof Application) ) {
             s = p._getSession();
             if ( s !== false ) {
               sess.push(s);
@@ -1296,7 +1334,7 @@
    *
    * @class
    */
-  var Panel = Class.extend({
+  var Panel = Process.extend({
 
     init : function() {
       var self = this;
@@ -1410,6 +1448,8 @@
       } else {
         this.$element.removeClass("Bottom");
       }
+
+      this._super("Panel");
     },
 
     destroy : function() {
@@ -1418,6 +1458,8 @@
       }
       this.items = null;
       this.$element.empty().remove();
+
+      this._super();
     },
 
     redraw : function(ev, eargs) {
@@ -1496,11 +1538,12 @@
    *
    * @class
    */
-  var _PanelItem = Class.extend({
+  var _PanelItem = Process.extend({
 
     init : function(name, align)  {
-      this.name         = name;
-      this.named        = name;
+      this._name        = name;
+      this._uuid        = null;
+      this._named       = name;
       this.align        = align || "AlignLeft";
       this.expand       = false;
       this.dynamic      = false;
@@ -1511,12 +1554,14 @@
       this._index       = -1;
       this._panel       = null;
       this.$element     = null;
+
+      this._super(name);
     },
 
     create : function(pos) {
       var self = this;
 
-      this.$element = $("<li></li>").attr("class", "PanelItem " + this.name);
+      this.$element = $("<li></li>").attr("class", "PanelItem " + this._name);
 
       if ( pos ) {
         this.align = pos;
@@ -1568,6 +1613,8 @@
         this.$element.empty();
         this.$element.remove();
       }
+
+      this._super();
     },
 
     configure : function() {
@@ -1582,7 +1629,7 @@
     getMenu : function() {
       var self = this;
       var menu = [
-        {"title" : self.named, "disabled" : true, "attribute" : "header"},
+        {"title" : self._named, "disabled" : true, "attribute" : "header"},
         /*
         {"title" : (self.align == "left" ? "Align to right" : "Align to left"), "method" : function() {
           self.align = (self.align == "left") ? "right" : "left";
@@ -3066,16 +3113,14 @@
    *
    * @class
    */
-  var Application = Class.extend({
+  var Application = Process.extend({
     init : function(name, argv, restore) {
       this._argv         = argv || {};
       this._name         = name;
       this._uuid         = null;
-      this._index        = (_Processes.push(this) - 1);
       this._running      = false;
       this._root_window  = null;
       this._windows      = [];
-      this._started      = new Date();
       this._storage      = {};
       this._storage_on   = false;
       this._signal       = -1;
@@ -3085,6 +3130,8 @@
       }
 
       console.log("Application::" + this._name + "::NULL::init()");
+
+      this._super(name);
     },
 
     destroy : function() {
@@ -3112,18 +3159,19 @@
 
         this._running = false;
         this._storage = null;
-
-        _Processes[this._index] = undefined;
       }
+
+      this._super();
     },
 
     run : function(root_window) {
       var self = this;
 
       if ( !this._running ) {
-        this._root_window = root_window;
-
         if ( root_window instanceof Window ) {
+          this._root_window = root_window;
+          this._proc_icon = root_window._icon;
+
           root_window._bind("die", function() {
             self._stop();
           });

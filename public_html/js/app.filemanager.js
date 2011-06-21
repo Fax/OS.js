@@ -124,7 +124,6 @@ var ApplicationFileManager = (function($, undefined) {
       },
 
       _updateTable : function() {
-        console.log();
         var self = this;
         this.$element.find(".iconview1 table.TableHead td").each(function(ind, el) {
           var pel = self.$element.find(".iconview1 table.TableBody tr:first-child td").get(ind);
