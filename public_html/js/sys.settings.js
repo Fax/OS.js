@@ -63,7 +63,7 @@ var SystemSettings = (function($, undefined) {
               }
               dir = tmp.join("/");
             }
-            API.system.dialog_file(function(fname) {
+            self.app.createFileDialog(function(fname) {
               $(txt).val(fname);
             }, ["image/*"], "open", dir);
           });

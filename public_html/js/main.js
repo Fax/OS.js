@@ -111,7 +111,10 @@
           if ( window[app_name] ) {
             var application = new window[app_name](GtkWindow, Application, API, args, windows);
             application._uuid  = data.result.uuid;
-            application.run();
+
+            setTimeout(function() {
+              application.run();
+            }, 100);
           } else {
             var error = "Application Script not found!";
             API.system.dialog("error", error);
@@ -368,21 +371,21 @@
         type = type || "error";
         message = message || "Unknown error";
 
-        _Desktop.addWindow(new Dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
-
         console.info("=> API Dialog", type);
+
+        return _Desktop.addWindow(new Dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
       },
 
       'dialog_rename' : function(path, clb_finish) {
-        _Desktop.addWindow(new RenameOperationDialog(path, clb_finish));
-
         console.info("=> API Rename Dialog");
+
+        return _Desktop.addWindow(new RenameOperationDialog(path, clb_finish));
       },
 
       'dialog_upload' : function(path, clb_finish, clb_progress, clb_cancel) {
-        _Desktop.addWindow(new UploadOperationDialog(path, clb_finish, clb_progress, clb_cancel));
-
         console.info("=> API Upload Dialog");
+
+        return _Desktop.addWindow(new UploadOperationDialog(path, clb_finish, clb_progress, clb_cancel));
       },
 
       'dialog_file' : function(clb_finish, mime_filter, type, cur_dir) {
@@ -390,21 +393,21 @@
         type = type || "open";
         cur_dir = cur_dir || "/";
 
-        _Desktop.addWindow(new FileOperationDialog(type, mime_filter, clb_finish, cur_dir));
-
         console.info("=> API File Dialog");
+
+        return _Desktop.addWindow(new FileOperationDialog(type, mime_filter, clb_finish, cur_dir));
       },
 
       'dialog_launch' : function(list, clb_finish) {
-        _Desktop.addWindow(new LaunchOperationDialog(list, clb_finish));
-
         console.info("=> API Launch Dialog");
+
+        return _Desktop.addWindow(new LaunchOperationDialog(list, clb_finish));
       },
 
       'dialog_color' : function(start_color, clb_finish) {
-        _Desktop.addWindow(new ColorOperationDialog(start_color, clb_finish));
-
         console.info("=> API Color Dialog");
+
+        return _Desktop.addWindow(new ColorOperationDialog(start_color, clb_finish));
       }
 
 
@@ -1055,20 +1058,6 @@
         }
 
         return false;
-      },
-
-      removeApplication : function(app) {
-        var i = 0;
-        var l = this.stack.length;
-        var a;
-        for ( i; i < l; i++ ) {
-          a = this.stack[i];
-          if ( a.app && a.app._uuid == app._uuid ) {
-            if ( a !== app._root_window ) {
-              this.removeWindow(a, i);
-            }
-          }
-        }
       },
 
       removeWindow : function(win, index) {
@@ -3079,14 +3068,17 @@
    */
   var Application = Class.extend({
     init : function(name, argv, restore) {
-      this._argv         = argv;
+      this._argv         = argv || {};
       this._name         = name;
       this._uuid         = null;
       this._index        = (_Processes.push(this) - 1);
       this._running      = false;
       this._root_window  = null;
+      this._windows      = [];
       this._started      = new Date();
       this._storage      = {};
+      this._storage_on   = false;
+      this._signal       = -1;
 
       if ( restore === undefined || restore === true ) {
         this._restoreStorage();
@@ -3108,7 +3100,13 @@
 
         this._saveStorage();
 
-        _Desktop.removeApplication(self);
+        for ( var i = 0; i < this._windows.length; i++ ) {
+          _Desktop.removeWindow(this._windows[i]);
+        }
+
+        if ( this._signal > 0 ) {
+          _Desktop.removeWindow(this._root_window);
+        }
 
         console.log("Application::" + this._name + "::" + this._uuid + "::destroy()");
 
@@ -3137,6 +3135,44 @@
       }
     },
 
+    createMessageDialog : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
+      this._addWindow(API.system.dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
+    },
+
+    createColorDialog : function(color, callback) {
+      this._addWindow(API.system.dialog_color(color, function(rgb, hex) {
+        callback(rgb, hex);
+      }));
+    },
+
+    createUploadDialog : function(dir, callback) {
+      this._addWindow(API.system.dialog_upload(dir, function() {
+        callback(dir);
+      }));
+    },
+
+    createFileDialog : function(callback, mimes, type, dir) {
+      this._addWindow(API.system.dialog_file(function(file, mime) {
+        callback(file, mime);
+      }, mimes, type, dir));
+    },
+
+    createLaunchDialog : function(list, callback) {
+      this._addWindow(API.system.dialog_launch(list, function(app, def) {
+        callback(app, def);
+      }));
+    },
+
+    createRenameDialog : function(dir, callback) {
+      this._addWindow(API.system.dialog_rename(dir, function(fname) {
+        callback(fname);
+      }));
+    },
+
+    _addWindow : function(win) {
+      this._windows.push(win);
+    },
+
     _stop : function() {
       if ( this._running ) {
         this.destroy();
@@ -3144,7 +3180,7 @@
     },
 
     _saveStorage : function() {
-      if ( this._name ) {
+      if ( this._name && this._storage_on ) {
         _Settings.saveApp(this._name, this._storage);
       }
     },
@@ -3152,6 +3188,7 @@
     _restoreStorage : function() {
       if ( this._name ) {
         this._storage = _Settings.loadApp(this._name);
+        this._storage_on = true;
       }
     },
 

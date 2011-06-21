@@ -55,7 +55,7 @@ var SystemUser = (function($, undefined) {
                 $(table).append($(sprintf("<tr><td class=\"pri\">%s</td><td class=\"sec\">%s</td></tr>", key, val)));
               });
             } else {
-              API.system.dialog("error", data.error);
+              self.app.createMessageDialog("error", data.error);
             }
 
             //$(inner).tabs();

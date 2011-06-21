@@ -48,7 +48,7 @@ var ApplicationFileManager = (function($, undefined) {
       EventMenuNew : function(el, ev) {
         var self = this;
 
-        API.system.dialog_upload(_CurrentDir, function() {
+        this.app.createUploadDialog(_CurrentDir, function() {
           self.chdir(_CurrentDir);
         });
       },
@@ -97,7 +97,7 @@ var ApplicationFileManager = (function($, undefined) {
           self._destroyView();
 
           if ( error ) {
-            API.system.dialog("error", error);
+            self.app.createMessageDialog("error", error);
             self.setTitle(self._origtitle);
 
             _defaultStatusText = "";
@@ -183,7 +183,7 @@ var ApplicationFileManager = (function($, undefined) {
           } else {
             return API.application.context_menu(ev, [
               {"title" : "Delete", "method" : function() {
-                API.system.dialog("confirm", "Are you sure you want to delete '" + fname + "'?", null, function() {
+                self.app.createMessageDialog("confirm", "Are you sure you want to delete '" + fname + "'?", null, function() {
                   API.system.call("delete", path, function(result, error) {
                     if ( error === null ) {
                       self.chdir(_CurrentDir);
@@ -192,7 +192,7 @@ var ApplicationFileManager = (function($, undefined) {
                 });
               }},
               {"title" : "Rename", "method" : function() {
-                API.system.dialog_rename(fname, function(nfname) {
+                self.app.createRenameDialog(fname, function(nfname) {
                   API.system.call("rename", [path, fname, nfname], function(result, error) {
                     if ( error === null ) {
                       self.chdir(_CurrentDir);

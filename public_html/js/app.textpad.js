@@ -44,14 +44,14 @@ var ApplicationTextpad = (function($, undefined) {
       }
     }
 
-    function _saveAs(callback) {
-      API.system.dialog_file(function(file, mime) {
+    function _saveAs(win, callback) {
+      win.app.createFileDialog(function(file, mime) {
         callback(file, mime);
       }, ["text/*"], "save");
     }
 
-    function _open(callback, el) {
-      API.system.dialog_file(function(fname) {
+    function _open(win, callback, el) {
+      win.app.createFileDialog(function(fname) {
         callback(fname);
 
         setTimeout(function() {
@@ -110,7 +110,7 @@ var ApplicationTextpad = (function($, undefined) {
       EventMenuOpen : function(el, ev) {
         var self = this;
 
-        _open(function(fname) {
+        _open(this, function(fname) {
           _read_file(self, fname);
         }, el);
       },
@@ -126,7 +126,7 @@ var ApplicationTextpad = (function($, undefined) {
 
       EventMenuSaveAs : function(el, ev) {
         var self = this;
-        _saveAs(function(file, mime) {
+        _saveAs(self, function(file, mime) {
           _save(file, self.$element.find("textarea").val(), function() {
             _update(file, self);
           });

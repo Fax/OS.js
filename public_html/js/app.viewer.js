@@ -19,8 +19,8 @@ var ApplicationViewer = (function($, undefined) {
       win._resize(w + 8, h + 35);
     }
 
-    function _open(callback) {
-      API.system.dialog_file(function(fname, mtype) {
+    function _open(win, callback) {
+      win.app.createFileDialog(function(fname, mtype) {
         callback(fname, mtype);
       }, ["image/*", "video/*", "application/ogg"]);
     }
@@ -53,7 +53,7 @@ var ApplicationViewer = (function($, undefined) {
             _resize(win, img, el);
           }, 0);
         }).error(function() {
-          API.system.dialog("error", "Failed to load " + type + "!");
+          win.app.createMessageDialog("error", "Failed to load " + type + "!");
           $(this).hide();
           this._loaded = true;
         }).each(function() {
@@ -155,7 +155,7 @@ var ApplicationViewer = (function($, undefined) {
 
       EventMenuOpen : function(el, ev) {
         var self = this;
-        _open(function(fname, mtype) {
+        _open(this, function(fname, mtype) {
           _play(self, self.$element, fname, mtype);
         });
       },

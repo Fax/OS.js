@@ -587,7 +587,7 @@ var ApplicationDraw = (function($, undefined) {
 
 
       EventChangeBackground : function(el, ev) {
-        API.system.dialog_color(Style.fill.hex, function(rgb, hex) {
+        this.app.createColorDialog(Style.fill.hex, function(rgb, hex) {
           $(el).css("background-color", hex);
 
           Style.fill = DrawColor(hex);
@@ -596,7 +596,7 @@ var ApplicationDraw = (function($, undefined) {
 
 
       EventChangeForeground : function(el, ev) {
-        API.system.dialog_color(Style.stroke.hex, function(rgb, hex) {
+        this.app.createColorDialog(Style.stroke.hex, function(rgb, hex) {
           $(el).css("background-color", hex);
           Style.stroke = DrawColor(hex);
         });
@@ -624,13 +624,13 @@ var ApplicationDraw = (function($, undefined) {
       },
 
       _saveAs : function(callback) {
-        API.system.dialog_file(function(file, mime) {
+        this.app.createFileDialog(function(file, mime) {
           callback(file, mime);
         }, ["image/*"], "save");
       },
 
       _open : function(callback) {
-        API.system.dialog_file(function(fname) {
+        this.app.createFileDialog(function(fname) {
           callback(fname);
         }, ["image/*"]);
       },
