@@ -2438,6 +2438,10 @@
             $(this).addClass("Level_" + level);
             if ( level > 0 ) {
               $(this).addClass("SubItem");
+
+              if ( $(this).find(".GtkMenu").length ) {
+                $(this).addClass("Subbed");
+              }
             }
 
             $(this).click(function(ev) {

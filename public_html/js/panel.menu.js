@@ -8,7 +8,7 @@
 var PanelItemMenu = (function($, undefined) {
   return function(_PanelItem, panel, api, argv) {
 
-    function CreateMenu(items) {
+    function CreateMenu(items, level) {
       var ul = $("<ul class=\"GtkMenu\"></ul>");
       if ( items && items.length ) {
         var it, li;
@@ -18,6 +18,7 @@ var PanelItemMenu = (function($, undefined) {
           li = $("<li class=\"GtkImageMenuItem\"></li>");
           li.append(sprintf("<img alt=\"\" src=\"/img/icons/16x16/%s\" /><span>%s</span>", it.icon, it.title));
           if ( it.items && it.items.length ) {
+            li.addClass("Subbed");
             li.append(CreateMenu(it.items));
           }
 

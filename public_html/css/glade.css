@@ -299,6 +299,12 @@
     text-decoration : underline;
   }
 
+  .GtkMenu li span.Hover {
+    text-decoration : none;
+  }
+
+
+
   .GtkMenuBar .SubItem.Hover,
   .GtkCustomMenu .SubItem.Hover { /* Custom */
     color : #fff;
@@ -309,6 +315,14 @@
     font-weight : bold;
   }
   .GtkMenuBar .Disabled {
+  }
+
+  .GtkMenu .Subbed {
+    background : url('/img/theme.default/menu_expand.png') no-repeat right;
+    padding-right : 16px;
+  }
+  .GtkMenu .Subbed.Hover {
+    background : #4f4f4f url('/img/theme.default/menu_expand_hover.png') no-repeat right;
   }
 
 /* GtkNotebook */
