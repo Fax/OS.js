@@ -52,6 +52,7 @@ var SystemLogout = (function($, undefined) {
           $(el).find('button.button2').click(function() {
             var chk = $(el).find("input").get(0);
             API.user.logout(chk.checked);
+            self.close();
           });
         }
 

@@ -504,6 +504,12 @@
             p = _Processes[i];
 
             if ( p !== undefined ) {
+              var ckill = (function(pp) {
+                return function() {
+                  return pp.kill();
+                };
+              })(p);
+
               procs.push({
                 'pid'    : p._pid,
                 'name'   : p._name,
@@ -512,15 +518,7 @@
                 'icon'   : p._proc_icon,
                 'title'  : p._proc_name,
                 'locked' : p._locked,
-                'kill'   : (function(pp) {
-                  return function() {
-                    if ( !pp._locked ) {
-                      pp.destroy();
-                      return true;
-                    }
-                    return false;
-                  };
-                })(p)
+                'kill'   : ckill
               });
             }
           }
@@ -613,6 +611,15 @@
       }
 
       this._started = null;
+    },
+
+    kill : function() {
+      if ( !this._locked ) {
+        this.destroy();
+
+        return true;
+      }
+      return false;
     }
 
   });
@@ -660,12 +667,29 @@
       if ( _Desktop ) {
         _Desktop.destroy();
       }
+
       if ( _Settings ) {
         _Settings.destroy();
       }
       if ( _Resources ) {
         _Resources.destroy();
       }
+
+      /*
+      setTimeout(function() {
+      var i = 0;
+      var l = _Processes.length;
+      var p, s;
+      for ( i; i < l; i++ ) {
+        p = _Processes[i];
+        if ( p ) {
+          console.log(p);
+          //p.destroy();
+        }
+      }
+      }, 0);
+      */
+
 
       _Core       = null;
       _Resources  = null;
@@ -1059,19 +1083,27 @@
           $("*").die();
         } catch ( eee ) { }
 
-        this.setWallpaper(null);
-
+        // Remove panel
         if ( this.panel ) {
           this.panel.destroy();
         }
+        this.panel = null;
 
+        // Remove bindings
         this.bindings = null;
 
+        // Remove windows
         var i = 0;
         var l = this.stack.length;
         for ( i; i < l; i++ ) {
-          this.stack[i].destroy();
+          if ( this.stack[i] ) {
+            this.stack[i].destroy();
+          }
         }
+        this.stack = null;
+
+        // Reset settings
+        this.setWallpaper(null);
 
         this._super();
       },
@@ -1167,23 +1199,26 @@
         return false;
       },
 
-      removeWindow : function(win, index) {
+      removeWindow : function(win, destroy) {
         if ( win instanceof Window ) {
-          win.destroy();
+          if ( destroy ) {
+            win.destroy();
+          }
 
-          if ( index === undefined ) {
-            var i = 0;
-            var l = this.stack.length;
-            for ( i; i < l; i++ ) {
-              if ( this.stack[i] == win ) {
-                index = i;
-                break;
-              }
+          var i = 0;
+          var l = this.stack.length;
+          var index = -1;
+          for ( i; i < l; i++ ) {
+            if ( this.stack[i] == win ) {
+              index = i;
+              break;
             }
           }
 
-          this.call("window_remove", win);
-          this.stack.splice(index, 1);
+          if ( index >= 0 ) {
+            this.call("window_remove", win);
+            this.stack.splice(index, 1);
+          }
         }
       },
 
@@ -1809,6 +1844,7 @@
         this._call("die");
 
         this._showing    = false;
+        this._created    = false;
         this._bindings   = null;
 
         $(this.$element).fadeOut(ANIMATION_SPEED, function() {
@@ -2107,7 +2143,7 @@
 
     close : function() {
       if ( this._showing ) {
-        _Desktop.removeWindow(this);
+        _Desktop.removeWindow(this, true);
       }
     },
 
@@ -3192,7 +3228,6 @@
       this._windows      = [];
       this._storage      = {};
       this._storage_on   = false;
-      this._signal       = -1;
 
       if ( restore === undefined || restore === true ) {
         this._restoreStorage();
@@ -3216,12 +3251,14 @@
 
         this._saveStorage();
 
-        for ( var i = 0; i < this._windows.length; i++ ) {
-          _Desktop.removeWindow(this._windows[i]);
-        }
+        if ( this._root_window ) {
+          setTimeout(function() { // NOTE: Required!
+            for ( var i = 0; i < self._windows.length; i++ ) {
+              self._windows[i].close();
+            }
 
-        if ( this._signal > 0 ) {
-          _Desktop.removeWindow(this._root_window);
+            self._root_window.close();
+          }, 0);
         }
 
         console.log("Application::" + this._name + "::" + this._uuid + "::destroy()");
