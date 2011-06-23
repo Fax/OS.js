@@ -2464,32 +2464,38 @@
               }
             }
 
-            $(this).click(function(ev) {
-              var t = $(ev.target || ev.srcElement);
-              var c = $(this).find(".GtkMenu").first();
+            if ( level > 0 ) {
+              $(this).hover(function() {
+                var c = $(this).find(".GtkMenu").first();
+                if ( last_menu !== c ) {
+                  if ( $(this).hasClass("Level_1") || $(this).hasClass("Level_2") ) {
+                    $(this).parent().find(".GtkMenu").hide();
+                  }
 
-              if ( last_menu !== c ) {
-                if ( $(this).parent().hasClass("GtkMenuBar") ) {
-                  $(this).parent().find(".GtkMenu").hide();
+                  c.show().css({
+                    'top'  : '0px',
+                    'left' : $(this).parent().width() + 'px'
+                  });
                 }
-              }
-              c.show();
-
-              last_menu = c;
-
-              if ( level > 0 ) {
+              }, function() {
+                $(this).find(".GtkMenu").first().hide();
+              }).click(function(ev) {
                 ev.stopPropagation();
-              }
-
-              if ( !$(this).find(".GtkMenu").length ) {
-                el.find(".GtkMenuItem .GtkMenu").hide();
-              }
-            });
+              });
+            } else {
+              $(this).click(function(ev) {
+                var c = $(this).find(".GtkMenu:first");
+                if ( last_menu && c !== last_menu ) {
+                  last_menu.hide();
+                }
+                last_menu = c.show();
+              });
+            }
           });
 
           $(document).click(function(ev) {
             var t = $(ev.target || ev.srcElement);
-            if ( !$(t).closest(".GtkMenuBar").get(0) ) {
+            if ( !$(t).closest(".GtkMenuBar").get(0) && !$(t).closest(".GtkMenu").get(0)  ) {
               el.find(".GtkMenuItem .GtkMenu").hide();
             }
           });
