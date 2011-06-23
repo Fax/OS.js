@@ -27,7 +27,7 @@ var SystemAbout = (function($, undefined) {
         this._is_closable = true;
         this._is_orphan = true;
         this._width = 220;
-        this._height = 120;
+        this._height = 160;
         this._gravity = "center";
       },
 

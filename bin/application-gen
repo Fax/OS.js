@@ -204,7 +204,7 @@ EOJAVASCRIPT;
         }, my_mimes, "save");
 
 EOJAVASCRIPT;
-      } else if ( $ev_handler == "MenuClose" || $ev_handler == "MenuQuit" ) {
+      } else if ( $ev_handler == "MenuClose" || $ev_handler == "MenuQuit" || $ev_handler == "Close" || $ev_handler == "Quit" ) {
         $ev_code = <<<EOJAVASCRIPT
 
         this.\$element.find(".ActionClose").click();
@@ -214,14 +214,15 @@ EOJAVASCRIPT;
         if ( $ev_type == "file-set" ) {
           $ev_code = <<<EOJAVASCRIPT
 
-        var my_callback = function(fname) {}; // FIXME
         var my_mimes    = []; // FIXME
+        var my_path     = self.\$element.find(".{$obj} input[type=text]").val();
 
         this.app.createFileDialog(function(fname) {
-          my_callback(fname);
+          self.\$element.find(".{$obj} input[type=text]").val(fname);
+          self.\$element.find(".{$obj} input[type=hidden]").val(fname);
 
           //self._argv['path'] = fname;
-        }, my_mimes);
+        }, my_mimes, "open", dirname(my_path));
 
 EOJAVASCRIPT;
         }

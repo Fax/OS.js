@@ -47,12 +47,12 @@
   </application>
   <application name="Settings" title="Settings" icon="categories/applications-system.png" system="true" category="system" class="SystemSettings" file="SystemSettings.class.php">
     <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"Settings","icon":"categories\/applications-system.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":500,"height":300,"gravity":""}]]></property>
+      <property name="properties"><![CDATA[{"type":"window","title":"Settings","icon":"categories\/applications-system.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":500,"height":330,"gravity":"center"}]]></property>
     </window>
   </application>
   <application name="Logout" title="Logout" icon="actions/gnome-logout.png" system="true" category="system" class="SystemLogout" file="SystemLogout.class.php">
     <window id="dialog1">
-      <property name="properties"><![CDATA[{"type":"dialog","title":"Logout","icon":"actions\/gnome-logout.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":300,"height":100,"gravity":"center"}]]></property>
+      <property name="properties"><![CDATA[{"type":"dialog","title":"Logout","icon":"actions\/gnome-logout.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":300,"height":150,"gravity":"center"}]]></property>
     </window>
   </application>
   <application name="User" title="User Information" icon="apps/user-info.png" system="true" category="system" class="SystemUser" file="SystemUser.class.php">

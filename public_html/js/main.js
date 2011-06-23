@@ -1894,17 +1894,13 @@
         var fresh = true;
         var el    = this._is_dialog ? $($("#Dialog").html()) : $($("#Window").html());
 
+        this.$element = el;
+
+        //
         // Attributtes
+        //
         el.attr("id", id);
         el.find(".WindowContent").css("overflow", this._is_scrollable ? "auto" : "hidden");
-
-        // Apply default size
-        if ( !isNaN(this._width) && (this._width > 0) ) {
-          $(el).width(this._width + "px");
-        }
-        if ( !isNaN(this._height) && (this._height > 0) ) {
-          $(el).height(this._height + "px");
-        }
 
         // Content and buttons
         el.find(".WindowTopInner span").html(this._title);
@@ -1944,7 +1940,9 @@
 
         _Tooltip.initRoot(el.find(".WindowContent"));
 
+        //
         // Events
+        //
         el.bind('mousedown', function(ev) {
           self.focus();
           if ( ev.which > 1 ) { // Menu only NOTE
@@ -2060,6 +2058,10 @@
           }
         }
 
+        //
+        // Handlers
+        //
+
         // Add jQuery UI Handlers
         if ( this._is_draggable ) {
           el.draggable({
@@ -2117,7 +2119,9 @@
           });
         }
 
-        this.$element = el;
+        //
+        // States
+        //
 
         if ( this._is_minimized ) {
           $(el).hide();
@@ -2365,14 +2369,12 @@
 
     _resize : function(width, height, el) {
       el = el || this.$element;
-      var appendWidth = 4;
-      var appendHeight = 4 + el.find(".WindowTop").height();
 
       if ( height ) {
-        el.css("height", (height + appendHeight) + "px");
+        el.css("height", (height) + "px");
       }
       if ( width ) {
-        el.css("width", (width + appendWidth) + "px");
+        el.css("width", (width) + "px");
       }
     },
 

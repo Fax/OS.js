@@ -421,3 +421,15 @@ function getTextareaCoordinates(txt) {
   return {'x' : col, 'y' : row, 'lines' : lcount, 'length' : len};
 }
 
+function dirname(dir) {
+  if ( dir ) {
+    var tmp = dir.split("/");
+    if ( tmp.length > 1 ) {
+      tmp.pop();
+    }
+    return tmp.join("/");
+  }
+
+  return val;
+}
+

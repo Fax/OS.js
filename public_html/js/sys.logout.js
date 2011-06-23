@@ -27,7 +27,7 @@ var SystemLogout = (function($, undefined) {
         this._is_orphan = true;
         this._is_ontop = true;
         this._width = 300;
-        this._height = 100;
+        this._height = 150;
         this._gravity = 'center';
       },
 
