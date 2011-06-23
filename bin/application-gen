@@ -24,15 +24,18 @@ $root_node = $doc->createElement("applications");
 
 function create_js_root($cname, $windows) {
   $wins = implode("\n", $windows);
-  $code = "";
+  $pre_code = "";
+  $aft_code = "";
   $root_window = "";
 
   if ( $windows ) {
     $keys = array_keys($windows);
     $win = reset($keys);
     $root_window = "root_window";
-    $code = <<<EOJAVASCRIPT
+    $pre_code = <<<EOJAVASCRIPT
         var root_window = new Window_{$win}(self);
+EOJAVASCRIPT;
+    $aft_code = <<<EOJAVASCRIPT
         root_window.show();
 EOJAVASCRIPT;
   }
@@ -88,6 +91,8 @@ var {$cname} = (function(\$, undefined) {
 
         this._super({$root_window});
 
+%s
+
         // Do your stuff here
       }
     });
@@ -98,7 +103,7 @@ var {$cname} = (function(\$, undefined) {
 
 EOJAVASCRIPT;
 
-  return sprintf($template, $wins, $code);
+  return sprintf($template, $wins, $pre_code, $aft_code);
 }
 
 function create_js($cname, $window, $content, $properties, $signals) {

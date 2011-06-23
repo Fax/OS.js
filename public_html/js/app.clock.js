@@ -108,9 +108,8 @@ var ApplicationClock = (function($, undefined) {
         var self = this;
 
         var root_window = new Window_window1(self);
-        root_window.show();
-
         this._super(root_window);
+        root_window.show();
 
         // Do your stuff here
       }

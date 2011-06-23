@@ -151,9 +151,9 @@ var SystemSettings = (function($, undefined) {
         var self = this;
 
         var root_window = new Window_window1(self);
+        this._super(root_window);
         root_window.show();
 
-        this._super(root_window);
 
         // Do your stuff here
       }

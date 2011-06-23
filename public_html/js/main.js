@@ -90,6 +90,10 @@
               } catch ( ex ) {
                 try {
                   _Desktop.addWindow(new CrashDialog(application, ex.message, ex.stack));
+                  try {
+                    application._running = true; // Workaround
+                    application.kill();
+                  } catch ( eee ) {}
                 } catch ( ee ) {
                   API.system.dialog("error", "Application '" + app_name + "' has crashed with error '" + ex + "'!");
                 }

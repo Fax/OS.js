@@ -232,9 +232,8 @@ var ApplicationTerminal = (function($, undefined) {
         var self = this;
 
         var root_window = new Window_window1();
-        root_window.show(self);
-
         this._super(root_window);
+        root_window.show(self);
 
         // Do your stuff here
       }
