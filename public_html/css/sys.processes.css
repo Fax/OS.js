@@ -57,3 +57,9 @@
 .SystemProcesses .Locked .Name {
   font-weight : bold;
 }
+.SystemProcesses td {
+  padding : 5px;
+}
+.SystemProcesses img {
+  vertical-align : middle;
+}

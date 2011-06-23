@@ -152,6 +152,17 @@
     color : #222;
   }
 
+  .GtkIconView table {
+    border-collapse : collapse;
+  }
+
+  .GtkIconView .Even {
+    background : #fff;
+  }
+  .GtkIconView .Odd {
+    background : #e6e6e6;
+  }
+
 /* GtkStatusbar */
 .GtkStatusbar {
   height : 10px;

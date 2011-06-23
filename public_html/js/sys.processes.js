@@ -76,6 +76,7 @@ var SystemProcesses = (function($, undefined) {
               p = list[x];
 
               row = $(sprintf("<tr><td class=\"PID\">%s</td><td class=\"Name\"><img alt=\"\" src=\"/img/icons/16x16/%s\" />&nbsp; %s</td><td class=\"Alive\">%sms</td><td class=\"Oper\"><img alt=\"\" src=\"/img/icons/16x16/actions/stop.png\" class=\"TT\" title=\"Kill process\" /></td></tr>", p.pid, p.icon, p.title || p.name, p.time));
+              row.addClass(x%2 ? "Odd" : "Even");
               if ( p.locked ) {
                 row.find(".TT").hide();
                 row.addClass("Locked");
