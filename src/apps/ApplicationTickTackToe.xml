@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application name="Viewer" file="ApplicationTickTackToe.class.php" schema="ApplicationTickTackToe.glade" category="games">
+  <property name="enabled">true</property>
+  <property name="title">Tick-tack-toe</property>
+  <property name="icon">/img/app.ticktacktoe/ttt.png</property>
+  <property name="system">false</property>
+
+  <resource>app.ticktacktoe.css</resource>
+  <resource>app.ticktacktoe.js</resource>
+</application>

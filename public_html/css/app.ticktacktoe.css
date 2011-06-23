@@ -1,0 +1,40 @@
+@charset "UTF-8";
+/**
+ * Application: ApplicationTickTackToe
+ *
+ * @package ajwm.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ */
+
+.ApplicationTickTackToe {
+
+}
+
+.ApplicationTickTackToe .fixed1 {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 0px;
+}
+
+.ApplicationTickTackToe .Table {
+  width : 100%;
+  height : 100%;
+  margin : -1px;
+}
+.ApplicationTickTackToe .Table td {
+  width : 33%;
+  height : 33%;
+  border : 1px solid;
+  vertical-align : middle;
+  text-align : center;
+  font-size : 80px;
+  font-family : Monospace;
+}
+.ApplicationTickTackToe .Table td.Player {
+  color : blue;
+}
+.ApplicationTickTackToe .Table td.Computer {
+  color : red;
+}

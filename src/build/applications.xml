@@ -60,6 +60,13 @@
       <property name="properties"><![CDATA[{"type":"window","title":"User Information","icon":"apps\/user-info.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":400,"height":250,"gravity":"center"}]]></property>
     </window>
   </application>
+  <application name="Viewer" title="Tick-tack-toe" icon="/img/app.ticktacktoe/ttt.png" system="false" category="games" class="ApplicationTickTackToe" file="ApplicationTickTackToe.class.php">
+    <window id="window1">
+      <property name="properties"><![CDATA[{"type":"window","title":"Tick-tack-toe","icon":"\/img\/app.ticktacktoe\/ttt.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":440,"height":440,"gravity":""}]]></property>
+    </window>
+    <resource>app.ticktacktoe.css</resource>
+    <resource>app.ticktacktoe.js</resource>
+  </application>
   <application name="Draw" title="Draw" icon="categories/gnome-graphics.png" system="false" category="graphics" class="ApplicationDraw" file="ApplicationDraw.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"Draw","icon":"categories\/gnome-graphics.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":800,"height":500,"gravity":""}]]></property>
