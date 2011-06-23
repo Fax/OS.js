@@ -98,6 +98,7 @@
   margin : 0;
   padding : 0;
   text-align : right;
+  margin-top : 10px;
 }
 
   .GtkButtonBox li {
@@ -371,7 +372,7 @@
     left : 0px;
     bottom : 0px;
     z-index : 2;
-    margin : 10px;
+    margin : 0;
   }
 
     .GtkNotebook .ui-tabs-nav {

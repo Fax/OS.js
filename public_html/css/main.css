@@ -535,9 +535,6 @@ input.Disabled {
   text-align : center;
 }
 
-.Window .ui-tabs {
-  margin : 10px;
-}
 /*
 .Window .ui-tabs,
 .Window .ui-tabs-panel,
