@@ -40,8 +40,8 @@ class Glade
       "gobject" => true
     ),
     "GtkLabel" => Array(
-      "element" => "div",
-      "gobject" => true
+      "element" => "div"/*,
+      "gobject" => true*/
     ),
     "GtkColorButton" => Array(
       "element" => "div",
@@ -62,7 +62,7 @@ class Glade
       "element" => "table"
     ),
     "GtkButtonBox" => Array(
-      "element" => "table"
+      "element" => "ul"
     ),
 
     "GtkCheckButton" => Array(
@@ -73,16 +73,16 @@ class Glade
     ),
 
     "GtkComboBox" => Array(
-      "element" => "select",
-      "gobject" => true
+      "element" => "select"/*,
+      "gobject" => true*/
     ),
 
     "GtkToolItemGroup" => Array(
       "element" => "button"
     ),
     "GtkButton" => Array(
-      "element" => "button",
-      "gobject" => true
+      "element" => "button"/*,
+      "gobject" => true*/
     ),
     "GtkTextView" => Array(
       "element" => "textarea",
@@ -127,10 +127,18 @@ class Glade
     "GtkNotebook" => Array(
       "element" => "div",
       "inner"   => "ul"
+    ),
+
+    "GtkFileChooserButton" => Array(
+      "element" => "div"
     )
   );
 
   protected static $Stock = Array(
+    "gtk-apply" => Array(
+      "label" => "Apply",
+      "icon" => "actions/gtk-save.png"
+    ),
     "gtk-cancel" => Array(
       "label" => "Cancel",
       "icon" => "actions/gtk-cancel.png"
@@ -217,6 +225,8 @@ class Glade
         "gravity"         => ""
       );
 
+      $rstyles = array();
+
       foreach ( $root->property as $p ) {
         $pv = (string) $p;
         switch ( (string) $p['name'] ) {
@@ -254,6 +264,12 @@ class Glade
               $properties['skip_pager'] = true;
             }
           break;
+
+          case "border_width" :
+            if ( (int) $pv > 0 ) {
+              $rstyles[] = "padding:{$pv}px";
+            }
+          break;
         }
       }
 
@@ -271,6 +287,10 @@ class Glade
 
       $n_content = $doc->createElement("div");
       $n_content->setAttribute("class", implode(" ", $classes));
+
+      if ( $rstyles )  {
+        $n_content->setAttribute("style", implode(";", $rstyles));
+      }
 
       $n_window->appendChild($n_content);
 
@@ -352,6 +372,7 @@ class Glade
 
           // Create HTML node
           $node = $doc->createElement($node_type);
+          $tab = null;
 
           if ( $class == "GtkCheckButton" ) {
             //$chk = $doc->createElement("input");
@@ -367,17 +388,35 @@ class Glade
             $node->appendChild(new DomText(end($ex)));
           } else if ( $class == "GtkNotebook" ) {
             // FIXME
+          } else if ( $class == "GtkFileChooserButton" ) {
+            $text = $doc->createElement("input");
+            $text->setAttribute("type", "text");
+            $btn = $doc->createElement("button");
+            $btn->setAttribute("class", "GtkFileChooserButton");
+            $btn->appendChild(new DomText("..."));
+            $fake = $doc->createElement("input");
+            $fake->setAttribute("type", "hidden");
+            $fake->setAttribute("style", "display:none;");
+
+            $node->appendChild($text);
+            $node->appendChild($btn);
+            $node->appendChild($fake);
           } else {
             if ( isset($c['type']) && ((string)$c['type'] == "tab") ) {
               $append_root = $doc_node->getElementsByTagName("ul")->item(0); //->appendChild($li);
               $outer = $doc->createElement("li");
               $advanced_ui = true;
               $tabbed_ui = "tab-" . (self::$Counter++);
+
+              if ( ($int = array_search("GtkObject", $classes)) !== false ) {
+                unset($classes[$int]);
+              }
             } else {
               if ( $gl_node['class'] == "GtkNotebook" ) {
                 $advanced_ui = true;
                 $elid = "tab-" . (self::$Counter);
-                $classes[] = "GtkTab";
+                $tab = $doc->createElement("div");
+                $tab->setAttribute("class", "GtkTab");
               }
             }
           }
@@ -515,6 +554,12 @@ class Glade
                     $node->appendChild(self::_getHotkeyed($doc, $pv));
                   }
                   break;
+
+                case "border_width" :
+                  if ( (int) $pv > 0 ) {
+                    $styles[] = "padding:{$pv}px";
+                  }
+                break;
               }
             }
           }
@@ -562,49 +607,86 @@ class Glade
               }
             }
 
-            if ( $orient != "Vertical" ) {
-              if ( !($temp = $doc_node->getElementsByTagName("tr")->item(0)) ) {
+            if ( $append_root->tagName == "ul" ) {
+              $li = $doc->createElement("li");
+
+              if ( $styles ) {
+                $node->setAttribute("style", implode(";", $styles));
+              }
+
+              $append_node = $node;
+              if ( $tab ) {
+                $tab->appendChild($node);
+                $tab->setAttribute("id", $elid);
+                $append_node = $tab;
+              } else {
+                if ( $elid ) {
+                  $node->setAttribute("id", $elid);
+                }
+              }
+
+              if ( $outer ) {
+                $outer->appendChild($append_node);
+                $li->appendChild($outer);
+              } else {
+                $li->appendChild($append_node);
+              }
+
+              $append_root->appendChild($li);
+            } else {
+
+              if ( $orient != "Vertical" ) {
+                if ( !($temp = $doc_node->getElementsByTagName("tr")->item(0)) ) {
+                  $temp = $doc->createElement("tr");
+                  $append_root->appendChild($temp);
+                }
+              } else {
                 $temp = $doc->createElement("tr");
                 $append_root->appendChild($temp);
               }
-            } else {
-              $temp = $doc->createElement("tr");
-              $append_root->appendChild($temp);
-            }
 
 
-            $temp2 = $doc->createElement("td");
-            $temp2->setAttribute("class", implode(" ", $oclasses));
-            $temp3 = $doc->createElement("div");
-            $temp3->setAttribute("class", "TableCellWrap");
+              $temp2 = $doc->createElement("td");
+              $temp2->setAttribute("class", implode(" ", $oclasses));
+              $temp3 = $doc->createElement("div");
+              $temp3->setAttribute("class", "TableCellWrap");
 
-            if ( $styles ) {
-              $temp2->setAttribute("style", implode(";", $styles));
+              if ( $styles ) {
+                $temp2->setAttribute("style", implode(";", $styles));
+              }
+              if ( $elid ) {
+                $temp2->setAttribute("id", $elid);
+              }
+              if ( $outer ) {
+                $outer->appendChild($node);
+                $temp3->appendChild($outer);
+              } else {
+                $temp3->appendChild($node);
+              }
+              $temp2->appendChild($temp3);
+              $temp->appendChild($temp2);
             }
-            if ( $elid ) {
-              $temp2->setAttribute("id", $elid);
-            }
-            if ( $outer ) {
-              $outer->appendChild($node);
-              $temp3->appendChild($outer);
-            } else {
-              $temp3->appendChild($node);
-            }
-            $temp2->appendChild($temp3);
-            $temp->appendChild($temp2);
           } else {
             if ( $styles ) {
               $node->setAttribute("style", implode(";", $styles));
             }
-            if ( $elid ) {
-              $node->setAttribute("id", $elid);
+
+            $append_node = $node;
+            if ( $tab ) {
+              $tab->appendChild($node);
+              $tab->setAttribute("id", $elid);
+              $append_node = $tab;
+            } else {
+              if ( $elid ) {
+                $node->setAttribute("id", $elid);
+              }
             }
 
             if ( $outer ) {
-              $outer->appendChild($node);
+              $outer->appendChild($append_node);
               $append_root->appendChild($outer);
             } else {
-              $append_root->appendChild($node);
+              $append_root->appendChild($append_node);
             }
           }
 

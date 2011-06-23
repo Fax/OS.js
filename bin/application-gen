@@ -210,6 +210,21 @@ EOJAVASCRIPT;
         this.\$element.find(".ActionClose").click();
 
 EOJAVASCRIPT;
+      } else {
+        if ( $ev_type == "file-set" ) {
+          $ev_code = <<<EOJAVASCRIPT
+
+        var my_callback = function(fname) {}; // FIXME
+        var my_mimes    = []; // FIXME
+
+        this.app.createFileDialog(function(fname) {
+          my_callback(fname);
+
+          //self._argv['path'] = fname;
+        }, my_mimes);
+
+EOJAVASCRIPT;
+        }
       }
 
       $js_methods .= <<<EOJAVASCRIPT
@@ -223,6 +238,15 @@ EOJAVASCRIPT;
 
 EOJAVASCRIPT;
 
+      if ( $ev_type == "file-set" ) {
+            $js_run .= <<<EOJAVASCRIPT
+
+          el.find(".{$obj} button").click(function(ev) {
+            self.Event{$ev_handler}(this, ev);
+          });
+
+EOJAVASCRIPT;
+      } else {
 
             $js_run .= <<<EOJAVASCRIPT
 
@@ -231,7 +255,7 @@ EOJAVASCRIPT;
           });
 
 EOJAVASCRIPT;
-
+      }
 
     }
   }

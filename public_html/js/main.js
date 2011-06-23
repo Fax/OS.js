@@ -2475,18 +2475,6 @@
           });
         }
 
-
-        //
-        // Box factors
-        //
-
-        el.find("td.Fill").each(function() {
-          if ( !$(this).hasClass("Expand") ) {
-            var height = parseInt($(this).find(":first-child").height(), 10);
-            $(this).parent().css("height", height + "px");
-          }
-        });
-
         //
         // Elements
         //
@@ -2534,6 +2522,24 @@
         });
 
         el.find(".GtkNotebook").tabs();
+
+
+        el.find(".GtkFileChooserButton input[type=text]").attr("disabled", "disabled");
+
+        //
+        // Box factors (LAST!)
+        //
+
+        setTimeout(function() {
+          el.find("td.Fill").each(function() {
+            if ( !$(this).hasClass("Expand") ) {
+              var height = parseInt($(this).find(":first-child").height(), 10);
+              if ( height > 0 ) {
+                $(this).parent().css("height", height + "px");
+              }
+            }
+          });
+        },0);
       }
 
       return el;

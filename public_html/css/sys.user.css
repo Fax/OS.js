@@ -25,14 +25,6 @@
   padding : 5px;
 }
 
-.SystemUser .notepad1 li.ui-tabs-selected {
-  background : #fff;
-}
-
-.SystemUser .GtkTab,
-.SystemUser .GtkTab {
-  background : #fff;
-}
 .SystemUser .fixed2 {
   overflow-y : auto;
 }
