@@ -2150,6 +2150,8 @@
           }
         }
 
+        this._gravitate();
+
         this._created = true;
 
         console.group("Window::" + this._name + "::create()");
