@@ -22,6 +22,41 @@ $build = isset($argv[1]) && $argv[1] == "build";
 
 $root_node = $doc->createElement("applications");
 
+function create_php($cname) {
+  return <<<EOPHP
+<?php
+/*!
+ * @file
+ * Contains {$cname} Class
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @license GPLv3 (see http://www.gnu.org/licenses/gpl-3.0.txt)
+ * @created 2011-05-23
+ */
+
+/**
+ * {$cname} Class
+ *
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @package ajwm.Applications
+ * @class
+ */
+class {$cname}
+  extends Application
+{
+
+  /**
+   * Create a new instance
+   */
+  public function __construct() {
+    parent::__construct();
+  }
+}
+
+
+?>
+EOPHP;
+}
+
 function create_js_root($cname, $windows) {
   $wins = implode("\n", $windows);
   $pre_code = "";
@@ -304,7 +339,9 @@ if ( $dh  = opendir($root) ) {
       $cname = str_replace(".xml", "", $filename);
       $class_file = (string) $xml['file'];
 
-      require_once PATH_APPS . "/{$class_file}";
+      if ( file_exists(PATH_APPS . "/{$class_file}") ) {
+        require_once PATH_APPS . "/{$class_file}";
+      }
 
       echo "Building {$filename} ($gfilename)...\n";
 
@@ -312,6 +349,7 @@ if ( $dh  = opendir($root) ) {
       $xml_app_icon   = Application::APPLICATION_ICON;
       $xml_app_cat    = "unknown";
       $xml_app_system = false;
+      $xml_app_file   = (string) $xml['file'];
 
       if ( isset($xml['category']) ) {
         $xml_app_cat = (string) $xml['category'];
@@ -415,6 +453,7 @@ if ( $dh  = opendir($root) ) {
         $script = create_js_root($cname, $wins);
         $style = create_css($cname);
         $html = implode("\n", $html);
+        $php = create_php($cname);
         /*
         $script_node = $doc->createElement("script");
         $script_node->appendChild($doc->createCDATASection($script));
@@ -431,10 +470,12 @@ if ( $dh  = opendir($root) ) {
         $css_path  = PATH_PROJECT_BUILD . "/apps/{$utype}.{$ucase}.css";
         $js_path   = PATH_PROJECT_BUILD . "/apps/{$utype}.{$ucase}.js";
         $html_path = PATH_PROJECT_BUILD . "/apps/{$utype}.{$ucase}.html";
+        $php_path  = PATH_PROJECT_BUILD . "/apps/{$xml_app_file}";
 
         file_put_contents($css_path, $style);
         file_put_contents($js_path, $script);
         file_put_contents($html_path, $html);
+        file_put_contents($php_path, $php);
 
         $root_node->appendChild($node);
         echo "\tSuccess!\n";

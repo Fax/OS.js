@@ -71,11 +71,12 @@ var SystemProcesses = (function($, undefined) {
             table2.find(".TableBody tbody").html("");
 
             var list = API.session.processes();
-            var p, row;
+            var p, row, icon;
             for ( var x = 0; x < list.length; x++ ) {
               p = list[x];
+              icon = p.icon.match(/^\/img/) ? p.icon : ("/img/icons/16x16/" + p.icon);
 
-              row = $(sprintf("<tr><td class=\"PID\">%s</td><td class=\"Name\"><img alt=\"\" src=\"/img/icons/16x16/%s\" />&nbsp; %s</td><td class=\"Alive\">%sms</td><td class=\"Oper\"><img alt=\"\" src=\"/img/icons/16x16/actions/stop.png\" class=\"TT\" title=\"Kill process\" /></td></tr>", p.pid, p.icon, p.title || p.name, p.time));
+              row = $(sprintf("<tr><td class=\"PID\">%s</td><td class=\"Name\"><img alt=\"\" src=\"%s\" />&nbsp; %s</td><td class=\"Alive\">%sms</td><td class=\"Oper\"><img alt=\"\" src=\"/img/icons/16x16/actions/stop.png\" class=\"TT\" title=\"Kill process\" /></td></tr>", p.pid, icon, p.title || p.name, p.time));
               row.addClass(x%2 ? "Odd" : "Even");
               if ( p.locked ) {
                 row.find(".TT").hide();

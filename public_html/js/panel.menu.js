@@ -14,9 +14,8 @@ var PanelItemMenu = (function($, undefined) {
         var it, li;
         for ( var i = 0; i < items.length; i++ ) {
           it = items[i];
-
           li = $("<li class=\"GtkImageMenuItem\"></li>");
-          li.append(sprintf("<img alt=\"\" src=\"/img/icons/16x16/%s\" /><span>%s</span>", it.icon, it.title));
+          li.append(sprintf("<img alt=\"\" src=\"%s\" /><span>%s</span>", it.icon, it.title));
           if ( it.items && it.items.length ) {
             li.addClass("Subbed");
             li.append(CreateMenu(it.items));
@@ -68,7 +67,7 @@ var PanelItemMenu = (function($, undefined) {
                   "method" : function() {
                     api.system.launch(apn);
                   },
-                  "icon" : o.icon
+                  "icon" : o.icon.match(/^\/img/) ? o.icon : ("/img/icons/16x16/" + o.icon)
                 });
               })(a);
             }
@@ -82,7 +81,7 @@ var PanelItemMenu = (function($, undefined) {
               menu_items.push({
                 "title" : cats[cat][0],
                 "items" : cats[cat][2],
-                "icon"  : cats[cat][1]
+                "icon"  : "/img/icons/16x16/" + cats[cat][1]
               });
             }
           }

@@ -40,7 +40,7 @@ var PanelItemWindowList = (function($, undefined) {
         if ( ev == "window_add" ) {
           if ( !document.getElementById(id) ) {
             var el = $("<div class=\"PanelItem Padded PanelItemWindow\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div>");
-            el.find("img").attr("src", "/img/icons/16x16/" + win._icon);
+            el.find("img").attr("src", win.getIcon());
             el.find("span").html(getTitle(win));
             el.attr("id", id);
             el.click(function() {

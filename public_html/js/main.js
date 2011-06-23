@@ -1919,7 +1919,7 @@
         if ( this._is_dialog ) {
           el.find(".DialogContent").html(this._content).addClass(this._is_dialog);
         } else {
-          el.find(".WindowTopInner img").attr("src", "/img/icons/16x16/" + this._icon);
+          el.find(".WindowTopInner img").attr("src", this.getIcon());
           el.find(".WindowContentInner").html(this._content);
 
           el.find(".WindowTopInner img").click(function(ev) {
@@ -2204,6 +2204,14 @@
 
     getTitle : function() {
       return this._title;
+    },
+
+    getIcon : function(size) {
+      size = size || "16x16";
+      if ( this._icon.match(/^\/img/) ) {
+        return this._icon;
+      }
+      return sprintf("/img/icons/%s/%s", size, this._icon);
     },
 
     //

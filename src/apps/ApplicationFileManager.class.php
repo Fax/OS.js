@@ -42,12 +42,16 @@ class ApplicationFileManager
       if ( ($items = ApplicationVFS::ls($path, $ignores)) !== false ) {
         $i = 0;
         foreach ( $items as $file => $info ) {
+          $icon = "/img/icons/32x32/{$info['icon']}";
+          if ( preg_match("/^\/img/", $info['icon']) ) {
+            $icon = $info['icon'];
+          }
 
           if ( $view == "icon" ) {
             $result[] = <<<EOHTML
         <li class="type_{$info['type']}">
           <div class="Inner">
-            <div class="Image"><img alt="" src="/img/icons/32x32/{$info['icon']}" /></div>
+            <div class="Image"><img alt="" src="{$icon}" width="32" height="32" /></div>
             <div class="Title">{$file}</div>
             <div class="Info" style="display:none;">
               <input type="hidden" name="type" value="{$info['type']}" />
@@ -66,7 +70,7 @@ EOHTML;
             $mime = $info['type'] == "dir" ? "" : $info['mime'];
             $result[] = <<<EOHTML
         <tr class="type_{$info['type']} {$class} Inner">
-          <td class="Image Space First"><img alt="" src="/img/icons/16x16/{$info['icon']}" /></td>
+          <td class="Image Space First"><img alt="" src="{$icon}" width="16" height="16" /></td>
           <td class="Title Space">{$file}</td>
           <td class="Size Space">{$size}</td>
           <td class="Type Space Last">{$mime}</td>
