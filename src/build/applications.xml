@@ -7,7 +7,7 @@
     <resource>app.filemanager.css</resource>
     <resource>app.filemanager.js</resource>
   </application>
-  <application name="Viewer" title="Viewer" icon="categories/gnome-multimedia.png" system="false" category="utilities" class="ApplicationViewer" file="ApplicationViewer.class.php">
+  <application name="Viewer" title="Viewer" icon="categories/gnome-multimedia.png" system="false" category="multimedia" class="ApplicationViewer" file="ApplicationViewer.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"Viewer","icon":"categories\/gnome-multimedia.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":300,"height":200,"gravity":""}]]></property>
     </window>

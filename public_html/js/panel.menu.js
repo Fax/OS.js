@@ -49,29 +49,21 @@ var PanelItemMenu = (function($, undefined) {
           var o;
           var apps = api.session.applications();
           var cats = {
-            "utilities" : [],
-            "graphics"  : [],
-            "system"    : [],
-            "unknown"   : []
-          };
-          var icons = {
-            "utilities" : "categories/applications-utilities.png",
-            "graphics"  : "categories/applications-graphics.png",
-            "system"    : "categories/applications-system.png",
-            "unknown"   : "categories/applications-development.png"
-          };
-          var labels = {
-            "utilities" : "Utilities",
-            "graphics"  : "Graphics",
-            "system"    : "System",
-            "unknown"   : "Unknown"
+            "development" : ["Development", "categories/applications-development.png", []],
+            "games"       : ["Games", "categories/applications-games.png", []],
+            "graphics"    : ["Graphics", "categories/applications-graphics.png", []],
+            "internet"    : ["Internet", "categories/applications-internet.png", []],
+            "multimedia"  : ["Multimedia", "categories/applications-multimedia.png", []],
+            "system"      : ["System", "categories/applications-system.png", []],
+            "utilities"   : ["Utilities", "categories/applications-utilities.png", []],
+            "unknown"     : ["Unknown", "categories/gnome-other.png", []]
           };
 
           for ( var a in apps ) {
             if ( apps.hasOwnProperty(a) ) {
               o = apps[a];
               (function(apn) {
-                cats[o.cat].push({
+                cats[o.cat][2].push({
                   "title" : o.title,
                   "method" : function() {
                     api.system.launch(apn);
@@ -86,11 +78,11 @@ var PanelItemMenu = (function($, undefined) {
         menu_items = [];
         for ( var cat in cats ) {
           if ( cats.hasOwnProperty(cat) ) {
-            if ( cats[cat].length ) {
+            if ( cats[cat][2].length ) {
               menu_items.push({
-                "title" : labels[cat],
-                "items" : cats[cat],
-                "icon"  : icons[cat]
+                "title" : cats[cat][0],
+                "items" : cats[cat][2],
+                "icon"  : cats[cat][1]
               });
             }
           }
