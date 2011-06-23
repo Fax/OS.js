@@ -427,3 +427,18 @@
 .GtkFileChooserButton {
 
 }
+  .GtkFileChooserButton table {
+    width : 100%;
+  }
+  .GtkFileChooserButton td.Input {
+    padding-right : 10px;
+  }
+  .GtkFileChooserButton td.Button {
+    width : 30px;
+  }
+  .GtkFileChooserButton input[type=text] {
+    width : 100%;
+  }
+  .GtkFileChooserButton button {
+    width : 100%;
+  }

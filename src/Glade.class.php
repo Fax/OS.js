@@ -398,9 +398,19 @@ class Glade
             $fake->setAttribute("type", "hidden");
             $fake->setAttribute("style", "display:none;");
 
-            $node->appendChild($text);
-            $node->appendChild($btn);
-            $node->appendChild($fake);
+            $table1 = $doc->createElement("table");
+            $row1   = $doc->createElement("tr");
+            $cell1  = $doc->createElement("td");
+            $cell1->setAttribute("class", "Input");
+            $cell2  = $doc->createElement("td");
+            $cell2->setAttribute("class", "Button");
+            $cell1->appendChild($text);
+            $cell1->appendChild($fake);
+            $cell2->appendChild($btn);
+            $row1->appendChild($cell1);
+            $row1->appendChild($cell2);
+            $table1->appendChild($row1);
+            $node->appendChild($table1);
           } else {
             if ( isset($c['type']) && ((string)$c['type'] == "tab") ) {
               $append_root = $doc_node->getElementsByTagName("ul")->item(0); //->appendChild($li);

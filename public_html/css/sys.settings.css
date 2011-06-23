@@ -11,6 +11,3 @@
 .SystemSettings .GtkComboBox {
   width : 100%;
 }
-.SystemSettings .GtkFileChooserButton input[type=text] {
-  width : 400px;
-}
