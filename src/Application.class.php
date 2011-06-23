@@ -69,7 +69,7 @@ abstract class Application
    */
   public static function Register($uuid, $instance) {
     if ( $uuid ) {
-      $_SESSION[$uuid] = $instance;
+      //$_SESSION[$uuid] = $instance;
       return true;
     }
     return false;
@@ -81,7 +81,7 @@ abstract class Application
    */
   public static function Flush($uuid) {
     if ( $uuid ) {
-      unset($_SESSION[$uuid]);
+      //unset($_SESSION[$uuid]);
       return true;
     }
     return false;

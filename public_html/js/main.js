@@ -3363,7 +3363,7 @@
       this._title    = title || "Configure " + this.type;
       this._content  = (copy || $("#OperationDialogPanelItem")).html();
       this._width    = 400;
-      this._height   = 170;
+      this._height   = 340;
     },
 
 
