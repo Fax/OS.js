@@ -2393,11 +2393,15 @@
       el = el || this.$element;
 
       if ( height ) {
+        height = height < 128 ? 128 : height;
+
         el.css("height", (height) + "px");
       } else {
         el.css("height", (this._height) + "px");
       }
       if ( width ) {
+        width = width < 128 ? 128 : width;
+
         el.css("width", (width) + "px");
       } else {
         el.css("width", (this._width) + "px");
