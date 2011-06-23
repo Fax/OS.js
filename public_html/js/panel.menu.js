@@ -128,32 +128,31 @@ var PanelItemMenu = (function($, undefined) {
             $(this).addClass("SubItem");
           }
 
-          $(this).click(function(ev) {
-            var t = $(ev.target || ev.srcElement);
+          $(this).hover(function(ev) {
             var c = $(this).find(".GtkMenu").first();
-
             if ( last_menu !== c ) {
               if ( $(this).hasClass("Level_1") ) {
                 $(this).parent().find(".GtkMenu").hide();
               }
             }
-            c.show();
-
-            last_menu = c;
-
-            ev.stopPropagation();
-            if ( !$(this).find(".GtkMenu").length ) {
-              el.find(".GtkMenu").hide();
+            last_menu = c.show().css({
+              'top'  : '0px',
+              'left' : $(this).parent().width() + 'px'
+            });
+          }, function() {
+            if ( last_menu ) {
+              last_menu.hide();
             }
           });
         });
 
         $(document).click(function(ev) {
           var t = $(ev.target || ev.srcElement);
-          if ( !$(t).closest(".GtkCustomMenu").get(0) || $(t).closest("li").hasClass("Level_1") ) {
+          if ( !$(t).closest(".GtkCustomMenu").get(0) || $(t).closest("li").hasClass("Level_2") ) {
             el.find(".GtkMenu").hide();
           }
         });
+
 
         return el;
       },
