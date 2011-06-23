@@ -1,5 +1,12 @@
 #!/usr/bin/env php
 <?php
+/**
+ * Convert Glade+XML into AJWM application
+ *
+ * TODO: ClorChooseButton as FileChoosButton
+ *
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ */
 
 require "header.php";
 
