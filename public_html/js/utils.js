@@ -421,6 +421,12 @@ function getTextareaCoordinates(txt) {
   return {'x' : col, 'y' : row, 'lines' : lcount, 'length' : len};
 }
 
+/**
+ * Get the directory name of a path
+ *
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @return String
+ */
 function dirname(dir) {
   if ( dir ) {
     var tmp = dir.split("/");

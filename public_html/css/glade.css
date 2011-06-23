@@ -373,31 +373,14 @@
       .GtkNotebook .ui-tabs-nav a {
         color : #222;
         font-weight : normal;
+        cursor : pointer !important;
       }
       .GtkNotebook .ui-tabs-nav .ui-tabs-selected a {
         font-weight : bold;
       }
 
-  /*
-  .GtkNotebook .ui-tabs,
-  .GtkNotebook .ui-tabs-panel {
-    padding : 0;
-    border : 0 none;
-    font-size : 12px;
-  }
-  .GtkNotebook .ui-tabs-panel {
-    padding : 10px;
-    overflow : hidden;
-  }
-  .GtkNotebook .ui-tabs li {
-    background : transparent;
-    border-color : #d1d4d7;
-  }
-    */
-
   .GtkNotebook .ui-tabs-nav .ui-state-default {
     background : transparent;
-    cursor : pointer;
     height : 28px;
     border-color : #d1d4d7;
   }
