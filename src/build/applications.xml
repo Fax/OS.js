@@ -27,7 +27,7 @@
   </application>
   <application name="Clock" title="Clock" icon="status/appointment-soon.png" system="false" category="utilities" class="ApplicationClock" file="ApplicationClock.class.php">
     <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"Clock","icon":"status\/appointment-soon.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":200,"height":200,"gravity":"center"}]]></property>
+      <property name="properties"><![CDATA[{"type":"window","title":"Clock","icon":"status\/appointment-soon.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":200,"height":230,"gravity":"center"}]]></property>
     </window>
     <resource>app.clock.css</resource>
     <resource>app.clock.js</resource>

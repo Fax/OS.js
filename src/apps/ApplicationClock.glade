@@ -7,7 +7,7 @@
     <property name="resizable">False</property>
     <property name="window_position">center</property>
     <property name="default_width">200</property>
-    <property name="default_height">200</property>
+    <property name="default_height">230</property>
     <child>
       <object class="GtkFixed" id="fixed1">
         <property name="visible">True</property>
