@@ -2488,6 +2488,9 @@
               }, function() {
                 $(this).find(".GtkMenu").first().hide();
               }).click(function(ev) {
+                if ( !$(this).hasClass("Subbed") ) {
+                  el.find(".GtkMenuItem .GtkMenu").hide();
+                }
                 ev.stopPropagation();
               });
             } else {
