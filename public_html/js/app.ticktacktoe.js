@@ -75,19 +75,19 @@ var ApplicationTickTackToe = (function($, undefined) {
         this.moves = 0;
 
         this.board = [
-          [-1, -1, -1],
-          [-1, -1, -1],
-          [-1, -1, -1]
+          ["", "", ""],
+          ["", "", ""],
+          ["", "", ""]
         ];
 
         var check = function() {
-          var ret = -1;
+          var ret = "";
           var x, y, sum;
 
           // Rows
           for ( y = 0; y < 3; y++ ) {
             sum = self.board[y][0] + self.board[y][1] + self.board[y][2];
-            if ( (sum % 3) === 0 ) {
+            if ( sum == "ooo" || sum == "xxx" ) {
               ret = sum;
               break;
             }
@@ -96,34 +96,39 @@ var ApplicationTickTackToe = (function($, undefined) {
           // Columns
           for ( x = 0; x < 3; x++ ) {
             sum = self.board[0][x] + self.board[1][x] + self.board[2][x];
-            if ( (sum % 3) === 0 ) {
+            if ( sum == "ooo" || sum == "xxx" ) {
               ret = sum;
               break;
             }
           }
 
           // Diagonal
-          if ( ret == -1 ) {
+          if ( !ret ) {
             sum = self.board[0][0] + self.board[1][1] + self.board[2][2];
-            if ( (sum % 3) === 0 ) {
+            if ( sum == "ooo" || sum == "xxx" ) {
               ret = sum;
             }
           }
-          if ( ret == -1 ) {
+          if ( !ret ) {
             sum = self.board[0][2] + self.board[1][1] + self.board[2][0];
-            if ( (sum % 3) === 0 ) {
+            if ( sum == "ooo" || sum == "xxx" ) {
               ret = sum;
             }
           }
 
           // Check result
-          if ( ret > 0 ) {
-            if ( ret === 3 ) {
-              alert("You won!");
+          if ( ret  ) {
+            if ( ret === "xxx" ) {
+              alert("Player 1 (x) won!");
             } else {
-              alert("You lost!");
+              alert("Player 2 (o) won!");
             }
 
+            return true;
+          }
+
+          if ( self.moves == 9 ) {
+            alert("Game over!");
             return true;
           }
 
@@ -131,6 +136,8 @@ var ApplicationTickTackToe = (function($, undefined) {
         };
 
         // Do your stuff here
+        var current = "x";
+
         var table = $("<table><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr></table>");
         table.addClass("Table");
         table.find("td").each(function(i) {
@@ -142,12 +149,14 @@ var ApplicationTickTackToe = (function($, undefined) {
               if ( !self.finished ) {
                 self.moves++;
 
-                $(this).append("X").addClass("Player");
+                $(this).append(current.toUpperCase()).addClass(current == "x" ? "Player" : "Computer");
 
-                self.board[y][x] = 1;
+                self.board[y][x] = current;
                 if ( check() ) {
                   self.finished = true;
                 }
+
+                current = current == "x" ? "o" : "x";
               }
 
             }
