@@ -1067,6 +1067,308 @@
   })();
 
   /////////////////////////////////////////////////////////////////////////////
+  // APPLICATION
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Application
+   * Basis for application (empty)
+   *
+   * @class
+   */
+  var Application = Process.extend({
+
+    /**
+     * Constructor
+     */
+    init : function(name, argv, restore) {
+      this._argv         = argv || {};
+      this._name         = name;
+      this._uuid         = null;
+      this._running      = false;
+      this._root_window  = null;
+      this._windows      = [];
+      this._storage      = {};
+      this._storage_on   = false;
+      this._compability  = [];
+
+      if ( restore === undefined || restore === true ) {
+        this._restoreStorage();
+      }
+
+      console.log("Application::" + this._name + "::NULL::init()");
+
+      this._super(name);
+    },
+
+    /**
+     * Destructor
+     */
+    destroy : function() {
+      var self = this;
+      if ( this._running ) {
+        if ( this._uuid ) {
+          $.post("/", {'ajax' : true, 'action' : 'flush', 'uuid' : self._uuid}, function(data) {
+            console.group("Application::" + self._name + "::" + self._uuid + "::destroy()");
+            console.log("flushed", data);
+            console.groupEnd();
+          });
+        }
+
+        this._saveStorage();
+
+        if ( this._root_window ) {
+          setTimeout(function() { // NOTE: Required!
+            for ( var i = 0; i < self._windows.length; i++ ) {
+              self._windows[i].close();
+            }
+
+            self._root_window.close();
+          }, 0);
+        }
+
+        console.log("Application::" + this._name + "::" + this._uuid + "::destroy()");
+
+        this._running = false;
+        this._storage = null;
+      }
+
+      this._super();
+    },
+
+    /**
+     * Run application
+     * @return void
+     */
+    run : function(root_window) {
+      var self = this;
+
+      if ( !this._running ) {
+        if ( root_window instanceof Window ) {
+          this._root_window = root_window;
+          this._proc_icon = root_window._icon;
+
+          root_window._bind("die", function() {
+            self._stop();
+          });
+        }
+
+        console.log("Application::" + this._name + "::" + this._uuid + "::run()");
+
+        this._running = true;
+      }
+    },
+
+    /**
+     * Create Dialog: Message
+     * @return void
+     */
+    createMessageDialog : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
+      this._addWindow(API.system.dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
+    },
+
+    /**
+     * Create Dialog: Color Chooser
+     * @return void
+     */
+    createColorDialog : function(color, callback) {
+      this._addWindow(API.system.dialog_color(color, function(rgb, hex) {
+        callback(rgb, hex);
+      }));
+    },
+
+    /**
+     * Create Dialog: Upload File
+     * @return void
+     */
+    createUploadDialog : function(dir, callback) {
+      this._addWindow(API.system.dialog_upload(dir, function() {
+        callback(dir);
+      }));
+    },
+
+    /**
+     * Create Dialog: File Operation Dialog
+     * @return void
+     */
+    createFileDialog : function(callback, mimes, type, dir) {
+      this._addWindow(API.system.dialog_file(function(file, mime) {
+        callback(file, mime);
+      }, mimes, type, dir));
+    },
+
+    /**
+     * Create Dialog: Launch Application
+     * @return void
+     */
+    createLaunchDialog : function(list, callback) {
+      this._addWindow(API.system.dialog_launch(list, function(app, def) {
+        callback(app, def);
+      }));
+    },
+
+    /**
+     * Create Dialog: Rename File
+     * @return void
+     */
+    createRenameDialog : function(dir, callback) {
+      this._addWindow(API.system.dialog_rename(dir, function(fname) {
+        callback(fname);
+      }));
+    },
+
+    /**
+     * Check Application compabilty list and throw errors if any
+     * @return void
+     * @throws Exception
+     */
+    _checkCompability : function() {
+      var error;
+
+      for ( var i = 0; i < this._compability.length; i++ ) {
+        switch ( this._compability[i] ) {
+          case "canvas" :
+            if ( !SUPPORT_CANVAS ) {
+              error = "<canvas>";
+            }
+          break;
+          case "audio" :
+            if ( !SUPPORT_AUDIO ) {
+              error = "<audio>";
+            }
+          break;
+          case "video" :
+            if ( !SUPPORT_VIDEO ) {
+              error = "<video>";
+            }
+          break;
+
+          case "localStorage" :
+            if ( !SUPPORT_LSTORAGE ) {
+              error = "localStorage()";
+            }
+          break;
+          case "sessionStorage" :
+            if ( !SUPPORT_SSTORAGE ) {
+              error = "sessionStorage()";
+            }
+          break;
+          case "globalStorage" :
+            if ( !SUPPORT_GSTORAGE ) {
+              error = "globalStorage()";
+            }
+          break;
+          case "database" :
+          case "databaseStorage" :
+          case "openDatabase" :
+            if ( !SUPPORT_DSTORAGE ) {
+              error = "databaseStorage()";
+            }
+          break;
+
+          default :
+            error = false;
+          break;
+        }
+      }
+
+      if ( error ) {
+        throw ({'message' : "Your browser does not support '" + error + "'", 'stack' : "Application::_checkCompability(): Application name: " + app_name});
+      }
+    },
+
+    /**
+     * Add a new window to application
+     * @return void
+     */
+    _addWindow : function(win) {
+      this._windows.push(win);
+    },
+
+    /**
+     * Stop application
+     * @return void
+     */
+    _stop : function() {
+      if ( this._running ) {
+        this.destroy();
+      }
+    },
+
+    /**
+     * Save Application Storage
+     * @return void
+     */
+    _saveStorage : function() {
+      if ( this._name && this._storage_on ) {
+        _Settings.saveApp(this._name, this._storage);
+      }
+    },
+
+    /**
+     * Load Application Storage
+     * @return void
+     */
+    _restoreStorage : function() {
+      if ( this._name ) {
+        this._storage = _Settings.loadApp(this._name);
+        this._storage_on = true;
+      }
+    },
+
+    /**
+     * Clear Application Storage
+     * @return void
+     */
+    _flushStorage : function() {
+      if ( this._name ) {
+        this._storage = {};
+
+        _Settings.saveApp(this._name, this._storage);
+      }
+    },
+
+    /**
+     * Perform Application Event (AJAX-call to Server-Side)
+     * @return void
+     */
+    _event : function(ev, args, callback) {
+      var self = this;
+      if ( this._uuid ) {
+        var pargs = {'ajax' : true, 'action' : 'event', 'cname' : self._name ,'uuid' : self._uuid, 'instance' : {'name' : self._name, 'action' : ev, 'args' : args }};
+        $.post("/", pargs, function(data) {
+
+          console.group("Application::" + self._name + "::" + self._uuid + "::_event()");
+          console.log(ev, args, data);
+          console.groupEnd();
+
+          callback(data.result, data.error);
+        });
+      }
+    },
+
+    /**
+     * Get current Application session data
+     * @return JSON
+     */
+    _getSession : function() {
+      if ( this._root_window ) {
+        var win = this._root_window._getSession();
+        if ( win !== false ) {
+          return {
+            "name"    : this._name,
+            "argv"    : this._argv,
+            "windows" : [win]
+          };
+        }
+      }
+
+      return false;
+    }
+
+  });
+
+  /////////////////////////////////////////////////////////////////////////////
   // DESKTOP
   /////////////////////////////////////////////////////////////////////////////
 
@@ -3757,308 +4059,6 @@
       var self = this;
       this._super(id, mcallback);
       this.clb_create(self);
-    }
-
-  });
-
-  /////////////////////////////////////////////////////////////////////////////
-  // APPLICATION
-  /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Application
-   * Basis for application (empty)
-   *
-   * @class
-   */
-  var Application = Process.extend({
-
-    /**
-     * Constructor
-     */
-    init : function(name, argv, restore) {
-      this._argv         = argv || {};
-      this._name         = name;
-      this._uuid         = null;
-      this._running      = false;
-      this._root_window  = null;
-      this._windows      = [];
-      this._storage      = {};
-      this._storage_on   = false;
-      this._compability  = [];
-
-      if ( restore === undefined || restore === true ) {
-        this._restoreStorage();
-      }
-
-      console.log("Application::" + this._name + "::NULL::init()");
-
-      this._super(name);
-    },
-
-    /**
-     * Destructor
-     */
-    destroy : function() {
-      var self = this;
-      if ( this._running ) {
-        if ( this._uuid ) {
-          $.post("/", {'ajax' : true, 'action' : 'flush', 'uuid' : self._uuid}, function(data) {
-            console.group("Application::" + self._name + "::" + self._uuid + "::destroy()");
-            console.log("flushed", data);
-            console.groupEnd();
-          });
-        }
-
-        this._saveStorage();
-
-        if ( this._root_window ) {
-          setTimeout(function() { // NOTE: Required!
-            for ( var i = 0; i < self._windows.length; i++ ) {
-              self._windows[i].close();
-            }
-
-            self._root_window.close();
-          }, 0);
-        }
-
-        console.log("Application::" + this._name + "::" + this._uuid + "::destroy()");
-
-        this._running = false;
-        this._storage = null;
-      }
-
-      this._super();
-    },
-
-    /**
-     * Run application
-     * @return void
-     */
-    run : function(root_window) {
-      var self = this;
-
-      if ( !this._running ) {
-        if ( root_window instanceof Window ) {
-          this._root_window = root_window;
-          this._proc_icon = root_window._icon;
-
-          root_window._bind("die", function() {
-            self._stop();
-          });
-        }
-
-        console.log("Application::" + this._name + "::" + this._uuid + "::run()");
-
-        this._running = true;
-      }
-    },
-
-    /**
-     * Create Dialog: Message
-     * @return void
-     */
-    createMessageDialog : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
-      this._addWindow(API.system.dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
-    },
-
-    /**
-     * Create Dialog: Color Chooser
-     * @return void
-     */
-    createColorDialog : function(color, callback) {
-      this._addWindow(API.system.dialog_color(color, function(rgb, hex) {
-        callback(rgb, hex);
-      }));
-    },
-
-    /**
-     * Create Dialog: Upload File
-     * @return void
-     */
-    createUploadDialog : function(dir, callback) {
-      this._addWindow(API.system.dialog_upload(dir, function() {
-        callback(dir);
-      }));
-    },
-
-    /**
-     * Create Dialog: File Operation Dialog
-     * @return void
-     */
-    createFileDialog : function(callback, mimes, type, dir) {
-      this._addWindow(API.system.dialog_file(function(file, mime) {
-        callback(file, mime);
-      }, mimes, type, dir));
-    },
-
-    /**
-     * Create Dialog: Launch Application
-     * @return void
-     */
-    createLaunchDialog : function(list, callback) {
-      this._addWindow(API.system.dialog_launch(list, function(app, def) {
-        callback(app, def);
-      }));
-    },
-
-    /**
-     * Create Dialog: Rename File
-     * @return void
-     */
-    createRenameDialog : function(dir, callback) {
-      this._addWindow(API.system.dialog_rename(dir, function(fname) {
-        callback(fname);
-      }));
-    },
-
-    /**
-     * Check Application compabilty list and throw errors if any
-     * @return void
-     * @throws Exception
-     */
-    _checkCompability : function() {
-      var error;
-
-      for ( var i = 0; i < this._compability.length; i++ ) {
-        switch ( this._compability[i] ) {
-          case "canvas" :
-            if ( !SUPPORT_CANVAS ) {
-              error = "<canvas>";
-            }
-          break;
-          case "audio" :
-            if ( !SUPPORT_AUDIO ) {
-              error = "<audio>";
-            }
-          break;
-          case "video" :
-            if ( !SUPPORT_VIDEO ) {
-              error = "<video>";
-            }
-          break;
-
-          case "localStorage" :
-            if ( !SUPPORT_LSTORAGE ) {
-              error = "localStorage()";
-            }
-          break;
-          case "sessionStorage" :
-            if ( !SUPPORT_SSTORAGE ) {
-              error = "sessionStorage()";
-            }
-          break;
-          case "globalStorage" :
-            if ( !SUPPORT_GSTORAGE ) {
-              error = "globalStorage()";
-            }
-          break;
-          case "database" :
-          case "databaseStorage" :
-          case "openDatabase" :
-            if ( !SUPPORT_DSTORAGE ) {
-              error = "databaseStorage()";
-            }
-          break;
-
-          default :
-            error = false;
-          break;
-        }
-      }
-
-      if ( error ) {
-        throw ({'message' : "Your browser does not support '" + error + "'", 'stack' : "Application::_checkCompability(): Application name: " + app_name});
-      }
-    },
-
-    /**
-     * Add a new window to application
-     * @return void
-     */
-    _addWindow : function(win) {
-      this._windows.push(win);
-    },
-
-    /**
-     * Stop application
-     * @return void
-     */
-    _stop : function() {
-      if ( this._running ) {
-        this.destroy();
-      }
-    },
-
-    /**
-     * Save Application Storage
-     * @return void
-     */
-    _saveStorage : function() {
-      if ( this._name && this._storage_on ) {
-        _Settings.saveApp(this._name, this._storage);
-      }
-    },
-
-    /**
-     * Load Application Storage
-     * @return void
-     */
-    _restoreStorage : function() {
-      if ( this._name ) {
-        this._storage = _Settings.loadApp(this._name);
-        this._storage_on = true;
-      }
-    },
-
-    /**
-     * Clear Application Storage
-     * @return void
-     */
-    _flushStorage : function() {
-      if ( this._name ) {
-        this._storage = {};
-
-        _Settings.saveApp(this._name, this._storage);
-      }
-    },
-
-    /**
-     * Perform Application Event (AJAX-call to Server-Side)
-     * @return void
-     */
-    _event : function(ev, args, callback) {
-      var self = this;
-      if ( this._uuid ) {
-        var pargs = {'ajax' : true, 'action' : 'event', 'cname' : self._name ,'uuid' : self._uuid, 'instance' : {'name' : self._name, 'action' : ev, 'args' : args }};
-        $.post("/", pargs, function(data) {
-
-          console.group("Application::" + self._name + "::" + self._uuid + "::_event()");
-          console.log(ev, args, data);
-          console.groupEnd();
-
-          callback(data.result, data.error);
-        });
-      }
-    },
-
-    /**
-     * Get current Application session data
-     * @return JSON
-     */
-    _getSession : function() {
-      if ( this._root_window ) {
-        var win = this._root_window._getSession();
-        if ( win !== false ) {
-          return {
-            "name"    : this._name,
-            "argv"    : this._argv,
-            "windows" : [win]
-          };
-        }
-      }
-
-      return false;
     }
 
   });
