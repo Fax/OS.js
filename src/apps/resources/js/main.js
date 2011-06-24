@@ -1,20 +1,6 @@
 /**
  * JavaScript Window Manager
  *
- * TODOs:
- *   TODO: Sortable panel items (use absolute, snap to direction as panel does)
- *   TODO: Rewrite settings manager
- *   TODO: Refactor ContextMenu
- *   TODO: Only one menu at a time, Global var, Global click handler
- *   FIXME: replace parents() with closest()
- *
- * Release:
- *   TODO: Convert Dialog to Glade and Separate JS files
- *   TODO: Check and fix Window::onblur() for all applications
- *
- * Browsers:
- *   FIXME: Various Opera bugs
- *
  * Creates a desktop environment inside the browser.
  * Applications can be loaded via the server.
  * Events and System calls are performed via the API

@@ -54,9 +54,20 @@ Built-In Applications, Dialogs and Panel Items:
 
 TODOs:
 -------------------------------------------------------------------------------
-* Core: Login Screen
-* Core: PNG Cursors
-* Panel: Finish up panel (Multiple, Sorting of Elements)
+- TODOs:
+*   TODO: Sortable panel items (use absolute, snap to direction as panel does)
+*   TODO: Rewrite settings manager
+*   TODO: Refactor ContextMenu
+*   TODO: Only one menu at a time, Global var, Global click handler
+*   FIXME: replace parents() with closest()
+
+- Others:
+*   TODO: Separate panels into separate resources
+*   TODO: Check and fix Window::onblur() for all applications
+
+- Browsers:
+*   FIXME: Various Opera CSS bugs
+*   FIXME: IE <=8 CSS Not correct anymore
 
 Building applications:
 -------------------------------------------------------------------------------
