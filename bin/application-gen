@@ -113,6 +113,7 @@ var {$cname} = (function(\$, undefined) {
 
       init : function() {
         this._super("{$cname}", argv);
+        this._compability = []; // Place compability tags here (HTML5/JavaScript)
       },
 
       destroy : function() {

@@ -321,16 +321,6 @@ function setSelectionRangeX(input, selectionStart, selectionEnd) {
 }
 
 /**
- * Check if browser supports localStorage
- *
- * @author Anders Evenrud <andersevenrud@gmail.com>
- * @return bool
- */
-function supports_html5_storage() {
-  return ('localStorage' in window) && window['localStorage'] !== null;
-}
-
-/**
  * Capitalize first letter
  *
  * @author Anders Evenrud <andersevenrud@gmail.com>

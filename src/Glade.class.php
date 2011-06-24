@@ -49,7 +49,7 @@ class Glade
     ),
 
     "GtkDrawingArea" => Array(
-      "element" => "canvas",
+      "element" => "div",
       "classes" => Array("Canvas")
     ),
 

@@ -199,6 +199,7 @@ var ApplicationViewer = (function($, undefined) {
 
       init : function() {
         this._super("ApplicationViewer", argv);
+        this._compability = ["audio", "video"];
       },
 
       destroy : function() {

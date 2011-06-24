@@ -57,6 +57,14 @@
   var TEMP_COUNTER     = 1;
   var TOOLTIP_TIMEOUT  = 300;
 
+  var SUPPORT_LSTORAGE = (('localStorage' in window) && window['localStorage'] !== null);
+  var SUPPORT_SSTORAGE = (('sessionStorage' in window) && window['sessionStorage'] !== null);
+  var SUPPORT_GSTORAGE = (('globalStorage' in window) && window['globalStorage'] !== null);
+  var SUPPORT_DSTORAGE = (('openDatabase' in window) && window['openDatabase'] !== null);
+  var SUPPORT_CANVAS   = (!!document.createElement('canvas').getContext);
+  var SUPPORT_VIDEO    = (!!document.createElement('video').canPlayType);
+  var SUPPORT_AUDIO    = (!!document.createElement('audio').canPlayType);
+
   /**
    * Local references
    */
@@ -70,6 +78,19 @@
   var _TopIndex        = (ZINDEX_WINDOW + 1);
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);
 
+
+  function CrashApplication(app_name, application, ex) {
+    try {
+      _Desktop.addWindow(new CrashDialog(application, ex.message, ex.stack));
+      try {
+        application._running = true; // Workaround
+        application.kill();
+      } catch ( eee ) {}
+    } catch ( ee ) {
+      API.system.dialog("error", "Application '" + app_name + "' has crashed with error '" + ex + "'!");
+    }
+  }
+
   function LaunchApplication(app_name, args, windows, callback, callback_error) {
     callback = callback || function() {};
     callback_error = callback_error || function() {};
@@ -81,22 +102,19 @@
         _Resources.addResources(data.result.resources, function() {
 
           if ( window[app_name] ) {
-            var application = new window[app_name](GtkWindow, Application, API, args, windows);
-            application._uuid  = data.result.uuid;
+            try {
+              var application = new window[app_name](GtkWindow, Application, API, args, windows);
+              application._uuid  = data.result.uuid;
+              application._checkCompability();
+            } catch ( ex ) {
+              CrashApplication(app_name, application, ex);
+            }
 
             setTimeout(function() {
               try {
                 application.run();
               } catch ( ex ) {
-                try {
-                  _Desktop.addWindow(new CrashDialog(application, ex.message, ex.stack));
-                  try {
-                    application._running = true; // Workaround
-                    application.kill();
-                  } catch ( eee ) {}
-                } catch ( ee ) {
-                  API.system.dialog("error", "Application '" + app_name + "' has crashed with error '" + ex + "'!");
-                }
+                CrashApplication(app_name, application, ex);
               }
             }, 100);
           } else {
@@ -557,7 +575,7 @@
 
       'restore' : function() {
 
-        if ( supports_html5_storage() ) {
+        if ( SUPPORT_LSTORAGE ) {
           var item = localStorage.getItem('session');
           if ( item ) {
             var session = JSON.parse(item);
@@ -1427,24 +1445,24 @@
 
       this.ttimeout = setTimeout(function() {
         _Tooltip.hide();
-      }, TOOLTIP_TIMEOUT);
+      }, 0);
     },
 
     show : function(tip, el, ev) {
       var posX = 0;
       var posY = 0;
 
-      if ( el ) {
-        posX = $(el).offset()['left'];
-        posY = $(el).offset()['top'];
-      } else if ( ev ) {
+      if ( ev ) {
         posX = ev.pageX;
         posY = ev.pageY;
+      } else if ( el ) {
+        posX = $(el).offset()['left'];
+        posY = $(el).offset()['top'];
       }
 
       this.$element.css({
-        "top" : (posY + 2) + "px",
-        "left" : (posX + 2) + "px"
+        "top" : (posY + 10) + "px",
+        "left" : (posX + 10) + "px"
       }).show().html(tip);
     },
 
@@ -2545,6 +2563,11 @@
           }
         });
 
+
+        if ( SUPPORT_CANVAS ) {
+          el.find(".GtkDrawingArea").append("<canvas>");
+        }
+
         var CreateId = function() {
           var cn = "";
           var test = "";
@@ -3400,6 +3423,7 @@
       this._windows      = [];
       this._storage      = {};
       this._storage_on   = false;
+      this._compability  = [];
 
       if ( restore === undefined || restore === true ) {
         this._restoreStorage();
@@ -3495,6 +3519,61 @@
       }));
     },
 
+    _checkCompability : function() {
+      var error;
+
+      for ( var i = 0; i < this._compability.length; i++ ) {
+        switch ( this._compability[i] ) {
+          case "canvas" :
+            if ( !SUPPORT_CANVAS ) {
+              error = "<canvas>";
+            }
+          break;
+          case "audio" :
+            if ( !SUPPORT_AUDIO ) {
+              error = "<audio>";
+            }
+          break;
+          case "video" :
+            if ( !SUPPORT_VIDEO ) {
+              error = "<video>";
+            }
+          break;
+
+          case "localStorage" :
+            if ( !SUPPORT_LSTORAGE ) {
+              error = "localStorage()";
+            }
+          break;
+          case "sessionStorage" :
+            if ( !SUPPORT_SSTORAGE ) {
+              error = "sessionStorage()";
+            }
+          break;
+          case "globalStorage" :
+            if ( !SUPPORT_GSTORAGE ) {
+              error = "globalStorage()";
+            }
+          break;
+          case "database" :
+          case "databaseStorage" :
+          case "openDatabase" :
+            if ( !SUPPORT_DSTORAGE ) {
+              error = "databaseStorage()";
+            }
+          break;
+
+          default :
+            error = false;
+          break;
+        }
+      }
+
+      if ( error ) {
+        throw ({'message' : "Your browser does not support '" + error + "'", 'stack' : "Application::_checkCompability(): Application name: " + app_name});
+      }
+    },
+
     _addWindow : function(win) {
       this._windows.push(win);
     },
@@ -3582,7 +3661,7 @@
     // COMPABILITY CHECK
     //
 
-    if ( !supports_html5_storage() ) {
+    if ( !SUPPORT_LSTORAGE ) {
       alert("Your browser does not support WebStorage. Cannot continue...");
 
       return false;
