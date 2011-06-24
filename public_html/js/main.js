@@ -164,15 +164,18 @@
         var ccursor = "default";
 
         return function(c, el) {
-          //var cname = "url('/img/cursors/" + c + "'.png), " + c;
+          //var cname = sprintf("url('/img/cursors/%s.png'), %s", c, c);
+          var cname = c;
+
           if ( el ) {
-            $(el).css("cursor", c);
+            $(el).css("cursor", cname);
             return;
           }
 
           if ( c !== ccursor ) {
-            $("body").css("cursor", c);
+            $("body").css("cursor", cname);
           }
+
           ccursor = c;
         };
       })(),
@@ -1072,6 +1075,8 @@
           return false;
         });
         */
+
+        API.ui.cursor("default");
 
         this._super("(Desktop)", "places/desktop.png");
       },
