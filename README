@@ -7,7 +7,6 @@ Uses Glade (Gtk+ 3) to build HTML, JSON, CSS and JavaScript data.
 
 Communication is done via AJAX to a PHP+MySQL backend.
 
-
 Features and Highlights:
 -------------------------------------------------------------------------------
 * Window Managment
