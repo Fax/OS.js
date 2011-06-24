@@ -241,6 +241,7 @@ var ApplicationMusicPlayer = (function($, undefined) {
         this._compability = ["audio"];
 
         this.$player = null;
+        this.$slider = null;
       },
 
       destroy : function() {
@@ -248,6 +249,7 @@ var ApplicationMusicPlayer = (function($, undefined) {
 
         try {
           this.$player.remove();
+          this.$slider.remove();
         } catch ( e ) {}
 
         this._super();
@@ -311,6 +313,53 @@ var ApplicationMusicPlayer = (function($, undefined) {
           "position" : "absolute",
           "top" : "-1000px",
           "left" : "-1000px"
+        });
+
+        this.$slider = root_window.$element.find(".scale1");
+
+        var audio = this.$player.get(0);
+        var loaded = false;
+        var manualSeek = false;
+
+        var label = root_window.$element.find(".label4");
+
+        this.$player.bind('timeupdate', function() {
+          var rem = parseInt(audio.duration - audio.currentTime, 10),
+              pos = (audio.currentTime / audio.duration) * 100,
+              mins = Math.floor(rem/60,10),
+              secs = rem - mins*60;
+
+          var mrem  = parseInt(audio.duration, 10),
+              mmins = Math.floor(mrem / 60, 10),
+              msecs = mrem - mmins * 60;
+
+          var lbl1 = sprintf("%s min %s sec", mins, (secs > 9 ? secs : '0' + secs));
+          var lbl2 = sprintf("%s min %s sec", mmins, (msecs > 9 ? msecs : '0' + msecs));
+          label.html(sprintf("<b>Length:</b> %s / %s", lbl1, lbl2));
+
+          if (!manualSeek) { 
+            self.$slider.slider("value", audio.currentTime);
+          }
+
+          if (!loaded) {
+            loaded = true;
+            self.$slider.slider({
+              value       : 0,
+              step        : 0.01,
+              orientation : "horizontal",
+              range       : "min",
+              max         : audio.duration,
+              animate     : true,
+              slide       : function() {
+                manualSeek = true;
+              },
+              stop        : function(e,ui) {
+                manualSeek = false;
+                audio.currentTime = ui.value;
+              }
+            });
+          }
+
         });
 
         root_window.$element.append(this.$player);
