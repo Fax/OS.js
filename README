@@ -61,7 +61,6 @@ TODOs:
 * TODO: Only one menu at a time, Global var, Global click handler
 * FIXME: replace parents() with closest()
 * TODO: Separate panels into separate resources
-* TODO: Check and fix Window::onblur() for all applications
 * FIXME: Various Opera CSS bugs
 * FIXME: IE <=8 CSS Not correct anymore
 

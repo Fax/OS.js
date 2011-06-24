@@ -177,7 +177,7 @@ var ApplicationTextpad = (function($, undefined) {
 
           $(el).find("textarea").mousedown(function(ev) {
             _updateStatusbar(el);
-            ev.stopPropagation();
+            //ev.stopPropagation();
           }).focus(function() {
             _updateStatusbar(el);
           }).keyup(function() {

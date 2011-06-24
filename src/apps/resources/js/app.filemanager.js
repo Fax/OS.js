@@ -136,6 +136,10 @@ var ApplicationFileManager = (function($, undefined) {
       _initClick : function () {
         var self = this;
 
+        $(this.$element).find(".iconview1").bind("contextmenu",function(e) {
+          return false;
+        });
+
         this.$element.find(".ApplicationFileManager .Inner").bind('click', function(ev) {
           $(document).click(); // Trigger this! (deselects context-menu)
           ev.stopPropagation();
@@ -161,12 +165,12 @@ var ApplicationFileManager = (function($, undefined) {
           } else {
             API.system.run(fpath, fmime);
           }
-          ev.stopPropagation();
+          //ev.stopPropagation();
           ev.preventDefault();
         }).bind('mousedown', function(ev) {
           self._selItem(this);
 
-          ev.stopPropagation();
+          //ev.stopPropagation();
           ev.preventDefault();
 
           var pro = $(this).find("input[name=protected]").val() == "1";
