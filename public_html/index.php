@@ -13,6 +13,25 @@ if ( !($wm = WindowManager::initialize()) ) {
   die("Failed to initialize window manager");
 }
 
+if ( isset($_GET['font']) && !empty($_GET['font']) ) {
+  header("Content-Type: text/css; charset=utf-8");
+  exit;
+}
+if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
+  $res  = addslashes($_GET['resource']);
+  $type = preg_match("/\.js$/", $res) ? "js" : "css";
+  $path = sprintf("%s/resources/%s/%s", PATH_APPS, $type, $res); // FIXME
+
+  if ( file_exists($path) ) {
+    header(sprintf("Content-Type: text/%s; charset=utf-8", $type == "js" ? "javascript" : "css"));
+    print file_get_contents($path);
+    exit;
+  }
+
+  header("HTTP/1.0 404 Not Found");
+  exit;
+}
+
 if ( !($json = $wm->doGET($_GET)) === false ) {
   header("Content-Type: application/json");
   die($json);
@@ -30,7 +49,7 @@ if ( !ENABLE_CACHE ) {
   header("Cache-Control: no-cache");
   header("Pragma: no-cache");
 
-  $append = "?" . time();
+  $append = "&" . time();
 }
 
 header("Content-Type: text/html; charset=utf-8");
@@ -54,7 +73,7 @@ header("Content-Type: text/html; charset=utf-8");
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
   <!-- Vendor libraries -->
-  <link rel="stylesheet" type="text/css" href="/css/ui-lightness/jquery-ui-1.8.13.custom.css" />
+  <link rel="stylesheet" type="text/css" href="/css/vendor/ui-lightness/jquery-ui-1.8.13.custom.css" />
 
   <script type="text/javascript" src="/js/vendor/json2.js"></script>
   <script type="text/javascript" src="/js/vendor/sprintf-0.7-beta1.js"></script>
@@ -64,31 +83,31 @@ header("Content-Type: text/html; charset=utf-8");
   <script type="text/javascript" src="/js/vendor/jquery.touch.compact.js"></script>
 
   <!-- Main libraries -->
-  <link rel="stylesheet" type="text/css" href="/css/main.css<?php print $append; ?>" />
-  <link rel="stylesheet" type="text/css" href="/css/glade.css<?php print $append; ?>" />
-  <link rel="stylesheet" type="text/css" href="/css/pimp.css<?php print $append; ?>" />
-  <link rel="stylesheet" type="text/css" href="/css/theme.default.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/?resource=main.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/?resource=glade.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/?resource=pimp.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/?resource=theme.default.css<?php print $append; ?>" />
 
-  <script type="text/javascript" src="/js/utils.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/js/main.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/?resource=utils.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/?resource=main.js<?php print $append; ?>"></script>
 
   <!-- Preloaded resources -->
-  <link rel="stylesheet" type="text/css" href="/css/sys.about.css<?php print $append; ?>" />
-  <link rel="stylesheet" type="text/css" href="/css/sys.user.css<?php print $append; ?>" />
-  <link rel="stylesheet" type="text/css" href="/css/sys.settings.css<?php print $append; ?>" />
-  <link rel="stylesheet" type="text/css" href="/css/sys.logout.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/?resource=sys.about.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/?resource=sys.user.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/?resource=sys.settings.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/?resource=sys.logout.css<?php print $append; ?>" />
 
-  <script type="text/javascript" src="/js/panel.separator.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/js/panel.clock.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/js/panel.menu.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/js/panel.windowlist.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/js/panel.dock.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/js/panel.weather.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/?resource=panel.separator.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/?resource=panel.clock.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/?resource=panel.menu.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/?resource=panel.windowlist.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/?resource=panel.dock.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/?resource=panel.weather.js<?php print $append; ?>"></script>
 
-  <script type="text/javascript" src="/js/sys.about.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/js/sys.user.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/js/sys.settings.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/js/sys.logout.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/?resource=sys.about.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/?resource=sys.user.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/?resource=sys.settings.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/?resource=sys.logout.js<?php print $append; ?>"></script>
 </head>
 <body>
 

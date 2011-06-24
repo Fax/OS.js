@@ -14,7 +14,6 @@
  *   TODO: Check and fix Window::onblur() for all applications
  *
  * Browsers:
- *   FIXME: Chrome bug TableCellWrapper is to far up
  *   FIXME: Various Opera bugs
  *
  * Creates a desktop environment inside the browser.
@@ -815,19 +814,19 @@
         type = type[type.length - 1];
 
         if ( !ENABLE_CACHE ) {
-          res += "?" + (new Date()).getTime();
+          res += "&" + (new Date()).getTime();
         }
 
         var el = null;
         var ie = false;
         if ( type == "js" ) {
-          el = $("<script type=\"text/javascript\" src=\"/js/" + res + "\"></script>");
+          el = $("<script type=\"text/javascript\" src=\"/?resource=" + res + "\"></script>");
         } else {
           if ( document.createStyleSheet ) {
             ie = true;
-            el = document.createStyleSheet("/css/" + res);
+            el = document.createStyleSheet("/?resource" + res);
           } else {
-            el = $("<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/" + res + "\" />");
+            el = $("<link rel=\"stylesheet\" type=\"text/css\" href=\"/?resource=" + res + "\" />");
           }
         }
 
