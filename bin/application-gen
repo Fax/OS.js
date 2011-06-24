@@ -144,9 +144,11 @@ EOJAVASCRIPT;
   return sprintf($template, $wins, $pre_code, $aft_code);
 }
 
-function create_js($cname, $window, $content, $properties, $signals) {
+function create_js($cname, $window, $content, $properties, $signals, Array $mimes) {
   $dialog = $properties['type'] == "dialog" ? 'true' : 'false';
   $content = addslashes(str_replace("\n", "", preg_replace("/\s+/", " ", $content)));
+  $mimes = json_encode($mimes);
+
   $template = <<<EOJAVASCRIPT
 
     /**
@@ -216,7 +218,7 @@ EOJAVASCRIPT;
         $ev_code = <<<EOJAVASCRIPT
 
         var my_callback = function(fname) {}; // FIXME
-        var my_mimes    = []; // FIXME
+        var my_mimes    = {$mimes};
 
         this.app.createFileDialog(function(fname) {
           my_callback(fname);
@@ -245,7 +247,7 @@ EOJAVASCRIPT;
         $ev_code = <<<EOJAVASCRIPT
 
         var my_callback = function(fname, fmime) {}; // FIXME
-        var my_mimes    = []; // FIXME
+        var my_mimes    = {$mimes};
 
         this.app.createFileDialog(function(fname, fmime) {
           my_callback(fname, fmime);
@@ -264,7 +266,7 @@ EOJAVASCRIPT;
         if ( $ev_type == "file-set" ) {
           $ev_code = <<<EOJAVASCRIPT
 
-        var my_mimes    = []; // FIXME
+        var my_mimes    = {$mimes};
         var my_path     = self.\$element.find(".{$obj} input[type=text]").val();
 
         this.app.createFileDialog(function(fname) {
@@ -399,6 +401,13 @@ if ( $dh  = opendir($root) ) {
         }
       }
 
+      $mimes = Array();
+      if ( isset($xml->mime) ) {
+        foreach ( $xml->mime as $r ) {
+          $mimes[] = (string) $r;
+        }
+      }
+
 
       if ( $glade = Glade::parse($root . $gfilename) ) {
         $windows = $glade->getWindows();
@@ -426,7 +435,7 @@ if ( $dh  = opendir($root) ) {
             //$window['properties']['icon'] = constant("{$cname}::APPLICATION_ICON");
           }
 
-          $wins[$id] = create_js($cname, $id, $window['content'], $window['properties'], $window['signals']);
+          $wins[$id] = create_js($cname, $id, $window['content'], $window['properties'], $window['signals'], $mimes);
 
           $win_node = $doc->createElement("window");
           $win_node->setAttribute("id", $id);
@@ -454,8 +463,7 @@ if ( $dh  = opendir($root) ) {
           $node->appendChild($res_node);
         }
 
-        foreach ( $xml->mime as $r ) {
-          $r = (string) $r;
+        foreach ( $mimes as $r ) {
           $mime_node = $doc->createElement("mime");
           $mime_node->appendChild(new DomText($r));
           $node->appendChild($mime_node);

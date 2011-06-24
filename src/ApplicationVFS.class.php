@@ -71,6 +71,15 @@ class ApplicationVFS
   }
 
   /**
+   * Check if file/dir exists
+   * @return Mixed
+   */
+  public static function exists($argv) {
+    $path = PATH_PROJECT_HTML . "/media/" . $argv;
+    return file_exists($path) ? $path : false;
+  }
+
+  /**
    * Read a file (cat)
    * @return String
    */

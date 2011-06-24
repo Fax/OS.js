@@ -81,7 +81,7 @@
 
   function CrashApplication(app_name, application, ex) {
     try {
-      _Desktop.addWindow(new CrashDialog(application, ex.message, ex.stack));
+      _Desktop.addWindow(new CrashDialog(application, ex.message, ex.stack, ex));
       try {
         application._running = true; // Workaround
         application.kill();
@@ -2754,7 +2754,7 @@
 
   var CrashDialog = Window.extend({
 
-    init : function(app, error, trace) {
+    init : function(app, error, trace, alternative) {
       var title = sprintf("Application '%s' crashed!", app._name);
 
       this._super("Crash", false);
@@ -2776,6 +2776,7 @@
 
       this.error = error;
       this.trace = trace;
+      this.alternative = alternative;
     },
 
 
@@ -2800,7 +2801,7 @@
         "left" : "0px",
         "right" : "0px",
         "bottom" : "140px"
-      }).find("textarea").val(self.error);
+      }).find("textarea").val(self.error || self.alternative);
 
       $(el).find(".trace").css({
         "position" : "absolute",
@@ -3605,7 +3606,7 @@
       }
     },
 
-    _event : function(win, ev, args, callback) {
+    _event : function(ev, args, callback) {
       var self = this;
       if ( this._uuid ) {
         var pargs = {'ajax' : true, 'action' : 'event', 'cname' : self._name ,'uuid' : self._uuid, 'instance' : {'name' : self._name, 'action' : ev, 'args' : args }};
