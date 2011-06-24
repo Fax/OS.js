@@ -9,9 +9,9 @@ Communication is done via AJAX to a PHP+MySQL backend.
 
 Features and Highlights:
 -------------------------------------------------------------------------------
-* Window Managment
-* Desktop Environment
-* Windows, Dialogs, Panels + PanelItems
+* Window Managment, Desktop environment
+* Simple Process managment
+* Windows, Dialogs, Panels and PanelItems, Menus
 * Application WebStorage (for settings etc)
 * Custom Error and Exception handling
 * Saving and Restoration of Desktop Sessions
@@ -28,14 +28,18 @@ Built-In Applications, Dialogs and Panel Items:
 -------------------------------------------------------------------------------
 * Application: Clock (HTML5-SVG)
 * Application: Draw (HTML5-Canvas)
+* Application: Movie Player (HTML5-Video)
+* Application: Music Player (HTML5-Audio)
 * Application: File Manager
 * Application: Terminal
 * Application: Textpad
-* Application: Viewer (HTML5-Audio, HTML5-Video, Images)
+* Application: Image Viewer
+* Application: Tick-tack-toe game
 * System: About
 * System: User Information
 * System: Settings
 * System: Logout
+* System: Process Information
 * Panel Item: Menu
 * Panel Item: Separator
 * Panel Item: Window List
