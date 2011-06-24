@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application name="VideoPlayer" file="ApplicationVideoPlayer.class.php" schema="ApplicationVideoPlayer.glade" category="multimedia">
+  <property name="enabled">true</property>
+  <property name="title">Video Player</property>
+  <property name="icon">mimetypes/video-x-generic.png</property>
+  <property name="system">false</property>
+
+  <resource>app.videoplayer.css</resource>
+  <resource>app.videoplayer.js</resource>
+
+  <mime>video/*</mime>
+  <mime>application/ogg</mime>
+
+  <compability>video</compability>
+</application>
