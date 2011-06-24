@@ -12,7 +12,7 @@ var ApplicationViewer = (function($, undefined) {
 
       init : function(app) {
         this._super("ApplicationViewer", false, app, windows);
-        this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationViewer window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_open\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <div class=\"GtkFixed fixed1\"></div> </td> </tr> </table> </div> </div> ").html();
+        this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationViewer window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_open\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkFixed fixed1\"></div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar1\"></div> </div> </td> </tr> </table> </div> </div> ").html();
         this._title = 'Image Viewer';
         this._icon = 'mimetypes/image-x-generic.png';
         this._is_draggable = true;
@@ -111,7 +111,7 @@ var ApplicationViewer = (function($, undefined) {
           h = (h > 500 ? 500 : h);
 
           if ( w > 0 && h > 0 ) {
-            self._root_window._resize(w + 10, h + 70);
+            self._root_window._resize(w + 10, h + 95);
           }
         }).error(function() {
           self.createMessageDialog("error", "Failed to open '" + fname + "'!");
@@ -123,6 +123,7 @@ var ApplicationViewer = (function($, undefined) {
 
         self.$image = img;
         self._root_window.$element.find(".fixed1").append(self.$image);
+        self._root_window.$element.find(".statusbar1").html(fname);
       },
 
       run : function() {

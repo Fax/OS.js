@@ -11,7 +11,7 @@ var PanelItemClock = (function($, undefined) {
     var _PanelItemClock = _PanelItem.extend({
       init : function() {
         this._super("PanelItemClock", "right");
-        this.named = "Clock";
+        this._named = "Clock";
       },
 
       create : function(pos) {

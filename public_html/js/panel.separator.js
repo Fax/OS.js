@@ -10,7 +10,7 @@ var PanelItemSeparator = (function($, undefined) {
     var _PanelItemSeparator = _PanelItem.extend({
       init : function() {
         this._super("PanelItemSeparator");
-        this.named = "Separator";
+        this._named = "Separator";
       },
 
       create : function(pos) {

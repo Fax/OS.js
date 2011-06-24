@@ -10,9 +10,9 @@ var PanelItemWindowList = (function($, undefined) {
     var _PanelItemWindowList = _PanelItem.extend({
       init : function() {
         this._super("PanelItemWindowList", "left");
-        this.named = "Window List";
-        this.expand = true;
-        this.redrawable = true;
+        this._named = "Window List";
+        this._expand = true;
+        this._redrawable = true;
       },
 
       create : function(pos) {

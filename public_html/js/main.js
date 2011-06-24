@@ -4,7 +4,6 @@
  * TODOs:
  *   TODO: Sortable panel items (use absolute, snap to direction as panel does)
  *   TODO: Rewrite settings manager
- *   TODO: Refactor _PanelItem class variable name scope
  *   TODO: Refactor ContextMenu
  *   TODO: Only one menu at a time, Global var, Global click handler
  *   FIXME: replace parents() with closest()
@@ -1689,19 +1688,19 @@
   var _PanelItem = Process.extend({
 
     init : function(name, align)  {
-      this._name        = name;
-      this._uuid        = null;
-      this._named       = name;
-      this.align        = align || "AlignLeft";
-      this.expand       = false;
-      this.dynamic      = false;
-      this.orphan       = true;
-      this.crashed      = false;
-      this.configurable = false;
-      this.redrawable   = false;
-      this._index       = -1;
-      this._panel       = null;
-      this.$element     = null;
+      this._name         = name;
+      this._uuid         = null;
+      this._named        = name;
+      this._align        = align || "AlignLeft";
+      this._expand       = false;
+      this._dynamic      = false;
+      this._orphan       = true;
+      this._crashed      = false;
+      this._configurable = false;
+      this._redrawable   = false;
+      this._index        = -1;
+      this._panel        = null;
+      this.$element      = null;
 
       this._super(name);
     },
@@ -1753,7 +1752,8 @@
       this.$element.find("*").remove();
       this.$element.addClass("Crashed");
       this.$element.html("<img alt=\"\" src=\"/img/icons/16x16/status/error.png\"/><span>" + error + "</span>");
-      this.crashed = true;
+
+      this._crashed = true;
     },
 
     destroy : function() {

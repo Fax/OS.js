@@ -115,7 +115,7 @@ var PanelItemWeather = (function($, undefined) {
         if ( navigator && navigator.geolocation ) {
           this.interval = setInterval(function() {
             self.poll();
-          }, 60 * 1000);
+          }, (60 * 1000) * 60);
 
           this.poll();
         } else {
@@ -140,7 +140,7 @@ var PanelItemWeather = (function($, undefined) {
         ret.push("---");
         ret.push({
           'title'    : 'Reload',
-          'disabled' : self.crashed,
+          'disabled' : self._crashed,
           'method'   : function() { self.poll(); }
         });
 

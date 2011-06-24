@@ -10,9 +10,10 @@ var PanelItemDock = (function($, undefined) {
     var _PanelItemDock = _PanelItem.extend({
       init : function(items) {
         this._super("PanelItemDock");
+        this._named = "Launcher Dock";
+        this._dynamic = true;
+
         this.items = items || [];
-        this.named = "Launcher Dock";
-        this.dynamic = true;
       },
 
       create : function(pos) {

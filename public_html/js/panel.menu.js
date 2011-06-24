@@ -39,7 +39,8 @@ var PanelItemMenu = (function($, undefined) {
 
       init : function(title, icon, menu) {
         this._super("PanelItemMenu");
-        this.named = "Launcher Menu";
+        this._named = "Launcher Menu";
+
         this.title = title || "Launch Application";
         this.icon = '/img/icons/16x16/' + (icon || 'categories/gnome-applications.png');
 
