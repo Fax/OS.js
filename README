@@ -54,6 +54,7 @@ Built-In Applications, Dialogs and Panel Items:
 
 TODOs:
 -------------------------------------------------------------------------------
+* TODO: Login
 * TODO: Sortable panel items (use absolute, snap to direction as panel does)
 * TODO: Rewrite settings manager
 * TODO: Refactor ContextMenu

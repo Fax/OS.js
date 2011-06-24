@@ -1,11 +1,6 @@
 /**
  * JavaScript Window Manager
  *
- * Creates a desktop environment inside the browser.
- * Applications can be loaded via the server.
- * Events and System calls are performed via the API
- * object.
- *
  * @package ajwm.Core
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  */
@@ -20,8 +15,9 @@
     window.console.groupEnd = function() { console.log(arguments); };
   }
 
-  var ENABLE_CACHE        = false;
-
+  /**
+   * CSS
+   */
   var ZINDEX_MENU         = 100000000;
   var ZINDEX_RECT         = 100000000;
   var ZINDEX_TOOLTIP      = 100000001;
@@ -34,12 +30,16 @@
   /**
    * Local settings
    */
-  var SETTING_REVISION = 18;
-  var ENABLE_LOGIN     = false;
-  var ANIMATION_SPEED  = 400;
-  var TEMP_COUNTER     = 1;
-  var TOOLTIP_TIMEOUT  = 300;
+  var ENABLE_CACHE       = false;
+  var SETTING_REVISION   = 18;
+  var ENABLE_LOGIN       = false;
+  var ANIMATION_SPEED    = 400;
+  var TEMP_COUNTER       = 1;
+  var TOOLTIP_TIMEOUT    = 300;
 
+  /**
+   * Compability
+   */
   var SUPPORT_LSTORAGE = (('localStorage' in window) && window['localStorage'] !== null);
   var SUPPORT_SSTORAGE = (('sessionStorage' in window) && window['sessionStorage'] !== null);
   var SUPPORT_GSTORAGE = (('globalStorage' in window) && window['globalStorage'] !== null);
@@ -127,6 +127,8 @@
 
   /**
    * Public API
+   *
+   * TODO: Deprecate api calls to dialogs. They are in application
    *
    * @object
    */
@@ -617,6 +619,9 @@
    */
   var Process = Class.extend({
 
+    /**
+     * Constructor
+     */
     init : function(name, icon, locked) {
       this._pid       = (_Processes.push(this) - 1);
       this._started   = new Date();
@@ -625,6 +630,9 @@
       this._locked    = locked || false;
     },
 
+    /**
+     * Destructor
+     */
     destroy : function() {
       if ( this._pid >= 0 ) {
         _Processes[this._pid] = undefined;
@@ -633,6 +641,11 @@
       this._started = null;
     },
 
+    /**
+     * Kill process
+     *
+     * @return bool
+     */
     kill : function() {
       if ( !this._locked ) {
         this.destroy();
@@ -648,7 +661,16 @@
   // CORE
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Main Process
+   *
+   * @class
+   */
   var Core = Process.extend({
+
+    /**
+     * Constructor
+     */
     init : function() {
       this._super("(Core)", "status/computer-fail.png", true);
 
@@ -680,6 +702,9 @@
     },
 
 
+    /**
+     * Destructor
+     */
     destroy : function() {
       if ( _Tooltip ) {
         _Tooltip.destroy();
@@ -739,6 +764,10 @@
     var _aResources = [];
 
     return Process.extend({
+
+      /**
+       * Constructor
+       */
       init : function() {
         this.resources = [];
         this.links = [];
@@ -756,6 +785,10 @@
         this._super("(ResourceManager)", "apps/system-software-install.png", true);
       },
 
+
+      /**
+       * Destructor
+       */
       destroy : function() {
         forEach(this.links, function(i, el) {
           $(el).remove();
@@ -767,6 +800,10 @@
         this._super();
       },
 
+      /**
+       * Force MANIFEST update
+       * @return void
+       */
       updateManifest : function() {
         var cache = window.applicationCache;
 
@@ -787,10 +824,18 @@
 
       },
 
+      /**
+       * Check if given resource is already loaded
+       * @return bool
+       */
       hasResource : function(res) {
         return in_array(res, this.resources);
       },
 
+      /**
+       * Add a resource (load)
+       * @return void
+       */
       addResource : function(res) {
         if ( this.hasResource(res) )
           return;
@@ -827,6 +872,10 @@
         this.links.push(el);
       },
 
+      /**
+       * Add an array with resources and call-back
+       * @return void
+       */
       addResources : function(res, callback) {
         var i = 0;
         var l = res.length;
@@ -855,6 +904,9 @@
 
     return Process.extend({
 
+      /**
+       * Constructor
+       */
       init : function(defaults) {
         _avail = defaults;
 
@@ -898,12 +950,19 @@
         this._super("(SettingsManager)", "apps/system-software-update.png", true);
       },
 
+      /**
+       * Destructor
+       */
       destroy : function() {
         _avail = null;
 
         this._super();
       },
 
+      /**
+       * Save application data
+       * @return void
+       */
       saveApp : function(name, props) {
         var storage = localStorage.getItem("applications");
         if ( !storage ) {
@@ -920,6 +979,10 @@
         localStorage.setItem("applications", JSON.stringify(storage));
       },
 
+      /**
+       * Load application data
+       * @return JSON
+       */
       loadApp : function(name) {
         var storage = localStorage.getItem("applications");
         var res;
@@ -936,6 +999,10 @@
         return {};
       },
 
+      /**
+       * Apply a changeset
+       * @return void
+       */
       _apply : function(settings) {
         for ( var i in settings ) {
           if ( settings.hasOwnProperty(i) ) {
@@ -944,6 +1011,10 @@
         }
       },
 
+      /**
+       * Set a storage item by key and value
+       * @return void
+       */
       _set : function(k, v) {
         if ( _avail[k] !== undefined ) {
           localStorage.setItem(k, v);
@@ -951,6 +1022,10 @@
         //  if (e == QUOTA_EXCEEDED_ERR) { (try/catch) // TODO
       },
 
+      /**
+       * Get a storage item by key
+       * @return Mixed
+       */
       _get : function(k, keys, jsn) {
         var ls = undefined;
         if ( _avail[k] !== undefined ) {
@@ -967,10 +1042,18 @@
         return jsn ? (ls ? (JSON.parse(ls)) : ls) : ls;
       },
 
+      /**
+       * Get storage item type by key
+       * @return String
+       */
       getType : function(key) {
         return (_avail[key] ? (_avail[key].type) : null);
       },
 
+      /**
+       * Get current Storage session data
+       * @return JSON
+       */
       getSession : function() {
         var exp = {};
         for ( var i = 0; i < _stores.length; i++ ) {
@@ -999,6 +1082,9 @@
 
     return Process.extend({
 
+      /**
+       * Constructor
+       */
       init : function() {
         var self = this;
 
@@ -1082,23 +1168,9 @@
         this._super("(Desktop)", "places/desktop.png");
       },
 
-      bind : function(mname, mfunc) {
-        if ( this.bindings ) {
-          if ( this.bindings[mname] ) {
-            this.bindings[mname].push(mfunc);
-          }
-        }
-      },
-
-      call : function(mname, margs) {
-        if ( this.bindings && this.bindings[mname] ) {
-          var r;
-          for ( var i = 0; i < this.bindings[mname].length; i++ ) {
-            r = this.bindings[mname][i].call(this, mname, margs);
-          }
-        }
-      },
-
+      /**
+       * Destructor
+       */
       destroy : function() {
         try {
           $("*").unbind();
@@ -1130,6 +1202,35 @@
         this._super();
       },
 
+      /**
+       * Bind an event by name and callback
+       * @return void
+       */
+      bind : function(mname, mfunc) {
+        if ( this.bindings ) {
+          if ( this.bindings[mname] ) {
+            this.bindings[mname].push(mfunc);
+          }
+        }
+      },
+
+      /**
+       * Call an event by name and arguments
+       * @return void
+       */
+      call : function(mname, margs) {
+        if ( this.bindings && this.bindings[mname] ) {
+          var r;
+          for ( var i = 0; i < this.bindings[mname].length; i++ ) {
+            r = this.bindings[mname][i].call(this, mname, margs);
+          }
+        }
+      },
+
+      /**
+       * Run DOM operations etc.
+       * @return void
+       */
       run : function() {
         var self = this;
         if ( this.running ) {
@@ -1180,6 +1281,10 @@
 
       // HANDLERS
 
+      /**
+       * Default event handler callback
+       * @return bool
+       */
       defaultHandler : function(ev, eargs) {
         if ( this.panel ) {
           if ( ev.match(/^window/) ) {
@@ -1194,6 +1299,10 @@
 
       // WINDOWS
 
+      /**
+       * Add a window to the stack (and create)
+       * @return Mixed
+       */
       addWindow : function(win) {
         if ( win instanceof Window ) {
           var self = this;
@@ -1221,6 +1330,10 @@
         return false;
       },
 
+      /**
+       * Remove a window from the stack
+       * @return void
+       */
       removeWindow : function(win, destroy) {
         if ( win instanceof Window ) {
           if ( destroy ) {
@@ -1244,12 +1357,20 @@
         }
       },
 
+      /**
+       * Perform 'blur' on Window
+       * @return void
+       */
       blurWindow : function(win) {
         win._blur();
 
         this.call("window_blur", win);
       },
 
+      /**
+       * Perform 'focus' on Window
+       * @return void
+       */
       focusWindow : function(win) {
         if ( _Window !== null ) {
           if ( win != _Window ) {
@@ -1266,22 +1387,42 @@
         }
       },
 
+      /**
+       * Perform 'restore' on Window
+       * @return void
+       */
       restoreWindow : function(win) {
         this.focusWindow(win);
       },
 
+      /**
+       * Perform 'maximize' on Window
+       * @return void
+       */
       maximizeWindow : function(win) {
         this.focusWindow(win);
       },
 
+      /**
+       * Perform 'minimize' on Window
+       * @return void
+       */
       minimizeWindow : function(win) {
         this.blurWindow(win);
       },
 
+      /**
+       * Perform 'update' on Window
+       * @return void
+       */
       updateWindow : function(win) {
         this.call("window_updated", win);
       },
 
+      /**
+       * Sort windows on desktop (align)
+       * @return void
+       */
       sortWindows : function(method) {
         var ppos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
         var top  = ppos == "top" ? 50 : 20;
@@ -1309,6 +1450,10 @@
 
       // SETTINGS \ SESSION
 
+      /**
+       * Apply changes from ResourceManger
+       * @return void
+       */
       applySettings : function() {
         var wp = _Settings._get('desktop.wallpaper.path');
         if ( wp ) {
@@ -1325,6 +1470,10 @@
         console.groupEnd();
       },
 
+      /**
+       * Set new wallpaper
+       * @return void
+       */
       setWallpaper : function(wp) {
         if ( wp ) {
           $("body").css("background", "url('/media" + wp + "') center center");
@@ -1333,6 +1482,10 @@
         }
       },
 
+      /**
+       * Set new theme
+       * @return void
+       */
       setTheme : function(theme) {
         var cname = "Theme" + theme.capitalize();
         var fname = "theme." + theme.toLowerCase() + ".css";
@@ -1347,6 +1500,10 @@
         _oldTheme = cname;
       },
 
+      /**
+       * Get current Desktop session data
+       * @return JSON
+       */
       getSession : function() {
         var sess = [];
 
@@ -1382,6 +1539,9 @@
    */
   var Tooltip = Class.extend({
 
+    /**
+     * Constructor
+     */
     init : function() {
       var self = this;
       this.$element = $("#Tooltip");
@@ -1393,9 +1553,16 @@
       this.ttimeout = null;
     },
 
+    /**
+     * Destructor
+     */
     destroy : function() {
     },
 
+    /**
+     * Initialize a DOM-root for Tooltips
+     * @return void
+     */
     initRoot : function(root) {
       root.find(".TT").each(function() {
         var tip = $(this).attr("title");
@@ -1411,6 +1578,10 @@
       });
     },
 
+    /**
+     * Hover On
+     * @return void
+     */
     hoverOn : function(tip, el, ev) {
       if ( this.ttimeout ) {
         clearTimeout(this.ttimeout);
@@ -1421,6 +1592,10 @@
       }, TOOLTIP_TIMEOUT);
     },
 
+    /**
+     * Hover Off
+     * @return void
+     */
     hoverOff : function(el, ev) {
       if ( this.ttimeout ) {
         clearTimeout(this.ttimeout);
@@ -1431,6 +1606,10 @@
       }, 0);
     },
 
+    /**
+     * Show tooltip
+     * @return void
+     */
     show : function(tip, el, ev) {
       var posX = 0;
       var posY = 0;
@@ -1449,6 +1628,10 @@
       }).show().html(tip);
     },
 
+    /**
+     * Hide tooltip
+     * @return void
+     */
     hide : function() {
       this.$element.hide();
     }
@@ -1467,6 +1650,9 @@
    */
   var Panel = Process.extend({
 
+    /**
+     * Constructor
+     */
     init : function() {
       var self = this;
 
@@ -1583,6 +1769,9 @@
       this._super("Panel");
     },
 
+    /**
+     * Destructor
+     */
     destroy : function() {
       for ( var i = 0; i < this.items.length; i++ ) {
         this.items[i].destroy();
@@ -1593,6 +1782,10 @@
       this._super();
     },
 
+    /**
+     * Redraw PanelItems
+     * @return void
+     */
     redraw : function(ev, eargs) {
       var pi;
       for ( var i = 0; i < this.items.length; i++ ) {
@@ -1603,6 +1796,10 @@
       }
     },
 
+    /**
+     * Add a new PanelItem
+     * @return Mixed
+     */
     addItem : function(i, pos) {
       if ( i instanceof _PanelItem ) {
 
@@ -1626,6 +1823,9 @@
       return false;
     },
 
+    /**
+     * FIXME
+     */
     moveItem : function(x, p) {
       var y = (p > 0) ? x._index + 1 : x._index - 1;
       var del = this.items[y];
@@ -1641,6 +1841,10 @@
       return false;
     },
 
+    /**
+     * Remove a PanelItem
+     * @return bool
+     */
     removeItem : function(x) {
       for ( var i = 0; i < this.items.length; i++ ) {
         if ( this.items[i] === x ) {
@@ -1671,6 +1875,10 @@
    */
   var _PanelItem = Process.extend({
 
+
+    /**
+     * Constructor
+     */
     init : function(name, align)  {
       this._name         = name;
       this._uuid         = null;
@@ -1689,6 +1897,22 @@
       this._super(name);
     },
 
+    /**
+     * Destructor
+     */
+    destroy : function() {
+      if ( this.$element ) {
+        this.$element.empty();
+        this.$element.remove();
+      }
+
+      this._super();
+    },
+
+    /**
+     * Create DOM elements etc.
+     * @return $
+     */
     create : function(pos) {
       var self = this;
 
@@ -1713,14 +1937,25 @@
       return this.$element;
     },
 
+    /**
+     * Run PanelItem
+     * @return void
+     */
     run : function() {
       _Tooltip.initRoot(this.$element);
     },
 
+    /**
+     * Reload PanelItem
+     * @return void
+     */
     reload : function() {
 
     },
 
+    /**
+     * FIXME
+     */
     update : function() {
       if ( this.align == "right" ) {
         this.$element.addClass("AlignRight");
@@ -1729,9 +1964,17 @@
       }
     },
 
+    /**
+     * Redraw PanelItem
+     * @return void
+     */
     redraw : function() {
     },
 
+    /**
+     * Make PanelItem Crash
+     * @return void
+     */
     crash : function(error) {
       this.$element.find("*").remove();
       this.$element.addClass("Crashed");
@@ -1740,15 +1983,10 @@
       this._crashed = true;
     },
 
-    destroy : function() {
-      if ( this.$element ) {
-        this.$element.empty();
-        this.$element.remove();
-      }
-
-      this._super();
-    },
-
+    /**
+     * Open Configuration Dialog
+     * @return void
+     */
     configure : function() {
       var self = this;
       if ( self.configurable ) {
@@ -1758,6 +1996,10 @@
       }
     },
 
+    /**
+     * Get the ContextMenu
+     * @return JSON
+     */
     getMenu : function() {
       var self = this;
       var menu = [
@@ -1810,6 +2052,8 @@
   var Window = Class.extend({
 
     /**
+     * Constructor
+     *
      * @param String   name       Name of window
      * @param String   dialog     Dialog type if any
      * @param Object   attrs      Extra win attributes (used to restore from sleep etc)
@@ -1867,6 +2111,9 @@
       console.log("Window::" + name + "::init()");
     },
 
+    /**
+     * Destructor
+     */
     destroy : function() {
       var self = this;
 
@@ -1885,10 +2132,18 @@
       console.log("Window::" + this._name + "::destroy()");
     },
 
+    /**
+     * Bind an event by name and callback
+     * @return void
+     */
     _bind : function(mname, mfunc) {
       this._bindings[mname].push(mfunc);
     },
 
+    /**
+     * Call an event by name and arguments
+     * @return void
+     */
     _call : function(mname) {
       if ( this._bindings ) {
         var fs = this._bindings[mname];
@@ -1900,6 +2155,10 @@
       }
     },
 
+    /**
+     * Create DOM elemnts etc.
+     * @return $
+     */
     create : function(id, mcallback) {
       var self = this;
 
@@ -2181,26 +2440,50 @@
     // EVENTS
     //
 
+    /**
+     * Show window (add)
+     * @see Desktop::addWindow()
+     * @return void
+     */
     show : function() {
       if ( !this._showing ) {
         _Desktop.addWindow(this);
       }
     },
 
+    /**
+     * Close window (remove)
+     * @see Desktop::removeWindow()
+     * @return void
+     */
     close : function() {
       if ( this._showing ) {
         _Desktop.removeWindow(this, true);
       }
     },
 
+    /**
+     * Focus window
+     * @see Desktop::focusWindow()
+     * @return void
+     */
     focus : function() {
       _Desktop.focusWindow(this);
     },
 
+    /**
+     * Blur window
+     * @see Desktop::blurWindow()
+     * @return void
+     */
     blur : function() {
       _Desktop.blurWindow(this);
     },
 
+    /**
+     * Set Window title
+     * @return void
+     */
     setTitle : function(t) {
       if ( t != this._title ) {
         this._title = t;
@@ -2209,10 +2492,18 @@
       }
     },
 
+    /**
+     * Get Window title
+     * @return String
+     */
     getTitle : function() {
       return this._title;
     },
 
+    /**
+     * Get Window full icon path
+     * @return String
+     */
     getIcon : function(size) {
       size = size || "16x16";
       if ( this._icon.match(/^\/img/) ) {
@@ -2225,6 +2516,10 @@
     // INTERNAL METHODS
     //
 
+    /**
+     * Shuffle Window (adjust z-index)
+     * @return void
+     */
     _shuffle : function(zi, old) {
       if ( old ) {
         this._oldZindex = this._zindex;
@@ -2237,6 +2532,10 @@
       }
     },
 
+    /**
+     * Set Window on-top state
+     * @return void
+     */
     _ontop : function(t) {
       t = (t === undefined) ? this._is_ontop : t;
       if ( !t ) {
@@ -2255,6 +2554,10 @@
       }
     },
 
+    /**
+     * Set window to focused state
+     * @return void
+     */
     _focus : function() {
       var focused = false;
       if ( !this._current ) {
@@ -2281,6 +2584,10 @@
       this._current = true;
     },
 
+    /**
+     * Set window to blurred state
+     * @return void
+     */
     _blur : function() {
       if ( this._current ) {
         this.$element.removeClass("Current");
@@ -2295,6 +2602,10 @@
       this._current = false;
     },
 
+    /**
+     * Set window to minimized state
+     * @return void
+     */
     _minimize : function() {
       if ( this._is_minimizable ) {
         var self = this;
@@ -2315,6 +2626,10 @@
       }
     },
 
+    /**
+     * Set window to maximized state
+     * @return void
+     */
     _maximize : function() {
       if ( this._is_maximizable ) {
         if ( this._is_maximized ) {
@@ -2376,6 +2691,10 @@
       }
     },
 
+    /**
+     * Gravitate window
+     * @return void
+     */
     _gravitate : function(dir) {
       dir = dir || this._gravity;
       if ( dir == "center" ) {
@@ -2386,6 +2705,10 @@
       }
     },
 
+    /**
+     * Move Window position
+     * @return void
+     */
     _move : function(left, top) {
       this._left = left;
       this._top = top;
@@ -2396,6 +2719,10 @@
       });
     },
 
+    /**
+     * Resize window dimension
+     * @return void
+     */
     _resize : function(width, height, el) {
       el = el || this.$element;
 
@@ -2415,6 +2742,10 @@
       }
     },
 
+    /**
+     * Get current Window session data
+     * @return JSON
+     */
     _getSession : function() {
       if ( !this._is_sessionable ) {
         return false;
@@ -2446,12 +2777,21 @@
    */
   var GtkWindow = Window.extend({
 
+    /**
+     * Constructor
+     * @see Window
+     */
     init : function(window_name, window_dialog, app, attrs) {
       this.app = app;
 
       this._super(window_name, window_dialog, attrs);
     },
 
+    /**
+     * Create DOM elements etc.
+     * @see Window
+     * @return $
+     */
     create : function(id, mcallback) {
       var el = this._super(id, mcallback);
       var self = this;
@@ -2612,11 +2952,17 @@
    */
   var Menu = Class.extend({
 
+    /**
+     * Constructor
+     */
     init : function(att_window) {
       this.$element = $("<ul></ul>");
       this.$element.attr("class", "Menu");
     },
 
+    /**
+     * Destructor
+     */
     destroy : function() {
       if ( this.$element ) {
         this.$element.empty().remove();
@@ -2683,6 +3029,10 @@
    */
   var Dialog = Window.extend({
 
+    /**
+     * Constructor
+     * @see Window
+     */
     init : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
       this.cmd_close  = cmd_close  || function() {};
       this.cmd_ok     = cmd_ok     || function() {};
@@ -2696,6 +3046,11 @@
       this._is_ontop = true;
     },
 
+    /**
+     * Create DOM elements etc
+     * @see Window
+     * @return $
+     */
     create : function(id, mcallback) {
       var self = this;
       var el = this._super(id, mcallback);
@@ -2738,6 +3093,10 @@
 
   var CrashDialog = Window.extend({
 
+    /**
+     * Constructor
+     * @see Window
+     */
     init : function(app, error, trace, alternative) {
       var title = sprintf("Application '%s' crashed!", app._name);
 
@@ -2763,7 +3122,11 @@
       this.alternative = alternative;
     },
 
-
+    /**
+     * Create DOM elements etc
+     * @see Window
+     * @return $
+     */
     create : function(id, mcallback) {
      var self = this;
       var el = this._super(id, mcallback);
@@ -2820,6 +3183,9 @@
    */
   var OperationDialog = Window.extend({
 
+    /**
+     * Constructor
+     */
     init : function(type) {
       this._super("OperationDialog", type);
       this._width          = 400;
@@ -2829,10 +3195,17 @@
       this._skip_taskbar   = true;
     },
 
+    /**
+     * Destructor
+     */
     destroy : function() {
       this._super();
     },
 
+    /**
+     * Create DOM elements etc.
+     * @return void
+     */
     create : function(id, mcallback) {
       this._super(id, mcallback);
 
@@ -3399,6 +3772,10 @@
    * @class
    */
   var Application = Process.extend({
+
+    /**
+     * Constructor
+     */
     init : function(name, argv, restore) {
       this._argv         = argv || {};
       this._name         = name;
@@ -3419,6 +3796,9 @@
       this._super(name);
     },
 
+    /**
+     * Destructor
+     */
     destroy : function() {
       var self = this;
       if ( this._running ) {
@@ -3451,6 +3831,10 @@
       this._super();
     },
 
+    /**
+     * Run application
+     * @return void
+     */
     run : function(root_window) {
       var self = this;
 
@@ -3470,40 +3854,69 @@
       }
     },
 
+    /**
+     * Create Dialog: Message
+     * @return void
+     */
     createMessageDialog : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
       this._addWindow(API.system.dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
     },
 
+    /**
+     * Create Dialog: Color Chooser
+     * @return void
+     */
     createColorDialog : function(color, callback) {
       this._addWindow(API.system.dialog_color(color, function(rgb, hex) {
         callback(rgb, hex);
       }));
     },
 
+    /**
+     * Create Dialog: Upload File
+     * @return void
+     */
     createUploadDialog : function(dir, callback) {
       this._addWindow(API.system.dialog_upload(dir, function() {
         callback(dir);
       }));
     },
 
+    /**
+     * Create Dialog: File Operation Dialog
+     * @return void
+     */
     createFileDialog : function(callback, mimes, type, dir) {
       this._addWindow(API.system.dialog_file(function(file, mime) {
         callback(file, mime);
       }, mimes, type, dir));
     },
 
+    /**
+     * Create Dialog: Launch Application
+     * @return void
+     */
     createLaunchDialog : function(list, callback) {
       this._addWindow(API.system.dialog_launch(list, function(app, def) {
         callback(app, def);
       }));
     },
 
+    /**
+     * Create Dialog: Rename File
+     * @return void
+     */
     createRenameDialog : function(dir, callback) {
       this._addWindow(API.system.dialog_rename(dir, function(fname) {
         callback(fname);
       }));
     },
 
+    /**
+     * Check Application compabilty list and throw errors if any
+     * @return void
+     * @throws Exception
+     */
     _checkCompability : function() {
       var error;
 
@@ -3559,22 +3972,38 @@
       }
     },
 
+    /**
+     * Add a new window to application
+     * @return void
+     */
     _addWindow : function(win) {
       this._windows.push(win);
     },
 
+    /**
+     * Stop application
+     * @return void
+     */
     _stop : function() {
       if ( this._running ) {
         this.destroy();
       }
     },
 
+    /**
+     * Save Application Storage
+     * @return void
+     */
     _saveStorage : function() {
       if ( this._name && this._storage_on ) {
         _Settings.saveApp(this._name, this._storage);
       }
     },
 
+    /**
+     * Load Application Storage
+     * @return void
+     */
     _restoreStorage : function() {
       if ( this._name ) {
         this._storage = _Settings.loadApp(this._name);
@@ -3582,6 +4011,10 @@
       }
     },
 
+    /**
+     * Clear Application Storage
+     * @return void
+     */
     _flushStorage : function() {
       if ( this._name ) {
         this._storage = {};
@@ -3590,6 +4023,10 @@
       }
     },
 
+    /**
+     * Perform Application Event (AJAX-call to Server-Side)
+     * @return void
+     */
     _event : function(ev, args, callback) {
       var self = this;
       if ( this._uuid ) {
@@ -3605,6 +4042,10 @@
       }
     },
 
+    /**
+     * Get current Application session data
+     * @return JSON
+     */
     _getSession : function() {
       if ( this._root_window ) {
         var win = this._root_window._getSession();
