@@ -11,4 +11,7 @@
   <mime>audio/*</mime>
   <mime>video/*</mime>
   <mime>application/ogg</mime>
+
+  <compability>video</compability>
+  <compability>audio</compability>
 </application>

@@ -57,7 +57,7 @@ class {$cname}
 EOPHP;
 }
 
-function create_js_root($cname, $windows) {
+function create_js_root($cname, $windows, Array $compability) {
   $wins = implode("\n", $windows);
   $pre_code = "";
   $aft_code = "";
@@ -74,6 +74,8 @@ EOJAVASCRIPT;
         root_window.show();
 EOJAVASCRIPT;
   }
+
+  $compability = json_encode($compability);
 
 
   $template = <<<EOJAVASCRIPT
@@ -113,7 +115,7 @@ var {$cname} = (function(\$, undefined) {
 
       init : function() {
         this._super("{$cname}", argv);
-        this._compability = []; // Place compability tags here (HTML5/JavaScript)
+        this._compability = {$compability};
       },
 
       destroy : function() {
@@ -390,6 +392,14 @@ if ( $dh  = opendir($root) ) {
         continue;
       }
 
+      $comp = Array();
+      if ( isset($xml->compability) ) {
+        foreach ( $xml->compability as $c ) {
+          $comp[] = (string) $c;
+        }
+      }
+
+
       if ( $glade = Glade::parse($root . $gfilename) ) {
         $windows = $glade->getWindows();
 
@@ -451,7 +461,7 @@ if ( $dh  = opendir($root) ) {
           $node->appendChild($mime_node);
         }
 
-        $script = create_js_root($cname, $wins);
+        $script = create_js_root($cname, $wins, $comp);
         $style = create_css($cname);
         $html = implode("\n", $html);
         $php = create_php($cname);

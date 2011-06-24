@@ -194,6 +194,27 @@ class Glade
     "gtk-quit" => Array(
       "label" => "Quit",
       "icon" => "actions/gtk-quit.png"
+    ),
+
+    "gtk-media-previous" => Array(
+      "label" => "Prev",
+      "icon" => "actions/media-skip-backward.png"
+    ),
+    "gtk-media-stop" => Array(
+      "label" => "Stop",
+      "icon" => "actions/media-playback-stop.png"
+    ),
+    "gtk-media-play" => Array(
+      "label" => "Play",
+      "icon" => "actions/media-playback-start.png"
+    ),
+    "gtk-media-pause" => Array(
+      "label" => "Pause",
+      "icon" => "actions/media-playback-pause.png"
+    ),
+    "gtk-media-next" => Array(
+      "label" => "Next",
+      "icon" => "actions/media-skip-forward.png"
     )
   );
 
@@ -329,7 +350,7 @@ class Glade
           $attribs  = Array();
 
           $oclasses = Array();
-          $ostyles  = Array();
+          $istyles  = Array();
 
           $inner = null;
           $outer = null;
@@ -570,6 +591,13 @@ class Glade
                     $styles[] = "padding:{$pv}px";
                   }
                 break;
+
+                case "layout_style" :
+                  if ( $pv ) {
+                    $pv = strtolower($pv);
+                    $istyles[] = "text-align:{$pv}";
+                  }
+                  break;
               }
             }
           }
@@ -667,6 +695,10 @@ class Glade
               if ( $elid ) {
                 $temp2->setAttribute("id", $elid);
               }
+              if ( $istyles ) {
+                $node->setAttribute("style", implode(";", $istyles));
+              }
+
               if ( $outer ) {
                 $outer->appendChild($node);
                 $temp3->appendChild($outer);
