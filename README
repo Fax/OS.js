@@ -26,7 +26,7 @@ Features and Highlights:
 
 Built-In Applications, Dialogs and Panel Items:
 -------------------------------------------------------------------------------
-* Application: Clock (HTML5-SVG)
+* Application: Clock (HTML5-SVG, CSS2)
 * Application: Draw (HTML5-Canvas)
 * Application: Movie Player (HTML5-Video)
 * Application: Music Player (HTML5-Audio)
