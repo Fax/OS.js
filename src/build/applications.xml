@@ -7,14 +7,13 @@
     <resource>app.filemanager.css</resource>
     <resource>app.filemanager.js</resource>
   </application>
-  <application name="Viewer" title="Viewer" icon="categories/gnome-multimedia.png" system="false" category="multimedia" class="ApplicationViewer" file="ApplicationViewer.class.php">
+  <application name="Viewer" title="Image Viewer" icon="mimetypes/image-x-generic.png" system="false" category="graphics" class="ApplicationViewer" file="ApplicationViewer.class.php">
     <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"Viewer","icon":"categories\/gnome-multimedia.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":300,"height":200,"gravity":""}]]></property>
+      <property name="properties"><![CDATA[{"type":"window","title":"Image Viewer","icon":"mimetypes\/image-x-generic.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":300,"height":200,"gravity":""}]]></property>
     </window>
     <resource>app.viewer.css</resource>
     <resource>app.viewer.js</resource>
     <mime>image/*</mime>
-    <mime>audio/*</mime>
   </application>
   <application name="VideoPlayer" title="Video Player" icon="mimetypes/video-x-generic.png" system="false" category="multimedia" class="ApplicationVideoPlayer" file="ApplicationVideoPlayer.class.php">
     <window id="window1">
@@ -61,6 +60,14 @@
     <window id="dialog1">
       <property name="properties"><![CDATA[{"type":"dialog","title":"Logout","icon":"actions\/gnome-logout.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":300,"height":150,"gravity":"center"}]]></property>
     </window>
+  </application>
+  <application name="MusicPlayer" title="Music Player" icon="status/audio-volume-high.png" system="false" category="multimedia" class="ApplicationMusicPlayer" file="ApplicationMusicPlayer.class.php">
+    <window id="window1">
+      <property name="properties"><![CDATA[{"type":"window","title":"Music Player","icon":"status\/audio-volume-high.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":450,"height":450,"gravity":""}]]></property>
+    </window>
+    <resource>app.musicplayer.css</resource>
+    <resource>app.musicplayer.js</resource>
+    <mime>audio/*</mime>
   </application>
   <application name="User" title="User Information" icon="apps/user-info.png" system="true" category="system" class="SystemUser" file="SystemUser.class.php">
     <window id="window1">

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application name="MusicPlayer" file="ApplicationMusicPlayer.class.php" schema="ApplicationMusicPlayer.glade" category="multimedia">
+  <property name="enabled">true</property>
+  <property name="title">Music Player</property>
+  <property name="icon">status/audio-volume-high.png</property>
+  <property name="system">false</property>
+
+  <resource>app.musicplayer.css</resource>
+  <resource>app.musicplayer.js</resource>
+
+  <mime>audio/*</mime>
+
+  <compability>audio</compability>
+</application>

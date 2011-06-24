@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application name="Viewer" file="ApplicationViewer.class.php" schema="ApplicationViewer.glade" category="multimedia">
+<application name="Viewer" file="ApplicationViewer.class.php" schema="ApplicationViewer.glade" category="graphics">
   <property name="enabled">true</property>
-  <property name="title">Viewer</property>
-  <property name="icon">categories/gnome-multimedia.png</property>
+  <property name="title">Image Viewer</property>
+  <property name="icon">mimetypes/image-x-generic.png</property>
   <property name="system">false</property>
 
   <resource>app.viewer.css</resource>
   <resource>app.viewer.js</resource>
   <mime>image/*</mime>
-  <mime>audio/*</mime>
-
-  <compability>audio</compability>
 </application>
