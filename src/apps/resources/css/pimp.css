@@ -6,18 +6,20 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  */
 
+/*
 @font-face {
-  font-family : MainFont;
+  font-family : DefaultFont;
   src: url('/media/System/Fonts/Sansation_Regular.ttf');
 }
 @font-face {
-  font-family : MainFont;
+  font-family : DefaultFont;
   font-weight : bold;
   src: url('/media/System/Fonts/Sansation_Bold.ttf');
 }
+*/
 
 body {
-  font-family : MainFont, Arial;
+  font-family : DefaultFont, Arial;
 }
 
 #Desktop *[draggable=true] {

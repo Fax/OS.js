@@ -8,7 +8,6 @@
  *   TODO: Only one menu at a time, Global var, Global click handler
  *   FIXME: replace parents() with closest()
  *
- *
  * Release:
  *   TODO: Convert Dialog to Glade and Separate JS files
  *   TODO: Check and fix Window::onblur() for all applications

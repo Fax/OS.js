@@ -14,7 +14,33 @@ if ( !($wm = WindowManager::initialize()) ) {
 }
 
 if ( isset($_GET['font']) && !empty($_GET['font']) ) {
+
   header("Content-Type: text/css; charset=utf-8");
+  $template = <<<EOCSS
+@charset "UTF-8";
+/**
+ * Font Stylesheet
+ *
+ * @package ajwm.Styles
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ */
+
+@font-face {
+  font-family : CustomFont;
+  src: url('/media/System/Fonts/%1\$s_Regular.ttf');
+}
+@font-face {
+  font-family : CustomFont;
+  font-weight : bold;
+  src: url('/media/System/Fonts/%1\$s_Bold.ttf');
+}
+
+body {
+  font-family : CustomFont, Arial;
+}
+EOCSS;
+
+  print sprintf($template, addslashes($_GET['font']));
   exit;
 }
 if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
@@ -87,6 +113,7 @@ header("Content-Type: text/html; charset=utf-8");
   <link rel="stylesheet" type="text/css" href="/?resource=glade.css<?php print $append; ?>" />
   <link rel="stylesheet" type="text/css" href="/?resource=pimp.css<?php print $append; ?>" />
   <link rel="stylesheet" type="text/css" href="/?resource=theme.default.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/?font=Sansation" title="FontFace" />
 
   <script type="text/javascript" src="/?resource=utils.js<?php print $append; ?>"></script>
   <script type="text/javascript" src="/?resource=main.js<?php print $append; ?>"></script>
