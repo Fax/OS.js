@@ -62,6 +62,13 @@
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);
 
 
+  /////////////////////////////////////////////////////////////////////////////
+  // HELPERS
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Application Crash Dialog handler
+   */
   function CrashApplication(app_name, application, ex) {
     try {
       _Desktop.addWindow(new CrashDialog(application, ex.message, ex.stack, ex));
@@ -74,6 +81,9 @@
     }
   }
 
+  /**
+   * Application Launch handler
+   */
   function LaunchApplication(app_name, args, windows, callback, callback_error) {
     callback = callback || function() {};
     callback_error = callback_error || function() {};
@@ -319,7 +329,7 @@
               });
             }
           } else {
-            API.system.dialog("confirm", "Found no suiting application for '" + path + "'"); // TODO: Ask for app
+            API.system.dialog("error", "Found no suiting application for '" + path + "' (" + mime + ")"); // TODO: Ask for app
           }
         }
       },
@@ -649,7 +659,6 @@
 
     /**
      * Kill process
-     *
      * @return bool
      */
     kill : function() {
@@ -718,29 +727,12 @@
       if ( _Desktop ) {
         _Desktop.destroy();
       }
-
       if ( _Settings ) {
         _Settings.destroy();
       }
       if ( _Resources ) {
         _Resources.destroy();
       }
-
-      /*
-      setTimeout(function() {
-      var i = 0;
-      var l = _Processes.length;
-      var p, s;
-      for ( i; i < l; i++ ) {
-        p = _Processes[i];
-        if ( p ) {
-          console.log(p);
-          //p.destroy();
-        }
-      }
-      }, 0);
-      */
-
 
       _Core       = null;
       _Resources  = null;
@@ -1906,6 +1898,7 @@
      * Destructor
      */
     destroy : function() {
+      // Element is in template
     },
 
     /**
