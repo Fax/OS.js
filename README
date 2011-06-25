@@ -24,6 +24,17 @@ Features and Highlights:
 * Uses HTML5 and CSS2+
 * Follows strict coding standards
 
+Compability:
+-------------------------------------------------------------------------------
+Tested on Linux and Windows platforms
+
+* Working: WebKit browsers (Chrome, Chromium, Safari etc)
+* Working: Gecko browsers (Firefox, Netscape etc)
+* Working: Android
+* Working: iOS
+* Partially working: Opera - Glade CSS errors (Opera 11 tested)
+* Partially working: Internet Explorer - CSS problems (<IE9 not tested)
+
 Built-In Applications, Dialogs and Panel Items:
 -------------------------------------------------------------------------------
 * Application: Clock (HTML5-SVG, CSS2)
