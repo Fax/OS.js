@@ -994,7 +994,7 @@
         } else {
           if ( document.createStyleSheet ) {
             ie = true;
-            el = document.createStyleSheet("/?resource" + res);
+            el = document.createStyleSheet("/?resource=" + res);
           } else {
             el = $("<link rel=\"stylesheet\" type=\"text/css\" href=\"/?resource=" + res + "\" />");
           }
