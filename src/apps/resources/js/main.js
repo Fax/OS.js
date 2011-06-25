@@ -2139,7 +2139,7 @@
       var pi;
       for ( var i = 0; i < this.items.length; i++ ) {
         pi = this.items[i];
-        if ( pi.redrawable ) {
+        if ( pi._redrawable ) {
           pi.redraw(ev, eargs);
         }
       }
