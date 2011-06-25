@@ -21,7 +21,7 @@ if ( isset($_GET['font']) && !empty($_GET['font']) ) {
 /**
  * Font Stylesheet
  *
- * @package ajwm.Styles
+ * @package OSjs.Styles
  * @author Anders Evenrud <andersevenrud@gmail.com>
  */
 
@@ -86,10 +86,10 @@ header("Content-Type: text/html; charset=utf-8");
   <!--
   JavaScript Window Manager
 
-  @package ajwm.Template
+  @package OSjs.Template
   @author  Anders Evenrud <andersevenrud@gmail.com>
   -->
-  <title>Another JSWM</title>
+  <title>OS.js</title>
 
   <!-- Compability -->
 <!--
@@ -322,7 +322,7 @@ header("Content-Type: text/html; charset=utf-8");
 
 <!-- Version Stamp -->
 <div id="Version">
-  JSWM Version <?php print PROJECT_VERSION; ?>
+  OS.js Version <?php print PROJECT_VERSION; ?>
   -
   <?php print PROJECT_AUTHOR; ?>
 

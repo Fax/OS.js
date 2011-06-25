@@ -11,7 +11,7 @@
  * ApplicationMusicPlayer Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package ajwm.Applications
+ * @package OSjs.Applications
  * @class
  */
 class ApplicationMusicPlayer

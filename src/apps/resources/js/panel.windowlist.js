@@ -1,7 +1,7 @@
 /**
  * PanelItem: WindowList
  *
- * @package ajwm.Panel
+ * @package OSjs.Panel
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */

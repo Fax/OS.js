@@ -1,7 +1,7 @@
 /**
  * JavaScript Window Manager
  *
- * @package ajwm.Core
+ * @package OSjs.Core
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  */
 (function($, undefined) {

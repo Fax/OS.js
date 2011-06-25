@@ -3,7 +3,7 @@
  *
  * Uses geolocation API and geonames to figure out weather
  *
- * @package ajwm.Panel
+ * @package OSjs.Panel
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */

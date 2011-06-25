@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /**
- * Convert Glade+XML into AJWM application
+ * Convert Glade+XML into OSjs application
  *
  * TODO: ClorChooseButton as FileChoosButton
  *
@@ -37,7 +37,7 @@ function create_php($cname) {
  * {$cname} Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package ajwm.Applications
+ * @package OSjs.Applications
  * @class
  */
 class {$cname}
@@ -82,7 +82,7 @@ EOJAVASCRIPT;
 /**
  * Application: {$cname}
  *
- * @package ajwm.Applications
+ * @package OSjs.Applications
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
@@ -322,7 +322,7 @@ function create_css($cname) {
 /**
  * Application: {$cname}
  *
- * @package ajwm.Applications
+ * @package OSjs.Applications
  * @author Anders Evenrud <andersevenrud@gmail.com>
  */
 

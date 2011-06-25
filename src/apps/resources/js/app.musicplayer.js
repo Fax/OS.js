@@ -1,7 +1,7 @@
 /**
  * Application: ApplicationMusicPlayer
  *
- * @package ajwm.Applications
+ * @package OSjs.Applications
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
