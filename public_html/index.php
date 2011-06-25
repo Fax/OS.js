@@ -56,7 +56,8 @@ if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
   $path = sprintf("%s/resources/%s/%s", PATH_APPS, $type, $res); // FIXME
 
   if ( file_exists($path) ) {
-    header(sprintf("Content-Type: text/%s; charset=utf-8", $type == "js" ? "javascript" : "css"));
+    //header(sprintf("Content-Type: text/%s; charset=utf-8", $type == "js" ? "javascript" : "css"));
+    header(sprintf("Content-Type: %s; charset=utf-8", $type == "js" ? "application/x-javascript" : "text/css"));
     print file_get_contents($path);
     exit;
   }

@@ -2406,7 +2406,7 @@
 
       // Windot temp attributes
       this._current         = false;
-      this._attrs_temp      = null; // FIXME: Refactor
+      this._attrs_temp      = null;
       this._attrs_restore   = attrs;
       this._created         = false;
       this._showing         = false;
@@ -2619,6 +2619,16 @@
 
         // Check if window has any saved attributes for override (session restore etc)
         if ( this._attrs_restore && sizeof(this._attrs_restore) ) {
+
+          if ( this._attrs_restore.is_maximized ) {
+            this._attrs_temp = {
+              top : this._top,
+              left : this._left,
+              width : this._width,
+              height : this._height
+            };
+          }
+
           this._top          = this._attrs_restore.top;
           this._left         = this._attrs_restore.left;
           this._width        = this._attrs_restore.width;
@@ -2972,10 +2982,10 @@
       if ( this._is_maximizable ) {
         if ( this._is_maximized ) {
           if ( this._attrs_temp !== null ) {
-            this._top = this._attrs_temp.position.top;
-            this._left = this._attrs_temp.position.left;
-            this._width = this._attrs_temp.size.width;
-            this._height = this._attrs_temp.size.height;
+            this._top = this._attrs_temp.top;
+            this._left = this._attrs_temp.left;
+            this._width = this._attrs_temp.width;
+            this._height = this._attrs_temp.height;
 
             this.$element.animate({
               'top'    : this._top + 'px',
@@ -2995,8 +3005,10 @@
           }
         } else {
           this._attrs_temp = {
-            'size'     : {'width' : this.$element.width(), 'height' : this.$element.height()},
-            'position' : this.$element.offset()
+            'top'    : this.$element.offset()['top'],
+            'left'   : this.$element.offset()['left'],
+            'width'  : this.$element.width(),
+            'height' : this.$element.height()
           };
 
           var ppos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
