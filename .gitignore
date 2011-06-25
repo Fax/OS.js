@@ -27,7 +27,6 @@ public_html/img/app.draw/icons/
 public_html/js/app.email.js
 server.php
 src/IMAP.class.php
-src/Server.class.php
 src/build/classes/ajwm/AppEmailMailbox.php
 src/build/classes/ajwm/AppEmailMailboxPeer.php
 src/build/classes/ajwm/AppEmailMailboxQuery.php

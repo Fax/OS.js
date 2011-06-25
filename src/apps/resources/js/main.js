@@ -47,6 +47,7 @@
   var SUPPORT_CANVAS   = (!!document.createElement('canvas').getContext);
   var SUPPORT_VIDEO    = (!!document.createElement('video').canPlayType);
   var SUPPORT_AUDIO    = (!!document.createElement('audio').canPlayType);
+  var SUPPORT_SOCKET   = ('WebSocket' in window && window['WebSocket'] !== null);
 
   /**
    * Local references
@@ -623,6 +624,151 @@
     }
 
   };
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Socket
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * WebSocket abstraction
+   * @class
+   */
+  var Socket = Class.extend({
+
+    /**
+     * Constructor
+     */
+    init : function(uri) {
+      this._socket = null;
+      this._uri    = (uri = uri || "ws://localhost:8888");
+
+      // Overrides
+      this.on_open    = function(ev) {};
+      this.on_message = function(ev, data) {};
+      this.on_close   = function(ev) {};
+      this.on_error   = function(ev, data, err) {};
+
+      console.group("Socket::init()");
+      console.log("Support", SUPPORT_SOCKET);
+      console.log("URI", uri);
+      console.groupEnd();
+
+    },
+
+    /**
+     * Destructor
+     */
+    destroy : function() {
+      if ( this._socket ) {
+        try {
+          this._socket.close();
+        } catch ( e ) {} // FIXME
+        this._socket = null;
+      }
+    },
+
+    /**
+     * Base onopen event
+     * @return void
+     */
+    _on_open : function(ev) {
+      console.log("Socket::open()", this);
+
+      this.on_open(ev);
+    },
+
+    /**
+     * Base onmessage event
+     * @return void
+     */
+    _on_message : function(ev, data) {
+      console.group("Socket::message()");
+      console.log(this._uri);
+      console.log(data);
+      console.groupEnd();
+
+      var js = null;
+      var err = null;
+      try {
+        js = JSON.parse(data);
+        if ( data.error ) {
+          err = data.error;
+        } else {
+          if ( data.result ) {
+            js = data.result;
+          }
+        }
+      } catch ( e ) {
+        err = e;
+      } // FIXME
+
+      if ( err !== null ) {
+        this.on_error(ev, js, err);
+      } else {
+        this.on_message(ev, js);
+      }
+    },
+
+    /**
+     * Base onclose event
+     * @return void
+     */
+    _on_close : function(ev) {
+      console.log("Socket::close()", this);
+
+      this.on_close(ev);
+    },
+
+    /**
+     * Connect
+     * @return bool
+     */
+    connect : function() {
+      var self = this;
+
+      if ( SUPPORT_SOCKET ) {
+        if ( !this._socket ) {
+          console.log("Socket::connect()", this._uri);
+
+          try {
+            var ws = new WebSocket(this._uri);
+            ws.onopen = function(ev) {
+              self._on_open(ev);
+            };
+            ws.onmessage = function(ev) {
+              self._on_message(ev, ev.data);
+            };
+            ws.onclose = function(ev) {
+              self._on_close(ev);
+            };
+
+            this._socket = ws;
+          } catch ( e ) {
+            alert("Failed to create socket: " + e); // FIXME
+          }
+
+          return true;
+        }
+      }
+
+      return false;
+    },
+
+    /**
+     * Send message
+     * @return void
+     */
+    send : function(msg) {
+      if ( this._socket ) {
+        console.group("Socket::send()");
+        console.log(this._uri, msg);
+        console.groupEnd();
+
+        this._socket.send(msg);
+      }
+    }
+
+  });
 
   /////////////////////////////////////////////////////////////////////////////
   // PROCESS
@@ -1278,6 +1424,12 @@
               }
             } else {
               error = "<audio>";
+            }
+          break;
+
+          case "socket" :
+            if ( !SUPPORT_SOCKET ) {
+              error = "WebSocket";
             }
           break;
 
