@@ -32,8 +32,12 @@ Tested on Linux and Windows platforms
 * Working: Gecko browsers (Firefox, Netscape etc)
 * Working: Android
 * Working: iOS
-* Partially working: Opera - Glade CSS errors (Opera 11 tested)
-* Partially working: Internet Explorer - CSS problems (<IE9 not tested)
+* Partially working: Opera (Opera 11 tested)
+  * Glade CSS issues
+* Partially working: Internet Explorer (<IE9 not tested)
+  * Dynamic CSS issues (working before)
+  * Does not fully support HTML5
+  * Does not fully support CSS2
 
 Built-In Applications, Dialogs and Panel Items:
 -------------------------------------------------------------------------------
