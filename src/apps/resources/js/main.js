@@ -85,21 +85,27 @@
         _Resources.addResources(data.result.resources, function() {
 
           if ( window[app_name] ) {
+            var crashed = false;
+            var application;
+
             try {
-              var application = new window[app_name](GtkWindow, Application, API, args, windows);
+              application = new window[app_name](GtkWindow, Application, API, args, windows);
               application._uuid  = data.result.uuid;
               application._checkCompability();
             } catch ( ex ) {
               CrashApplication(app_name, application, ex);
+              crashed = true;
             }
 
-            setTimeout(function() {
-              try {
-                application.run();
-              } catch ( ex ) {
-                CrashApplication(app_name, application, ex);
-              }
-            }, 100);
+            if ( !crashed ) {
+              setTimeout(function() {
+                try {
+                  application.run();
+                } catch ( ex ) {
+                  CrashApplication(app_name, application, ex);
+                }
+              }, 100);
+            }
           } else {
             var error = "Application Script not found!";
             API.system.dialog("error", error);
@@ -1222,11 +1228,12 @@
      * @return void
      * @throws Exception
      */
-    _checkCompability : function() {
-      var error;
+    _checkCompability : (function() {
 
-      for ( var i = 0; i < this._compability.length; i++ ) {
-        switch ( this._compability[i] ) {
+      function __check(key) {
+        var error;
+
+        switch ( key ) {
           case "canvas" :
             if ( !SUPPORT_CANVAS ) {
               error = "<canvas>";
@@ -1266,16 +1273,56 @@
             }
           break;
 
+          case "ogg" :
+            if ( SUPPORT_AUDIO ) {
+              if ( !(!!document.createElement('audio').canPlayType('audio/ogg; codecs="vorbis')) ) {
+                error = "<audio> does not support OGG/Vorbis";
+              }
+            } else {
+              error = "<audio>";
+            }
+          break;
+
+          case "mp3" :
+            if ( SUPPORT_AUDIO ) {
+              if ( !(!!document.createElement('audio').canPlayType('audio/mpeg')) ) {
+                error = "<audio> does not support MP3";
+              }
+            } else {
+              error = "<audio>";
+            }
+          break;
+
           default :
             error = false;
           break;
         }
+
+        return error;
       }
 
-      if ( error ) {
-        throw ({'message' : "Your browser does not support '" + error + "'", 'stack' : "Application::_checkCompability(): Application name: " + app_name});
-      }
-    },
+      return function(key) {
+        var self = this;
+        var error;
+
+        if ( key ) {
+          error = __check(key);
+        } else {
+          for ( var i = 0; i < this._compability.length; i++ ) {
+            error = __check(this._compability[i]);
+            if ( error ) {
+              break;
+            }
+          }
+
+          if ( error ) {
+            throw ({'message' : "Your browser does not support '" + error + "'", 'stack' : "Application::_checkCompability(): Application name: " + self._name});
+          }
+        }
+
+        return error;
+      };
+    })(),
 
     /**
      * Add a new window to application

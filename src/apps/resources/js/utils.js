@@ -429,3 +429,13 @@ function dirname(dir) {
   return val;
 }
 
+/**
+ * Get the filename name of a path
+ *
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @return String
+ */
+function basename(dir) {
+  var expl = dir.split("/");
+  return expl.length ? (expl[expl.length - 1]) : null;
+}

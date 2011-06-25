@@ -284,15 +284,32 @@ var ApplicationMusicPlayer = (function($, undefined) {
             if ( error ) {
               self.createMessageDialog("error", sprintf("Failed to read file '%s'", fname));
             } else {
-              console.log(result);
+              var invalid = true;
+              var type = "unknown";
+              if ( result['MIMEType'] ) {
+                var mime = result['MIMEType'];
+                if ( mime.match(/^audio\/mpeg/) ) {
+                  invalid = self._checkCompability("mp3");
+                  type = "mp3";
+                } else if ( mime.match(/^audio\/ogg/) ) {
+                  invalid = self._checkCompability("ogg");
+                  type = "ogg/vorbis";
+                }
+              }
 
-              el.find(".label1").html(sprintf("<b>Artist:</b> %s", result.Artist || "Unknown"));
-              el.find(".label2").html(sprintf("<b>Album:</b> %s (%s)", result.Album || "Unknown", result.Year || "Unknown year"));
-              el.find(".label3").html(sprintf("<b>Track:</b> %s", result.Title || "Unknown"));
-              el.find(".label4").html(sprintf("<b>Length:</b> %s", result.Length));
+              if ( invalid ) {
+                alert("Cannot play this filetype (" + type + ")!"); // FIXME
+              } else {
+                el.find(".label1").html(sprintf("<b>Artist:</b> %s", result.Artist || "Unknown"));
+                el.find(".label2").html(sprintf("<b>Album:</b> %s (%s)", result.Album || "Unknown", result.Year || "Unknown year"));
+                el.find(".label3").html(sprintf("<b>Track:</b> %s", result.Title || "Unknown"));
+                el.find(".label4").html(sprintf("<b>Length:</b> %s", result.Length));
 
-              self.$player.attr("src", "/media" + fname);
-              self.$player.get(0).play();
+                el.find(".iconview1").html(fname);
+
+                self.$player.attr("src", "/media" + fname);
+                self.$player.get(0).play();
+              }
             }
           });
         }
