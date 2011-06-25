@@ -13,6 +13,13 @@ if ( !($wm = WindowManager::initialize()) ) {
   die("Failed to initialize window manager");
 }
 
+if ( !ENABLE_CACHE ) {
+  header("Expires: Fri, 01 Jan 2010 05:00:00 GMT");
+  header("Cache-Control: maxage=1");
+  header("Cache-Control: no-cache");
+  header("Pragma: no-cache");
+}
+
 if ( isset($_GET['font']) && !empty($_GET['font']) ) {
 
   header("Content-Type: text/css; charset=utf-8");
@@ -67,17 +74,6 @@ if ( !($json = $wm->doPOST($_POST)) === false ) {
   die($json);
 }
 
-
-$append = "";
-if ( !ENABLE_CACHE ) {
-  header("Expires: Fri, 01 Jan 2010 05:00:00 GMT");
-  header("Cache-Control: maxage=1");
-  header("Cache-Control: no-cache");
-  header("Pragma: no-cache");
-
-  $append = "&" . time();
-}
-
 header("Content-Type: text/html; charset=utf-8");
 ?>
 <!DOCTYPE html>
@@ -109,32 +105,32 @@ header("Content-Type: text/html; charset=utf-8");
   <script type="text/javascript" src="/js/vendor/jquery.touch.compact.js"></script>
 
   <!-- Main libraries -->
-  <link rel="stylesheet" type="text/css" href="/?resource=main.css<?php print $append; ?>" />
-  <link rel="stylesheet" type="text/css" href="/?resource=glade.css<?php print $append; ?>" />
-  <link rel="stylesheet" type="text/css" href="/?resource=pimp.css<?php print $append; ?>" />
-  <link rel="stylesheet" type="text/css" href="/?resource=theme.default.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/?resource=main.css" />
+  <link rel="stylesheet" type="text/css" href="/?resource=glade.css" />
+  <link rel="stylesheet" type="text/css" href="/?resource=pimp.css" />
+  <link rel="stylesheet" type="text/css" href="/?resource=theme.default.css" />
   <link rel="stylesheet" type="text/css" href="/?font=Sansation" title="FontFace" />
 
-  <script type="text/javascript" src="/?resource=utils.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/?resource=main.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/?resource=utils.js"></script>
+  <script type="text/javascript" src="/?resource=main.js"></script>
 
   <!-- Preloaded resources -->
-  <link rel="stylesheet" type="text/css" href="/?resource=sys.about.css<?php print $append; ?>" />
-  <link rel="stylesheet" type="text/css" href="/?resource=sys.user.css<?php print $append; ?>" />
-  <link rel="stylesheet" type="text/css" href="/?resource=sys.settings.css<?php print $append; ?>" />
-  <link rel="stylesheet" type="text/css" href="/?resource=sys.logout.css<?php print $append; ?>" />
+  <link rel="stylesheet" type="text/css" href="/?resource=sys.about.css" />
+  <link rel="stylesheet" type="text/css" href="/?resource=sys.user.css" />
+  <link rel="stylesheet" type="text/css" href="/?resource=sys.settings.css" />
+  <link rel="stylesheet" type="text/css" href="/?resource=sys.logout.css" />
 
-  <script type="text/javascript" src="/?resource=panel.separator.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/?resource=panel.clock.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/?resource=panel.menu.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/?resource=panel.windowlist.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/?resource=panel.dock.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/?resource=panel.weather.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/?resource=panel.separator.js"></script>
+  <script type="text/javascript" src="/?resource=panel.clock.js"></script>
+  <script type="text/javascript" src="/?resource=panel.menu.js"></script>
+  <script type="text/javascript" src="/?resource=panel.windowlist.js"></script>
+  <script type="text/javascript" src="/?resource=panel.dock.js"></script>
+  <script type="text/javascript" src="/?resource=panel.weather.js"></script>
 
-  <script type="text/javascript" src="/?resource=sys.about.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/?resource=sys.user.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/?resource=sys.settings.js<?php print $append; ?>"></script>
-  <script type="text/javascript" src="/?resource=sys.logout.js<?php print $append; ?>"></script>
+  <script type="text/javascript" src="/?resource=sys.about.js"></script>
+  <script type="text/javascript" src="/?resource=sys.user.js"></script>
+  <script type="text/javascript" src="/?resource=sys.settings.js"></script>
+  <script type="text/javascript" src="/?resource=sys.logout.js"></script>
 </head>
 <body>
 

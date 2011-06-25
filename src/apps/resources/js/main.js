@@ -841,10 +841,6 @@
         var type = res.split(".");
         type = type[type.length - 1];
 
-        if ( !ENABLE_CACHE ) {
-          res += "&" + (new Date()).getTime();
-        }
-
         var el = null;
         var ie = false;
         if ( type == "js" ) {
@@ -866,7 +862,7 @@
         console.log(ie ? el : el.get(0));
         console.groupEnd();
 
-        this.resources.push(res.split("?")[0]);
+        this.resources.push(res);
         this.links.push(el);
       },
 
