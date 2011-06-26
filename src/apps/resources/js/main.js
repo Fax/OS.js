@@ -151,6 +151,10 @@
    */
   var API = {
 
+    'Socket' : function() {
+      return new Socket();
+    },
+
     'loading' : {
       'show' : function() {
         $("#Loading").show();
