@@ -25,7 +25,6 @@ public_html/js/vendor/jquery.ui.touch-punch.min.js
 public_html/css/app.email.css
 public_html/img/app.draw/icons/
 public_html/js/app.email.js
-server.php
 src/IMAP.class.php
 src/build/classes/ajwm/AppEmailMailbox.php
 src/build/classes/ajwm/AppEmailMailboxPeer.php
