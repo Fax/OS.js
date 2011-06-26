@@ -17,6 +17,7 @@ Features and Highlights:
 * Saving and Restoration of Desktop Sessions
 * User Environment settings (WebStorage and SQL backup)
 * API, System calls, Virtual filesystem
+* TCP WebSocket Wrapper
 
 * Light-weight server and client code
 * Application Compiler, Glade Templates
