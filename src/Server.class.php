@@ -285,16 +285,16 @@ class Server
             if ( $s = $user->connect($args[0], $args[1]) ) {
               $this->_sockets[] = $s;
               $user->tcp_index = sizeof($this->_sockets) - 1;
-              $response = Array("result" => true);
+              $response = Array("method" => $json['method'], "result" => true);
             } else {
-              $response = Array("result" => false, "error" => true);
+              $response = Array("method" => $json['method'], "result" => false, "error" => true);
             }
             break;
           case "tcp_send":
             if ( $user->send($args[0]) ) {
-              $response = Array("result" => true);
+              $response = Array("method" => $json['method'], "result" => true);
             } else {
-              $response = Array("result" => false, "error" => true);
+              $response = Array("method" => $json['method'], "result" => false, "error" => true);
             }
             break;
           case "tcp_close":
@@ -302,9 +302,9 @@ class Server
               $user->disconnect();
               array_splice($this->_sockets, $ind, 1);
 
-              $response = Array("result" => true);
+              $response = Array("method" => $json['method'], "result" => true);
             } else {
-              $response = Array("result" => false, "error" => true);
+              $response = Array("method" => $json['method'], "result" => false, "error" => true);
             }
             break;
         }

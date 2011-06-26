@@ -651,9 +651,8 @@
 
       // Overrides
       this.on_open    = function(ev) {};
-      this.on_message = function(ev, data) {};
+      this.on_message = function(ev, js, data, err) {};
       this.on_close   = function(ev) {};
-      this.on_error   = function(ev, data, err) {};
 
       console.group("Socket::init()");
       console.log("Support", SUPPORT_SOCKET);
@@ -694,26 +693,20 @@
       console.log(data);
       console.groupEnd();
 
+      console.log(data.substr(0, 1));
+
       var js = null;
       var err = null;
       try {
-        js = JSON.parse(data);
-        if ( data.error ) {
-          err = data.error;
-        } else {
-          if ( data.result ) {
-            js = data.result;
-          }
+        if ( data.substr(0, 1) !== "{" ) {
+          data = data.substr(1, data.length);
         }
+        js = JSON.parse(data);
       } catch ( e ) {
         err = e;
       } // FIXME
 
-      if ( err !== null ) {
-        this.on_error(ev, js, err);
-      } else {
-        this.on_message(ev, js);
-      }
+      this.on_message(ev, js, data, err);
     },
 
     /**
