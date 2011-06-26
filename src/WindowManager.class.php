@@ -98,6 +98,11 @@ class WindowManager
         "options" => Array("dark", "light"),
         "value"   => "dark"
       ),
+      "desktop.font" => Array(
+        "type" => "array",
+        "options" => Array("Sansation", "FreeMono", "FreeSans", "FreeSerif"),
+        "value" => "Sansation"
+      ),
       "desktop.panel.items" => Array(
         "type" => "list",
         "items" => Array(

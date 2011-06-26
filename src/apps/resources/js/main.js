@@ -31,7 +31,7 @@
    * Local settings
    */
   var ENABLE_CACHE       = false;
-  var SETTING_REVISION   = 18;
+  var SETTING_REVISION   = 20;
   var ENABLE_LOGIN       = false;
   var ANIMATION_SPEED    = 400;
   var TEMP_COUNTER       = 1;
@@ -513,6 +513,13 @@
 
         'get' : function(k) {
           return _Settings._get(k);
+        },
+
+        'options' : function(k) {
+          if ( API.user.settings.type(k) == "array" ) {
+            return _Settings._get(k, true);
+          }
+          return false;
         }
       },
 
@@ -1169,13 +1176,13 @@
       _get : function(k, keys, jsn) {
         var ls = undefined;
         if ( _avail[k] !== undefined ) {
-          ls = localStorage.getItem(k);
-
-          if ( ls === null || ls === undefined || ls === "undefined" ) {
-            if ( keys ) {
-              ls = _avail[k].options;
-            } else {
+          if ( keys && _avail[k] ) {
+            ls = _avail[k].options;
+          } else {
+            if ( _avail[k].hidden ) {
               ls = _avail[k].value;
+            } else {
+              ls = localStorage.getItem(k);
             }
           }
         }
@@ -1952,6 +1959,10 @@
         if ( theme ) {
           this.setTheme(theme);
         }
+        var font = _Settings._get('desktop.font');
+        if ( font ) {
+          this.setFont(font);
+        }
 
         console.group("Applied used settings");
         console.log("wallpaper", wp);
@@ -1987,6 +1998,15 @@
 
         $("body").addClass(cname);
         _oldTheme = cname;
+      },
+
+      /**
+       * Set font
+       * @return void
+       */
+      setFont : function(font) {
+        var css = $("head link[title=FontFace]");
+        $(css).attr("href", "/?font=" + font);
       },
 
       /**

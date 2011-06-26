@@ -34,10 +34,12 @@ Tested on Linux and Windows platforms
 * Working: iOS
 * Partially working: Opera (Opera 11 tested)
   * Glade CSS issues
+  * No WebSocket
 * Partially working: Internet Explorer (<IE9 not tested)
   * Some Panel CSS issues
   * Does not fully support HTML5
   * Does not fully support CSS2
+  * No WebSocket
 
 Built-In Applications, Dialogs and Panel Items:
 -------------------------------------------------------------------------------

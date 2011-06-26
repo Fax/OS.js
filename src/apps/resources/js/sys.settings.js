@@ -81,7 +81,8 @@ var SystemSettings = (function($, undefined) {
 
         var args = {
           "desktop.wallpaper.path" : self.$element.find(".filechooserbutton_wallpaper input[type=hidden]").val(),
-          "desktop.theme"          : self.$element.find(".combobox_theme").val()
+          "desktop.theme"          : self.$element.find(".combobox_theme").val(),
+          "desktop.font"           : self.$element.find(".combobox_font").val()
         };
         API.user.settings.save(args);
 
@@ -109,17 +110,24 @@ var SystemSettings = (function($, undefined) {
 
           // Do your stuff here
 
-          var val = API.user.settings.get(this.name);
+          var opts = API.user.settings.options("desktop.theme");
+          $(opts).each(function(i, v) {
+            el.find(".combobox_theme").append($(sprintf("<option value=\"%s\">%s</option>", v, v)));
+          });
 
-          el.find(".combobox_theme").append($("<option value=\"dark\">Dark</option>"));
-          el.find(".combobox_theme").append($("<option value=\"light\">Light</option>"));
+          opts = API.user.settings.options("desktop.font");
+          $(opts).each(function(i, v) {
+            el.find(".combobox_font").append($(sprintf("<option value=\"%s\">%s</option>", v, v)));
+          });
 
           var wallpaper = API.user.settings.get("desktop.wallpaper.path");
           var theme     = API.user.settings.get("destkop.theme");
+          var font      = API.user.settings.get("desktop.font");
 
           el.find("input[type=text]").val(wallpaper);
           el.find("input[type=hidden]").val(wallpaper);
           el.find(".combobox_theme").val(theme);
+          el.find(".combobox_font").val(font);
 
           return true;
         }
