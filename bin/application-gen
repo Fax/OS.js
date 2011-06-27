@@ -299,6 +299,18 @@ EOJAVASCRIPT;
           });
 
 EOJAVASCRIPT;
+
+      } else if ( $ev_type == "input-activate" ) {
+            $js_run .= <<<EOJAVASCRIPT
+
+          el.find(".{$obj}").keypress(function(ev) {
+            var k = ev.keyCode || ev.which;
+            if ( k == 13 ) {
+              self.Event{$ev_handler}(this, ev);
+            }
+          });
+
+EOJAVASCRIPT;
       } else {
 
             $js_run .= <<<EOJAVASCRIPT

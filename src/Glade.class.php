@@ -462,9 +462,15 @@ class Glade
                 case "item-activated" :
                 case "group-changed" :
                 case "select" :
-                case "activate" :
                 case "clicked" :
                   $pk = "click";
+                  break;
+                case "activate" :
+                  if ( $class == "GtkEntry" ) {
+                    $pk = "input-activate";
+                  } else {
+                    $pk = "click";
+                  }
                   break;
               }
 
