@@ -30,6 +30,7 @@
   /**
    * Local settings
    */
+  var WEBSOCKET_URI      = "ws://localhost:8888";
   var ENABLE_CACHE       = false;
   var SETTING_REVISION   = 20;
   var ENABLE_LOGIN       = false;
@@ -652,7 +653,7 @@
      */
     init : function(uri) {
       this._socket = null;
-      this._uri    = (uri = uri || "ws://localhost:8888");
+      this._uri    = (uri = uri || WEBSOCKET_URI);
 
       // Overrides
       this.on_open    = function(ev) {};
