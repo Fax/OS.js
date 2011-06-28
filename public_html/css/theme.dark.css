@@ -6,7 +6,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  */
 
-body.ThemeDark {
+body {
   background : #005a77;
   color : #222;
 }
@@ -20,34 +20,34 @@ body.ThemeDark {
 }
 */
 
-body.ThemeDark .DesktopPanel {
+.DesktopPanel {
   background : #3c3c3d;
   border-bottom : 1px solid #2a2a2b;
   border-left : 1px solid #2a2a2b;
   border-right : 1px solid #2a2a2b;
 }
 
-body.ThemeDark .PanelItem {
+.PanelItem {
   color : #b0c2c1;
 }
-body.ThemeDark .PanelItemWindow:hover {
+.PanelItemWindow:hover {
   color : #fff;
 }
-body.ThemeDark .PanelItem.Current {
+.PanelItem.Current {
 }
-body.ThemeDark .PanelItemSeparator {
+.PanelItemSeparator {
   border-left : 1px solid #363636;
   border-right : 1px solid #3f4040;
 }
-body.ThemeDark .PanelItemSeparator:hover,
-body.ThemeDark .PanelItemClock:hover {
+.PanelItemSeparator:hover,
+.PanelItemClock:hover {
 }
 
-body.ThemeDark .Window {
+.Window {
   border : 1px solid #30353d;
   background : #eeeeee;
 }
-body.ThemeDark .WindowTop {
+.WindowTop {
   color : #b0c2c1;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#41454d', endColorstr='#31363d'); /* for IE */
   background-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20version%3D%221.0%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22gradient%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%20%2341454d%3B%22/%3E%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%20%2331363d%3B%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20x%3D%220%22%20y%3D%220%22%20fill%3D%22url%28%23gradient%29%22%20width%3D%22100%25%22%20height%3D%22100%25%22%20/%3E%3C/svg%3E);
@@ -55,7 +55,7 @@ body.ThemeDark .WindowTop {
   background: -moz-linear-gradient(top,  #41454d,  #31363d); /* for firefox 3.6+ */ 
 
 }
-body.ThemeDark .GtkIconViewHeader {
+.GtkIconViewHeader {
   color : #222;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e7eaec', endColorstr='#dddfe1'); /* for IE */
   background-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20version%3D%221.0%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22gradient%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%20%23e7eaec%3B%22/%3E%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%20%23dddfe1%3B%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20x%3D%220%22%20y%3D%220%22%20fill%3D%22url%28%23gradient%29%22%20width%3D%22100%25%22%20height%3D%22100%25%22%20/%3E%3C/svg%3E);
@@ -64,44 +64,44 @@ body.ThemeDark .GtkIconViewHeader {
   border-top : 1px solid #bdbfc1;
   border-bottom : 1px solid #cacdcf;
 }
-body.ThemeDark .GtkIconViewHeader td.Space {
+.GtkIconViewHeader td.Space {
   border-right : 1px solid #ced1d3;
   padding-left : 5px;
   margin-left : -5px;
 }
-body.ThemeDark .GtkIconViewHeader td.Space {
+.GtkIconViewHeader td.Space {
   border-left : 1px solid #eef1f3;
 }
-body.ThemeDark .GtkIconViewHeader td.Space.First {
+.GtkIconViewHeader td.Space.First {
   border-left :  0 none;
 }
-body.ThemeDark .GtkIconViewHeader td.Space.Last {
+.GtkIconViewHeader td.Space.Last {
   border-right : 0 none;
 }
 
-body.ThemeDark .WindowTopController {
+.WindowTopController {
   font-weight : bold;
   font-size : 16px;
 }
-body.ThemeDark .WindowTopController:hover {
+.WindowTopController:hover {
   color : #fff;
 }
-body.ThemeDark .Window.Current .WindowTopInner {
+.Window.Current .WindowTopInner {
   color : #fff;
 }
-body.ThemeDark .PanelItemWindow.Current {
+.PanelItemWindow.Current {
   color : #fff;
   font-weight : bold;
 }
 
-body.ThemeDark .Menu,
-body.ThemeDark .GtkWindow .GtkMenuBar .GtkMenuItem ul {
+.Menu,
+.GtkWindow .GtkMenuBar .GtkMenuItem ul {
   border : 1px solid #30353d;
   background : #eeeeee;
   color : #222;
 }
 
-body.ThemeDark .Menu li.Default:hover {
+.Menu li.Default:hover {
   color : #fff;
   background : #4f4f4f;
 }

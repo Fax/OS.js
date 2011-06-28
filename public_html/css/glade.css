@@ -387,7 +387,6 @@
       .GtkNotebook .ui-tabs-nav a {
         color : #222;
         font-weight : normal;
-        cursor : pointer !important;
       }
       .GtkNotebook .ui-tabs-nav .ui-tabs-selected a {
         font-weight : bold;

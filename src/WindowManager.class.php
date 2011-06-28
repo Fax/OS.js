@@ -99,9 +99,14 @@ class WindowManager
         "value"   => "dark"
       ),
       "desktop.font" => Array(
-        "type" => "array",
+        "type"    => "array",
         "options" => Array("Sansation", "FreeMono", "FreeSans", "FreeSerif"),
-        "value" => "Sansation"
+        "value"   => "Sansation"
+      ),
+      "desktop.cursor.theme" => Array(
+        "type"    => "array",
+        "options" => Array("Default", "Experimental"),
+        "value"   => "Default"
       ),
       "desktop.panel.items" => Array(
         "type" => "list",

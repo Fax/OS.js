@@ -8,10 +8,6 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  */
 
-html {
-  cursor : default;
-}
-
 body {
   background : #666;
   font-size : 12px;
@@ -50,9 +46,11 @@ textarea {
   background : #e6e6e6;
 }
 
+/*
 .PanelItem {
   cursor : pointer;
 }
+*/
 
 .PanelItemWindow.Current {
   font-weight : bold;
@@ -61,9 +59,11 @@ textarea {
 .Window {
   background : #e6e6e6;
 }
+/*
 .WindowTopController {
   cursor : pointer;
 }
+  */
 .WindowTopController {
 }
 .WindowTopController:hover,
@@ -94,6 +94,7 @@ textarea {
 
 .WindowBottomInner {
 }
+/*
 .Window .ui-resizable-n {
   cursor : n-resize;
 }
@@ -118,14 +119,17 @@ textarea {
 .Window .ui-resizable-sw {
   cursor : sw-resize;
 }
+  */
 
 
 .Menu {
   background : #e6e6e6;
 }
+/*
 .Menu li {
   cursor : pointer;
 }
+  */
 .Menu li.Disabled {
   color : #777;
 }
@@ -168,9 +172,11 @@ textarea {
   border : 2px inset;
 }
 
+/*
 .OperationDialog .FileChooser li {
   cursor : pointer;
 }
+  */
 .OperationDialog .FileChooser li:hover {
   text-decoration : underline;
 }
@@ -218,6 +224,8 @@ textarea {
 
 /* Glade */
 
+/*
 .GtkWindow .GtkMenu li {
   cursor : pointer;
 }
+  */

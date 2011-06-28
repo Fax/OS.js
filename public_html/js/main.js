@@ -32,7 +32,7 @@
    */
   var WEBSOCKET_URI      = "ws://localhost:8888";
   var ENABLE_CACHE       = false;
-  var SETTING_REVISION   = 20;
+  var SETTING_REVISION   = 21;
   var ENABLE_LOGIN       = false;
   var ANIMATION_SPEED    = 400;
   var TEMP_COUNTER       = 1;
@@ -188,20 +188,12 @@
 
       'cursor' : (function() {
         var ccursor = "default";
+        var celement = null;
 
-        return function(c, el) {
-          //var cname = sprintf("url('/img/cursors/%s.png'), %s", c, c);
-          var cname = c;
-
-          if ( el ) {
-            $(el).css("cursor", cname);
-            return;
-          }
-
+        return function(c) {
           if ( c !== ccursor ) {
-            $("body").css("cursor", cname);
+            $("body").attr("class", "cursor_" + c);
           }
-
           ccursor = c;
         };
       })(),
@@ -1595,8 +1587,6 @@
    */
   var Desktop = (function() {
 
-    var _oldTheme = null;
-
     return Process.extend({
 
       /**
@@ -1984,6 +1974,10 @@
         if ( font ) {
           this.setFont(font);
         }
+        var cursor = _Settings._get('desktop.cursor.theme');
+        if ( cursor ) {
+          this.setCursorTheme(cursor.split(" ")[0]);
+        }
 
         console.group("Applied used settings");
         console.log("wallpaper", wp);
@@ -2008,17 +2002,11 @@
        * @return void
        */
       setTheme : function(theme) {
-        var cname = "Theme" + theme.capitalize();
-        var fname = "theme." + theme.toLowerCase() + ".css";
-
-        _Resources.addResource(fname);
-
-        if ( _oldTheme ) {
-          $("body").removeClass(_oldTheme);
+        var css = $("#ThemeFace");
+        var href = "/css/theme." + theme.toLowerCase() + ".css";
+        if ( $(css).attr("href") != href ) {
+          $(css).attr("href", href);
         }
-
-        $("body").addClass(cname);
-        _oldTheme = cname;
       },
 
       /**
@@ -2026,8 +2014,23 @@
        * @return void
        */
       setFont : function(font) {
-        var css = $("head link[title=FontFace]");
-        $(css).attr("href", "/?font=" + font);
+        var css = $("#FontFace");
+        var href = "/?font=" + font;
+        if ( $(css).attr("href") != href ) {
+          $(css).attr("href", href);
+        }
+      },
+
+      /**
+       * Set cursor theme
+       * @return void
+       */
+      setCursorTheme : function(cursor) {
+        var css = $("#CursorFace");
+        var href = "/css/cursor." + cursor.toLowerCase() + ".css";
+        if ( $(css).attr("href") != href ) {
+          $(css).attr("href", href);
+        }
       },
 
       /**

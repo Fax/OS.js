@@ -20,6 +20,10 @@ if ( !ENABLE_CACHE ) {
   header("Pragma: no-cache");
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// FONT STYLESHEET
+///////////////////////////////////////////////////////////////////////////////
+
 if ( isset($_GET['font']) && !empty($_GET['font']) ) {
 
   header("Content-Type: text/css; charset=utf-8");
@@ -68,6 +72,11 @@ EOCSS;
   print sprintf($template, addslashes($font));
   exit;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// RESOURCE LOADING
+///////////////////////////////////////////////////////////////////////////////
+
 if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
   $res  = addslashes($_GET['resource']);
   $type = preg_match("/\.js$/", $res) ? "js" : "css";
@@ -84,6 +93,10 @@ if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
   exit;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// AJAX
+///////////////////////////////////////////////////////////////////////////////
+
 if ( !($json = $wm->doGET($_GET)) === false ) {
   header("Content-Type: application/json");
   die($json);
@@ -92,6 +105,11 @@ if ( !($json = $wm->doPOST($_POST)) === false ) {
   header("Content-Type: application/json");
   die($json);
 }
+
+
+///////////////////////////////////////////////////////////////////////////////
+// HTML
+///////////////////////////////////////////////////////////////////////////////
 
 header("Content-Type: text/html; charset=utf-8");
 ?>
@@ -123,15 +141,19 @@ header("Content-Type: text/html; charset=utf-8");
   <script type="text/javascript" src="/js/vendor/jquery-ui-1.8.13.custom.min.js"></script>
   <script type="text/javascript" src="/js/vendor/jquery.touch.compact.js"></script>
 
-  <!-- Main libraries -->
-  <link rel="stylesheet" type="text/css" href="/?resource=main.css" />
-  <link rel="stylesheet" type="text/css" href="/?resource=glade.css" />
-  <link rel="stylesheet" type="text/css" href="/?resource=pimp.css" />
-  <link rel="stylesheet" type="text/css" href="/?resource=theme.default.css" />
-  <link rel="stylesheet" type="text/css" href="/?font=Sansation" title="FontFace" />
+  <!-- Main resources -->
+  <link rel="stylesheet" type="text/css" href="/css/main.css" />
+  <link rel="stylesheet" type="text/css" href="/css/glade.css" />
+  <link rel="stylesheet" type="text/css" href="/css/pimp.css" />
 
-  <script type="text/javascript" src="/?resource=utils.js"></script>
-  <script type="text/javascript" src="/?resource=main.js"></script>
+  <script type="text/javascript" src="/js/utils.js"></script>
+  <script type="text/javascript" src="/js/main.js"></script>
+
+  <!-- OS.js defineable -->
+  <link rel="stylesheet" type="text/css" href="/?font=Sansation" id="FontFace" />
+  <link rel="stylesheet" type="text/css" href="/css/theme.default.css" id="ThemeBase" />
+  <link rel="stylesheet" type="text/css" href="/css/theme.dark.css" id="ThemeFace" />
+  <link rel="stylesheet" type="text/css" href="/css/cursor.default.css" id="CursorFace" />
 
   <!-- Preloaded resources -->
   <link rel="stylesheet" type="text/css" href="/?resource=sys.about.css" />

@@ -1,0 +1,55 @@
+@charset "UTF-8";
+/**
+ * Cursor Stylesheet
+ *
+ * @package OSjs.Styles
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ */
+
+html {
+  cursor : default;
+}
+
+body {
+  cursor : default;
+}
+.cursor_move {
+  cursor : move !important;
+}
+.cursor_default {
+  cursor : default !important;
+}
+.cursor_not-allowed {
+  cursor : not-allowed !important;
+}
+.cursor_wait {
+  cursor : wait !important;
+}
+
+.PanelItem {
+  cursor : pointer;
+}
+
+.Window .WindowTopController {
+  cursor : pointer;
+}
+.Window .ui-resizable-se {
+  cursor : se-resize;
+}
+.Window textarea,
+.Window input[type=text] {
+  cursor : text;
+}
+
+.GtkMenu li,
+.Menu li {
+  cursor : pointer;
+}
+
+.FileChooser li {
+  cursor : pointer;
+}
+
+.GtkNotebook .ui-tabs-nav a {
+  cursor : pointer !important;
+}

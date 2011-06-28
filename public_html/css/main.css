@@ -2,10 +2,14 @@
 /**
  * Main Stylesheet
  *
- * This is the main stylesheet. User for positioning elements etc.
- * - Default colors, fonts, cursors etc. in 'theme.default.css'
- * - CSS2/3 can be found in 'pimp.css'
- * - Theme is defined by js 'theme.*.js'
+ * This stylesheet contains default styles for main components.
+ *
+ * - Color schemes are found in theme.*
+ * - Advanced CSS features is in pimp.css
+ * - Glade styles are in glade.css
+ * - Fonts are defined in /?font=
+ * - Cursors are defined in /?cursor=
+ *
  *
  * @package OSjs.Styles
  * @author Anders Evenrud <andersevenrud@gmail.com>
