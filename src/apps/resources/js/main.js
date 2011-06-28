@@ -1551,7 +1551,7 @@
     _getSession : function() {
       if ( this._root_window ) {
         var wname = this._root_window._name;
-        var win = this._root_window._getSession();
+        var win   = this._root_window._getSession();
 
         var windows = {};
         windows[wname] = win;
@@ -2704,7 +2704,36 @@
         // Content and buttons
         el.find(".WindowTopInner span").html(this._title);
         if ( this._is_dialog ) {
-          el.find(".DialogContent").html(this._content).addClass(this._is_dialog);
+          el.find(".DialogContent").html(this._content);
+          if ( this._is_dialog !== true ) {
+            el.find(".DialogContent").addClass(this._is_dialog);
+
+            var icon;
+            switch ( this._is_dialog ) {
+              case "info" :
+                icon = "info";
+              break;
+              case "error" :
+                icon = "error";
+              break;
+              case "question" :
+              case "confirm"  :
+                icon = "question";
+              break;
+              case "warning" :
+                icon = "warning";
+              break;
+              default :
+                icon = null;
+              break;
+            }
+
+            if ( icon ) {
+              el.find(".WindowTopInner img").attr("src", sprintf("/img/icons/16x16/status/gtk-dialog-%s.png", icon));
+            } else {
+              el.find(".WindowTopInner img").hide();
+            }
+          }
         } else {
           el.find(".WindowTopInner img").attr("src", this.getIcon());
           el.find(".WindowContentInner").html(this._content);
@@ -2849,7 +2878,7 @@
         //
 
         // Fix title alignment
-        var lw = this._is_dialog ? 0 : 16;
+        var lw = el.find(".WindowTopInner img").is(":visible") ? 16 : 0;
         var hw = 0;
         $(el).find(".WindowTop .WindowTopController").filter(":visible").each(function() {
           hw += parseInt($(this).width(), 10);

@@ -222,6 +222,7 @@ header("Content-Type: text/html; charset=utf-8");
   <div class="Window Dialog">
     <div class="WindowTop">
       <div class="WindowTopInner">
+        <img alt="" src="/img/blank.gif" />
         <span></span>
       </div>
       <div class="WindowTopControllers">
