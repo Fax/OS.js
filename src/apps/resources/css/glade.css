@@ -344,6 +344,7 @@
     font-weight : bold;
   }
   .GtkMenuBar .Disabled {
+    color : #ddd;
   }
 
   .GtkMenu .Subbed {

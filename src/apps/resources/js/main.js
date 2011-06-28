@@ -48,6 +48,7 @@
   var SUPPORT_VIDEO    = (!!document.createElement('video').canPlayType);
   var SUPPORT_AUDIO    = (!!document.createElement('audio').canPlayType);
   var SUPPORT_SOCKET   = ('WebSocket' in window && window['WebSocket'] !== null);
+  var SUPPORT_RICHTEXT = (!!document.createElement('textarea').contentEditable);
 
   /**
    * Local references
@@ -696,8 +697,6 @@
       console.log(this._uri);
       console.log(data);
       console.groupEnd();
-
-      console.log(data.substr(0, 1));
 
       var js = null;
       var err = null;
@@ -1434,6 +1433,12 @@
           case "socket" :
             if ( !SUPPORT_SOCKET ) {
               error = "WebSocket";
+            }
+          break;
+
+          case "richtext" :
+            if ( !SUPPORT_RICHTEXT ) {
+              error = "Richtext (contentEditable)";
             }
           break;
 
