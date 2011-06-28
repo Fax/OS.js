@@ -13,7 +13,7 @@ var ApplicationClock = (function($, undefined) {
     var Window_window1 = GtkWindow.extend({
 
       init : function(app) {
-        this._super("ApplicationClock", false, app, windows);
+        this._super("Window_window1", false, app, windows);
         this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationClock window1\"> <div class=\"Clock\"><div class=\"HourShadow\"></div><div class=\"Hour\"></div><div class=\"MinuteShadow\"></div><div class=\"Minute\"></div><div class=\"SecondShadow\"></div><div class=\"Second\"></div></div> </div> </div> ").html();
         this._title = 'Clock';
         this._icon = 'status/appointment-soon.png';

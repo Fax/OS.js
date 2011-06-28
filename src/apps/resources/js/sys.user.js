@@ -12,7 +12,7 @@ var SystemUser = (function($, undefined) {
     var Window_window1 = GtkWindow.extend({
 
       init : function(app) {
-        this._super("SystemUser", false, app, windows);
+        this._super("Window_window1", false, app, windows);
         this._content = $("<div class=\"window1\"> <div class=\"GtkWindow SystemUser window1\"> <div class=\"GtkNotebook notebook1\"> <ul> <li class=\"GtkLabel GtkObject label1\"> <div> <a href=\"#tab-0\">Profile</a> </div> </li> <li class=\"GtkLabel GtkObject label2\"> <div> <a href=\"#tab-1\">Session</a> </div> </li> </ul> <div class=\"GtkFixed GtkTab fixed1\" id=\"tab-0\"></div> <div class=\"GtkFixed GtkTab fixed2\" id=\"tab-1\"></div> </div> </div> </div> ").html();
         this._title = 'User Information';
         this._icon = 'apps/user-info.png';

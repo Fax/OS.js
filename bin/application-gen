@@ -145,7 +145,8 @@ EOJAVASCRIPT;
 }
 
 function create_js($cname, $window, $content, $properties, $signals, Array $mimes) {
-  $dialog = $properties['type'] == "dialog" ? 'true' : 'false';
+  //$dialog = $properties['type'] == "dialog" ? 'true' : 'false';
+  $dialog = "false";
   $content = addslashes(str_replace("\n", "", preg_replace("/\s+/", " ", $content)));
   $mimes = json_encode($mimes);
 
@@ -158,7 +159,7 @@ function create_js($cname, $window, $content, $properties, $signals, Array $mime
     var Window_{$window} = GtkWindow.extend({
 
       init : function(app) {
-        this._super("{$cname}", $dialog, app, windows);
+        this._super("Window_{$window}", $dialog, app, windows);
         this._content = $("{$content}").html();
 %s
       },

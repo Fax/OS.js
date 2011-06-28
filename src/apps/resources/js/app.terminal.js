@@ -82,7 +82,7 @@ var ApplicationTerminal = (function($, undefined) {
     var Window_window1 = GtkWindow.extend({
 
       init : function(app) {
-        this._super("ApplicationTerminal", false, app, windows);
+        this._super("Window_window1", false, app, windows);
         this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationTerminal window1\"> <textarea class=\"GtkTextView GtkObject textview1\"></textarea> </div> </div> ").html();
         this._title = 'Terminal';
         this._icon = 'apps/utilities-terminal.png';

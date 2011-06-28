@@ -28,7 +28,7 @@ var SystemProcesses = (function($, undefined) {
     var Window_window1 = GtkWindow.extend({
 
       init : function(app) {
-        this._super("SystemProcesses", false, app, windows);
+        this._super("Window_window1", false, app, windows);
         this._content = $("<div class=\"window1\"> <div class=\"GtkWindow SystemProcesses window1\"> <div class=\"GtkIconView GtkObject iconview1\"></div> </div> </div> ").html();
         this._title = 'Processes';
         this._icon = 'apps/utilities-system-monitor.png';

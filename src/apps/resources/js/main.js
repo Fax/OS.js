@@ -1550,12 +1550,16 @@
      */
     _getSession : function() {
       if ( this._root_window ) {
+        var wname = this._root_window._name;
         var win = this._root_window._getSession();
+
+        var windows = {};
+        windows[wname] = win;
         if ( win !== false ) {
           return {
             "name"    : this._name,
             "argv"    : this._argv,
-            "windows" : [win]
+            "windows" : windows
           };
         }
       }
@@ -2572,8 +2576,12 @@
      * @param Object   attrs      Extra win attributes (used to restore from sleep etc)
      */
     init : function(name, dialog, attrs) {
-      if ( (attrs instanceof Array) && attrs.length ) {
-        attrs = attrs[0]; // FIXME
+      var restore = null;
+
+      if ( attrs instanceof Object ) {
+        if ( attrs[name] !== undefined ) {
+          restore = attrs[name];
+        }
       }
 
       // DOM Elements
@@ -2582,7 +2590,7 @@
       // Windot temp attributes
       this._current         = false;
       this._attrs_temp      = null;
-      this._attrs_restore   = attrs;
+      this._attrs_restore   = restore;
       this._created         = false;
       this._showing         = false;
       this._origtitle       = "";
