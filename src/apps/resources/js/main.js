@@ -1121,6 +1121,13 @@
         storage[name] = props;
 
         localStorage.setItem("applications", JSON.stringify(storage));
+
+        console.group("SettingsManager::saveApp()");
+        console.log(name);
+        console.log(props);
+        console.groupEnd();
+
+        return props;
       },
 
       /**
@@ -1135,12 +1142,20 @@
             res = JSON.parse(storage);
           } catch ( e ) {}
         }
-        if ( (res instanceof Array) && (res instanceof Object) ) {
+
+        if ( (res instanceof Object) ) {
           if ( res[name] ) {
+
+            console.group("SettingsManager::loadApp()");
+            console.log(name);
+            console.log(res[name]);
+            console.groupEnd();
+
             return res[name];
           }
         }
-        return {};
+
+        return false;
       },
 
       /**
@@ -1225,7 +1240,7 @@
     /**
      * Constructor
      */
-    init : function(name, argv, restore) {
+    init : function(name, argv) {
       this._argv         = argv || {};
       this._name         = name;
       this._uuid         = null;
@@ -1235,10 +1250,6 @@
       this._storage      = {};
       this._storage_on   = false;
       this._compability  = [];
-
-      if ( restore === undefined || restore === true ) {
-        this._restoreStorage();
-      }
 
       console.log("Application::" + this._name + "::NULL::init()");
 
@@ -1288,6 +1299,9 @@
       var self = this;
 
       if ( !this._running ) {
+
+        this._restoreStorage();
+
         if ( root_window instanceof Window ) {
           this._root_window = root_window;
           this._proc_icon = root_window._icon;
@@ -1498,7 +1512,7 @@
      */
     _saveStorage : function() {
       if ( this._name && this._storage_on ) {
-        _Settings.saveApp(this._name, this._storage);
+        this._storage = _Settings.saveApp(this._name, this._storage);
       }
     },
 
@@ -1507,9 +1521,11 @@
      * @return void
      */
     _restoreStorage : function() {
-      if ( this._name ) {
-        this._storage = _Settings.loadApp(this._name);
-        this._storage_on = true;
+      if ( this._name && this._storage_on ) {
+        var s = _Settings.loadApp(this._name);
+        if ( s !== false ) {
+          this._storage = s;
+        }
       }
     },
 
@@ -1518,10 +1534,8 @@
      * @return void
      */
     _flushStorage : function() {
-      if ( this._name ) {
-        this._storage = {};
-
-        _Settings.saveApp(this._name, this._storage);
+      if ( this._name && this._storage_on ) {
+        this._storage = _Settings.saveApp(this._name, {});
       }
     },
 
