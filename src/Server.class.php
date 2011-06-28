@@ -66,7 +66,10 @@ class SocketUser{
 
       }
       print "....Sendt!\n";
+
+      return $socket;
     }
+    return null;
   }
 
   public function disconnect() {
@@ -291,10 +294,12 @@ class Server
             }
             break;
           case "tcp_send":
-            if ( $user->send($args[0]) ) {
-              $response = Array("method" => $json['method'], "result" => true);
+            $err = "no socket";
+            $t   = $user->send($args[0]);
+            if ( !$t || $err = socket_last_error($t)  ) {
+              $response = Array("method" => $json['method'], "result" => false, "error" => $err);
             } else {
-              $response = Array("method" => $json['method'], "result" => false, "error" => true);
+              $response = Array("method" => $json['method'], "result" => true);
             }
             break;
           case "tcp_close":

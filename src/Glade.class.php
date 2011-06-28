@@ -195,6 +195,22 @@ class Glade
       "label" => "Quit",
       "icon" => "actions/gtk-quit.png"
     ),
+    "gtk-connect" => Array(
+      "label" => "Connect",
+      "icon" => "actions/stock_media-play.png"
+    ),
+    "gtk-disconnect" => Array(
+      "label" => "Disconnect",
+      "icon" => "actions/gtk-stop.png"
+    ),
+    "gtk-preferences" => Array(
+      "label" => "Preferences",
+      "icon" => "categories/gtk-preferences.png"
+    ),
+    "gtk-ok" => Array(
+      "label" => "Ok",
+      "icon" => "actions/gtk-save.png"
+    ),
 
     "gtk-media-previous" => Array(
       "label" => "Prev",
