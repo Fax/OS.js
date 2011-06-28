@@ -121,7 +121,7 @@ var SystemSettings = (function($, undefined) {
           });
 
           var wallpaper = API.user.settings.get("desktop.wallpaper.path");
-          var theme     = API.user.settings.get("destkop.theme");
+          var theme     = API.user.settings.get("desktop.theme");
           var font      = API.user.settings.get("desktop.font");
 
           el.find("input[type=text]").val(wallpaper);
