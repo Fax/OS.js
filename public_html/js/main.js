@@ -2661,6 +2661,9 @@
       this._height         = -1;
       this._top            = -1;
       this._left           = -1;
+      this._lock_size      = false;
+      this._lock_width     = -1;
+      this._lock_height    = -1;
 
       console.log("Window::" + name + "::init()");
     },
@@ -2727,6 +2730,11 @@
         var el    = this._is_dialog ? $($("#Dialog").html()) : $($("#Window").html());
 
         this.$element = el;
+
+        if ( this._lock_size ) {
+          this._lock_width = this._width;
+          this._lock_height = this._height;
+        }
 
         //
         // Attributtes
@@ -2968,7 +2976,7 @@
         }
 
         if ( this._is_resizable ) {
-          el.resizable({
+          var ropts = {
             handles : "se",
             start : function() {
               if ( self._is_maximized ) {
@@ -2987,7 +2995,16 @@
 
               self._call("resize");
             }
-          });
+          };
+
+          if ( this._lock_width > 0 ) {
+            ropts.minWidth = this._lock_width;
+          }
+          if ( this._lock_height > 0 ) {
+            ropts.minHeight = this._lock_height;
+          }
+
+          el.resizable(ropts);
         }
 
         //
@@ -3327,6 +3344,9 @@
 
       if ( height ) {
         height = height < 128 ? 128 : height;
+        if ( this._lock_height > 0 && height > this._lock_height ) {
+          height = this._lock_height;
+        }
 
         el.css("height", (height) + "px");
       } else {
@@ -3334,6 +3354,9 @@
       }
       if ( width ) {
         width = width < 128 ? 128 : width;
+        if ( this._lock_width > 0 && width > this._lock_width ) {
+          width = this._lock_width;
+        }
 
         el.css("width", (width) + "px");
       } else {

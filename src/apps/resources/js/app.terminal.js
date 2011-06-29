@@ -134,6 +134,7 @@ var ApplicationTerminal = (function($, undefined) {
         this._width = 800;
         this._height = 340;
         this._gravity = null;
+        this._lock_size = true;
       },
 
       destroy : function() {
