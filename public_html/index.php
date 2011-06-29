@@ -158,16 +158,6 @@ header("Content-Type: text/html; charset=utf-8");
   <link rel="stylesheet" type="text/css" href="/css/theme.dark.css" id="ThemeFace" />
   <link rel="stylesheet" type="text/css" href="/css/cursor.default.css" id="CursorFace" />
 
-  <!-- Preloaded resources -->
-  <link rel="stylesheet" type="text/css" href="/?resource=sys.about.css" />
-  <link rel="stylesheet" type="text/css" href="/?resource=sys.user.css" />
-  <link rel="stylesheet" type="text/css" href="/?resource=sys.settings.css" />
-  <link rel="stylesheet" type="text/css" href="/?resource=sys.logout.css" />
-
-  <script type="text/javascript" src="/?resource=sys.about.js"></script>
-  <script type="text/javascript" src="/?resource=sys.user.js"></script>
-  <script type="text/javascript" src="/?resource=sys.settings.js"></script>
-  <script type="text/javascript" src="/?resource=sys.logout.js"></script>
 </head>
 <body>
 

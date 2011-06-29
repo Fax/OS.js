@@ -5,8 +5,6 @@
   <property name="icon">actions/gtk-about.png</property>
   <property name="system">true</property>
 
-  <!--
   <resource>sys.about.css</resource>
   <resource>sys.about.js</resource>
-  -->
 </application>

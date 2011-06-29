@@ -4,8 +4,6 @@
   <property name="icon">apps/user-info.png</property>
   <property name="system">true</property>
 
-  <!--
   <resource>sys.user.css</resource>
   <resource>sys.user.js</resource>
-  -->
 </application>

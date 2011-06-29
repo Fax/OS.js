@@ -4,8 +4,6 @@
   <property name="icon">categories/applications-system.png</property>
   <property name="system">true</property>
 
-  <!--
   <resource>sys.settings.css</resource>
   <resource>sys.settings.js</resource>
-  -->
 </application>
