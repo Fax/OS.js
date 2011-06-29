@@ -53,16 +53,30 @@ var ApplicationTerminal = (function($, undefined) {
       'ls' : function(argv, $txt, callback) {
 
         if ( CurrentPath ) {
-          var out = "";
+          var num = 0;
+          var total = 0;
+          var out = [str_pad("Filename", 60, " ", 'STR_PAD_RIGHT'), str_pad("MIME", 25, " ", 'STR_PAD_LEFT'), str_pad("Size", 15, " ", 'STR_PAD_LEFT'), "\n"].join("");
+          out += str_pad("", 100, "-") + "\n";
+
           for ( var f in CurrentPath ) {
             if ( CurrentPath.hasOwnProperty(f) ) {
-              out += [str_pad(f, 60, " ", 'STR_PAD_RIGHT'), str_pad(CurrentPath[f].mime, 25, " ", 'STR_PAD_LEFT'), str_pad(CurrentPath[f].size, 15, " ", 'STR_PAD_LEFT'), "\n"].join("");
+              var fname = f;
+              if ( CurrentPath[f].type == "dir" ) {
+                fname = "[ " + f + " ]";
+              }
+              out += [str_pad(fname, 60, " ", 'STR_PAD_RIGHT'), str_pad(CurrentPath[f].mime, 25, " ", 'STR_PAD_LEFT'), str_pad(CurrentPath[f].size, 15, " ", 'STR_PAD_LEFT'), "\n"].join("");
+              num++;
+              total += CurrentPath[f].size;
             }
           }
 
+          out += "\n";
+          out += num + " file(s) and dir(s), totals to " + total + " byte(s)";
+
+
           callback(out);
         } else {
-          callback("NO WORKING DIRECTORY!");
+          callback("ls: NO WORKING DIRECTORY!");
         }
       },
       'cd' : function(argv, $txt, callback) {
@@ -77,7 +91,22 @@ var ApplicationTerminal = (function($, undefined) {
             }
           });
         } else {
-          callback("No argument given");
+          callback("cd: No argument given");
+        }
+      },
+
+      'open' : function(argv, $txt, callback) {
+        if ( argv && argv.length == 2 ) {
+          var p = argv[0];
+          var m = argv[1];
+          if ( !p.match(/^\//) ) {
+            p = ((CurrentDir == "/" ? "" : "/") + "/") + p;
+          }
+
+          API.system.run(p, m);
+          callback("Opening " + p);
+        } else {
+          callback("open: Not enouth argument given (path mime)");
         }
       }
     };
@@ -222,7 +251,7 @@ var ApplicationTerminal = (function($, undefined) {
               self.terminal_put((out ? ("\n" + out) : out) + "\n");
             });
           } else {
-            out = "Bad command or filename '" + cmd + "'!";
+            out = "Bad command or filename '" + cmd + "'!\n";
           }
 
           if ( out ) {
