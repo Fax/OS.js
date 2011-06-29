@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application name="Arkanoid" file="ApplicationArkanoid.class.php" schema="ApplicationArkanoid.glade" category="games">
+  <property name="enabled">true</property>
+  <property name="title">Arkanoid</property>
+  <property name="icon">emblems/emblem-new.png</property>
+  <property name="system">false</property>
+
+  <resource>app.arkanoid.css</resource>
+  <resource>app.arkanoid.js</resource>
+
+  <compability>canvas</compability>
+</application>

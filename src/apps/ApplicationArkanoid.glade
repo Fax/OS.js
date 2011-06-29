@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkWindow" id="window1">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Arkanoid</property>
+    <property name="resizable">False</property>
+    <property name="default_width">810</property>
+    <property name="default_height">438</property>
+    <child>
+      <placeholder/>
+    </child>
+  </object>
+</interface>

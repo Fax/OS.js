@@ -480,3 +480,141 @@ function get_path(path) {
 
   return ("/" + (abs.length ? abs.join("/") : "/")).replace(/\/\//g, '/');
 }
+
+
+/**
+ * HTML5 Canvas Helper library
+ *
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @class
+ */
+var CanvasHelper = Class.extend({
+
+  init : function(container, w, h) {
+    this.$container = container;
+    this.$canvas    = document.createElement("canvas");
+    this.$context   = null;
+    this.width      = w;
+    this.height     = h;
+
+    if ( this.$container && this.$canvas ) {
+      this.$container.appendChild(this.$canvas);
+
+      this.$container.style.width  = this.width + "px";
+      this.$container.style.height = this.height + "px";
+      this.$canvas.width           = this.width;
+      this.$canvas.height          = this.height;
+
+      if ( this.$canvas.getContext ) {
+        this.$context              = this.$canvas.getContext("2d");
+        this.$context.fillStyle    = "#000000";
+        this.$context.strokeStyle  = "#ffffff";
+        this.$context.lineWidth    = 1;
+        this.$context.font         = "20px Times New Roman";
+
+        return;
+      }
+    }
+
+    throw ("Canvas is not supported in your browser");
+  },
+
+  destroy : function() {
+
+  },
+
+  clear : function(fill) {
+    if ( this.$context ) {
+      this.$context.clearRect(0, 0, this.width, this.height);
+
+      if ( fill ) {
+        this.rect(0, 0, this.width, this.height, fill);
+      }
+    }
+  },
+
+  rect : function(x, y, w, h, fill, stroke) {
+    if ( this.$context ) {
+      this._fill(fill);
+
+      this.$context.beginPath();
+      this.$context.rect(x, y, w, h);
+      this.$context.closePath();
+
+      this._apply(fill, stroke);
+    }
+  },
+
+  roundRect : function(x, y, w, h, radius, fill, stroke) {
+    radius = (radius === undefined) ? 5 : radius;
+
+    if ( this.$context ) {
+      this.$context.beginPath();
+      this.$context.moveTo(x + radius, y);
+      this.$context.lineTo(x + w - radius, y);
+      this.$context.quadraticCurveTo(x + w, y, x + w, y + radius);
+      this.$context.lineTo(x + w, y + h - radius);
+      this.$context.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+      this.$context.lineTo(x + radius, y + h);
+      this.$context.quadraticCurveTo(x, y + h, x, y + h - radius);
+      this.$context.lineTo(x, y + radius);
+      this.$context.quadraticCurveTo(x, y, x + radius, y);
+      this.$context.closePath();
+
+      this._apply(fill, stroke);
+    }
+  },
+
+  circle : function(x, y, r, fill, stroke) {
+    if ( this.$context ) {
+      this.$context.beginPath();
+      this.$context.arc(x, y, r, 0, Math.PI*2, true);
+      this.$context.closePath();
+
+      this._apply(fill, stroke);
+    }
+  },
+
+  text : function(txt, x, y) {
+    if ( this.$context ) {
+      this.$context.fillText(txt, x, y);
+    }
+  },
+
+  createLinearGradient : function(sx, sy, dx, dy, steps) {
+    var gra = null;
+    if ( this.$context ) {
+      gra = this.$context.createLinearGradient(sx, sy, dx, dy);
+      if ( steps instanceof Object ) {
+        for ( var s in steps ) {
+          if ( steps.hasOwnProperty(s) ) {
+            gra.addColorStop(s, steps[s]);
+          }
+        }
+      }
+    }
+    return gra;
+  },
+
+  _fill : function(fill) {
+    if ( fill && fill !== true ) {
+      this.$context.fillStyle = fill;
+    }
+  },
+
+  _apply : function(fill, stroke) {
+    stroke = (stroke === undefined) ? false : stroke;
+
+    if (stroke) {
+      if ( stroke !== true ) {
+        this.$context.strokeStyle = stroke;
+      }
+      this.$context.stroke();
+    }
+    if (fill) {
+      this.$context.fill();
+    }
+  }
+
+});
+
