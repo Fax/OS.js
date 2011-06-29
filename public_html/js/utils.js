@@ -455,7 +455,7 @@ function MobileSupport() {
 
 /**
  * Build absolute path
- * @author Anders Evenrud
+ * @author Anders Evenrud <andersevenrud@gmail.com>
  * @return String
  */
 function get_path(path) {

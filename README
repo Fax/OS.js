@@ -36,7 +36,7 @@ Tested on Linux and Windows platforms
 * Partially working: Opera (Opera 11 tested)
   * Glade CSS issues
   * No WebSocket
-* Partially working: Internet Explorer (<IE9 not tested)
+* Partially working: Internet Explorer (IE 8 tested)
   * Some Panel CSS issues
   * Does not fully support HTML5
   * Does not fully support CSS2

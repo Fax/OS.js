@@ -3550,14 +3550,18 @@
         setTimeout(function() {
           el.find("td.Fill").each(function() {
             if ( !$(this).hasClass("Expand") ) {
-              var height = parseInt($(this).find(":first-child").height(), 10);
-              if ( height > 0 ) {
+              //var height = parseInt($(this).css("height"), 10);
+              //if ( !height || isNaN(height) ) {
+              //}
+              var first = $(this).find(".TableCellWrap :first-child");
+              var height = parseInt(first.height(), 10);
+              if ( !isNaN(height) && height ) {
                 $(this).parent().css("height", height + "px");
                 //$(this).css("height", height + "px");
               }
             }
           });
-        },0);
+        }, 0);
       }
 
       return el;

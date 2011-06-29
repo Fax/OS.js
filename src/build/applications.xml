@@ -55,7 +55,7 @@
   </application>
   <application name="Settings" title="Settings" icon="categories/applications-system.png" system="true" category="system" class="SystemSettings" file="SystemSettings.class.php">
     <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"Settings","icon":"categories\/applications-system.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":500,"height":330,"gravity":"center"}]]></property>
+      <property name="properties"><![CDATA[{"type":"window","title":"Settings","icon":"categories\/applications-system.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":500,"height":380,"gravity":"center"}]]></property>
     </window>
     <resource>sys.settings.css</resource>
     <resource>sys.settings.js</resource>
