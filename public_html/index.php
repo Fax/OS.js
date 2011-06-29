@@ -80,7 +80,7 @@ EOCSS;
 if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
   $res  = addslashes($_GET['resource']);
   $type = preg_match("/\.js$/", $res) ? "js" : "css";
-  $path = sprintf("%s/resources/%s", PATH_RESOURCES, $res); // FIXME
+  $path = sprintf("%s/%s", PATH_RESOURCES, $res); // FIXME
 
   if ( file_exists($path) ) {
     //header(sprintf("Content-Type: text/%s; charset=utf-8", $type == "js" ? "javascript" : "css"));
