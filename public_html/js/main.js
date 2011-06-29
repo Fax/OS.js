@@ -445,45 +445,24 @@
     //
 
     'application' : {
-      'context_menu' : (function() {
-
-        var inited = false;
-        var cm = null;
-
-        function _destroy() {
-          if ( cm !== null ) {
-            cm.destroy();
-          }
-
-          cm = null;
-        }
-
-        return function(ev, items, where, which, mpos, mtop) {
+      'context_menu' : function(ev, items, where, which, mpos, mtop) {
           which = which || 3;
           mpos = mpos || false;
           mtop = mtop || 20;
 
-          if ( inited === false ) {
-            // $("#ContextMenu").hide()
-            $(document).click(function(ev) {
-              if ( !$(ev.target).filter(function(){ return $(this).parents(".Menu").length; }).length ) {
-                _destroy();
-              }
-            });
-
-            initied = true;
-          }
-
           var ewhich = ev.which || 1;
           if ( ewhich === which ) {
-            _destroy();
+            if ( _Menu ) {
+              _Menu.destroy();
+              _Menu = null;
+            }
 
-            cm = new Menu(where);
+            _Menu = new Menu(where);
             forEach(items, function(i, it) {
               if ( it == "---" ) {
-                cm.create_separator();
+                _Menu.create_separator();
               } else {
-                cm.create_item(it. title, it.icon, it.method, it.disabled, it.attribute);
+                _Menu.create_item(it. title, it.icon, it.method, it.disabled, it.attribute);
               }
             });
 
@@ -493,7 +472,7 @@
                 "left" :off.left + "px",
                 "top" : off.top + mtop + "px"
               }
-            ).html(cm.$element).show();
+            ).html(_Menu.$element).show();
 
             var h = $("#ContextMenu").height();
             var m = $(document).height();
@@ -505,15 +484,11 @@
             ev.stopPropagation();
             ev.preventDefault();
 
-            _Tooltip.hide();
-
             return false;
           }
 
           return true;
-        };
-
-      })()
+      }
     },
 
     //
@@ -869,6 +844,7 @@
           $(document).bind("mousedown",   self.global_mousedown);
           $(document).bind("mouseup",     self.global_mouseup);
           $(document).bind("mousemove",   self.global_mousemove);
+          $(document).bind("click",       self.global_click);
           $(document).bind("dblclick",    self.global_dblclick);
           $(document).bind("contextmenu", self.global_contextmenu);
           $(document).bind('touchmove',   self.global_touchmove, false);
@@ -967,6 +943,28 @@
       }
 
       return true;
+    },
+
+    /**
+     * Global Event Handler: click
+     * @return void
+     */
+    global_click : function(ev) {
+      ev.preventDefault();
+
+      if ( _Menu ) {
+        if ( _Menu instanceof Menu ) {
+          var t = $(ev.target || ev.srcElement);
+
+          if ( !t.filter(function(){ return $(this).parents(".Menu").length; }).length ) {
+            _Menu.destroy();
+            _Menu = null;
+          }
+        //} else { TODO
+        }
+      }
+
+      _Tooltip.hide();
     },
 
     /**
@@ -2212,10 +2210,6 @@
     init : function() {
       var self = this;
       this.$element = $("#Tooltip");
-
-      $(document).click(function(ev) {
-        self.hide();
-      });
 
       this.ttimeout = null;
     },

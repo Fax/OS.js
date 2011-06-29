@@ -75,8 +75,6 @@ TODOs:
 * TODO: Login
 * TODO: Sortable panel items (use absolute, snap to direction as panel does)
 * FIXME: Rewrite settings manager
-* TODO: Refactor ContextMenu
-* FIXME: Only one menu at a time, Global var, Global click handler
 * FIXME: replace parents() with closest()
 * TODO: Separate OperationDialogs into separate resources
 * FIXME: IE and Opera suffers the same CSS [table] bugs
