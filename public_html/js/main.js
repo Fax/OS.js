@@ -851,23 +851,38 @@
      * Constructor
      */
     init : function() {
+      var self = this;
+
       this._super("(Core)", "status/computer-fail.png", true);
 
       API.loading.show();
       API.loading.progress(5);
 
-      _Resources = new ResourceManager();
-
+      // Load initial data
       $.post("/", {'ajax' : true, 'action' : 'init'}, function(data) {
         if ( data.success ) {
+          // Initialize resources
+          _Resources = new ResourceManager();
 
+          // Bind global events
+          $(document).bind("keydown",     self.global_keydown);
+          $(document).bind("mousedown",   self.global_mousedown);
+          $(document).bind("mouseup",     self.global_mouseup);
+          $(document).bind("mousemove",   self.global_mousemove);
+          $(document).bind("dblclick",    self.global_dblclick);
+          $(document).bind("contextmenu", self.global_contextmenu);
+          $(document).bind('touchmove',   self.global_touchmove, false);
+
+          // Set some global variables
           if ( data.result.config ) {
             ENABLE_CACHE = data.result.config.cache;
           }
 
+          // Initialize settings
           _Settings = new SettingsManager(data.result.settings);
           API.loading.progress(10);
 
+          // Initialize desktop etc.
           _Tooltip = new Tooltip();
           _Desktop = new Desktop();
           API.loading.progress(15);
@@ -884,7 +899,6 @@
 
       });
     },
-
 
     /**
      * Destructor
@@ -917,7 +931,106 @@
       _TopIndex   = 11;
 
       this._super();
+    },
+
+    /**
+     * Global Event Handler: keydown
+     * @return bool
+     */
+    global_keydown : function(ev) {
+      var key = ev.keyCode || ev.which;
+      var target = ev.target || ev.srcElement;
+
+      // ESC cancels dialogs
+      if ( key === 27 ) {
+        if ( _Window && _Window._is_dialog ) {
+          _Window.$element.find(".ActionClose").click();
+          return false;
+        }
+      }
+
+      if ( target ) {
+        // TAB key only in textareas
+        if ( key === 9 ) {
+          if ( target.tagName.toLowerCase() == "textarea" ) {
+            var cc = getCaret(target);
+            var val = $(target).val();
+
+            $(target).val( val.substr(0, cc) + "\t" + val.substr(cc, val.length) );
+
+            var ccc = cc + 1;
+            setSelectionRangeX(target, ccc, ccc);
+
+          }
+          return false;
+        }
+      }
+
+      return true;
+    },
+
+    /**
+     * Global Event Handler: dblclick
+     * @return void
+     */
+    global_dblclick : function(ev) {
+      ev.preventDefault();
+    },
+
+    /**
+     * Global Event Handler: mousedown
+     * @return void
+     */
+    global_mousedown : function(ev) {
+      var t = ev.target || ev.srcElement;
+      if ( t ) {
+        var tagName = t.tagName.toLowerCase();
+        if ( tagName !== "input" && tagName !== "textarea" && tagName !== "select" ) {
+          ev.preventDefault();
+        }
+      }
+    },
+
+    /**
+     * Global Event Handler: mouseup
+     * @return void
+     */
+    global_mouseup : function(ev) {
+      API.ui.rectangle.hide(ev);
+    },
+
+    /**
+     * Global Event Handler: mousemove
+     * @return void
+     */
+    global_mousemove : function(ev) {
+      API.ui.rectangle.update(ev);
+    },
+
+    /**
+     * Global Event Handler: touchmove
+     * @return void
+     */
+    global_touchmove : function(e) {
+      v.preventDefault();
+    },
+
+    /**
+     * Global Event Handler: contextmenu
+     * @return bool
+     */
+    global_contextmenu : function(e) {
+      // TODO: Add parameter to DOM object if Context Menu
+      if ( $(e.target).hasClass("ContextMenu") || $(e.target).hasClass("Menu") || $(e.target).parent().hasClass("ContextMenu") || $(e.target).parent().hasClass("Menu") ) {
+        return false;
+      }
+
+      if ( e.target.id === "Desktop" || e.target.id === "Panel" || e.target.id === "ContextMenu" ) {
+        return false;
+      }
+      return true;
     }
+
   });
 
   /////////////////////////////////////////////////////////////////////////////
@@ -4526,99 +4639,12 @@
    * @ready()
    */
   $(window).ready(function() {
-
-    //
-    // COMPABILITY CHECK
-    //
-
     if ( !SUPPORT_LSTORAGE ) {
       alert("Your browser does not support WebStorage. Cannot continue...");
-
       return false;
     }
 
-    //
-    // GLOBAL EVENTS
-    //
-
-    // Global touch-movment handler
-    $(document).bind('touchmove', function(e) {
-      e.preventDefault();
-    }, false);
-
-
-    // Global context-menu handler
-    $(document).bind("contextmenu",function(e) {
-      // TODO: Add parameter to DOM object if Context Menu
-      if ( $(e.target).hasClass("ContextMenu") || $(e.target).hasClass("Menu") || $(e.target).parent().hasClass("ContextMenu") || $(e.target).parent().hasClass("Menu") ) {
-        return false;
-      }
-
-      if ( e.target.id === "Desktop" || e.target.id === "Panel" || e.target.id === "ContextMenu" ) {
-        return false;
-      }
-      return true;
-    });
-
-    // Global keydown handler
-    $(document).keydown(function(ev) {
-      var key = ev.keyCode || ev.which;
-      var target = ev.target || ev.srcElement;
-
-      // ESC cancels dialogs
-      if ( key === 27 ) {
-        if ( _Window && _Window._is_dialog ) {
-          _Window.$element.find(".ActionClose").click();
-          return false;
-        }
-      }
-
-      if ( target ) {
-        // TAB key only in textareas
-        if ( key === 9 ) {
-          if ( target.tagName.toLowerCase() == "textarea" ) {
-            var cc = getCaret(target);
-            var val = $(target).val();
-
-            $(target).val( val.substr(0, cc) + "\t" + val.substr(cc, val.length) );
-
-            var ccc = cc + 1;
-            setSelectionRangeX(target, ccc, ccc);
-
-          }
-          return false;
-        }
-      }
-
-      return true;
-    });
-
-    // Global rectangle handler
-    $(document).mouseup(function(ev) {
-      API.ui.rectangle.hide(ev);
-    }).mousemove(function(ev) {
-      API.ui.rectangle.update(ev);
-    });
-
-    // Global mousedown handler (cancel bubbling)
-    $("#Desktop, .DesktopPanel").mousedown(function(ev) {
-      var t = ev.target || ev.srcElement;
-      if ( t ) {
-        var tagName = t.tagName.toLowerCase();
-        if ( tagName !== "input" && tagName !== "textarea" && tagName !== "select" ) {
-          ev.preventDefault();
-        }
-      }
-    }).dblclick(function(ev) {
-      ev.preventDefault();
-    });
-
-    //
-    // MAIN
-    //
-
     _Core = new Core();
-
     return true;
   });
 
