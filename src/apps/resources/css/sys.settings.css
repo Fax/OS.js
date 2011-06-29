@@ -11,3 +11,6 @@
 .SystemSettings .GtkComboBox {
   width : 100%;
 }
+.SystemSettings .GtkEntry {
+  width : 100%;
+}
