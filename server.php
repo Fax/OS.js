@@ -8,7 +8,7 @@
  */
 
 require "header.php";
-require "src/Server.class.php";
+require "lib/Server.class.php";
 
 error_reporting(E_ALL);
 set_time_limit(0);

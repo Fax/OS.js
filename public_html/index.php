@@ -9,8 +9,8 @@
 
 require "../header.php";
 
-if ( !($wm = WindowManager::initialize()) ) {
-  die("Failed to initialize window manager");
+if ( !($core = Core::initialize()) ) {
+  die("Failed to initialize OS.js Core");
 }
 
 if ( !ENABLE_CACHE ) {
@@ -97,11 +97,11 @@ if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
 // AJAX
 ///////////////////////////////////////////////////////////////////////////////
 
-if ( !($json = $wm->doGET($_GET)) === false ) {
+if ( !($json = $core->doGET($_GET)) === false ) {
   header("Content-Type: application/json");
   die($json);
 }
-if ( !($json = $wm->doPOST($_POST)) === false ) {
+if ( !($json = $core->doPOST($_POST)) === false ) {
   header("Content-Type: application/json");
   die($json);
 }

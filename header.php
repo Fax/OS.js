@@ -25,6 +25,7 @@ define("SERVER_PORT", 8888);
 // Path definitions
 define("PATH_PROJECT",           dirname(__FILE__));
 define("PATH_PROJECT_SRC",       PATH_PROJECT . "/src");
+define("PATH_PROJECT_LIB",       PATH_PROJECT . "/lib");
 define("PATH_PROJECT_HTML",      PATH_PROJECT . "/public_html");
 define("PATH_PROJECT_BUILD",     PATH_PROJECT . "/src/build");
 define("PATH_PROJECT_LOG",       PATH_PROJECT . "/logs");
@@ -45,14 +46,16 @@ set_include_path(sprintf("%s/classes/%s", PATH_PROJECT_BUILD, PROPEL_PROJECT) . 
 require 'vendor/Propel/runtime/lib/Propel.php';
 require "vendor/AjaxUpload.php";
 
-// Application
-require "src/Functions.php";
-require "src/UUID.class.php";
-require "src/Glade.class.php";
+// Internal libraries
+require "lib/Functions.php";
+require "lib/UUID.class.php";
+
+require 'src/Core.class.php';
+require "src/SettingsManager.class.php";
 require "src/ApplicationVFS.class.php";
 require "src/ApplicationAPI.class.php";
 require "src/Application.class.php";
-require 'src/WindowManager.class.php';
+require "src/Panel.class.php";
 
 Propel::init(PROPEL_CONFIG);
 

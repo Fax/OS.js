@@ -9,6 +9,7 @@
  */
 
 require "header.php";
+require PATH_PROJECT_LIB . "/Glade.class.php";
 
 $root = PATH_APPS . "/";
 $config = APPLICATION_BUILD;

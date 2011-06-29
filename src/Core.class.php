@@ -1,20 +1,20 @@
 <?php
 /*!
  * @file
- * Contains IndexViewContoller Class
+ * Contains Core Class
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @license GPLv3 (see http://www.gnu.org/licenses/gpl-3.0.txt)
  * @created 2011-05-22
  */
 
 /**
- * WindowManager Class
+ * Core Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package MyApplication
  * @class
  */
-class WindowManager
+class Core
 {
 
   protected $_oTime = null;
@@ -38,14 +38,14 @@ class WindowManager
 
   public static function initialize() {
     if ( !self::$__Instance ) {
-      self::$__Instance = new WindowManager();
+      self::$__Instance = new Core();
     }
     return self::$__Instance;
   }
 
   public static function getSettings() {
-    $apps = Array();
 
+    $apps   = Array();
     foreach ( Application::$Registered as $c => $opts ) {
       $apps[$c] = Array(
         "title" => $opts['title'],
@@ -55,113 +55,54 @@ class WindowManager
       );
     }
 
-    $pitems = Array(
-      "PanelItemSeparator" => Array(
-        "title"       => "Separator",
-        "description" => "Separator",
-        "icon"        => "/img/icons/32x32/actions/gtk-remove.png"
-      ),
-      "PanelItemClock" => Array(
-        "title"       => "Clock",
-        "description" => "Clock with date",
-        "icon"        => "/img/icons/32x32/status/appointment-soon.png"
-      ),
-      "PanelItemMenu" => Array(
-        "title"       => "Menu",
-        "description" => "Display a menu",
-        "icon"        => "/img/icons/32x32/actions/window_new.png"
-      ),
-      "PanelItemWindowList" => Array(
-        "title"       => "Window List",
-        "description" => "Display desktop windows",
-        "icon"        => "/img/icons/32x32/apps/xfwm4.png"
-      ),
-      "PanelItemDock" => Array(
-        "title"       => "Launcher Dock",
-        "description" => "Application launcher dock",
-        "icon"        => "/img/icons/32x32/actions/system-run.png"
-      ),
-      "PanelItemWeather" => Array(
-        "title"       => "Weather",
-        "description" => "Weather (geolocation) forecast",
-        "icon"        => "/img/icons/32x32/status/weather-few-clouds.png"
-      )
+    $pitems = Array();
+    foreach ( Panel::$Registered as $c => $opts ) {
+      $pitems[$c] = $opts;
+    }
+
+    $panel = Array(
+      Array("PanelItemMenu", Array(), "left"),
+      Array("PanelItemSeparator", Array(), "left"),
+      Array("PanelItemWindowList", Array(), "left"),
+      Array("PanelItemClock", Array(), "right"),
+      Array("PanelItemSeparator", Array(), "right"),
+      Array("PanelItemDock", Array(Array(
+        Array(
+          "title"  => "About",
+          "icon"   => "actions/gtk-about.png",
+          "launch" => "SystemAbout"
+        ),
+        Array(
+          "title"  => "System Settings",
+          "icon"   => "categories/applications-system.png",
+          "launch" => "SystemSettings"
+        ),
+        Array(
+          "title"  => "User Information",
+          "icon"   => "apps/user-info.png",
+          "launch" => "SystemUser"
+        ),
+        Array(
+          "title"  => "Save and Quit",
+          "icon"   => "actions/gnome-logout.png",
+          "launch" => "SystemLogout"
+        )
+      )), "right"),
+      Array("PanelItemSeparator", Array(), "right"),
+      Array("PanelItemWeather", Array(), "right")
     );
 
-    return Array(
-      "desktop.wallpaper.path" => Array(
-        "type"  => "filename",
-        "value" => "/System/Wallpapers/go2cxpb.png"
-      ),
-      "desktop.theme" => Array(
-        "type"    => "array",
-        "options" => Array("dark", "light"),
-        "value"   => "dark"
-      ),
-      "desktop.font" => Array(
-        "type"    => "array",
-        "options" => Array("Sansation", "FreeMono", "FreeSans", "FreeSerif"),
-        "value"   => "Sansation"
-      ),
-      "desktop.cursor.theme" => Array(
-        "type"    => "array",
-        "options" => Array("Default", "Experimental"),
-        "value"   => "Default"
-      ),
-      "desktop.panel.items" => Array(
-        "type" => "list",
-        "items" => Array(
-          Array("PanelItemMenu", Array(), "left"),
-          Array("PanelItemSeparator", Array(), "left"),
-          Array("PanelItemWindowList", Array(), "left"),
-          Array("PanelItemClock", Array(), "right"),
-          Array("PanelItemSeparator", Array(), "right"),
-          Array("PanelItemDock", Array(Array(
-            Array(
-              "title"  => "About",
-              "icon"   => "actions/gtk-about.png",
-              "launch" => "SystemAbout"
-            ),
-            Array(
-              "title"  => "System Settings",
-              "icon"   => "categories/applications-system.png",
-              "launch" => "SystemSettings"
-            ),
-            Array(
-              "title"  => "User Information",
-              "icon"   => "apps/user-info.png",
-              "launch" => "SystemUser"
-            ),
-            Array(
-              "title"  => "Save and Quit",
-              "icon"   => "actions/gnome-logout.png",
-              "launch" => "SystemLogout"
-            )
-          )), "right"),
-          Array("PanelItemSeparator", Array(), "right"),
-          Array("PanelItemWeather", Array(), "right")
-        ),
-      ),
-      "desktop.panel.position" => Array(
-        "type" => "array",
-        "options" => Array("top", "bottom"),
-        "value" => "top"
-      ),
+    return SettingsManager::getSettings(Array(
       "system.app.registered" => Array(
-        "type"    => "array",
-        "options" => $apps,
-        "hidden"  => true
+        "options" => $apps
       ),
       "system.panel.registered" => Array(
-        "type"    => "array",
-        "options" => $pitems,
-        "hidden"  => true
+        "options" => $pitems
       ),
-      "user.first-run" => Array(
-        "type" => "bool",
-        "value" => true
+      "desktop.panel.items" => Array(
+        "items" => $panel
       )
-    );
+    ));
   }
 
   public static function get() {
