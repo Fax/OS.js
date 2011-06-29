@@ -11,6 +11,12 @@
 .ApplicationTerminal {
 
 }
+.GtkWindow.ApplicationTerminal {
+  top : 0px;
+  left : 0px;
+  right : 3px;
+  bottom : 4px;
+}
 
 .ApplicationTerminal textarea {
   margin : 0;

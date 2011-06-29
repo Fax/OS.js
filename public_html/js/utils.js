@@ -452,3 +452,31 @@ function MobileSupport() {
     android: ua.match(/Android/)
   };
 }
+
+/**
+ * Build absolute path
+ * @author Anders Evenrud
+ * @return String
+ */
+function get_path(path) {
+  var abs = [];
+
+  if ( path != "/" ) {
+    var parts = path.split("/");
+    var part;
+    for ( var i = 0; i < parts.length; i++ ) {
+      part = parts[i];
+      if ( part == "." ) {
+        continue;
+      } else if ( part == ".." ) {
+        if ( abs.length ) {
+          abs.pop();
+        }
+      } else {
+        abs.push(part);
+      }
+    }
+  }
+
+  return ("/" + (abs.length ? abs.join("/") : "/")).replace(/\/\//g, '/');
+}

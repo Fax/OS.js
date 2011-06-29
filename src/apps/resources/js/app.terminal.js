@@ -16,21 +16,23 @@ var ApplicationTerminal = (function($, undefined) {
   var KEY_RIGHT = 39;
   var KEY_DOWN = 40;
 
-
   return function(GtkWindow, Application, API, argv, windows) {
 
-
+    ///////////////////////////////////////////////////////////////////////////
+    // TERMINAL EMULATION
+    ///////////////////////////////////////////////////////////////////////////
 
     var CurrentDir = null;
     var CurrentPath = null;
 
     var ChDir = function(dir, callback) {
       dir = dir || "/";
-      callback = callback || function() {};
-
-      if ( !dir.match(/^\//) && CurrentDir ) {
-        dir = CurrentDir + dir;
+      if ( CurrentDir && CurrentDir != "/" ) {
+        dir = CurrentDir + "/" + dir;
       }
+      dir = get_path(dir);
+
+      callback = callback || function() {};
 
       if ( dir != CurrentDir ) {
         API.system.call("readdir", {'path' : dir}, function(result, error) {
@@ -64,7 +66,9 @@ var ApplicationTerminal = (function($, undefined) {
         }
       },
       'cd' : function(argv, $txt, callback) {
+
         if ( (argv.length) && argv[0] ) {
+
           ChDir(argv[0], function(res) {
             if ( res === true ) {
               callback("Changed directory to '" + argv[0] + "'");
@@ -78,6 +82,10 @@ var ApplicationTerminal = (function($, undefined) {
       }
     };
 
+
+    ///////////////////////////////////////////////////////////////////////////
+    // WINDOWS
+    ///////////////////////////////////////////////////////////////////////////
 
     var Window_window1 = GtkWindow.extend({
 
@@ -94,8 +102,8 @@ var ApplicationTerminal = (function($, undefined) {
         this._is_maximizable = true;
         this._is_closable = true;
         this._is_orphan = false;
-        this._width = 500;
-        this._height = 300;
+        this._width = 800;
+        this._height = 340;
         this._gravity = null;
       },
 
@@ -134,51 +142,8 @@ var ApplicationTerminal = (function($, undefined) {
           $(txt).val("");
           this._call("focus");
 
-          var execute = function(cmd) {
-            if ( !cmd ) {
-              put("\n");
-              return;
-            }
-
-            var out = null;
-            var args = [];
-
-            var tmp = cmd.split(" ");
-            cmd = tmp[0];
-            if ( tmp.length > 1 ) {
-              tmp.shift();
-              args = tmp;
-            }
-
-            var callback = function(out) {
-              put((out ? ("\n" + out) : out) + "\n");
-            };
-
-            if ( Commands[cmd] ) {
-              out = Commands[cmd].call(this, args, $(txt), callback);
-            } else {
-              out = "Bad command or filename '" + cmd + "'!";
-            }
-
-            if ( out ) {
-              put((out ? ("\n" + out) : out) + "\n");
-            }
-          };
-
-          var put = function(v) {
-            v = v || "";
-            $(txt).val($(txt).val() + v + "~" + CurrentDir + " > ");
-            $(txt).attr({ scrollTop: $(txt).attr("scrollHeight") });
-          };
-
           $(txt).keydown(function(ev) {
             var keyCode = ev.which || ev.keyCode;
-            if ( !ev.shiftKey && (keyCode >= 65 && keyCode <= 90) ) {
-              keyCode += 32;
-            }
-
-            var ch = String.fromCharCode(keyCode);
-
             if ( keyCode == KEY_BACKSPACE ) {
               if ( inpbuffer.length ) {
                 inpbuffer.pop();
@@ -188,7 +153,7 @@ var ApplicationTerminal = (function($, undefined) {
             } else if ( keyCode == KEY_TAB ) {
               return false;
             } else if ( keyCode == KEY_ENTER ) {
-              execute(inpbuffer.join(""));
+              self.app.terminal_exec(inpbuffer.join(""));
               inpbuffer = [];
               return false;
             } else if ( keyCode === 0 || keyCode == 16 || keyCode == 17 || keyCode == 18 || keyCode == 91 ) {
@@ -197,6 +162,12 @@ var ApplicationTerminal = (function($, undefined) {
               return false;
             }
 
+            return true;
+          });
+
+          $(txt).keypress(function(ev) {
+            var keyCode = ev.which || ev.keyCode;
+            var ch = String.fromCharCode(keyCode);
             if ( ch && ch !== "" ) {
               inpbuffer.push(ch);
             }
@@ -205,7 +176,7 @@ var ApplicationTerminal = (function($, undefined) {
           });
 
           ChDir("/", function(out) {
-            put(out === true ? null : out);
+            self.app.terminal_put(out === true ? null : out);
           });
 
         }
@@ -231,12 +202,43 @@ var ApplicationTerminal = (function($, undefined) {
       run : function() {
         var self = this;
 
-        var root_window = new Window_window1();
+        var root_window = new Window_window1(self);
         this._super(root_window);
-        root_window.show(self);
+        root_window.show();
 
         // Do your stuff here
+        this.$txt = root_window.$element.find("textarea");
+      },
+
+      terminal_exec : function(cmd) {
+        var self = this;
+        if ( cmd ) {
+          var args  = cmd.split(" ");
+          cmd = args.shift();
+
+          var out;
+          if ( Commands[cmd] ) {
+            out = Commands[cmd].call(this, args, this.$txt, function(out) {
+              self.terminal_put((out ? ("\n" + out) : out) + "\n");
+            });
+          } else {
+            out = "Bad command or filename '" + cmd + "'!";
+          }
+
+          if ( out ) {
+            this.terminal_put(out + "\n");
+          }
+        } else {
+          this.terminal_put("\n");
+        }
+      },
+
+      terminal_put : function(v) {
+        v = v || "";
+        this.$txt.val(this.$txt.val() + v + "~" + CurrentDir + " > ");
+        this.$txt.attr({ scrollTop: this.$txt.attr("scrollHeight") });
       }
+
     });
 
     return new __ApplicationTerminal();
