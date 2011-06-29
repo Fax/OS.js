@@ -1,2 +1,5 @@
-  .GtkBox td.Expand.Fill {
-  }
+.GtkBox td.Expand.Fill {
+}
+table.GtkBox {
+  table-layout : fixed;
+}

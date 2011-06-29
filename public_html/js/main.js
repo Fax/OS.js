@@ -1881,6 +1881,10 @@
       blurWindow : function(win) {
         win._blur();
 
+        if ( _Window === win ) {
+          _Window = null;
+        }
+
         this.call("window_blur", win);
       },
 
@@ -3208,6 +3212,10 @@
           }});
 
           this._is_minimized = true;
+
+          if ( this._current ) {
+            _Desktop.blurWindow(self);
+          }
         }
 
       }
@@ -3508,6 +3516,8 @@
 
         el.find(".GtkFileChooserButton input[type=text]").attr("disabled", "disabled");
 
+        el.find("input").attr("autocomplete", "off");
+
         //
         // Box factors (LAST!)
         //
@@ -3518,6 +3528,7 @@
               var height = parseInt($(this).find(":first-child").height(), 10);
               if ( height > 0 ) {
                 $(this).parent().css("height", height + "px");
+                //$(this).css("height", height + "px");
               }
             }
           });
