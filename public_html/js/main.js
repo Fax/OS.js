@@ -1616,475 +1616,471 @@
    *
    * @class
    */
-  var Desktop = (function() {
+  var Desktop = Process.extend({
 
-    return Process.extend({
+    /**
+     * Constructor
+     */
+    init : function() {
+      var self = this;
 
-      /**
-       * Constructor
-       */
-      init : function() {
-        var self = this;
+      this.$element = $("#Desktop");
+      this.stack    = [];
+      this.panel    = null;
+      this.running  = false;
+      this.bindings = {
+        "window_add"     : [self.defaultHandler],
+        "window_remove"  : [self.defaultHandler],
+        "window_focus"   : [self.defaultHandler],
+        "window_blur"    : [self.defaultHandler],
+        "window_updated" : [self.defaultHandler]
+      };
 
-        this.$element = $("#Desktop");
-        this.stack    = [];
-        this.panel    = null;
-        this.running  = false;
-        this.bindings = {
-          "window_add"     : [self.defaultHandler],
-          "window_remove"  : [self.defaultHandler],
-          "window_focus"   : [self.defaultHandler],
-          "window_blur"    : [self.defaultHandler],
-          "window_updated" : [self.defaultHandler]
-        };
+      $("#Desktop").mousedown(function(ev) {
+        var t = ev.target || ev.srcElement;
 
-        $("#Desktop").mousedown(function(ev) {
-          var t = ev.target || ev.srcElement;
-
-          if ( !t || !t.id == "Desktop" ) {
-            return true;
-          }
-
-          var ret = API.application.context_menu(ev, [
-            {"title" : "Desktop", "disabled" : true, "attribute" : "header"},
-            {"title" : "Change wallpaper", "method" : function() {
-              var dir = _Settings._get("desktop.wallpaper.path");
-              if ( dir ) {
-                var tmp = dir.split("/");
-                if ( tmp.length > 1 ) {
-                  tmp.pop();
-                }
-                dir = tmp.join("/");
-              } else {
-                dir = "/";
-              }
-              API.system.dialog_file(function(fname) {
-                _Settings._set("desktop.wallpaper.path", fname);
-                _Desktop.applySettings();
-              }, ["image/*"], "open", dir);
-            }
-          },
-          {"title" : "Tile windows", "method" : function() { 
-            API.ui.windows.tile();
-          }}
-
-          ], $(this), 3, true);
-
-          if ( ev.which > 1 ) {
-            ev.preventDefault();
-          }
-
-          return ret;
-        });
-
-        /*
-        $("#Desktop").bind("dragover", function(ev) {
-          ev.preventDefault();
-          return false;
-        });
-        $("#Desktop").bind("dragleave", function(ev) {
-          ev.preventDefault();
-          return false;
-        });
-        $("#Desktop").bind("dragenter", function(ev) {
-          ev.preventDefault();
-          return false;
-        });
-        $("#Desktop").bind("drop", function(ev) {
-          ev.preventDefault();
-          var dt = ev.originalEvent.dataTransfer;
-          console.log(dt, dt.getData('Text'));
-          console.log(dt.getData('text/uri-list'));
-          console.log(dt.getData('text/plain'));
-          console.log(dt.getData('text/html'));
-          return false;
-        });
-        */
-
-        API.ui.cursor("default");
-
-        this._super("(Desktop)", "places/desktop.png");
-      },
-
-      /**
-       * Destructor
-       */
-      destroy : function() {
-        try {
-          $("*").unbind();
-          $("*").die();
-        } catch ( eee ) { }
-
-        // Remove panel
-        if ( this.panel ) {
-          this.panel.destroy();
-        }
-        this.panel = null;
-
-        // Remove bindings
-        this.bindings = null;
-
-        // Remove windows
-        var i = 0;
-        var l = this.stack.length;
-        for ( i; i < l; i++ ) {
-          if ( this.stack[i] ) {
-            this.stack[i].destroy();
-          }
-        }
-        this.stack = null;
-
-        // Reset settings
-        this.setWallpaper(null);
-
-        this._super();
-      },
-
-      /**
-       * Bind an event by name and callback
-       * @return void
-       */
-      bind : function(mname, mfunc) {
-        if ( this.bindings ) {
-          if ( this.bindings[mname] ) {
-            this.bindings[mname].push(mfunc);
-          }
-        }
-      },
-
-      /**
-       * Call an event by name and arguments
-       * @return void
-       */
-      call : function(mname, margs) {
-        if ( this.bindings && this.bindings[mname] ) {
-          var r;
-          for ( var i = 0; i < this.bindings[mname].length; i++ ) {
-            r = this.bindings[mname][i].call(this, mname, margs);
-          }
-        }
-      },
-
-      /**
-       * Run DOM operations etc.
-       * @return void
-       */
-      run : function() {
-        var self = this;
-        if ( this.running ) {
-          return;
-        }
-
-        this.applySettings();
-
-        API.loading.progress(30);
-
-        // Create panel and items from localStorage
-        this.panel = new Panel();
-        var items = _Settings._get("desktop.panel.items", false, true);
-
-        var el, iname, iargs, ialign;
-        for ( var i = 0; i < items.length; i++ ) {
-          el = items[i];
-          iname  = el[0];
-          iargs  = el[1];
-          ialign = el[2] || "left";
-
-          LaunchPanelItem(i, iname, iargs, ialign, self.panel);
-        }
-
-        API.loading.progress(40);
-
-        API.session.restore();
-
-        API.loading.progress(95);
-
-        setTimeout(function() {
-          API.loading.progress(100);
-          API.loading.hide();
-        },200);
-
-        this.running = true;
-      },
-
-      // HANDLERS
-
-      /**
-       * Default event handler callback
-       * @return bool
-       */
-      defaultHandler : function(ev, eargs) {
-        if ( this.panel ) {
-          if ( ev.match(/^window/) ) {
-            this.panel.redraw(ev, eargs);
-          }
-
+        if ( !t || !t.id == "Desktop" ) {
           return true;
         }
 
-        return false;
-      },
-
-      // WINDOWS
-
-      /**
-       * Add a window to the stack (and create)
-       * @return Mixed
-       */
-      addWindow : function(win) {
-        if ( win instanceof Window ) {
-          var self = this;
-
-          var AddWindowCallback = function(fresh) {
-            if ( fresh ) {
-              if ( !win._is_minimized && !win._is_maximized ) {
-                setTimeout(function() {  // NOTE: Timeout required for Panel items to be
-                                         // Correctly redrawed
-                  self.focusWindow(win); // Always focus new windows
-                }, 0);
+        var ret = API.application.context_menu(ev, [
+          {"title" : "Desktop", "disabled" : true, "attribute" : "header"},
+          {"title" : "Change wallpaper", "method" : function() {
+            var dir = _Settings._get("desktop.wallpaper.path");
+            if ( dir ) {
+              var tmp = dir.split("/");
+              if ( tmp.length > 1 ) {
+                tmp.pop();
               }
+              dir = tmp.join("/");
+            } else {
+              dir = "/";
             }
-          };
+            API.system.dialog_file(function(fname) {
+              _Settings._set("desktop.wallpaper.path", fname);
+              _Desktop.applySettings();
+            }, ["image/*"], "open", dir);
+          }
+        },
+        {"title" : "Tile windows", "method" : function() { 
+          API.ui.windows.tile();
+        }}
 
-          win.create(("Window_" + this.stack.length), AddWindowCallback);
+        ], $(this), 3, true);
 
-          this.stack.push(win);
-
-          this.call("window_add", win);
-
-          return win;
+        if ( ev.which > 1 ) {
+          ev.preventDefault();
         }
 
+        return ret;
+      });
+
+      /*
+      $("#Desktop").bind("dragover", function(ev) {
+        ev.preventDefault();
         return false;
-      },
+      });
+      $("#Desktop").bind("dragleave", function(ev) {
+        ev.preventDefault();
+        return false;
+      });
+      $("#Desktop").bind("dragenter", function(ev) {
+        ev.preventDefault();
+        return false;
+      });
+      $("#Desktop").bind("drop", function(ev) {
+        ev.preventDefault();
+        var dt = ev.originalEvent.dataTransfer;
+        console.log(dt, dt.getData('Text'));
+        console.log(dt.getData('text/uri-list'));
+        console.log(dt.getData('text/plain'));
+        console.log(dt.getData('text/html'));
+        return false;
+      });
+      */
 
-      /**
-       * Remove a window from the stack
-       * @return void
-       */
-      removeWindow : function(win, destroy) {
-        if ( win instanceof Window ) {
-          if ( destroy ) {
-            win.destroy();
-          }
+      API.ui.cursor("default");
 
-          var i = 0;
-          var l = this.stack.length;
-          var index = -1;
-          for ( i; i < l; i++ ) {
-            if ( this.stack[i] == win ) {
-              index = i;
-              break;
-            }
-          }
+      this._super("(Desktop)", "places/desktop.png");
+    },
 
-          if ( index >= 0 ) {
-            this.call("window_remove", win);
-            this.stack.splice(index, 1);
-          }
+    /**
+     * Destructor
+     */
+    destroy : function() {
+      try {
+        $("*").unbind();
+        $("*").die();
+      } catch ( eee ) { }
+
+      // Remove panel
+      if ( this.panel ) {
+        this.panel.destroy();
+      }
+      this.panel = null;
+
+      // Remove bindings
+      this.bindings = null;
+
+      // Remove windows
+      var i = 0;
+      var l = this.stack.length;
+      for ( i; i < l; i++ ) {
+        if ( this.stack[i] ) {
+          this.stack[i].destroy();
         }
-      },
+      }
+      this.stack = null;
 
-      /**
-       * Perform 'blur' on Window
-       * @return void
-       */
-      blurWindow : function(win) {
-        win._blur();
+      // Reset settings
+      this.setWallpaper(null);
 
-        if ( _Window === win ) {
-          _Window = null;
+      this._super();
+    },
+
+    /**
+     * Bind an event by name and callback
+     * @return void
+     */
+    bind : function(mname, mfunc) {
+      if ( this.bindings ) {
+        if ( this.bindings[mname] ) {
+          this.bindings[mname].push(mfunc);
         }
+      }
+    },
 
-        this.call("window_blur", win);
-      },
-
-      /**
-       * Perform 'focus' on Window
-       * @return void
-       */
-      focusWindow : function(win) {
-        if ( _Window !== null ) {
-          if ( win != _Window ) {
-            this.blurWindow(_Window);
-          }
+    /**
+     * Call an event by name and arguments
+     * @return void
+     */
+    call : function(mname, margs) {
+      if ( this.bindings && this.bindings[mname] ) {
+        var r;
+        for ( var i = 0; i < this.bindings[mname].length; i++ ) {
+          r = this.bindings[mname][i].call(this, mname, margs);
         }
+      }
+    },
 
-        if ( _Window !== win ) {
-          win._focus();
-
-          this.call("window_focus", win);
-
-          _Window = win;
-        }
-      },
-
-      /**
-       * Perform 'restore' on Window
-       * @return void
-       */
-      restoreWindow : function(win) {
-        this.focusWindow(win);
-      },
-
-      /**
-       * Perform 'maximize' on Window
-       * @return void
-       */
-      maximizeWindow : function(win) {
-        this.focusWindow(win);
-      },
-
-      /**
-       * Perform 'minimize' on Window
-       * @return void
-       */
-      minimizeWindow : function(win) {
-        this.blurWindow(win);
-      },
-
-      /**
-       * Perform 'update' on Window
-       * @return void
-       */
-      updateWindow : function(win) {
-        this.call("window_updated", win);
-      },
-
-      /**
-       * Sort windows on desktop (align)
-       * @return void
-       */
-      sortWindows : function(method) {
-        var ppos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
-        var top  = ppos == "top" ? 50 : 20;
-        var left = 20;
-
-        if ( method == "tile" ) {
-          var last;
-          for ( var i = 0; i < this.stack.length; i++ ) {
-            last = this.stack[i];
-
-            last.$element.css({
-              'left' : left + 'px',
-              'top'  : top + 'px'
-            });
-            last.left = left;
-            last.top  = top;
-
-            top += 20;
-            left += 20;
-
-            this.focusWindow(last); // FIXME
-          }
-        }
-      },
-
-      // SETTINGS \ SESSION
-
-      /**
-       * Apply changes from ResourceManger
-       * @return void
-       */
-      applySettings : function() {
-        var wp = _Settings._get('desktop.wallpaper.path');
-        if ( wp ) {
-          this.setWallpaper(wp);
-        }
-        var theme = _Settings._get('desktop.theme');
-        if ( theme ) {
-          this.setTheme(theme);
-        }
-        var font = _Settings._get('desktop.font');
-        if ( font ) {
-          this.setFont(font);
-        }
-        var cursor = _Settings._get('desktop.cursor.theme');
-        if ( cursor ) {
-          this.setCursorTheme(cursor.split(" ")[0]);
-        }
-
-        console.group("Applied used settings");
-        console.log("wallpaper", wp);
-        console.log("theme", theme);
-        console.groupEnd();
-      },
-
-      /**
-       * Set new wallpaper
-       * @return void
-       */
-      setWallpaper : function(wp) {
-        if ( wp ) {
-          $("body").css("background", "url('/media" + wp + "') center center");
-        } else {
-          $("body").css("background", "url('/img/blank.gif')");
-        }
-      },
-
-      /**
-       * Set new theme
-       * @return void
-       */
-      setTheme : function(theme) {
-        var css = $("#ThemeFace");
-        var href = "/css/theme." + theme.toLowerCase() + ".css";
-        if ( $(css).attr("href") != href ) {
-          $(css).attr("href", href);
-        }
-      },
-
-      /**
-       * Set font
-       * @return void
-       */
-      setFont : function(font) {
-        var css = $("#FontFace");
-        var href = "/?font=" + font;
-        if ( $(css).attr("href") != href ) {
-          $(css).attr("href", href);
-        }
-      },
-
-      /**
-       * Set cursor theme
-       * @return void
-       */
-      setCursorTheme : function(cursor) {
-        var css = $("#CursorFace");
-        var href = "/css/cursor." + cursor.toLowerCase() + ".css";
-        if ( $(css).attr("href") != href ) {
-          $(css).attr("href", href);
-        }
-      },
-
-      /**
-       * Get current Desktop session data
-       * @return JSON
-       */
-      getSession : function() {
-        var sess = [];
-
-        var i = 0;
-        var l = _Processes.length;
-        var p, s;
-        for ( i; i < l; i++ ) {
-          p = _Processes[i];
-          if ( p !== undefined && (p instanceof Application) ) {
-            s = p._getSession();
-            if ( s !== false ) {
-              sess.push(s);
-            }
-          }
-        }
-
-        return sess;
+    /**
+     * Run DOM operations etc.
+     * @return void
+     */
+    run : function() {
+      var self = this;
+      if ( this.running ) {
+        return;
       }
 
+      this.applySettings();
 
-    });
+      API.loading.progress(30);
 
-  })();
+      // Create panel and items from localStorage
+      this.panel = new Panel();
+      var items = _Settings._get("desktop.panel.items", false, true);
+
+      var el, iname, iargs, ialign;
+      for ( var i = 0; i < items.length; i++ ) {
+        el = items[i];
+        iname  = el[0];
+        iargs  = el[1];
+        ialign = el[2] || "left";
+
+        LaunchPanelItem(i, iname, iargs, ialign, self.panel);
+      }
+
+      API.loading.progress(40);
+
+      API.session.restore();
+
+      API.loading.progress(95);
+
+      setTimeout(function() {
+        API.loading.progress(100);
+        API.loading.hide();
+      },200);
+
+      this.running = true;
+    },
+
+    // HANDLERS
+
+    /**
+     * Default event handler callback
+     * @return bool
+     */
+    defaultHandler : function(ev, eargs) {
+      if ( this.panel ) {
+        if ( ev.match(/^window/) ) {
+          this.panel.redraw(ev, eargs);
+        }
+
+        return true;
+      }
+
+      return false;
+    },
+
+    // WINDOWS
+
+    /**
+     * Add a window to the stack (and create)
+     * @return Mixed
+     */
+    addWindow : function(win) {
+      if ( win instanceof Window ) {
+        var self = this;
+
+        var AddWindowCallback = function(fresh) {
+          if ( fresh ) {
+            if ( !win._is_minimized && !win._is_maximized ) {
+              setTimeout(function() {  // NOTE: Timeout required for Panel items to be
+                                       // Correctly redrawed
+                self.focusWindow(win); // Always focus new windows
+              }, 0);
+            }
+          }
+        };
+
+        win.create(("Window_" + this.stack.length), AddWindowCallback);
+
+        this.stack.push(win);
+
+        this.call("window_add", win);
+
+        return win;
+      }
+
+      return false;
+    },
+
+    /**
+     * Remove a window from the stack
+     * @return void
+     */
+    removeWindow : function(win, destroy) {
+      if ( win instanceof Window ) {
+        if ( destroy ) {
+          win.destroy();
+        }
+
+        var i = 0;
+        var l = this.stack.length;
+        var index = -1;
+        for ( i; i < l; i++ ) {
+          if ( this.stack[i] == win ) {
+            index = i;
+            break;
+          }
+        }
+
+        if ( index >= 0 ) {
+          this.call("window_remove", win);
+          this.stack.splice(index, 1);
+        }
+      }
+    },
+
+    /**
+     * Perform 'blur' on Window
+     * @return void
+     */
+    blurWindow : function(win) {
+      win._blur();
+
+      if ( _Window === win ) {
+        _Window = null;
+      }
+
+      this.call("window_blur", win);
+    },
+
+    /**
+     * Perform 'focus' on Window
+     * @return void
+     */
+    focusWindow : function(win) {
+      if ( _Window !== null ) {
+        if ( win != _Window ) {
+          this.blurWindow(_Window);
+        }
+      }
+
+      if ( _Window !== win ) {
+        win._focus();
+
+        this.call("window_focus", win);
+
+        _Window = win;
+      }
+    },
+
+    /**
+     * Perform 'restore' on Window
+     * @return void
+     */
+    restoreWindow : function(win) {
+      this.focusWindow(win);
+    },
+
+    /**
+     * Perform 'maximize' on Window
+     * @return void
+     */
+    maximizeWindow : function(win) {
+      this.focusWindow(win);
+    },
+
+    /**
+     * Perform 'minimize' on Window
+     * @return void
+     */
+    minimizeWindow : function(win) {
+      this.blurWindow(win);
+    },
+
+    /**
+     * Perform 'update' on Window
+     * @return void
+     */
+    updateWindow : function(win) {
+      this.call("window_updated", win);
+    },
+
+    /**
+     * Sort windows on desktop (align)
+     * @return void
+     */
+    sortWindows : function(method) {
+      var ppos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
+      var top  = ppos == "top" ? 50 : 20;
+      var left = 20;
+
+      if ( method == "tile" ) {
+        var last;
+        for ( var i = 0; i < this.stack.length; i++ ) {
+          last = this.stack[i];
+
+          last.$element.css({
+            'left' : left + 'px',
+            'top'  : top + 'px'
+          });
+          last.left = left;
+          last.top  = top;
+
+          top += 20;
+          left += 20;
+
+          this.focusWindow(last); // FIXME
+        }
+      }
+    },
+
+    // SETTINGS \ SESSION
+
+    /**
+     * Apply changes from ResourceManger
+     * @return void
+     */
+    applySettings : function() {
+      var wp = _Settings._get('desktop.wallpaper.path');
+      if ( wp ) {
+        this.setWallpaper(wp);
+      }
+      var theme = _Settings._get('desktop.theme');
+      if ( theme ) {
+        this.setTheme(theme);
+      }
+      var font = _Settings._get('desktop.font');
+      if ( font ) {
+        this.setFont(font);
+      }
+      var cursor = _Settings._get('desktop.cursor.theme');
+      if ( cursor ) {
+        this.setCursorTheme(cursor.split(" ")[0]);
+      }
+
+      console.group("Applied used settings");
+      console.log("wallpaper", wp);
+      console.log("theme", theme);
+      console.groupEnd();
+    },
+
+    /**
+     * Set new wallpaper
+     * @return void
+     */
+    setWallpaper : function(wp) {
+      if ( wp ) {
+        $("body").css("background", "url('/media" + wp + "') center center");
+      } else {
+        $("body").css("background", "url('/img/blank.gif')");
+      }
+    },
+
+    /**
+     * Set new theme
+     * @return void
+     */
+    setTheme : function(theme) {
+      var css = $("#ThemeFace");
+      var href = "/css/theme." + theme.toLowerCase() + ".css";
+      if ( $(css).attr("href") != href ) {
+        $(css).attr("href", href);
+      }
+    },
+
+    /**
+     * Set font
+     * @return void
+     */
+    setFont : function(font) {
+      var css = $("#FontFace");
+      var href = "/?font=" + font;
+      if ( $(css).attr("href") != href ) {
+        $(css).attr("href", href);
+      }
+    },
+
+    /**
+     * Set cursor theme
+     * @return void
+     */
+    setCursorTheme : function(cursor) {
+      var css = $("#CursorFace");
+      var href = "/css/cursor." + cursor.toLowerCase() + ".css";
+      if ( $(css).attr("href") != href ) {
+        $(css).attr("href", href);
+      }
+    },
+
+    /**
+     * Get current Desktop session data
+     * @return JSON
+     */
+    getSession : function() {
+      var sess = [];
+
+      var i = 0;
+      var l = _Processes.length;
+      var p, s;
+      for ( i; i < l; i++ ) {
+        p = _Processes[i];
+        if ( p !== undefined && (p instanceof Application) ) {
+          s = p._getSession();
+          if ( s !== false ) {
+            sess.push(s);
+          }
+        }
+      }
+
+      return sess;
+    }
+
+
+  });
 
   /////////////////////////////////////////////////////////////////////////////
   // TOOLTIP
