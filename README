@@ -76,7 +76,6 @@ TODOs:
 * TODO: Sortable panel items (use absolute, snap to direction as panel does)
 * FIXME: Rewrite settings manager
 * FIXME: replace parents() with closest()
-* TODO: Separate OperationDialogs into separate resources
 * FIXME: IE and Opera suffers the same CSS [table] bugs
 * IMPLEMENT: http://trac.webkit.org/export/41842/trunk/LayoutTests/scrollbars/overflow-scrollbar-combinations.html
 

@@ -70,7 +70,6 @@
   // HELPERS
   /////////////////////////////////////////////////////////////////////////////
 
-
   /**
    * PanelItem Launch handler
    */
@@ -406,13 +405,13 @@
       'dialog_rename' : function(path, clb_finish) {
         console.info("=> API Rename Dialog");
 
-        return _Desktop.addWindow(new RenameOperationDialog(path, clb_finish));
+        return _Desktop.addWindow(new RenameOperationDialog(OperationDialog, API, [path, clb_finish]));
       },
 
       'dialog_upload' : function(path, clb_finish, clb_progress, clb_cancel) {
         console.info("=> API Upload Dialog");
 
-        return _Desktop.addWindow(new UploadOperationDialog(path, clb_finish, clb_progress, clb_cancel));
+        return _Desktop.addWindow(new UploadOperationDialog(OperationDialog, API, [path, clb_finish, clb_progress, clb_cancel]));
       },
 
       'dialog_file' : function(clb_finish, mime_filter, type, cur_dir) {
@@ -422,21 +421,20 @@
 
         console.info("=> API File Dialog");
 
-        return _Desktop.addWindow(new FileOperationDialog(type, mime_filter, clb_finish, cur_dir));
+        return _Desktop.addWindow(new FileOperationDialog(OperationDialog, API, [type, mime_filter, clb_finish, cur_dir]));
       },
 
       'dialog_launch' : function(list, clb_finish) {
         console.info("=> API Launch Dialog");
 
-        return _Desktop.addWindow(new LaunchOperationDialog(list, clb_finish));
+        return _Desktop.addWindow(new LaunchOperationDialog(OperationDialog, API, [list, clb_finish]));
       },
 
       'dialog_color' : function(start_color, clb_finish) {
         console.info("=> API Color Dialog");
 
-        return _Desktop.addWindow(new ColorOperationDialog(start_color, clb_finish));
+        return _Desktop.addWindow(new ColorOperationDialog(OperationDialog, API, [start_color, clb_finish]));
       }
-
 
     },
 
@@ -2363,7 +2361,7 @@
         var ret = API.application.context_menu(ev, [
           {"title" : "Panel", "disabled" : true, "attribute" : "header"},
           {"title" : "Add new item", "method" : function() {
-            var pitem = new PanelItemOperationDialog(this, function(diag) {
+            var pitem = new PanelItemOperationDialog(OperationDialog, API, [this, function(diag) {
               var items = _Settings._get("system.panel.registered", true);
               var current;
               var selected;
@@ -2401,7 +2399,7 @@
 
             }, function() {
               self.reload();
-            }, "Add new panel item", $("#OperationDialogPanelItemAdd"));
+            }, "Add new panel item", $("#OperationDialogPanelItemAdd")]);
 
             pitem.height = 300;
             pitem._gravity = "center";
@@ -2647,9 +2645,9 @@
     configure : function() {
       var self = this;
       if ( self.configurable ) {
-        _Desktop.addWindow(new PanelItemOperationDialog(this, function() {
+        _Desktop.addWindow(new PanelItemOperationDialog(OperationDialog, API, [this, function() {
           self.reload();
-        }));
+        }]));
       }
     },
 
@@ -4072,544 +4070,6 @@
       self.$element.find(".DialogButtons .Cancel").click(function() {
         self.$element.find(".ActionClose").click();
       });
-    }
-
-  });
-
-  /**
-   * OperationDialog: ColorOperationDialog
-   * Color swatch, color picking etc.
-   *
-   * @class
-   */
-  var ColorOperationDialog = OperationDialog.extend({
-
-    init : function(start_color, clb_finish) {
-      this.clb_finish = clb_finish   || function() {};
-      this.colorObj   = RGBFromHex(start_color  || "#ffffff");
-
-      this._super("Color");
-      this._title    = "Choose color...";
-      this._icon     = "apps/style.png";
-      this._content  = $("#OperationDialogColor").html();
-      this._width    = 400;
-      this._height   = 170;
-    },
-
-    create : function(id, mcallback) {
-      var self = this;
-      this._super(id, mcallback);
-
-      var desc      = $(self.$element).find(".CurrentColorDesc");
-      var cube      = $(self.$element).find(".CurrentColor");
-      var running   = false;
-
-      var _update   = function() {
-        if ( running ) {
-          self.colorObj.red   = parseInt($(self.$element).find(".SliderR").slider("value"), 10);
-          self.colorObj.green = parseInt($(self.$element).find(".SliderG").slider("value"), 10);
-          self.colorObj.blue  = parseInt($(self.$element).find(".SliderB").slider("value"), 10);
-        }
-
-        var hex = hexFromRGB(self.colorObj.red, self.colorObj.green, self.colorObj.blue);
-        $(cube).css("background-color", "#" + hex);
-        $(desc).html(sprintf("R: %03d, G: %03d, B: %03d (#%s)", self.colorObj.red, self.colorObj.green, self.colorObj.blue, hex));
-      };
-
-      this.$element.find(".DialogButtons .Close").hide().find(".DialogButtons .Cancel").show();
-      this.$element.find(".DialogButtons .Ok").show().click(function() {
-        self.clb_finish(self.colorObj, "#" + hexFromRGB(self.colorObj.red, self.colorObj.green, self.colorObj.blue));
-      });
-
-      $(this.$element).find(".Slider").slider({
-        'min'    : 0,
-        'max'    : 255,
-        'step'   : 1,
-        'slide'  : _update,
-        'change' : _update
-      });
-
-      this.$element.find(".SliderR").slider("value", this.colorObj.red);
-      this.$element.find(".SliderG").slider("value", this.colorObj.green);
-      this.$element.find(".SliderB").slider("value", this.colorObj.blue);
-
-      running = true;
-    }
-  });
-
-  /**
-   * OperationDialog: CopyOperationDialog
-   * Status dialog for copy/move operations for files
-   *
-   * @class
-   */
-  var CopyOperationDialog = OperationDialog.extend({
-
-    init : function(src, dest, clb_finish, clb_progress, clb_cancel) {
-      this.src          = src          || null;
-      this.dest         = dest         || null;
-      this.clb_finish   = clb_finish   || function() {};
-      this.clb_progress = clb_progress || function() {};
-      this.clb_cancel   = clb_cancel   || function() {};
-
-      this._super("Copy");
-      this._title    = "Copy file";
-      this._content  = $("#OperationDialogCopy").html();
-      this._width    = 400;
-      this._height   = 170;
-    },
-
-
-    create : function(id, mcallback) {
-      var self = this;
-      this._super(id, mcallback);
-
-      $(this._content).find(".ProgressBar").progressbar({
-        value : 50
-      });
-    }
-
-  });
-
-  /**
-   * OperationDialog: RenameOperationDialog
-   * Rename file dialog
-   *
-   * @class
-   */
-  var RenameOperationDialog = OperationDialog.extend({
-
-    init : function(src, clb_finish) {
-      this.src          = src          || null;
-      this.clb_finish   = clb_finish   || function() {};
-
-      this._super("Rename");
-      this._title    = "Copy file";
-      this._content  = $("#OperationDialogRename").html();
-      this._width    = 200;
-      this._height   = 100;
-    },
-
-
-    create : function(id, mcallback) {
-      var self = this;
-      this._super(id, mcallback);
-
-      var txt = this.$element.find(".OperationDialog input");
-      txt.val(this.src);
-
-      this.$element.find(".DialogButtons .Ok").show().click(function() {
-        var val = txt.val();
-        if ( !val ) {
-          alert("A filename is required!"); // FIXME
-          return;
-        }
-        self.clb_finish(val);
-      });
-
-      $(txt).keydown(function(ev) {
-        var keyCode = ev.which || ev.keyCode;
-        if ( keyCode == 13 ) {
-
-          self.$element.find(".DialogButtons .Ok").click();
-          return false;
-        }
-        return true;
-      });
-
-
-      txt.focus();
-      var tmp = txt.val().split(".");
-      var len = 0;
-      if ( tmp.length > 1 ) {
-        tmp.pop();
-        len = tmp.join(".").length;
-      } else {
-        len = tmp[0].length;
-      }
-      setSelectionRangeX(txt.get(0), 0, len);
-    }
-
-  });
-
-  /**
-   * OperationDialog: UploadOperationDialog
-   * Upload file dialog
-   *
-   * @class
-   */
-  var UploadOperationDialog = OperationDialog.extend({
-
-    init : function(path, clb_finish, clb_progress, clb_cancel) {
-      this.uploader = null;
-      this.upload_path  = path;
-      this.clb_finish   = clb_finish   || function() {};
-      this.clb_progress = clb_progress || function() {};
-      this.clb_cancel   = clb_cancel   || function() {};
-
-      this._super("Upload");
-      this._title    = "Upload file";
-      this._icon     = "actions/up.png";
-      this._content  = $("#OperationDialogUpload").html();
-      this._width    = 400;
-      this._height   = 140;
-    },
-
-    create : function(id, mcallback) {
-      this._super(id, mcallback);
-
-      var self = this;
-      $(this.$element).find(".ProgressBar").progressbar({
-        value : 0
-      });
-
-      var trigger = this.$element.find(".DialogButtons .Choose").show();
-      var pbar    = this.$element.find(".ProgressBar");
-
-      this.uploader = new qq.FileUploader({
-        element : trigger[0],
-        action  : '/',
-        params : {
-          ajax   : true,
-          action : 'upload',
-          path : self.upload_path
-        },
-        onSubmit: function(id, fileName){
-          $(trigger).html(fileName);
-          self.$element.find("p.Status").html(sprintf("Uploading '%s'", fileName));
-          return true;
-        },
-        onProgress: function(id, fileName, loaded, total){
-          var percentage = Math.round(loaded / total * 100);
-          $(pbar).progressbar({
-            value : percentage
-          });
-
-          self.$element.find("p.Status").html(sprintf("Uploading '%s' %d of %d (%d%%)", fileName, loaded, total, percentage));
-          self.clb_progress(fileName, loaded, total, percentage);
-        },
-        onComplete: function(id, fileName, responseJSON){
-          self.$element.find(".ActionClose").click();
-
-          self.clb_finish(fileName, responseJSON);
-        },
-        onCancel: function(id, fileName){
-          API.system.dialog("error", "File upload '" + fileName + "' was cancelled!");
-          self.$element.find(".ActionClose").click();
-
-          self.clb_cancel(fileName);
-        }
-      });
-    },
-
-    destroy : function() {
-      if ( this.uploader ) {
-        this.uploader = null;
-      }
-
-      this._super();
-    }
-
-  });
-
-  /**
-   * OperationDialog: FileOperationDialog
-   * Used for Open and Save operations.
-   *
-   * @class
-   */
-  var FileOperationDialog = OperationDialog.extend({
-
-    init : function(type, argv, clb_finish, cur_dir) {
-      this.aargv         = argv         || {};
-      this.atype         = type         || "open";
-      this.clb_finish    = clb_finish   || function() {};
-      this.selected_file = null;
-      this.init_dir      = cur_dir      || "/";
-
-      this._super("File");
-      this._title        = type == "save" ? "Save As..." : "Open File";
-      this._icon         = type == "save" ? "actions/document-save.png" : "actions/document-open.png";
-      this._content      = $("#OperationDialogFile").html();
-      this._is_resizable = true;
-      this._width        = 400;
-      this._height       = 300;
-    },
-
-    create : function(id, mcallback) {
-      var self = this;
-
-      this._super(id, mcallback);
-
-      var ul          = this.$element.find("ul");
-      var inp         = this.$element.find("input[type='text']");
-      var prev        = null;
-      var current_dir = "";
-      var is_save     = self.atype == "save";
-      var currentFile = null;
-
-      var readdir = function(path)
-      {
-        if ( path == current_dir )
-          return;
-
-        var ignores = path == "/" ? ["..", "."] : ["."];
-        currentFile = null;
-
-        API.system.call("readdir", {'path' : path, 'mime' : self.aargv, 'ignore' : ignores}, function(result, error) {
-          $(ul).die();
-          $(ul).unbind();
-
-          ul.find("li").empty().remove();
-
-          if ( error === null ) {
-            var i = 0;
-            for ( var f in result ) {
-              if ( result.hasOwnProperty(f) ) {
-                var o = result[f];
-                var el = $("<li><img alt=\"\" src=\"/img/blank.gif\" /><span></span></li>");
-                el.find("img").attr("src", "/img/icons/16x16/" + o.icon);
-                el.find("span").html(f);
-                el.addClass(i % 2 ? "odd" : "even");
-                if ( o['protected'] == "1" ) {
-                  el.addClass("Disabled");
-                }
-
-                (function(vo) {
-                  el.click(function() {
-
-                    if ( prev !== null && prev !== this ) {
-                      $(prev).removeClass("current");
-                    }
-
-                    if ( prev !== this ) {
-                      $(this).addClass("current");
-                    }
-
-                    if ( vo.type == "file" ) {
-                      if ( vo['protected'] == "1" && is_save ) {
-                        self.selected_file = null;
-                        self.$element.find("button.Ok").attr("disabled", "disabled");
-                        currentFile = null;
-                        $(inp).val("");
-                      } else {
-                        self.selected_file = vo;
-                        self.$element.find("button.Ok").removeAttr("disabled");
-                        currentFile = this;
-                        $(inp).val(vo.path);
-                      }
-
-                    } else {
-                      self.selected_file = null;
-                      $(inp).val("");
-                      self.$element.find("button.Ok").attr("disabled", "disabled");
-
-                      currentFile = null;
-                    }
-
-                    prev = this;
-                  });
-
-                  el.dblclick(function() {
-
-                    if ( vo.type != "file" ) {
-                      readdir(vo.path);
-                    } else {
-
-                      var _doSelect = function() {
-                        self.selected_file = vo;
-                        $(inp).val(vo.path);
-
-                        self.$element.find("button.Ok").removeAttr("disabled");
-                        self.$element.find("button.Ok").click();
-                      };
-
-                      if ( is_save ) {
-                        if ( vo['protected'] == "1" ) {
-                          alert("This file is protected!"); // FIXME
-                        } else {
-                          if ( confirm("Are you sure you want to overwrite this file?") ) { // FIXME
-                            _doSelect();
-                          }
-                        }
-                      } else {
-                        _doSelect();
-                      }
-                    }
-
-                  });
-                })(o);
-
-                $(ul).append(el);
-
-                i++;
-              }
-            }
-          }
-
-          self.$element.find("button.Ok").attr("disabled", "disabled");
-        });
-
-        current_dir = path;
-      };
-
-
-      if ( !is_save ) {
-        $(inp).focus(function() {
-          $(this).blur();
-        }).addClass("Disabled");
-      }
-
-      $(inp).keydown(function(ev) {
-        var keyCode = ev.which || ev.keyCode;
-        var val = $(this).val();
-
-        if ( keyCode == 13 ) {
-          if ( !is_save ) {
-            if ( !self.$element.find("button.Ok").attr("disabled") ) {
-              if ( currentFile ) {
-                $(currentFile).trigger('dblclick');
-              }
-            }
-          } else {
-            if ( val ) {
-              if ( !val.match(/^\//) ) {
-                val = (current_dir == "/" ? "/" : (current_dir + "/")) + val;
-              }
-
-              self.selected_file = {
-                "path" : val,
-                "size" : -1,
-                "mime" : "",
-                "icon" : "",
-                "type" : "file"
-              };
-              self.$element.find("button.Ok").click();
-            }
-          }
-        }
-      });
-
-      $(inp).keyup(function(ev) {
-        var keyCode = ev.which || ev.keyCode;
-        var val = $(this).val();
-
-        if ( is_save ) {
-          if ( val ) {
-            self.$element.find("button.Ok").removeAttr("disabled");
-          } else {
-            self.$element.find("button.Ok").attr("disabled", "disabled");
-          }
-        }
-      });
-
-      this.$element.find(".DialogButtons .Close").hide();
-      this.$element.find(".DialogButtons .Cancel").show();
-
-      this.$element.find(".DialogButtons .Ok").show().click(function() {
-        if ( self.selected_file ) {
-          self.clb_finish(self.selected_file.path, self.selected_file.mime);
-        }
-      }).attr("disabled", "disabled");
-
-      readdir(this.init_dir);
-
-
-    }
-
-  });
-
-  /**
-   * OperationDialog: LaunchOperationDialog
-   * Select application for opening file
-   *
-   * @class
-   */
-  var LaunchOperationDialog = OperationDialog.extend({
-
-    init : function(items, clb_finish) {
-      this.list         = items        || [];
-      this.clb_finish   = clb_finish   || function() {};
-
-      this._super("Launch");
-      this._title    = "Select an application";
-      this._content  = $("#OperationDialogLaunch").html();
-      this._width    = 400;
-      this._height   = 170;
-    },
-
-
-    create : function(id, mcallback) {
-      var self = this;
-      this._super(id, mcallback);
-
-      var app, current;
-      var selected;
-      var set_default = false;
-
-      for ( var x = 0; x < this.list.length; x++ ) {
-        app = this.list[x];
-        var li = $("<li><img alt=\"\" src=\"/img/icons/16x16/" + app.icon + "\" /><span>" + app.title + "</span></li>");
-        li.addClass(x % 2 ? "odd" : "even");
-        (function(litem, mapp) {
-          li.click(function() {
-            if ( current && current !== this ) {
-              $(current).removeClass("current");
-            }
-            current = this;
-            selected = mapp.name; // must be appended
-
-            $(current).addClass("current");
-            self.$element.find(".Ok").removeAttr("disabled");
-          }).dblclick(function() {
-            if ( !self.$element.find(".Ok").attr("disabled") ) {
-              self.$element.find(".Ok").click();
-            }
-          });
-        })(li, app);
-        this.$element.find("ul").append(li);
-      }
-
-      this.$element.find(".DialogButtons .Close").hide();
-      this.$element.find(".DialogButtons .Ok").show().click(function() {
-        var chk = self.$element.find("input[type=checkbox]");
-        if ( selected ) {
-          set_default = (chk.attr("checked") || chk.val()) ? true : false;
-          self.clb_finish(selected, set_default);
-        }
-      }).attr("disabled", "disabled");
-      this.$element.find(".DialogButtons .Cancel").show();
-    }
-
-  });
-
-  /**
-   * OperationDialog: PanelItemOperationDialog
-   * Opereation dialog for handling panel and panel items
-   *
-   * @class
-   */
-  var PanelItemOperationDialog = OperationDialog.extend({
-
-    init : function(item, clb_create, clb_finish, title, copy) {
-      this.item         = item         || null;
-      this.type         = item instanceof Panel ? "panel" : "item";
-      this.clb_finish   = clb_finish   || function() {};
-      this.clb_create   = clb_create   || function() {};
-
-
-      this._super("PanelItem");
-      this._title    = title || "Configure " + this.type;
-      this._content  = (copy || $("#OperationDialogPanelItem")).html();
-      this._width    = 400;
-      this._height   = 340;
-    },
-
-
-    create : function(id, mcallback) {
-      var self = this;
-      this._super(id, mcallback);
-      this.clb_create(self);
     }
 
   });
