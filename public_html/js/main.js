@@ -70,6 +70,27 @@
   // HELPERS
   /////////////////////////////////////////////////////////////////////////////
 
+
+  /**
+   * PanelItem Launch handler
+   */
+  function LaunchPanelItem(i, iname, iargs, ialign, panel) {
+    var reg = _Settings._get("system.panel.registered", true);
+    var resources =  reg[iname] ? reg[iname]['resources'] : [];
+
+    _Resources.addResources(resources, function() {
+      if ( window[iname] ) {
+        var item = new window[iname](_PanelItem, panel, API, iargs);
+        if ( item ) {
+          item._panel = panel;
+          item._index = i;
+          panel.addItem(item, ialign);
+        }
+      }
+
+    });
+  }
+
   /**
    * Application Crash Dialog handler
    */
@@ -1769,17 +1790,7 @@
           iargs  = el[1];
           ialign = el[2] || "left";
 
-          //var item = new PanelItem[iname]();
-          var item;
-          if ( window[iname] ) {
-            item = new window[iname](_PanelItem, self, API, iargs);
-          }
-
-          if ( item ) {
-            item._panel = this.panel;
-            item._index = i;
-            this.panel.addItem(item, ialign);
-          }
+          LaunchPanelItem(i, iname, iargs, ialign, self.panel);
         }
 
         API.loading.progress(40);
@@ -2281,12 +2292,7 @@
               diag.$element.find(".DialogButtons .Close").show();
               diag.$element.find(".DialogButtons .Ok").show().click(function() {
                 if ( selected ) {
-                  if ( window[selected] ) {
-                    var item = new window[selected](_PanelItem, self, API, []);
-                    item._panel = self;
-                    item._index = self.items.length;
-                    self.addItem(item, "left");
-                  }
+                  LaunchPanelItem(self.items.length, selected, [], "left", self);
                 }
               }).attr("disabled", "disabled");
 

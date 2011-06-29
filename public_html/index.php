@@ -164,13 +164,6 @@ header("Content-Type: text/html; charset=utf-8");
   <link rel="stylesheet" type="text/css" href="/?resource=sys.settings.css" />
   <link rel="stylesheet" type="text/css" href="/?resource=sys.logout.css" />
 
-  <script type="text/javascript" src="/?resource=panel.separator.js"></script>
-  <script type="text/javascript" src="/?resource=panel.clock.js"></script>
-  <script type="text/javascript" src="/?resource=panel.menu.js"></script>
-  <script type="text/javascript" src="/?resource=panel.windowlist.js"></script>
-  <script type="text/javascript" src="/?resource=panel.dock.js"></script>
-  <script type="text/javascript" src="/?resource=panel.weather.js"></script>
-
   <script type="text/javascript" src="/?resource=sys.about.js"></script>
   <script type="text/javascript" src="/?resource=sys.user.js"></script>
   <script type="text/javascript" src="/?resource=sys.settings.js"></script>
