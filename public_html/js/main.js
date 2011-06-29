@@ -168,8 +168,6 @@
   /**
    * Public API
    *
-   * TODO: Deprecate api calls to dialogs. They are in application
-   *
    * @object
    */
   var API = {
@@ -349,7 +347,7 @@
               });
             }
           } else {
-            API.system.dialog("error", "Found no suiting application for '" + path + "' (" + mime + ")"); // TODO: Ask for app
+            API.system.dialog("error", "Found no suiting application for '" + path + "' (" + mime + ")");
           }
         }
       },
@@ -609,8 +607,7 @@
         $.post("/", {'ajax' : true, 'action' : 'shutdown', 'session' : ssess, 'settings' : ssett}, function(data) {
           if ( data.success ) {
             setTimeout(function() {
-              // FIXME: Do not use unload... make a safer way !
-              $(window).unload();
+              __die();
             }, 100);
           } else {
             API.system.dialog("error", data.error);
@@ -661,7 +658,7 @@
       if ( this._socket ) {
         try {
           this._socket.close();
-        } catch ( e ) {} // FIXME
+        } catch ( e ) {}
         this._socket = null;
       }
     },
@@ -735,7 +732,7 @@
 
             this._socket = ws;
           } catch ( e ) {
-            alert("Failed to create socket: " + e); // FIXME
+            API.system.dialog("error", "Failed to create socket: " + e);
           }
 
           return true;
@@ -948,7 +945,7 @@
      * @return void
      */
     global_click : function(ev) {
-      ev.preventDefault();
+      //ev.preventDefault(); FIXME???
 
       if ( _Menu ) {
         if ( _Menu instanceof Menu ) {
@@ -1016,7 +1013,6 @@
      * @return bool
      */
     global_contextmenu : function(e) {
-      // TODO: Add parameter to DOM object if Context Menu
       if ( $(e.target).hasClass("ContextMenu") || $(e.target).hasClass("Menu") || $(e.target).parent().hasClass("ContextMenu") || $(e.target).parent().hasClass("Menu") ) {
         return false;
       }
@@ -2082,7 +2078,7 @@
           top += 20;
           left += 20;
 
-          this.focusWindow(last); // FIXME
+          this.focusWindow(last);
         }
       }
     },
@@ -2479,24 +2475,6 @@
     },
 
     /**
-     * FIXME
-     */
-    moveItem : function(x, p) {
-      var y = (p > 0) ? x._index + 1 : x._index - 1;
-      var del = this.items[y];
-      if ( del ) {
-        if ( p > 0 ) {
-          $(x.$element).insertAfter(this.items[y].$element);
-          return 0;
-        } else {
-          $(x.$element).insertBefore(this.items[y].$element);
-        }
-        return true;
-      }
-      return false;
-    },
-
-    /**
      * Remove a PanelItem
      * @return bool
      */
@@ -2529,7 +2507,6 @@
    * @class
    */
   var _PanelItem = Process.extend({
-
 
     /**
      * Constructor
@@ -2609,17 +2586,6 @@
     },
 
     /**
-     * FIXME
-     */
-    update : function() {
-      if ( this.align == "right" ) {
-        this.$element.addClass("AlignRight");
-      } else {
-        this.$element.removeClass("AlignRight");
-      }
-    },
-
-    /**
      * Redraw PanelItem
      * @return void
      */
@@ -2659,22 +2625,10 @@
       var self = this;
       var menu = [
         {"title" : self._named, "disabled" : true, "attribute" : "header"},
-        /*
-        {"title" : (self.align == "left" ? "Align to right" : "Align to left"), "method" : function() {
-          self.align = (self.align == "left") ? "right" : "left";
-          self.update();
-        }},
-        {"title" : "Move left", "method" : function() {
-          self._panel.moveItem(self, -1);
-        }},
-        {"title" : "Move right", "method" : function() {
-          self._panel.moveItem(self, 1);
-        }},*/
-        {"title" : "Move", "method" : function() {
-        }, "disabled" : true},
+        {"title" : "Move", "method" : function() {}, "disabled" : true},
         {"title" : "Remove", "method" : function() {
           API.system.dialog("confirm", "Are you sure you want to remove this item?", null, function() {
-            self._panel.removeItem(self); // TODO: Save
+            self._panel.removeItem(self);
           });
         }}
       ];
@@ -4078,15 +4032,21 @@
   // MAIN
   /////////////////////////////////////////////////////////////////////////////
 
+  function __init() {
+    _Core = new Core();
+  }
+  function __die() {
+    if ( _Core ) {
+      _Core.destroy();
+      _Core = null;
+    }
+  }
 
   /**
    * @unload()
    */
   $(window).unload(function() {
-    if ( _Core ) {
-      _Core.destroy();
-      _Core = null;
-    }
+    __die();
   });
 
   /**
@@ -4098,7 +4058,7 @@
       return false;
     }
 
-    _Core = new Core();
+    __init();
     return true;
   });
 

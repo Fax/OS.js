@@ -9,8 +9,8 @@ Communication is done via AJAX to a PHP+MySQL backend.
 
 Features and Highlights:
 -------------------------------------------------------------------------------
-* Window Managment, Desktop environment
 * Simple Process managment
+* Window Managment, Desktop environment
 * Windows, Dialogs, Panels and PanelItems, Menus
 * Application WebStorage (for settings etc)
 * Custom Error and Exception handling
@@ -53,6 +53,7 @@ Built-In Applications, Dialogs and Panel Items:
 * Application: Textpad
 * Application: Image Viewer
 * Application: Tick-tack-toe game
+* Application: Arkanoid game (HTML5-Canvas)
 * System: About
 * System: User Information
 * System: Settings
@@ -73,25 +74,28 @@ Built-In Applications, Dialogs and Panel Items:
 TODOs:
 -------------------------------------------------------------------------------
 * TODO: Login
-* TODO: Sortable panel items (use absolute, snap to direction as panel does)
-* FIXME: Rewrite settings manager
+* TODO: Rewrite settings manager
+* TODO: When no suiting application is found for launching, open while list
+* TODO: Add/Remove panel item storage
+* TODO: Panel item sorting and alignments (snapping etc)
 * FIXME: replace parents() with closest()
 * FIXME: IE and Opera suffers the same CSS [table] bugs
-* IMPLEMENT: http://trac.webkit.org/export/41842/trunk/LayoutTests/scrollbars/overflow-scrollbar-combinations.html
+* FIXME: Fix ContextMenu pop-out problems
+* NOTE: http://trac.webkit.org/export/41842/trunk/LayoutTests/scrollbars/overflow-scrollbar-combinations.html
 
 Building applications:
 -------------------------------------------------------------------------------
 Look at the example files to see how this is done.
 
 New Application:
-* Create an ApplicationXXX class that extends 'Application' class in 'src/apps/'
-* Create Glade Interface file, place in 'src/apps/'
-* Create XML build-file, place in 'src/apps/'
+* Create Glade Interface file, place in 'src/apps/ApplicationXXX.glade'
+* Create XML build-file, place in 'src/apps/ApplicationXXX.xml'
 * Update Database schema 'schema.xml' if needed
 * Run './bin/application-gen'
 * Run './bin/database-gen' if database schema was updated
-* Copy 'src/build/apps/app.XXX.js' to 'public_html/js/'
-* Copy 'src/build/apps/app.XXX.css' to 'public_html/css/'
+* Copy 'src/build/ApplicationXXX.class.php' to 'src/apps/'
+* Copy 'src/build/apps/app.XXX.js' to 'src/resources/'
+* Copy 'src/build/apps/app.XXX.css' to 'src/resources/'
 
 Update:
 * Run './bin/application-gen'
