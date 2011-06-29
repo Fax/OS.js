@@ -30,7 +30,7 @@ class Core
     $now        = new DateTime("now", $tz);
 
     date_default_timezone_set($zone);
-    session_start();
+    //session_start();
 
     $this->_oTime = $now;
     $this->_oZone = $tz;
