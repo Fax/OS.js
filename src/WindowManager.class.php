@@ -156,6 +156,10 @@ class WindowManager
         "type"    => "array",
         "options" => $pitems,
         "hidden"  => true
+      ),
+      "user.first-run" => Array(
+        "type" => "bool",
+        "value" => true
       )
     );
   }

@@ -32,7 +32,7 @@
    */
   var WEBSOCKET_URI      = "ws://localhost:8888";
   var ENABLE_CACHE       = false;
-  var SETTING_REVISION   = 21;
+  var SETTING_REVISION   = 22;
   var ENABLE_LOGIN       = false;
   var ANIMATION_SPEED    = 400;
   var TEMP_COUNTER       = 1;
@@ -60,6 +60,7 @@
   var _Desktop         = null;
   var _Window          = null;
   var _Tooltip         = null;
+  var _Menu            = null;
   var _Processes       = [];
   var _TopIndex        = (ZINDEX_WINDOW + 1);
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);
@@ -851,6 +852,11 @@
           API.loading.progress(15);
 
           _Desktop.run();
+
+          if ( _Settings._get("user.first-run") === "true" ) {
+            _Desktop.addWindow(new BrowserDialog());
+            _Settings._set("user.first-run", "false");
+          }
         } else {
           alert(data.error);
         }
@@ -865,6 +871,9 @@
     destroy : function() {
       if ( _Tooltip ) {
         _Tooltip.destroy();
+      }
+      if ( _Menu ) {
+        _Menu.destroy();
       }
       if ( _Desktop ) {
         _Desktop.destroy();
@@ -882,6 +891,7 @@
       _Desktop    = null;
       _Window     = null;
       _Tooltip    = null;
+      _Menu       = null;
       _Processes  = [];
       _TopIndex   = 11;
 
@@ -3667,9 +3677,124 @@
   });
 
   /////////////////////////////////////////////////////////////////////////////
-  // CRASH DIALOG
+  // MISC DIALOGS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Browser Compability Dialog
+   * @class
+   */
+  var BrowserDialog = Window.extend({
+
+    /**
+     * Constructor
+     * @see Window
+     */
+    init : function() {
+      var supported = "Supported";
+      var color     = "black";
+
+      var mob = MobileSupport();
+      if ( ($.browser.msie || $.browser.opera) || (mob.iphone || mob.blackberry || mob.android) ) {
+        supported = "Partially supported";
+        color = "#f3a433";
+      } else {
+        supported = "Supported";
+        color = "#137a26";
+      }
+
+      this._super("Crash", false);
+      this._content = "<div style=\"padding:10px;\"><div><b>Your browser is: <span style=\"color:" + color + ";\">" + supported + "</span></b></div> <table class=\"chart\"></table><div class=\"notes\"></div></div>";
+      this._title = "Browser compability";
+      this._icon = 'status/software-update-available.png';
+      this._is_draggable = true;
+      this._is_resizable = false;
+      this._is_scrollable = false;
+      this._is_sessionable = false;
+      this._is_minimizable = true;
+      this._is_maximizable = false;
+      this._is_closable = true;
+      this._is_orphan = false;
+      this._is_ontop = true;
+      this._width = 500;
+      this._height = 300;
+      this._gravity = "center";
+    },
+
+    /**
+     * Create DOM elements etc
+     * @see Window
+     * @return $
+     */
+    create : function(id, mcallback) {
+      var self = this;
+      var el = this._super(id, mcallback);
+
+      var table  = el.find("table.chart");
+      var _row   = "<tr><td width=\"16\"><img alt=\"\" src=\"/img/icons/16x16/emblems/emblem-%s.png\" /></td><td>%s</td></tr>";
+      var _check = {
+        "Local Storage" : SUPPORT_LSTORAGE,
+        "Session Storage" : SUPPORT_SSTORAGE,
+        "Global Storage" : SUPPORT_GSTORAGE,
+        "Database Storage" : SUPPORT_DSTORAGE,
+        "Canvas (2D/3D)" : SUPPORT_CANVAS,
+        "Audio" : SUPPORT_AUDIO,
+        "Video" : SUPPORT_VIDEO,
+        "Sockets" : SUPPORT_SOCKET
+      };
+
+      var row;
+      var icon;
+      for ( var c in _check ) {
+        if ( _check.hasOwnProperty(c) ) {
+          icon = _check[c] ? "default" : "important";
+          row = $(sprintf(_row, icon, c));
+          table.append(row);
+        }
+      }
+
+      $(table).css({
+        "float" : "left",
+        "width" : "49%",
+        "margin-top" : "10px",
+        "background" : "#fff",
+        "height" : "226px"
+      }).find("td").css({
+        "padding" : "3px",
+        "vertical-align" : "middle"
+      });
+
+      var notes = el.find("div.notes");
+      if ( $.browser.msie || $.browser.opera ) {
+        notes.append("<p>Glade CSS style problems occurs in IE and Opera for &lt;table&gt; elements.</p>");
+        if ( $.browser.msie ) {
+          notes.append("<p>IE is lacking some CSS effects and HTML5/W3C features.</p>");
+        }
+      } else {
+        var mob = MobileSupport();
+        if ( mob.iphone || mob.blackberry || mob.android ) {
+          notes.append("<p>Your device is not fully supported due to lacking Touch support.</p>");
+        } else {
+          notes.append("<p>Your browser does not have any known problems.</p>");
+        }
+      }
+      notes.append("<p><b>This message will only be showed once!</b></p>");
+
+      $(notes).css({
+        "float" : "right",
+        "width" : "49%",
+        "margin-top" : "10px",
+        "background" : "#fff",
+        "height" : "226px"
+      }).find("p").css({"padding" : "5px", "margin" : "0"});
+    }
+
+  });
+
+  /**
+   * Application Crash Dialog
+   * @class
+   */
   var CrashDialog = Window.extend({
 
     /**
@@ -3707,7 +3832,7 @@
      * @return $
      */
     create : function(id, mcallback) {
-     var self = this;
+      var self = this;
       var el = this._super(id, mcallback);
 
       $(el).find(".Crash").css({
@@ -3743,7 +3868,9 @@
         "top" : "15px",
         "left" : "0px",
         "right" : "0px",
-        "bottom" : "0px"
+        "bottom" : "0px",
+        "width" : "580px",
+        "height" : "70px"
       });
     }
 
@@ -4426,6 +4553,7 @@
       return true;
     });
 
+    // Global rectangle handler
     $(document).mouseup(function(ev) {
       API.ui.rectangle.hide(ev);
     }).mousemove(function(ev) {

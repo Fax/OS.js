@@ -74,13 +74,12 @@ TODOs:
 -------------------------------------------------------------------------------
 * TODO: Login
 * TODO: Sortable panel items (use absolute, snap to direction as panel does)
-* TODO: Rewrite settings manager
+* FIXME: Rewrite settings manager
 * TODO: Refactor ContextMenu
-* TODO: Only one menu at a time, Global var, Global click handler
+* FIXME: Only one menu at a time, Global var, Global click handler
 * FIXME: replace parents() with closest()
-* TODO: Separate panels into separate resources
-* FIXME: Various Opera CSS bugs
-* FIXME: IE <=8 CSS Not correct anymore
+* TODO: Separate OperationDialogs into separate resources
+* FIXME: IE and Opera suffers the same CSS [table] bugs
 * IMPLEMENT: http://trac.webkit.org/export/41842/trunk/LayoutTests/scrollbars/overflow-scrollbar-combinations.html
 
 Building applications:

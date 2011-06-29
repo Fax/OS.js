@@ -145,6 +145,9 @@ header("Content-Type: text/html; charset=utf-8");
   <link rel="stylesheet" type="text/css" href="/css/main.css" />
   <link rel="stylesheet" type="text/css" href="/css/glade.css" />
   <link rel="stylesheet" type="text/css" href="/css/pimp.css" />
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" href="/css/ie.css" />
+<![endif]-->
 
   <script type="text/javascript" src="/js/utils.js"></script>
   <script type="text/javascript" src="/js/main.js"></script>

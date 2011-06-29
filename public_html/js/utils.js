@@ -439,3 +439,16 @@ function basename(dir) {
   var expl = dir.split("/");
   return expl.length ? (expl[expl.length - 1]) : null;
 }
+
+/**
+ * Check for mobile support
+ * @return Object
+ */
+function MobileSupport() {
+  var ua = navigator.userAgent;
+  return {
+    iphone: ua.match(/(iPhone|iPod|iPad)/),
+    blackberry: ua.match(/BlackBerry/),
+    android: ua.match(/Android/)
+  };
+}
