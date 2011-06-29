@@ -63,7 +63,7 @@ var PanelItemMenu = (function($, undefined) {
             if ( apps.hasOwnProperty(a) ) {
               o = apps[a];
               (function(apn) {
-                cats[o.cat][2].push({
+                cats[o.category][2].push({
                   "title" : o.title,
                   "method" : function() {
                     api.system.launch(apn);

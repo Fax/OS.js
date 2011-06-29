@@ -45,21 +45,6 @@ class Core
 
   public static function getSettings() {
 
-    $apps   = Array();
-    foreach ( Application::$Registered as $c => $opts ) {
-      $apps[$c] = Array(
-        "title" => $opts['title'],
-        "icon"  => $opts['icon'],
-        "mime"  => $opts["mimes"],
-        "cat"   => $opts['category']
-      );
-    }
-
-    $pitems = Array();
-    foreach ( Panel::$Registered as $c => $opts ) {
-      $pitems[$c] = $opts;
-    }
-
     $panel = Array(
       Array("PanelItemMenu", Array(), "left"),
       Array("PanelItemSeparator", Array(), "left"),
@@ -94,10 +79,10 @@ class Core
 
     return SettingsManager::getSettings(Array(
       "system.app.registered" => Array(
-        "options" => $apps
+        "options" => Application::$Registered
       ),
       "system.panel.registered" => Array(
-        "options" => $pitems
+        "options" => Panel::$Registered
       ),
       "desktop.panel.items" => Array(
         "items" => $panel

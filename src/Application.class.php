@@ -175,12 +175,12 @@ abstract class Application
             "name"      => $app_name,
             "title"     => $app_title,
             "icon"      => $app_icon,
-            "class"     => $app_class,
             "category"  => $app_category,
-            "windows"   => $windows,
-            "resources" => $resources,
             "mimes"     => $mimes,
-            "system"    => $app_system
+            "resources" => $resources/*,
+            "class"     => $app_class,
+            "windows"   => $windows,
+            "system"    => $app_system*/
           );
 
           require_once PATH_APPS . "/{$app_file}";
@@ -202,13 +202,9 @@ abstract class Application
    */
   public function getJSON() {
     $cname = get_class($this);
-    return Array(
-      "uuid"      => $this->_sUUID,
-      "title"     => self::$Registered[$cname]['title'],
-      "icon"      => self::$Registered[$cname]['icon'],
-      "resources" => self::$Registered[$cname]['resources'],
-      "mime"      => self::$Registered[$cname]['mimes']
-    );
+    $reg   = self::$Registered[$cname];
+
+    return array_merge(Array("uuid" => $this->_sUUID), $reg);
   }
 
 }

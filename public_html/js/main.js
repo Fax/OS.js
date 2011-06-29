@@ -32,7 +32,7 @@
    */
   var WEBSOCKET_URI      = "ws://localhost:8888";
   var ENABLE_CACHE       = false;
-  var SETTING_REVISION   = 22;
+  var SETTING_REVISION   = 23;
   var ENABLE_LOGIN       = false;
   var ANIMATION_SPEED    = 400;
   var TEMP_COUNTER       = 1;
@@ -293,17 +293,17 @@
             if ( apps.hasOwnProperty(i) ) {
               app = apps[i];
               app.name = i; // append
-              if ( app.mime.length ) {
-                for ( check in app.mime ) {
-                  if ( app.mime.hasOwnProperty(check) ) {
-                    mtype = app.mime[check].split("/");
+              if ( app.mimes.length ) {
+                for ( check in app.mimes ) {
+                  if ( app.mimes.hasOwnProperty(check) ) {
+                    mtype = app.mimes[check].split("/");
                     if ( mtype[1] == "*" ) {
                       if ( mtype[0] == inmime[0] ) {
                         found.push(i);
                         list.push(app);
                       }
                     } else {
-                      if ( app.mime[check] == mime ) {
+                      if ( app.mimes[check] == mime ) {
                         found.push(i);
                         list.push(app);
                       }
