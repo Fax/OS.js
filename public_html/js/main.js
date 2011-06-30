@@ -1687,6 +1687,13 @@
     },
 
     /**
+     * Perform a clipboard action
+     * @return void
+     */
+    _clipboard : function(action) {
+    },
+
+    /**
      * Get current Application session data
      * @return JSON
      */

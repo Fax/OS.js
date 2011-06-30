@@ -264,6 +264,31 @@ EOJAVASCRIPT;
         this.\$element.find(".ActionClose").click();
 
 EOJAVASCRIPT;
+      } else if ( $ev_handler == "MenuTextCopy" ) {
+        $ev_code = <<<EOJAVASCRIPT
+        var my_mimes    = {$mimes};
+        this.app._clipboard("copy");
+EOJAVASCRIPT;
+      } else if ( $ev_handler == "MenuTextPaste" ) {
+        $ev_code = <<<EOJAVASCRIPT
+        var my_mimes    = {$mimes};
+        this.app._clipboard("paste");
+EOJAVASCRIPT;
+      } else if ( $ev_handler == "MenuTextCut" ) {
+        $ev_code = <<<EOJAVASCRIPT
+        var my_mimes    = {$mimes};
+        this.app._clipboard("cut");
+EOJAVASCRIPT;
+      } else if ( $ev_handler == "MenuTextSelectAll" ) {
+        $ev_code = <<<EOJAVASCRIPT
+        var my_mimes    = {$mimes};
+        this.app._clipboard("select");
+EOJAVASCRIPT;
+      } else if ( $ev_handler == "MenuTextDelete" ) {
+        $ev_code = <<<EOJAVASCRIPT
+        var my_mimes    = {$mimes};
+        this.app._clipboard("delete");
+EOJAVASCRIPT;
       } else {
         if ( $ev_type == "file-set" ) {
           $ev_code = <<<EOJAVASCRIPT
