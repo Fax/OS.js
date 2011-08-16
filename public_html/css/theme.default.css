@@ -184,11 +184,17 @@ textarea {
   font-weight : bold;
 }
 
+.OperationDialogLaunch p {
+  padding : 5px;
+  padding-top : 0;
+  margin : 0;
+}
+
 .OperationDialogLaunch ul {
   margin : 0;
   padding : 0;
   list-style-type : none;
-  height : 80px;
+  height : 170px;
   overflow : auto;
 }
 .OperationDialogLaunch li {

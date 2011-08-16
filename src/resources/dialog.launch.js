@@ -1,6 +1,6 @@
 /**
  * OperationDialog: LaunchOperationDialog
- * Used for Open and Save operations.
+ * Used for selecting an application to open from a specific file (MIME)
  *
  * @package OSjs.Dialogs
  * @author Anders Evenrud <andersevenrud@gmail.com>
@@ -10,15 +10,16 @@ var LaunchOperationDialog = (function($, undefined) {
   return function(OperationDialog, API, argv) {
 
     var _LaunchOperationDialog = OperationDialog.extend({
-      init : function(items, clb_finish) {
+      init : function(items, clb_finish, not_found) {
         this.list         = items        || [];
         this.clb_finish   = clb_finish   || function() {};
+        this.not_found    = not_found === undefined ? false : not_found;
 
         this._super("Launch");
         this._title    = "Select an application";
         this._content  = $("#OperationDialogLaunch").html();
         this._width    = 400;
-        this._height   = 170;
+        this._height   = 300;
       },
 
 
@@ -29,6 +30,12 @@ var LaunchOperationDialog = (function($, undefined) {
         var app, current;
         var selected;
         var set_default = false;
+
+        if ( this.not_found ) {
+          this.$element.find(".OperationDialogInner").prepend("<p>Found no suiting application for this MIME type. </p>");
+        } else {
+          this.$element.find(".OperationDialogInner").prepend("<p>Found multiple application supporting this MIME type:</p>");
+        }
 
         for ( var x = 0; x < this.list.length; x++ ) {
           app = this.list[x];

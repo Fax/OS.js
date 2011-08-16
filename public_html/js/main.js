@@ -307,6 +307,7 @@
           var inmime = mime.split("/");
 
           var app, check, mtype;
+          var all_apps = [];
           for ( var i in apps ) {
             if ( apps.hasOwnProperty(i) ) {
               app = apps[i];
@@ -330,6 +331,7 @@
                 }
               }
             }
+            all_apps.push(app);
           }
 
           function __run(mapp) {
@@ -347,7 +349,10 @@
               });
             }
           } else {
-            API.system.dialog("error", "Found no suiting application for '" + path + "' (" + mime + ")");
+            //API.system.dialog("error", "Found no suiting application for '" + path + "' (" + mime + ")");
+            API.system.dialog_launch(all_apps, function(mapp, set_default) {
+              __run(mapp);
+            }, true);
           }
         }
       },
@@ -422,10 +427,10 @@
         return _Desktop.addWindow(new FileOperationDialog(OperationDialog, API, [type, mime_filter, clb_finish, cur_dir]));
       },
 
-      'dialog_launch' : function(list, clb_finish) {
+      'dialog_launch' : function(list, clb_finish, not_found) {
         console.info("=> API Launch Dialog");
 
-        return _Desktop.addWindow(new LaunchOperationDialog(OperationDialog, API, [list, clb_finish]));
+        return _Desktop.addWindow(new LaunchOperationDialog(OperationDialog, API, [list, clb_finish, not_found]));
       },
 
       'dialog_color' : function(start_color, clb_finish) {

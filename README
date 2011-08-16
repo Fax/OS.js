@@ -75,7 +75,6 @@ TODOs:
 -------------------------------------------------------------------------------
 * TODO: Login
 * TODO: Rewrite settings manager
-* TODO: When no suiting application is found for launching, open while list
 * TODO: Add/Remove panel item storage
 * TODO: Panel item sorting and alignments (snapping etc)
 * FIXME: replace parents() with closest()
