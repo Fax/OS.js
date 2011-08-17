@@ -141,9 +141,26 @@
               }, 100);
             }
           } else {
+            /*
             var error = "Application Script not found!";
             API.system.dialog("error", error);
             callback_error(error);
+            */
+            var errors = [];
+            var eargs = [];
+            for ( var x in data.result.resources ) {
+              errors.push("* " + data.result.resources[x]);
+            }
+            for ( var a in args ) {
+              eargs.push(args[a]);
+            }
+
+            CrashApplication(app_name, {
+              _name : app_name
+            }, {
+              message : "One or more of these resources failed to load:\n" + errors.join("\n"),
+              stack : sprintf("[LaunchApplication]API::system::launch()\n  Application: %s\n  Arguments: %s", app_name, eargs.join(","))
+            });
           }
 
           setTimeout(function() {
