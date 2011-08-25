@@ -21,6 +21,7 @@ abstract class Archive
   const TYPE_BZIP = 2;
   const TYPE_RAR  = 3;
   const TYPE_ZLIB = 4;
+  const TYPE_TAR  = 5;
 
   /////////////////////////////////////////////////////////////////////////////
   // VARIABLES
@@ -30,25 +31,28 @@ abstract class Archive
   protected $_sFilename    = "";
   protected $_sArchiveType = "";
 
-  protected static $_ArchiveTypes = Array(
+  protected static $_ArchiveExtensions = Array(
     self::TYPE_ZIP  => Array("zip"),
     self::TYPE_BZIP => Array("bz2", "bzip", "bz"),
-    self::TYPE_RAR  => Array("rar", "r"),
-    self::TYPE_ZLIB => Array("gz", "gzip")
+    self::TYPE_RAR  => Array("rar"),
+    self::TYPE_ZLIB => Array("gz", "gzip"),
+    self::TYPE_TAR  => Array("tar")
   );
 
   protected static $_ArchiveNames = Array(
     self::TYPE_ZIP  => "ZIP Archive",
     self::TYPE_BZIP => "Bzip2 Archive",
     self::TYPE_RAR  => "RAR Archive",
-    self::TYPE_ZLIB => "Gzip Archive"
+    self::TYPE_ZLIB => "Gzip Archive",
+    self::TYPE_TAR  => "TAR Archive"
   );
 
   protected static $_ArchiveClasses = Array(
     self::TYPE_ZIP  => "Zip",
     self::TYPE_BZIP => "Bzip",
     self::TYPE_RAR  => "Rar",
-    self::TYPE_ZLIB => "Gzip"
+    self::TYPE_ZLIB => "Gzip",
+    self::TYPE_TAR  => "TAR"
   );
 
   /////////////////////////////////////////////////////////////////////////////
@@ -80,6 +84,10 @@ abstract class Archive
     throw new Exception(sprintf("%s does not support '%s()'", get_class($this), __METHOD__));
   }
 
+  public function extract() {
+    throw new Exception(sprintf("%s does not support '%s()'", get_class($this), __METHOD__));
+  }
+
   /////////////////////////////////////////////////////////////////////////////
   // STATIC METHODS
   /////////////////////////////////////////////////////////////////////////////
@@ -92,7 +100,7 @@ abstract class Archive
     }
 
     if ( ($type = self::_checkType($filename) ) ) {
-      if ( in_array($type, array_keys(self::$_ArchiveTypes)) ) {
+      if ( in_array($type, array_keys(self::$_ArchiveExtensions)) ) {
         $cname = "Archive" . self::$_ArchiveClasses[$type];
         if ( class_exists($cname) ) {
           return new $cname($filename, $type);
@@ -109,7 +117,7 @@ abstract class Archive
     }
 
     if ( ($type = self::_checkType($filename) ) ) {
-      if ( in_array($type, array_keys(self::$_ArchiveTypes)) ) {
+      if ( in_array($type, array_keys(self::$_ArchiveExtensions)) ) {
         $cname = "Archive" . self::$_ArchiveClasses[$type];
         if ( class_exists($cname) ) {
           return new $cname($filename, $type);
@@ -140,6 +148,9 @@ abstract class Archive
         case "application/x-bzip2" :
           $type = self::TYPE_BZIP;
         break;
+        case "application/x-tar" :
+          $type = self::TYPE_TAR;
+        break;
         /*
         case "application/octet-stream" :
           $type = self::TYPE_ZIP;
@@ -159,7 +170,7 @@ abstract class Archive
       $expl = explode(".", $bsrc);
       $ext  = end($expl);
 
-      foreach ( self::$_ArchiveTypes as $tid => $exts ) {
+      foreach ( self::$_ArchiveExtensions as $tid => $exts ) {
         if ( in_array($ext, $exts) ) {
           $type = $tid;
           break;
@@ -186,6 +197,10 @@ abstract class Archive
 class ArchiveZip
   extends Archive
 {
+
+  public final function extract() {
+    return false;
+  }
 
   public function read() {
     $list = Array();
@@ -225,7 +240,11 @@ class ArchiveRar
   extends Archive
 {
 
-  public function read() {
+  public final function extract() {
+    return false;
+  }
+
+  public final function read() {
     $list = Array();
 
     if ( $res = rar_open($this->_sFilename) ) {
@@ -253,6 +272,28 @@ class ArchiveRar
 }
 
 /**
+ * ArchiveTar Class
+ *
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @package OS.js
+ * @class
+ */
+class ArchiveTar
+  extends Archive
+{
+
+  public final function extract() {
+    return false;
+  }
+
+  public final function read() {
+    $list = Array();
+
+    return $list;
+  }
+}
+
+/**
  * ArchiveBzip Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
@@ -263,7 +304,7 @@ class ArchiveBzip
   extends Archive
 {
 
-  public function compress($src) {
+  public final function compress($src) {
     if ( $fp = fopen($src, "r") ) {
       // Read source file
       $data = fread ($fp, filesize($src));
@@ -281,7 +322,7 @@ class ArchiveBzip
     return false;
   }
 
-  public function decompress($dst) {
+  public final function decompress($dst) {
     $string = "";
     $buffer = 4096;
 
@@ -316,7 +357,7 @@ class ArchiveGzip
   extends Archive
 {
 
-  public function compress($src) {
+  public final function compress($src) {
     $level = 9;
 
     if ( $fp = fopen($src, "r") ) {
@@ -336,7 +377,7 @@ class ArchiveGzip
     return false;
   }
 
-  public function decompress($dst) {
+  public final function decompress($dst) {
     $string = "";
     $buffer = 4096;
 
