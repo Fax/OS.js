@@ -180,20 +180,20 @@ class ApplicationVFS
     try {
       if ( $a = Archive::open($arch) ) {
         foreach ( $a->read() as $f ) {
-          $file = trim($f['name']);
-          $size = $f['size_real'];
-          $type = substr($file, -1) == "/" ? "dir" : "file";
-          $mime = $type == "file" ? "application/octet-stream" : "";
-          $icon = $type == "file" ? "mimetypes/binary.png" : "places/folder.png";
+          $file  = trim($f['name']);
+          $size  = $f['size_real'];
+          $type  = substr($file, -1) == "/" ? "dir" : "file";
+          $mime  = $type == "file" ? "application/octet-stream" : "";
+          $icon  = $type == "file" ? "mimetypes/binary.png" : "places/folder.png";
           $fname = "/{$file}";
 
           $result[$type][$file] = Array(
-            "path" => $fname,
-            "size" => $size,
-            "mime" => $mime,
-            "icon" => $icon,
-            "type" => $type,
-            "protected" => 0
+            "path"       => $fname,
+            "size"       => $size,
+            "mime"       => $mime,
+            "icon"       => $icon,
+            "type"       => $type,
+            "protected"  => 0
           );
 
         }
@@ -202,10 +202,14 @@ class ApplicationVFS
       $result = false;
     }
 
-    ksort($result["dir"]);
-    ksort($result["file"]);
+    if ( $result ) {
+      ksort($result["dir"]);
+      ksort($result["file"]);
 
-    return array_merge($result["dir"], $result["file"]);
+      return array_merge($result["dir"], $result["file"]);
+    }
+
+    return false;
   }
 
 
