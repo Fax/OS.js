@@ -1,0 +1,95 @@
+@charset "UTF-8";
+/**
+ * Application: ApplicationArchiver
+ *
+ * @package OSjs.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ */
+
+.ApplicationArchiver {
+}
+/*
+.Window.ApplicationArchiver .WindowContent{
+  background : #fff;
+}
+  */
+.ApplicationArchiver .iconview1 {
+  /*
+  position : absolute;
+  top : 2px;
+  left : 2px;
+  right : 2px;
+  bottom : 2px;
+  */
+  background : #fff;
+  overflow : auto;
+}
+.ApplicationArchiver .iconview1 ul {
+  list-style-type : none;
+  padding : 0;
+  margin : 0;
+}
+.ApplicationArchiver .iconview1 li {
+  float : left;
+  margin : 0;
+  padding : 10px;
+  text-align : center;
+  width : 48px;
+  height : 48px;
+  font-size : 10px;
+  word-wrap : break-word;
+}
+
+.ApplicationArchiver .iconview1 .Inner,
+.ApplicationArchiver .iconview1 .Inner * {
+  cursor : pointer;
+}
+.ApplicationArchiver .iconview1 .Current .Title {
+  background : #4f4f4f;
+  color : #fff;
+}
+.ApplicationArchiver .iconview1 tr.Current,
+.ApplicationArchiver .iconview1 tr.odd.Current {
+  background : #4f4f4f;
+  color : #fff;
+}
+
+.ApplicationArchiver .iconview1 table {
+  border-collapse : collapse;
+  width : 100%;
+}
+.ApplicationArchiver .iconview1 td {
+  padding : 2px;
+  white-space : nowrap;
+}
+.ApplicationArchiver .iconview1 td.Image {
+  width : 16px;
+}
+.ApplicationArchiver .iconview1 td.Size {
+  width : 50px;
+}
+.ApplicationArchiver .iconview1 td.Type {
+  width : 50px;
+}
+
+.ApplicationArchiver .iconview1 tr.odd {
+  background : #e6e6e6;
+}
+
+
+.ApplicationArchiver .iconview1 table.TableHead {
+  height : 20px;
+  padding-top :5px;
+  padding-bottom : 5px;
+  overflow : hidden;
+  display : block;
+}
+.ApplicationArchiver .iconview1 table.TableBody {
+  background : #fff;
+}
+
+.ApplicationArchiver .TableWrap {
+}
+
+.ApplicationArchiver .TableBodyWrap {
+}

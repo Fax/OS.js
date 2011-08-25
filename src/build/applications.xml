@@ -7,6 +7,13 @@
     <resource>app.filemanager.css</resource>
     <resource>app.filemanager.js</resource>
   </application>
+  <application name="Archiver" title="File Archiver" icon="mimetypes/package-x-generic.png" system="false" category="utilities" class="ApplicationArchiver" file="ApplicationArchiver.class.php">
+    <window id="window1">
+      <property name="properties"><![CDATA[{"type":"window","title":"File Archiver","icon":"mimetypes\/package-x-generic.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":500,"height":500,"gravity":""}]]></property>
+    </window>
+    <resource>app.archiver.css</resource>
+    <resource>app.archiver.js</resource>
+  </application>
   <application name="Viewer" title="Image Viewer" icon="mimetypes/image-x-generic.png" system="false" category="graphics" class="ApplicationViewer" file="ApplicationViewer.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"Image Viewer","icon":"mimetypes\/image-x-generic.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":300,"height":200,"gravity":""}]]></property>

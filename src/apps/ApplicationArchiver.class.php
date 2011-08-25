@@ -26,79 +26,49 @@ class ApplicationArchiver
   }
 
   public static function Event($uuid, $action, Array $args) {
-    /*
+    $path = "/tmp/ccthemepack.zip";
+
     if ( $action == "browse" ) {
       $result = Array();
-
-      $path  = $args['path'];
-      $view  = $args['view'];
       $total = 0;
       $bytes = 0;
-      $ignores = Array(".", ".gitignore");
 
-      if ( $path == "/" ) {
-        $ignores[] = "..";
-      }
+      if ( ($a = ApplicationVFS::ls_archive($path)) ) {
 
-      if ( ($items = ApplicationVFS::ls($path, $ignores)) !== false ) {
         $i = 0;
-        foreach ( $items as $file => $info ) {
+        foreach ( $a as $file => $info ) {
           $icon = "/img/icons/32x32/{$info['icon']}";
           if ( preg_match("/^\/img/", $info['icon']) ) {
             $icon = $info['icon'];
           }
 
-          if ( $view == "icon" ) {
-            $result[] = <<<EOHTML
-        <li class="type_{$info['type']}">
-          <div class="Inner">
-            <div class="Image"><img alt="" src="{$icon}" width="32" height="32" /></div>
-            <div class="Title">{$file}</div>
-            <div class="Info" style="display:none;">
-              <input type="hidden" name="type" value="{$info['type']}" />
-              <input type="hidden" name="mime" value="{$info['mime']}" />
-              <input type="hidden" name="name" value="{$file}" />
-              <input type="hidden" name="path" value="{$info['path']}" />
-              <input type="hidden" name="size" value="{$info['size']}" />
-              <input type="hidden" name="protected" value="{$info['protected']}" />
-            </div>
-          </div>
-        </li>
-EOHTML;
-          } else {
-            $class = $i % 2 ? "odd" : "even";
-            $size = $info['type'] == "dir" ? "" : $info['size'];
-            $mime = $info['type'] == "dir" ? "" : $info['mime'];
-            $result[] = <<<EOHTML
-        <tr class="type_{$info['type']} {$class} Inner">
-          <td class="Image Space First"><img alt="" src="{$icon}" width="16" height="16" /></td>
-          <td class="Title Space">{$file}</td>
-          <td class="Size Space">{$size}</td>
-          <td class="Type Space Last">{$mime}</td>
-          <td class="Info" style="display:none;">
-            <input type="hidden" name="type" value="{$info['type']}" />
-            <input type="hidden" name="mime" value="{$info['mime']}" />
-            <input type="hidden" name="name" value="{$file}" />
-            <input type="hidden" name="path" value="{$info['path']}" />
-            <input type="hidden" name="size" value="{$info['size']}" />
-            <input type="hidden" name="protected" value="{$info['protected']}" />
-          </td>
-        </tr>
+          $class = $i % 2 ? "odd" : "even";
+          $size = $info['type'] == "dir" ? "" : $info['size'];
+          $mime = $info['type'] == "dir" ? "" : $info['mime'];
+          $result[] = <<<EOHTML
+      <tr class="type_{$info['type']} {$class} Inner">
+        <td class="Image Space First"><img alt="" src="{$icon}" width="16" height="16" /></td>
+        <td class="Title Space">{$file}</td>
+        <td class="Size Space">{$size}</td>
+        <td class="Type Space Last">{$mime}</td>
+        <td class="Info" style="display:none;">
+          <input type="hidden" name="type" value="{$info['type']}" />
+          <input type="hidden" name="mime" value="{$info['mime']}" />
+          <input type="hidden" name="name" value="{$file}" />
+          <input type="hidden" name="path" value="{$info['path']}" />
+          <input type="hidden" name="size" value="{$info['size']}" />
+          <input type="hidden" name="protected" value="{$info['protected']}" />
+        </td>
+      </tr>
 EOHTML;
 
-            $i++;
-          }
-
-          $total++;
-          $bytes += (int) $info['size'];
-        }
+        $i++;
+        $total++;
+        $bytes += (int) $info['size'];
       }
 
-      if ( $view == "icon" ) {
-        $out = "<ul class=\"ListWrap\">" . implode("", $result) . "</ul>";
-      } else {
-        $rows = implode("", $result);
-        $out = <<<EOHTML
+      $rows = implode("", $result);
+      $out = <<<EOHTML
 <div class="TableWrap">
   <table class="TableHead GtkIconViewHeader">
     <tbody>
@@ -120,13 +90,10 @@ EOHTML;
   </div>
 </div>
 EOHTML;
+
+        return Array("items" => $out, "total" => $total, "bytes" => $bytes, "path" => ($path == "/" ? "Home" : $path));
       }
-
-      return Array("items" => $out, "total" => $total, "bytes" => $bytes, "path" => ($path == "/" ? "Home" : $path));
-    } else if ( $action == "upload" ) {
-
     }
-     */
 
     return false;
   }
