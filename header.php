@@ -17,6 +17,7 @@ define("PROJECT_VERSION", "0.5-alpha5");
 define("ENV_PRODUCTION", false);
 define("DEFAULT_TIMEZONE", "Europe/Oslo");
 define("ENABLE_CACHE", false);
+define("ARCHIVE_SYSETM", false); // lib/Archive.php
 
 // Server
 define("SERVER_HOST", "localhost");
@@ -49,6 +50,7 @@ require "vendor/AjaxUpload.php";
 
 // Internal libraries
 require "lib/Functions.php";
+require "lib/Archive.php";
 require "lib/UUID.class.php";
 
 require 'src/Core.class.php';
