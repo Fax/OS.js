@@ -1,4 +1,4 @@
-/**
+/*!
  * PanelItem: Clock
  *
  * @package OSjs.Panel
@@ -6,7 +6,10 @@
  * @class
  */
 var PanelItemClock = (function($, undefined) {
+  "$:nomunge";
+
   return function(_PanelItem, panel, api, argv) {
+    "_PanelItem:nomunge, panel:nomunge, api:nomunge, argv:nomunge";
 
     var _PanelItemClock = _PanelItem.extend({
       init : function() {

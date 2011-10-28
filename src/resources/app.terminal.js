@@ -1,4 +1,4 @@
-/**
+/*!
  * Application: ApplicationTerminal
  *
  * @package OSjs.Applications
@@ -6,7 +6,7 @@
  * @class
  */
 var ApplicationTerminal = (function($, undefined) {
-
+  "$:nomunge";
 
   var KEY_TAB = 9;
   var KEY_ENTER = 13;
@@ -17,6 +17,7 @@ var ApplicationTerminal = (function($, undefined) {
   var KEY_DOWN = 40;
 
   return function(GtkWindow, Application, API, argv, windows) {
+    "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
 
     ///////////////////////////////////////////////////////////////////////////
     // TERMINAL EMULATION

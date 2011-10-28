@@ -1,4 +1,4 @@
-/**
+/*!
  * PanelItem: Separator
  *
  * @package OSjs.Panel
@@ -6,7 +6,11 @@
  * @class
  */
 var PanelItemSeparator = (function($, undefined) {
+  "$:nomunge";
+
   return function(_PanelItem, panel, api, argv) {
+    "_PanelItem:nomunge, panel:nomunge, api:nomunge, argv:nomunge";
+
     var _PanelItemSeparator = _PanelItem.extend({
       init : function() {
         this._super("PanelItemSeparator");

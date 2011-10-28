@@ -1,4 +1,4 @@
-/**
+/*!
  * Application: ApplicationTextpad
  *
  * @package OSjs.Applications
@@ -6,7 +6,10 @@
  * @class
  */
 var ApplicationTextpad = (function($, undefined) {
+  "$:nomunge";
+
   return function(GtkWindow, Application, API, argv, windows) {
+    "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
 
     function _read_file(win,file) {
       var txt = win.$element.find("textarea");

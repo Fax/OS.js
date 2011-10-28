@@ -1,4 +1,4 @@
-/**
+/*!
  * Application: SystemLogout
  *
  * @package OSjs.Applications
@@ -6,9 +6,10 @@
  * @class
  */
 var SystemLogout = (function($, undefined) {
+  "$:nomunge";
+
   return function(GtkWindow, Application, API, argv, windows) {
-
-
+    "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
 
     var Window_dialog1 = GtkWindow.extend({
 

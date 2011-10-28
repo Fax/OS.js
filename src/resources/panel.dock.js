@@ -1,4 +1,4 @@
-/**
+/*!
  * PanelItem: Dock
  *
  * @package OSjs.Panel
@@ -6,7 +6,11 @@
  * @class
  */
 var PanelItemDock = (function($, undefined) {
+  "$:nomunge";
+
   return function(_PanelItem, panel, api, argv) {
+    "_PanelItem:nomunge, panel:nomunge, api:nomunge, argv:nomunge";
+
     var _PanelItemDock = _PanelItem.extend({
       init : function(items) {
         this._super("PanelItemDock");

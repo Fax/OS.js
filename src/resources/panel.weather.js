@@ -1,4 +1,4 @@
-/**
+/*!
  * PanelItem: Weather
  *
  * Uses geolocation API and geonames to figure out weather
@@ -8,7 +8,11 @@
  * @class
  */
 var PanelItemWeather = (function($, undefined) {
+  "$:nomunge";
+
   return function(_PanelItem, panel, api, argv) {
+    "_PanelItem:nomunge, panel:nomunge, api:nomunge, argv:nomunge";
+
     var _PanelItemWeather = _PanelItem.extend({
       init : function() {
         this._super("PanelItemWeather", "right");

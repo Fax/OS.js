@@ -1,4 +1,4 @@
-/**
+/*!
  * Application: ApplicationFileManager
  *
  * @package OSjs.Applications
@@ -6,7 +6,10 @@
  * @class
  */
 var ApplicationFileManager = (function($, undefined) {
+  "$:nomunge";
+
   return function(GtkWindow, Application, API, argv, windows) {
+    "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
 
     if ( argv.view_type == undefined ) {
       argv.view_type = 'icon';

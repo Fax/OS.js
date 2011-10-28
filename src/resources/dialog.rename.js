@@ -1,4 +1,4 @@
-/**
+/*!
  * OperationDialog: RenameOperationDialog
  * Rename file dialog
  *
@@ -7,7 +7,10 @@
  * @class
  */
 var RenameOperationDialog = (function($, undefined) {
+  "$:nomunge";
+
   return function(OperationDialog, API, argv) {
+    "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
     var _RenameOperationDialog = OperationDialog.extend({
       init : function(src, clb_finish) {

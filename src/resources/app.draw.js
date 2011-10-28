@@ -1,4 +1,4 @@
-/**
+/*!
  * Application: ApplicationDraw
  *
  * @package OSjs.Applications
@@ -6,7 +6,10 @@
  * @class
  */
 var ApplicationDraw = (function($, undefined) {
+  "$:nomunge";
+
   return function(GtkWindow, Application, API, argv, windows) {
+    "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
 
     var Icons = {
       "selection"  : "/img/app.draw/icons/stock-selection-16.png",

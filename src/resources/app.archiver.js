@@ -1,4 +1,4 @@
-/**
+/*!
  * Application: ApplicationArchiver
  *
  * @package OSjs.Applications
@@ -6,6 +6,8 @@
  * @class
  */
 var ApplicationArchiver = (function($, undefined) {
+  "$:nomunge";
+
   /**
    * @param GtkWindow     GtkWindow            GtkWindow API Reference
    * @param Application   Application          Application API Reference
@@ -14,7 +16,7 @@ var ApplicationArchiver = (function($, undefined) {
    * @param Array         windows              Application windows from session (restoration)
    */
   return function(GtkWindow, Application, API, argv, windows) {
-
+    "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
 
     ///////////////////////////////////////////////////////////////////////////
     // WINDOWS

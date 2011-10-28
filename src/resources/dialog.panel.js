@@ -1,4 +1,4 @@
-/**
+/*!
  * OperationDialog: PanelItemOperationDialog
  * Used for Open and Save operations.
  *
@@ -7,7 +7,10 @@
  * @class
  */
 var PanelItemOperationDialog = (function($, undefined) {
+  "$:nomunge";
+
   return function(OperationDialog, API, argv) {
+    "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
     var _PanelItemOperationDialog = OperationDialog.extend({
       init : function(item, clb_create, clb_finish, title, copy) {

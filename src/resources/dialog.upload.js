@@ -1,4 +1,4 @@
-/**
+/*!
  * OperationDialog: UploadOperationDialog
  * Upload file dialog
  *
@@ -7,7 +7,10 @@
  * @class
  */
 var UploadOperationDialog = (function($, undefined) {
+  "$:nomunge";
+
   return function(OperationDialog, API, argv) {
+    "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
     var _UploadOperationDialog = OperationDialog.extend({
       init : function(path, clb_finish, clb_progress, clb_cancel) {

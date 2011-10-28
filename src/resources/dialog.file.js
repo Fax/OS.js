@@ -1,4 +1,4 @@
-/**
+/*!
  * OperationDialog: FileOperationDialog
  * Used for Open and Save operations.
  *
@@ -7,7 +7,10 @@
  * @class
  */
 var FileOperationDialog = (function($, undefined) {
+  "$:nomunge";
+
   return function(OperationDialog, API, argv) {
+    "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
     var _FileOperationDialog = OperationDialog.extend({
       init : function(type, argv, clb_finish, cur_dir) {

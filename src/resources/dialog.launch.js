@@ -1,4 +1,4 @@
-/**
+/*!
  * OperationDialog: LaunchOperationDialog
  * Used for selecting an application to open from a specific file (MIME)
  *
@@ -7,7 +7,10 @@
  * @class
  */
 var LaunchOperationDialog = (function($, undefined) {
+  "$:nomunge";
+
   return function(OperationDialog, API, argv) {
+    "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
     var _LaunchOperationDialog = OperationDialog.extend({
       init : function(items, clb_finish, not_found) {

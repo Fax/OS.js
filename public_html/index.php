@@ -78,14 +78,66 @@ EOCSS;
 ///////////////////////////////////////////////////////////////////////////////
 
 if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
-  $res  = addslashes($_GET['resource']);
+  $res  = str_replace(Array("../", "./"), Array("", ""), $_GET['resource']);
+  $res  = addslashes($res);
   $type = preg_match("/\.js$/", $res) ? "js" : "css";
   $path = sprintf("%s/%s", PATH_RESOURCES, $res); // FIXME
 
   if ( file_exists($path) ) {
     //header(sprintf("Content-Type: text/%s; charset=utf-8", $type == "js" ? "javascript" : "css"));
+
+    $content = "";
+    if ( ENV_PRODUCTION ) {
+      $cmd  = PATH_PROJECT_BIN . "/yui.sh";
+      $cmd  = sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_PROJECT_BIN, PATH_PROJECT_VENDOR);
+      $args = "--preserve-semi ";
+      if ( $type == "js" ) {
+        $args .= sprintf("--type js --charset UTF-8 %s", escapeshellarg($path));
+      } else {
+        $args .= sprintf("--type css --charset UTF-8 %s", escapeshellarg($path));
+      }
+
+      $exec = sprintf("%s %s 2>&1", $cmd, $args);
+      if ( !($content = shell_exec($exec)) ) {
+        $content = "/* FAILED TO GET CONTENTS */";
+      }
+    } else {
+      if ( !($content = file_get_contents($path)) ) {
+        $content = "";
+      }
+    }
+
+
     header(sprintf("Content-Type: %s; charset=utf-8", $type == "js" ? "application/x-javascript" : "text/css"));
-    print file_get_contents($path);
+    print $content;
+    exit;
+  }
+
+  header("HTTP/1.0 404 Not Found");
+  exit;
+} else if ( isset($_GET['library']) ) {
+  $res  = str_replace(Array("../", "./"), Array("", ""), $_GET['library']);
+  $res  = addslashes($res);
+  $path = sprintf("%s/%s", PATH_JSBASE, $res); // FIXME
+
+  $content = "";
+  if ( file_exists($path) ) {
+    if ( ENV_PRODUCTION ) {
+      $cmd  = PATH_PROJECT_BIN . "/yui.sh";
+      $cmd  = sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_PROJECT_BIN, PATH_PROJECT_VENDOR);
+      $args = sprintf("--preserve-semi --type js --charset UTF-8 %s", escapeshellarg($path));
+      $exec = sprintf("%s %s 2>&1", $cmd, $args);
+      if ( !($content = shell_exec($exec)) ) {
+        $content = "/* FAILED TO GET CONTENTS */";
+      }
+    } else {
+      if ( !($content = file_get_contents($path)) ) {
+        $content = "/* FAILED TO GET CONTENTS */";
+      }
+    }
+
+    header(sprintf("Content-Type: %s; charset=utf-8", "application/x-javascript"));
+    print $content;
     exit;
   }
 
@@ -148,9 +200,7 @@ header("Content-Type: text/html; charset=utf-8");
 <!--[if lt IE 9]>
 <link rel="stylesheet" type="text/css" href="/css/ie.css" />
 <![endif]-->
-
   <script type="text/javascript" src="/js/utils.js"></script>
-  <script type="text/javascript" src="/js/main.js"></script>
 
   <!-- OS.js defineable -->
   <link rel="stylesheet" type="text/css" href="/?font=Sansation" id="FontFace" />
@@ -159,13 +209,14 @@ header("Content-Type: text/html; charset=utf-8");
   <link rel="stylesheet" type="text/css" href="/css/cursor.default.css" id="CursorFace" />
 
   <!-- Preloads -->
-  <script type="text/javascript" src="?resource=dialog.panel.js"></script>
-  <script type="text/javascript" src="?resource=dialog.launch.js"></script>
-  <script type="text/javascript" src="?resource=dialog.file.js"></script>
-  <script type="text/javascript" src="?resource=dialog.upload.js"></script>
-  <script type="text/javascript" src="?resource=dialog.rename.js"></script>
-  <script type="text/javascript" src="?resource=dialog.copy.js"></script>
-  <script type="text/javascript" src="?resource=dialog.color.js"></script>
+  <script type="text/javascript" src="/?library=main.js"></script>
+  <script type="text/javascript" src="/?resource=dialog.panel.js"></script>
+  <script type="text/javascript" src="/?resource=dialog.launch.js"></script>
+  <script type="text/javascript" src="/?resource=dialog.file.js"></script>
+  <script type="text/javascript" src="/?resource=dialog.upload.js"></script>
+  <script type="text/javascript" src="/?resource=dialog.rename.js"></script>
+  <script type="text/javascript" src="/?resource=dialog.copy.js"></script>
+  <script type="text/javascript" src="/?resource=dialog.color.js"></script>
 </head>
 <body>
 

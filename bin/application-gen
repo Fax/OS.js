@@ -80,7 +80,7 @@ EOJAVASCRIPT;
 
 
   $template = <<<EOJAVASCRIPT
-/**
+/*!
  * Application: {$cname}
  *
  * @package OSjs.Applications
@@ -88,6 +88,8 @@ EOJAVASCRIPT;
  * @class
  */
 var {$cname} = (function(\$, undefined) {
+  "$:nomunge";
+
   /**
    * @param GtkWindow     GtkWindow            GtkWindow API Reference
    * @param Application   Application          Application API Reference
@@ -96,7 +98,7 @@ var {$cname} = (function(\$, undefined) {
    * @param Array         windows              Application windows from session (restoration)
    */
   return function(GtkWindow, Application, API, argv, windows) {
-
+    "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
 
     ///////////////////////////////////////////////////////////////////////////
     // WINDOWS
@@ -358,7 +360,7 @@ EOJAVASCRIPT;
 function create_css($cname) {
   return <<<EOCSS
 @charset "UTF-8";
-/**
+/*!
  * Application: {$cname}
  *
  * @package OSjs.Applications

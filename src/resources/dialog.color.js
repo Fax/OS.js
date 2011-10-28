@@ -1,4 +1,4 @@
-/**
+/*!
  * OperationDialog: ColorOperationDialog
  * Color swatch, color picking etc.
  *
@@ -7,7 +7,10 @@
  * @class
  */
 var ColorOperationDialog = (function($, undefined) {
+  "$:nomunge";
+
   return function(OperationDialog, API, argv) {
+    "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
     var _ColorOperationDialog = OperationDialog.extend({
       init : function(start_color, clb_finish) {

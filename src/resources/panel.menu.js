@@ -6,7 +6,10 @@
  * @class
  */
 var PanelItemMenu = (function($, undefined) {
+  "$:nomunge";
+
   return function(_PanelItem, panel, api, argv) {
+    "_PanelItem:nomunge, panel:nomunge, api:nomunge, argv:nomunge";
 
     function CreateMenu(items, level) {
       var ul = $("<ul class=\"GtkMenu\"></ul>");

@@ -177,6 +177,7 @@ class Server
 
   public final function createHeaders($req) {
     $r=$h=$o=$data=null;
+    $key1=$key2=null;
     if(preg_match("/GET (.*) HTTP/"   ,$req,$match)){ $r=$match[1]; }
     if(preg_match("/Host: (.*)\r\n/"  ,$req,$match)){ $h=$match[1]; }
     if(preg_match("/Origin: (.*)\r\n/",$req,$match)){ $o=$match[1]; }

@@ -1,4 +1,4 @@
-/**
+/*!
  * Application: ApplicationMusicPlayer
  *
  * @package OSjs.Applications
@@ -6,6 +6,8 @@
  * @class
  */
 var ApplicationMusicPlayer = (function($, undefined) {
+  "$:nomunge";
+
   /**
    * @param GtkWindow     GtkWindow            GtkWindow API Reference
    * @param Application   Application          Application API Reference
@@ -14,7 +16,7 @@ var ApplicationMusicPlayer = (function($, undefined) {
    * @param Array         windows              Application windows from session (restoration)
    */
   return function(GtkWindow, Application, API, argv, windows) {
-
+    "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
 
     ///////////////////////////////////////////////////////////////////////////
     // WINDOWS

@@ -1,4 +1,4 @@
-/**
+/*!
  * OperationDialog: CopyOperationDialog
  * Status dialog for copy/move operations for files
  *
@@ -7,7 +7,10 @@
  * @class
  */
 var CopyOperationDialog = (function($, undefined) {
+  "$:nomunge";
+
   return function(OperationDialog, API, argv) {
+    "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
     var _CopyOperationDialog = OperationDialog.extend({
       init : function(src, dest, clb_finish, clb_progress, clb_cancel) {

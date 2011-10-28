@@ -1,4 +1,4 @@
-/**
+/*!
  * Application: SystemAbout
  *
  * @package OSjs.Applications
@@ -6,10 +6,10 @@
  * @class
  */
 var SystemAbout = (function($, undefined) {
+  "$:nomunge";
+
   return function(GtkWindow, Application, API, argv, windows) {
-
-
-
+    "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
 
     var Window_window1 = GtkWindow.extend({
 

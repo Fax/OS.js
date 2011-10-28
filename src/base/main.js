@@ -1,4 +1,4 @@
-/**
+/*!
  * JavaScript Window Manager
  *
  * @package OSjs.Core

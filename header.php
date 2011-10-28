@@ -12,9 +12,10 @@ error_reporting(E_ALL | E_STRICT);
 define("PROJECT_AUTHOR",  "Anders Evenrud");
 define("PROJECT_CONTACT", "andersevenrud@gmail.com");
 define("PROJECT_VERSION", "0.5-alpha5");
+define("PROJECT_HOST",    (php_uname('n')));
 
 // Environment
-define("ENV_PRODUCTION", false);
+define("ENV_PRODUCTION", (PROJECT_HOST != "amitop"));
 define("DEFAULT_TIMEZONE", "Europe/Oslo");
 define("ENABLE_CACHE", false);
 define("ARCHIVE_SYSETM", false); // lib/Archive.php
@@ -25,13 +26,16 @@ define("SERVER_PORT", 8888);
 
 // Path definitions
 define("PATH_PROJECT",           dirname(__FILE__));
+define("PATH_PROJECT_BIN",       PATH_PROJECT . "/bin");
 define("PATH_PROJECT_SRC",       PATH_PROJECT . "/src");
 define("PATH_PROJECT_LIB",       PATH_PROJECT . "/lib");
+define("PATH_PROJECT_VENDOR",    PATH_PROJECT . "/vendor");
 define("PATH_PROJECT_HTML",      PATH_PROJECT . "/public_html");
 define("PATH_PROJECT_BUILD",     PATH_PROJECT . "/src/build");
 define("PATH_PROJECT_LOG",       PATH_PROJECT . "/logs");
 define("PATH_APPS",              PATH_PROJECT . "/src/apps");
 define("PATH_RESOURCES",         PATH_PROJECT . "/src/resources");
+define("PATH_JSBASE",            PATH_PROJECT . "/src/base");
 
 define("APPLICATION_BUILD",      PATH_PROJECT_BUILD . "/applications.xml");
 

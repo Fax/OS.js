@@ -1,4 +1,4 @@
-/**
+/*!
  * Application: ApplicationArkanoid
  *
  * @package OSjs.Applications
@@ -6,7 +6,7 @@
  * @class
  */
 var ApplicationArkanoid = (function($, undefined) {
-
+    "$:nomunge";
 
     var KEY_TAB = 9;
     var KEY_ENTER = 13;
@@ -208,6 +208,7 @@ var ApplicationArkanoid = (function($, undefined) {
    * @param Array         windows              Application windows from session (restoration)
    */
   return function(GtkWindow, Application, API, argv, windows) {
+    "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
 
 
     ///////////////////////////////////////////////////////////////////////////
