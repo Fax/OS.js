@@ -12,7 +12,6 @@
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package OSjs.Server.Core
- * @package MyApplication
  * @class
  */
 class Core
