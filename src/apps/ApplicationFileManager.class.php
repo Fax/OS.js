@@ -11,7 +11,7 @@
  * ApplicationFileManager Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package MyApplication
+ * @package OS.js.Server.Applications
  * @class
  */
 class ApplicationFileManager

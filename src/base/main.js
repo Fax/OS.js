@@ -1,7 +1,7 @@
 /*!
  * JavaScript Window Manager
  *
- * @package OSjs.Core
+ * @package OSjs.Client.Core
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  */
 (function($, undefined) {
@@ -30,13 +30,20 @@
   /**
    * Local settings
    */
-  var WEBSOCKET_URI      = "ws://localhost:8888";
   var ENABLE_CACHE       = false;
   var SETTING_REVISION   = 23;
   var ENABLE_LOGIN       = false;
   var ANIMATION_SPEED    = 400;
   var TEMP_COUNTER       = 1;
   var TOOLTIP_TIMEOUT    = 300;
+
+  /**
+   * URIs
+   */
+  var WEBSOCKET_URI      = "ws://localhost:8888";
+  var RESOURCE_URI       = "/?resource=";
+  var LIBRARY_URI        = "/?library=";
+  var AJAX_URI           = "/";
 
   /**
    * Compability
@@ -114,7 +121,7 @@
 
     API.ui.cursor("wait");
 
-    $.post("/", {'ajax' : true, 'action' : 'load', 'app' : app_name}, function(data) {
+    $.post(AJAX_URI, {'ajax' : true, 'action' : 'load', 'app' : app_name}, function(data) {
       if ( data.success ) {
         _Resources.addResources(data.result.resources, function() {
 
@@ -399,7 +406,7 @@
       'call' : function(method, argv, callback, show_alert) {
         show_alert = (show_alert === undefined) ? true : (show_alert ? true : false);
 
-        $.post("/", {'ajax' : true, 'action' : 'call', 'method' : method, 'args' : argv}, function(data) {
+        $.post(AJAX_URI, {'ajax' : true, 'action' : 'call', 'method' : method, 'args' : argv}, function(data) {
           if ( data.success ) {
             callback(data.result, null);
           } else {
@@ -626,7 +633,7 @@
 
         console.info("=> API Shutdown session");
 
-        $.post("/", {'ajax' : true, 'action' : 'shutdown', 'session' : ssess, 'settings' : ssett}, function(data) {
+        $.post(AJAX_URI, {'ajax' : true, 'action' : 'shutdown', 'session' : ssess, 'settings' : ssett}, function(data) {
           if ( data.success ) {
             setTimeout(function() {
               __die();
@@ -851,7 +858,7 @@
       API.loading.progress(5);
 
       // Load initial data
-      $.post("/", {'ajax' : true, 'action' : 'init'}, function(data) {
+      $.post(AJAX_URI, {'ajax' : true, 'action' : 'init'}, function(data) {
         if ( data.success ) {
           // Initialize resources
           _Resources = new ResourceManager();
@@ -1144,13 +1151,13 @@
         var el = null;
         var ie = false;
         if ( type == "js" ) {
-          el = $("<script type=\"text/javascript\" src=\"/?resource=" + res + "\"></script>");
+          el = $("<script type=\"text/javascript\" src=\"" + RESOURCE_URI + res + "\"></script>");
         } else {
           if ( document.createStyleSheet ) {
             ie = true;
-            el = document.createStyleSheet("/?resource=" + res);
+            el = document.createStyleSheet(RESOURCE_URI + res);
           } else {
-            el = $("<link rel=\"stylesheet\" type=\"text/css\" href=\"/?resource=" + res + "\" />");
+            el = $("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + RESOURCE_URI + res + "\" />");
           }
         }
 
@@ -1413,7 +1420,7 @@
       var self = this;
       if ( this._running ) {
         if ( this._uuid ) {
-          $.post("/", {'ajax' : true, 'action' : 'flush', 'uuid' : self._uuid}, function(data) {
+          $.post(AJAX_URI, {'ajax' : true, 'action' : 'flush', 'uuid' : self._uuid}, function(data) {
             console.group("Application::" + self._name + "::" + self._uuid + "::destroy()");
             console.log("flushed", data);
             console.groupEnd();
@@ -1697,7 +1704,7 @@
       var self = this;
       if ( this._uuid ) {
         var pargs = {'ajax' : true, 'action' : 'event', 'cname' : self._name ,'uuid' : self._uuid, 'instance' : {'name' : self._name, 'action' : ev, 'args' : args }};
-        $.post("/", pargs, function(data) {
+        $.post(AJAX_URI, pargs, function(data) {
 
           console.group("Application::" + self._name + "::" + self._uuid + "::_event()");
           console.log(ev, args, data);

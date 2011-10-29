@@ -11,7 +11,7 @@
  * ApplicationAPI Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package MyApplication
+ * @package OSjs.Server.Core
  * @class
  */
 class ApplicationAPI

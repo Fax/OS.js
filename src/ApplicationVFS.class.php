@@ -11,7 +11,7 @@
  * ApplicationVFS Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OS.js
+ * @package OSjs.Server.Core
  * @class
  */
 class ApplicationVFS
@@ -21,6 +21,9 @@ class ApplicationVFS
   // VARIABLES
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * @var Virtual Directories
+   */
   protected static $VirtualDirs = Array(
     "/System/Applications" => Array(
       "type" => "applications",

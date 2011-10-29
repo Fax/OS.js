@@ -11,17 +11,24 @@
  * Core Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @package OSjs.Server.Core
  * @package MyApplication
  * @class
  */
 class Core
 {
 
-  protected $_oTime = null;
-  protected $_oZone = null;
+  protected $_oTime = null;   //!< Current DateTime
+  protected $_oZone = null;   //!< Current DateTimeZome
 
+  /**
+   * @var Current instance
+   */
   protected static $__Instance;
 
+  /**
+   * @constructor
+   */
   protected function __construct() {
 
     $user       = $this->getUser();
@@ -36,6 +43,10 @@ class Core
     $this->_oZone = $tz;
   }
 
+  /**
+   * Initialize Core (Create Instance)
+   * @return Core
+   */
   public static function initialize() {
     if ( !self::$__Instance ) {
       self::$__Instance = new Core();
@@ -43,6 +54,10 @@ class Core
     return self::$__Instance;
   }
 
+  /**
+   * Get the Settings Array
+   * @return Array
+   */
   public static function getSettings() {
 
     $panel = Array(
@@ -90,14 +105,60 @@ class Core
     ));
   }
 
+  /**
+   * Get current Instance
+   * @return Core
+   */
   public static function get() {
     return self::$__Instance;
   }
 
+  /**
+   * Compress a file with YUI
+   * @return Mixed
+   */
+  public static function compress($type, $path, $compress) {
+    $content = "";
+
+    if ( file_exists($path) ) {
+      if ( $compress ) {
+        $cmd  = PATH_PROJECT_BIN . "/yui.sh";
+        $cmd  = sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_PROJECT_BIN, PATH_PROJECT_VENDOR);
+        $args = "--preserve-semi ";
+        if ( $type == "js" ) {
+          $args .= sprintf("--type js --charset UTF-8 %s", escapeshellarg($path));
+        } else {
+          $args .= sprintf("--type css --charset UTF-8 %s", escapeshellarg($path));
+        }
+
+        $exec = sprintf("%s %s 2>&1", $cmd, $args);
+        if ( !($content = shell_exec($exec)) ) {
+          $content = "/* FAILED TO GET CONTENTS */";
+        }
+      } else {
+        if ( !($content = file_get_contents($path)) ) {
+          $content = "/* FAILED TO GET CONTENTS */";
+        }
+      }
+
+      return $content;
+    }
+
+    return false;
+  }
+
+  /**
+   * Get the current Core User
+   * @return User
+   */
   public function getUser() {
     return UserQuery::create()->findPK(1);
   }
 
+  /**
+   * Do a GET request
+   * @return Mixed
+   */
   public function doGET(Array $args) {
     // Upload "POST"
     if ( isset($args['ajax']) && isset($args['action']) && isset($args['qqfile']) && isset($args['path']) ) {
@@ -107,6 +168,10 @@ class Core
     return false;
   }
 
+  /**
+   * Do a POST request
+   * @return Mixed
+   */
   public function doPOST(Array $args) {
     if ( sizeof($args) ) {
 

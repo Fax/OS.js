@@ -34,7 +34,7 @@ if ( isset($_GET['font']) && !empty($_GET['font']) ) {
 
   $template = <<<EOCSS
 @charset "UTF-8";
-/**
+/*!
  * Font Stylesheet
  *
  * @package OSjs.Styles
@@ -83,65 +83,27 @@ if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
   $type = preg_match("/\.js$/", $res) ? "js" : "css";
   $path = sprintf("%s/%s", PATH_RESOURCES, $res); // FIXME
 
-  if ( file_exists($path) ) {
-    //header(sprintf("Content-Type: text/%s; charset=utf-8", $type == "js" ? "javascript" : "css"));
-
-    $content = "";
-    if ( ENV_PRODUCTION ) {
-      $cmd  = PATH_PROJECT_BIN . "/yui.sh";
-      $cmd  = sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_PROJECT_BIN, PATH_PROJECT_VENDOR);
-      $args = "--preserve-semi ";
-      if ( $type == "js" ) {
-        $args .= sprintf("--type js --charset UTF-8 %s", escapeshellarg($path));
-      } else {
-        $args .= sprintf("--type css --charset UTF-8 %s", escapeshellarg($path));
-      }
-
-      $exec = sprintf("%s %s 2>&1", $cmd, $args);
-      if ( !($content = shell_exec($exec)) ) {
-        $content = "/* FAILED TO GET CONTENTS */";
-      }
-    } else {
-      if ( !($content = file_get_contents($path)) ) {
-        $content = "";
-      }
-    }
-
-
-    header(sprintf("Content-Type: %s; charset=utf-8", $type == "js" ? "application/x-javascript" : "text/css"));
-    print $content;
+  if ( ($content = Core::compress($type, $path, ENV_PRODUCTION)) === false ) {
+    header("HTTP/1.0 404 Not Found");
     exit;
   }
 
-  header("HTTP/1.0 404 Not Found");
+  header(sprintf("Content-Type: %s; charset=utf-8", $type == "js" ? "application/x-javascript" : "text/css"));
+  print $content;
   exit;
+
 } else if ( isset($_GET['library']) ) {
   $res  = str_replace(Array("../", "./"), Array("", ""), $_GET['library']);
   $res  = addslashes($res);
   $path = sprintf("%s/%s", PATH_JSBASE, $res); // FIXME
 
-  $content = "";
-  if ( file_exists($path) ) {
-    if ( ENV_PRODUCTION ) {
-      $cmd  = PATH_PROJECT_BIN . "/yui.sh";
-      $cmd  = sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_PROJECT_BIN, PATH_PROJECT_VENDOR);
-      $args = sprintf("--preserve-semi --type js --charset UTF-8 %s", escapeshellarg($path));
-      $exec = sprintf("%s %s 2>&1", $cmd, $args);
-      if ( !($content = shell_exec($exec)) ) {
-        $content = "/* FAILED TO GET CONTENTS */";
-      }
-    } else {
-      if ( !($content = file_get_contents($path)) ) {
-        $content = "/* FAILED TO GET CONTENTS */";
-      }
-    }
-
-    header(sprintf("Content-Type: %s; charset=utf-8", "application/x-javascript"));
-    print $content;
+  if ( ($content = Core::compress("js", $path, ENV_PRODUCTION)) === false ) {
+    header("HTTP/1.0 404 Not Found");
     exit;
   }
 
-  header("HTTP/1.0 404 Not Found");
+  header("Content-Type: application/x-javascript; charset=utf-8");
+  print $content;
   exit;
 }
 
@@ -149,10 +111,13 @@ if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
 // AJAX
 ///////////////////////////////////////////////////////////////////////////////
 
+// GET operations
 if ( !($json = $core->doGET($_GET)) === false ) {
   header("Content-Type: application/json");
   die($json);
 }
+
+// POST operations
 if ( !($json = $core->doPOST($_POST)) === false ) {
   header("Content-Type: application/json");
   die($json);

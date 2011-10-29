@@ -11,7 +11,7 @@
  * Application Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package MyApplication
+ * @package OSjs.Server.Core
  * @class
  */
 abstract class Application
@@ -23,7 +23,11 @@ abstract class Application
   // VARIABLES
   /////////////////////////////////////////////////////////////////////////////
 
-  private $_sUUID = "";
+  private $_sUUID = "";                   //!< Application's UUUID
+
+  /**
+   * @var Registered Applications
+   */
   public static $Registered = Array();
 
   /////////////////////////////////////////////////////////////////////////////
@@ -198,6 +202,7 @@ abstract class Application
   /////////////////////////////////////////////////////////////////////////////
 
   /**
+   * Get Application JSON data
    * @return Array
    */
   public function getJSON() {
