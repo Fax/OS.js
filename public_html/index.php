@@ -139,7 +139,7 @@ header("Content-Type: text/html; charset=utf-8");
   @package OSjs.Template
   @author  Anders Evenrud <andersevenrud@gmail.com>
   -->
-  <title>OS.js</title>
+  <title>OS.js <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)</title>
 
   <!-- Compability -->
 <!--
@@ -382,7 +382,7 @@ header("Content-Type: text/html; charset=utf-8");
 
 <!-- Version Stamp -->
 <div id="Version">
-  OS.js Version <?php print PROJECT_VERSION; ?>
+  OS.js Version <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)
   -
   <?php print PROJECT_AUTHOR; ?>
 
