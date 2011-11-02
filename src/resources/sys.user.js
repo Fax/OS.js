@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var SystemUser = (function($, undefined) {
+OSjs.Applications.SystemUser = (function($, undefined) {
   "$:nomunge";
 
   return function(GtkWindow, Application, API, argv, windows) {

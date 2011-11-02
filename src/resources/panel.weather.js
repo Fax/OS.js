@@ -7,7 +7,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var PanelItemWeather = (function($, undefined) {
+OSjs.PanelItems.PanelItemWeather = (function($, undefined) {
   "$:nomunge";
 
   return function(_PanelItem, panel, api, argv) {

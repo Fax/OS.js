@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var ApplicationViewer = (function($, undefined) {
+OSjs.Applications.ApplicationViewer = (function($, undefined) {
   "$:nomunge";
 
   return function(GtkWindow, Application, API, argv, windows) {

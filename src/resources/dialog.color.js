@@ -6,7 +6,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var ColorOperationDialog = (function($, undefined) {
+OSjs.Dialogs.ColorOperationDialog = (function($, undefined) {
   "$:nomunge";
 
   return function(OperationDialog, API, argv) {

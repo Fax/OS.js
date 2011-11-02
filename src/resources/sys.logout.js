@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var SystemLogout = (function($, undefined) {
+OSjs.Applications.SystemLogout = (function($, undefined) {
   "$:nomunge";
 
   return function(GtkWindow, Application, API, argv, windows) {

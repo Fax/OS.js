@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var ApplicationVideoPlayer = (function($, undefined) {
+OSjs.Applications.ApplicationVideoPlayer = (function($, undefined) {
   "$:nomunge";
 
   /**

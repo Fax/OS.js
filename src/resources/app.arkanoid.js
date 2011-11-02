@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var ApplicationArkanoid = (function($, undefined) {
+OSjs.Applications.ApplicationArkanoid = (function($, undefined) {
     "$:nomunge";
 
     var KEY_TAB = 9;

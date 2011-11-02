@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var ApplicationMusicPlayer = (function($, undefined) {
+OSjs.Applications.ApplicationMusicPlayer = (function($, undefined) {
   "$:nomunge";
 
   /**

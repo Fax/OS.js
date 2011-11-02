@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var ApplicationFileManager = (function($, undefined) {
+OSjs.Applications.ApplicationFileManager = (function($, undefined) {
   "$:nomunge";
 
   return function(GtkWindow, Application, API, argv, windows) {

@@ -6,7 +6,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var UploadOperationDialog = (function($, undefined) {
+OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
   "$:nomunge";
 
   return function(OperationDialog, API, argv) {

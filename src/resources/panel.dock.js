@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var PanelItemDock = (function($, undefined) {
+OSjs.PanelItems.PanelItemDock = (function($, undefined) {
   "$:nomunge";
 
   return function(_PanelItem, panel, api, argv) {

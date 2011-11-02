@@ -72,8 +72,8 @@
     var resources =  reg[iname] ? reg[iname]['resources'] : [];
 
     _Resources.addResources(resources, function() {
-      if ( window[iname] ) {
-        var item = new window[iname](_PanelItem, panel, API, iargs);
+      if ( OSjs.PanelItems[iname] ) {
+        var item = new OSjs.PanelItems[iname](_PanelItem, panel, API, iargs);
         if ( item ) {
           item._panel = panel;
           item._index = i;
@@ -112,8 +112,7 @@
       if ( data.success ) {
         _Resources.addResources(data.result.resources, function() {
 
-          var app_ref = window.OSjs.Applications[app_name] || window[app_name]; // FIXME
-
+          var app_ref = OSjs.Applications[app_name];
           if ( app_ref ) {
             var crashed = false;
             var application;
@@ -421,13 +420,13 @@
       'dialog_rename' : function(path, clb_finish) {
         console.info("=> API Rename Dialog");
 
-        return _Desktop.addWindow(new RenameOperationDialog(OperationDialog, API, [path, clb_finish]));
+        return _Desktop.addWindow(new OSjs.Dialogs.RenameOperationDialog(OperationDialog, API, [path, clb_finish]));
       },
 
       'dialog_upload' : function(path, clb_finish, clb_progress, clb_cancel) {
         console.info("=> API Upload Dialog");
 
-        return _Desktop.addWindow(new UploadOperationDialog(OperationDialog, API, [path, clb_finish, clb_progress, clb_cancel]));
+        return _Desktop.addWindow(new OSjs.Dialogs.UploadOperationDialog(OperationDialog, API, [path, clb_finish, clb_progress, clb_cancel]));
       },
 
       'dialog_file' : function(clb_finish, mime_filter, type, cur_dir) {
@@ -437,19 +436,19 @@
 
         console.info("=> API File Dialog");
 
-        return _Desktop.addWindow(new FileOperationDialog(OperationDialog, API, [type, mime_filter, clb_finish, cur_dir]));
+        return _Desktop.addWindow(new OSjs.Dialogs.FileOperationDialog(OperationDialog, API, [type, mime_filter, clb_finish, cur_dir]));
       },
 
       'dialog_launch' : function(list, clb_finish, not_found) {
         console.info("=> API Launch Dialog");
 
-        return _Desktop.addWindow(new LaunchOperationDialog(OperationDialog, API, [list, clb_finish, not_found]));
+        return _Desktop.addWindow(new OSjs.Dialogs.LaunchOperationDialog(OperationDialog, API, [list, clb_finish, not_found]));
       },
 
       'dialog_color' : function(start_color, clb_finish) {
         console.info("=> API Color Dialog");
 
-        return _Desktop.addWindow(new ColorOperationDialog(OperationDialog, API, [start_color, clb_finish]));
+        return _Desktop.addWindow(new OSjs.Dialogs.ColorOperationDialog(OperationDialog, API, [start_color, clb_finish]));
       }
 
     },
@@ -593,7 +592,7 @@
 
       'restore' : function() {
 
-        if ( window.OSjs.Compability.SUPPORT_LSTORAGE ) {
+        if ( OSjs.Compability.SUPPORT_LSTORAGE ) {
           var item = localStorage.getItem('session');
           if ( item ) {
             var session = JSON.parse(item);
@@ -663,7 +662,7 @@
       this.on_close   = function(ev) {};
 
       console.group("Socket::init()");
-      console.log("Support", window.OSjs.Compability.SUPPORT_SOCKET);
+      console.log("Support", OSjs.Compability.SUPPORT_SOCKET);
       console.log("URI", uri);
       console.groupEnd();
 
@@ -732,7 +731,7 @@
     connect : function() {
       var self = this;
 
-      if ( window.OSjs.Compability.SUPPORT_SOCKET ) {
+      if ( OSjs.Compability.SUPPORT_SOCKET ) {
         if ( !this._socket ) {
           console.log("Socket::connect()", this._uri);
 
@@ -1533,46 +1532,46 @@
 
         switch ( key ) {
           case "canvas" :
-            if ( !window.OSjs.Compability.SUPPORT_CANVAS ) {
+            if ( !OSjs.Compability.SUPPORT_CANVAS ) {
               error = "<canvas>";
             }
           break;
           case "audio" :
-            if ( !window.OSjs.Compability.SUPPORT_AUDIO ) {
+            if ( !OSjs.Compability.SUPPORT_AUDIO ) {
               error = "<audio>";
             }
           break;
           case "video" :
-            if ( !window.OSjs.Compability.SUPPORT_VIDEO ) {
+            if ( !OSjs.Compability.SUPPORT_VIDEO ) {
               error = "<video>";
             }
           break;
 
           case "localStorage" :
-            if ( !window.OSjs.Compability.SUPPORT_LSTORAGE ) {
+            if ( !OSjs.Compability.SUPPORT_LSTORAGE ) {
               error = "localStorage()";
             }
           break;
           case "sessionStorage" :
-            if ( !window.OSjs.Compability.SUPPORT_SSTORAGE ) {
+            if ( !OSjs.Compability.SUPPORT_SSTORAGE ) {
               error = "sessionStorage()";
             }
           break;
           case "globalStorage" :
-            if ( !window.OSjs.Compability.SUPPORT_GSTORAGE ) {
+            if ( !OSjs.Compability.SUPPORT_GSTORAGE ) {
               error = "globalStorage()";
             }
           break;
           case "database" :
           case "databaseStorage" :
           case "openDatabase" :
-            if ( !window.OSjs.Compability.SUPPORT_DSTORAGE ) {
+            if ( !OSjs.Compability.SUPPORT_DSTORAGE ) {
               error = "databaseStorage()";
             }
           break;
 
           case "ogg" :
-            if ( window.OSjs.Compability.SUPPORT_AUDIO ) {
+            if ( OSjs.Compability.SUPPORT_AUDIO ) {
               if ( !(!!document.createElement('audio').canPlayType('audio/ogg; codecs="vorbis')) ) {
                 error = "<audio> does not support OGG/Vorbis";
               }
@@ -1582,7 +1581,7 @@
           break;
 
           case "mp3" :
-            if ( window.OSjs.Compability.SUPPORT_AUDIO ) {
+            if ( OSjs.Compability.SUPPORT_AUDIO ) {
               if ( !(!!document.createElement('audio').canPlayType('audio/mpeg')) ) {
                 error = "<audio> does not support MP3";
               }
@@ -1592,13 +1591,13 @@
           break;
 
           case "socket" :
-            if ( !window.OSjs.Compability.SUPPORT_SOCKET ) {
+            if ( !OSjs.Compability.SUPPORT_SOCKET ) {
               error = "WebSocket";
             }
           break;
 
           case "richtext" :
-            if ( !window.OSjs.Compability.SUPPORT_RICHTEXT ) {
+            if ( !OSjs.Compability.SUPPORT_RICHTEXT ) {
               error = "Richtext (contentEditable)";
             }
           break;
@@ -3594,7 +3593,7 @@
         });
 
 
-        if ( window.OSjs.Compability.SUPPORT_CANVAS ) {
+        if ( OSjs.Compability.SUPPORT_CANVAS ) {
           el.find(".GtkDrawingArea").append("<canvas>");
         }
 
@@ -3857,14 +3856,14 @@
       var table  = el.find("table.chart");
       var _row   = "<tr><td width=\"16\"><img alt=\"\" src=\"/img/icons/16x16/emblems/emblem-%s.png\" /></td><td>%s</td></tr>";
       var _check = {
-        "Local Storage" : window.OSjs.Compability.SUPPORT_LSTORAGE,
-        "Session Storage" : window.OSjs.Compability.SUPPORT_SSTORAGE,
-        "Global Storage" : window.OSjs.Compability.SUPPORT_GSTORAGE,
-        "Database Storage" : window.OSjs.Compability.SUPPORT_DSTORAGE,
-        "Canvas (2D/3D)" : window.OSjs.Compability.SUPPORT_CANVAS,
-        "Audio" : window.OSjs.Compability.SUPPORT_AUDIO,
-        "Video" : window.OSjs.Compability.SUPPORT_VIDEO,
-        "Sockets" : window.OSjs.Compability.SUPPORT_SOCKET
+        "Local Storage" : OSjs.Compability.SUPPORT_LSTORAGE,
+        "Session Storage" : OSjs.Compability.SUPPORT_SSTORAGE,
+        "Global Storage" : OSjs.Compability.SUPPORT_GSTORAGE,
+        "Database Storage" : OSjs.Compability.SUPPORT_DSTORAGE,
+        "Canvas (2D/3D)" : OSjs.Compability.SUPPORT_CANVAS,
+        "Audio" : OSjs.Compability.SUPPORT_AUDIO,
+        "Video" : OSjs.Compability.SUPPORT_VIDEO,
+        "Sockets" : OSjs.Compability.SUPPORT_SOCKET
       };
 
       var row;
@@ -4057,13 +4056,13 @@
   // MAIN
   /////////////////////////////////////////////////////////////////////////////
 
-  window.OSjs.__Run = function() {
+  OSjs.__Run = function() {
     _Core = new Core();
 
     return true;
   };
 
-  window.OSjs.__Stop = function() {
+  OSjs.__Stop = function() {
     if ( _Core ) {
       _Core.destroy();
       _Core = null;

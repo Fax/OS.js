@@ -6,7 +6,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var CopyOperationDialog = (function($, undefined) {
+OSjs.Dialogs.CopyOperationDialog = (function($, undefined) {
   "$:nomunge";
 
   return function(OperationDialog, API, argv) {

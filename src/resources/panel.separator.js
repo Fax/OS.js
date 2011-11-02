@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var PanelItemSeparator = (function($, undefined) {
+OSjs.PanelItems.PanelItemSeparator = (function($, undefined) {
   "$:nomunge";
 
   return function(_PanelItem, panel, api, argv) {

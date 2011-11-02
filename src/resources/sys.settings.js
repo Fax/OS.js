@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var SystemSettings = (function($, undefined) {
+OSjs.Applications.SystemSettings = (function($, undefined) {
   "$:nomunge";
 
   /**

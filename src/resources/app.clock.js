@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var ApplicationClock = (function($, undefined) {
+OSjs.Applications.ApplicationClock = (function($, undefined) {
   "$:nomunge";
 
   return function(GtkWindow, Application, API, argv, windows) {

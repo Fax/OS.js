@@ -6,7 +6,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var LaunchOperationDialog = (function($, undefined) {
+OSjs.Dialogs.LaunchOperationDialog = (function($, undefined) {
   "$:nomunge";
 
   return function(OperationDialog, API, argv) {

@@ -6,7 +6,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var PanelItemOperationDialog = (function($, undefined) {
+OSjs.Dialogs.PanelItemOperationDialog = (function($, undefined) {
   "$:nomunge";
 
   return function(OperationDialog, API, argv) {

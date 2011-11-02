@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var ApplicationArchiver = (function($, undefined) {
+OSjs.Applications.ApplicationArchiver = (function($, undefined) {
   "$:nomunge";
 
   /**

@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var PanelItemClock = (function($, undefined) {
+OSjs.PanelItems.PanelItemClock = (function($, undefined) {
   "$:nomunge";
 
   return function(_PanelItem, panel, api, argv) {

@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var ApplicationTerminal = (function($, undefined) {
+OSjs.Applications.ApplicationTerminal = (function($, undefined) {
   "$:nomunge";
 
   var KEY_TAB = 9;

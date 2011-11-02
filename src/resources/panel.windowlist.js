@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var PanelItemWindowList = (function($, undefined) {
+OSjs.PanelItems.PanelItemWindowList = (function($, undefined) {
   "$:nomunge";
 
   return function(_PanelItem, panel, api, argv) {

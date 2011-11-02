@@ -31,7 +31,7 @@
       SUPPORT_RICHTEXT : (!!document.createElement('textarea').contentEditable)
     },
 
-    // Dynamic containers
+    // Dynamic namespace containers
     Applications : { /* ... */ },
     Dialogs      : { /* ... */ },
     PanelItems   : { /* ... */ }

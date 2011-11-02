@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var SystemProcesses = (function($, undefined) {
+OSjs.Applications.SystemProcesses = (function($, undefined) {
   "$:nomunge";
 
   /**

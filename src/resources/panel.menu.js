@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var PanelItemMenu = (function($, undefined) {
+OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
   "$:nomunge";
 
   return function(_PanelItem, panel, api, argv) {

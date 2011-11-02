@@ -5,7 +5,7 @@
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var ApplicationTickTackToe = (function($, undefined) {
+OSjs.Applications.ApplicationTickTackToe = (function($, undefined) {
   "$:nomunge";
 
   /**

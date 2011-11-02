@@ -87,7 +87,7 @@ EOJAVASCRIPT;
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class
  */
-var {$cname} = (function(\$, undefined) {
+OSjs.Applications.{$cname} = (function(\$, undefined) {
   "$:nomunge";
 
   /**
