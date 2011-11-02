@@ -11,8 +11,8 @@ error_reporting(E_ALL | E_STRICT);
 // Project
 define("PROJECT_AUTHOR",    "Anders Evenrud");
 define("PROJECT_CONTACT",   "andersevenrud@gmail.com");
-define("PROJECT_VERSION",   "0.5-alpha6");
-define("PROJECT_CODENAME",  "FoxTrot");
+define("PROJECT_VERSION",   "0.5-alpha6"); // Next: 0.6
+define("PROJECT_CODENAME",  "FoxTrot"); // Next: DiscoFox
 define("PROJECT_HOST",      (php_uname('n')));
 
 // Environment

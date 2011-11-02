@@ -46,19 +46,6 @@
   var AJAX_URI           = "/";
 
   /**
-   * Compability
-   */
-  var SUPPORT_LSTORAGE = (('localStorage' in window) && window['localStorage'] !== null);
-  var SUPPORT_SSTORAGE = (('sessionStorage' in window) && window['sessionStorage'] !== null);
-  var SUPPORT_GSTORAGE = (('globalStorage' in window) && window['globalStorage'] !== null);
-  var SUPPORT_DSTORAGE = (('openDatabase' in window) && window['openDatabase'] !== null);
-  var SUPPORT_CANVAS   = (!!document.createElement('canvas').getContext);
-  var SUPPORT_VIDEO    = (!!document.createElement('video').canPlayType);
-  var SUPPORT_AUDIO    = (!!document.createElement('audio').canPlayType);
-  var SUPPORT_SOCKET   = ('WebSocket' in window && window['WebSocket'] !== null);
-  var SUPPORT_RICHTEXT = (!!document.createElement('textarea').contentEditable);
-
-  /**
    * Local references
    */
   var _Core            = null;
@@ -125,12 +112,14 @@
       if ( data.success ) {
         _Resources.addResources(data.result.resources, function() {
 
-          if ( window[app_name] ) {
+          var app_ref = window.OSjs.Applications[app_name] || window[app_name]; // FIXME
+
+          if ( app_ref ) {
             var crashed = false;
             var application;
 
             try {
-              application = new window[app_name](GtkWindow, Application, API, args, windows);
+              application = new app_ref(GtkWindow, Application, API, args, windows);
               application._uuid  = data.result.uuid;
               application._checkCompability();
             } catch ( ex ) {
@@ -604,7 +593,7 @@
 
       'restore' : function() {
 
-        if ( SUPPORT_LSTORAGE ) {
+        if ( window.OSjs.Compability.SUPPORT_LSTORAGE ) {
           var item = localStorage.getItem('session');
           if ( item ) {
             var session = JSON.parse(item);
@@ -674,7 +663,7 @@
       this.on_close   = function(ev) {};
 
       console.group("Socket::init()");
-      console.log("Support", SUPPORT_SOCKET);
+      console.log("Support", window.OSjs.Compability.SUPPORT_SOCKET);
       console.log("URI", uri);
       console.groupEnd();
 
@@ -743,7 +732,7 @@
     connect : function() {
       var self = this;
 
-      if ( SUPPORT_SOCKET ) {
+      if ( window.OSjs.Compability.SUPPORT_SOCKET ) {
         if ( !this._socket ) {
           console.log("Socket::connect()", this._uri);
 
@@ -1544,46 +1533,46 @@
 
         switch ( key ) {
           case "canvas" :
-            if ( !SUPPORT_CANVAS ) {
+            if ( !window.OSjs.Compability.SUPPORT_CANVAS ) {
               error = "<canvas>";
             }
           break;
           case "audio" :
-            if ( !SUPPORT_AUDIO ) {
+            if ( !window.OSjs.Compability.SUPPORT_AUDIO ) {
               error = "<audio>";
             }
           break;
           case "video" :
-            if ( !SUPPORT_VIDEO ) {
+            if ( !window.OSjs.Compability.SUPPORT_VIDEO ) {
               error = "<video>";
             }
           break;
 
           case "localStorage" :
-            if ( !SUPPORT_LSTORAGE ) {
+            if ( !window.OSjs.Compability.SUPPORT_LSTORAGE ) {
               error = "localStorage()";
             }
           break;
           case "sessionStorage" :
-            if ( !SUPPORT_SSTORAGE ) {
+            if ( !window.OSjs.Compability.SUPPORT_SSTORAGE ) {
               error = "sessionStorage()";
             }
           break;
           case "globalStorage" :
-            if ( !SUPPORT_GSTORAGE ) {
+            if ( !window.OSjs.Compability.SUPPORT_GSTORAGE ) {
               error = "globalStorage()";
             }
           break;
           case "database" :
           case "databaseStorage" :
           case "openDatabase" :
-            if ( !SUPPORT_DSTORAGE ) {
+            if ( !window.OSjs.Compability.SUPPORT_DSTORAGE ) {
               error = "databaseStorage()";
             }
           break;
 
           case "ogg" :
-            if ( SUPPORT_AUDIO ) {
+            if ( window.OSjs.Compability.SUPPORT_AUDIO ) {
               if ( !(!!document.createElement('audio').canPlayType('audio/ogg; codecs="vorbis')) ) {
                 error = "<audio> does not support OGG/Vorbis";
               }
@@ -1593,7 +1582,7 @@
           break;
 
           case "mp3" :
-            if ( SUPPORT_AUDIO ) {
+            if ( window.OSjs.Compability.SUPPORT_AUDIO ) {
               if ( !(!!document.createElement('audio').canPlayType('audio/mpeg')) ) {
                 error = "<audio> does not support MP3";
               }
@@ -1603,13 +1592,13 @@
           break;
 
           case "socket" :
-            if ( !SUPPORT_SOCKET ) {
+            if ( !window.OSjs.Compability.SUPPORT_SOCKET ) {
               error = "WebSocket";
             }
           break;
 
           case "richtext" :
-            if ( !SUPPORT_RICHTEXT ) {
+            if ( !window.OSjs.Compability.SUPPORT_RICHTEXT ) {
               error = "Richtext (contentEditable)";
             }
           break;
@@ -3605,7 +3594,7 @@
         });
 
 
-        if ( SUPPORT_CANVAS ) {
+        if ( window.OSjs.Compability.SUPPORT_CANVAS ) {
           el.find(".GtkDrawingArea").append("<canvas>");
         }
 
@@ -3868,14 +3857,14 @@
       var table  = el.find("table.chart");
       var _row   = "<tr><td width=\"16\"><img alt=\"\" src=\"/img/icons/16x16/emblems/emblem-%s.png\" /></td><td>%s</td></tr>";
       var _check = {
-        "Local Storage" : SUPPORT_LSTORAGE,
-        "Session Storage" : SUPPORT_SSTORAGE,
-        "Global Storage" : SUPPORT_GSTORAGE,
-        "Database Storage" : SUPPORT_DSTORAGE,
-        "Canvas (2D/3D)" : SUPPORT_CANVAS,
-        "Audio" : SUPPORT_AUDIO,
-        "Video" : SUPPORT_VIDEO,
-        "Sockets" : SUPPORT_SOCKET
+        "Local Storage" : window.OSjs.Compability.SUPPORT_LSTORAGE,
+        "Session Storage" : window.OSjs.Compability.SUPPORT_SSTORAGE,
+        "Global Storage" : window.OSjs.Compability.SUPPORT_GSTORAGE,
+        "Database Storage" : window.OSjs.Compability.SUPPORT_DSTORAGE,
+        "Canvas (2D/3D)" : window.OSjs.Compability.SUPPORT_CANVAS,
+        "Audio" : window.OSjs.Compability.SUPPORT_AUDIO,
+        "Video" : window.OSjs.Compability.SUPPORT_VIDEO,
+        "Sockets" : window.OSjs.Compability.SUPPORT_SOCKET
       };
 
       var row;
@@ -4068,34 +4057,19 @@
   // MAIN
   /////////////////////////////////////////////////////////////////////////////
 
-  function __init() {
+  window.OSjs.__Run = function() {
     _Core = new Core();
-  }
-  function __die() {
+
+    return true;
+  };
+
+  window.OSjs.__Stop = function() {
     if ( _Core ) {
       _Core.destroy();
       _Core = null;
     }
-  }
 
-  /**
-   * @unload()
-   */
-  $(window).unload(function() {
-    __die();
-  });
-
-  /**
-   * @ready()
-   */
-  $(window).ready(function() {
-    if ( !SUPPORT_LSTORAGE ) {
-      alert("Your browser does not support WebStorage. Cannot continue...");
-      return false;
-    }
-
-    __init();
     return true;
-  });
+  };
 
 })($);

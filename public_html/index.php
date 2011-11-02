@@ -174,7 +174,9 @@ header("Content-Type: text/html; charset=utf-8");
   <link rel="stylesheet" type="text/css" href="/css/cursor.default.css" id="CursorFace" />
 
   <!-- Preloads -->
+  <script type="text/javascript" src="/?library=init.js"></script>
   <script type="text/javascript" src="/?library=main.js"></script>
+
   <script type="text/javascript" src="/?resource=dialog.panel.js"></script>
   <script type="text/javascript" src="/?resource=dialog.launch.js"></script>
   <script type="text/javascript" src="/?resource=dialog.file.js"></script>
