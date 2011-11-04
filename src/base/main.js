@@ -624,7 +624,7 @@
         $.post(AJAX_URI, {'ajax' : true, 'action' : 'shutdown', 'session' : ssess, 'settings' : ssett}, function(data) {
           if ( data.success ) {
             setTimeout(function() {
-              __die();
+              OSjs.__Stop();
             }, 100);
           } else {
             API.system.dialog("error", data.error);
