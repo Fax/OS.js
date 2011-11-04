@@ -6,7 +6,9 @@
  */
 (function($, undefined) {
 
+  //
   // Override for browsers without console
+  //
   if (!window.console) console = {log:function() {}, info:function(){}, error:function(){}};
   if ( !window.console.group ) {
     window.console.group = function() { console.log(arguments); };
@@ -15,7 +17,9 @@
     window.console.groupEnd = function() { console.log(arguments); };
   }
 
+  //
   // Main OS.js namespace
+  //
   window.OSjs =
   {
     // Compability
@@ -37,7 +41,9 @@
     PanelItems   : { /* ... */ }
   };
 
+  //
   // Main program
+  //
 
   /**
    * window::unload()

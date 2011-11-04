@@ -113,33 +113,33 @@ class Core
   }
 
   /**
-   * Compress a file with YUI
+   * Get a resource file (CSS or JS) [with compression]
    * @return Mixed
    */
-  public static function compress($type, $path, $compress) {
+  public static function getFile($resource, $type, $input, $compress) {
     $content = "";
 
-    if ( file_exists($path) ) {
-      if ( $compress ) {
-        $cmd  = PATH_PROJECT_BIN . "/yui.sh";
-        $cmd  = sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_PROJECT_BIN, PATH_PROJECT_VENDOR);
-        $args = "--preserve-semi ";
-        if ( $type == "js" ) {
-          $args .= sprintf("--type js --charset UTF-8 %s", escapeshellarg($path));
-        } else {
-          $args .= sprintf("--type css --charset UTF-8 %s", escapeshellarg($path));
-        }
+    $res  = str_replace(Array("../", "./"), Array("", ""), $input);
+    $res  = addslashes($res);
 
-        $exec = sprintf("%s %s 2>&1", $cmd, $args);
-        if ( !($content = shell_exec($exec)) ) {
-          $content = "/* FAILED TO GET CONTENTS */";
-        }
+    if ( $compress ) {
+      if ( $resource ) {
+        $path = sprintf("%s/%s", PATH_RESOURCES_COMPRESSED, $res);
       } else {
-        if ( !($content = file_get_contents($path)) ) {
-          $content = "/* FAILED TO GET CONTENTS */";
-        }
+        $path = sprintf("%s/%s", PATH_JSBASE_COMPRESSED, $res);
       }
+    } else {
+      if ( $resource ) {
+        $path = sprintf("%s/%s", PATH_RESOURCES, $res);
+      } else {
+        $path = sprintf("%s/%s", PATH_JSBASE, $res);
+      }
+    }
 
+    if ( file_exists($path) ) {
+      if ( !($content = file_get_contents($path)) ) {
+        $content = "/* FAILED TO GET CONTENTS */";
+      }
       return $content;
     }
 

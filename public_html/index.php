@@ -78,12 +78,8 @@ EOCSS;
 ///////////////////////////////////////////////////////////////////////////////
 
 if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
-  $res  = str_replace(Array("../", "./"), Array("", ""), $_GET['resource']);
-  $res  = addslashes($res);
-  $type = preg_match("/\.js$/", $res) ? "js" : "css";
-  $path = sprintf("%s/%s", PATH_RESOURCES, $res); // FIXME
-
-  if ( ($content = Core::compress($type, $path, ENV_PRODUCTION)) === false ) {
+  $type = preg_match("/\.js$/", $_GET['resource']) ? "js" : "css";
+  if ( ($content = Core::getFile(true, $type, $_GET['resource'], ENV_PRODUCTION)) === false ) {
     header("HTTP/1.0 404 Not Found");
     exit;
   }
@@ -93,11 +89,7 @@ if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
   exit;
 
 } else if ( isset($_GET['library']) ) {
-  $res  = str_replace(Array("../", "./"), Array("", ""), $_GET['library']);
-  $res  = addslashes($res);
-  $path = sprintf("%s/%s", PATH_JSBASE, $res); // FIXME
-
-  if ( ($content = Core::compress("js", $path, ENV_PRODUCTION)) === false ) {
+  if ( ($content = Core::getFile(false, "js", $_GET['library'], ENV_PRODUCTION)) === false ) {
     header("HTTP/1.0 404 Not Found");
     exit;
   }

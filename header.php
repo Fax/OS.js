@@ -11,7 +11,7 @@ error_reporting(E_ALL | E_STRICT);
 // Project
 define("PROJECT_AUTHOR",    "Anders Evenrud");
 define("PROJECT_CONTACT",   "andersevenrud@gmail.com");
-define("PROJECT_VERSION",   "0.5-alpha6"); // Next: 0.6
+define("PROJECT_VERSION",   "0.5-alpha7"); // Next: 0.6
 define("PROJECT_CODENAME",  "FoxTrot"); // Next: DiscoFox
 define("PROJECT_HOST",      (php_uname('n')));
 
@@ -26,17 +26,19 @@ define("SERVER_HOST", "localhost");
 define("SERVER_PORT", 8888);
 
 // Path definitions
-define("PATH_PROJECT",           dirname(__FILE__));
-define("PATH_PROJECT_BIN",       PATH_PROJECT . "/bin");
-define("PATH_PROJECT_SRC",       PATH_PROJECT . "/src");
-define("PATH_PROJECT_LIB",       PATH_PROJECT . "/lib");
-define("PATH_PROJECT_VENDOR",    PATH_PROJECT . "/vendor");
-define("PATH_PROJECT_HTML",      PATH_PROJECT . "/public_html");
-define("PATH_PROJECT_BUILD",     PATH_PROJECT . "/src/build");
-define("PATH_PROJECT_LOG",       PATH_PROJECT . "/logs");
-define("PATH_APPS",              PATH_PROJECT . "/src/apps");
-define("PATH_RESOURCES",         PATH_PROJECT . "/src/resources");
-define("PATH_JSBASE",            PATH_PROJECT . "/src/base");
+define("PATH_PROJECT",               dirname(__FILE__));
+define("PATH_PROJECT_BIN",           PATH_PROJECT . "/bin");
+define("PATH_PROJECT_SRC",           PATH_PROJECT . "/src");
+define("PATH_PROJECT_LIB",           PATH_PROJECT . "/lib");
+define("PATH_PROJECT_VENDOR",        PATH_PROJECT . "/vendor");
+define("PATH_PROJECT_HTML",          PATH_PROJECT . "/public_html");
+define("PATH_PROJECT_BUILD",         PATH_PROJECT . "/src/build");
+define("PATH_PROJECT_LOG",           PATH_PROJECT . "/logs");
+define("PATH_APPS",                  PATH_PROJECT . "/src/apps");
+define("PATH_RESOURCES",             PATH_PROJECT . "/src/resources");
+define("PATH_RESOURCES_COMPRESSED",  PATH_PROJECT_BUILD . "/scripts/resources");
+define("PATH_JSBASE",                PATH_PROJECT . "/src/base");
+define("PATH_JSBASE_COMPRESSED",     PATH_PROJECT_BUILD . "/scripts/base");
 
 define("APPLICATION_BUILD",      PATH_PROJECT_BUILD . "/applications.xml");
 
