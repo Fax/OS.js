@@ -1,14 +1,24 @@
 Requirements:
 -------------------------------------------------------------------------------
-* UNIX
-* Apache
-* PHP 5.3
-* MySQL
+* UNIX-like operating system
+  * VFS Support is not tested on Windows
+* Apache >= 2.0
+  * Modules: htaccess
+* PHP >= 5.3
+  * Modules: apache2 bcmath calendar curl curlwrappers gd inifile mysql snmp soap sockets sqlite3 sysvipc xmlreader xmlrpc xmlwriter xsl zip pdo imap mhash postgres tidy wddx mysqli intl pcntl
+* MySQL >= 5.0
 
 Vendor libraries used:
-* Propel ORM
-
-Application Requirements
 -------------------------------------------------------------------------------
-ApplicationYouTube:
-* pear install channel://pear.php.net/Services_YouTube-0.2.2
+* jQuery
+* JSON2 by Douglas Crockford
+* Sprintf by Alexandru Marasteanu
+* File uploaderby Andrew Valums
+* Yahoo YUI Compressor
+* Propel ORM (Core and Application database access)
+
+All (except Propel ORM) is included in the development repository.
+
+Install Propel ORM:
+-------------------------------------------------------------------------------
+Just clone the repository or unpack installation into 'vendor/Propel'
