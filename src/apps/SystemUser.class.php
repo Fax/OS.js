@@ -11,7 +11,7 @@
  * SystemUser Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OS.js.Server.Applications
+ * @package OSjs.Server.Applications
  * @class
  */
 class SystemUser
