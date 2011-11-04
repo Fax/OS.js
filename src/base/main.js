@@ -736,6 +736,9 @@
           console.log("Socket::connect()", this._uri);
 
           try {
+            //var ws = new WebSocket(this._uri, "draft-ietf-hybi-thewebsocketprotocol-00");
+            //var ws = new WebSocket(this._uri, "hybi-00");
+            //var ws = new WebSocket(this._uri, "hybi-07");
             var ws = new WebSocket(this._uri);
             ws.onopen = function(ev) {
               self._on_open(ev);

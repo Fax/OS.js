@@ -36,9 +36,11 @@ define("ARCHIVE_SYSETM",      false); // lib/Archive.php
 // Server
 //
 
-define("SERVER_HOST",   "0.0.0.0");
-//define("SERVER_HOST", "localhost");
-define("SERVER_PORT",   8888);
+define("SERVER_HOST",     "0.0.0.0");
+//define("SERVER_HOST",   "localhost");
+define("SERVER_PORT",     8888);
+define("SERVER_BACKLOG",  20);
+define("SERVER_NONBLOCK", false); // TODO
 
 //
 // Paths

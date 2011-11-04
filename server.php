@@ -8,9 +8,9 @@
  */
 
 require "header.php";
+require "lib/ServerUser.class.php";
 require "lib/Server.class.php";
 
-error_reporting(E_ALL);
 set_time_limit(0);
 ob_implicit_flush();
 

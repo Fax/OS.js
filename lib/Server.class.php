@@ -8,81 +8,6 @@
  */
 
 /**
- * SocketUser Class
- *
- * WebSocket user connection class
- *
- * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core
- * @class
- */
-class SocketUser{
-  public $id;
-  public $socket;
-  public $handshake;
-
-  public $tcp;
-  public $tcp_index;
-
-  public function __construct($socket) {
-    $this->id = uniqid();
-    $this->socket = $socket;
-
-    print "User created '{$this->id}'...\n";
-  }
-
-  public function connect($conn, $port) {
-    if ( !$this->tcp ) {
-      if ( $this->tcp = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) ) {
-        print "User: Creating TCP Connection ($conn:$port)\n";
-        socket_connect($this->tcp, $conn, $port);
-        return $this->tcp;
-      }
-    }
-    return null;
-  }
-
-  public function send($st) {
-    if ( $socket = $this->tcp ) {
-      $length = strlen($st);
-      print "User: Sending TCP message ($length)\n";
-      while ( true ) {
-        $sent = socket_write($socket, $st, $length);
-        if ($sent === false) {
-          break;
-        }
-        // Check if the entire message has been sented
-        if ($sent < $length) {
-
-          // If not sent the entire message.
-          // Get the part of the message that has not yet been sented as message
-          $st = substr($st, $sent);
-
-          // Get the length of the not sented part
-          $length -= $sent;
-        } else {
-          break;
-        }
-
-      }
-      print "....Sendt!\n";
-
-      return $socket;
-    }
-    return null;
-  }
-
-  public function disconnect() {
-    if ( $this->tcp ) {
-      print "User: Disconnecting TCP\n";
-      socket_close($this->tcp);
-
-      $this->tcp = null;
-    }
-  }
-}
-
-/**
  * Server Class
  *
  * WebSocket server class
@@ -98,9 +23,9 @@ class Server
   // VARIABLES
   /////////////////////////////////////////////////////////////////////////////
 
-  protected $_master = null;
-  protected $_sockets = Array();
-  protected $_users = Array();
+  protected $_master  = null;     //!< Master Socket
+  protected $_sockets = Array();  //!< Connected Sockets
+  protected $_users   = Array();  //!< Connected ServerUser(s)
 
   /////////////////////////////////////////////////////////////////////////////
   // MAGICS
@@ -123,7 +48,6 @@ class Server
 
   /**
    * Create a new instance of Server
-   *
    * @return Server
    */
   public final static function run($host, $port) {
@@ -136,20 +60,30 @@ class Server
     $buffer = null;
     while ( true ) {
       $changed = $server->_sockets;
+
+      // Select all sockets for handling
       socket_select($changed, $write = null, $except = null, null);
+
       foreach ( $changed as $socket ) {
+        // Handle Master socket
         if ( $socket == $server->_master ) {
           $client = socket_accept($server->_master);
           if ( $client < 0 ) {
+            usleep(100);
             continue;
-          } else {
+          } else if ($client !== false) {
             $server->_connect($client);
           }
-        } else {
+        }
+        // Handle data recieved
+        else {
           $bytes = socket_recv($socket, $buffer, 2048, 0);
+
+          // If no more data was recieved, disconnect the socket
           if ( $bytes == 0 ) {
             $server->_disconnect($socket);
           } else {
+            // Seems like we got a handshake or data recieved
             $user = $server->_getUserBySocket($socket);
             if ( !$user->handshake ) {
               $server->_handshake($user, $buffer);
@@ -162,11 +96,23 @@ class Server
     }
   }
 
+  /**
+   * Create a new Socket
+   * @return Mixed
+   */
   public final function createSocket($address, $port) {
+    // Create a internet streaming TCP socket
     if ( $master = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) ) {
+      // Set socket options
       if ( socket_set_option($master, SOL_SOCKET, SO_REUSEADDR, 1) ) {
+        // Bins the socket to the configured address in 'header.php'
         if ( socket_bind($master, $address, $port) ) {
-          if ( socket_listen($master,20) ) {
+          // Listen for connections
+          if ( socket_listen($master, SERVER_BACKLOG) ) {
+            if ( SERVER_NONBLOCK ) {
+              socket_set_nonblock($master);
+            }
+
             return $master;
           }
         }
@@ -175,22 +121,20 @@ class Server
     return null;
   }
 
-  public final function createHeaders($req) {
-    $r=$h=$o=$data=null;
-    $key1=$key2=null;
-    if(preg_match("/GET (.*) HTTP/"   ,$req,$match)){ $r=$match[1]; }
-    if(preg_match("/Host: (.*)\r\n/"  ,$req,$match)){ $h=$match[1]; }
-    if(preg_match("/Origin: (.*)\r\n/",$req,$match)){ $o=$match[1]; }
-    if(preg_match("/Sec-WebSocket-Key2: (.*)\r\n/",$req,$match)){ $key2=$match[1]; }
-    if(preg_match("/Sec-WebSocket-Key1: (.*)\r\n/",$req,$match)){ $key1=$match[1]; }
-    if(preg_match("/\r\n(.*?)\$/",$req,$match)){ $data=$match[1]; }
-    return array($r,$h,$o,$key1,$key2,$data);
-  }
-
+  /**
+   * Wrap a string to WebSocket message
+   * @see    WebSocket W3C Specifications
+   * @return String
+   */
   public final function wrap($msg = "" ) {
     return chr(0).$msg.chr(255);
   }
 
+  /**
+   * Unwrap the WebSocket message
+   * @see    WebSocket W3C Specifications
+   * @return String
+   */
   public final function unwrap($msg = "") {
     return substr($msg,1,strlen($msg)-2);
   }
@@ -199,13 +143,24 @@ class Server
   // CLASS METHODS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Connect a Socket and ServerUser
+   * @return void
+   */
   protected function _connect($socket) {
     print "Connection requested...\n";
+
+    // Add socket and user our Server instance
     $this->_sockets[] = $socket;
     $this->_users[] = new SocketUser($socket);
   }
 
+  /**
+   * Disconnect Socket (Also ServerUser)
+   * @return void
+   */
   protected function _disconnect($socket) {
+    // Check if we find a user for this socket
     $found = null;
     $i = 0;
     foreach ( $this->_users as $u ) {
@@ -216,6 +171,7 @@ class Server
       $i++;
     }
 
+    // If we found a user, disconnect
     if ( $found !== null ) {
       $u = $this->_users[$found];
       if ( $ind = $u->tcp_index ) {
@@ -227,6 +183,7 @@ class Server
       array_splice($this->_users, $found, 1);
     }
 
+    // Close and remove socket reference
     $index = array_search($socket, $this->_sockets);
     socket_close($socket);
     if ( $index >= 0 ) {
@@ -234,20 +191,47 @@ class Server
     }
   }
 
+  /**
+   * Do a ServerUser handshake over Socket
+   *
+   * TODO:
+   *   http://code.google.com/p/phpwebsocket/issues/detail?id=33
+   *   http://code.google.com/p/phpwebsocket/issues/detail?id=35#c4
+   *   http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-17#section-5
+   *   http://no2.php.net/socket_accept
+   *   http://stackoverflow.com/questions/7363095/javascript-and-websockets-using-specific-protocol
+   *
+   * @see    WebSocket W3C Specifications
+   * @return bool
+   */
   protected function _handshake($user, $buffer) {
     print "Handshaking with '{$user->id}'\n";
-    list($resource,$host,$origin,$strkey1,$strkey2,$data) = self::createHeaders($buffer);
 
+    // Parse the HTML header
+    $r=$h=$o=$data=null;
+    $key1=$key2=null;
+    if(preg_match("/GET (.*) HTTP/"   ,$buffer,$match)){ $r=$match[1]; }
+    if(preg_match("/Host: (.*)\r\n/"  ,$buffer,$match)){ $h=$match[1]; }
+    if(preg_match("/Origin: (.*)\r\n/",$buffer,$match)){ $o=$match[1]; }
+    if(preg_match("/Sec-WebSocket-Key2: (.*)\r\n/",$buffer,$match)){ $key2=$match[1]; }
+    if(preg_match("/Sec-WebSocket-Key1: (.*)\r\n/",$buffer,$match)){ $key1=$match[1]; }
+    if(preg_match("/\r\n(.*?)\$/",$buffer,$match)){ $data=$match[1]; }
+
+    list($resource,$host,$origin,$strkey1,$strkey2,$data) = array($r,$h,$o,$key1,$key2,$data);
+
+    // Now match up
     $numkey1 = preg_replace('/[^\d]*/', '', $strkey1);
     $numkey2 = preg_replace('/[^\d]*/', '', $strkey2);
     $spaces1 = strlen(preg_replace('/[^ ]*/', '', $strkey1));
     $spaces2 = strlen(preg_replace('/[^ ]*/', '', $strkey2));
 
-    if ($spaces1 == 0 || $spaces2 == 0 || $numkey1 % $spaces1 != 0 || $numkey2 % $spaces2 != 0) {
+    //if ($spaces1 == 0 || $spaces2 == 0 || $numkey1 % $spaces1 != 0 || $numkey2 % $spaces2 != 0) {
+    if ($spaces1 == 0 || $spaces2 == 0 || fmod($numkey1, $spaces1) != 0 || fmod($numkey2, $spaces2) != 0) {
       socket_close($user->socket);
       return false;
     }
 
+    // Create a handshake response
     $ctx = hash_init('md5');
     hash_update($ctx, pack("N", $numkey1/$spaces1));
     hash_update($ctx, pack("N", $numkey2/$spaces2));
@@ -262,6 +246,7 @@ class Server
                 "\r\n" .
                 $hash_data;
 
+    // Write to socket and return
     socket_write($user->socket,$upgrade.chr(0),strlen($upgrade.chr(0)));
     $user->handshake=true;
 
@@ -269,6 +254,10 @@ class Server
     return true;
   }
 
+  /**
+   * Process a ServerUser message
+   * @return void
+   */
   protected function _process($user, $message, $external = false) {
     $response = null;
     if ( $external ) {
@@ -323,6 +312,10 @@ class Server
     $this->_send($user->socket, json_encode($response));
   }
 
+  /**
+   * Send a message to a Client Socket
+   * @return void
+   */
   protected function _send($client, $message) {
     print "> '$message'\n";
     $msg = self::wrap($message);
@@ -337,6 +330,10 @@ class Server
   // GET
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Get the SocketUser by Socket
+   * @return Mixed
+   */
   protected function _getUserBySocket($socket) {
     foreach ( $this->_users as $u ) {
       if ( $u->socket == $socket || $u->tcp == $socket ) {
