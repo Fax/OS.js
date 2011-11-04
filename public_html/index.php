@@ -79,7 +79,7 @@ EOCSS;
 
 if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
   $type = preg_match("/\.js$/", $_GET['resource']) ? "js" : "css";
-  if ( ($content = Core::getFile(true, $type, $_GET['resource'], ENV_PRODUCTION)) === false ) {
+  if ( ($content = Core::getFile(true, $_GET['resource'], ENV_PRODUCTION)) === false ) {
     header("HTTP/1.0 404 Not Found");
     exit;
   }
@@ -89,7 +89,7 @@ if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
   exit;
 
 } else if ( isset($_GET['library']) ) {
-  if ( ($content = Core::getFile(false, "js", $_GET['library'], ENV_PRODUCTION)) === false ) {
+  if ( ($content = Core::getFile(false, $_GET['library'], ENV_PRODUCTION)) === false ) {
     header("HTTP/1.0 404 Not Found");
     exit;
   }

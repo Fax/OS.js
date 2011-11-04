@@ -70,37 +70,3 @@ Built-In Applications, Dialogs and Panel Items:
 * Dialog: File Open, Save, Rename
 * Dialog: Lauch Application
 * Dialog: Modify Panel/PanelItem
-
-TODOs:
--------------------------------------------------------------------------------
-* TODO: Login
-* TODO: Rewrite settings manager
-* TODO: Add/Remove panel item storage
-* TODO: Panel item sorting and alignments (snapping etc)
-* FIXME: replace parents() with closest()
-* FIXME: IE and Opera suffers the same CSS [table] bugs
-* FIXME: Fix ContextMenu pop-out problems
-* NOTE: http://trac.webkit.org/export/41842/trunk/LayoutTests/scrollbars/overflow-scrollbar-combinations.html
-
-Building applications:
--------------------------------------------------------------------------------
-Look at the example files to see how this is done.
-
-New Application:
-* Create Glade Interface file, place in 'src/apps/ApplicationXXX.glade'
-* Create XML build-file, place in 'src/apps/ApplicationXXX.xml'
-* Update Database schema 'schema.xml' if needed
-* Run './bin/application-gen'
-* Run './bin/database-gen' if database schema was updated
-* Copy 'src/build/ApplicationXXX.class.php' to 'src/apps/'
-* Copy 'src/build/apps/app.XXX.js' to 'src/resources/'
-* Copy 'src/build/apps/app.XXX.css' to 'src/resources/'
-
-Update:
-* Run './bin/application-gen'
-* Run './bin/database-gen' if database schema was updated
-* Update your CSS and JS with new code found in 'src/build/app.FOO.BAR'
-
-Tips:
-* Signals named 'MenuOpen', 'MenuSave', 'MenuSaveAs', 'MenuQuit', 'MenuClose'
-  automatically creates code for dialogs.

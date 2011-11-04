@@ -116,9 +116,10 @@ class Core
    * Get a resource file (CSS or JS) [with compression]
    * @return Mixed
    */
-  public static function getFile($resource, $type, $input, $compress) {
+  public static function getFile($resource, $input, $compress) {
     $content = "";
 
+    $type = preg_match("/\.js$/", $input) ? "js" : "css";
     $res  = str_replace(Array("../", "./"), Array("", ""), $input);
     $res  = addslashes($res);
 

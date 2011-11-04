@@ -1,0 +1,23 @@
+Building applications:
+-------------------------------------------------------------------------------
+Look at the example files to see how this is done.
+
+New Application:
+* Create Glade Interface file, place in 'src/apps/ApplicationXXX.glade'
+* Create XML build-file, place in 'src/apps/ApplicationXXX.xml'
+* Update Database schema 'schema.xml' if needed
+* Run './bin/application-gen'
+* Run './bin/database-gen' if database schema was updated
+* Copy 'src/build/ApplicationXXX.class.php' to 'src/apps/'
+* Copy 'src/build/apps/app.XXX.js' to 'src/resources/'
+* Copy 'src/build/apps/app.XXX.css' to 'src/resources/'
+
+Update:
+* Run './bin/application-gen'
+* Run './bin/database-gen' if database schema was updated
+* Update your CSS and JS with new code found in 'src/build/app.FOO.BAR'
+
+Tips:
+* Signals named 'MenuOpen', 'MenuSave', 'MenuSaveAs', 'MenuQuit', 'MenuClose'
+  automatically creates code for dialogs.
+

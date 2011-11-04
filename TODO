@@ -1,0 +1,8 @@
+* TODO: Login
+* TODO: Rewrite settings manager
+* TODO: Add/Remove panel item storage
+* TODO: Panel item sorting and alignments (snapping etc)
+* FIXME: replace parents() with closest()
+* FIXME: IE and Opera suffers the same CSS [table] bugs
+* FIXME: Fix ContextMenu pop-out problems
+* NOTE: http://trac.webkit.org/export/41842/trunk/LayoutTests/scrollbars/overflow-scrollbar-combinations.html
