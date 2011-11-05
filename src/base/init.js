@@ -1,7 +1,7 @@
 /*!
- * JavaScript [Namespace] Initialization
+ * OS.js - JavaScript Operating System - Namespace
  *
- * @package OSjs.Client.Core
+ * @package OSjs.Client.Init
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  */
 (function($, undefined) {
@@ -24,20 +24,22 @@
   {
     // Compability
     Compability : {
-      SUPPORT_LSTORAGE : (('localStorage' in window) && window['localStorage'] !== null),
-      SUPPORT_SSTORAGE : (('sessionStorage' in window) && window['sessionStorage'] !== null),
-      SUPPORT_GSTORAGE : (('globalStorage' in window) && window['globalStorage'] !== null),
-      SUPPORT_DSTORAGE : (('openDatabase' in window) && window['openDatabase'] !== null),
-      SUPPORT_CANVAS   : (!!document.createElement('canvas').getContext),
-      SUPPORT_VIDEO    : (!!document.createElement('video').canPlayType),
-      SUPPORT_AUDIO    : (!!document.createElement('audio').canPlayType),
-      SUPPORT_SOCKET   : ('WebSocket' in window && window['WebSocket'] !== null),
-      SUPPORT_RICHTEXT : (!!document.createElement('textarea').contentEditable)
+      "SUPPORT_LSTORAGE"       : (('localStorage'    in window) && window['localStorage']   !== null),
+      "SUPPORT_SSTORAGE"       : (('sessionStorage'  in window) && window['sessionStorage'] !== null),
+      "SUPPORT_GSTORAGE"       : (('globalStorage'   in window) && window['globalStorage']  !== null),
+      "SUPPORT_DSTORAGE"       : (('openDatabase'    in window) && window['openDatabase']   !== null),
+      "SUPPORT_SOCKET"         : (('WebSocket'       in window) && window['WebSocket']      !== null),
+      "SUPPORT_CANVAS"         : (!!document.createElement('canvas').getContext),
+      "SUPPORT_VIDEO"          : (!!document.createElement('video').canPlayType),
+      "SUPPORT_AUDIO"          : (!!document.createElement('audio').canPlayType),
+      "SUPPORT_AUDIO_OGG"      : (!!document.createElement('audio').canPlayType && !(!!document.createElement('audio').canPlayType('audio/ogg; codecs="vorbis'))),
+      "SUPPORT_AUDIO_MP3"      : (!!document.createElement('audio').canPlayType && !(!!document.createElement('audio').canPlayType('audio/mpeg'))),
+      "SUPPORT_RICHTEXT"       : (!!document.createElement('textarea').contentEditable)
     },
 
     // Internal namespace containers
-    Labels       : {},
-    Public       : {},
+    Labels       : { /* ... */ },
+    Public       : { /* ... */ },
 
     // Dynamic namespace containers
     Applications : { /* ... */ },
@@ -80,29 +82,6 @@
     "Video"            : OSjs.Compability.SUPPORT_VIDEO,
     "Sockets"          : OSjs.Compability.SUPPORT_SOCKET
   };
-
-  //
-  // Main program
-  //
-
-  /**
-   * window::unload()
-   */
-  $(window).unload(function() {
-    return OSjs.__Stop();
-  });
-
-  /**
-   * window::ready()
-   */
-  $(window).ready(function() {
-    if ( !OSjs.Compability.SUPPORT_LSTORAGE ) {
-      alert("Your browser does not support WebStorage. Cannot continue...");
-      return false;
-    }
-
-    return OSjs.__Run();
-  });
 
 })($);
 

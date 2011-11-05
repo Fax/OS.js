@@ -97,6 +97,7 @@ compress_list(true, Array(
 
 compress_list(false, Array(
   "init.js",
+  "core.js",
   "main.js"
 ));
 

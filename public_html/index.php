@@ -167,6 +167,7 @@ header("Content-Type: text/html; charset=utf-8");
 
   <!-- Preloads -->
   <script type="text/javascript" src="/?library=init.js"></script>
+  <script type="text/javascript" src="/?library=core.js"></script>
   <script type="text/javascript" src="/?library=main.js"></script>
 
   <script type="text/javascript" src="/?resource=dialog.panel.js"></script>
