@@ -92,6 +92,14 @@
     <resource>app.arkanoid.css</resource>
     <resource>app.arkanoid.js</resource>
   </application>
+  <application name="Browser" title="HTML Browser" icon="apps/web-browser.png" system="false" category="internet" class="ApplicationBrowser" file="ApplicationBrowser.class.php">
+    <window id="window1">
+      <property name="properties"><![CDATA[{"type":"window","title":"HTML Browser","icon":"apps\/web-browser.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":440,"height":440,"gravity":""}]]></property>
+    </window>
+    <resource>app.browser.css</resource>
+    <resource>app.browser.js</resource>
+    <mime>text/html</mime>
+  </application>
   <application name="User" title="User Information" icon="apps/user-info.png" system="true" category="system" class="SystemUser" file="SystemUser.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"User Information","icon":"apps\/user-info.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":400,"height":250,"gravity":"center"}]]></property>

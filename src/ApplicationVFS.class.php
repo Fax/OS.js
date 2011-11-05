@@ -30,6 +30,11 @@ class ApplicationVFS
       "attr" => "r",
       "icon" => "places/user-bookmarks.png"
     ),
+    "/System/Docs" => Array(
+      "type" => "core",
+      "attr" => "r",
+      "icon" => "places/folder-documents.png"
+    ),
     "/System/Wallpapers" => Array(
       "type" => "core",
       "attr" => "r",
