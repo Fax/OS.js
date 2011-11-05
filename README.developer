@@ -38,6 +38,7 @@ src/                    Main sources
     migrations/             Propel ORM Migration files
     sql/                    Propel ORM SQL Build files
     src/                    Minimized sources for Core and Application resources
+    [applications.xml]      Compiled application XML metadata
   resources/              Application resource files (CSS, JavaScript)
 vendor/                 Vendor libraries
   Propel/                 Propel ORM installation base directory
