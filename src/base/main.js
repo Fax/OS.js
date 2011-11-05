@@ -91,11 +91,12 @@
     try {
       _Desktop.addWindow(new CrashDialog(application, ex.message, ex.stack, ex));
       try {
-        application._running = true; // Workaround
+        application._running = true; // NOTE: Workaround
         application.kill();
       } catch ( eee ) {}
     } catch ( ee ) {
-      API.system.dialog("error", "Application '" + app_name + "' has crashed with error '" + ex + "'!");
+      var label = OSjs.Labels.CrashApplication;
+      API.system.dialog("error", sprintf(label, app_name, ex));
     }
   }
 
@@ -153,8 +154,8 @@
             CrashApplication(app_name, {
               _name : app_name
             }, {
-              message : "One or more of these resources failed to load:\n" + errors.join("\n"),
-              stack : sprintf("[LaunchApplication]API::system::launch()\n  Application: %s\n  Arguments: %s", app_name, eargs.join(","))
+              message : sprintf(OSjs.Labels.CrashApplicationResourceMessage, errors.join("\n")),
+              stack   : sprintf(OSjs.Labels.CrashApplicationResourceStack, app_name, eargs.join(","))
             });
           }
 
@@ -1536,72 +1537,77 @@
         switch ( key ) {
           case "canvas" :
             if ( !OSjs.Compability.SUPPORT_CANVAS ) {
-              error = "<canvas>";
+              error = OSjs.Public.CompabilityErrors[key];
             }
           break;
           case "audio" :
             if ( !OSjs.Compability.SUPPORT_AUDIO ) {
-              error = "<audio>";
+              error = OSjs.Public.CompabilityErrors[key];
             }
           break;
           case "video" :
             if ( !OSjs.Compability.SUPPORT_VIDEO ) {
-              error = "<video>";
+              error = OSjs.Public.CompabilityErrors[key];
             }
           break;
 
           case "localStorage" :
             if ( !OSjs.Compability.SUPPORT_LSTORAGE ) {
-              error = "localStorage()";
+              error = OSjs.Public.CompabilityErrors[key];
             }
           break;
           case "sessionStorage" :
             if ( !OSjs.Compability.SUPPORT_SSTORAGE ) {
-              error = "sessionStorage()";
+              error = OSjs.Public.CompabilityErrors[key];
             }
           break;
           case "globalStorage" :
             if ( !OSjs.Compability.SUPPORT_GSTORAGE ) {
-              error = "globalStorage()";
+              error = OSjs.Public.CompabilityErrors[key];
             }
           break;
           case "database" :
           case "databaseStorage" :
           case "openDatabase" :
+            key = "databaseStorage";
             if ( !OSjs.Compability.SUPPORT_DSTORAGE ) {
-              error = "databaseStorage()";
+              error = OSjs.Public.CompabilityErrors[key];
             }
           break;
 
           case "ogg" :
+          case "vorbis" :
+            key = "ogg";
             if ( OSjs.Compability.SUPPORT_AUDIO ) {
               if ( !(!!document.createElement('audio').canPlayType('audio/ogg; codecs="vorbis')) ) {
-                error = "<audio> does not support OGG/Vorbis";
+                error = OSjs.Public.CompabilityErrors[key];
               }
             } else {
-              error = "<audio>";
+              error = OSjs.Public.CompabilityErrors["audio"];
             }
           break;
 
-          case "mp3" :
+          case "mp3"  :
+          case "mpeg" :
+            key = "mp3";
             if ( OSjs.Compability.SUPPORT_AUDIO ) {
               if ( !(!!document.createElement('audio').canPlayType('audio/mpeg')) ) {
-                error = "<audio> does not support MP3";
+                error = OSjs.Public.CompabilityErrors[key];
               }
             } else {
-              error = "<audio>";
+              error = OSjs.Public.CompabilityErrors["audio"];
             }
           break;
 
           case "socket" :
             if ( !OSjs.Compability.SUPPORT_SOCKET ) {
-              error = "WebSocket";
+              error = OSjs.Public.CompabilityErrors[key];
             }
           break;
 
           case "richtext" :
             if ( !OSjs.Compability.SUPPORT_RICHTEXT ) {
-              error = "Richtext (contentEditable)";
+              error = OSjs.Public.CompabilityErrors[key];
             }
           break;
 
@@ -1628,7 +1634,10 @@
           }
 
           if ( error ) {
-            throw ({'message' : "Your browser does not support '" + error + "'", 'stack' : "Application::_checkCompability(): Application name: " + self._name});
+            throw ({
+              'message' : sprintf(OSjs.Labels.ApplicationCheckCompabilityMessage, error),
+              'stack'   : sprintf(OSjs.Labels.ApplicationCheckCompabilityStack, self._name)
+            });
           }
         }
 
@@ -3858,16 +3867,7 @@
 
       var table  = el.find("table.chart");
       var _row   = "<tr><td width=\"16\"><img alt=\"\" src=\"/img/icons/16x16/emblems/emblem-%s.png\" /></td><td>%s</td></tr>";
-      var _check = {
-        "Local Storage" : OSjs.Compability.SUPPORT_LSTORAGE,
-        "Session Storage" : OSjs.Compability.SUPPORT_SSTORAGE,
-        "Global Storage" : OSjs.Compability.SUPPORT_GSTORAGE,
-        "Database Storage" : OSjs.Compability.SUPPORT_DSTORAGE,
-        "Canvas (2D/3D)" : OSjs.Compability.SUPPORT_CANVAS,
-        "Audio" : OSjs.Compability.SUPPORT_AUDIO,
-        "Video" : OSjs.Compability.SUPPORT_VIDEO,
-        "Sockets" : OSjs.Compability.SUPPORT_SOCKET
-      };
+      var _check = OSjs.Public.CompabilityLabels;
 
       var row;
       var icon;

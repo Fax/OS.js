@@ -126,7 +126,7 @@ class Server
    * @see    WebSocket W3C Specifications
    * @return String
    */
-  public final function wrap($msg = "" ) {
+  public final static function wrap($msg = "" ) {
     return chr(0).$msg.chr(255);
   }
 
@@ -135,12 +135,12 @@ class Server
    * @see    WebSocket W3C Specifications
    * @return String
    */
-  public final function unwrap($msg = "") {
+  public final static function unwrap($msg = "") {
     return substr($msg,1,strlen($msg)-2);
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  // CLASS METHODS
+  // WebSocket METHODS
   /////////////////////////////////////////////////////////////////////////////
 
   /**
@@ -152,7 +152,7 @@ class Server
 
     // Add socket and user our Server instance
     $this->_sockets[] = $socket;
-    $this->_users[] = new SocketUser($socket);
+    $this->_users[]   = new SocketUser($socket);
   }
 
   /**
@@ -255,7 +255,18 @@ class Server
   }
 
   /**
+   * Send a message to a Client Socket
+   * @return void
+   */
+  protected function _send($client, $message) {
+    print "> '$message'\n";
+    $msg = self::wrap($message);
+    socket_write($client, $msg, strlen($msg));
+  }
+
+  /**
    * Process a ServerUser message
+   * TODO: Error handling
    * @return void
    */
   protected function _process($user, $message, $external = false) {
@@ -274,6 +285,8 @@ class Server
       if ( $json !== null && sizeof($json) ) {
         $args = $json['arguments'];
         switch ( $json['method'] ) {
+
+          // Open TCP Connection
           case "tcp_open":
             if ( $s = $user->connect($args[0], $args[1]) ) {
               $this->_sockets[] = $s;
@@ -283,6 +296,8 @@ class Server
               $response = Array("method" => $json['method'], "result" => false, "error" => true);
             }
             break;
+
+          // Send data over TCP Connection
           case "tcp_send":
             $err = "no socket";
             $t   = $user->send($args[0]);
@@ -292,6 +307,8 @@ class Server
               $response = Array("method" => $json['method'], "result" => true);
             }
             break;
+
+          // Close TCP Connection
           case "tcp_close":
             if ( $ind = $user->tcp_index ) {
               $user->disconnect();
@@ -310,16 +327,6 @@ class Server
       }
     }
     $this->_send($user->socket, json_encode($response));
-  }
-
-  /**
-   * Send a message to a Client Socket
-   * @return void
-   */
-  protected function _send($client, $message) {
-    print "> '$message'\n";
-    $msg = self::wrap($message);
-    socket_write($client, $msg, strlen($msg));
   }
 
   /////////////////////////////////////////////////////////////////////////////

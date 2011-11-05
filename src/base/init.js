@@ -35,10 +35,50 @@
       SUPPORT_RICHTEXT : (!!document.createElement('textarea').contentEditable)
     },
 
+    // Internal namespace containers
+    Labels       : {},
+    Public       : {},
+
     // Dynamic namespace containers
     Applications : { /* ... */ },
     Dialogs      : { /* ... */ },
     PanelItems   : { /* ... */ }
+  };
+
+  // Labels
+  OSjs.Labels = {
+    "ApplicationCheckCompabilityMessage"  : "Your browser does not support '%s'",
+    "ApplicationCheckCompabilityStack"    : "Application::_checkCompability(): Application name: %s",
+    "CrashApplication"                    : "Application '%s' has crashed with error '%s'!",
+    "CrashApplicationResourceMessage"     : "One or more of these resources failed to load:\n%s",
+    "CrashApplicationResourceStack"       : "[LaunchApplication]API::system::launch()\n  Application: %s\n  Arguments: %s"
+  };
+
+  // Application Compability error exceptions
+  OSjs.Public.CompabilityErrors = {
+    "canvas"          : "<canvas> DOM Element",
+    "audio"           : "<audio> DOM Element",
+    "ogg"             : "<audio> Does not support OGG/Vorbis",
+    "mp3"             : "<audio> Does not support MPEG/MP3",
+    "video"           : "<video> DOM Element",
+    "localStorage"    : "window.localStorage()",
+    "sessionStorage"  : "window.sessionStorage()",
+    "globalStorage"   : "window.globalStorage()",
+    "databaseStorage" : "window.databaseStorage()",
+    "socket"          : "window.WebSocket()",
+    "richtext"        : "window.contentEditable (Rich Text Editing)"
+  };
+
+  // Browser Compability list
+  OSjs.Public.CompabilityLabels = {
+    "Local Storage"    : OSjs.Compability.SUPPORT_LSTORAGE,
+    "Session Storage"  : OSjs.Compability.SUPPORT_SSTORAGE,
+    "Global Storage"   : OSjs.Compability.SUPPORT_GSTORAGE,
+    "Database Storage" : OSjs.Compability.SUPPORT_DSTORAGE,
+    "Canvas (2D/3D)"   : OSjs.Compability.SUPPORT_CANVAS,
+    "Audio"            : OSjs.Compability.SUPPORT_AUDIO,
+    "Video"            : OSjs.Compability.SUPPORT_VIDEO,
+    "Sockets"          : OSjs.Compability.SUPPORT_SOCKET
   };
 
   //
@@ -49,19 +89,19 @@
    * window::unload()
    */
   $(window).unload(function() {
-    return window.OSjs.__Stop();
+    return OSjs.__Stop();
   });
 
   /**
    * window::ready()
    */
   $(window).ready(function() {
-    if ( !window.OSjs.Compability.SUPPORT_LSTORAGE ) {
+    if ( !OSjs.Compability.SUPPORT_LSTORAGE ) {
       alert("Your browser does not support WebStorage. Cannot continue...");
       return false;
     }
 
-    return window.OSjs.__Run();
+    return OSjs.__Run();
   });
 
 })($);
