@@ -2167,7 +2167,7 @@
      */
     setTheme : function(theme) {
       var css = $("#ThemeFace");
-      var href = "/css/theme." + theme.toLowerCase() + ".css";
+      var href = "/?theme=" + theme.toLowerCase();
       if ( $(css).attr("href") != href ) {
         $(css).attr("href", href);
       }
@@ -2191,7 +2191,7 @@
      */
     setCursorTheme : function(cursor) {
       var css = $("#CursorFace");
-      var href = "/css/cursor." + cursor.toLowerCase() + ".css";
+      var href = "/?cursor=" + cursor.toLowerCase();
       if ( $(css).attr("href") != href ) {
         $(css).attr("href", href);
       }

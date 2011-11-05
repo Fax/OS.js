@@ -37,9 +37,9 @@
 
   <!-- OS.js defineable -->
   <link rel="stylesheet" type="text/css" href="/?font=Sansation" id="FontFace" />
-  <link rel="stylesheet" type="text/css" href="/css/theme.default.css" id="ThemeBase" />
-  <link rel="stylesheet" type="text/css" href="/css/theme.dark.css" id="ThemeFace" />
-  <link rel="stylesheet" type="text/css" href="/css/cursor.default.css" id="CursorFace" />
+  <link rel="stylesheet" type="text/css" href="/?theme=default" id="ThemeBase" />
+  <link rel="stylesheet" type="text/css" href="/?theme=dark" id="ThemeFace" />
+  <link rel="stylesheet" type="text/css" href="/?cursor=default" id="CursorFace" />
 
   <!-- Preloads -->
   <script type="text/javascript" src="/?library=init.js"></script>

@@ -24,7 +24,13 @@ public_html/             Apache Public directory
   [help.php]                Help file
 src/                    Main sources
   apps/                   Application build files (XML, Glade and PHP)
-  base/                   JavaScript Core files
+  base/                   Core JavaScript, CSS and Templates
+    [init.js]               OS.js Namespace init
+    [core.js]               OS.js Core
+    [main.js]               OS.js main initialization
+    [theme.*.js]            Theme stylesheet(s)
+    [cursor.*.js]           Cursor stylesheet(s)
+    [template.php]          HTML Template
   build/                  Compiled files
     apps/                   Application compiler output files
     classes/                Propel ORM Classes

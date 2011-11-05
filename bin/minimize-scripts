@@ -76,6 +76,10 @@ if ( $xml = file_get_contents(APPLICATION_BUILD) ) {
 compress_list(true, $app_files);
 
 compress_list(false, Array(
+  "theme.default.css",
+  "theme.dark.css",
+  "theme.light.css",
+  "cursor.default.css",
   "init.js",
   "core.js",
   "main.js"

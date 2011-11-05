@@ -21,12 +21,34 @@ if ( !ENABLE_CACHE ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// FONT STYLESHEET
+// STYLESHEET LOADING
 ///////////////////////////////////////////////////////////////////////////////
 
 if ( isset($_GET['font']) && !empty($_GET['font']) ) {
   header("Content-Type: text/css; charset=utf-8");
   print Core::getFont($_GET['font'], ENV_PRODUCTION);
+  exit;
+}
+
+if ( isset($_GET['theme']) && !empty($_GET['theme']) ) {
+  if ( ($content = Core::getTheme($_GET['theme'], ENV_PRODUCTION)) === false ) {
+    header("HTTP/1.0 404 Not Found");
+    exit;
+  }
+
+  header("Content-Type: text/css; charset=utf-8");
+  print $content;
+  exit;
+}
+
+if ( isset($_GET['cursor']) && !empty($_GET['cursor']) ) {
+  if ( ($content = Core::getCursor($_GET['cursor'], ENV_PRODUCTION)) === false ) {
+    header("HTTP/1.0 404 Not Found");
+    exit;
+  }
+
+  header("Content-Type: text/css; charset=utf-8");
+  print $content;
   exit;
 }
 

@@ -113,7 +113,37 @@ class Core
   }
 
   /**
-   * Get font StyleSheet
+   * Get Cursor StyleSheet
+   * @return Mixed
+   */
+  public static function getCursor($theme, $compress) {
+    $path = sprintf("%s/cursor.%s.css", ($compress ? PATH_JSBASE_COMPRESSED : PATH_JSBASE), $theme);
+    if ( file_exists($path) ) {
+      if ( !($content = file_get_contents($path)) ) {
+        $content = "/* FAILED TO GET CONTENTS */";
+      }
+      return $content;
+    }
+    return false;
+  }
+
+  /**
+   * Get Theme StyleSheet
+   * @return Mixed
+   */
+  public static function getTheme($theme, $compress) {
+    $path = sprintf("%s/theme.%s.css", ($compress ? PATH_JSBASE_COMPRESSED : PATH_JSBASE), $theme);
+    if ( file_exists($path) ) {
+      if ( !($content = file_get_contents($path)) ) {
+        $content = "/* FAILED TO GET CONTENTS */";
+      }
+      return $content;
+    }
+    return false;
+  }
+
+  /**
+   * Get Font StyleSheet
    * @return String
    */
   public static function getFont($font, $compress) {
