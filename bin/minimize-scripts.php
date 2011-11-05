@@ -53,55 +53,20 @@ function compress_list($resource, $files) {
   }
 }
 
-compress_list(true, Array(
-  "app.archiver.js",
-  "app.archiver.css",
-  "app.arkanoid.js",
-  "app.arkanoid.css",
-  "app.clock.js",
-  "app.clock.css",
-  "app.draw.js",
-  "app.draw.css",
-  "app.filemanager.js",
-  "app.filemanager.css",
-  "app.irc.js",
-  "app.irc.css",
-  "app.musicplayer.js",
-  "app.musicplayer.css",
-  "app.terminal.js",
-  "app.terminal.css",
-  "app.textpad.js",
-  "app.textpad.css",
-  "app.ticktacktoe.js",
-  "app.ticktacktoe.css",
-  "app.videoplayer.js",
-  "app.videoplayer.css",
-  "app.viewer.js",
-  "app.viewer.css",
-  "dialog.color.js",
-  "dialog.copy.js",
-  "dialog.file.js",
-  "dialog.launch.js",
-  "dialog.panel.js",
-  "dialog.rename.js",
-  "dialog.upload.js",
-  "panel.clock.js",
-  "panel.dock.js",
-  "panel.menu.js",
-  "panel.separator.js",
-  "panel.weather.js",
-  "panel.windowlist.js",
-  "sys.about.js",
-  "sys.about.css",
-  "sys.logout.js",
-  "sys.logout.css",
-  "sys.processes.js",
-  "sys.processes.css",
-  "sys.settings.js",
-  "sys.settings.css",
-  "sys.user.js",
-  "sys.user.css"
-));
+// Parse application data
+$app_files = Array();
+if ( $xml = file_get_contents(APPLICATION_BUILD) ) {
+  if ( $xml = new SimpleXmlElement($xml) ) {
+    foreach ( $xml->application as $app ) {
+      $app_name     = (string) $app['name'];
+      foreach ( $app->resource as $res ) {
+        $app_files[] = ((string) $res);
+      }
+    }
+  }
+}
+
+compress_list(true, $app_files);
 
 compress_list(false, Array(
   "init.js",
