@@ -1,7 +1,7 @@
 <?php
 /*!
  * @file
- * Contains Archiver Class
+ * Contains Application Archiver Class
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @license GPLv3 (see http://www.gnu.org/licenses/gpl-3.0.txt)
  * @created 2011-06-16
@@ -11,7 +11,7 @@
  * ApplicationArchiver Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Server.Applications
+ * @package OSjs.Core.Sources.Applications
  * @class
  */
 class ApplicationArchiver

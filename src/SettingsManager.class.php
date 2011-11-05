@@ -11,11 +11,14 @@
  * SettingsManager Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Server.Core
+ * @package OSjs.Core.Sources
  * @class
  */
 class SettingsManager
 {
+  /**
+   * @var Default Settings
+   */
   public static $Settings = Array(
     // User theme settings
     "desktop.wallpaper.path" => Array(
@@ -85,6 +88,11 @@ class SettingsManager
     )
   );
 
+  /**
+   * Get the current Settings array
+   * @param  Array   $merge    Merge with this array
+   * @return Array
+   */
   public final static function getSettings(Array $merge) {
     $settings = self::$Settings;
     foreach ( $merge as $mk => $mopts ) {

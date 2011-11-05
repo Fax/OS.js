@@ -11,7 +11,7 @@
  * SystemLogout Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Server.Applications
+ * @package OSjs.Core.Sources.Applications
  * @class
  */
 class SystemLogout

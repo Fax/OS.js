@@ -11,7 +11,7 @@
  * Core Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Server.Core
+ * @package OSjs.Core.Sources
  * @class
  */
 class Core
@@ -114,6 +114,8 @@ class Core
 
   /**
    * Get Cursor StyleSheet
+   * @param  String   $theme        Theme name
+   * @param  bool     $compress     Enable Compression
    * @return Mixed
    */
   public static function getCursor($theme, $compress) {
@@ -129,6 +131,8 @@ class Core
 
   /**
    * Get Theme StyleSheet
+   * @param  String   $theme        Theme name
+   * @param  bool     $compress     Enable Compression
    * @return Mixed
    */
   public static function getTheme($theme, $compress) {
@@ -144,6 +148,9 @@ class Core
 
   /**
    * Get Font StyleSheet
+   * @param  String   $font         Font name
+   * @param  bool     $compress     Enable Compression
+   * @package OSjs.Core.Sources
    * @return String
    */
   public static function getFont($font, $compress) {
@@ -202,6 +209,9 @@ EOCSS;
 
   /**
    * Get a resource file (CSS or JS) [with compression]
+   * @param  bool     $resource     Resource file?
+   * @param  String   $input        Filename
+   * @param  bool     $compress     Enable Compression
    * @return Mixed
    */
   public static function getFile($resource, $input, $compress) {
@@ -245,6 +255,7 @@ EOCSS;
 
   /**
    * Do a GET request
+   * @param  Array    $args   Argument list
    * @return Mixed
    */
   public function doGET(Array $args) {
@@ -258,6 +269,7 @@ EOCSS;
 
   /**
    * Do a POST request
+   * @param  Array    $args   Argument list
    * @return Mixed
    */
   public function doPOST(Array $args) {

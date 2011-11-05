@@ -11,12 +11,15 @@
  * Panel Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Server.Core
+ * @package OSjs.Core.Sources
  * @class
  */
 class Panel
 {
 
+  /**
+   * @var Registered Panel Items
+   */
   public static $Registered = Array(
     "PanelItemSeparator" => Array(
       "title"       => "Separator",

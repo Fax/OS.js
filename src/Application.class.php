@@ -11,7 +11,7 @@
  * Application Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Server.Core
+ * @package OSjs.Core.Sources
  * @class
  */
 abstract class Application
@@ -47,6 +47,9 @@ abstract class Application
 
   /**
    * Event performed by AJAX
+   * @param  String     $uuid         Application UUID
+   * @param  String     $action       Application Action
+   * @param  Array      $args         Action Arguments
    * @return Mixed
    */
   public static function Event($uuid, $action, Array $args) {
@@ -55,6 +58,7 @@ abstract class Application
 
   /**
    * Load an application
+   * @param  String     $classname      Class-name to use
    * @return Mixed
    */
   public static function Load($classname) {
@@ -69,6 +73,8 @@ abstract class Application
 
   /**
    * Register an application
+   * @param  String       $uuid         Application UUID
+   * @param  Application  $instance     Application Instance
    * @return bool
    */
   public static function Register($uuid, $instance) {
@@ -81,6 +87,7 @@ abstract class Application
 
   /**
    * Flush an application
+   * @param  String       $uuid         Application UUID
    * @return bool
    */
   public static function Flush($uuid) {
@@ -93,6 +100,9 @@ abstract class Application
 
   /**
    * Handle an application event
+   * @param  String       $uuid         Application UUID
+   * @param  String       $action       Application Action
+   * @param  Application  $instance     Application Instance
    * @return Mixed
    */
   public static function Handle($uuid, $action, $instance) {
@@ -114,6 +124,8 @@ abstract class Application
 
   /**
    * Initialize application(s)
+   * @param  String   $config       Configuration path
+   * @param  String   $filename     Lock on class-name
    * @return void
    */
   public static function init($config, $classname = null) {

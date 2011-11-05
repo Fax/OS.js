@@ -11,7 +11,7 @@
  * IMAP Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package MyApplication
+ * @package OSjs.Core.Libraries
  * @class
  */
 class IMAP

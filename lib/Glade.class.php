@@ -7,28 +7,25 @@
  * @created 2011-06-16
  */
 
-function get_inner_html( $node ) { 
-    $innerHTML= ''; 
-    $children = $node->childNodes; 
-    foreach ($children as $child) { 
-        $innerHTML .= $child->ownerDocument->saveXML( $child ); 
-    } 
-
-    return $innerHTML; 
-} 
-
+/**
+ * Glade Class
+ *
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @package OSjs.Core.Libraries
+ * @class
+ */
 class Glade
 {
-  private $_sClassName = "";
-  private $_aWindows = Array();
+  private $_sClassName  = "";           //!< Class Name
+  private $_aWindows    = Array();      //!< Window List
 
-  protected static $Counter = 0;
+  protected static $Counter = 0;        //!< Internal counter
 
-  protected static $ShortTags = Array(
+  protected static $ShortTags = Array(  //!< Short HTML tags
     "GtkImage", "GtkEntry"
   );
 
-  public static $ClassMap = Array(
+  public static $ClassMap = Array(      //!< Glade Class mapping
     "GtkScale" => Array(
       "element" => "div"
     ),
@@ -134,7 +131,7 @@ class Glade
     )
   );
 
-  protected static $Stock = Array(
+  protected static $Stock = Array(          //!< Stock icons
     "gtk-apply" => Array(
       "label" => "Apply",
       "icon" => "actions/gtk-save.png"
@@ -234,6 +231,12 @@ class Glade
     )
   );
 
+  /**
+   * Create a new Glade instance
+   * @param String    $filename   Glade XML filename
+   * @param String    $xml_data   Glade XML data
+   * @constructor
+   */
   public function __construct($filename, $xml_data) {
     $cn = str_replace(".glade", "", basename($filename)); // FIXME
     $this->_sClassName = $cn;
@@ -347,12 +350,28 @@ class Glade
     }
   }
 
+  /**
+   * Fill node with empty text
+   * @param   DOMDocument   $doc        Document Object
+   * @param   DOMNode       $node       Node to fill
+   * @param   bool          $short      Short tag ?
+   * @return  void
+   */
   protected function _fill($doc, $node, $short = false) {
     if ( !$node->hasChildNodes() && !$short ) {
       $node->appendChild($doc->createTextNode(''));
     }
   }
 
+  /**
+   * Parse a child node in Glade XML document
+   * @param   DOMDocument   $doc          Document Object
+   * @param   DOMNode       $doc_node     Node to use
+   * @param   DOMNode       $gl_root      -- Unused --
+   * @param   DOMNode       $gl_node      Parent Node
+   * @param   Array         $signals      Signals
+   * @return  Array
+   */
   protected final function _parseChild($doc, $doc_node, $gl_root, $gl_node, Array &$signals = Array()) {
     if  ( isset($gl_node->child) ) {
       if ( $children = $gl_node->child ) {
@@ -766,6 +785,12 @@ class Glade
     return $signals;
   }
 
+  /**
+   * Get stock image from String
+   * @param   String    $stock    Stock-image string
+   * @param   String    $size     Image Size (deafault: 16x16)
+   * @return  Array
+   */
   protected final static function _getStockImage($stock, $size = "16x16") {
     if ( isset(self::$Stock[$stock]) ) {
       $label   = self::$Stock[$stock]['label'];
@@ -782,6 +807,12 @@ class Glade
     return null;
   }
 
+  /**
+   * Check if node is hotkeyed and apply an underscore
+   * @param   DOMDocument   $doc    Document Object
+   * @param   String        $pv     Label
+   * @return  DOMNode
+   */
   protected final static function _getHotkeyed($doc, $pv) {
     $span = $doc->createElement("span");
     if ( ($sub = strstr($pv, "_")) !== false ) {
@@ -802,6 +833,11 @@ class Glade
     return $span;
   }
 
+  /**
+   * Parse a Glade XML document
+   * @param   String    $file     XML Path
+   * @return  Glade
+   */
   public final static function parse($file) {
     if ( file_exists($file) && ($content = file_get_contents($file)) ) {
       if ( $xml = new SimpleXMLElement($content) ) {
@@ -812,6 +848,10 @@ class Glade
     throw new Exception("Failed to read glade file.");
   }
 
+  /**
+   * Get Document Windows
+   * @return Array
+   */
   public final function getWindows() {
     return $this->_aWindows;
   }

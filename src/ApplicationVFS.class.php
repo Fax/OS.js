@@ -11,7 +11,7 @@
  * ApplicationVFS Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Server.Core
+ * @package OSjs.Core.Sources
  * @class
  */
 class ApplicationVFS
@@ -54,6 +54,7 @@ class ApplicationVFS
 
   /**
    * Upload a file
+   * @param  String   $path     Upload path
    * @retrun Mixed
    */
   public static function upload($path) {
@@ -75,6 +76,7 @@ class ApplicationVFS
 
   /**
    * Check if file/dir exists
+   * @param  String   $argv     Argument
    * @return Mixed
    */
   public static function exists($argv) {
@@ -84,6 +86,7 @@ class ApplicationVFS
 
   /**
    * Read a file (cat)
+   * @param  String   $argv     Argument
    * @return String
    */
   public static function cat($argv) {
@@ -96,6 +99,7 @@ class ApplicationVFS
 
   /**
    * Write a file (put)
+   * @param  String   $argv     Argument
    * @return bool
    */
   public static function put($argv) {
@@ -127,6 +131,7 @@ class ApplicationVFS
 
   /**
    * Delete a file (rm)
+   * @param  String   $path     Path
    * @return bool
    */
   public static function rm($path) {
@@ -148,6 +153,9 @@ class ApplicationVFS
 
   /**
    * Move/Rename a file (mv)
+   * @param  String   $path     Path
+   * @param  String   $src      Source filename
+   * @param  String   $dest     Destination filename
    * @return bool
    */
   public static function mv($path, $src, $dest) {
@@ -175,6 +183,8 @@ class ApplicationVFS
 
   /**
    * Read a archive file
+   * @param  String   $arch   Archive filename
+   * @param  String   $path   Archive path (default /)
    * @return Array
    */
   public static function ls_archive($arch, $path = "/") {
@@ -218,6 +228,9 @@ class ApplicationVFS
 
   /**
    * Read a directory (ls)
+   * @param  String     $path     Directory path
+   * @param  Array      $ignores  Ignore these file(s)
+   * @param  Array      $mimes    Only show these MIME(s)
    * @return Array
    */
   public static function ls($path, Array $ignores = null, Array $mimes = Array()) {

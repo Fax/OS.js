@@ -11,12 +11,15 @@
  * Archive Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OS.js
+ * @package OSjs.Core.Libraries
  * @class
  */
 abstract class Archive
 {
 
+  /**
+   * Archive types
+   */
   const TYPE_ZIP  = 1;
   const TYPE_BZIP = 2;
   const TYPE_RAR  = 3;
@@ -27,11 +30,11 @@ abstract class Archive
   // VARIABLES
   /////////////////////////////////////////////////////////////////////////////
 
-  protected $_iType        = -1;
-  protected $_sFilename    = "";
-  protected $_sArchiveType = "";
+  protected $_iType        = -1;    //!< Archive type
+  protected $_sFilename    = "";    //!< Archive filename
+  protected $_sArchiveType = "";    //!< Archive type description
 
-  protected static $_ArchiveExtensions = Array(
+  protected static $_ArchiveExtensions = Array(     //!< Archive filename ext.
     self::TYPE_ZIP  => Array("zip"),
     self::TYPE_BZIP => Array("bz2", "bzip", "bz"),
     self::TYPE_RAR  => Array("rar"),
@@ -39,7 +42,7 @@ abstract class Archive
     self::TYPE_TAR  => Array("tar")
   );
 
-  protected static $_ArchiveNames = Array(
+  protected static $_ArchiveNames = Array(          //!< Archive descriptions
     self::TYPE_ZIP  => "ZIP Archive",
     self::TYPE_BZIP => "Bzip2 Archive",
     self::TYPE_RAR  => "RAR Archive",
@@ -47,7 +50,7 @@ abstract class Archive
     self::TYPE_TAR  => "TAR Archive"
   );
 
-  protected static $_ArchiveClasses = Array(
+  protected static $_ArchiveClasses = Array(        //!< Archive class mapping
     self::TYPE_ZIP  => "Zip",
     self::TYPE_BZIP => "Bzip",
     self::TYPE_RAR  => "Rar",
@@ -59,12 +62,20 @@ abstract class Archive
   // MAGICS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * @param String    $filename     Archive filename
+   * @param int       $type         Archive type
+   * @constructor
+   */
   protected function __construct($filename, $type) {
     $this->_iType         = (int) $type;
     $this->_sFilename     = $filename;
     $this->_sArchiveType  = self::$_ArchiveNames[$type];
   }
 
+  /**
+   * @destructor
+   */
   public function __destruct() {
   }
 
@@ -72,18 +83,38 @@ abstract class Archive
   // VIRTUAL METHODS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Compress archive
+   * @throws Exception
+   * @return void
+   */
   public function compress($src) {
     throw new Exception(sprintf("%s does not support '%s()'", get_class($this), __METHOD__));
   }
 
+  /**
+   * Decompress archive
+   * @throws Exception
+   * @return void
+   */
   public function decompress($dst) {
     throw new Exception(sprintf("%s does not support '%s()'", get_class($this), __METHOD__));
   }
 
+  /**
+   * Read/List archive
+   * @throws Exception
+   * @return void
+   */
   public function read() {
     throw new Exception(sprintf("%s does not support '%s()'", get_class($this), __METHOD__));
   }
 
+  /**
+   * Extract archive
+   * @throws Exception
+   * @return void
+   */
   public function extract() {
     throw new Exception(sprintf("%s does not support '%s()'", get_class($this), __METHOD__));
   }
@@ -92,6 +123,11 @@ abstract class Archive
   // STATIC METHODS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Open Archive
+   * @param  String     $filename     Archive filename
+   * @return [Archive]
+   */
   public final static function open($filename) {
     $instance = null;
 
@@ -111,6 +147,11 @@ abstract class Archive
     throw new Exception("The file '$filename' is not a valid archive!");
   }
 
+  /**
+   * Create Archive
+   * @param  String     $filename     Archive filename
+   * @return [Archive]
+   */
   public final static function create($filename) {
     if ( file_exists($filename) || is_file($filename) ) {
       throw new Exception("File '$filename' already exists!");
@@ -128,6 +169,12 @@ abstract class Archive
     throw new Exception("Failed to create archive '$filename'!");
   }
 
+  /**
+   * Check type by mime (fallback to extension)
+   * @param   String    $src        Source file
+   * @param   int       $ctype      Set type (static, default -1)
+   * @return  int
+   */
   protected final static function _checkType($src, $ctype = -1) {
 
     // Find MIME
@@ -191,17 +238,23 @@ abstract class Archive
  * ArchiveZip Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OS.js
+ * @package OSjs.Core.Libraries.Archive
  * @class
  */
 class ArchiveZip
   extends Archive
 {
 
+  /**
+   * @see Archive::extract()
+   */
   public final function extract() {
     return false;
   }
 
+  /**
+   * @see Archive::read()
+   */
   public function read() {
     $list = Array();
 
@@ -233,17 +286,23 @@ class ArchiveZip
  * ArchiveRar Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OS.js
+ * @package OSjs.Core.Libraries.Archive
  * @class
  */
 class ArchiveRar
   extends Archive
 {
 
+  /**
+   * @see Archive::extract()
+   */
   public final function extract() {
     return false;
   }
 
+  /**
+   * @see Archive::read()
+   */
   public final function read() {
     $list = Array();
 
@@ -275,17 +334,23 @@ class ArchiveRar
  * ArchiveTar Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OS.js
+ * @package OSjs.Core.Libraries.Archive
  * @class
  */
 class ArchiveTar
   extends Archive
 {
 
+  /**
+   * @see Archive::extract()
+   */
   public final function extract() {
     return false;
   }
 
+  /**
+   * @see Archive::read()
+   */
   public final function read() {
     $list = Array();
 
@@ -297,13 +362,16 @@ class ArchiveTar
  * ArchiveBzip Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OS.js
+ * @package OSjs.Core.Libraries.Archive
  * @class
  */
 class ArchiveBzip
   extends Archive
 {
 
+  /**
+   * @see Archive::compress()
+   */
   public final function compress($src) {
     if ( $fp = fopen($src, "r") ) {
       // Read source file
@@ -322,6 +390,9 @@ class ArchiveBzip
     return false;
   }
 
+  /**
+   * @see Archive::decompress()
+   */
   public final function decompress($dst) {
     $string = "";
     $buffer = 4096;
@@ -350,13 +421,16 @@ class ArchiveBzip
  * ArchiveBzip Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OS.js
+ * @package OSjs.Core.Libraries.Archive
  * @class
  */
 class ArchiveGzip
   extends Archive
 {
 
+  /**
+   * @see Archive::compress()
+   */
   public final function compress($src) {
     $level = 9;
 
@@ -377,6 +451,9 @@ class ArchiveGzip
     return false;
   }
 
+  /**
+   * @see Archive::decompress()
+   */
   public final function decompress($dst) {
     $string = "";
     $buffer = 4096;

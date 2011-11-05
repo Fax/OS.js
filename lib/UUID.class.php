@@ -21,7 +21,7 @@
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @author  Andrew Moore 04-Dec-2009 04:45
  * @link    http://php.net/manual/en/function.uniqid.php
- * @package Simplicicore.Utilities.UUID
+ * @package OSjs.Core.Libraries
  * @class
  */
 class UUID

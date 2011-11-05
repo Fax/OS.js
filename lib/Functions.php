@@ -7,6 +7,16 @@
  * @created 2011-06-20
  */
 
+function get_inner_html( $node ) { 
+    $innerHTML= ''; 
+    $children = $node->childNodes; 
+    foreach ($children as $child) { 
+        $innerHTML .= $child->ownerDocument->saveXML( $child ); 
+    } 
+
+    return $innerHTML; 
+} 
+
 function startsWith($haystack, $needle)
 {
     $length = strlen($needle);

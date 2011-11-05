@@ -13,18 +13,22 @@
  * WebSocket user connection class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core
+ * @package OSjs.Core.Libraries
  * @class
  */
-class SocketUser{
-  public $id;
-  public $socket;
-  public $handshake;
-  public $type = "hybi-00";
+class SocketUser
+{
+  public $id        = null;         //!< User unique ID
+  public $socket    = null;         //!< WebSocket Socket
+  public $handshake = null;         //!< Handshaked ?
+  public $type      = "hybi-00";    //!< WebSocket type
 
-  public $tcp;
-  public $tcp_index;
+  public $tcp;                      //!< TCP Socket
+  public $tcp_index;                //!< TCP Socket index
 
+  /**
+   * @constructor
+   */
   public function __construct($socket) {
     $this->id = uniqid();
     $this->socket = $socket;
@@ -32,6 +36,12 @@ class SocketUser{
     print "User created '{$this->id}'...\n";
   }
 
+  /**
+   * Create a TCP connection
+   * @param   String    $conn     Destination Host
+   * @param   int       $port     Destination Port
+   * @return  Socket
+   */
   public function connect($conn, $port) {
     if ( !$this->tcp ) {
       if ( $this->tcp = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) ) {
@@ -43,6 +53,11 @@ class SocketUser{
     return null;
   }
 
+  /**
+   * Send a message over TCP connection
+   * @param   String    $st       Message
+   * @return  Socket
+   */
   public function send($st) {
     if ( $socket = $this->tcp ) {
       $length = strlen($st);
@@ -66,20 +81,27 @@ class SocketUser{
         }
 
       }
-      print "....Sendt!\n";
 
       return $socket;
     }
     return null;
   }
 
+  /**
+   * Disconnect the TCP Socket
+   * @return bool
+   */
   public function disconnect() {
     if ( $this->tcp ) {
       print "User: Disconnecting TCP\n";
       socket_close($this->tcp);
 
       $this->tcp = null;
+
+      return true;
     }
+
+    return false;
   }
 }
 

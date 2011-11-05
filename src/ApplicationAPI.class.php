@@ -11,12 +11,18 @@
  * ApplicationAPI Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Server.Core
+ * @package OSjs.Core.Sources
  * @class
  */
 class ApplicationAPI
 {
 
+  /**
+   * Read an URL
+   * @param  String   $url        URL to read
+   * @param  int      $timeout    Read timeout (default 30s)
+   * @return String
+   */
   public static function readurl($url, $timeout = 30) {
     $ch = curl_init();
     curl_setopt($ch,CURLOPT_URL,$url);
@@ -27,6 +33,11 @@ class ApplicationAPI
     return $data;
   }
 
+  /**
+   * Get Audio-file information
+   * @param  String   $fname      Audio-file path
+   * @return Mixed
+   */
   public static function audioInfo($fname) {
     if ( $path = ApplicationVFS::exists($fname) ) {
       $pcmd   = escapeshellarg($path);

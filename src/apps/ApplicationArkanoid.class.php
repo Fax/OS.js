@@ -11,7 +11,7 @@
  * ApplicationArkanoid Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Applications
+ * @package OSjs.Core.Sources.Applications
  * @class
  */
 class ApplicationArkanoid
