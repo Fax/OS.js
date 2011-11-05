@@ -1,3 +1,52 @@
+Directory structure:
+-------------------------------------------------------------------------------
+bin/                    Utilities and misc scripts
+  [application-gen]         Application compiler
+  [database-gen]            Database compiler (Propel ORM)
+  [count-lines]             Count code lines
+  [update_revision]         Update to latest revision
+  [yui.sh]                  Yahoo YUI Compressor launcher wrapper
+lib/                     Main PHP libraries
+logs/                    Apache Log files
+public_html/             Apache Public directory
+  css/                      CSS files
+    vendor/                   Vendor library CSS files
+  img/                      Image files, icons, etc
+  js/                       JavaScript library files
+    vendor/                   Vendor library JavaScript files
+      [fileuploader.js]         AJAX file upload script
+      [jquery-*.js]             jQuery script(s)
+      [json2.js]                JSON library
+      [sprintf-*.js]            sprintf() function
+    [utils.js]                Public OS.js utilities
+  media/                    Public media directory (VFS)
+  [index.php]               Main PHP script
+  [help.php]                Help file
+src/                    Main sources
+  apps/                   Application build files (XML, Glade and PHP)
+  base/                   JavaScript Core files
+  build/                  Compiled files
+    apps/                   Application compiler output files
+    classes/                Propel ORM Classes
+    conf/                   Propel ORM Configuration files
+    migrations/             Propel ORM Migration files
+    sql/                    Propel ORM SQL Build files
+    src/                    Minimized sources for Core and Application resources
+  resources/              Application resource files (CSS, JavaScript)
+vendor/                 Vendor libraries
+  Propel/                 Propel ORM installation base directory
+  [yuicompressor-*.jar]   Yahoo Script Compressor
+  [AjaxUpload.php]        AJAX file upload script
+[header.php]            PHP Bootstrap, configurations
+[server.php]            WebSocket server PHP script
+[build.properties]      Propel ORM build file
+[buildtime-conf.xml]    Propel ORM build runtime config
+[runtime-conf.xml]      Propel ORM main runtime config
+[schema.xml]            Application(s) database Schema (Propel ORM)
+
+The 'public_html/' directory does not expose or contain any core script files.
+All
+
 Building applications:
 -------------------------------------------------------------------------------
 Look at the example files to see how this is done.
@@ -11,11 +60,13 @@ New Application:
 * Copy 'src/build/ApplicationXXX.class.php' to 'src/apps/'
 * Copy 'src/build/apps/app.XXX.js' to 'src/resources/'
 * Copy 'src/build/apps/app.XXX.css' to 'src/resources/'
+* Run './bin/minimize-scripts.php' if you want minimized scripts for production servers
 
 Update:
 * Run './bin/application-gen'
 * Run './bin/database-gen' if database schema was updated
 * Update your CSS and JS with new code found in 'src/build/app.FOO.BAR'
+* Run './bin/minimize-scripts.php' if you want minimized scripts for production servers
 
 Tips:
 * Signals named 'MenuOpen', 'MenuSave', 'MenuSaveAs', 'MenuQuit', 'MenuClose'

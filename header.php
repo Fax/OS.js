@@ -56,9 +56,9 @@ define("PATH_PROJECT_BUILD",         PATH_PROJECT . "/src/build");
 define("PATH_PROJECT_LOG",           PATH_PROJECT . "/logs");
 define("PATH_APPS",                  PATH_PROJECT . "/src/apps");
 define("PATH_RESOURCES",             PATH_PROJECT . "/src/resources");
-define("PATH_RESOURCES_COMPRESSED",  PATH_PROJECT_BUILD . "/scripts/resources");
+define("PATH_RESOURCES_COMPRESSED",  PATH_PROJECT_BUILD . "/src/resources");
 define("PATH_JSBASE",                PATH_PROJECT . "/src/base");
-define("PATH_JSBASE_COMPRESSED",     PATH_PROJECT_BUILD . "/scripts/base");
+define("PATH_JSBASE_COMPRESSED",     PATH_PROJECT_BUILD . "/src/base");
 define("APPLICATION_BUILD",          PATH_PROJECT_BUILD . "/applications.xml");
 
 //
