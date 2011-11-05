@@ -156,7 +156,7 @@ class Core
 /*!
  * Font Stylesheet
  *
- * @package OSjs.Styles
+ * @package OSjs.Fonts
  * @author Anders Evenrud <andersevenrud@gmail.com>
  */
 
