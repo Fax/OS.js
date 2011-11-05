@@ -1,4 +1,11 @@
+#!/usr/bin/env php
 <?php
+/**
+ * Compress all resources
+ *
+ * @package OSjs.Utilities
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ */
 
 require "header.php";
 

@@ -3,4 +3,4 @@
 sudo chown -R anders:anders .git
 git pull
 ./bin/application-gen
-php bin/minimize-scripts.php
+./bin/minimize-scripts
