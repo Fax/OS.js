@@ -113,6 +113,64 @@ class Core
   }
 
   /**
+   * Get font StyleSheet
+   * @return String
+   */
+  public static function getFont($font, $compress) {
+    $italic = $font == "FreeSerif" ? "Italic" : "Oblique";
+    $bos    = $font == "Sansation" ? "/*" : "";
+    $boe    = $font == "Sansation" ? "*/" : "";
+
+    $header = <<<EOCSS
+@charset "UTF-8";
+/*!
+ * Font Stylesheet
+ *
+ * @package OSjs.Styles
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ */
+
+EOCSS;
+
+
+    $template = <<<EOCSS
+@font-face {
+  font-family : CustomFont;
+  src: url('/media/System/Fonts/%1\$s.ttf');
+}
+@font-face {
+  font-family : CustomFont;
+  font-weight : bold;
+  src: url('/media/System/Fonts/%1\$sBold.ttf');
+}
+@font-face {
+  font-family : CustomFont;
+  font-style : italic;
+  src: url('/media/System/Fonts/%1\$s{$italic}.ttf');
+}
+{$bos}
+@font-face {
+  font-family : CustomFont;
+  font-weight : bold;
+  font-style : italic;
+  src: url('/media/System/Fonts/%1\$sBold{$italic}.ttf');
+}
+{$boe}
+
+body {
+  font-family : CustomFont, Arial;
+}
+EOCSS;
+
+    $css = sprintf($template, addslashes($font));
+    if ( $compress ) {
+      $css = preg_replace("/\s/", "", $css);
+      $css = preg_replace('%/\s*\*.*?\*/\s*%s', '', $css);
+    }
+    return ($header . $css);
+  }
+
+  /**
    * Get a resource file (CSS or JS) [with compression]
    * @return Mixed
    */

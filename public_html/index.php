@@ -25,51 +25,8 @@ if ( !ENABLE_CACHE ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 if ( isset($_GET['font']) && !empty($_GET['font']) ) {
-
   header("Content-Type: text/css; charset=utf-8");
-  $font   = $_GET['font'];
-  $italic = $_GET['font'] == "FreeSerif" ? "Italic" : "Oblique";
-  $bos    = $_GET['font'] == "Sansation" ? "/*" : "";
-  $boe    = $_GET['font'] == "Sansation" ? "*/" : "";
-
-  $template = <<<EOCSS
-@charset "UTF-8";
-/*!
- * Font Stylesheet
- *
- * @package OSjs.Styles
- * @author Anders Evenrud <andersevenrud@gmail.com>
- */
-
-@font-face {
-  font-family : CustomFont;
-  src: url('/media/System/Fonts/%1\$s.ttf');
-}
-@font-face {
-  font-family : CustomFont;
-  font-weight : bold;
-  src: url('/media/System/Fonts/%1\$sBold.ttf');
-}
-@font-face {
-  font-family : CustomFont;
-  font-style : italic;
-  src: url('/media/System/Fonts/%1\$s{$italic}.ttf');
-}
-{$bos}
-@font-face {
-  font-family : CustomFont;
-  font-weight : bold;
-  font-style : italic;
-  src: url('/media/System/Fonts/%1\$sBold{$italic}.ttf');
-}
-{$boe}
-
-body {
-  font-family : CustomFont, Arial;
-}
-EOCSS;
-
-  print sprintf($template, addslashes($font));
+  print Core::getFont($_GET['font'], ENV_PRODUCTION);
   exit;
 }
 
