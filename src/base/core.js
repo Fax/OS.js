@@ -41,9 +41,13 @@
    * URIs
    */
   var WEBSOCKET_URI      = "ws://localhost:8888";
+  var AJAX_URI           = "/";
+
   var RESOURCE_URI       = "/?resource=";
   var LIBRARY_URI        = "/?library=";
-  var AJAX_URI           = "/";
+  var THEME_URI          = "/?theme=";
+  var FONT_URI           = "/?font=";
+  var CURSOR_URI         = "/?cursor=";
 
   /**
    * Local references
@@ -2167,7 +2171,7 @@
      */
     setTheme : function(theme) {
       var css = $("#ThemeFace");
-      var href = "/?theme=" + theme.toLowerCase();
+      var href = THEME_URI + theme.toLowerCase();
       if ( $(css).attr("href") != href ) {
         $(css).attr("href", href);
       }
@@ -2179,7 +2183,7 @@
      */
     setFont : function(font) {
       var css = $("#FontFace");
-      var href = "/?font=" + font;
+      var href = FONT_URI + font;
       if ( $(css).attr("href") != href ) {
         $(css).attr("href", href);
       }
@@ -2191,7 +2195,7 @@
      */
     setCursorTheme : function(cursor) {
       var css = $("#CursorFace");
-      var href = "/?cursor=" + cursor.toLowerCase();
+      var href = CURSOR_URI + cursor.toLowerCase();
       if ( $(css).attr("href") != href ) {
         $(css).attr("href", href);
       }
