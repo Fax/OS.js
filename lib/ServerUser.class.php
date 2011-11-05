@@ -20,6 +20,7 @@ class SocketUser{
   public $id;
   public $socket;
   public $handshake;
+  public $type = "hybi-00";
 
   public $tcp;
   public $tcp_index;

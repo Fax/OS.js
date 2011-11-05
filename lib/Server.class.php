@@ -60,9 +60,11 @@ class Server
     $buffer = null;
     while ( true ) {
       $changed = $server->_sockets;
+      $write   = null;
+      $except  = null;
 
       // Select all sockets for handling
-      socket_select($changed, $write = null, $except = null, null);
+      socket_select($changed, $write, $except, null);
 
       foreach ( $changed as $socket ) {
         // Handle Master socket
@@ -86,7 +88,14 @@ class Server
             // Seems like we got a handshake or data recieved
             $user = $server->_getUserBySocket($socket);
             if ( !$user->handshake ) {
-              $server->_handshake($user, $buffer);
+
+              if ( preg_match("/Sec-WebSocket-Version: (.*)\r\n/",$buffer,$match) ) {
+                if ( ((int)trim($match[1])) >= 8 ) {
+                  $shake = $server->_handshake10($user, $buffer);
+                } else {
+                  $shake = $server->_handshake00($user, $buffer);
+                }
+              }
             } else {
               $server->_process($user, $buffer, $socket == $user->tcp);
             }
@@ -135,8 +144,45 @@ class Server
    * @see    WebSocket W3C Specifications
    * @return String
    */
-  public final static function unwrap($msg = "") {
-    return substr($msg,1,strlen($msg)-2);
+  public final static function unwrap($user, $data = "") {
+    if ( $user->type == "hybi-00" ) {
+      return substr($data,1,strlen($data)-2);
+    } else {
+      $bytes = $data;
+      $dataLength = '';
+      $mask = '';
+      $coded_data = '';
+      $decodedData = '';
+      $secondByte = sprintf('%08b', ord($bytes[1]));
+      $masked = ($secondByte[0] == '1') ? true : false;
+      $dataLength = ($masked === true) ? ord($bytes[1]) & 127 : ord($bytes[1]);
+
+      if ( $masked === true ) {
+        if ( $dataLength === 126 ) {
+          $mask = substr($bytes, 4, 4);
+          $coded_data = substr($bytes, 8);
+        } else if ( $dataLength === 127 ) {
+          $mask = substr($bytes, 10, 4);
+          $coded_data = substr($bytes, 14);
+        } else {
+          $mask = substr($bytes, 2, 4);
+          $coded_data = substr($bytes, 6);
+        }
+        for($i = 0; $i < strlen($coded_data); $i++) {
+          $decodedData .= $coded_data[$i] ^ $mask[$i % 4];
+        }
+      } else {
+        if ( $dataLength === 126 ) {
+          $decodedData = substr($bytes, 4);
+        } else if ( $dataLength === 127 ) {
+          $decodedData = substr($bytes, 10);
+        } else {
+          $decodedData = substr($bytes, 2);
+        }
+      }
+
+      return $decodedData;
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -192,7 +238,7 @@ class Server
   }
 
   /**
-   * Do a ServerUser handshake over Socket
+   * Do a ServerUser handshake over Socket (hybi-10)
    *
    * TODO:
    *   http://code.google.com/p/phpwebsocket/issues/detail?id=33
@@ -204,20 +250,67 @@ class Server
    * @see    WebSocket W3C Specifications
    * @return bool
    */
-  protected function _handshake($user, $buffer) {
-    print "Handshaking with '{$user->id}'\n";
+  protected function _handshake10($user, $buffer) {
+    print "Handshaking hyby-10 with '{$user->id}'\n";
 
-    // Parse the HTML header
-    $r=$h=$o=$data=null;
-    $key1=$key2=null;
-    if(preg_match("/GET (.*) HTTP/"   ,$buffer,$match)){ $r=$match[1]; }
-    if(preg_match("/Host: (.*)\r\n/"  ,$buffer,$match)){ $h=$match[1]; }
-    if(preg_match("/Origin: (.*)\r\n/",$buffer,$match)){ $o=$match[1]; }
-    if(preg_match("/Sec-WebSocket-Key2: (.*)\r\n/",$buffer,$match)){ $key2=$match[1]; }
-    if(preg_match("/Sec-WebSocket-Key1: (.*)\r\n/",$buffer,$match)){ $key1=$match[1]; }
+    /*
+    Request URL:ws://localhost:8888/
+    Request Headersview source
+    Connection:Upgrade
+    Host:localhost:8888
+    Sec-WebSocket-Key:5l1WQFrCzbaN+ES7zBwuPw==
+    Sec-WebSocket-Origin:http://ajwm.local
+    Sec-WebSocket-Version:8
+    Upgrade:websocket
+    (Key3):00:00:00:00:00:00:00:00
+     */
+
+    $resource = $host = $origin = $key = $data = null;
+    if(preg_match("/GET (.*) HTTP/"   ,$buffer,$match)){ $resource=$match[1]; }
+    if(preg_match("/Host: (.*)\r\n/"  ,$buffer,$match)){ $host=$match[1]; }
+    if(preg_match("/Origin: (.*)\r\n/",$buffer,$match)){ $origin=$match[1]; }
+    if(preg_match("/Sec-WebSocket-Key: (.*)\r\n/",$buffer,$match)){ $key=$match[1]; }
     if(preg_match("/\r\n(.*?)\$/",$buffer,$match)){ $data=$match[1]; }
 
-    list($resource,$host,$origin,$strkey1,$strkey2,$data) = array($r,$h,$o,$key1,$key2,$data);
+    if ( $resource && $host && $key && $data ) {
+      $sha        = sha1($key."258EAFA5-E914-47DA-95CA-C5AB0DC85B11",true);
+      $hash_data  = base64_encode($sha);
+
+      $upgrade =  "HTTP/1.1 101 Switching Protocols\r\n" .
+                  "Upgrade: WebSocket\r\n" .
+                  "Connection: Upgrade\r\n" .
+                  "Sec-WebSocket-Accept: " . $hash_data . "\r\n\r\n";
+
+      // Write to socket and return
+      //socket_write($user->socket,$upgrade.chr(0),strlen($upgrade.chr(0)));
+      socket_write($user->socket, $upgrade, strlen($upgrade));
+      $user->handshake  = true;
+      $user->type       = "hybi-10";
+
+      print "Handshaked hyby-10 with '{$user->id}'\n";
+      return true;
+    }
+
+    return $this->_handshakeOld($user, $buffer);
+  }
+
+  /**
+   * Do a ServerUser handshake over Socket
+   *
+   * @see    WebSocket W3C Specifications
+   * @return bool
+   */
+  protected function _handshake00($user, $buffer) {
+    print "Handshaking hybi-00 with '{$user->id}'\n";
+
+    // Parse the HTML header
+    $resource = $host = $origin = $strkey1 = $strkey2 = $data = null;
+    if(preg_match("/GET (.*) HTTP/"   ,$buffer,$match)){ $resource=$match[1]; }
+    if(preg_match("/Host: (.*)\r\n/"  ,$buffer,$match)){ $host=$match[1]; }
+    if(preg_match("/Origin: (.*)\r\n/",$buffer,$match)){ $origin=$match[1]; }
+    if(preg_match("/Sec-WebSocket-Key2: (.*)\r\n/",$buffer,$match)){ $strkey2=$match[1]; }
+    if(preg_match("/Sec-WebSocket-Key1: (.*)\r\n/",$buffer,$match)){ $strkey1=$match[1]; }
+    if(preg_match("/\r\n(.*?)\$/",$buffer,$match)){ $data=$match[1]; }
 
     // Now match up
     $numkey1 = preg_replace('/[^\d]*/', '', $strkey1);
@@ -250,7 +343,7 @@ class Server
     socket_write($user->socket,$upgrade.chr(0),strlen($upgrade.chr(0)));
     $user->handshake=true;
 
-    print "Handshaked with '{$user->id}'\n";
+    print "Handshaked hybi-00 with '{$user->id}'\n";
     return true;
   }
 
@@ -258,10 +351,57 @@ class Server
    * Send a message to a Client Socket
    * @return void
    */
-  protected function _send($client, $message) {
-    print "> '$message'\n";
-    $msg = self::wrap($message);
-    socket_write($client, $msg, strlen($msg));
+  protected function _send($type, $client, $data) {
+    print "> '$data'\n";
+    if ( $type == "hybi-00" ) {
+      $msg = self::wrap($data);
+      $result = socket_write($client, $msg, strlen($msg));
+      if ( !$result ) {
+        $this->_disconnect($client);
+        $client = false;
+      }
+    } else {
+      // FIXME throw error if message length is longer than 0x7FFFFFFFFFFFFFFF chracters
+      $header = " ";
+      $header[0] = chr(0x81);
+      $header_length = 1;
+
+      //Payload length:  7 bits, 7+16 bits, or 7+64 bits
+      $dataLength = strlen($data);
+
+      //The length of the payload data, in bytes: if 0-125, that is the payload length.
+      if ( $dataLength <= 125 ) {
+        $header[1] = chr($dataLength);
+        $header_length = 2;
+      } else if ( $dataLength <= 65535 ) {
+        // If 126, the following 2 bytes interpreted as a 16
+        // bit unsigned integer are the payload length.
+        $header[1] = chr(126);
+        $header[2] = chr($dataLength >> 8);
+        $header[3] = chr($dataLength & 0xFF);
+        $header_length = 4;
+      } else {
+        // If 127, the following 8 bytes interpreted as a 64-bit unsigned integer (the
+        // most significant bit MUST be 0) are the payload length.
+        $header[1] = chr(127);
+        $header[2] = chr(($dataLength & 0xFF00000000000000) >> 56);
+        $header[3] = chr(($dataLength & 0xFF000000000000) >> 48);
+        $header[4] = chr(($dataLength & 0xFF0000000000) >> 40);
+        $header[5] = chr(($dataLength & 0xFF00000000) >> 32);
+        $header[6] = chr(($dataLength & 0xFF000000) >> 24);
+        $header[7] = chr(($dataLength & 0xFF0000) >> 16);
+        $header[8] = chr(($dataLength & 0xFF00 ) >> 8);
+        $header[9] = chr( $dataLength & 0xFF );
+        $header_length = 10;
+      }
+
+      $result = socket_write($client, $header . $data, strlen($data) + $header_length);
+      //$result = socket_write($client, chr(0x81) . chr(strlen($data)) . $data, strlen($data) + 2);
+      if ( !$result ) {
+        $this->_disconnect($client);
+        $client = false;
+      }
+    }
   }
 
   /**
@@ -275,7 +415,7 @@ class Server
       print "< EXT: ---\n";
       $response = Array("response" => "$message");
     } else {
-      $msg = self::unwrap($message);
+      $msg = self::unwrap($user, $message);
       $json = null;
       try {
         $json = (array) json_decode($msg);
@@ -326,7 +466,7 @@ class Server
         print "< '$msg'\n";
       }
     }
-    $this->_send($user->socket, json_encode($response));
+    $this->_send($user->type, $user->socket, json_encode($response));
   }
 
   /////////////////////////////////////////////////////////////////////////////
