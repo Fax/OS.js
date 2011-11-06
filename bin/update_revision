@@ -1,6 +1,7 @@
 #!/bin/sh
 
 sudo chown -R anders:anders .git
+git checkout -- src/build/applications.xml
 git pull
 ./bin/application-gen
 ./bin/minimize-scripts
