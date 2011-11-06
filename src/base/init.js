@@ -58,6 +58,8 @@
       }
       delete canv;
     }
+    delete test;
+    delete i;
   }
 
   // Labels
