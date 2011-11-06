@@ -51,11 +51,12 @@
   // Compability cont.
   if ( OSjs.Compability.SUPPORT_CANVAS ) {
     var test = ["2d", "webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
-    var canv = document.createElement('canvas');
     for ( var i = 0; i < test.length; i++ ) {
-      if ( canv.getContext(test[i]) ) {
+      var canv = document.createElement('canvas');
+      if ( !!canv.getContext(test[i]) ) {
         OSjs.Compability.SUPPORT_CANVAS_CONTEXT.push(test[i]);
       }
+      delete canv;
     }
   }
 
