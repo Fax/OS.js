@@ -8,7 +8,7 @@
  */
 
 ///////////////////////////////////////////////////////////////////////////////
-// BASE CLASS
+// BASE CLASSES
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -50,12 +50,51 @@ abstract class Service
 
 }
 
+// SOAP Extensions
+if ( class_exists("SoapClient") ) {
+  /**
+   * Soap Client Class
+   *
+   * @author  Anders Evenrud <andersevenrud@gmail.com>
+   * @package OSjs.Core.Libraries.Services.Wrapper
+   * @class
+   */
+  class     LocalSoapClient
+    extends SoapClient
+  {
+    public function __call($function_name, $arguments)
+    {
+      $result       = false;
+      $max_retries  = 5;
+      $retry_count  = 0;
+
+      while ( !$result && $retry_count < $max_retries ) {
+        try {
+          $result = parent::__call($function_name, $arguments);
+        } catch ( SoapFault $fault ) {
+          if ( $fault->faultstring != 'Could not connect to host') {
+            throw $fault;
+          }
+        }
+        sleep(1);
+        $retry_count ++;
+      }
+
+      if ( $retry_count == $max_retries ) {
+        throw new SoapFault('Could not connect to host after 5 attempts');
+      }
+
+      return $result;
+    }
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // EXTENDED CLASSES
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * GET Service Class
+ * ServiceGET -- GET Service Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package OSjs.Core.Libraries.Services
@@ -111,7 +150,7 @@ class     ServiceGET
 }
 
 /**
- * POST Service Class
+ * ServicePOST -- POST Service Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package OSjs.Core.Libraries.Services
@@ -163,7 +202,7 @@ class     ServicePOST
 }
 
 /**
- * JSON Service Class
+ * ServiceJSON -- JSON Service Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package OSjs.Core.Libraries.Services
@@ -201,9 +240,11 @@ class     ServiceJSON
 }
 
 /**
- * SOAP Service Class
+ * ServiceSOAP -- SOAP Service Class
  *
- * @TODO
+ * This class depends upon the LocalSoapClient Class.
+ * Requires SOAP to be supported by PHP.
+ *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package OSjs.Core.Libraries.Services
  * @class
@@ -218,10 +259,58 @@ class     ServiceSOAP
   public function __construct() {
     parent::__construct(Service::TYPE_SOAP);
   }
+
+  /**
+   * Call a SOAP WSDL Method with given arguments
+   *
+   * This function returns an Array with either ["error", "type"] upon failure,
+   * or ["method", "arguments", "response"] on success.
+   *
+   * @param   Array   $data         SOAP Data
+   *                                Array("call" => "method", "arvg" => Array([arguments, ...]))
+   * @param   Array   $options      SOAP Client Options
+   * @see LocalSoapClient
+   * @see ServiceGET::call()
+   */
+  public function call($uri, $data, $timeout = 30, Array $options = Array()) {
+    $return = null;
+
+    try {
+      if ( $sc = $this->createClient($uri, $options) ) {
+        $response = $sc->$data['call']($data['argv']);
+        $return   = Array(
+          "method"    => $data['call'],
+          "arguments" => $data['argv'],
+          "response"  => $response
+        );
+      } else {
+        throw new Exception("PHP was not compiled with Soap support!");
+      }
+    } catch ( SoapFault $e ) {
+      $return = Array("error" => $e->getMessage(), "type" => "soap");
+    } catch ( Exception $e ) {
+      $return = Array("error" => $e->getMessage(), "type" => "internal");
+    }
+
+    return $return;
+  }
+
+  /**
+   * Create a new SOAP Client
+   * @param  String   $uri            The WSDL URI
+   * @param  Array    $options        The SOAP Client options
+   * @return LocalSoapClient
+   */
+  public function createClient($uri, Array $options = Array()) {
+    if ( class_exists("LocalSoapClient") ) {
+      return new LocalSoapClient($uri, $options);
+    }
+    return null;
+  }
 }
 
 /**
- * XML Service Class
+ * ServiceXML -- XML Service Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package OSjs.Core.Libraries.Services
