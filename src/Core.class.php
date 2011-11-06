@@ -278,6 +278,11 @@ EOCSS;
       if ( isset($args['ajax']) ) {
         $json = Array("success" => false, "error" => "Unknown error", "result" => null);
 
+        if ( !isset($args['action']) ) {
+          $json['error'] = "No action given!";
+          return json_encode($json);
+        }
+
         /**
          * MAIN
          */

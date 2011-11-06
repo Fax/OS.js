@@ -84,6 +84,7 @@ require "vendor/AjaxUpload.php";
 // Internal libraries
 require "lib/Functions.php";
 require "lib/Archive.php";
+require "lib/Services.php";
 require "lib/UUID.class.php";
 
 // Main sources

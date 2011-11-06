@@ -19,6 +19,8 @@ Vendor libraries used:
 
 All (except Propel ORM) is included in the development repository.
 
-Install Propel ORM:
+Install Vendor Stuff:
 -------------------------------------------------------------------------------
-Just clone the repository or unpack installation into 'vendor/Propel'
+* Copy a X11's icon theme 16x16 and 32x32 folders into 'public_html/img/icons/'
+* Install Propel ORM into 'vendor/Propel/' (By repository or archive)
+
