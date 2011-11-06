@@ -6,14 +6,9 @@
  */
 (function($, undefined) {
 
-  // Override for browsers without console
-  if (!window.console) console = {log:function() {}, info:function(){}, error:function(){}};
-  if ( !window.console.group ) {
-    window.console.group = function() { console.log(arguments); };
-  }
-  if ( !window.console.groupEnd ) {
-    window.console.groupEnd = function() { console.log(arguments); };
-  }
+  /////////////////////////////////////////////////////////////////////////////
+  // CONFIG
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
    * CSS
@@ -49,6 +44,10 @@
   var FONT_URI           = "/?font=";
   var CURSOR_URI         = "/?cursor=";
 
+  /////////////////////////////////////////////////////////////////////////////
+  // PRIVATE VARIABLES
+  /////////////////////////////////////////////////////////////////////////////
+
   /**
    * Local references
    */
@@ -62,7 +61,6 @@
   var _Processes       = [];
   var _TopIndex        = (ZINDEX_WINDOW + 1);
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);
-
 
   /////////////////////////////////////////////////////////////////////////////
   // HELPERS
