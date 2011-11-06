@@ -15,7 +15,7 @@
  * Service Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Libraries
+ * @package OSjs.Libraries
  * @class
  */
 abstract class Service
@@ -56,7 +56,7 @@ if ( class_exists("SoapClient") ) {
    * Soap Client Class
    *
    * @author  Anders Evenrud <andersevenrud@gmail.com>
-   * @package OSjs.Core.Libraries.Services.Wrapper
+   * @package OSjs.Libraries.Services.Wrapper
    * @class
    */
   class     LocalSoapClient
@@ -97,7 +97,7 @@ if ( class_exists("SoapClient") ) {
  * ServiceGET -- GET Service Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Libraries.Services
+ * @package OSjs.Libraries.Services
  * @class
  */
 class     ServiceGET
@@ -153,7 +153,7 @@ class     ServiceGET
  * ServicePOST -- POST Service Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Libraries.Services
+ * @package OSjs.Libraries.Services
  * @class
  */
 class     ServicePOST
@@ -205,7 +205,7 @@ class     ServicePOST
  * ServiceJSON -- JSON Service Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Libraries.Services
+ * @package OSjs.Libraries.Services
  * @class
  */
 class     ServiceJSON
@@ -246,7 +246,7 @@ class     ServiceJSON
  * Requires SOAP to be supported by PHP.
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Libraries.Services
+ * @package OSjs.Libraries.Services
  * @class
  */
 class     ServiceSOAP
@@ -313,7 +313,7 @@ class     ServiceSOAP
  * ServiceXML -- XML Service Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Libraries.Services
+ * @package OSjs.Libraries.Services
  * @class
  */
 class     ServiceXML

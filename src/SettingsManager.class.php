@@ -8,10 +8,10 @@
  */
 
 /**
- * SettingsManager Class
+ * SettingsManager -- OS.js Settings Managment Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Sources
+ * @package OSjs.Sources.Core
  * @class
  */
 class SettingsManager

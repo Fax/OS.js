@@ -8,10 +8,10 @@
  */
 
 /**
- * IMAP Class
+ * IMAP -- The IMAP Mailing Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Libraries
+ * @package OSjs.Libraries
  * @class
  */
 class IMAP

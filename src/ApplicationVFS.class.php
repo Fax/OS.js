@@ -8,10 +8,10 @@
  */
 
 /**
- * ApplicationVFS Class
+ * ApplicationVFS -- Application VFS (Virtual Filesystem) Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Sources
+ * @package OSjs.Sources.Core
  * @class
  */
 class ApplicationVFS

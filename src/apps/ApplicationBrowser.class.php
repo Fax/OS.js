@@ -11,7 +11,7 @@
  * ApplicationBrowser Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Sources.Applications
+ * @package OSjs.Applications
  * @class
  */
 class ApplicationBrowser

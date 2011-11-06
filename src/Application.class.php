@@ -8,10 +8,10 @@
  */
 
 /**
- * Application Class
+ * Application -- Base OS.js Application Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Sources
+ * @package OSjs.Sources.Core
  * @class
  */
 abstract class Application

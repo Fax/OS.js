@@ -7,22 +7,42 @@
  * @created 2011-06-20
  */
 
-function get_inner_html( $node ) { 
-    $innerHTML= ''; 
-    $children = $node->childNodes; 
-    foreach ($children as $child) { 
-        $innerHTML .= $child->ownerDocument->saveXML( $child ); 
-    } 
+/**
+ * get_inner_html() -- Get innerHTML of a DOMDocument Node
+ *
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @package OSjs.Functions
+ * @return  String
+ */
+function get_inner_html( $node ) {
+    $innerHTML = '';
+    $children  = $node->childNodes;
+    foreach ( $children as $child ) {
+      $innerHTML .= $child->ownerDocument->saveXML( $child );
+    }
+    return $innerHTML;
+}
 
-    return $innerHTML; 
-} 
-
+/**
+ * startsWith() -- Check if string starts with X
+ *
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @package OSjs.Functions
+ * @return  String
+ */
 function startsWith($haystack, $needle)
 {
     $length = strlen($needle);
     return (substr($haystack, 0, $length) === $needle);
 }
 
+/**
+ * endsWith() -- Check if string ends with X
+ *
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @package OSjs.Functions
+ * @return  String
+ */
 function endsWith($haystack, $needle)
 {
     $length = strlen($needle);
@@ -30,7 +50,15 @@ function endsWith($haystack, $needle)
     return (substr($haystack, $start) === $needle);
 }
 
-function array_merge_deep($arr) { // an array-merging function to strip one or more arrays down to a single one dimension array
+/**
+ * array_merge_deep() -- An array-merging function to strip one or more
+ * arrays down to a single one dimension array
+ *
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @package OSjs.Functions
+ * @return  String
+ */
+function array_merge_deep($arr) {
   $arr = (array)$arr;
   $argc = func_num_args();
   if ($argc != 1) {

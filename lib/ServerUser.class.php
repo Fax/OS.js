@@ -8,12 +8,12 @@
  */
 
 /**
- * SocketUser Class
+ * SocketUser -- The Socket User Class
  *
- * WebSocket user connection class
+ * Also handles TCP Connections (Wrapper).
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Libraries
+ * @package OSjs.Libraries
  * @class
  */
 class SocketUser

@@ -8,10 +8,10 @@
  */
 
 /**
- * Core Class
+ * Core -- Main OS.js interfacing Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Sources
+ * @package OSjs.Sources
  * @class
  */
 class Core
@@ -150,7 +150,7 @@ class Core
    * Get Font StyleSheet
    * @param  String   $font         Font name
    * @param  bool     $compress     Enable Compression
-   * @package OSjs.Core.Sources
+   * @package OSjs.Sources
    * @return String
    */
   public static function getFont($font, $compress) {

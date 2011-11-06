@@ -8,7 +8,7 @@
  */
 
 /**
- * UUID Class
+ * UUID - Unique Universal ID Generator Class
  *
  * The following class generates VALID RFC 4211 COMPLIANT Universally Unique IDentifiers (UUID) version 3, 4 and 5.
  *
@@ -21,7 +21,7 @@
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @author  Andrew Moore 04-Dec-2009 04:45
  * @link    http://php.net/manual/en/function.uniqid.php
- * @package OSjs.Core.Libraries
+ * @package OSjs.Libraries
  * @class
  */
 class UUID

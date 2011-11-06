@@ -8,16 +8,14 @@
  */
 
 /**
- * Server Class
- *
- * WebSocket server class
+ * Server -- The WebSocket Server Class
  *
  * Docs:
  *   https://github.com/esromneb/phpwebsocket/blob/master/websocket.class.php
  *   http://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-17
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Libraries
+ * @package OSjs.Libraries
  * @class
  */
 class Server

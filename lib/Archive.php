@@ -8,10 +8,10 @@
  */
 
 /**
- * Archive Class
+ * Archive -- Compressed Archive Base Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Libraries
+ * @package OSjs.Libraries
  * @class
  */
 abstract class Archive
@@ -231,11 +231,11 @@ abstract class Archive
 }
 
 /**
- * Archive Exception Class
+ * ArchiveException -- Archive Exception Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @see     Exception
- * @package OSjs.Core.Libraries.Archive
+ * @package OSjs.Libraries.Archive
  * @class
  */
 class ArchiveException
@@ -246,10 +246,10 @@ class ArchiveException
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * ArchiveZip Class
+ * ArchiveZip -- ZIP Archive Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Libraries.Archive
+ * @package OSjs.Libraries.Archive
  * @class
  */
 class ArchiveZip
@@ -294,10 +294,10 @@ class ArchiveZip
 
 
 /**
- * ArchiveRar Class
+ * ArchiveRar -- RAR Archive Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Libraries.Archive
+ * @package OSjs.Libraries.Archive
  * @class
  */
 class ArchiveRar
@@ -342,10 +342,10 @@ class ArchiveRar
 }
 
 /**
- * ArchiveTar Class
+ * ArchiveTar -- tar Archive Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Libraries.Archive
+ * @package OSjs.Libraries.Archive
  * @class
  */
 class ArchiveTar
@@ -370,10 +370,10 @@ class ArchiveTar
 }
 
 /**
- * ArchiveBzip Class
+ * ArchiveBzip -- bzip/bzip2 Archive Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Libraries.Archive
+ * @package OSjs.Libraries.Archive
  * @class
  */
 class ArchiveBzip
@@ -429,10 +429,10 @@ class ArchiveBzip
 }
 
 /**
- * ArchiveBzip Class
+ * ArchiveBzip -- gzip Archive Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Libraries.Archive
+ * @package OSjs.Libraries.Archive
  * @class
  */
 class ArchiveGzip

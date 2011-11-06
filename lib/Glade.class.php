@@ -8,10 +8,10 @@
  */
 
 /**
- * Glade Class
+ * Glade -- The Glade Interface Parsing Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Core.Libraries
+ * @package OSjs.Libraries
  * @class
  */
 class Glade
