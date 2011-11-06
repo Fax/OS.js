@@ -39,6 +39,21 @@ class SettingsManager
       "options"   => Array("none", "default", "fade", "scroll", "shrink"),
       "value"     => "default"
     ),
+    "wm.animation.windowMaximize" => Array(
+      "type"      => "array",
+      "options"   => Array("none", "default", "grow"),
+      "value"     => "default"
+    ),
+    "wm.animation.windowMinimize" => Array(
+      "type"      => "array",
+      "options"   => Array("none", "default", "fade", "scroll", "shrink"),
+      "value"     => "default"
+    ),
+    "wm.animation.windowRestore" => Array(
+      "type"      => "array",
+      "options"   => Array("none", "default", "fade", "scroll", "grow"),
+      "value"     => "default"
+    ),
     "wm.animation.menuOpen" => Array(
       "type"      => "array",
       "options"   => Array("none", "default", "fade", "scroll"),
