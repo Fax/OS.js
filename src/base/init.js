@@ -53,9 +53,12 @@
     var test = ["2d", "webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
     for ( var i = 0; i < test.length; i++ ) {
       var canv = document.createElement('canvas');
-      if ( !!canv.getContext(test[i]) ) {
-        OSjs.Compability.SUPPORT_CANVAS_CONTEXT.push(test[i]);
-      }
+      try {
+        if ( !!canv.getContext(test[i]) ) {
+          OSjs.Compability.SUPPORT_CANVAS_CONTEXT.push(test[i]);
+        }
+      } catch ( eee ) {}
+
       delete canv;
     }
     delete test;
