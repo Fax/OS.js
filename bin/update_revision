@@ -1,8 +1,10 @@
 #!/bin/sh
 
+sudo chown -R anders:anders public_html/media
 sudo chown -R anders:anders .git
 git checkout -- src/build/applications.xml
-git pull
+git pull origin master
 ./bin/documentation-gen
 ./bin/application-gen
 ./bin/minimize-scripts
+sudo chown -R www-data:www-data public_html/media
