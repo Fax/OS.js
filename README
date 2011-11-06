@@ -75,3 +75,4 @@ Built-In Applications, Dialogs and Panel Items:
 * Dialog: File Open, Save, Rename
 * Dialog: Lauch Application
 * Dialog: Modify Panel/PanelItem
+* Dialog: Input-box

@@ -64,6 +64,10 @@ class SettingsManager
       "options"   => Array("none", "default", "fade", "scroll"),
       "value"     => "default"
     ),
+    "wm.shadows.show" => Array(
+      "type"      => "bool",
+      "value"     => true
+    ),
     "wm.vd.cound" => Array(
       "type"      => "integer",
       "value"     => 2
