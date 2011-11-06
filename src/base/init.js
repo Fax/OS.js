@@ -30,6 +30,7 @@
       "SUPPORT_DSTORAGE"       : (('openDatabase'    in window) && window['openDatabase']   !== null),
       "SUPPORT_SOCKET"         : (('WebSocket'       in window) && window['WebSocket']      !== null),
       "SUPPORT_CANVAS"         : (!!document.createElement('canvas').getContext),
+      "SUPPORT_CANVAS_CONTEXT" : [],
       "SUPPORT_VIDEO"          : (!!document.createElement('video').canPlayType),
       "SUPPORT_AUDIO"          : (!!document.createElement('audio').canPlayType),
       "SUPPORT_AUDIO_OGG"      : (!!document.createElement('audio').canPlayType && !!document.createElement('audio').canPlayType('audio/ogg; codecs="vorbis')),
@@ -46,6 +47,17 @@
     Dialogs      : { /* ... */ },
     PanelItems   : { /* ... */ }
   };
+
+  // Compability cont.
+  if ( OSjs.Compability.SUPPORT_CANVAS ) {
+    var test = ["2d", "webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
+    var canv = document.createElement('canvas');
+    for ( var i = 0; i < test.length; i++ ) {
+      if ( canv.getContext(test[i]) ) {
+        OSjs.Compability.SUPPORT_CANVAS_CONTEXT.push(test[i]);
+      }
+    }
+  }
 
   // Labels
   OSjs.Labels = {
