@@ -61,19 +61,34 @@ function compress_list($resource, $files) {
 }
 
 // Parse application data
-$app_files = Array();
+$resource_files = Array(
+  "panel.separator.js",
+  "panel.weather.js",
+  "panel.dock.js",
+  "panel.menu.js",
+  "panel.windowlist.js",
+  "panel.clock.js",
+  "dialog.panel.js",
+  "dialog.rename.js",
+  "dialog.copy.js",
+  "dialog.launch.js",
+  "dialog.file.js",
+  "dialog.color.js",
+  "dialog.input.js",
+  "dialog.upload.js"
+);
 if ( $xml = file_get_contents(APPLICATION_BUILD) ) {
   if ( $xml = new SimpleXmlElement($xml) ) {
     foreach ( $xml->application as $app ) {
       $app_name     = (string) $app['name'];
       foreach ( $app->resource as $res ) {
-        $app_files[] = ((string) $res);
+        $resource_files[] = ((string) $res);
       }
     }
   }
 }
 
-compress_list(true, $app_files);
+compress_list(true, $resource_files);
 
 compress_list(false, Array(
   "theme.default.css",
