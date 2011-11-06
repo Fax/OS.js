@@ -1,7 +1,7 @@
 /*!
  * OS.js - JavaScript Operating System - Core File
  *
- * @package OSjs.Client.Main
+ * @package OSjs.Core.Main
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  */
 (function($, undefined) {

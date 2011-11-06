@@ -189,6 +189,19 @@ class ApplicationVFS
   /**
    * Read a archive file
    * @param  String   $arch   Archive filename
+   * @param  String   $dest   Extract path
+   * @return Mixed
+   */
+  public static function extract_archive($arch, $dest) {
+    if ( $a = Archive::open($arch) ) {
+      return $a->extract($dest);
+    }
+    return false;
+  }
+
+  /**
+   * Read a archive file
+   * @param  String   $arch   Archive filename
    * @param  String   $path   Archive path (default /)
    * @return Array
    */

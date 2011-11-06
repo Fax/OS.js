@@ -5,4 +5,5 @@
 * FIXME: replace parents() with closest()
 * FIXME: IE and Opera suffers the same CSS [table] bugs
 * FIXME: Fix ContextMenu pop-out problems
+* FIXME: Respond with a crash dialog upon Application::Event => "Failed to handle Application"
 * NOTE: http://trac.webkit.org/export/41842/trunk/LayoutTests/scrollbars/overflow-scrollbar-combinations.html

@@ -31,8 +31,8 @@ OSjs.Applications.ApplicationArchiver = (function($, undefined) {
 
       init : function(app) {
         this._super("Window_window1", false, app, windows);
-        this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationArchiver window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem1\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem2\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <li class=\"GtkImageMenuItem imagemenuitem3\"> <img alt=\"gtk-save\" src=\"/img/icons/16x16/actions/gtk-save.png\"/> <span>Save</span> </li> <li class=\"GtkImageMenuItem imagemenuitem4\"> <img alt=\"gtk-save-as\" src=\"/img/icons/16x16/actions/gtk-save-as.png\"/> <span>Save as...</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem5\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem3\"> <span><u>A</u>ctions</span> <ul class=\"GtkMenu menu2\"> <li class=\"GtkImageMenuItem menuitem2\"> <span>gtk-add</span> </li> <li class=\"GtkImageMenuItem menuitem4\"> <span>gtk-remove</span> </li> <li class=\"GtkImageMenuItem menuitem5\"> <span>gtk-execute</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview1\"></div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar1\"></div> </div> </td> </tr> </table> </div> </div> ").html();
-        this._title = 'File Archiver';
+        this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationArchiver window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem1\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem2\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <li class=\"GtkImageMenuItem imagemenuitem3\"> <img alt=\"gtk-save\" src=\"/img/icons/16x16/actions/gtk-save.png\"/> <span>Save</span> </li> <li class=\"GtkImageMenuItem imagemenuitem4\"> <img alt=\"gtk-save-as\" src=\"/img/icons/16x16/actions/gtk-save-as.png\"/> <span>Save as...</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem5\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem3\"> <span><u>A</u>ctions</span> <ul class=\"GtkMenu menu2\"> <li class=\"GtkImageMenuItem menuitem2\"> <img alt=\"gtk-add\" src=\"/img/icons/16x16/actions/gtk-add.png\"/> <span>Add</span> </li> <li class=\"GtkImageMenuItem menuitem4\"> <img alt=\"gtk-remove\" src=\"/img/icons/16x16/actions/gtk-remove.png\"/> <span>Remove</span> </li> <li class=\"GtkImageMenuItem menuitem5\"> <img alt=\"gtk-execute\" src=\"/img/icons/16x16/actions/gtk-execute.png\"/> <span>Execute</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview1\"></div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar1\"></div> </div> </td> </tr> </table> </div> </div> ").html();
+        this._title = 'File Archiver (UNDER DEVELOPMENT)';
         this._icon = 'mimetypes/package-x-generic.png';
         this._is_draggable = true;
         this._is_resizable = true;
@@ -66,8 +66,16 @@ OSjs.Applications.ApplicationArchiver = (function($, undefined) {
         var self = this;
 
 
-        var my_callback = function(fname) {}; // FIXME
-        var my_mimes    = [];
+        var my_callback = function(fname) {
+          self.app.openArchive(fname, self);
+        };
+        var my_mimes    = [
+          "application/zip",
+          "application/x-bzip2",
+          "application/x-gzip",
+          "application/x-rar",
+          "application/x-tar"
+        ];
 
         this.app.createFileDialog(function(fname) {
           my_callback(fname);
@@ -104,7 +112,12 @@ OSjs.Applications.ApplicationArchiver = (function($, undefined) {
       EventMenuArchiveExecute : function(el, ev) {
         var self = this;
 
-
+        var path = "/";
+        if ( this.app.extractArchive() ) {
+          API.system.dialog_input(path, "Extract to", function(value) {
+            self.app.extractArchive(null, value);
+          });
+        }
       },
 
 
@@ -161,15 +174,16 @@ OSjs.Applications.ApplicationArchiver = (function($, undefined) {
             });
           });
 
-          this.app._event("browse", {"path" : "TODO"}, function(result, error) {
-            if ( error ) {
-              self.app.createMessageDialog("error", error);
-            } else {
-              self.$element.find(".ApplicationArchiver .iconview1").html(result.items);
-            }
+          el.find(".iconview1").addClass("ContextMenu");
 
-            self._call("resize");
-          });
+          // FIXME
+          var menu1 = el.find(".menu1");
+          var menu2 = el.find(".menu2");
+          menu1.find(".imagemenuitem1").hide();
+          menu1.find(".imagemenuitem3").hide();
+          menu1.find(".imagemenuitem4").hide();
+          menu2.find(".menuitem2").hide();
+          menu2.find(".menuitem4").hide();
 
           return true;
         }
@@ -192,6 +206,8 @@ OSjs.Applications.ApplicationArchiver = (function($, undefined) {
       init : function() {
         this._super("ApplicationArchiver", argv);
         this._compability = [];
+
+        this.current_path = null;
       },
 
       destroy : function() {
@@ -208,6 +224,54 @@ OSjs.Applications.ApplicationArchiver = (function($, undefined) {
         root_window.show();
 
         // Do your stuff here
+        if ( argv.path ) {
+          this.openArchive(argv.path, root_window);
+        }
+      },
+
+      openArchive : function(path, root_window) {
+        var self = this;
+
+        this._event("browse", {"path" : path}, function(result, error) {
+          if ( error ) {
+            self.createMessageDialog("error", "Cannot open archive '" + basename(path) + "'. Server responded: " + error);
+
+            self.current_path = null;
+          } else {
+            root_window.$element.find(".ApplicationArchiver .iconview1").html(result.items).find("td").addClass("ContextMenu");
+
+            self.current_path = path;
+          }
+
+          root_window._call("resize");
+        });
+      },
+
+      extractArchive : function(path, destination) {
+        var self = this;
+
+        if ( path === undefined || path === null ) {
+          if ( !this.current_path ) {
+            this.createMessageDialog("error", "No archive to extract");
+            return false;
+          }
+
+          path = this.current_path;
+        }
+
+        if ( path && destination ) {
+          this._event("extract", {"path" : path, "destination" : destination}, function(result, error) {
+            error = error || result.error;
+            if ( error ) {
+              self.createMessageDialog("error", "Cannot extract archive '" + basename(path) + "'. Server responded: " + error);
+            } else {
+              self.createMessageDialog("info", "Archive '" + basename(path) + " extracted'.");
+            }
+          });
+        }
+
+
+        return true;
       }
     });
 

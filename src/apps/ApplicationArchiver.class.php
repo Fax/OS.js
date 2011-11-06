@@ -26,9 +26,21 @@ class ApplicationArchiver
   }
 
   public static function Event($uuid, $action, Array $args) {
-    $path = "/tmp/ccthemepack.zip";
+    $base     = PATH_PROJECT_HTML . "/media";
+    $path     = "{$base}{$args['path']}";
 
-    if ( $action == "browse" ) {
+    if ( $action == "extract" ) {
+      $dest = "{$base}{$args['destination']}";
+      try {
+        if ( ($a = ApplicationVFS::extract_archive($path, $dest)) !== false ) {
+          return Array("result" => $a);
+        } else {
+          return Array("error" => "Failed to open");
+        }
+      } catch ( ArchiveException $e ) {
+        return Array("error" => $e->getMessage());
+      }
+    } else if ( $action == "browse" ) {
       $result = Array();
       $total = 0;
       $bytes = 0;

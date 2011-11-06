@@ -1,7 +1,7 @@
 /*!
  * OS.js - JavaScript Operating System - Core File
  *
- * @package OSjs.Client.Core
+ * @package OSjs.Core
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  */
 (function($, undefined) {
@@ -169,6 +169,7 @@
         });
       } else {
         API.system.dialog("error", data.error);
+
         callback_error(data.error);
 
         setTimeout(function() {
@@ -420,6 +421,12 @@
         console.info("=> API Dialog", type);
 
         return _Desktop.addWindow(new Dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
+      },
+
+      'dialog_input' : function(path, desc, clb_finish) {
+        console.info("=> API Input Dialog");
+
+        return _Desktop.addWindow(new OSjs.Dialogs.InputOperationDialog(OperationDialog, API, [path, desc, clb_finish]));
       },
 
       'dialog_rename' : function(path, clb_finish) {
@@ -3772,6 +3779,30 @@
       this._gravity  = "center";
       this._content  = message;
       this._is_ontop = true;
+
+      // FIXME: Labels
+      switch ( type ) {
+        case "info" :
+          this._title    = "Information";
+        break;
+        case "error" :
+          this._title    = "Error";
+        break;
+        case "question" :
+          this._title    = "Question";
+        break;
+        case "confirm"  :
+          this._title    = "Confirmation";
+        break;
+        case "warning" :
+          this._title    = "Warning";
+        break;
+        default :
+          if ( !this._title ) {
+            this._title  = "Dialog";
+          }
+        break;
+      }
     },
 
     /**

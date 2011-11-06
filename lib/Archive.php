@@ -89,7 +89,7 @@ abstract class Archive
    * @return void
    */
   public function compress($src) {
-    throw new Exception(sprintf("%s does not support '%s()'", get_class($this), __METHOD__));
+    throw new ArchiveException(sprintf("%s does not support '%s()'", get_class($this), __METHOD__));
   }
 
   /**
@@ -98,7 +98,7 @@ abstract class Archive
    * @return void
    */
   public function decompress($dst) {
-    throw new Exception(sprintf("%s does not support '%s()'", get_class($this), __METHOD__));
+    throw new ArchiveException(sprintf("%s does not support '%s()'", get_class($this), __METHOD__));
   }
 
   /**
@@ -107,7 +107,7 @@ abstract class Archive
    * @return void
    */
   public function read() {
-    throw new Exception(sprintf("%s does not support '%s()'", get_class($this), __METHOD__));
+    throw new ArchiveException(sprintf("%s does not support '%s()'", get_class($this), __METHOD__));
   }
 
   /**
@@ -115,8 +115,8 @@ abstract class Archive
    * @throws Exception
    * @return void
    */
-  public function extract() {
-    throw new Exception(sprintf("%s does not support '%s()'", get_class($this), __METHOD__));
+  public function extract($dest) {
+    throw new ArchiveException(sprintf("%s does not support '%s()'", get_class($this), __METHOD__));
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -132,7 +132,7 @@ abstract class Archive
     $instance = null;
 
     if ( !file_exists($filename) || !is_file($filename) ) {
-      throw new Exception("Failed to open '$filename'!");
+      throw new ArchiveException("Failed to open '$filename'!");
     }
 
     if ( ($type = self::_checkType($filename) ) ) {
@@ -144,7 +144,7 @@ abstract class Archive
       }
     }
 
-    throw new Exception("The file '$filename' is not a valid archive!");
+    throw new ArchiveException("The file '$filename' is not a valid archive!");
   }
 
   /**
@@ -154,7 +154,7 @@ abstract class Archive
    */
   public final static function create($filename) {
     if ( file_exists($filename) || is_file($filename) ) {
-      throw new Exception("File '$filename' already exists!");
+      throw new ArchiveException("File '$filename' already exists!");
     }
 
     if ( ($type = self::_checkType($filename) ) ) {
@@ -166,7 +166,7 @@ abstract class Archive
       }
     }
 
-    throw new Exception("Failed to create archive '$filename'!");
+    throw new ArchiveException("Failed to create archive '$filename'!");
   }
 
   /**
@@ -230,6 +230,17 @@ abstract class Archive
 
 }
 
+/**
+ * Archive Exception Class
+ *
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @see     Exception
+ * @package OSjs.Core.Libraries.Archive
+ * @class
+ */
+class ArchiveException
+  extends Exception {}
+
 ///////////////////////////////////////////////////////////////////////////////
 //                            ARCHIVE TYPES                                  //
 ///////////////////////////////////////////////////////////////////////////////
@@ -248,7 +259,7 @@ class ArchiveZip
   /**
    * @see Archive::extract()
    */
-  public final function extract() {
+  public final function extract($dest) {
     return false;
   }
 
@@ -296,7 +307,7 @@ class ArchiveRar
   /**
    * @see Archive::extract()
    */
-  public final function extract() {
+  public final function extract($dest) {
     return false;
   }
 
@@ -344,7 +355,7 @@ class ArchiveTar
   /**
    * @see Archive::extract()
    */
-  public final function extract() {
+  public final function extract($dest) {
     return false;
   }
 

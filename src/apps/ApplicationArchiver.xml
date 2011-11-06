@@ -5,6 +5,12 @@
   <property name="icon">mimetypes/package-x-generic.png</property>
   <property name="system">false</property>
 
+  <mime>application/zip</mime>
+  <mime>application/x-bzip2</mime>
+  <mime>application/x-gzip</mime>
+  <mime>application/x-rar</mime>
+  <mime>application/x-tar</mime>
+
   <resource>app.archiver.css</resource>
   <resource>app.archiver.js</resource>
 </application>

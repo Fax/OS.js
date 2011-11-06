@@ -557,3 +557,9 @@ input.Disabled {
 .Window .ui-tabs li.ui-tabs-selected a {
 }
 */
+
+.OperationDialog h1 {
+  margin : 0;
+  padding : 0;
+  font-size : 120%;
+}

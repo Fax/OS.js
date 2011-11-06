@@ -46,6 +46,7 @@
   <script type="text/javascript" src="/?library=core.js"></script>
   <script type="text/javascript" src="/?library=main.js"></script>
 
+  <script type="text/javascript" src="/?resource=dialog.input.js"></script>
   <script type="text/javascript" src="/?resource=dialog.panel.js"></script>
   <script type="text/javascript" src="/?resource=dialog.launch.js"></script>
   <script type="text/javascript" src="/?resource=dialog.file.js"></script>
@@ -247,6 +248,15 @@
     <div class="OperationDialogInner Wrapper">
       <ul>
       </ul>
+    </div>
+  </div>
+</div>
+
+<div id="OperationDialogInput" style="display:none">
+  <div class="OperationDialog OperationDialogInput">
+    <h1>Input:</h1>
+    <div class="OperationDialogInner">
+      <input type="text" />
     </div>
   </div>
 </div>

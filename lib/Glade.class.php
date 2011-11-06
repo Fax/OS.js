@@ -208,6 +208,18 @@ class Glade
       "label" => "Ok",
       "icon" => "actions/gtk-save.png"
     ),
+    "gtk-add" => Array(
+      "label" => "Add",
+      "icon" => "actions/gtk-add.png"
+    ),
+    "gtk-remove" => Array(
+      "label" => "Remove",
+      "icon" => "actions/gtk-remove.png"
+    ),
+    "gtk-execute" => Array(
+      "label" => "Execute",
+      "icon" => "actions/gtk-execute.png"
+    ),
 
     "gtk-media-previous" => Array(
       "label" => "Prev",

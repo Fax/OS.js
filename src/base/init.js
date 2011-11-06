@@ -1,7 +1,7 @@
 /*!
  * OS.js - JavaScript Operating System - Namespace
  *
- * @package OSjs.Client.Init
+ * @package OSjs.Core.Init
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  */
 (function($, undefined) {
