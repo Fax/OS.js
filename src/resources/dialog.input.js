@@ -58,15 +58,6 @@ OSjs.Dialogs.InputOperationDialog = (function($, undefined) {
 
 
         txt.focus();
-        var tmp = txt.val().split(".");
-        var len = 0;
-        if ( tmp.length > 1 ) {
-          tmp.pop();
-          len = tmp.join(".").length;
-        } else {
-          len = tmp[0].length;
-        }
-        setSelectionRangeX(txt.get(0), 0, len);
       }
     });
 
