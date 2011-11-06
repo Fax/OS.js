@@ -187,7 +187,7 @@ class ApplicationVFS
   }
 
   /**
-   * Read a archive file
+   * Extract an archive file
    * @param  String   $arch   Archive filename
    * @param  String   $dest   Extract path
    * @return Mixed

@@ -32,8 +32,8 @@
       "SUPPORT_CANVAS"         : (!!document.createElement('canvas').getContext),
       "SUPPORT_VIDEO"          : (!!document.createElement('video').canPlayType),
       "SUPPORT_AUDIO"          : (!!document.createElement('audio').canPlayType),
-      "SUPPORT_AUDIO_OGG"      : (!!document.createElement('audio').canPlayType && !(!!document.createElement('audio').canPlayType('audio/ogg; codecs="vorbis'))),
-      "SUPPORT_AUDIO_MP3"      : (!!document.createElement('audio').canPlayType && !(!!document.createElement('audio').canPlayType('audio/mpeg'))),
+      "SUPPORT_AUDIO_OGG"      : (!!document.createElement('audio').canPlayType && !!document.createElement('audio').canPlayType('audio/ogg; codecs="vorbis')),
+      "SUPPORT_AUDIO_MP3"      : (!!document.createElement('audio').canPlayType && !!document.createElement('audio').canPlayType('audio/mpeg')),
       "SUPPORT_RICHTEXT"       : (!!document.createElement('textarea').contentEditable)
     },
 
