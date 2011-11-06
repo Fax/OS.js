@@ -45,7 +45,7 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
         this._named = "Launcher Menu";
 
         this.title = title || "Launch Application";
-        this.icon = '/img/icons/16x16/' + (icon || 'categories/gnome-applications.png');
+        this.icon = '/img/icons/16x16/' + (icon || 'apps/system-software-install.png');
 
         var menu_items = menu || null;
         if ( menu_items === null ) {
