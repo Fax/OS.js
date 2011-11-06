@@ -1549,6 +1549,13 @@
               error = OSjs.Public.CompabilityErrors[key];
             }
           break;
+          case "3d" :
+          case "webgl" :
+            key = webgl;
+            if ( !OSjs.Compability.SUPPORT_WEBGL ) {
+              error = OSjs.Public.CompabilityErrors[key];
+            }
+          break;
           case "audio" :
             if ( !OSjs.Compability.SUPPORT_AUDIO ) {
               error = OSjs.Public.CompabilityErrors[key];
@@ -3885,7 +3892,7 @@
       this._is_orphan = false;
       this._is_ontop = true;
       this._width = 500;
-      this._height = 300;
+      this._height = 330;
       this._gravity = "center";
     },
 
@@ -3944,7 +3951,7 @@
         "width" : "49%",
         "margin-top" : "10px",
         "background" : "#fff",
-        "height" : "226px"
+        "height" : "255px"
       }).find("p").css({"padding" : "5px", "margin" : "0"});
     }
 

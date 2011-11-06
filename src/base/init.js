@@ -17,6 +17,8 @@
     window.console.groupEnd = function() { console.log(arguments); };
   }
 
+  console.group("init.js");
+
   //
   // Main OS.js namespace
   //
@@ -30,6 +32,7 @@
       "SUPPORT_DSTORAGE"       : (('openDatabase'    in window) && window['openDatabase']   !== null),
       "SUPPORT_SOCKET"         : (('WebSocket'       in window) && window['WebSocket']      !== null),
       "SUPPORT_CANVAS"         : (!!document.createElement('canvas').getContext),
+      "SUPPORT_WEBGL"          : false,
       "SUPPORT_CANVAS_CONTEXT" : [],
       "SUPPORT_VIDEO"          : (!!document.createElement('video').canPlayType),
       "SUPPORT_AUDIO"          : (!!document.createElement('audio').canPlayType),
@@ -56,6 +59,9 @@
       try {
         if ( !!canv.getContext(test[i]) ) {
           OSjs.Compability.SUPPORT_CANVAS_CONTEXT.push(test[i]);
+          if ( i > 0 ) {
+            OSjs.Compability.SUPPORT_WEBGL = true;
+          }
         }
       } catch ( eee ) {}
 
@@ -77,6 +83,7 @@
   // Application Compability error exceptions
   OSjs.Public.CompabilityErrors = {
     "canvas"          : "<canvas> DOM Element",
+    "webgl"           : "<canvas> WebGL",
     "audio"           : "<audio> DOM Element",
     "ogg"             : "<audio> Does not support OGG/Vorbis",
     "mp3"             : "<audio> Does not support MPEG/MP3",
@@ -95,11 +102,15 @@
     "Session Storage"  : OSjs.Compability.SUPPORT_SSTORAGE,
     "Global Storage"   : OSjs.Compability.SUPPORT_GSTORAGE,
     "Database Storage" : OSjs.Compability.SUPPORT_DSTORAGE,
-    "Canvas (2D/3D)"   : OSjs.Compability.SUPPORT_CANVAS,
+    "Canvas"           : OSjs.Compability.SUPPORT_CANVAS,
+    "WebGL"            : OSjs.Compability.SUPPORT_WEBGL,
     "Audio"            : OSjs.Compability.SUPPORT_AUDIO,
     "Video"            : OSjs.Compability.SUPPORT_VIDEO,
     "Sockets"          : OSjs.Compability.SUPPORT_SOCKET
   };
+
+  console.log("Compability", OSjs.Compability);
+  console.groupEnd();
 
 })($);
 
