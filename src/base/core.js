@@ -595,7 +595,7 @@
         save = save || false;
         var sess = save ? _Desktop.getSession() : {};
 
-        console.info("=> API Session save");
+        console.info("=> API Session save", sess);
 
         localStorage.setItem('session', JSON.stringify(sess));
       },
@@ -2983,7 +2983,6 @@
 
         // Check if window has any saved attributes for override (session restore etc)
         if ( this._attrs_restore && sizeof(this._attrs_restore) ) {
-
           if ( this._attrs_restore.is_maximized ) {
             this._attrs_temp = {
               top : this._top,
@@ -3141,7 +3140,9 @@
           }
         }
 
-        this._gravitate();
+        if ( fresh ) {
+          this._gravitate();
+        }
 
         this._created = true;
 
