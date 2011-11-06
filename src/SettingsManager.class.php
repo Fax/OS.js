@@ -19,7 +19,45 @@ class SettingsManager
   /**
    * @var Default Settings
    */
-  public static $Settings = Array(
+  public static $Settings = Array
+  (
+    //
+    // Window Manager
+    //
+    "wm.animation.speed" => Array(
+      "type"      => "array",
+      "options"   => Array("default", "slow", "medium", "fast"),
+      "value"     => "default"
+    ),
+    "wm.animation.windowOpen" => Array(
+      "type"      => "array",
+      "options"   => Array("none", "default", "fade", "scroll", "grow"),
+      "value"     => "default"
+    ),
+    "wm.animation.windowClose" => Array(
+      "type"      => "array",
+      "options"   => Array("none", "default", "fade", "scroll", "shrink"),
+      "value"     => "default"
+    ),
+    "wm.animation.menuOpen" => Array(
+      "type"      => "array",
+      "options"   => Array("none", "default", "fade", "scroll"),
+      "value"     => "default"
+    ),
+    "wm.animation.menuClose" => Array(
+      "type"      => "array",
+      "options"   => Array("none", "default", "fade", "scroll"),
+      "value"     => "default"
+    ),
+    "wm.vd.cound" => Array(
+      "type"      => "integer",
+      "value"     => 2
+    ),
+
+    //
+    // Desktop
+    //
+
     // User theme settings
     "desktop.wallpaper.path" => Array(
       "type"  => "filename",
@@ -51,6 +89,10 @@ class SettingsManager
       "options" => Array("top", "bottom"),
       "value" => "top"
     ),
+
+    //
+    // System
+    //
 
     // Application registry
     "system.app.registered" => Array(

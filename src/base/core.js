@@ -26,7 +26,7 @@
    * Local settings
    */
   var ENABLE_CACHE       = false;
-  var SETTING_REVISION   = 23;
+  var SETTING_REVISION   = 24;
   var ENABLE_LOGIN       = false;
   var ANIMATION_SPEED    = 400;
   var TEMP_COUNTER       = 1;
