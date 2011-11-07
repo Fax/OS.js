@@ -25,12 +25,12 @@
   /**
    * Local settings
    */
-  var ENABLE_CACHE       = false;
-  var SETTING_REVISION   = 26;
-  var ENABLE_LOGIN       = false;
-  var ANIMATION_SPEED    = 400;
-  var TEMP_COUNTER       = 1;
-  var TOOLTIP_TIMEOUT    = 300;
+  var ENABLE_CACHE       = false;                         //!< Enabled caching
+  var SETTING_REVISION   = 26;                            //!< The settings revision
+  var ENABLE_LOGIN       = false;                         //!< Use login
+  var ANIMATION_SPEED    = 400;                           //!< Animation speed in ms
+  var TEMP_COUNTER       = 1;                             //!< Internal temp. counter
+  var TOOLTIP_TIMEOUT    = 300;                           //!< Tooltip timeout in ms
 
   /**
    * URIs
@@ -68,6 +68,12 @@
 
   /**
    * PanelItem Launch handler
+   * @param   int     i             Item index
+   * @param   String  iname         Item name
+   * @param   Mixed   iargs         Item argument(s)
+   * @param   String  ialign        Item alignment
+   * @param   Panel   panel         Panel instance reference
+   * @return  void
    */
   function LaunchPanelItem(i, iname, iargs, ialign, panel) {
     var reg = _Settings._get("system.panel.registered", true);
@@ -88,6 +94,10 @@
 
   /**
    * Application Crash Dialog handler
+   * @param   String        app_name              Application name
+   * @param   Application   application           Application instance
+   * @param   Exception     ex                    Exception thrown
+   * @return  void
    */
   function CrashApplication(app_name, application, ex) {
     try {
@@ -104,6 +114,12 @@
 
   /**
    * Application Launch handler
+   * @param   String    app_name              Application name
+   * @param   Mixed     args                  Application starting arguments (argv)
+   * @param   Array     windows               Window list (used for restoration)
+   * @param   Function  callback              Callback on success
+   * @param   Function  callback_error        Callback on error
+   * @return  void
    */
   function LaunchApplication(app_name, args, windows, callback, callback_error) {
     callback = callback || function() {};
@@ -1606,6 +1622,17 @@
      */
     createRenameDialog : function(dir, callback) {
       this._addWindow(API.system.dialog_rename(dir, function(fname) {
+        callback(fname);
+      }));
+    },
+
+    /**
+     * Create Dialog: Input Box
+     * @see     API.system.dialog_input
+     * @return  void
+     */
+    createRenameDialog : function(path, desc, callback) {
+      this._addWindow(API.system.dialog_input(path, desc, function(fname) {
         callback(fname);
       }));
     },
