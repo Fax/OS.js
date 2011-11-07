@@ -659,8 +659,12 @@
    */
   var Socket = Class.extend({
 
+    _socket : null,       //!< Socket instance reference
+    _uri    : null,       //!< Socket URI string
+
     /**
      * Constructor
+     * @param   String      uri     Connection host/ip/uri/string
      * @constructor
      */
     init : function(uri) {
@@ -694,7 +698,8 @@
 
     /**
      * Base onopen event
-     * @return void
+     * @param   Mixed     ev      WebSocket Event
+     * @return  void
      */
     _on_open : function(ev) {
       console.log("Socket::open()", this);
@@ -2839,6 +2844,49 @@
    */
   var Window = Class.extend({
 
+    $element          : null,                             //!< DOM Element
+    _current          : false,                            //!< Current window ?
+    _attrs_temp       : null,                             //!< Temporary Window attributes
+    _attrs_restore    : null,                             //!< Restore Window attributes
+    _created          : false,                            //!< Window created ?
+    _showing          : false,                            //!< Window showing ?
+    _origtitle        : "",                               //!< Original Window title
+    _id               : null,                             //!< DOM Element ID
+    _name             : "",                               //!< Window Name
+    _title            : "",                               //!< Window Title
+    _content          : "",                               //!< Window Content (HTML)
+    _icon             : "emblems/emblem-unreadable.png",  //!< Window Icon Name
+    _is_dialog        : false,                            //!< Window Attribute: Dialog ?
+    _is_resizable     : true,                             //!< Window Attribute: Resizable ?
+    _is_draggable     : true,                             //!< Window Attribute: Draggable ?
+    _is_scrollable    : true,                             //!< Window Attribute: Scrollable ?
+    _is_maximized     : false,                            //!< Window Attribute: Maximized state
+    _is_maximizable   : true,                             //!< Window Attribute: Maximizable ?
+    _is_minimized     : false,                            //!< Window Attribute: Minimized state
+    _is_minimizable   : true,                             //!< Window Attribute: Minimizable ?
+    _is_sessionable   : true,                             //!< Window Attribute: Sessionable ?
+    _is_closable      : true,                             //!< Window Attribute: Closable ?
+    _is_orphan        : false,                            //!< Window Attribute: Orphan (Only one instance allowed)
+    _is_ontop         : false,                            //!< Window Attribute: On-Top of other windows ?
+    _skip_taskbar     : false,                            //!< Window Attribute: Skip the taskbar
+    _skip_pager       : false,                            //!< Window Attribute: Skip the pager
+    _oldZindex        : -1,                               //!< Old z-index
+    _zindex           : -1,                               //!< Current z-index
+    _gravity          : "none",                           //!< Window gravity
+    _width            : -1,                               //!< Current window width in px
+    _height           : -1,                               //!< Current window height in px
+    _top              : -1,                               //!< Current window top position in px
+    _left             : -1,                               //!< Current window left position in px
+    _lock_size        : false,                            //!< Lock window size
+    _lock_width       : -1,                               //!< Lock to this window width in px
+    _lock_height      : -1,                               //!< Lock to this window height in px
+    _bindings         : {                                 //!< Event bindings list
+      "die"    : [],
+      "focus"  : [],
+      "blur"   : [],
+      "resize" : []
+    },
+
     /**
      * Constructor
      *
@@ -2848,61 +2896,24 @@
      * @constructor
      */
     init : function(name, dialog, attrs) {
+      // Check if we are restoring a window
       var restore = null;
-
       if ( attrs instanceof Object ) {
         if ( attrs[name] !== undefined ) {
           restore = attrs[name];
         }
       }
 
-      // DOM Elements
-      this.$element = null;
-
-      // Windot temp attributes
-      this._current         = false;
-      this._attrs_temp      = null;
-      this._attrs_restore   = restore;
-      this._created         = false;
-      this._showing         = false;
-      this._origtitle       = "";
-      this._bindings        = {
-        "die"    : [],
-        "focus"  : [],
-        "blur"   : [],
-        "resize" : []
-      };
-
       // Window attributes
-      this._id             = null;
       this._name           = name;
       this._title          = dialog ? "Dialog" : "Window";
-      this._content        = "";
-      this._icon           = "emblems/emblem-unreadable.png";
       this._is_dialog      = dialog ? dialog : false;
       this._is_resizable   = dialog ? false : true;
-      this._is_draggable   = true;
       this._is_scrollable  = dialog ? false :true;
-      this._is_maximized   = false;
       this._is_maximizable = dialog ? false : true;
-      this._is_minimized   = false;
       this._is_minimizable = dialog ? false : true;
       this._is_sessionable = dialog ? false : true;
-      this._is_closable    = true;
-      this._is_orphan      = false;
-      this._is_ontop       = false;
-      this._skip_taskbar   = false;
-      this._skip_pager     = false;
-      this._oldZindex      = -1;
-      this._zindex         = -1;
-      this._gravity        = "none";
-      this._width          = -1;
-      this._height         = -1;
-      this._top            = -1;
-      this._left           = -1;
-      this._lock_size      = false;
-      this._lock_width     = -1;
-      this._lock_height    = -1;
+      this._attrs_restore  = restore;
 
       console.log("Window::" + name + "::init()");
     },
@@ -3838,6 +3849,8 @@
    * @class
    */
   var Menu = Class.extend({
+
+    $element : null,      //!< Menu DOM Element
 
     /**
      * Constructor
