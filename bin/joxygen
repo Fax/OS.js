@@ -133,10 +133,12 @@ var_dump($classes);
 
 // Write HTML file
 $classes_html = "";
+$class_list = Array();
 foreach ( $classes as $className => $options ) {
   $class_vars = "";
   $class_methods = "";
 
+  $class_list[] = sprintf("<a href=\"#%s\">%s</a>", $className, $className);
 
   foreach ( $options['variables'] as $var ) {
     $class_vars .= <<<EOHTML
@@ -184,7 +186,7 @@ EOHTML;
   $classes_html .= <<<EOHTML
 
 <div class="Class">
-  <h2>{$options["extends"]}::{$className}</h2>
+  <h2><a name="{$className}">{$options["extends"]}::{$className}</a></h2>
   <pre>{$options["header"]}</pre>
   <h3>Variables</h3>
   <ul>
@@ -200,6 +202,9 @@ EOHTML;
 
 EOHTML;
 }
+
+sort($class_list);
+$class_list = $class_list ? implode(" | ", $class_list) : "";
 
 
 $doc = <<<EOHTML
@@ -228,6 +233,9 @@ $doc = <<<EOHTML
     <li>core.js</li>
   </ul>
   <h1>Classes:</h1>
+  <p>
+{$class_list}
+  </p>
 {$classes_html}
   <h1>Functions:</h1>
 </body>
