@@ -35,14 +35,14 @@
   /**
    * URIs
    */
-  var WEBSOCKET_URI      = "ws://localhost:8888";
-  var AJAX_URI           = "/";
+  var WEBSOCKET_URI      = "ws://localhost:8888";         //!< WebSocket URI
+  var AJAX_URI           = "/";                           //!< AJAX URI
 
-  var RESOURCE_URI       = "/?resource=";
-  var LIBRARY_URI        = "/?library=";
-  var THEME_URI          = "/?theme=";
-  var FONT_URI           = "/?font=";
-  var CURSOR_URI         = "/?cursor=";
+  var RESOURCE_URI       = "/?resource=";                 //!< Resource loading URI
+  var LIBRARY_URI        = "/?library=";                  //!< Library URI
+  var THEME_URI          = "/?theme=";                    //!< Themes loading URI
+  var FONT_URI           = "/?font=";                     //!< Font loading URI
+  var CURSOR_URI         = "/?cursor=";                   //!< Cursor loading URI
 
   /////////////////////////////////////////////////////////////////////////////
   // PRIVATE VARIABLES
@@ -51,16 +51,16 @@
   /**
    * Local references
    */
-  var _Core            = null;
-  var _Resources       = null;
-  var _Settings        = null;
-  var _Desktop         = null;
-  var _Window          = null;
-  var _Tooltip         = null;
-  var _Menu            = null;
-  var _Processes       = [];
-  var _TopIndex        = (ZINDEX_WINDOW + 1);
-  var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);
+  var _Core            = null;                            //!< Core instance
+  var _Resources       = null;                            //!< ResourceManager instance
+  var _Settings        = null;                            //!< SettingsManager instance
+  var _Desktop         = null;                            //!< Desktop instance
+  var _Window          = null;                            //!< Current Window instance
+  var _Tooltip         = null;                            //!< Current Tooltip instance
+  var _Menu            = null;                            //!< Current Menu instance
+  var _Processes       = [];                              //!< Process instance list
+  var _TopIndex        = (ZINDEX_WINDOW + 1);             //!< OnTop z-index
+  var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);       //!< OnTop instances index
 
   /////////////////////////////////////////////////////////////////////////////
   // HELPERS
@@ -654,13 +654,14 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * WebSocket abstraction
+   * Socket -- WebSocket abstraction (w/TCP)
    * @class
    */
   var Socket = Class.extend({
 
     /**
      * Constructor
+     * @constructor
      */
     init : function(uri) {
       this._socket = null;
@@ -680,6 +681,7 @@
 
     /**
      * Destructor
+     * @destructor
      */
     destroy : function() {
       if ( this._socket ) {
@@ -702,7 +704,9 @@
 
     /**
      * Base onmessage event
-     * @return void
+     * @param   Mixed     ev      WebSocket Event
+     * @param   Mixed     data    WebSocket Data
+     * @return  void
      */
     _on_message : function(ev, data) {
       console.group("Socket::message()");
@@ -726,7 +730,8 @@
 
     /**
      * Base onclose event
-     * @return void
+     * @param   Mixed     ev      WebSocket Event
+     * @return  void
      */
     _on_close : function(ev) {
       console.log("Socket::close()", this);
@@ -774,7 +779,8 @@
 
     /**
      * Send message
-     * @return void
+     * @param   Mixed     msg     Data to send
+     * @return  void
      */
     send : function(msg) {
       if ( this._socket ) {
@@ -793,25 +799,43 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Process
+   * Process -- Process Class
    *
    * @class
    */
   var Process = Class.extend({
 
+    _pid        : -1,
+    _started    : null,
+    _proc_name  : "(unknown)",
+    _proc_icon  : "mimetypes/exec.png",
+    _locked     : false,
+
     /**
      * Constructor
+     * @param   String    name          Process Name
+     * @param   String    icon          Process Icon
+     * @param   bool      locked        Not stoppable by user
+     * @constructor
      */
     init : function(name, icon, locked) {
       this._pid       = (_Processes.push(this) - 1);
       this._started   = new Date();
-      this._proc_name = name || "(unknown)";
-      this._proc_icon = icon || "mimetypes/exec.png";
-      this._locked    = locked || false;
+
+      if ( name !== undefined && name ) {
+        this._proc_name = name;
+      }
+      if ( icon !== undefined && icon ) {
+        this._proc_icon = icon;
+      }
+      if ( locked !== undefined ) {
+        this._locked    = locked;
+      }
     },
 
     /**
      * Destructor
+     * @destructor
      */
     destroy : function() {
       if ( this._pid >= 0 ) {
@@ -841,14 +865,16 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Main Process
+   * Core -- Main Process
    *
+   * @extends Process
    * @class
    */
   var Core = Process.extend({
 
     /**
      * Constructor
+     * @constructor
      */
     init : function() {
       var self = this;
@@ -903,6 +929,7 @@
 
     /**
      * Destructor
+     * @destructor
      */
     destroy : function() {
       if ( _Tooltip ) {
@@ -936,7 +963,8 @@
 
     /**
      * Global Event Handler: keydown
-     * @return bool
+     * @param   DOMEvent    ev      DOM Event
+     * @return  bool
      */
     global_keydown : function(ev) {
       var key = ev.keyCode || ev.which;
@@ -972,7 +1000,8 @@
 
     /**
      * Global Event Handler: click
-     * @return void
+     * @param   DOMEvent    ev      DOM Event
+     * @return  void
      */
     global_click : function(ev) {
       //ev.preventDefault(); FIXME???
@@ -994,7 +1023,8 @@
 
     /**
      * Global Event Handler: dblclick
-     * @return void
+     * @param   DOMEvent    ev      DOM Event
+     * @return  void
      */
     global_dblclick : function(ev) {
       ev.preventDefault();
@@ -1002,7 +1032,8 @@
 
     /**
      * Global Event Handler: mousedown
-     * @return void
+     * @param   DOMEvent    ev      DOM Event
+     * @return  void
      */
     global_mousedown : function(ev) {
       var t = ev.target || ev.srcElement;
@@ -1016,7 +1047,8 @@
 
     /**
      * Global Event Handler: mouseup
-     * @return void
+     * @param   DOMEvent    ev      DOM Event
+     * @return  void
      */
     global_mouseup : function(ev) {
       API.ui.rectangle.hide(ev);
@@ -1024,7 +1056,8 @@
 
     /**
      * Global Event Handler: mousemove
-     * @return void
+     * @param   DOMEvent    ev      DOM Event
+     * @return  void
      */
     global_mousemove : function(ev) {
       API.ui.rectangle.update(ev);
@@ -1032,15 +1065,17 @@
 
     /**
      * Global Event Handler: touchmove
-     * @return void
+     * @param   DOMEvent    ev      DOM Event
+     * @return  void
      */
-    global_touchmove : function(e) {
-      v.preventDefault();
+    global_touchmove : function(ev) {
+      ev.preventDefault();
     },
 
     /**
      * Global Event Handler: contextmenu
-     * @return bool
+     * @param   DOMEvent    e       DOM Event
+     * @return  bool
      */
     global_contextmenu : function(e) {
       if ( $(e.target).hasClass("ContextMenu") || $(e.target).hasClass("Menu") || $(e.target).parent().hasClass("ContextMenu") || $(e.target).parent().hasClass("Menu") ) {
@@ -1060,9 +1095,10 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Resource Manager
+   * ResourceManager -- Resource Manager
    * Takes care of CSS, JavaScript loading etc.
    *
+   * @extends Process
    * @class
    */
   var ResourceManager = (function() {
@@ -1073,6 +1109,7 @@
 
       /**
        * Constructor
+       * @constructor
        */
       init : function() {
         this.resources = [];
@@ -1094,6 +1131,7 @@
 
       /**
        * Destructor
+       * @destructor
        */
       destroy : function() {
         forEach(this.links, function(i, el) {
@@ -1132,7 +1170,8 @@
 
       /**
        * Check if given resource is already loaded
-       * @return bool
+       * @param   String      res       Resource URI
+       * @return  bool
        */
       hasResource : function(res) {
         return in_array(res, this.resources);
@@ -1140,7 +1179,8 @@
 
       /**
        * Add a resource (load)
-       * @return void
+       * @param   String      res       Resource URI
+       * @return  void
        */
       addResource : function(res) {
         if ( this.hasResource(res) )
@@ -1176,7 +1216,9 @@
 
       /**
        * Add an array with resources and call-back
-       * @return void
+       * @param   Array     res         Resource URI array
+       * @param   Function  callback    Call when done adding
+       * @return  void
        */
       addResources : function(res, callback) {
         var i = 0;
@@ -1194,9 +1236,10 @@
 
 
   /**
-   * SettingsManager
+   * SettingsManager -- Settings Manager
    * Uses localSettings (WebStorage) to handle session data
    *
+   * @extends Process
    * @class
    */
   var SettingsManager = (function() {
@@ -1208,6 +1251,8 @@
 
       /**
        * Constructor
+       * @param   Object    defaults      Default settings
+       * @constructor
        */
       init : function(defaults) {
         _avail = defaults;
@@ -1254,6 +1299,7 @@
 
       /**
        * Destructor
+       * @destructor
        */
       destroy : function() {
         _avail = null;
@@ -1263,7 +1309,9 @@
 
       /**
        * Save application data
-       * @return void
+       * @param   String    name      Application name
+       * @param   Object    props     Application settings
+       * @return  void
        */
       saveApp : function(name, props) {
         var storage = localStorage.getItem("applications");
@@ -1290,7 +1338,8 @@
 
       /**
        * Load application data
-       * @return JSON
+       * @param   String    name      Application name
+       * @return  JSON
        */
       loadApp : function(name) {
         var storage = localStorage.getItem("applications");
@@ -1318,7 +1367,8 @@
 
       /**
        * Apply a changeset
-       * @return void
+       * @param   Object    settings    Settings Array
+       * @return  void
        */
       _apply : function(settings) {
         for ( var i in settings ) {
@@ -1330,7 +1380,9 @@
 
       /**
        * Set a storage item by key and value
-       * @return void
+       * @param   String    k       Settings Key
+       * @param   Mixed     v       Settings Value
+       * @return  void
        */
       _set : function(k, v) {
         if ( _avail[k] !== undefined ) {
@@ -1341,7 +1393,10 @@
 
       /**
        * Get a storage item by key
-       * @return Mixed
+       * @param   String    k       Settings Key
+       * @param   bool      keys    Return availible options
+       * @param   bool      jsn     Return as parsed JSON
+       * @return  Mixed
        */
       _get : function(k, keys, jsn) {
         var ls = undefined;
@@ -1361,7 +1416,8 @@
 
       /**
        * Get storage item type by key
-       * @return String
+       * @param   String    key     Settings Key
+       * @return  String
        */
       getType : function(key) {
         return (_avail[key] ? (_avail[key].type) : null);
@@ -1388,26 +1444,34 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Application
+   * Application -- The base Application class
    * Basis for application (empty)
    *
+   * @see     Window
+   * @extends Process
    * @class
    */
   var Application = Process.extend({
 
+    _argv         : {},           //!< Application staring arguments (argv)
+    _name         : "",           //!< Application name
+    _uuid         : null,         //!< Application unique-id (used for messsagin/comm.)
+    _running      : false,        //!< Application running state
+    _root_window  : null,         //!< Application root Window
+    _windows      : [],           //!< Application Window list
+    _storage      : {},           //!< Application Storage
+    _storage_on   : false,        //!< Application Storage enabled state
+    _compability  : [],           //!< Application compability list
+
     /**
      * Constructor
+     * @param   String    name      Application Name
+     * @param   Array     argv      Application Staring arguments (argv)
+     * @constructor
      */
     init : function(name, argv) {
       this._argv         = argv || {};
       this._name         = name;
-      this._uuid         = null;
-      this._running      = false;
-      this._root_window  = null;
-      this._windows      = [];
-      this._storage      = {};
-      this._storage_on   = false;
-      this._compability  = [];
 
       console.log("Application::" + this._name + "::NULL::init()");
 
@@ -1416,6 +1480,7 @@
 
     /**
      * Destructor
+     * @destructor
      */
     destroy : function() {
       var self = this;
@@ -1451,7 +1516,8 @@
 
     /**
      * Run application
-     * @return void
+     * @param   Window    root_window   Bind a Window as main Window
+     * @return  void
      */
     run : function(root_window) {
       var self = this;
@@ -1477,7 +1543,8 @@
 
     /**
      * Create Dialog: Message
-     * @return void
+     * @see     API.system.dialog
+     * @return  void
      */
     createMessageDialog : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
       this._addWindow(API.system.dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
@@ -1485,7 +1552,8 @@
 
     /**
      * Create Dialog: Color Chooser
-     * @return void
+     * @see     API.system.dialog_color
+     * @return  void
      */
     createColorDialog : function(color, callback) {
       this._addWindow(API.system.dialog_color(color, function(rgb, hex) {
@@ -1495,7 +1563,8 @@
 
     /**
      * Create Dialog: Upload File
-     * @return void
+     * @see     API.system.dialog_upload
+     * @return  void
      */
     createUploadDialog : function(dir, callback) {
       this._addWindow(API.system.dialog_upload(dir, function() {
@@ -1505,7 +1574,8 @@
 
     /**
      * Create Dialog: File Operation Dialog
-     * @return void
+     * @see     API.system.dialog_file
+     * @return  void
      */
     createFileDialog : function(callback, mimes, type, dir) {
       this._addWindow(API.system.dialog_file(function(file, mime) {
@@ -1515,7 +1585,8 @@
 
     /**
      * Create Dialog: Launch Application
-     * @return void
+     * @see     API.system.dialog_launch
+     * @return  void
      */
     createLaunchDialog : function(list, callback) {
       this._addWindow(API.system.dialog_launch(list, function(app, def) {
@@ -1525,7 +1596,8 @@
 
     /**
      * Create Dialog: Rename File
-     * @return void
+     * @see     API.system.dialog_rename
+     * @return  void
      */
     createRenameDialog : function(dir, callback) {
       this._addWindow(API.system.dialog_rename(dir, function(fname) {
@@ -1535,8 +1607,8 @@
 
     /**
      * Check Application compabilty list and throw errors if any
-     * @return void
      * @throws Exception
+     * @return void
      */
     _checkCompability : (function() {
 
@@ -1663,7 +1735,8 @@
 
     /**
      * Add a new window to application
-     * @return void
+     * @param   Window    win     Window to add
+     * @return  void
      */
     _addWindow : function(win) {
       this._windows.push(win);
@@ -1714,6 +1787,9 @@
 
     /**
      * Perform Application Event (AJAX-call to Server-Side)
+     * @param   String    ev          The AJAX action to perform
+     * @param   Mixed     args        The AJAX action argument(s)
+     * @param   Function  callback    Callback to function when done
      * @return void
      */
     _event : function(ev, args, callback) {
@@ -1729,13 +1805,6 @@
           callback(data.result, data.error);
         });
       }
-    },
-
-    /**
-     * Perform a clipboard action
-     * @return void
-     */
-    _clipboard : function(action) {
     },
 
     /**
@@ -1768,23 +1837,30 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Desktop
+   * Desktop -- Main Window Manager Class
    * The desktop containing all elements
    *
+   * TODO: Rename to Window manager
+   *
+   * @extends Process
    * @class
    */
   var Desktop = Process.extend({
 
+    $element : null,          //!< Desktop DOM Element
+    stack    : [],            //!< Window Stack
+    panel    : null,          //!< Panel instance
+    running  : false,         //!< Window Manager running ?
+    bindings : {},            //!< Global action bindings
+
     /**
      * Constructor
+     * @constructor
      */
     init : function() {
       var self = this;
 
       this.$element = $("#Desktop");
-      this.stack    = [];
-      this.panel    = null;
-      this.running  = false;
       this.bindings = {
         "window_add"     : [self.defaultHandler],
         "window_remove"  : [self.defaultHandler],
@@ -1863,6 +1939,7 @@
 
     /**
      * Destructor
+     * @destructor
      */
     destroy : function() {
       try {
@@ -1897,7 +1974,9 @@
 
     /**
      * Bind an event by name and callback
-     * @return void
+     * @param   String    mname     Binding name
+     * @param   Function  mfunc     Binding function
+     * @return  void
      */
     bind : function(mname, mfunc) {
       if ( this.bindings ) {
@@ -1909,6 +1988,8 @@
 
     /**
      * Call an event by name and arguments
+     * @param   String    mname     Binding name
+     * @param   Mixed     margs     Binding arguments
      * @return void
      */
     call : function(mname, margs) {
@@ -1966,7 +2047,9 @@
 
     /**
      * Default event handler callback
-     * @return bool
+     * @param   String    ev          Event name
+     * @param   Mixed     eargs       Event argument(s)
+     * @return  bool
      */
     defaultHandler : function(ev, eargs) {
       if ( this.panel ) {
@@ -1984,7 +2067,8 @@
 
     /**
      * Add a window to the stack (and create)
-     * @return Mixed
+     * @param   Window    win       Window to add
+     * @return  Mixed
      */
     addWindow : function(win) {
       if ( win instanceof Window ) {
@@ -2015,7 +2099,9 @@
 
     /**
      * Remove a window from the stack
-     * @return void
+     * @param   Window    win       Window to remove
+     * @param   bool      destroy   Destroy window
+     * @return  void
      */
     removeWindow : function(win, destroy) {
       if ( win instanceof Window ) {
@@ -2042,7 +2128,8 @@
 
     /**
      * Perform 'blur' on Window
-     * @return void
+     * @param   Window    win       Window to manipulate
+     * @return  void
      */
     blurWindow : function(win) {
       win._blur();
@@ -2056,7 +2143,8 @@
 
     /**
      * Perform 'focus' on Window
-     * @return void
+     * @param   Window    win       Window to manipulate
+     * @return  void
      */
     focusWindow : function(win) {
       if ( _Window !== null ) {
@@ -2076,7 +2164,8 @@
 
     /**
      * Perform 'restore' on Window
-     * @return void
+     * @param   Window    win       Window to manipulate
+     * @return  void
      */
     restoreWindow : function(win) {
       this.focusWindow(win);
@@ -2084,7 +2173,8 @@
 
     /**
      * Perform 'maximize' on Window
-     * @return void
+     * @param   Window    win       Window to manipulate
+     * @return  void
      */
     maximizeWindow : function(win) {
       this.focusWindow(win);
@@ -2092,7 +2182,8 @@
 
     /**
      * Perform 'minimize' on Window
-     * @return void
+     * @param   Window    win       Window to manipulate
+     * @return  void
      */
     minimizeWindow : function(win) {
       this.blurWindow(win);
@@ -2100,7 +2191,8 @@
 
     /**
      * Perform 'update' on Window
-     * @return void
+     * @param   Window    win       Window to manipulate
+     * @return  void
      */
     updateWindow : function(win) {
       this.call("window_updated", win);
@@ -2108,7 +2200,8 @@
 
     /**
      * Sort windows on desktop (align)
-     * @return void
+     * @param   String      method      Sorting method (default = tile)
+     * @return  void
      */
     sortWindows : function(method) {
       var ppos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
@@ -2167,7 +2260,8 @@
 
     /**
      * Set new wallpaper
-     * @return void
+     * @param   String    wp      Wallpaper path
+     * @return  void
      */
     setWallpaper : function(wp) {
       if ( wp ) {
@@ -2179,7 +2273,8 @@
 
     /**
      * Set new theme
-     * @return void
+     * @param   String    theme   Theme name
+     * @return  void
      */
     setTheme : function(theme) {
       var css = $("#ThemeFace");
@@ -2191,7 +2286,8 @@
 
     /**
      * Set font
-     * @return void
+     * @param   String    font    Font name
+     * @return  void
      */
     setFont : function(font) {
       var css = $("#FontFace");
@@ -2203,7 +2299,8 @@
 
     /**
      * Set cursor theme
-     * @return void
+     * @param   String    cursor    Theme name
+     * @return  void
      */
     setCursorTheme : function(cursor) {
       var css = $("#CursorFace");
@@ -2244,7 +2341,7 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Custom Tooltip Class
+   * Tooltip -- Custom Tooltip Class
    *
    * @class
    */
@@ -2252,16 +2349,17 @@
 
     /**
      * Constructor
+     * @constructor
      */
     init : function() {
       var self = this;
       this.$element = $("#Tooltip");
-
       this.ttimeout = null;
     },
 
     /**
      * Destructor
+     * @destructor
      */
     destroy : function() {
       // Element is in template
@@ -2269,7 +2367,8 @@
 
     /**
      * Initialize a DOM-root for Tooltips
-     * @return void
+     * @param   DOMElement    root    Initialize this root
+     * @return  void
      */
     initRoot : function(root) {
       root.find(".TT").each(function() {
@@ -2288,6 +2387,9 @@
 
     /**
      * Hover On
+     * @param   String      tip       Tooltip
+     * @param   DOMElement  el        Element
+     * @param   DOMEevent   ev        Event
      * @return void
      */
     hoverOn : function(tip, el, ev) {
@@ -2302,7 +2404,9 @@
 
     /**
      * Hover Off
-     * @return void
+     * @param   DOMElement  el        Element
+     * @param   DOMEevent   ev        Event
+     * @return  void
      */
     hoverOff : function(el, ev) {
       if ( this.ttimeout ) {
@@ -2316,7 +2420,10 @@
 
     /**
      * Show tooltip
-     * @return void
+     * @param   String      tip       Tooltip
+     * @param   DOMElement  el        Element
+     * @param   DOMEevent   ev        Event
+     * @return  void
      */
     show : function(tip, el, ev) {
       var posX = 0;
@@ -2351,15 +2458,17 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Panel
+   * Panel -- The Desktop Panel Class
    * Panels can be added to desktop. Contains PanelItem(s) or Widgets
    *
+   * @extends Process
    * @class
    */
   var Panel = Process.extend({
 
     /**
      * Constructor
+     * @constructor
      */
     init : function() {
       var self = this;
@@ -2474,6 +2583,7 @@
 
     /**
      * Destructor
+     * @destructor
      */
     destroy : function() {
       for ( var i = 0; i < this.items.length; i++ ) {
@@ -2487,7 +2597,9 @@
 
     /**
      * Redraw PanelItems
-     * @return void
+     * @param   String    ev          Event name
+     * @param   Mixed     eargs       Event argument(s)
+     * @return  void
      */
     redraw : function(ev, eargs) {
       var pi;
@@ -2501,7 +2613,9 @@
 
     /**
      * Add a new PanelItem
-     * @return Mixed
+     * @param   _PanelItem    i       Item
+     * @param   int           pos     Position index
+     * @return  Mixed
      */
     addItem : function(i, pos) {
       if ( i instanceof _PanelItem ) {
@@ -2528,7 +2642,8 @@
 
     /**
      * Remove a PanelItem
-     * @return bool
+     * @param   _PanelItem    x       Item
+     * @return  bool
      */
     removeItem : function(x) {
       for ( var i = 0; i < this.items.length; i++ ) {
@@ -2553,36 +2668,44 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * PanelItem
+   * _PanelItem -- The Panel Item Class
    * Basis for a PanelItem
    *
+   * @extends Process
    * @class
    */
   var _PanelItem = Process.extend({
+    _name         : "",
+    _uuid         : null,
+    _named        : "",
+    _align        : "AlignLeft",
+    _expand       : false,
+    _dynamic      : false,
+    _orphan       : true,
+    _crashed      : false,
+    _configurable : false,
+    _redrawable   : false,
+    _index        : -1,
+    _panel        : null,
+    $element      : null,
 
     /**
      * Constructor
+     * @param   String    name    Panel Item name
+     * @param   String    align   Panel Item alignment
+     * @constructor
      */
     init : function(name, align)  {
       this._name         = name;
-      this._uuid         = null;
       this._named        = name;
-      this._align        = align || "AlignLeft";
-      this._expand       = false;
-      this._dynamic      = false;
-      this._orphan       = true;
-      this._crashed      = false;
-      this._configurable = false;
-      this._redrawable   = false;
-      this._index        = -1;
-      this._panel        = null;
-      this.$element      = null;
+      this._align        = align || this._align;
 
       this._super(name);
     },
 
     /**
      * Destructor
+     * @destructor
      */
     destroy : function() {
       if ( this.$element ) {
@@ -2595,7 +2718,8 @@
 
     /**
      * Create DOM elements etc.
-     * @return $
+     * @param   String    pos     Item Alignment
+     * @return  $
      */
     create : function(pos) {
       var self = this;
@@ -2631,6 +2755,7 @@
 
     /**
      * Reload PanelItem
+     * @TODO
      * @return void
      */
     reload : function() {
@@ -2639,6 +2764,7 @@
 
     /**
      * Redraw PanelItem
+     * @TODO
      * @return void
      */
     redraw : function() {
@@ -2646,7 +2772,8 @@
 
     /**
      * Make PanelItem Crash
-     * @return void
+     * @param   String      error     Error message
+     * @return  void
      */
     crash : function(error) {
       this.$element.find("*").remove();
@@ -2704,7 +2831,7 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Window
+   * Window -- The Main Window Class
    * Basis for an Application or Dialog.
    * This class does all the loading
    *
@@ -2718,6 +2845,7 @@
      * @param String   name       Name of window
      * @param String   dialog     Dialog type if any
      * @param Object   attrs      Extra win attributes (used to restore from sleep etc)
+     * @constructor
      */
     init : function(name, dialog, attrs) {
       var restore = null;
@@ -2781,6 +2909,7 @@
 
     /**
      * Destructor
+     * @destructor
      */
     destroy : function() {
       var self = this;
@@ -2802,7 +2931,9 @@
 
     /**
      * Bind an event by name and callback
-     * @return void
+     * @param   String    mname     Binding name
+     * @param   Function  mfunc     Binding function
+     * @return  void
      */
     _bind : function(mname, mfunc) {
       this._bindings[mname].push(mfunc);
@@ -2810,7 +2941,8 @@
 
     /**
      * Call an event by name and arguments
-     * @return void
+     * @param   String    mname     Binding name
+     * @return  void
      */
     _call : function(mname) {
       if ( this._bindings ) {
@@ -2825,7 +2957,9 @@
 
     /**
      * Create DOM elemnts etc.
-     * @return $
+     * @param   String        id              The ID to give DOM Element
+     * @param   Function      mcallback       Callback when done
+     * @return  $
      */
     create : function(id, mcallback) {
       var self = this;
@@ -3204,7 +3338,8 @@
 
     /**
      * Set Window title
-     * @return void
+     * @param   String    t         Title
+     * @return  void
      */
     setTitle : function(t) {
       if ( t != this._title ) {
@@ -3224,7 +3359,8 @@
 
     /**
      * Get Window full icon path
-     * @return String
+     * @param   String    size      Size (default = 16x16)
+     * @return  String
      */
     getIcon : function(size) {
       size = size || "16x16";
@@ -3240,7 +3376,9 @@
 
     /**
      * Shuffle Window (adjust z-index)
-     * @return void
+     * @param   int   zi        New z-index
+     * @param   int   old       Old z-index
+     * @return  void
      */
     _shuffle : function(zi, old) {
       if ( old ) {
@@ -3256,7 +3394,8 @@
 
     /**
      * Set Window on-top state
-     * @return void
+     * @param   bool    t     State
+     * @return  void
      */
     _ontop : function(t) {
       t = (t === undefined) ? this._is_ontop : t;
@@ -3421,6 +3560,7 @@
 
     /**
      * Gravitate window
+     * @param   String    dir       Direction/Location
      * @return void
      */
     _gravitate : function(dir) {
@@ -3435,7 +3575,9 @@
 
     /**
      * Move Window position
-     * @return void
+     * @param   int   left    New Left/X Position in px
+     * @param   int   top     New top/Y Position in px
+     * @return  void
      */
     _move : function(left, top) {
       this._left = left;
@@ -3449,7 +3591,10 @@
 
     /**
      * Resize window dimension
-     * @return void
+     * @param   int           width       New width in px
+     * @param   int           height      New height in px
+     * @param   DOMElement    el          Element
+     * @return  void
      */
     _resize : function(width, height, el) {
       el = el || this.$element;
@@ -3505,15 +3650,17 @@
 
 
   /**
-   * Gtk+: GtkWindow
+   * GtkWindow -- Gtk+ Window Class
    *
+   * @extends Window
    * @class
    */
   var GtkWindow = Window.extend({
 
     /**
      * Constructor
-     * @see Window
+     * @see Window::init()
+     * @constructor
      */
     init : function(window_name, window_dialog, app, attrs) {
       this.app = app;
@@ -3523,7 +3670,7 @@
 
     /**
      * Create DOM elements etc.
-     * @see Window
+     * @see Window::create()
      * @return $
      */
     create : function(id, mcallback) {
@@ -3686,8 +3833,7 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Menu
-   * Menu for Window and Context
+   * Menu -- Menu for Window and Context Class
    *
    * @class
    */
@@ -3695,6 +3841,7 @@
 
     /**
      * Constructor
+     * @constructor
      */
     init : function(att_window) {
       this.$element = $("<ul></ul>");
@@ -3703,6 +3850,7 @@
 
     /**
      * Destructor
+     * @destructor
      */
     destroy : function() {
       if ( this.$element ) {
@@ -3712,18 +3860,35 @@
       this.$element = null;
     },
 
+    /**
+     * Empty root
+     * @return void
+     */
     clear : function() {
       if ( this.$element ) {
         this.$element.find("li").empty().remove();
       }
     },
 
+    /**
+     * Create/Add a separator to list
+     * @return void
+     */
     create_separator : function() {
       var litem = $("<li><hr /></li>");
         litem.addClass("separator");
       this.$element.append(litem);
     },
 
+    /**
+     * Create/Add item to list
+     * @param   String      title     The label
+     * @param   String      icon      Icon name
+     * @param   Function    method    The callback function onClick
+     * @param   bool        disabled  Enabled state
+     * @param   String      aclass    Add this className to menu item
+     * @return  void
+     */
     create_item : function(title, icon, method, disabled, aclass) {
       var self = this;
       var litem = $("<li><span><img alt=\"\" src=\"/img/blank.gif\" /></span></li>");
@@ -3763,16 +3928,18 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Dialog
+   * Dialog -- Dialog-Window class
    * Used for Alert and Confirm messages etc.
    *
+   * @extends Window
    * @class
    */
   var Dialog = Window.extend({
 
     /**
      * Constructor
-     * @see Window
+     * @see Window::init()
+     * @constructor
      */
     init : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
       this.cmd_close  = cmd_close  || function() {};
@@ -3857,7 +4024,8 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Browser Compability Dialog
+   * BrowserDialog -- Browser Compability Dialog
+   * @extends Window
    * @class
    */
   var BrowserDialog = Window.extend({
@@ -3865,6 +4033,7 @@
     /**
      * Constructor
      * @see Window
+     * @constructor
      */
     init : function() {
       var supported = "Supported";
@@ -3959,7 +4128,9 @@
   });
 
   /**
-   * Application Crash Dialog
+   * CrashDialog -- Application Crash Dialog
+   *
+   * @extends Window
    * @class
    */
   var CrashDialog = Window.extend({
@@ -3967,6 +4138,7 @@
     /**
      * Constructor
      * @see Window
+     * @constructor
      */
     init : function(app, error, trace, alternative) {
       var title = sprintf("Application '%s' crashed!", app._name);
@@ -4049,15 +4221,17 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * OperationDialog
+   * OperationDialog -- Misc Operation Dialogs Class
    * Basis for extended variant of dialogs with interactions.
    *
+   * @extends Window
    * @class
    */
   var OperationDialog = Window.extend({
 
     /**
      * Constructor
+     * @constructor
      */
     init : function(type) {
       this._super("OperationDialog", type);
@@ -4070,6 +4244,7 @@
 
     /**
      * Destructor
+     * @destructor
      */
     destroy : function() {
       this._super();
@@ -4077,6 +4252,7 @@
 
     /**
      * Create DOM elements etc.
+     * @see    Window::create()
      * @return void
      */
     create : function(id, mcallback) {
