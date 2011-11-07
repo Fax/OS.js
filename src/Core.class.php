@@ -369,6 +369,33 @@ EOCSS;
         }
 
         /**
+         * Services
+         */
+        else if ( $args['action'] == "service" && isset($args['arguments']) ) {
+          $iargs = $args['arguments'];
+          if ( isset($iargs['type']) && isset($iargs['uri']) && isset($iargs['data']) && isset($iargs['options']) && isset($iargs['timeout']) ) {
+            if ( $s = Service::createFromType($iargs['type']) ) {
+              $uri      = $iargs['uri'];
+              $data     = $iargs['data'];
+              $timeout  = $iargs['timeout'];
+              $options  = $iargs['options'];
+
+              if ( $res = $s->call($uri, $data, $timeout, $options) ) {
+                $json['success'] = true;
+                $json['error']   = null;
+                $json['result']  = $res;
+              } else {
+                $json['error']   = "Failed to call Service!";
+              }
+            } else {
+              $json['error']   = "Failed to construct Service!";
+            }
+          } else {
+            $json['error']   = "Missing some arguments!";
+          }
+        }
+
+        /**
          * API
          */
         else if ( $args['action'] == "call" && isset($args['method']) && isset($args['args']) ) {

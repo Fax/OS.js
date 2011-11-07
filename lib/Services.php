@@ -48,6 +48,36 @@ abstract class Service
     return false;
   }
 
+  /**
+   * Create a new instance from type
+   * @param   int   $type     Type identifier
+   * @return  Service
+   */
+  public final static function createFromType($type) {
+    $result;
+    switch ( (int)$type ) {
+      case self::TYPE_GET :
+        $type = new ServiceGET();
+      break;
+      case self::TYPE_POST :
+        $type = new ServicePOST();
+      break;
+      case self::TYPE_JSON :
+        $type = new ServiceJSON();
+      break;
+      case self::TYPE_SOAP :
+        $type = new ServiceSOAP();
+      break;
+      case self::TYPE_XML :
+        $type = new ServiceXML();
+      break;
+      default :
+        $result = null;
+      break;
+    }
+    return $result;
+  }
+
 }
 
 // SOAP Extensions

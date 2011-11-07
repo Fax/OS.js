@@ -44,6 +44,15 @@
   var FONT_URI           = "/?font=";                     //!< Font loading URI
   var CURSOR_URI         = "/?cursor=";                   //!< Cursor loading URI
 
+  /**
+   * Service types
+   */
+  var SERVICE_GET  = 0;               //!< Service: HTTP GET
+  var SERVICE_POST = 1;               //!< Service: HTTP POST
+  var SERVICE_JSON = 2;               //!< Service: JSON (POST)
+  var SERVICE_SOAP = 3;               //!< Service: Soap
+  var SERVICE_XML  = 4;               //!< Service: XML (POST)
+
   /////////////////////////////////////////////////////////////////////////////
   // PRIVATE VARIABLES
   /////////////////////////////////////////////////////////////////////////////
@@ -670,8 +679,72 @@
   };
 
   /////////////////////////////////////////////////////////////////////////////
-  // Socket
+  // Server Services
   /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Service -- Server-Side Services
+   *
+   * @class
+   */
+  var Service = Class.extend({
+
+    _type    : -1,     //!< Service type
+    _timeout : 30,     //!< Service default timeout
+
+    /**
+     * Service::init() -- Constructor
+     * @param   int     type      Service type (default = SERVICE_GET)
+     * @constructor
+     */
+    init : function(type) {
+      this._type    = parseInt(type, 10) || SERVICE_GET;
+      this._timeout = 30;
+    },
+
+    /**
+     * Service::destroy() -- Destroy
+     * @destructor
+     */
+    destroy : function() {},
+
+    /**
+     * Service::call() -- Call service
+     * @param   String    uri           Service URI
+     * @param   Mixed     data          Service Method data/arguments (Array/Tuple depending on service type)
+     * @param   int       timeout       Service Timeout in seconds (Not avail. in some services)
+     * @param   Mixed     options       Service Options (Array/Tuple depending on service type)
+     * @param   Function  callback      Callback function (returns [data, internal_error?])
+     * @see     Server-Side documentation
+     * @return  void
+     */
+    call : function(uri, method, data, timeout, options, callback) {
+      data      = (data === undefined)    ? null            : data;
+      timeout   = (timeout === undefined) ? (this._timeout) : (parseInt(timeout, 10) || this._timeout);
+      options   = (options === undefined) ? {}              : options;
+
+      if ( uri && (callback instanceof Function) ) {
+        var ajax_args = {
+          'ajax'      : true,
+          'action'    : 'service',
+          'arguments' : {
+            'type'     : this._type,
+            'uri'      : uri,
+            'data'     : data,
+            'timeout'  : timeout,
+            'options'  : options
+          }
+        };
+
+        $.post(AJAX_URI, ajax_args, function(data) {
+          callback(data, false);
+        }, function(data) {
+          callback(data, true);
+        });
+      }
+    }
+
+  }); // @endclass
 
   /**
    * Socket -- WebSocket abstraction (w/TCP)
