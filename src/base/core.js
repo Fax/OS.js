@@ -830,10 +830,10 @@
    */
   var Process = Class.extend({
 
-    _pid        : -1,
-    _started    : null,
-    _proc_name  : "(unknown)",
-    _proc_icon  : "mimetypes/exec.png",
+    _pid        : -1,                     //!< Process ID
+    _started    : null,                   //!< Process started date
+    _proc_name  : "(unknown)",            //!< Process name identifier
+    _proc_icon  : "mimetypes/exec.png",   //!< Process icon
     _locked     : false,
 
     /**

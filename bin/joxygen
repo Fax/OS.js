@@ -149,7 +149,7 @@ EOHTML;
     $params_list = "";
     $return = "";
     foreach ( $var['parameters'] as $p => $po ) {
-      $params[] = "{$po['type']} {$p}";
+      $params[] = "<i>{$po['type']}</i> {$p}";
     }
     if ( $params ) {
       $tmp = "";
