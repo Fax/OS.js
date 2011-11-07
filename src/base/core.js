@@ -846,6 +846,9 @@
     init : function(name, icon, locked) {
       this._pid       = (_Processes.push(this) - 1);
       this._started   = new Date();
+      this._proc_name = "(unknown)";
+      this._proc_icon = "mimetypes/exec.png";
+      this._locked    = false;
 
       if ( name !== undefined && name ) {
         this._proc_name = name;
@@ -1131,6 +1134,9 @@
     var _aResources = [];
 
     return Process.extend({
+
+      resources : [],       //!< Resources array
+      links     : [],       //!< Resource link array
 
       /**
        * ResourceManager::init() -- Constructor
@@ -1495,8 +1501,15 @@
      * @constructor
      */
     init : function(name, argv) {
-      this._argv         = argv || {};
-      this._name         = name;
+      this._argv        = argv || {};
+      this._name        = name;
+      this._uuid        = null;
+      this._running     = false;
+      this._root_window = null;
+      this._windows     = [];
+      this._storage     = {};
+      this._storage_on  = false;
+      this._compability = [];
 
       console.log("Application::" + this._name + "::NULL::init()");
 
@@ -1550,12 +1563,11 @@
       if ( !this._running ) {
 
         this._restoreStorage();
-
         if ( root_window instanceof Window ) {
           this._root_window = root_window;
-          this._proc_icon = root_window._icon;
+          this._proc_icon   = root_window._icon;
 
-          root_window._bind("die", function() {
+          this._root_window._bind("die", function() {
             self._stop();
           });
         }
@@ -1783,6 +1795,8 @@
      */
     _stop : function() {
       if ( this._running ) {
+        console.log("Application::" + this._name + "::" + this._uuid + "::_stop()");
+
         this.destroy();
       }
     },
@@ -1896,6 +1910,9 @@
       var self = this;
 
       this.$element = $("#Desktop");
+      this.stack    = [];
+      this.panel    = null;
+      this.running  = false;
       this.bindings = {
         "window_add"     : [self.defaultHandler],
         "window_remove"  : [self.defaultHandler],
@@ -2136,10 +2153,12 @@
      * Desktop::removeWindow() -- Remove a window from the stack
      * @param   Window    win       Window to remove
      * @param   bool      destroy   Destroy window
-     * @return  void
+     * @return  bool
      */
     removeWindow : function(win, destroy) {
       if ( win instanceof Window ) {
+        console.log("Desktop::removeWindow()", destroy, win);
+
         if ( destroy ) {
           win.destroy();
         }
@@ -2157,8 +2176,12 @@
         if ( index >= 0 ) {
           this.call("window_remove", win);
           this.stack.splice(index, 1);
+
+          return true;
         }
       }
+
+      return false;
     },
 
     /**
@@ -2382,12 +2405,14 @@
    */
   var Tooltip = Class.extend({
 
+    $element  :  null,      //!< DOM Elemenent
+    ttimeout  :  null,      //!< Timeout reference
+
     /**
      * Tooltip::init() -- Constructor
      * @constructor
      */
     init : function() {
-      var self = this;
       this.$element = $("#Tooltip");
       this.ttimeout = null;
     },
@@ -2500,6 +2525,10 @@
    * @class
    */
   var Panel = Process.extend({
+
+    $element    : null,       //!< DOM Element
+    pos         : "",         //!< Panel Position
+    items       : [],         //!< Panel Items
 
     /**
      * Panel::init() -- Constructor
@@ -2710,19 +2739,20 @@
    * @class
    */
   var _PanelItem = Process.extend({
-    _name         : "",
-    _uuid         : null,
-    _named        : "",
-    _align        : "AlignLeft",
-    _expand       : false,
-    _dynamic      : false,
-    _orphan       : true,
-    _crashed      : false,
-    _configurable : false,
-    _redrawable   : false,
-    _index        : -1,
-    _panel        : null,
-    $element      : null,
+
+    $element      : null,             //!< DOM Elemeent
+    _name         : "",               //!< Item name identifier
+    _uuid         : null,             //!< Item UUID
+    _named        : "",               //!< Readable name
+    _align        : "AlignLeft",      //!< Item alignment
+    _expand       : false,            //!< Expand item
+    _dynamic      : false,            //!< Dynamic item
+    _orphan       : true,             //!< Orphan ? (Only one instance allowed)
+    _crashed      : false,            //!< Crashed ?
+    _configurable : false,            //!< Configurable ?
+    _redrawable   : false,            //!< Redrawable ?
+    _index        : -1,               //!< Panel item Index
+    _panel        : null,             //!< Panel instance reference
 
     /**
      * _PanelItem::init() -- Constructor
@@ -2734,6 +2764,16 @@
       this._name         = name;
       this._named        = name;
       this._align        = align || this._align;
+      this._uuid         = null;
+      this._expand       = false;
+      this._dynamic      = false;
+      this._orphan       = true;
+      this._crashed      = false;
+      this._configurable = false;
+      this._redrawable   = false;
+      this._index        = -1;
+      this._panel        = null;
+      this.$element      = null;
 
       this._super(name);
     },
@@ -2910,12 +2950,7 @@
     _lock_size        : false,                            //!< Lock window size
     _lock_width       : -1,                               //!< Lock to this window width in px
     _lock_height      : -1,                               //!< Lock to this window height in px
-    _bindings         : {                                 //!< Event bindings list
-      "die"    : [],
-      "focus"  : [],
-      "blur"   : [],
-      "resize" : []
-    },
+    _bindings         : {},                               //!< Event bindings list
 
     /**
      * Window::init() -- Constructor
@@ -2934,6 +2969,34 @@
         }
       }
 
+      // Default attributes
+      this.$element          = null;
+      this._current          = false;
+      this._attrs_temp       = null;
+      this._created          = false;
+      this._showing          = false;
+      this._origtitle        = "";
+      this._id               = null;
+      this._content          = "";
+      this._icon             = "emblems/emblem-unreadable.png";
+      this._is_maximized     = false;
+      this._is_minimized     = false;
+      this._is_closable      = true;
+      this._is_orphan        = false;
+      this._is_ontop         = false;
+      this._skip_taskbar     = false;
+      this._skip_pager       = false;
+      this._oldZindex        = -1;
+      this._zindex           = -1;
+      this._gravity          = "none";
+      this._width            = -1;
+      this._height           = -1;
+      this._top              = -1;
+      this._left             = -1;
+      this._lock_size        = false;
+      this._lock_width       = -1;
+      this._lock_height      = -1;
+
       // Window attributes
       this._name           = name;
       this._title          = dialog ? "Dialog" : "Window";
@@ -2944,6 +3007,12 @@
       this._is_minimizable = dialog ? false : true;
       this._is_sessionable = dialog ? false : true;
       this._attrs_restore  = restore;
+      this._bindings = {
+        "die"    : [],
+        "focus"  : [],
+        "blur"   : [],
+        "resize" : []
+      };
 
       console.log("Window::" + name + "::init()");
     },
@@ -2968,6 +3037,8 @@
       }
 
       console.log("Window::" + this._name + "::destroy()");
+
+      //this._super(); Called by the binding "die"
     },
 
     /**
@@ -2986,7 +3057,7 @@
      * @return  void
      */
     _call : function(mname) {
-      if ( this._bindings ) {
+      if ( this._bindings && this._showing ) {
         var fs = this._bindings[mname];
         if ( fs ) {
           for ( var i = 0; i < fs.length; i++ ) {
@@ -3345,6 +3416,8 @@
     show : function() {
       if ( !this._showing ) {
         _Desktop.addWindow(this);
+
+        this._showing = true;
       }
     },
 
@@ -3356,6 +3429,8 @@
     close : function() {
       if ( this._showing ) {
         _Desktop.removeWindow(this, true);
+
+        this._showing = false;
       }
     },
 
