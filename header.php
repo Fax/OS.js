@@ -47,6 +47,7 @@ define("SERVER_NONBLOCK", false); // TODO
 //
 
 define("PATH_PROJECT",               dirname(__FILE__));
+define("PATH_PROJECT_DOC",           PATH_PROJECT . "/doc");
 define("PATH_PROJECT_BIN",           PATH_PROJECT . "/bin");
 define("PATH_PROJECT_SRC",           PATH_PROJECT . "/src");
 define("PATH_PROJECT_LIB",           PATH_PROJECT . "/lib");

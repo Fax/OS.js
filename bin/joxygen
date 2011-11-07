@@ -1,0 +1,238 @@
+#!/usr/bin/env php
+<?php
+
+require "header.php";
+error_reporting(E_ALL);
+
+$file = PATH_JSBASE . "/core.js";
+$code = file_get_contents($file);
+
+$classes = Array();
+$functions = Array();
+
+// Find functions
+
+// Find classes
+$re = "/@class(.*?)@endclass/s";
+if ( ($reg = preg_match_all($re, $code, $matches, PREG_OFFSET_CAPTURE)) !== false ) {
+
+  foreach ( $matches[0] as $m ) {
+    $class   = $m[0];
+    $offset  = $m[1];
+
+    if ( preg_match("/var (.*)\s+?=\s+?(.*)\.extend\(\{(.*)\}\); \/\/ @endclass/s", $class, $cmatches) ) {
+      $variables = Array();
+      $methods   = Array();
+      $header    = "";
+
+      if ( sizeof($cmatches) == 4 ) {
+        $className  = array_shift(explode(" ", $cmatches[1]));
+        $extendName = end(explode(" ", $cmatches[2]));
+        $classCode  = $cmatches[3];
+        $classCodeL = explode("\n", $classCode);
+
+        // Class header comment
+        $cn = preg_quote($className);
+        if ( preg_match("/\/\*\*\s*\* {$cn} \-\- (.*)\n(.*)\n((.*)\n)*?\s*?\* @class\s*\*\//", $code, $hmatches) ) {
+          $header = $hmatches[0];
+        }
+
+        // Variables
+        if ( preg_match_all("/(.*)\/\/\!\< (.*)\s*/", $classCode, $tmatches, PREG_OFFSET_CAPTURE) ) {
+          foreach ( $tmatches[2] as $i => $vcomment ) {
+            $vdesc = $vcomment[0];
+            $vline = trim($tmatches[1][$i][0]);
+            $vline = preg_replace("/,$/", "", $vline);
+            $vline = preg_replace("/\s+?/", "", $vline);
+
+            list($vname, $vdef) = explode(":", $vline);
+
+            $variables[] = Array(
+              "name"    => $vname,
+              "header"  => trim($vdesc),
+              "default" => $vdef
+            );
+          }
+        }
+
+        // Methods
+        if ( preg_match_all("/([A-z0-9_]*)\s+?\:\s+?\(?function\(/", $classCode, $mmatches, PREG_OFFSET_CAPTURE) ) {
+          foreach ( $mmatches[1] as $mtemp ) {
+            $methodName = trim($mtemp[0]);
+            $methodHeader = "";
+            $methodParams = Array();
+            $methodReturn = null;
+            $methodSpecial = null;
+
+            if ( !trim($methodName) || preg_match("/^{/", trim($methodName)) ) {
+              continue;
+            }
+
+            if ( preg_match("/\/\*\*\s*\* {$className}\:\:{$methodName}\(\) \-\- (.*)\n(.*)\n((.*)\n)*?\s*?\s*\*\//", $code, $mmmatches) ) {
+              if ( $mhead = trim($mmmatches[0]) ) {
+                foreach ( explode("\n", $mhead) as $cl ) {
+                  if ( trim($cl) != "/**" && trim($cl)!= "*/" ) {
+                    $cl = preg_replace("/\s*?\*\s*?/", "", $cl);
+                    $cl = str_replace("{$className}::{$methodName}() -- ", "", $cl);
+                    $cl = trim(preg_replace("/\s+/", " ", $cl));
+
+                    if ( preg_match("/^@param (\w+) ([A-z0-9_]+) (.*)$/", $cl, $pm) ) {
+                      $methodParams[$pm[2]] = Array(
+                        "type" => $pm[1],
+                        "desc" => $pm[3]
+                      );
+                    } else if ( preg_match("/^@return (\w+)$/", $cl, $pm) ) {
+                      $methodReturn = $pm[1];
+                    } else if ( preg_match("/^@TODO( (\w+))?$/", $cl, $pm) ) {
+                      $msg = isset($pm[1]) ? $pm[1] : "[something]";
+                      $methodHeader .= "TODO: {$msg}\n";
+                    } else if ( preg_match("/^@FIXME( (\w+))?$/", $cl, $pm) ) {
+                      $msg = isset($pm[1]) ? $pm[1] : "[something]";
+                      $methodHeader .= "FIXME: {$msg}\n";
+                    } else if ( preg_match("/^@constructor$/", $cl, $pm) ) {
+                      $methodSpecial = "constructor";
+                    } else if ( preg_match("/^@destructor$/", $cl, $pm) ) {
+                      $methodSpecial = "destructor";
+                    } else if ( preg_match("/^@see (.*)$/", $cl, $pm) ) {
+                      $methodHeader .= "Read more: <a href=\"#{$pm[1]}\">{$pm[1]}</a>\n";
+                    } else {
+                      $methodHeader .= "{$cl}\n";
+                    }
+                  }
+                }
+              }
+            }
+            $methods[] = Array(
+              "name"        => $methodName,
+              "header"      => $methodHeader,
+              "parameters"  => $methodParams,
+              "returns"     => $methodReturn,
+              "special"     => $methodSpecial
+            );
+          }
+        }
+
+        // Add to list
+        $classes[$className] = Array(
+          "name"      => $className,
+          "extends"   => $extendName,
+          "header"    => $header,
+          "variables" => $variables,
+          "methods"   => $methods
+        );
+      }
+    }
+
+  }
+}
+
+/*
+var_dump($functions);
+var_dump($classes);
+ */
+
+// Write HTML file
+$classes_html = "";
+foreach ( $classes as $className => $options ) {
+  $class_vars = "";
+  $class_methods = "";
+
+
+  foreach ( $options['variables'] as $var ) {
+    $class_vars .= <<<EOHTML
+      <li><b>{$var['name']}</b> <i>= {$var["default"]}</i><br />{$var['header']}<br /></li>
+EOHTML;
+  }
+
+  foreach ( $options['methods'] as $var ) {
+    $params = Array();
+    $params_list = "";
+    $return = "";
+    foreach ( $var['parameters'] as $p => $po ) {
+      $params[] = "{$po['type']} {$p}";
+    }
+    if ( $params ) {
+      $tmp = "";
+      foreach ( $var['parameters'] as $p => $po ) {
+        $tmp .= "<li>{$po['type']} <b>{$p}</b>: <i>{$po['desc']}</i></li>";
+      }
+      $params_list = "<i>Arguments:</i> <ol>{$tmp}</ol>";
+    }
+    if ( $var['returns'] ) {
+      $return = "        <i>Returns:</i> <b>{$var['returns']}</b>";
+    }
+    $special = "";
+    $params = implode(", ", $params);
+    $name = "{$className}::{$var['name']}";
+
+
+    if ( $var['special'] ) {
+      $special = "<u>[{$var['special']}]</u> ";
+    }
+
+    $class_methods .= <<<EOHTML
+      <li>
+        <b><a name="{$name}">{$special}{$name}({$params})</a></b>
+        <br />
+        <pre>{$var['header']}</pre>
+{$return}<br />
+{$params_list}
+      </li>
+EOHTML;
+  }
+
+  $classes_html .= <<<EOHTML
+
+<div class="Class">
+  <h2>{$options["extends"]}::{$className}</h2>
+  <pre>{$options["header"]}</pre>
+  <h3>Variables</h3>
+  <ul>
+{$class_vars}
+  </ul>
+  <h3>Methods</h3>
+  <ul>
+{$class_methods}
+  </ul>
+</div>
+
+<br />
+
+EOHTML;
+}
+
+
+$doc = <<<EOHTML
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OS.js JavaScript documentation</title>
+  <style type="text/css">
+  .Class {
+    background-color : #e6e6e6;
+    padding : 10px;
+  }
+  li {
+    margin-bottom : 10px;
+  }
+  </style>
+</head>
+<body>
+  <h1>OS.js JavaScript API</h1>
+  <p>
+    Contains complete API documentation for OS.js JavaScript.
+  </p>
+
+  <h1>Files:</h1>
+  <ul>
+    <li>core.js</li>
+  </ul>
+  <h1>Classes:</h1>
+{$classes_html}
+  <h1>Functions:</h1>
+</body>
+</html>
+EOHTML;
+
+file_put_contents(sprintf("%s/javascript/%s", PATH_PROJECT_DOC, "index.html"), $doc);
+?>

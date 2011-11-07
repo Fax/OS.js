@@ -74,6 +74,7 @@
    * @param   String  ialign        Item alignment
    * @param   Panel   panel         Panel instance reference
    * @return  void
+   * @function
    */
   function LaunchPanelItem(i, iname, iargs, ialign, panel) {
     var reg = _Settings._get("system.panel.registered", true);
@@ -90,7 +91,7 @@
       }
 
     });
-  }
+  } // @endfunction
 
   /**
    * Application Crash Dialog handler
@@ -98,6 +99,7 @@
    * @param   Application   application           Application instance
    * @param   Exception     ex                    Exception thrown
    * @return  void
+   * @function
    */
   function CrashApplication(app_name, application, ex) {
     try {
@@ -110,7 +112,7 @@
       var label = OSjs.Labels.CrashApplication;
       API.system.dialog("error", sprintf(label, app_name, ex));
     }
-  }
+  } // @endfunction
 
   /**
    * Application Launch handler
@@ -120,6 +122,7 @@
    * @param   Function  callback              Callback on success
    * @param   Function  callback_error        Callback on error
    * @return  void
+   * @function
    */
   function LaunchApplication(app_name, args, windows, callback, callback_error) {
     callback = callback || function() {};
@@ -191,7 +194,7 @@
         }, 50);
       }
     });
-  }
+  } // @endfunction
 
   /////////////////////////////////////////////////////////////////////////////
   // PUBLIC API
@@ -671,6 +674,7 @@
 
   /**
    * Socket -- WebSocket abstraction (w/TCP)
+   *
    * @class
    */
   var Socket = Class.extend({
@@ -679,7 +683,7 @@
     _uri    : null,       //!< Socket URI string
 
     /**
-     * Constructor
+     * Socket::init() -- Constructor
      * @param   String      uri     Connection host/ip/uri/string
      * @constructor
      */
@@ -700,7 +704,7 @@
     },
 
     /**
-     * Destructor
+     * Socket::destroy() -- Destructor
      * @destructor
      */
     destroy : function() {
@@ -713,7 +717,7 @@
     },
 
     /**
-     * Base onopen event
+     * Socket::_on_open() -- Base onopen event
      * @param   Mixed     ev      WebSocket Event
      * @return  void
      */
@@ -724,7 +728,7 @@
     },
 
     /**
-     * Base onmessage event
+     * Socket::_on_message() -- Base onmessage event
      * @param   Mixed     ev      WebSocket Event
      * @param   Mixed     data    WebSocket Data
      * @return  void
@@ -750,7 +754,7 @@
     },
 
     /**
-     * Base onclose event
+     * Socket::_on_close() -- Base onclose event
      * @param   Mixed     ev      WebSocket Event
      * @return  void
      */
@@ -761,7 +765,7 @@
     },
 
     /**
-     * Connect
+     * Socket::connect() -- Connect
      * @return bool
      */
     connect : function() {
@@ -799,7 +803,7 @@
     },
 
     /**
-     * Send message
+     * Socket::send() -- Send message
      * @param   Mixed     msg     Data to send
      * @return  void
      */
@@ -813,7 +817,7 @@
       }
     }
 
-  });
+  }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
   // PROCESS
@@ -833,7 +837,7 @@
     _locked     : false,
 
     /**
-     * Constructor
+     * Process::init() -- Constructor
      * @param   String    name          Process Name
      * @param   String    icon          Process Icon
      * @param   bool      locked        Not stoppable by user
@@ -855,7 +859,7 @@
     },
 
     /**
-     * Destructor
+     * Process::destroy() -- Destructor
      * @destructor
      */
     destroy : function() {
@@ -867,7 +871,7 @@
     },
 
     /**
-     * Kill process
+     * Process::kill() -- Kill process
      * @return bool
      */
     kill : function() {
@@ -879,7 +883,7 @@
       return false;
     }
 
-  });
+  }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
   // CORE
@@ -894,7 +898,7 @@
   var Core = Process.extend({
 
     /**
-     * Constructor
+     * Core::init() -- Constructor
      * @constructor
      */
     init : function() {
@@ -949,7 +953,7 @@
     },
 
     /**
-     * Destructor
+     * Core::destroy() -- Destructor
      * @destructor
      */
     destroy : function() {
@@ -983,7 +987,7 @@
     },
 
     /**
-     * Global Event Handler: keydown
+     * Core::global_keydown() -- Global Event Handler: keydown
      * @param   DOMEvent    ev      DOM Event
      * @return  bool
      */
@@ -1020,7 +1024,7 @@
     },
 
     /**
-     * Global Event Handler: click
+     * Core::global_click() -- Global Event Handler: click
      * @param   DOMEvent    ev      DOM Event
      * @return  void
      */
@@ -1043,7 +1047,7 @@
     },
 
     /**
-     * Global Event Handler: dblclick
+     * Core::global_dblclick() -- Global Event Handler: dblclick
      * @param   DOMEvent    ev      DOM Event
      * @return  void
      */
@@ -1052,7 +1056,7 @@
     },
 
     /**
-     * Global Event Handler: mousedown
+     * Core::global_mousedown() -- Global Event Handler: mousedown
      * @param   DOMEvent    ev      DOM Event
      * @return  void
      */
@@ -1067,7 +1071,7 @@
     },
 
     /**
-     * Global Event Handler: mouseup
+     * Core::global_mouseup() -- Global Event Handler: mouseup
      * @param   DOMEvent    ev      DOM Event
      * @return  void
      */
@@ -1076,7 +1080,7 @@
     },
 
     /**
-     * Global Event Handler: mousemove
+     * Core::global_mousemove() -- Global Event Handler: mousemove
      * @param   DOMEvent    ev      DOM Event
      * @return  void
      */
@@ -1085,7 +1089,7 @@
     },
 
     /**
-     * Global Event Handler: touchmove
+     * Core::global_touchmove() -- Global Event Handler: touchmove
      * @param   DOMEvent    ev      DOM Event
      * @return  void
      */
@@ -1094,7 +1098,7 @@
     },
 
     /**
-     * Global Event Handler: contextmenu
+     * Core::global_contextmenu() -- Global Event Handler: contextmenu
      * @param   DOMEvent    e       DOM Event
      * @return  bool
      */
@@ -1109,7 +1113,7 @@
       return true;
     }
 
-  });
+  }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
   // MANAGERS
@@ -1129,7 +1133,7 @@
     return Process.extend({
 
       /**
-       * Constructor
+       * ResourceManager::init() -- Constructor
        * @constructor
        */
       init : function() {
@@ -1151,7 +1155,7 @@
 
 
       /**
-       * Destructor
+       * ResourceManager::destroy() -- Destructor
        * @destructor
        */
       destroy : function() {
@@ -1166,7 +1170,7 @@
       },
 
       /**
-       * Force MANIFEST update
+       * ResourceManager::updateManifest() -- Force MANIFEST update
        * @return void
        */
       updateManifest : function() {
@@ -1190,7 +1194,7 @@
       },
 
       /**
-       * Check if given resource is already loaded
+       * ResourceManager::hasResource() -- Check if given resource is already loaded
        * @param   String      res       Resource URI
        * @return  bool
        */
@@ -1199,7 +1203,7 @@
       },
 
       /**
-       * Add a resource (load)
+       * ResourceManager::addResource() -- Add a resource (load)
        * @param   String      res       Resource URI
        * @return  void
        */
@@ -1236,7 +1240,7 @@
       },
 
       /**
-       * Add an array with resources and call-back
+       * ResourceManager::addResources() -- Add an array with resources and call-back
        * @param   Array     res         Resource URI array
        * @param   Function  callback    Call when done adding
        * @return  void
@@ -1251,7 +1255,7 @@
 
         callback();
       }
-    });
+    }); // @endclass
 
   })();
 
@@ -1271,7 +1275,7 @@
     return Process.extend({
 
       /**
-       * Constructor
+       * SettingsManager::init() -- Constructor
        * @param   Object    defaults      Default settings
        * @constructor
        */
@@ -1319,7 +1323,7 @@
       },
 
       /**
-       * Destructor
+       * SettingsManager::destroy() -- Destructor
        * @destructor
        */
       destroy : function() {
@@ -1329,7 +1333,7 @@
       },
 
       /**
-       * Save application data
+       * SettingsManager::saveApp() -- Save application data
        * @param   String    name      Application name
        * @param   Object    props     Application settings
        * @return  void
@@ -1358,7 +1362,7 @@
       },
 
       /**
-       * Load application data
+       * SettingsManager::loadApp() -- Load application data
        * @param   String    name      Application name
        * @return  JSON
        */
@@ -1387,7 +1391,7 @@
       },
 
       /**
-       * Apply a changeset
+       * SettingsManager::_apply() -- Apply a changeset
        * @param   Object    settings    Settings Array
        * @return  void
        */
@@ -1400,7 +1404,7 @@
       },
 
       /**
-       * Set a storage item by key and value
+       * SettingsManager::_set() -- Set a storage item by key and value
        * @param   String    k       Settings Key
        * @param   Mixed     v       Settings Value
        * @return  void
@@ -1413,7 +1417,7 @@
       },
 
       /**
-       * Get a storage item by key
+       * SettingsManager::_get() -- Get a storage item by key
        * @param   String    k       Settings Key
        * @param   bool      keys    Return availible options
        * @param   bool      jsn     Return as parsed JSON
@@ -1436,7 +1440,7 @@
       },
 
       /**
-       * Get storage item type by key
+       * SettingsManager::getType() -- Get storage item type by key
        * @param   String    key     Settings Key
        * @return  String
        */
@@ -1445,7 +1449,7 @@
       },
 
       /**
-       * Get current Storage session data
+       * SettingsManager::getSession() -- Get current Storage session data
        * @return JSON
        */
       getSession : function() {
@@ -1456,7 +1460,7 @@
         return exp;
       }
 
-    });
+    }); // @endclass
 
   })();
 
@@ -1485,7 +1489,7 @@
     _compability  : [],           //!< Application compability list
 
     /**
-     * Constructor
+     * Application::init() -- Constructor
      * @param   String    name      Application Name
      * @param   Array     argv      Application Staring arguments (argv)
      * @constructor
@@ -1500,7 +1504,7 @@
     },
 
     /**
-     * Destructor
+     * Application::destroy() -- Destructor
      * @destructor
      */
     destroy : function() {
@@ -1536,7 +1540,7 @@
     },
 
     /**
-     * Run application
+     * Application::run() -- Run application
      * @param   Window    root_window   Bind a Window as main Window
      * @return  void
      */
@@ -1563,7 +1567,7 @@
     },
 
     /**
-     * Create Dialog: Message
+     * Application::createMessageDialog() -- Create Dialog: Message
      * @see     API.system.dialog
      * @return  void
      */
@@ -1572,7 +1576,7 @@
     },
 
     /**
-     * Create Dialog: Color Chooser
+     * Application::createColorDialog() -- Create Dialog: Color Chooser
      * @see     API.system.dialog_color
      * @return  void
      */
@@ -1583,7 +1587,7 @@
     },
 
     /**
-     * Create Dialog: Upload File
+     * Application::createUploadDialog() -- Create Dialog: Upload File
      * @see     API.system.dialog_upload
      * @return  void
      */
@@ -1594,7 +1598,7 @@
     },
 
     /**
-     * Create Dialog: File Operation Dialog
+     * Application::createFileDialog() -- Create Dialog: File Operation Dialog
      * @see     API.system.dialog_file
      * @return  void
      */
@@ -1605,7 +1609,7 @@
     },
 
     /**
-     * Create Dialog: Launch Application
+     * Application::createLaunchDialog() -- Create Dialog: Launch Application
      * @see     API.system.dialog_launch
      * @return  void
      */
@@ -1616,7 +1620,7 @@
     },
 
     /**
-     * Create Dialog: Rename File
+     * Application::createRenameDialog() -- Create Dialog: Rename File
      * @see     API.system.dialog_rename
      * @return  void
      */
@@ -1627,19 +1631,18 @@
     },
 
     /**
-     * Create Dialog: Input Box
+     * Application::createInputDialog() -- Create Dialog: Input Box
      * @see     API.system.dialog_input
      * @return  void
      */
-    createRenameDialog : function(path, desc, callback) {
+    createInputDialog : function(path, desc, callback) {
       this._addWindow(API.system.dialog_input(path, desc, function(fname) {
         callback(fname);
       }));
     },
 
     /**
-     * Check Application compabilty list and throw errors if any
-     * @throws Exception
+     * Application::_checkCompability() -- Check Application compabilty list and throw errors if any
      * @return void
      */
     _checkCompability : (function() {
@@ -1766,7 +1769,7 @@
     })(),
 
     /**
-     * Add a new window to application
+     * Application::_addWindow() -- Add a new window to application
      * @param   Window    win     Window to add
      * @return  void
      */
@@ -1775,7 +1778,7 @@
     },
 
     /**
-     * Stop application
+     * Application::_stop() -- Stop application
      * @return void
      */
     _stop : function() {
@@ -1785,7 +1788,7 @@
     },
 
     /**
-     * Save Application Storage
+     * Application::_saveStorage() -- Save Application Storage
      * @return void
      */
     _saveStorage : function() {
@@ -1795,7 +1798,7 @@
     },
 
     /**
-     * Load Application Storage
+     * Application::_restoreStorage() -- Load Application Storage
      * @return void
      */
     _restoreStorage : function() {
@@ -1808,7 +1811,7 @@
     },
 
     /**
-     * Clear Application Storage
+     * Application::_flushStorage() -- Clear Application Storage
      * @return void
      */
     _flushStorage : function() {
@@ -1818,7 +1821,7 @@
     },
 
     /**
-     * Perform Application Event (AJAX-call to Server-Side)
+     * Application::_event() -- Perform Application Event (AJAX-call to Server-Side)
      * @param   String    ev          The AJAX action to perform
      * @param   Mixed     args        The AJAX action argument(s)
      * @param   Function  callback    Callback to function when done
@@ -1840,7 +1843,7 @@
     },
 
     /**
-     * Get current Application session data
+     * Application::_getSession() -- Get current Application session data
      * @return JSON
      */
     _getSession : function() {
@@ -1862,7 +1865,7 @@
       return false;
     }
 
-  });
+  }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
   // DESKTOP
@@ -1886,7 +1889,7 @@
     bindings : {},            //!< Global action bindings
 
     /**
-     * Constructor
+     * Desktop::init() -- Constructor
      * @constructor
      */
     init : function() {
@@ -1970,7 +1973,7 @@
     },
 
     /**
-     * Destructor
+     * Desktop::destroy() -- Destructor
      * @destructor
      */
     destroy : function() {
@@ -2005,7 +2008,7 @@
     },
 
     /**
-     * Bind an event by name and callback
+     * Desktop::bind() -- Bind an event by name and callback
      * @param   String    mname     Binding name
      * @param   Function  mfunc     Binding function
      * @return  void
@@ -2019,7 +2022,7 @@
     },
 
     /**
-     * Call an event by name and arguments
+     * Desktop::call() -- Call an event by name and arguments
      * @param   String    mname     Binding name
      * @param   Mixed     margs     Binding arguments
      * @return void
@@ -2034,7 +2037,7 @@
     },
 
     /**
-     * Run DOM operations etc.
+     * Desktop::run() -- Run DOM operations etc.
      * @return void
      */
     run : function() {
@@ -2078,7 +2081,7 @@
     // HANDLERS
 
     /**
-     * Default event handler callback
+     * Desktop::defaultHandler() -- Default event handler callback
      * @param   String    ev          Event name
      * @param   Mixed     eargs       Event argument(s)
      * @return  bool
@@ -2098,7 +2101,7 @@
     // WINDOWS
 
     /**
-     * Add a window to the stack (and create)
+     * Desktop::addWindow() -- Add a window to the stack (and create)
      * @param   Window    win       Window to add
      * @return  Mixed
      */
@@ -2130,7 +2133,7 @@
     },
 
     /**
-     * Remove a window from the stack
+     * Desktop::removeWindow() -- Remove a window from the stack
      * @param   Window    win       Window to remove
      * @param   bool      destroy   Destroy window
      * @return  void
@@ -2159,7 +2162,7 @@
     },
 
     /**
-     * Perform 'blur' on Window
+     * Desktop::blurWindow() -- Perform 'blur' on Window
      * @param   Window    win       Window to manipulate
      * @return  void
      */
@@ -2174,7 +2177,7 @@
     },
 
     /**
-     * Perform 'focus' on Window
+     * Desktop::focusWindow() -- Perform 'focus' on Window
      * @param   Window    win       Window to manipulate
      * @return  void
      */
@@ -2195,7 +2198,7 @@
     },
 
     /**
-     * Perform 'restore' on Window
+     * Desktop::restoreWindow() -- Perform 'restore' on Window
      * @param   Window    win       Window to manipulate
      * @return  void
      */
@@ -2204,7 +2207,7 @@
     },
 
     /**
-     * Perform 'maximize' on Window
+     * Desktop::maximizeWindow() -- Perform 'maximize' on Window
      * @param   Window    win       Window to manipulate
      * @return  void
      */
@@ -2213,7 +2216,7 @@
     },
 
     /**
-     * Perform 'minimize' on Window
+     * Desktop::minimizeWindow() -- Perform 'minimize' on Window
      * @param   Window    win       Window to manipulate
      * @return  void
      */
@@ -2222,7 +2225,7 @@
     },
 
     /**
-     * Perform 'update' on Window
+     * Desktop::updateWindow() -- Perform 'update' on Window
      * @param   Window    win       Window to manipulate
      * @return  void
      */
@@ -2231,7 +2234,7 @@
     },
 
     /**
-     * Sort windows on desktop (align)
+     * Desktop::sortWindows() -- Sort windows on desktop (align)
      * @param   String      method      Sorting method (default = tile)
      * @return  void
      */
@@ -2263,7 +2266,7 @@
     // SETTINGS \ SESSION
 
     /**
-     * Apply changes from ResourceManger
+     * Desktop::applySettings() -- Apply changes from ResourceManger
      * @return void
      */
     applySettings : function() {
@@ -2291,7 +2294,7 @@
     },
 
     /**
-     * Set new wallpaper
+     * Desktop::setWallpaper() -- Set new wallpaper
      * @param   String    wp      Wallpaper path
      * @return  void
      */
@@ -2304,7 +2307,7 @@
     },
 
     /**
-     * Set new theme
+     * Desktop::setTheme() -- Set new theme
      * @param   String    theme   Theme name
      * @return  void
      */
@@ -2317,7 +2320,7 @@
     },
 
     /**
-     * Set font
+     * Desktop::setFont() -- Set font
      * @param   String    font    Font name
      * @return  void
      */
@@ -2330,7 +2333,7 @@
     },
 
     /**
-     * Set cursor theme
+     * Desktop::setCursorTheme() -- Set cursor theme
      * @param   String    cursor    Theme name
      * @return  void
      */
@@ -2343,7 +2346,7 @@
     },
 
     /**
-     * Get current Desktop session data
+     * Desktop::getSession() -- Get current Desktop session data
      * @return JSON
      */
     getSession : function() {
@@ -2366,7 +2369,7 @@
     }
 
 
-  });
+  }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
   // TOOLTIP
@@ -2380,7 +2383,7 @@
   var Tooltip = Class.extend({
 
     /**
-     * Constructor
+     * Tooltip::init() -- Constructor
      * @constructor
      */
     init : function() {
@@ -2390,7 +2393,7 @@
     },
 
     /**
-     * Destructor
+     * Tooltip::destroy() -- Destructor
      * @destructor
      */
     destroy : function() {
@@ -2398,7 +2401,7 @@
     },
 
     /**
-     * Initialize a DOM-root for Tooltips
+     * Tooltip::initRoot() -- Initialize a DOM-root for Tooltips
      * @param   DOMElement    root    Initialize this root
      * @return  void
      */
@@ -2418,7 +2421,7 @@
     },
 
     /**
-     * Hover On
+     * Tooltip::hoverOn() -- Hover On
      * @param   String      tip       Tooltip
      * @param   DOMElement  el        Element
      * @param   DOMEevent   ev        Event
@@ -2435,7 +2438,7 @@
     },
 
     /**
-     * Hover Off
+     * Tooltip::hoverOff() -- Hover Off
      * @param   DOMElement  el        Element
      * @param   DOMEevent   ev        Event
      * @return  void
@@ -2451,7 +2454,7 @@
     },
 
     /**
-     * Show tooltip
+     * Tooltip::show() -- Show tooltip
      * @param   String      tip       Tooltip
      * @param   DOMElement  el        Element
      * @param   DOMEevent   ev        Event
@@ -2476,14 +2479,14 @@
     },
 
     /**
-     * Hide tooltip
+     * Tooltip::hide() -- Hide tooltip
      * @return void
      */
     hide : function() {
       this.$element.hide();
     }
 
-  });
+  }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
   // PANEL
@@ -2499,7 +2502,7 @@
   var Panel = Process.extend({
 
     /**
-     * Constructor
+     * Panel::init() -- Constructor
      * @constructor
      */
     init : function() {
@@ -2614,7 +2617,7 @@
     },
 
     /**
-     * Destructor
+     * Panel::destroy() -- Destructor
      * @destructor
      */
     destroy : function() {
@@ -2628,7 +2631,7 @@
     },
 
     /**
-     * Redraw PanelItems
+     * Panel::redraw() -- Redraw PanelItems
      * @param   String    ev          Event name
      * @param   Mixed     eargs       Event argument(s)
      * @return  void
@@ -2644,7 +2647,7 @@
     },
 
     /**
-     * Add a new PanelItem
+     * Panel::addItem() -- Add a new PanelItem
      * @param   _PanelItem    i       Item
      * @param   int           pos     Position index
      * @return  Mixed
@@ -2673,7 +2676,7 @@
     },
 
     /**
-     * Remove a PanelItem
+     * Panel::removeItem() -- Remove a PanelItem
      * @param   _PanelItem    x       Item
      * @return  bool
      */
@@ -2693,7 +2696,7 @@
       return false;
     }
 
-  });
+  }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
   // PANEL ITEMS
@@ -2722,7 +2725,7 @@
     $element      : null,
 
     /**
-     * Constructor
+     * _PanelItem::init() -- Constructor
      * @param   String    name    Panel Item name
      * @param   String    align   Panel Item alignment
      * @constructor
@@ -2736,7 +2739,7 @@
     },
 
     /**
-     * Destructor
+     * _PanelItem::destroy() -- Destructor
      * @destructor
      */
     destroy : function() {
@@ -2749,7 +2752,7 @@
     },
 
     /**
-     * Create DOM elements etc.
+     * _PanelItem::create() -- Create DOM elements etc.
      * @param   String    pos     Item Alignment
      * @return  $
      */
@@ -2778,7 +2781,7 @@
     },
 
     /**
-     * Run PanelItem
+     * _PanelItem::run() -- Run PanelItem
      * @return void
      */
     run : function() {
@@ -2786,7 +2789,7 @@
     },
 
     /**
-     * Reload PanelItem
+     * _PanelItem::reload() -- Reload PanelItem
      * @TODO
      * @return void
      */
@@ -2795,7 +2798,7 @@
     },
 
     /**
-     * Redraw PanelItem
+     * _PanelItem::redraw() -- Redraw PanelItem
      * @TODO
      * @return void
      */
@@ -2803,7 +2806,7 @@
     },
 
     /**
-     * Make PanelItem Crash
+     * _PanelItem::crash() -- Make PanelItem Crash
      * @param   String      error     Error message
      * @return  void
      */
@@ -2816,7 +2819,7 @@
     },
 
     /**
-     * Open Configuration Dialog
+     * _PanelItem::configure() -- Open Configuration Dialog
      * @return void
      */
     configure : function() {
@@ -2829,7 +2832,7 @@
     },
 
     /**
-     * Get the ContextMenu
+     * _PanelItem::getMenu() -- Get the ContextMenu
      * @return JSON
      */
     getMenu : function() {
@@ -2856,7 +2859,7 @@
       return menu;
     }
 
-  });
+  }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
   // WINDOW
@@ -2915,7 +2918,7 @@
     },
 
     /**
-     * Constructor
+     * Window::init() -- Constructor
      *
      * @param String   name       Name of window
      * @param String   dialog     Dialog type if any
@@ -2946,7 +2949,7 @@
     },
 
     /**
-     * Destructor
+     * Window::destroy() -- Destructor
      * @destructor
      */
     destroy : function() {
@@ -2968,7 +2971,7 @@
     },
 
     /**
-     * Bind an event by name and callback
+     * Window::_bind() -- Bind an event by name and callback
      * @param   String    mname     Binding name
      * @param   Function  mfunc     Binding function
      * @return  void
@@ -2978,7 +2981,7 @@
     },
 
     /**
-     * Call an event by name and arguments
+     * Window::_call() -- Call an event by name and arguments
      * @param   String    mname     Binding name
      * @return  void
      */
@@ -2994,7 +2997,7 @@
     },
 
     /**
-     * Create DOM elemnts etc.
+     * Window::create() -- Create DOM elemnts etc.
      * @param   String        id              The ID to give DOM Element
      * @param   Function      mcallback       Callback when done
      * @return  $
@@ -3335,7 +3338,7 @@
     //
 
     /**
-     * Show window (add)
+     * Window::show() -- Show window (add)
      * @see Desktop::addWindow()
      * @return void
      */
@@ -3346,7 +3349,7 @@
     },
 
     /**
-     * Close window (remove)
+     * Window::close() -- Close window (remove)
      * @see Desktop::removeWindow()
      * @return void
      */
@@ -3357,7 +3360,7 @@
     },
 
     /**
-     * Focus window
+     * Window::focus() -- Focus window
      * @see Desktop::focusWindow()
      * @return void
      */
@@ -3366,7 +3369,7 @@
     },
 
     /**
-     * Blur window
+     * Window::blur() -- Blur window
      * @see Desktop::blurWindow()
      * @return void
      */
@@ -3375,7 +3378,7 @@
     },
 
     /**
-     * Set Window title
+     * Window::setTitle() -- Set Window title
      * @param   String    t         Title
      * @return  void
      */
@@ -3388,7 +3391,7 @@
     },
 
     /**
-     * Get Window title
+     * Window::getTitle() -- Get Window title
      * @return String
      */
     getTitle : function() {
@@ -3396,7 +3399,7 @@
     },
 
     /**
-     * Get Window full icon path
+     * Window::getIcon() -- Get Window full icon path
      * @param   String    size      Size (default = 16x16)
      * @return  String
      */
@@ -3413,7 +3416,7 @@
     //
 
     /**
-     * Shuffle Window (adjust z-index)
+     * Window::_shuffle() -- Shuffle Window (adjust z-index)
      * @param   int   zi        New z-index
      * @param   int   old       Old z-index
      * @return  void
@@ -3431,7 +3434,7 @@
     },
 
     /**
-     * Set Window on-top state
+     * Window::_ontop() -- Set Window on-top state
      * @param   bool    t     State
      * @return  void
      */
@@ -3454,7 +3457,7 @@
     },
 
     /**
-     * Set window to focused state
+     * Window::_focus() -- Set window to focused state
      * @return void
      */
     _focus : function() {
@@ -3484,7 +3487,7 @@
     },
 
     /**
-     * Set window to blurred state
+     * Window::_blur() -- Set window to blurred state
      * @return void
      */
     _blur : function() {
@@ -3502,7 +3505,7 @@
     },
 
     /**
-     * Set window to minimized state
+     * Window::_minimize() -- Set window to minimized state
      * @return void
      */
     _minimize : function() {
@@ -3530,7 +3533,7 @@
     },
 
     /**
-     * Set window to maximized state
+     * Window::_maximize() -- Set window to maximized state
      * @return void
      */
     _maximize : function() {
@@ -3597,7 +3600,7 @@
     },
 
     /**
-     * Gravitate window
+     * Window::_gravitate() -- Gravitate window
      * @param   String    dir       Direction/Location
      * @return void
      */
@@ -3612,7 +3615,7 @@
     },
 
     /**
-     * Move Window position
+     * Window::_move() -- Move Window position
      * @param   int   left    New Left/X Position in px
      * @param   int   top     New top/Y Position in px
      * @return  void
@@ -3628,7 +3631,7 @@
     },
 
     /**
-     * Resize window dimension
+     * Window::_resize() -- Resize window dimension
      * @param   int           width       New width in px
      * @param   int           height      New height in px
      * @param   DOMElement    el          Element
@@ -3660,7 +3663,7 @@
     },
 
     /**
-     * Get current Window session data
+     * Window::_getSession() -- Get current Window session data
      * @return JSON
      */
     _getSession : function() {
@@ -3680,7 +3683,7 @@
       };
    }
 
-  });
+  }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
   // GTK+ Implementations
@@ -3696,7 +3699,7 @@
   var GtkWindow = Window.extend({
 
     /**
-     * Constructor
+     * GtkWindow::init() -- Constructor
      * @see Window::init()
      * @constructor
      */
@@ -3707,7 +3710,7 @@
     },
 
     /**
-     * Create DOM elements etc.
+     * GtkWindow::create() -- Create DOM elements etc.
      * @see Window::create()
      * @return $
      */
@@ -3864,7 +3867,7 @@
       return el;
     }
 
-  });
+  }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
   // MENU
@@ -3880,7 +3883,7 @@
     $element : null,      //!< Menu DOM Element
 
     /**
-     * Constructor
+     * Menu::init() -- Constructor
      * @constructor
      */
     init : function(att_window) {
@@ -3889,7 +3892,7 @@
     },
 
     /**
-     * Destructor
+     * Menu::destroy() -- Destructor
      * @destructor
      */
     destroy : function() {
@@ -3901,7 +3904,7 @@
     },
 
     /**
-     * Empty root
+     * Menu::clear() -- Empty root
      * @return void
      */
     clear : function() {
@@ -3911,7 +3914,7 @@
     },
 
     /**
-     * Create/Add a separator to list
+     * Menu::create_separator() -- Create/Add a separator to list
      * @return void
      */
     create_separator : function() {
@@ -3921,7 +3924,7 @@
     },
 
     /**
-     * Create/Add item to list
+     * Menu::create_item() -- Create/Add item to list
      * @param   String      title     The label
      * @param   String      icon      Icon name
      * @param   Function    method    The callback function onClick
@@ -3961,7 +3964,7 @@
       this.$element.append(litem);
     }
 
-  });
+  }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
   // DIALOG
@@ -3977,7 +3980,7 @@
   var Dialog = Window.extend({
 
     /**
-     * Constructor
+     * Dialog::init() -- Constructor
      * @see Window::init()
      * @constructor
      */
@@ -4019,7 +4022,7 @@
     },
 
     /**
-     * Create DOM elements etc
+     * Dialog::create() -- Create DOM elements etc
      * @see Window
      * @return $
      */
@@ -4057,7 +4060,7 @@
       });
     }
 
-  });
+  }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
   // MISC DIALOGS
@@ -4071,7 +4074,7 @@
   var BrowserDialog = Window.extend({
 
     /**
-     * Constructor
+     * BrowserDialog::init() -- Constructor
      * @see Window
      * @constructor
      */
@@ -4107,7 +4110,7 @@
     },
 
     /**
-     * Create DOM elements etc
+     * BrowserDialog::create() -- Create DOM elements etc
      * @see Window
      * @return $
      */
@@ -4165,7 +4168,7 @@
       }).find("p").css({"padding" : "5px", "margin" : "0"});
     }
 
-  });
+  }); // @endclass
 
   /**
    * CrashDialog -- Application Crash Dialog
@@ -4176,7 +4179,7 @@
   var CrashDialog = Window.extend({
 
     /**
-     * Constructor
+     * CrashDialog::init() -- Constructor
      * @see Window
      * @constructor
      */
@@ -4206,7 +4209,7 @@
     },
 
     /**
-     * Create DOM elements etc
+     * CrashDialog::create() -- Create DOM elements etc
      * @see Window
      * @return $
      */
@@ -4254,7 +4257,7 @@
     }
 
 
-  });
+  }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
   // OPERATION DIALOG
@@ -4270,7 +4273,7 @@
   var OperationDialog = Window.extend({
 
     /**
-     * Constructor
+     * OperationDialog::init() -- Constructor
      * @constructor
      */
     init : function(type) {
@@ -4283,7 +4286,7 @@
     },
 
     /**
-     * Destructor
+     * OperationDialog::destroy() -- Destructor
      * @destructor
      */
     destroy : function() {
@@ -4291,7 +4294,7 @@
     },
 
     /**
-     * Create DOM elements etc.
+     * OperationDialog::create() -- Create DOM elements etc.
      * @see    Window::create()
      * @return void
      */
@@ -4310,7 +4313,7 @@
       });
     }
 
-  });
+  }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
   // MAIN
@@ -4319,16 +4322,18 @@
   /**
    * Run OS.js
    * @return bool
+   * @function
    */
   OSjs.__Run = function() {
     _Core = new Core();
 
     return true;
-  };
+  }; // @endfunction
 
   /**
    * Stop OS.js
    * @return bool
+   * @function
    */
   OSjs.__Stop = function() {
     if ( _Core ) {
@@ -4337,7 +4342,7 @@
     }
 
     return true;
-  };
+  }; // @endfunction
 
 })($);
 
