@@ -16,6 +16,7 @@
    * @return bool
    */
   $(window).unload(function() {
+    window.onbeforeunload = null;
     return OSjs.__Stop();
   });
 
@@ -32,6 +33,15 @@
 
     return OSjs.__Run();
   });
+
+  /**
+   * window::onbeforeunload()
+   * @see    main.js
+   * @return bool
+   */
+  window.onbeforeunload = function(ev) {
+    return OSjs.__Leave(ev);
+  };
 
 })($);
 

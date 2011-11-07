@@ -61,6 +61,7 @@
   var _Processes       = [];                              //!< Process instance list
   var _TopIndex        = (ZINDEX_WINDOW + 1);             //!< OnTop z-index
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);       //!< OnTop instances index
+  var _Running         = false;                           //!< Global running state
 
   /////////////////////////////////////////////////////////////////////////////
   // HELPERS
@@ -4401,6 +4402,7 @@
    */
   OSjs.__Run = function() {
     _Core = new Core();
+    _Running = true;
 
     return true;
   }; // @endfunction
@@ -4411,9 +4413,36 @@
    * @function
    */
   OSjs.__Stop = function() {
-    if ( _Core ) {
+    if ( _Running && _Core ) {
       _Core.destroy();
       _Core = null;
+      _Running = false;
+
+      window.onbeforeunload = null; // NOTE: Required!
+    }
+
+    return true;
+  }; // @endfunction
+
+  /**
+   * Leave OS.js
+   * @param   DOMEvent  ev    Event
+   * @return  bool
+   * @function
+   */
+  OSjs.__Leave = function(ev) {
+    ev = ev || window.event;
+
+    if ( _Running ) {
+      ev.cancelBubble = true;
+      if ( ev.stopPropagation ) {
+        ev.stopPropagation();
+        ev.preventDefault();
+      }
+
+      var msg = 'Are you sure you want to quit? To save your session use the Logout functionallity.';
+      ev.returnValue = msg;
+      return msg;
     }
 
     return true;
