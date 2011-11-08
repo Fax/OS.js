@@ -21,42 +21,51 @@ function compress_list($resource, $files) {
     // Build command
     $type = preg_match("/\.js$/", $file) ? "js" : "css";
     $path = ($resource ? PATH_RESOURCES : PATH_JSBASE) . "/{$file}";
-    $cmd  = PATH_PROJECT_BIN . "/yui.sh";
-    $cmd  = sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_PROJECT_BIN, PATH_PROJECT_VENDOR);
+    if ( file_exists($path) ) {
 
-    $args = "--preserve-semi ";
-    if ( $type == "js" ) {
-      $args .= sprintf("--type js --charset UTF-8 %s", escapeshellarg($path));
-    } else {
-      $args .= sprintf("--type css --charset UTF-8 %s", escapeshellarg($path));
-    }
+      $cmd  = PATH_PROJECT_BIN . "/yui.sh";
+      $cmd  = sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_PROJECT_BIN, PATH_PROJECT_VENDOR);
 
-    // Run command
-    $exec = sprintf("%s %s 2>&1", $cmd, $args);
-    $size = 0;
-    $comp = 0;
-    $perc = 0;
-    if ( !($content = shell_exec($exec)) ) {
-      $content = "/* FAILED TO GET CONTENTS */";
-    } else {
-      $size    = filesize($path);
-      $comp    = strlen($content);
+      $tmp_path = "/tmp/OSjs-minimize";
+      $content = file_get_contents($path);
+      $content = preg_replace("/(console)\.(log|info|error|warning|group|groupEnd)\((.*)\);/", "", $content);
 
-      if ( $size && $comp ) {
-        $perc = round(($comp / $size) * 100);
+      file_put_contents($tmp_path, $content);
+
+      $args = "--preserve-semi ";
+      if ( $type == "js" ) {
+        $args .= sprintf("--type js --charset UTF-8 %s", escapeshellarg($tmp_path));
+      } else {
+        $args .= sprintf("--type css --charset UTF-8 %s", escapeshellarg($tmp_path));
       }
 
-      $total_before += $size;
-      $total_after  += $comp;
+      // Run command
+      $exec = sprintf("%s %s 2>&1", $cmd, $args);
+      $size = 0;
+      $comp = 0;
+      $perc = 0;
+      if ( !($content = shell_exec($exec)) ) {
+        $content = "/* FAILED TO GET CONTENTS */";
+      } else {
+        $size    = filesize($path);
+        $comp    = strlen($content);
+
+        if ( $size && $comp ) {
+          $perc = round(($comp / $size) * 100);
+        }
+
+        $total_before += $size;
+        $total_after  += $comp;
+      }
+
+      $label = "Minimized {$file}";
+      $spaces = str_pad("", (40 - strlen($label)));
+      print sprintf("%s%s ($size => $comp, $perc%%)\n", $label, $spaces);
+
+      // Write cached file
+      $out_path = ($resource ? PATH_RESOURCES_COMPRESSED : PATH_JSBASE_COMPRESSED) . "/{$file}";
+      file_put_contents($out_path, $content);
     }
-
-    $label = "Minimized {$file}";
-    $spaces = str_pad("", (40 - strlen($label)));
-    print sprintf("%s%s ($size => $comp, $perc%%)\n", $label, $spaces);
-
-    // Write cached file
-    $out_path = ($resource ? PATH_RESOURCES_COMPRESSED : PATH_JSBASE_COMPRESSED) . "/{$file}";
-    file_put_contents($out_path, $content);
   }
 }
 
