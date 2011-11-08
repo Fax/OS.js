@@ -11,7 +11,7 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * CSS
+   * @constants CSS
    */
   var ZINDEX_MENU         = 100000000;              //!< Default Menu z-index
   var ZINDEX_RECT         = 100000000;              //!< Default Rect z-index
@@ -21,9 +21,10 @@
   var ZINDEX_WINDOW_MAX   = 88888889;               //!< Max Window z-index
   var ZINDEX_WINDOW_ONTOP = 90000000;               //!< Window cur ontop z-index
   var ZINDEX_LOADING      = 1000100;                //!< Loadingbar z-index
+  // @endconstants
 
   /**
-   * Local settings
+   * @constants Local settings
    */
   var ENABLE_CACHE       = false;                   //!< Enabled caching
   var SETTING_REVISION   = 26;                      //!< The settings revision
@@ -31,9 +32,10 @@
   var ANIMATION_SPEED    = 400;                     //!< Animation speed in ms
   var TEMP_COUNTER       = 1;                       //!< Internal temp. counter
   var TOOLTIP_TIMEOUT    = 300;                     //!< Tooltip timeout in ms
+  // @endconstants
 
   /**
-   * URIs
+   * @constants URIs
    */
   var WEBSOCKET_URI      = "localhost:8888";        //!< WebSocket URI
   var AJAX_URI           = "/";                     //!< AJAX URI
@@ -42,15 +44,17 @@
   var THEME_URI          = "/?theme=";              //!< Themes loading URI
   var FONT_URI           = "/?font=";               //!< Font loading URI
   var CURSOR_URI         = "/?cursor=";             //!< Cursor loading URI
+  // @endconstants
 
   /**
-   * Service types
+   * @constants Service types
    */
   var SERVICE_GET  = 0;                             //!< Service: HTTP GET
   var SERVICE_POST = 1;                             //!< Service: HTTP POST
   var SERVICE_JSON = 2;                             //!< Service: JSON (POST)
   var SERVICE_SOAP = 3;                             //!< Service: Soap
   var SERVICE_XML  = 4;                             //!< Service: XML (POST)
+  // @endconstants
 
   /////////////////////////////////////////////////////////////////////////////
   // PRIVATE VARIABLES
