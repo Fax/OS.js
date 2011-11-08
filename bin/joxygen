@@ -259,19 +259,24 @@ $doc = <<<EOHTML
 <body>
   <h1>OS.js JavaScript API</h1>
   <p>
-    Contains complete API documentation for OS.js JavaScript.
+    Contains complete API documentation for OS.js JavaScript Core.
   </p>
 
-  <h1>Files:</h1>
-  <ul>
-    <li>core.js</li>
-  </ul>
+  <h1>Constants:</h1>
+  <p>
+    TODO
+  </p>
+
+  <h1>Functions:</h1>
+  <p>
+    TODO
+  </p>
+
   <h1>Classes:</h1>
   <p>
 {$class_list}
   </p>
 {$classes_html}
-  <h1>Functions:</h1>
 </body>
 </html>
 EOHTML;

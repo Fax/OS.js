@@ -38,12 +38,12 @@
    * @constants URIs
    */
   var WEBSOCKET_URI      = "localhost:8888";        //!< WebSocket URI
-  var AJAX_URI           = "/";                     //!< AJAX URI
-  var RESOURCE_URI       = "/?resource=";           //!< Resource loading URI
-  var LIBRARY_URI        = "/?library=";            //!< Library URI
-  var THEME_URI          = "/?theme=";              //!< Themes loading URI
-  var FONT_URI           = "/?font=";               //!< Font loading URI
-  var CURSOR_URI         = "/?cursor=";             //!< Cursor loading URI
+  var AJAX_URI           = "/";                     //!< AJAX URI (POST)
+  var RESOURCE_URI       = "/?resource=";           //!< Resource loading URI (GET)
+  var LIBRARY_URI        = "/?library=";            //!< Library URI (GET)
+  var THEME_URI          = "/?theme=";              //!< Themes loading URI (GET)
+  var FONT_URI           = "/?font=";               //!< Font loading URI (GET)
+  var CURSOR_URI         = "/?cursor=";             //!< Cursor loading URI (GET)
   // @endconstants
 
   /**
