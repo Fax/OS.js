@@ -1,50 +1,49 @@
 About OS.js:
 -------------------------------------------------------------------------------
-JavaScript Window Manager (and simple desktop environment) for modern browsers.
-Features an Application compiler inspired by Freedesktop.org standards.
-
-Uses Glade (Gtk+ 3) to build HTML, JSON, CSS and JavaScript data.
-
-Communication is done via AJAX to a PHP+MySQL backend.
+JavaScript Oprating System. For more information go to:
+http://anderse.wordpress.com/os-js/
 
 For requirements, installation etc. see the INSTALL file.
 For developer information, see the README.developer file
 For HTML version of this document, see the README.markup file.
 
+Vendor libraries used:
+-------------------------------------------------------------------------------
+* jQuery
+* JSON2 by Douglas Crockford
+* Sprintf by Alexandru Marasteanu
+* File uploaderby Andrew Valums
+* Yahoo YUI Compressor
+* Propel ORM (Core and Application database access)
+
 Features and Highlights:
 -------------------------------------------------------------------------------
-* Simple Process managment
-* Window Managment, Desktop environment
-* Windows, Dialogs, Panels and PanelItems, Menus
-* Application WebStorage (for settings etc)
-* Custom Error and Exception handling
-* Saving and Restoration of Desktop Sessions
-* User Environment settings (WebStorage and SQL backup)
-* API, System calls, Virtual filesystem
-* TCP WebSocket Wrapper
-
-* Light-weight server and client code
-* Application Compiler, Glade Templates
-* Application/System API and Event handling
-* Uses HTML5 and CSS2+
-* Follows strict coding standards
+* Follows strict coding standards, fully documented
+* Uses HTML5 and CSS2+ features (Supported features are detected on first run.)
+* Uses a light-weight PHP backend
+* Simple process managment (process stack, kill processes etc)
+* Desktop environment (Customizable settings, themes, fonts, cursors etc)
+* Window Managment (With standard window actions like maximize, minimize, restore, on-top and so on)
+* Session Managment (Save and restore sessions for later use)
+* Desktop Panels (movable)
+* Desktop Panel items (See list below)
+* Sandboxed Applications with API access and crash-handling
+* Uses WebStorage to store system/user/application settings and sessions (SQL as backup in case of deletion of browser cache)
+* TCP/IP Socket connections via WebSocket wrapper (hybi-00 and hybi-10)
+* Application Compiler (Compiles Application+Glade-XML into JavaScript, CSS and PHP code, also minifies the code)
+* VFS - Virtual Filesystem support (Block devices, Network connections, Compressed files etc.)
 
 Compability (Client-Side):
 -------------------------------------------------------------------------------
 Tested on Linux and Windows platforms
 
-* Working: WebKit browsers (Chrome, Chromium, Safari etc)
-* Working: Gecko browsers (Firefox, Netscape etc)
-* Working: Android
-* Working: iOS
-* Partially working: Opera (Opera 11 tested)
-  * Glade CSS issues
-  * No WebSocket
-* Partially working: Internet Explorer (IE 8 tested)
-  * Some Panel CSS issues
-  * Does not fully support HTML5
-  * Does not fully support CSS2
-  * No WebSocket
+* Working: Linux with WebKit/Safari/Chrome, Gecko/Mozilla/Firefox
+* Wokring: Google Android 2.2 (Samsung Galaxy S tested 2.2/2.3)
+* Wokring: Apple iOS 4 (iPad iOS4 tested)
+* Probably working: Windows with WebKit/Safari/Chrome, Gecko/Mozilla/Firefox
+* Partially working: Opera 10+ – Problem with Glade/GTK CSS
+* Partially working: Internet Explorer 8 – Problem with Glade/GTK CSS, Missing WebSocket and Canvas
+* Not tested: Internet Explorer 9
 
 Built-In Applications, Dialogs and Panel Items:
 -------------------------------------------------------------------------------
