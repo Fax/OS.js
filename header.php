@@ -100,6 +100,7 @@ require "src/Panel.class.php";
 // Main initialization(s)
 //
 
+// FIXME Move this to Core::doPost()
 Propel::init(PROPEL_CONFIG);
 
 ?>
