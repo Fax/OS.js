@@ -10,16 +10,33 @@ $code = file_get_contents($file);
 $classes = Array();
 $functions = Array();
 
+//
 // Find functions
+//
+// TODO
 
-// Find classes
+//
+// Find all Classes
+//
 $re = "/@class(.*?)@endclass/s";
 if ( ($reg = preg_match_all($re, $code, $matches, PREG_OFFSET_CAPTURE)) !== false ) {
+  "
+    /**
+     * MyClass - Description
+     *
+     * @class
+     */
+    var MyClass = Class.extend({
+
+    }); // @endclass
+
+  ";
 
   foreach ( $matches[0] as $m ) {
     $class   = $m[0];
     $offset  = $m[1];
 
+    // Match
     if ( preg_match("/var (.*)\s+?=\s+?(.*)\.extend\(\{(.*)\}\); \/\/ @endclass/s", $class, $cmatches) ) {
       $variables = Array();
       $methods   = Array();
@@ -37,8 +54,14 @@ if ( ($reg = preg_match_all($re, $code, $matches, PREG_OFFSET_CAPTURE)) !== fals
           $header = $hmatches[0];
         }
 
+        //
         // Variables
+        //
         if ( preg_match_all("/(.*)\/\/\!\< (.*)\s*/", $classCode, $tmatches, PREG_OFFSET_CAPTURE) ) {
+          "
+            my_variable : default_value //!< Variable comment
+          ";
+
           foreach ( $tmatches[2] as $i => $vcomment ) {
             $vdesc = $vcomment[0];
             $vline = trim($tmatches[1][$i][0]);
@@ -55,8 +78,18 @@ if ( ($reg = preg_match_all($re, $code, $matches, PREG_OFFSET_CAPTURE)) !== fals
           }
         }
 
+        //
         // Methods
+        //
         if ( preg_match_all("/([A-z0-9_]*)\s+?\:\s+?\(?function\(/", $classCode, $mmatches, PREG_OFFSET_CAPTURE) ) {
+          "
+            /**
+             * MyClass::my_function() -- Description
+             * @return void
+             */
+            my_function : function(argument) {
+            }
+          ";
           foreach ( $mmatches[1] as $mtemp ) {
             $methodName = trim($mtemp[0]);
             $methodHeader = "";
@@ -68,6 +101,7 @@ if ( ($reg = preg_match_all($re, $code, $matches, PREG_OFFSET_CAPTURE)) !== fals
               continue;
             }
 
+            // Match up the method header and parse it
             if ( preg_match("/\/\*\*\s*\* {$className}\:\:{$methodName}\(\) \-\- (.*)\n(.*)\n((.*)\n)*?\s*?\s*\*\//", $code, $mmmatches) ) {
               if ( $mhead = trim($mmmatches[0]) ) {
                 foreach ( explode("\n", $mhead) as $cl ) {
@@ -112,7 +146,7 @@ if ( ($reg = preg_match_all($re, $code, $matches, PREG_OFFSET_CAPTURE)) !== fals
           }
         }
 
-        // Add to list
+        // Add Class to list
         $classes[$className] = Array(
           "name"      => $className,
           "extends"   => $extendName,
