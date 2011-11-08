@@ -27,7 +27,7 @@ define("PROJECT_HOST",      (php_uname('n')));
 // Environment
 //
 
-define("ENV_PRODUCTION",      true);
+define("ENV_PRODUCTION",      (PROJECT_HOST != "amitop"));
 define("DEFAULT_TIMEZONE",    "Europe/Oslo");
 define("ENABLE_CACHE",        false);
 define("ARCHIVE_SYSETM",      false); // lib/Archive.php
