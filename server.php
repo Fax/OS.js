@@ -10,6 +10,7 @@
 require "header.php";
 require "lib/ServerUser.class.php";
 require "lib/Server.class.php";
+//require "lib/Daemon.class.php";
 
 set_time_limit(0);
 ob_implicit_flush();
