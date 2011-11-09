@@ -22,6 +22,7 @@ OSjs.Applications.SystemProcesses = (function($, undefined) {
     // WINDOWS
     ///////////////////////////////////////////////////////////////////////////
 
+    var LastItem = null;
 
     /**
      * GtkWindow Class
@@ -88,13 +89,29 @@ OSjs.Applications.SystemProcesses = (function($, undefined) {
                 row.addClass("Locked");
               }
 
+              if ( x === LastItem ) {
+                row.addClass("Current");
+              }
 
               (function(rel, proc) {
+                // Kill process
                 rel.find(".TT").click(function() {
                   if ( confirm(sprintf("Are you sure you want to kill process \"%s\" (pid:%s)", proc.title || proc.name, proc.pid)) ) { // FIXME
                     if ( !proc.kill() ) {
                       alert("Failed to kill process!"); // FIXME
                     }
+                  }
+                });
+
+                // Highlight
+                row.click(function() {
+                  if ( !$(this).hasClass("Current") ) {
+                    if ( LastItem !== null ) {
+                      $($(".iconview1 table.TableBody tbody").find("tr").get(LastItem)).removeClass("Current");
+                    }
+
+                    $(this).addClass("Current");
+                    LastItem = this.rowIndex;
                   }
                 });
               })(row, p);

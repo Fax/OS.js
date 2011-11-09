@@ -63,3 +63,8 @@
 .SystemProcesses img {
   vertical-align : middle;
 }
+.SystemProcesses .iconview1 tr.Current,
+.SystemProcesses .iconview1 tr.odd.Current {
+  background : #4f4f4f;
+  color : #fff;
+}
