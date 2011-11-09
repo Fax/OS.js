@@ -49,6 +49,7 @@ OSjs.Applications.SystemProcesses = (function($, undefined) {
         this._height = 400;
         this._gravity = null;
 
+        this.title     = "Processes (%d running)";
         this.pinterval = null;
       },
 
@@ -74,6 +75,8 @@ OSjs.Applications.SystemProcesses = (function($, undefined) {
 
             var list = API.session.processes();
             var p, row, icon;
+
+            self.setTitle(sprintf(self.title, list.length));
             for ( var x = 0; x < list.length; x++ ) {
               p = list[x];
               icon = p.icon.match(/^\/img/) ? p.icon : ("/img/icons/16x16/" + p.icon);

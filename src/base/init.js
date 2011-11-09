@@ -77,7 +77,10 @@
     "ApplicationCheckCompabilityStack"    : "Application::_checkCompability(): Application name: %s",
     "CrashApplication"                    : "Application '%s' has crashed with error '%s'!",
     "CrashApplicationResourceMessage"     : "One or more of these resources failed to load:\n%s",
-    "CrashApplicationResourceStack"       : "[LaunchApplication]API::system::launch()\n  Application: %s\n  Arguments: %s"
+    "CrashApplicationResourceStack"       : "[LaunchApplication]API::system::launch()\n  Application: %s\n  Arguments: %s",
+    "CrashDialogTitleApplication"         : "Application '%s' crashed!",
+    "CrashDialogTitleProcess"             : "Process '%s' crashed!",
+    "InitLaunchError"                     : "Cannot launch '%s'.\nMaximum allowed processes are: %d"
   };
 
   // Application Compability error exceptions

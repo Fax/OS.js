@@ -32,6 +32,7 @@
   var ANIMATION_SPEED    = 400;                     //!< Animation speed in ms
   var TEMP_COUNTER       = 1;                       //!< Internal temp. counter
   var TOOLTIP_TIMEOUT    = 300;                     //!< Tooltip timeout in ms
+  var MAX_PROCESSES      = 50;
   // @endconstants
 
   /**
@@ -79,6 +80,27 @@
   // HELPERS
   /////////////////////////////////////////////////////////////////////////////
 
+
+  /**
+   * InitLaunch() -- Initialize a launching of exec
+   * @return  bool
+   * @function
+   */
+  function InitLaunch(name) {
+    var list = API.session.processes();
+    if ( list.length >= MAX_PROCESSES ) {
+      var msg = sprintf(OSjs.Labels.InitLaunchError, name, MAX_PROCESSES);
+      var trace = sprintf("InitLaunch(%s)", name);
+      try {
+        _Desktop.addWindow(new CrashDialog(name, msg, trace));
+      } catch ( eee ) {
+        alert(msg);
+      }
+      return false;
+    }
+    return true;
+  } // @endfunction
+
   /**
    * LaunchPanelItem() -- PanelItem Launch handler
    * @param   int     i             Item index
@@ -90,20 +112,22 @@
    * @function
    */
   function LaunchPanelItem(i, iname, iargs, ialign, panel) {
-    var reg = _Settings._get("system.panel.registered", true);
-    var resources =  reg[iname] ? reg[iname]['resources'] : [];
+    if ( InitLaunch(iname) ) {
+      var reg = _Settings._get("system.panel.registered", true);
+      var resources =  reg[iname] ? reg[iname]['resources'] : [];
 
-    _Resources.addResources(resources, function() {
-      if ( OSjs.PanelItems[iname] ) {
-        var item = new OSjs.PanelItems[iname](_PanelItem, panel, API, iargs);
-        if ( item ) {
-          item._panel = panel;
-          item._index = i;
-          panel.addItem(item, ialign);
+      _Resources.addResources(resources, function() {
+        if ( OSjs.PanelItems[iname] ) {
+          var item = new OSjs.PanelItems[iname](_PanelItem, panel, API, iargs);
+          if ( item ) {
+            item._panel = panel;
+            item._index = i;
+            panel.addItem(item, ialign);
+          }
         }
-      }
 
-    });
+      });
+    }
   } // @endfunction
 
   /**
@@ -140,6 +164,10 @@
   function LaunchApplication(app_name, args, windows, callback, callback_error) {
     callback = callback || function() {};
     callback_error = callback_error || function() {};
+
+    if ( !InitLaunch(app_name) ) {
+      return;
+    }
 
     API.ui.cursor("wait");
 
@@ -4338,7 +4366,12 @@
      * @constructor
      */
     init : function(app, error, trace, alternative) {
-      var title = sprintf("Application '%s' crashed!", app._name);
+      var title = "";
+      if ( app instanceof Application ) {
+        title = sprintf(OSjs.Labels.CrashDialogTitleApplication, app._name);
+      } else {
+        title = sprintf(OSjs.Labels.CrashDialogTitleProcess, app);
+      }
 
       this._super("Crash", false);
       this._content = "<div class=\"Crash\"><span>" + title + "</span><div class=\"error\"><div><b>Error</b></div><textarea></textarea></div><div class=\"trace\"><div><b>Trace</b></div><textarea></textarea></div></div>";
