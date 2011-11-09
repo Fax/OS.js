@@ -64,6 +64,14 @@ class SettingsManager
       "options"   => Array("none", "default", "fade", "scroll"),
       "value"     => "default"
     ),
+    "wm.opacity.windowNormal" => Array(
+      "type"      => "integer",
+      "value"     => 100
+    ),
+    "wm.opacity.windowMove" => Array(
+      "type"      => "integer",
+      "value"     => 90
+    ),
     "wm.shadows.show" => Array(
       "type"      => "bool",
       "value"     => true
