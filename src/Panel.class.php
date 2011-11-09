@@ -14,7 +14,7 @@
  * @package OSjs.Sources.WindowManager
  * @class
  */
-class Panel
+abstract class Panel
 {
 
   /**

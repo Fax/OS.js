@@ -63,6 +63,8 @@ class ApplicationVFS
    * @retrun Mixed
    */
   public static function upload($path) {
+    require PATH_PROJECT_VENDOR . "/AjaxUpload.php";
+
     // list of valid extensions, ex. array("jpeg", "xml", "bmp")
     $allowedExtensions = array();
     // max file size in bytes

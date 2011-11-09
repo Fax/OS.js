@@ -30,8 +30,9 @@ class Core
    */
   protected function __construct() {
 
-    $user       = $this->getUser();
-    $zone       = $user->getTimezone();
+    /*$user       = $this->getUser();
+    $zone       = $user->getTimezone();*/
+    $zone       = "Europe/Oslo";
     $tz         = new DateTimeZone($zone);
     $now        = new DateTime("now", $tz);
 
@@ -250,6 +251,10 @@ EOCSS;
    * @return User
    */
   public function getUser() {
+    /*if ( !class_exists("UserQuery") ) {
+      Propel::init(PROPEL_CONFIG);
+    }*/
+
     return UserQuery::create()->findPK(1);
   }
 
@@ -274,6 +279,8 @@ EOCSS;
    */
   public function doPOST(Array $args) {
     if ( sizeof($args) ) {
+
+      Propel::init(PROPEL_CONFIG);
 
       if ( isset($args['ajax']) ) {
         $json = Array("success" => false, "error" => "Unknown error", "result" => null);

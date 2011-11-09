@@ -51,7 +51,7 @@ function compress_list($resource, $files) {
         $comp    = strlen($content);
 
         if ( $size && $comp ) {
-          $perc = round(($comp / $size) * 100);
+          $perc = 100 - round(($comp / $size) * 100);
         }
 
         $total_before += $size;
@@ -69,23 +69,24 @@ function compress_list($resource, $files) {
   }
 }
 
-// Parse application data
-$resource_files = Array(
-  "panel.separator.js",
-  "panel.weather.js",
-  "panel.dock.js",
-  "panel.menu.js",
-  "panel.windowlist.js",
-  "panel.clock.js",
-  "dialog.panel.js",
-  "dialog.rename.js",
-  "dialog.copy.js",
-  "dialog.launch.js",
-  "dialog.file.js",
-  "dialog.color.js",
-  "dialog.input.js",
-  "dialog.upload.js"
-);
+//
+// MAIN
+//
+
+$base_files     = Array();
+$resource_files = Array();
+
+// Read registered panel items
+foreach ( Panel::$Registered as $n => $v ) {
+  $resource_files = array_merge($resource_files, $v['resources']);
+}
+
+// Read registered dialogs
+foreach ( Dialog::$Registered as $n => $v ) {
+  $resource_files = array_merge($resource_files, $v['resources']);
+}
+
+// Read registered applications
 if ( $xml = file_get_contents(APPLICATION_BUILD) ) {
   if ( $xml = new SimpleXmlElement($xml) ) {
     foreach ( $xml->application as $app ) {
@@ -97,9 +98,8 @@ if ( $xml = file_get_contents(APPLICATION_BUILD) ) {
   }
 }
 
-compress_list(true, $resource_files);
-
-compress_list(false, Array(
+// Read base files
+$base_files = Array(
   "theme.default.css",
   "theme.dark.css",
   "theme.light.css",
@@ -107,11 +107,14 @@ compress_list(false, Array(
   "init.js",
   "core.js",
   "main.js"
-));
+);
+
+compress_list(false, $base_files);
+compress_list(true, $resource_files);
 
 $perc = 0;
 if ( $total_before && $total_after ) {
-  $perc = round(($total_after / $total_before) * 100);
+  $perc = 100 - round(($total_after / $total_before) * 100);
 }
 
 print "\nCompressed {$total_before} into {$total_after} ({$perc}% compression)\n";

@@ -80,7 +80,6 @@ set_include_path(sprintf("%s/classes/%s", PATH_PROJECT_BUILD, PROPEL_PROJECT) . 
 
 // Vendor libraries
 require 'vendor/Propel/runtime/lib/Propel.php';
-require "vendor/AjaxUpload.php";
 
 // Internal libraries
 require "lib/Functions.php";
@@ -93,14 +92,10 @@ require 'src/Core.class.php';
 require "src/SettingsManager.class.php";
 require "src/ApplicationVFS.class.php";
 require "src/ApplicationAPI.class.php";
-require "src/Application.class.php";
+
+// Extension sources
 require "src/Panel.class.php";
-
-//
-// Main initialization(s)
-//
-
-// FIXME Move this to Core::doPost()
-Propel::init(PROPEL_CONFIG);
+require "src/Dialog.class.php";
+require "src/Application.class.php";
 
 ?>
