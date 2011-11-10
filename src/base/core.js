@@ -979,6 +979,8 @@
         _Processes[this._pid] = undefined;
       }
 
+      // Destroy global references
+      // FIXME: Create a param in init for this!
       if ( this._proc_name == "(Desktop)" ) {
         _Desktop = null;
       } else if ( this._proc_name == "(WindowManager)" ) {
@@ -2056,6 +2058,17 @@
     // WINDOWS
 
     /**
+     * WindowManager::insertWindow() -- Insert a window into DOM
+     * @param   DOMElement    el      DOM Element from window
+     * @return  void
+     */
+    insertWindow : function(el) {
+      console.log("Windowmanager::insertWindow()");
+
+      $("#Desktop").append(el);
+    },
+
+    /**
      * WindowManager::addWindow() -- Add a window to the stack (and create)
      * @param   Window    win       Window to add
      * @return  Mixed
@@ -2063,6 +2076,8 @@
     addWindow : function(win) {
       if ( win instanceof Window ) {
         var self = this;
+
+        console.log("WindowManager::addWindow()", win);
 
         var AddWindowCallback = function(fresh) {
           if ( fresh ) {
@@ -2388,6 +2403,11 @@
       return false;
     },
 
+    /**
+     * Desktop::mousedownHandler() -- Desktop mousedown handler
+     * @param   DOMEvent  ev          Event
+     * @return  bool
+     */
     mousedownHandler : function(ev) {
       var self = this;
 
@@ -3200,6 +3220,8 @@
       mcallback = mcallback || function() {};
 
       if ( !this._created ) {
+        console.group("Window::" + this._name + "::create()");
+
         this._id        = id;
         this._showing   = true;
         this._origtitle = this._title;
@@ -3331,7 +3353,7 @@
         }
 
         // Insert into DOM
-        _Desktop.$element.append(el);
+        _WM.insertWindow(el);
 
         //
         // Apply sizes, dimensions etc.
@@ -3513,8 +3535,7 @@
 
         this._created = true;
 
-        console.group("Window::" + this._name + "::create()");
-        console.log(el);
+        console.log(el.get(0));
         console.groupEnd();
 
         mcallback(fresh);
