@@ -67,6 +67,7 @@
   var _Core            = null;                            //!< Core instance
   var _Resources       = null;                            //!< ResourceManager instance
   var _Settings        = null;                            //!< SettingsManager instance
+  var _WM              = null;                            //!< WindowManager instance
   var _Desktop         = null;                            //!< Desktop instance
   var _Window          = null;                            //!< Current Window instance
   var _Tooltip         = null;                            //!< Current Tooltip instance
@@ -92,7 +93,7 @@
       var msg = sprintf(OSjs.Labels.InitLaunchError, name, MAX_PROCESSES);
       var trace = sprintf("InitLaunch(%s)", name);
       try {
-        _Desktop.addWindow(new CrashDialog(name, msg, trace));
+        _WM.addWindow(new CrashDialog(name, msg, trace));
       } catch ( eee ) {
         alert(msg);
       }
@@ -140,7 +141,7 @@
    */
   function CrashApplication(app_name, application, ex) {
     try {
-      _Desktop.addWindow(new CrashDialog(application, ex.message, ex.stack, ex));
+      _WM.addWindow(new CrashDialog(application, ex.message, ex.stack, ex));
       try {
         application._running = true; // NOTE: Workaround
         application.kill();
@@ -277,7 +278,7 @@
     'ui' : {
       'windows' : {
         'tile' : function() {
-          _Desktop.sortWindows('tile');
+          _WM.sortWindows('tile');
         }
       },
 
@@ -440,12 +441,12 @@
         }
         windows = windows || {};
 
-        var wins = _Desktop.stack;
+        var wins = _WM.stack;
         for ( var i = 0; i < wins.length; i++ ) {
           if ( wins[i].app && wins[i].app._name == app_name ) {
             if ( wins[i]._is_orphan ) {
               console.info("=> API launch denied", "is_orphan");
-              _Desktop.focusWindow(wins[i]);
+              _WM.focusWindow(wins[i]);
               return;
             }
           }
@@ -478,25 +479,25 @@
 
         console.info("=> API Dialog", type);
 
-        return _Desktop.addWindow(new Dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
+        return _WM.addWindow(new Dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
       },
 
       'dialog_input' : function(path, desc, clb_finish) {
         console.info("=> API Input Dialog");
 
-        return _Desktop.addWindow(new OSjs.Dialogs.InputOperationDialog(OperationDialog, API, [path, desc, clb_finish]));
+        return _WM.addWindow(new OSjs.Dialogs.InputOperationDialog(OperationDialog, API, [path, desc, clb_finish]));
       },
 
       'dialog_rename' : function(path, clb_finish) {
         console.info("=> API Rename Dialog");
 
-        return _Desktop.addWindow(new OSjs.Dialogs.RenameOperationDialog(OperationDialog, API, [path, clb_finish]));
+        return _WM.addWindow(new OSjs.Dialogs.RenameOperationDialog(OperationDialog, API, [path, clb_finish]));
       },
 
       'dialog_upload' : function(path, clb_finish, clb_progress, clb_cancel) {
         console.info("=> API Upload Dialog");
 
-        return _Desktop.addWindow(new OSjs.Dialogs.UploadOperationDialog(OperationDialog, API, [path, clb_finish, clb_progress, clb_cancel]));
+        return _WM.addWindow(new OSjs.Dialogs.UploadOperationDialog(OperationDialog, API, [path, clb_finish, clb_progress, clb_cancel]));
       },
 
       'dialog_file' : function(clb_finish, mime_filter, type, cur_dir) {
@@ -506,19 +507,19 @@
 
         console.info("=> API File Dialog");
 
-        return _Desktop.addWindow(new OSjs.Dialogs.FileOperationDialog(OperationDialog, API, [type, mime_filter, clb_finish, cur_dir]));
+        return _WM.addWindow(new OSjs.Dialogs.FileOperationDialog(OperationDialog, API, [type, mime_filter, clb_finish, cur_dir]));
       },
 
       'dialog_launch' : function(list, clb_finish, not_found) {
         console.info("=> API Launch Dialog");
 
-        return _Desktop.addWindow(new OSjs.Dialogs.LaunchOperationDialog(OperationDialog, API, [list, clb_finish, not_found]));
+        return _WM.addWindow(new OSjs.Dialogs.LaunchOperationDialog(OperationDialog, API, [list, clb_finish, not_found]));
       },
 
       'dialog_color' : function(start_color, clb_finish) {
         console.info("=> API Color Dialog");
 
-        return _Desktop.addWindow(new OSjs.Dialogs.ColorOperationDialog(OperationDialog, API, [start_color, clb_finish]));
+        return _WM.addWindow(new OSjs.Dialogs.ColorOperationDialog(OperationDialog, API, [start_color, clb_finish]));
       }
 
     },
@@ -582,7 +583,10 @@
       'settings' : {
         'save' : function(settings) {
           _Settings._apply(settings);
-          _Desktop.applySettings();
+
+          if ( _Desktop ) {
+            _Desktop.applySettings();
+          }
         },
 
         'type' : function(k) {
@@ -653,7 +657,7 @@
 
       'save' : function(save) {
         save = save || false;
-        var sess = save ? _Desktop.getSession() : {};
+        var sess = save ? _WM.getSession() : {};
 
         console.info("=> API Session save", sess);
 
@@ -686,7 +690,7 @@
       },
 
       'shutdown' : function() {
-        var ssess = _Desktop.getSession();
+        var ssess = _WM.getSession();
         var ssett = _Settings.getSession();
 
         console.info("=> API Shutdown session");
@@ -975,6 +979,12 @@
         _Processes[this._pid] = undefined;
       }
 
+      if ( this._proc_name == "(Desktop)" ) {
+        _Desktop = null;
+      } else if ( this._proc_name == "(WindowManager)" ) {
+        _WM = null;
+      }
+
       this._started = null;
     },
 
@@ -1045,14 +1055,25 @@
           // Initialize desktop etc.
           _Tooltip = new Tooltip();
           _Desktop = new Desktop();
+          _WM      = new WindowManager();
           API.loading.progress(15);
 
+          API.loading.progress(30);
           _Desktop.run();
+          API.loading.progress(40);
+
+          _WM.run();
+          API.loading.progress(95);
 
           if ( _Settings._get("user.first-run") === "true" ) {
-            _Desktop.addWindow(new BrowserDialog());
+            _WM.addWindow(new BrowserDialog());
             _Settings._set("user.first-run", "false");
           }
+
+          setTimeout(function() {
+            API.loading.progress(100);
+            API.loading.hide();
+          },200);
         } else {
           alert(data.error);
         }
@@ -1074,6 +1095,9 @@
       if ( _Desktop ) {
         _Desktop.destroy();
       }
+      if ( _WM ) {
+        _WM.destroy();
+      }
       if ( _Settings ) {
         _Settings.destroy();
       }
@@ -1085,11 +1109,17 @@
       _Resources  = null;
       _Settings   = null;
       _Desktop    = null;
+      _WM         = null;
       _Window     = null;
       _Tooltip    = null;
       _Menu       = null;
       _Processes  = [];
       _TopIndex   = 11;
+
+      try {
+        $("*").unbind();
+        $("*").die();
+      } catch ( eee ) { }
 
       this._super();
     },
@@ -1760,6 +1790,7 @@
 
     /**
      * Application::_checkCompability() -- Check Application compabilty list and throw errors if any
+     * @see    OSjs.Compability
      * @return void
      */
     _checkCompability : (function() {
@@ -1915,129 +1946,48 @@
   }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
-  // DESKTOP
+  // WINDOW MANAGER
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Desktop -- Main Window Manager Class
-   * The desktop containing all elements
-   *
-   * TODO: Rename to Window manager
+   * WindowManager -- Main Window Manager Class
    *
    * @extends Process
    * @class
    */
-  var Desktop = Process.extend({
+  var WindowManager = Process.extend({
 
-    $element : null,          //!< Desktop DOM Element
     stack    : [],            //!< Window Stack
-    panel    : null,          //!< Panel instance
     running  : false,         //!< Window Manager running ?
     bindings : {},            //!< Global action bindings
 
     /**
-     * Desktop::init() -- Constructor
+     * WindowManager::init() -- Constructor
      * @constructor
      */
     init : function() {
       var self = this;
 
-      this.$element = $("#Desktop");
       this.stack    = [];
-      this.panel    = null;
       this.running  = false;
       this.bindings = {
-        "window_add"     : [self.defaultHandler],
-        "window_remove"  : [self.defaultHandler],
-        "window_focus"   : [self.defaultHandler],
-        "window_blur"    : [self.defaultHandler],
-        "window_updated" : [self.defaultHandler]
+        "window_add"     : [],
+        "window_remove"  : [],
+        "window_focus"   : [],
+        "window_blur"    : [],
+        "window_updated" : []
       };
-
-      $("#Desktop").mousedown(function(ev) {
-        var t = ev.target || ev.srcElement;
-
-        if ( !t || !t.id == "Desktop" ) {
-          return true;
-        }
-
-        var ret = API.application.context_menu(ev, [
-          {"title" : "Desktop", "disabled" : true, "attribute" : "header"},
-          {"title" : "Change wallpaper", "method" : function() {
-            var dir = _Settings._get("desktop.wallpaper.path");
-            if ( dir ) {
-              var tmp = dir.split("/");
-              if ( tmp.length > 1 ) {
-                tmp.pop();
-              }
-              dir = tmp.join("/");
-            } else {
-              dir = "/";
-            }
-            API.system.dialog_file(function(fname) {
-              _Settings._set("desktop.wallpaper.path", fname);
-              _Desktop.applySettings();
-            }, ["image/*"], "open", dir);
-          }
-        },
-        {"title" : "Tile windows", "method" : function() { 
-          API.ui.windows.tile();
-        }}
-
-        ], $(this), 3, true);
-
-        if ( ev.which > 1 ) {
-          ev.preventDefault();
-        }
-
-        return ret;
-      });
-
-      /*
-      $("#Desktop").bind("dragover", function(ev) {
-        ev.preventDefault();
-        return false;
-      });
-      $("#Desktop").bind("dragleave", function(ev) {
-        ev.preventDefault();
-        return false;
-      });
-      $("#Desktop").bind("dragenter", function(ev) {
-        ev.preventDefault();
-        return false;
-      });
-      $("#Desktop").bind("drop", function(ev) {
-        ev.preventDefault();
-        var dt = ev.originalEvent.dataTransfer;
-        console.log(dt, dt.getData('Text'));
-        console.log(dt.getData('text/uri-list'));
-        console.log(dt.getData('text/plain'));
-        console.log(dt.getData('text/html'));
-        return false;
-      });
-      */
 
       API.ui.cursor("default");
 
-      this._super("(Desktop)", "places/desktop.png");
+      this._super("(WindowManager)", "apps/xfwm4.png");
     },
 
     /**
-     * Desktop::destroy() -- Destructor
+     * WindowManager::destroy() -- Destructor
      * @destructor
      */
     destroy : function() {
-      try {
-        $("*").unbind();
-        $("*").die();
-      } catch ( eee ) { }
-
-      // Remove panel
-      if ( this.panel ) {
-        this.panel.destroy();
-      }
-      this.panel = null;
-
       // Remove bindings
       this.bindings = null;
 
@@ -2051,14 +2001,31 @@
       }
       this.stack = null;
 
-      // Reset settings
-      this.setWallpaper(null);
+      this.running = false;
 
       this._super();
     },
 
     /**
-     * Desktop::bind() -- Bind an event by name and callback
+     * WindowManager::run() -- Run window manager
+     * @return void
+     */
+    run : function() {
+      var self = this;
+      if ( this.running ) {
+        return;
+      }
+
+      API.session.restore();
+
+      this.running = true;
+    },
+
+
+    // BINDINGS
+
+    /**
+     * WindowManager::bind() -- Bind an event by name and callback
      * @param   String    mname     Binding name
      * @param   Function  mfunc     Binding function
      * @return  void
@@ -2072,7 +2039,7 @@
     },
 
     /**
-     * Desktop::call() -- Call an event by name and arguments
+     * WindowManager::call() -- Call an event by name and arguments
      * @param   String    mname     Binding name
      * @param   Mixed     margs     Binding arguments
      * @return void
@@ -2086,72 +2053,10 @@
       }
     },
 
-    /**
-     * Desktop::run() -- Run DOM operations etc.
-     * @return void
-     */
-    run : function() {
-      var self = this;
-      if ( this.running ) {
-        return;
-      }
-
-      this.applySettings();
-
-      API.loading.progress(30);
-
-      // Create panel and items from localStorage
-      this.panel = new Panel();
-      var items = _Settings._get("desktop.panel.items", false, true);
-
-      var el, iname, iargs, ialign;
-      for ( var i = 0; i < items.length; i++ ) {
-        el = items[i];
-        iname  = el[0];
-        iargs  = el[1];
-        ialign = el[2] || "left";
-
-        LaunchPanelItem(i, iname, iargs, ialign, self.panel);
-      }
-
-      API.loading.progress(40);
-
-      API.session.restore();
-
-      API.loading.progress(95);
-
-      setTimeout(function() {
-        API.loading.progress(100);
-        API.loading.hide();
-      },200);
-
-      this.running = true;
-    },
-
-    // HANDLERS
-
-    /**
-     * Desktop::defaultHandler() -- Default event handler callback
-     * @param   String    ev          Event name
-     * @param   Mixed     eargs       Event argument(s)
-     * @return  bool
-     */
-    defaultHandler : function(ev, eargs) {
-      if ( this.panel ) {
-        if ( ev.match(/^window/) ) {
-          this.panel.redraw(ev, eargs);
-        }
-
-        return true;
-      }
-
-      return false;
-    },
-
     // WINDOWS
 
     /**
-     * Desktop::addWindow() -- Add a window to the stack (and create)
+     * WindowManager::addWindow() -- Add a window to the stack (and create)
      * @param   Window    win       Window to add
      * @return  Mixed
      */
@@ -2183,14 +2088,14 @@
     },
 
     /**
-     * Desktop::removeWindow() -- Remove a window from the stack
+     * WindowManager::removeWindow() -- Remove a window from the stack
      * @param   Window    win       Window to remove
      * @param   bool      destroy   Destroy window
      * @return  bool
      */
     removeWindow : function(win, destroy) {
       if ( win instanceof Window ) {
-        console.log("Desktop::removeWindow()", destroy, win);
+        console.log("WindowManager::removeWindow()", destroy, win);
 
         if ( destroy ) {
           win.destroy();
@@ -2218,7 +2123,7 @@
     },
 
     /**
-     * Desktop::blurWindow() -- Perform 'blur' on Window
+     * WindowManager::blurWindow() -- Perform 'blur' on Window
      * @param   Window    win       Window to manipulate
      * @return  void
      */
@@ -2233,7 +2138,7 @@
     },
 
     /**
-     * Desktop::focusWindow() -- Perform 'focus' on Window
+     * WindowManager::focusWindow() -- Perform 'focus' on Window
      * @param   Window    win       Window to manipulate
      * @return  void
      */
@@ -2254,7 +2159,7 @@
     },
 
     /**
-     * Desktop::restoreWindow() -- Perform 'restore' on Window
+     * WindowManager::restoreWindow() -- Perform 'restore' on Window
      * @param   Window    win       Window to manipulate
      * @return  void
      */
@@ -2263,7 +2168,7 @@
     },
 
     /**
-     * Desktop::maximizeWindow() -- Perform 'maximize' on Window
+     * WindowManager::maximizeWindow() -- Perform 'maximize' on Window
      * @param   Window    win       Window to manipulate
      * @return  void
      */
@@ -2272,7 +2177,7 @@
     },
 
     /**
-     * Desktop::minimizeWindow() -- Perform 'minimize' on Window
+     * WindowManager::minimizeWindow() -- Perform 'minimize' on Window
      * @param   Window    win       Window to manipulate
      * @return  void
      */
@@ -2281,7 +2186,7 @@
     },
 
     /**
-     * Desktop::updateWindow() -- Perform 'update' on Window
+     * WindowManager::updateWindow() -- Perform 'update' on Window
      * @param   Window    win       Window to manipulate
      * @return  void
      */
@@ -2290,7 +2195,7 @@
     },
 
     /**
-     * Desktop::sortWindows() -- Sort windows on desktop (align)
+     * WindowManager::sortWindows() -- Sort windows on desktop (align)
      * @param   String      method      Sorting method (default = tile)
      * @return  void
      */
@@ -2317,6 +2222,211 @@
           this.focusWindow(last);
         }
       }
+    },
+
+    /**
+     * WindowManager::getSession() -- Get current Desktop session data
+     * @return JSON
+     */
+    getSession : function() {
+      var sess = [];
+
+      var i = 0;
+      var l = _Processes.length;
+      var p, s;
+      for ( i; i < l; i++ ) {
+        p = _Processes[i];
+        if ( p !== undefined && (p instanceof Application) ) {
+          s = p._getSession();
+          if ( s !== false ) {
+            sess.push(s);
+          }
+        }
+      }
+
+      return sess;
+    }
+
+  });
+
+  /////////////////////////////////////////////////////////////////////////////
+  // DESKTOP
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Desktop -- Main Desktop Class
+   * The desktop containing all elements
+   *
+   * @extends Process
+   * @class
+   */
+  var Desktop = Process.extend({
+
+    $element : null,          //!< Desktop DOM Element
+    running  : false,         //!< Desktop running ?
+    panel    : null,          //!< Panel instance
+
+    /**
+     * Desktop::init() -- Constructor
+     * @constructor
+     */
+    init : function() {
+      var self = this;
+
+      this.$element = $("#Desktop");
+      this.panel    = null;
+
+
+      /*
+      $("#Desktop").bind("dragover", function(ev) {
+        ev.preventDefault();
+        return false;
+      });
+      $("#Desktop").bind("dragleave", function(ev) {
+        ev.preventDefault();
+        return false;
+      });
+      $("#Desktop").bind("dragenter", function(ev) {
+        ev.preventDefault();
+        return false;
+      });
+      $("#Desktop").bind("drop", function(ev) {
+        ev.preventDefault();
+        var dt = ev.originalEvent.dataTransfer;
+        console.log(dt, dt.getData('Text'));
+        console.log(dt.getData('text/uri-list'));
+        console.log(dt.getData('text/plain'));
+        console.log(dt.getData('text/html'));
+        return false;
+      });
+      */
+
+      this._super("(Desktop)", "places/desktop.png");
+    },
+
+    /**
+     * Desktop::destroy() -- Destructor
+     * @destructor
+     */
+    destroy : function() {
+      $("#Desktop").unbind("mousedown");
+
+      // Remove panel
+      if ( this.panel ) {
+        this.panel.destroy();
+      }
+      this.panel = null;
+
+      // Reset settings
+      this.setWallpaper(null);
+
+      this._running = false;
+
+      this._super();
+    },
+
+    /**
+     * Desktop::run() -- Run DOM operations etc.
+     * @return void
+     */
+    run : function() {
+      var self = this;
+      if ( this.running ) {
+        return;
+      }
+
+      // Events
+      $("#Desktop").mousedown(function(ev) {
+        return self.mousedownHandler(ev);
+      });
+
+      if ( _WM ) {
+        _WM.bind("window_add", this.defaultHandler);
+        _WM.bind("window_remove", this.defaultHandler);
+        _WM.bind("window_focus", this.defaultHandler);
+        _WM.bind("window_blur", this.defaultHandler);
+        _WM.bind("window_updated", this.defaultHandler);
+      }
+
+      this.applySettings();
+
+
+      // Create panel and items from localStorage
+      this.panel = new Panel();
+      var items = _Settings._get("desktop.panel.items", false, true);
+
+      var el, iname, iargs, ialign;
+      for ( var i = 0; i < items.length; i++ ) {
+        el = items[i];
+        iname  = el[0];
+        iargs  = el[1];
+        ialign = el[2] || "left";
+
+        LaunchPanelItem(i, iname, iargs, ialign, self.panel);
+      }
+
+      this.running = true;
+    },
+
+    // HANDLERS
+
+    /**
+     * Desktop::defaultHandler() -- Default event handler callback
+     * @param   String    ev          Event name
+     * @param   Mixed     eargs       Event argument(s)
+     * @return  bool
+     */
+    defaultHandler : function(ev, eargs) {
+      if ( this.panel ) {
+        if ( ev.match(/^window/) ) {
+          this.panel.redraw(ev, eargs);
+        }
+
+        return true;
+      }
+
+      return false;
+    },
+
+    mousedownHandler : function(ev) {
+      var self = this;
+
+      var t = ev.target || ev.srcElement;
+
+      if ( !t || !t.id == "Desktop" ) {
+        return true;
+      }
+
+      var ret = API.application.context_menu(ev, [
+        {"title" : "Desktop", "disabled" : true, "attribute" : "header"},
+        {"title" : "Change wallpaper", "method" : function() {
+          var dir = _Settings._get("desktop.wallpaper.path");
+          if ( dir ) {
+            var tmp = dir.split("/");
+            if ( tmp.length > 1 ) {
+              tmp.pop();
+            }
+            dir = tmp.join("/");
+          } else {
+            dir = "/";
+          }
+          API.system.dialog_file(function(fname) {
+            _Settings._set("desktop.wallpaper.path", fname);
+            _Desktop.applySettings();
+          }, ["image/*"], "open", dir);
+        }
+      },
+      {"title" : "Tile windows", "method" : function() { 
+        API.ui.windows.tile();
+      }}
+
+      ], $(this), 3, true);
+
+      if ( ev.which > 1 ) {
+        ev.preventDefault();
+      }
+
+      return ret;
     },
 
     // SETTINGS \ SESSION
@@ -2399,31 +2509,7 @@
       if ( $(css).attr("href") != href ) {
         $(css).attr("href", href);
       }
-    },
-
-    /**
-     * Desktop::getSession() -- Get current Desktop session data
-     * @return JSON
-     */
-    getSession : function() {
-      var sess = [];
-
-      var i = 0;
-      var l = _Processes.length;
-      var p, s;
-      for ( i; i < l; i++ ) {
-        p = _Processes[i];
-        if ( p !== undefined && (p instanceof Application) ) {
-          s = p._getSession();
-          if ( s !== false ) {
-            sess.push(s);
-          }
-        }
-      }
-
-      return sess;
     }
-
 
   }); // @endclass
 
@@ -2659,7 +2745,7 @@
             pitem._gravity = "center";
             pitem.icon = "categories/applications-utilities.png";
 
-            _Desktop.addWindow(pitem);
+            _WM.addWindow(pitem);
           }}
 
         ], $(this), 3, true);
@@ -2900,7 +2986,7 @@
     configure : function() {
       var self = this;
       if ( self.configurable ) {
-        _Desktop.addWindow(new PanelItemOperationDialog(OperationDialog, API, [this, function() {
+        _WM.addWindow(new PanelItemOperationDialog(OperationDialog, API, [this, function() {
           self.reload();
         }]));
       }
@@ -3445,12 +3531,12 @@
 
     /**
      * Window::show() -- Show window (add)
-     * @see Desktop::addWindow()
+     * @see WidowManager::addWindow()
      * @return void
      */
     show : function() {
       if ( !this._showing ) {
-        _Desktop.addWindow(this);
+        _WM.addWindow(this);
 
         this._showing = true;
       }
@@ -3458,12 +3544,12 @@
 
     /**
      * Window::close() -- Close window (remove)
-     * @see Desktop::removeWindow()
+     * @see WindowManager::removeWindow()
      * @return void
      */
     close : function() {
       if ( this._showing ) {
-        _Desktop.removeWindow(this, true);
+        _WM.removeWindow(this, true);
 
         this._showing = false;
       }
@@ -3471,20 +3557,20 @@
 
     /**
      * Window::focus() -- Focus window
-     * @see Desktop::focusWindow()
+     * @see WindowManager::focusWindow()
      * @return void
      */
     focus : function() {
-      _Desktop.focusWindow(this);
+      _WM.focusWindow(this);
     },
 
     /**
      * Window::blur() -- Blur window
-     * @see Desktop::blurWindow()
+     * @see WindowManager::blurWindow()
      * @return void
      */
     blur : function() {
-      _Desktop.blurWindow(this);
+      _WM.blurWindow(this);
     },
 
     /**
@@ -3496,7 +3582,7 @@
       if ( t != this._title ) {
         this._title = t;
         this.$element.find(".WindowTopInner span").html(this._title);
-        _Desktop.updateWindow(this);
+        _WM.updateWindow(this);
       }
     },
 
@@ -3623,19 +3709,19 @@
         var self = this;
         if ( this._is_minimized ) {
           this.$element.animate({opacity: 'show', height: 'show'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
-            _Desktop.restoreWindow(self);
+            _WM.restoreWindow(self);
           }});
 
           this._is_minimized = false;
         } else {
           this.$element.animate({opacity: 'hide', height: 'hide'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
-            _Desktop.minimizeWindow(self);
+            _WM.minimizeWindow(self);
           }});
 
           this._is_minimized = true;
 
           if ( this._current ) {
-            _Desktop.blurWindow(self);
+            _WM.blurWindow(self);
           }
         }
 
@@ -3695,7 +3781,7 @@
             'width'  : (this._width) + "px",
             'height' : (this._height)  + "px"
           }, {'duration' : ANIMATION_SPEED}, function() {
-            _Desktop.maximizeWidow(self);
+            _WM.maximizeWindow(self);
           });
 
           this.$element.find(".ActionMaximize").parent().addClass("Active");
