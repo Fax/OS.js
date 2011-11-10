@@ -19,6 +19,9 @@
 
   console.group("init.js");
 
+  var video_supported = !!document.createElement('video').canPlayType;
+  var audio_supported = !!document.createElement('audio').canPlayType;
+
   //
   // Main OS.js namespace
   //
@@ -34,10 +37,16 @@
       "SUPPORT_CANVAS"         : (!!document.createElement('canvas').getContext),
       "SUPPORT_WEBGL"          : false,
       "SUPPORT_CANVAS_CONTEXT" : [],
-      "SUPPORT_VIDEO"          : (!!document.createElement('video').canPlayType),
-      "SUPPORT_AUDIO"          : (!!document.createElement('audio').canPlayType),
-      "SUPPORT_AUDIO_OGG"      : (!!document.createElement('audio').canPlayType && !!document.createElement('audio').canPlayType('audio/ogg; codecs="vorbis')),
-      "SUPPORT_AUDIO_MP3"      : (!!document.createElement('audio').canPlayType && !!document.createElement('audio').canPlayType('audio/mpeg')),
+
+      // http://www.w3.org/TR/html5/video.html
+      "SUPPORT_VIDEO"          : (video_supported),
+      "SUPPORT_VIDEO_WEBM"     : (video_supported && !!document.createElement('video').canPlayType('video/webm; codecs="vp8.0, vorbis"')),
+      "SUPPORT_VIDEO_OGG"      : (video_supported && !!document.createElement('video').canPlayType('video/ogg; codecs="theora, vorbis"')),
+      "SUPPORT_VIDEO_MPEG"     : (video_supported && !!document.createElement('video').canPlayType('video/mp4; codecs="avc1.4D401E, mp4a.40.2"')),    // H.264 Main profile video level 3 and Low-Complexity AAC audio in MP4 container
+      "SUPPORT_VIDEO_MKV"      : (video_supported && !!document.createElement('video').canPlayType('video/x-matroska; codecs="theora, vorbis"')),
+      "SUPPORT_AUDIO"          : (audio_supported),
+      "SUPPORT_AUDIO_OGG"      : (audio_supported && !!document.createElement('audio').canPlayType('audio/ogg; codecs="vorbis')),
+      "SUPPORT_AUDIO_MP3"      : (audio_supported && !!document.createElement('audio').canPlayType('audio/mpeg')),
       "SUPPORT_RICHTEXT"       : (!!document.createElement('textarea').contentEditable)
     },
 
@@ -87,10 +96,17 @@
   OSjs.Public.CompabilityErrors = {
     "canvas"          : "<canvas> DOM Element",
     "webgl"           : "<canvas> WebGL",
+
     "audio"           : "<audio> DOM Element",
-    "ogg"             : "<audio> Does not support OGG/Vorbis",
-    "mp3"             : "<audio> Does not support MPEG/MP3",
+    "audio_ogg"       : "<audio> Does not support OGG/Vorbis",
+    "audio_mp3"       : "<audio> Does not support MPEG/MP3",
+
     "video"           : "<video> DOM Element",
+    "video_webm"      : "<video> Does not support VP8/WebM",
+    "video_ogg"       : "<video> Does not support OGG/Vorbis",
+    "video_mpeg"      : "<video> Does not support MP4/MPEG/h264",
+    "video_mkv"       : "<video> Does not support MKV",
+
     "localStorage"    : "window.localStorage()",
     "sessionStorage"  : "window.sessionStorage()",
     "globalStorage"   : "window.globalStorage()",

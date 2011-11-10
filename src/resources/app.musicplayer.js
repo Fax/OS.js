@@ -291,10 +291,10 @@ OSjs.Applications.ApplicationMusicPlayer = (function($, undefined) {
               if ( result['MIMEType'] ) {
                 var mime = result['MIMEType'];
                 if ( mime.match(/^audio\/mpeg/) ) {
-                  invalid = self._checkCompability("mp3");
+                  invalid = self._checkCompability("audio_mp3");
                   type = "mp3";
                 } else if ( mime.match(/^audio\/ogg/) ) {
-                  invalid = self._checkCompability("ogg");
+                  invalid = self._checkCompability("audio_ogg");
                   type = "ogg/vorbis";
                 }
               }

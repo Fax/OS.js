@@ -1815,9 +1815,9 @@
             }
           break;
 
-          case "ogg" :
-          case "vorbis" :
-            key = "ogg";
+          case "audio_ogg" :
+          case "audio_vorbis" :
+            key = "audio_ogg";
             if ( OSjs.Compability.SUPPORT_AUDIO ) {
               if ( !OSjs.Compability.SUPPORT_AUDIO_OGG ) {
                 error = OSjs.Public.CompabilityErrors[key];
@@ -1826,16 +1826,61 @@
               error = OSjs.Public.CompabilityErrors["audio"];
             }
           break;
-
-          case "mp3"  :
-          case "mpeg" :
-            key = "mp3";
+          case "audio_mp3"  :
+          case "audio_mpeg" :
+            key = "audio_mp3";
             if ( OSjs.Compability.SUPPORT_AUDIO ) {
               if ( !OSjs.Compability.SUPPORT_AUDIO_MP3 ) {
                 error = OSjs.Public.CompabilityErrors[key];
               }
             } else {
               error = OSjs.Public.CompabilityErrors["audio"];
+            }
+          break;
+
+          case "video_vp8" :
+          case "video_webm" :
+            key = "video_webm";
+            if ( OSjs.Compability.SUPPORT_VIDEO ) {
+              if ( !OSjs.Compability.SUPPORT_VIDEO_WEBM ) {
+                error = OSjs.Public.CompabilityErrors[key];
+              }
+            } else {
+              error = OSjs.Public.CompabilityErrors["video"];
+            }
+          break;
+          case "video_ogg" :
+          case "video_vorbis" :
+            key = "video_ogg";
+            if ( OSjs.Compability.SUPPORT_VIDEO ) {
+              if ( !OSjs.Compability.SUPPORT_VIDEO_OGG ) {
+                error = OSjs.Public.CompabilityErrors[key];
+              }
+            } else {
+              error = OSjs.Public.CompabilityErrors["video"];
+            }
+          break;
+          case "video_mpeg" :
+          case "video_mp4"  :
+          case "video_h264" :
+            key = "video_mpeg";
+            if ( OSjs.Compability.SUPPORT_VIDEO ) {
+              if ( !OSjs.Compability.SUPPORT_VIDEO_MPEG ) {
+                error = OSjs.Public.CompabilityErrors[key];
+              }
+            } else {
+              error = OSjs.Public.CompabilityErrors["video"];
+            }
+          break;
+          case "video_mkv"  :
+          case "video_matroska" :
+            key = "video_mkv";
+            if ( OSjs.Compability.SUPPORT_VIDEO ) {
+              if ( !OSjs.Compability.SUPPORT_VIDEO_MKV ) {
+                error = OSjs.Public.CompabilityErrors[key];
+              }
+            } else {
+              error = OSjs.Public.CompabilityErrors["video"];
             }
           break;
 
