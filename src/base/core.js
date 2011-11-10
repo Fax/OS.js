@@ -2240,6 +2240,29 @@
     },
 
     /**
+     * WindowManager::getWindowSpace() -- Get free window space rect
+     * @return Object
+     */
+    getWindowSpace : function() {
+      var ppos   = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
+      var w      = parseInt($(document).width(), 10);
+      var h      = parseInt($(document).height(), 10);
+      var margin = 10;
+      var ph     = 30;
+
+      if ( !_Desktop || !_Desktop.getPanel() ) {
+        ph = 0;
+      }
+
+      return {
+        'y' : (ph ? (ppos == "top" ? 30 : 0) : 0) + margin,
+        'x' : margin,
+        'w' : w - (margin * 2),
+        'h' : (ph ? (h - ph) : h) - (margin * 2)
+      };
+    },
+
+    /**
      * WindowManager::getSession() -- Get current Desktop session data
      * @return JSON
      */
@@ -2272,6 +2295,7 @@
    * Desktop -- Main Desktop Class
    * The desktop containing all elements
    *
+   * @TODO    Multiple panels
    * @extends Process
    * @class
    */
@@ -2449,7 +2473,36 @@
       return ret;
     },
 
-    // SETTINGS \ SESSION
+    /**
+     * Desktop::addPanel() -- Add Panel
+     * @param   Panel     p           Panel or null
+     * @return  void
+     */
+    addPanel : function(p) {
+      if ( p instanceof Panel ) {
+        if ( this.panel !== null ) {
+          this.panel.destroy();
+        }
+        this.panel = p;
+      }
+    },
+
+    /**
+     * Desktop::removePanel() -- Remove Panel
+     * @param   Panel     p           Panel or null
+     * @param   bool      destroyed   Set if action comes from Panel::destroy()
+     * @return  void
+     */
+    removePanel : function(p, destroyed) {
+      if ( this.panel == p ) {
+        if ( !destroyed ) {
+          this.panel.destroy();
+        }
+        this.panel = null;
+      }
+    },
+
+    // SETTINGS / SESSION
 
     /**
      * Desktop::applySettings() -- Apply changes from ResourceManger
@@ -2478,6 +2531,8 @@
       console.log("theme", theme);
       console.groupEnd();
     },
+
+    // GETTERS / SETTERS
 
     /**
      * Desktop::setWallpaper() -- Set new wallpaper
@@ -2529,6 +2584,14 @@
       if ( $(css).attr("href") != href ) {
         $(css).attr("href", href);
       }
+    },
+
+    /**
+     * Desktop::getPanel() -- Get Panel
+     * @return Panel
+     */
+    getPanel : function() {
+      return this.panel;
     }
 
   }); // @endclass
@@ -2794,6 +2857,10 @@
       }
       this.items = null;
       this.$element.empty().remove();
+
+      if ( _Desktop ) {
+        _Desktop.removePanel(this, true);
+      }
 
       this._super();
     },
@@ -3786,14 +3853,11 @@
             'height' : this.$element.height()
           };
 
-          var ppos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
-          var w = parseInt($(document).width(), 10);
-          var h = parseInt($(document).height(), 10);
-
-          this._top = ppos == "top" ? 40 : 10;
-          this._left = 10;
-          this._width = w - 20;
-          this._height = h - 50;
+          var free      = _WM.getWindowSpace();
+          this._left    = free.x;
+          this._top     = free.y;
+          this._width   = free.w;
+          this._height  = free.h;
 
           this.$element.css({
             'top'    : (this._top) + 'px',
