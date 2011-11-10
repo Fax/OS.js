@@ -94,25 +94,42 @@
 
   // Application Compability error exceptions
   OSjs.Public.CompabilityErrors = {
-    "canvas"          : "<canvas> DOM Element",
-    "webgl"           : "<canvas> WebGL",
-
+    "canvas"          : "<canvas> Context (2d)",
+    "webgl"           : "<canvas> WebGL Context (3d)",
     "audio"           : "<audio> DOM Element",
     "audio_ogg"       : "<audio> Does not support OGG/Vorbis",
     "audio_mp3"       : "<audio> Does not support MPEG/MP3",
-
     "video"           : "<video> DOM Element",
     "video_webm"      : "<video> Does not support VP8/WebM",
     "video_ogg"       : "<video> Does not support OGG/Vorbis",
     "video_mpeg"      : "<video> Does not support MP4/MPEG/h264",
     "video_mkv"       : "<video> Does not support MKV",
-
     "localStorage"    : "window.localStorage()",
     "sessionStorage"  : "window.sessionStorage()",
     "globalStorage"   : "window.globalStorage()",
     "databaseStorage" : "window.databaseStorage()",
     "socket"          : "window.WebSocket()",
     "richtext"        : "window.contentEditable (Rich Text Editing)"
+  };
+
+  // Compability mapping
+  OSjs.Public.CompabilityMapping = {
+    "canvas"          : OSjs.Compability.SUPPORT_CANVS,
+    "webgl"           : OSjs.Compability.SUPPORT_WEBGL,
+    "audio"           : OSjs.Compability.SUPPORT_AUDIO,
+    "audio_ogg"       : OSjs.Compability.SUPPORT_AUDIO_OGG,
+    "audio_mp3"       : OSjs.Compability.SUPPORT_AUDIO_MP3,
+    "video"           : OSjs.Compability.SUPPORT_VIDEO,
+    "video_webm"      : OSjs.Compability.SUPPORT_VIDEO_WEBM,
+    "video_ogg"       : OSjs.Compability.SUPPORT_VIDEO_OGG,
+    "video_mpeg"      : OSjs.Compability.SUPPORT_VIDEO_MPEG,
+    "video_mkv"       : OSjs.Compability.SUPPORT_VIDEO_MKV,
+    "localStorage"    : OSjs.Compability.SUPPORT_LSTORAGE,
+    "sessionStorage"  : OSjs.Compability.SUPPORT_SSTORAGE,
+    "globalStorage"   : OSjs.Compability.SUPPORT_GSTORAGE,
+    "databaseStorage" : OSjs.Compability.SUPPORT_DSTORAGE,
+    "socket"          : OSjs.Compability.SUPPORT_SOCKET,
+    "richtext"        : OSjs.Compability.SUPPORT_RICHTEXT
   };
 
   // Browser Compability list

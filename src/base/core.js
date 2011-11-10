@@ -1765,140 +1765,21 @@
     _checkCompability : (function() {
 
       function __check(key) {
-        var error;
+        var error = false;
 
-        switch ( key ) {
-          case "canvas" :
-            if ( !OSjs.Compability.SUPPORT_CANVAS ) {
-              error = OSjs.Public.CompabilityErrors[key];
-            }
-          break;
-          case "3d" :
-          case "webgl" :
-            key = webgl;
-            if ( !OSjs.Compability.SUPPORT_WEBGL ) {
-              error = OSjs.Public.CompabilityErrors[key];
-            }
-          break;
-          case "audio" :
-            if ( !OSjs.Compability.SUPPORT_AUDIO ) {
-              error = OSjs.Public.CompabilityErrors[key];
-            }
-          break;
-          case "video" :
-            if ( !OSjs.Compability.SUPPORT_VIDEO ) {
-              error = OSjs.Public.CompabilityErrors[key];
-            }
-          break;
+        // First check if we have a sub-compability check
+        var tmp   = key.match(/\_/) ? ((key.split("_")).pop()) : null;
+        if ( tmp === "audio" || tmp === "video" ) {
+          if ( OSjs.Public.CompabilityMapping[tmp] === false ) {
+            error = OSjs.Public.CompabilityErrors[tmp];
+          }
+        }
 
-          case "localStorage" :
-            if ( !OSjs.Compability.SUPPORT_LSTORAGE ) {
-              error = OSjs.Public.CompabilityErrors[key];
-            }
-          break;
-          case "sessionStorage" :
-            if ( !OSjs.Compability.SUPPORT_SSTORAGE ) {
-              error = OSjs.Public.CompabilityErrors[key];
-            }
-          break;
-          case "globalStorage" :
-            if ( !OSjs.Compability.SUPPORT_GSTORAGE ) {
-              error = OSjs.Public.CompabilityErrors[key];
-            }
-          break;
-          case "database" :
-          case "databaseStorage" :
-          case "openDatabase" :
-            key = "databaseStorage";
-            if ( !OSjs.Compability.SUPPORT_DSTORAGE ) {
-              error = OSjs.Public.CompabilityErrors[key];
-            }
-          break;
-
-          case "audio_ogg" :
-          case "audio_vorbis" :
-            key = "audio_ogg";
-            if ( OSjs.Compability.SUPPORT_AUDIO ) {
-              if ( !OSjs.Compability.SUPPORT_AUDIO_OGG ) {
-                error = OSjs.Public.CompabilityErrors[key];
-              }
-            } else {
-              error = OSjs.Public.CompabilityErrors["audio"];
-            }
-          break;
-          case "audio_mp3"  :
-          case "audio_mpeg" :
-            key = "audio_mp3";
-            if ( OSjs.Compability.SUPPORT_AUDIO ) {
-              if ( !OSjs.Compability.SUPPORT_AUDIO_MP3 ) {
-                error = OSjs.Public.CompabilityErrors[key];
-              }
-            } else {
-              error = OSjs.Public.CompabilityErrors["audio"];
-            }
-          break;
-
-          case "video_vp8" :
-          case "video_webm" :
-            key = "video_webm";
-            if ( OSjs.Compability.SUPPORT_VIDEO ) {
-              if ( !OSjs.Compability.SUPPORT_VIDEO_WEBM ) {
-                error = OSjs.Public.CompabilityErrors[key];
-              }
-            } else {
-              error = OSjs.Public.CompabilityErrors["video"];
-            }
-          break;
-          case "video_ogg" :
-          case "video_vorbis" :
-            key = "video_ogg";
-            if ( OSjs.Compability.SUPPORT_VIDEO ) {
-              if ( !OSjs.Compability.SUPPORT_VIDEO_OGG ) {
-                error = OSjs.Public.CompabilityErrors[key];
-              }
-            } else {
-              error = OSjs.Public.CompabilityErrors["video"];
-            }
-          break;
-          case "video_mpeg" :
-          case "video_mp4"  :
-          case "video_h264" :
-            key = "video_mpeg";
-            if ( OSjs.Compability.SUPPORT_VIDEO ) {
-              if ( !OSjs.Compability.SUPPORT_VIDEO_MPEG ) {
-                error = OSjs.Public.CompabilityErrors[key];
-              }
-            } else {
-              error = OSjs.Public.CompabilityErrors["video"];
-            }
-          break;
-          case "video_mkv"  :
-          case "video_matroska" :
-            key = "video_mkv";
-            if ( OSjs.Compability.SUPPORT_VIDEO ) {
-              if ( !OSjs.Compability.SUPPORT_VIDEO_MKV ) {
-                error = OSjs.Public.CompabilityErrors[key];
-              }
-            } else {
-              error = OSjs.Public.CompabilityErrors["video"];
-            }
-          break;
-
-          case "socket" :
-            if ( !OSjs.Compability.SUPPORT_SOCKET ) {
-              error = OSjs.Public.CompabilityErrors[key];
-            }
-          break;
-
-          case "richtext" :
-            if ( !OSjs.Compability.SUPPORT_RICHTEXT ) {
-              error = OSjs.Public.CompabilityErrors[key];
-            }
-          break;
-
-          default :
-            error = false;
-          break;
+        // Then check main-type
+        if ( error === false ) {
+          if ( OSjs.Public.CompabilityMapping[key] === false ) {
+            error = OSjs.Public.CompabilityErrors[key];
+          }
         }
 
         return error;
@@ -1909,8 +1790,10 @@
         var error;
 
         if ( key ) {
+          console.log("Application::" + this._name + "::" + this._uuid + "::_checkCompability()", key);
           error = __check(key);
         } else {
+          console.log("Application::" + this._name + "::" + this._uuid + "::_checkCompability()", this._compability);
           for ( var i = 0; i < this._compability.length; i++ ) {
             error = __check(this._compability[i]);
             if ( error ) {
