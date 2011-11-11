@@ -2952,31 +2952,34 @@
         var ret = API.application.context_menu(ev, [
           {"title" : "Panel", "disabled" : true, "attribute" : "header"},
           {"title" : "Add new item", "method" : function() {
+            if ( !_WM ) {
+              alert(OSjs.Labels.WindowManagerMissing);
+              return;
+            }
+
             var pitem = new PanelItemOperationDialog(OperationDialog, API, [this, function(diag) {
-              var items = _Settings._get("system.panel.registered", true);
-              var current;
-              var selected;
+            var items = _Settings._get("system.panel.registered", true);
 
-              for ( var name in items ) {
-                if ( items.hasOwnProperty(name) ) {
-                  var li = $("<li><img alt=\"/img/blank.gif\" /><div class=\"Inner\"><div class=\"Title\">Title</div><div class=\"Description\">Description</div></div></li>");
-                  li.find("img").attr("src", items[name].icon);
-                  li.find(".Title").html(items[name].title);
-                  li.find(".Description").html(items[name].description);
+            var name, li, current, selected;
+            for ( name in items ) {
+              if ( items.hasOwnProperty(name) ) {
+                li = $("<li><img alt=\"/img/blank.gif\" /><div class=\"Inner\"><div class=\"Title\">Title</div><div class=\"Description\">Description</div></div></li>");
+                li.find("img").attr("src", items[name].icon);
+                li.find(".Title").html(items[name].title);
+                li.find(".Description").html(items[name].description);
 
-                  (function(litem, iname, iitem) {
-                    litem.click(function() {
-                      if ( current && current != this ) {
-                        $(current).removeClass("Current");
-                      }
-                      $(this).addClass("Current");
-                      current = this;
-                      selected = iname;
+                (function(litem, iname, iitem) {
+                  litem.click(function() {
+                    if ( current && current != this ) {
+                      $(current).removeClass("Current");
+                    }
+                    $(this).addClass("Current");
+                    current = this;
+                    selected = iname;
 
-                      //diag.$element.find(".DialogButtons .Ok").removeAttr("disabled");
-                    });
-                  })(li, name, items[name]);
-
+                    //diag.$element.find(".DialogButtons .Ok").removeAttr("disabled");
+                  });
+                })(li, name, items[name]);
                   diag.$element.find(".DialogContent ul").append(li);
                 }
               }
