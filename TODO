@@ -1,3 +1,4 @@
+* TODO: "Set this application as default [for this mime]"
 * TODO: Finish multiple-sessions
 * TODO: Login
 * TODO: Rewrite settings manager
@@ -9,3 +10,5 @@
 * FIXME: Fix ContextMenu pop-out problems
 * FIXME: Respond with a crash dialog upon Application::Event => "Failed to handle Application"
 * NOTE: http://trac.webkit.org/export/41842/trunk/LayoutTests/scrollbars/overflow-scrollbar-combinations.html
+
+There are more TODO/FIXME scattered around in core.js
