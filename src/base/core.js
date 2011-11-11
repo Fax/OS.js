@@ -96,7 +96,7 @@
       var msg = sprintf(OSjs.Labels.InitLaunchError, name, MAX_PROCESSES);
       var trace = sprintf("InitLaunch(%s)", name);
       try {
-        _WM.addWindow(new CrashDialog(name, msg, trace));
+        _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, [name, msg, trace]));
       } catch ( eee ) {
         alert(msg);
       }
@@ -145,7 +145,7 @@
    */
   function CrashApplication(app_name, application, ex) {
     try {
-      _WM.addWindow(new CrashDialog(application, ex.message, ex.stack, ex));
+      _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, [application, ex.message, ex.stack, ex]));
       try {
         application._running = true; // NOTE: Workaround
         application.kill();
@@ -1074,7 +1074,7 @@
           bar.progressbar({value : 70});
 
           if ( _Settings._get("user.first-run") === "true" ) {
-            _WM.addWindow(new BrowserDialog());
+            _WM.addWindow(new OSjs.Dialogs.CompabilityDialog(Window, Application, []));
             _Settings._set("user.first-run", "false");
           }
 
@@ -4502,208 +4502,6 @@
         self.cmd_cancel();
       });
     }
-
-  }); // @endclass
-
-  /////////////////////////////////////////////////////////////////////////////
-  // MISC DIALOGS
-  /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * BrowserDialog -- Browser Compability Dialog
-   * @extends Window
-   * @class
-   */
-  var BrowserDialog = Window.extend({
-
-    /**
-     * BrowserDialog::init() -- Constructor
-     * @see Window
-     * @constructor
-     */
-    init : function() {
-      var supported = "Supported";
-      var color     = "black";
-
-      var mob = MobileSupport();
-      if ( ($.browser.msie || $.browser.opera) || (mob.iphone || mob.blackberry || mob.android) ) {
-        supported = "Partially supported";
-        color = "#f3a433";
-      } else {
-        supported = "Supported";
-        color = "#137a26";
-      }
-
-      this._super("Crash", false);
-      this._content = "<div style=\"padding:10px;\"><div><b>Your browser is: <span style=\"color:" + color + ";\">" + supported + "</span></b></div> <table class=\"chart\"></table><div class=\"notes\"></div></div>";
-      this._title = "Browser compability";
-      this._icon = 'status/software-update-available.png';
-      this._is_draggable = true;
-      this._is_resizable = false;
-      this._is_scrollable = false;
-      this._is_sessionable = false;
-      this._is_minimizable = true;
-      this._is_maximizable = false;
-      this._is_closable = true;
-      this._is_orphan = false;
-      this._is_ontop = true;
-      this._width = 500;
-      this._height = 330;
-      this._gravity = "center";
-    },
-
-    /**
-     * BrowserDialog::create() -- Create DOM elements etc
-     * @see Window
-     * @return $
-     */
-    create : function(id, mcallback) {
-      var self = this;
-      var el = this._super(id, mcallback);
-
-      var table  = el.find("table.chart");
-      var _row   = "<tr><td width=\"16\"><img alt=\"\" src=\"/img/icons/16x16/emblems/emblem-%s.png\" /></td><td>%s</td></tr>";
-      var _check = OSjs.Public.CompabilityLabels;
-
-      var row;
-      var icon;
-      for ( var c in _check ) {
-        if ( _check.hasOwnProperty(c) ) {
-          icon = _check[c] ? "default" : "important";
-          row = $(sprintf(_row, icon, c));
-          table.append(row);
-        }
-      }
-
-      $(table).css({
-        "float" : "left",
-        "width" : "49%",
-        "margin-top" : "10px",
-        "background" : "#fff",
-        "height" : "226px"
-      }).find("td").css({
-        "padding" : "3px",
-        "vertical-align" : "middle"
-      });
-
-      var notes = el.find("div.notes");
-      if ( $.browser.msie || $.browser.opera ) {
-        notes.append("<p>Glade CSS style problems occurs in IE and Opera for &lt;table&gt; elements.</p>");
-        if ( $.browser.msie ) {
-          notes.append("<p>IE is lacking some CSS effects and HTML5/W3C features.</p>");
-        }
-      } else {
-        var mob = MobileSupport();
-        if ( mob.iphone || mob.blackberry || mob.android ) {
-          notes.append("<p>Your device is not fully supported due to lacking Touch support.</p>");
-        } else {
-          notes.append("<p>Your browser does not have any known problems.</p>");
-        }
-      }
-      notes.append("<p><b>This message will only be showed once!</b></p>");
-
-      $(notes).css({
-        "float" : "right",
-        "width" : "49%",
-        "margin-top" : "10px",
-        "background" : "#fff",
-        "height" : "255px"
-      }).find("p").css({"padding" : "5px", "margin" : "0"});
-    }
-
-  }); // @endclass
-
-  /**
-   * CrashDialog -- Application Crash Dialog
-   *
-   * @extends Window
-   * @class
-   */
-  var CrashDialog = Window.extend({
-
-    /**
-     * CrashDialog::init() -- Constructor
-     * @see Window
-     * @constructor
-     */
-    init : function(app, error, trace, alternative) {
-      var title = "";
-      if ( app instanceof Application ) {
-        title = sprintf(OSjs.Labels.CrashDialogTitleApplication, app._name);
-      } else {
-        title = sprintf(OSjs.Labels.CrashDialogTitleProcess, app);
-      }
-
-      this._super("Crash", false);
-      this._content = "<div class=\"Crash\"><span>" + title + "</span><div class=\"error\"><div><b>Error</b></div><textarea></textarea></div><div class=\"trace\"><div><b>Trace</b></div><textarea></textarea></div></div>";
-      this._title = title;
-      this._icon = 'status/software-update-urgent.png';
-      this._is_draggable = true;
-      this._is_resizable = false;
-      this._is_scrollable = false;
-      this._is_sessionable = false;
-      this._is_minimizable = true;
-      this._is_maximizable = false;
-      this._is_closable = true;
-      this._is_orphan = false;
-      this._is_ontop = true;
-      this._width = 600;
-      this._height = 300;
-      this._gravity = "center";
-
-      this.error = error;
-      this.trace = trace;
-      this.alternative = alternative;
-    },
-
-    /**
-     * CrashDialog::create() -- Create DOM elements etc
-     * @see Window
-     * @return $
-     */
-    create : function(id, mcallback) {
-      var self = this;
-      var el = this._super(id, mcallback);
-
-      $(el).find(".Crash").css({
-        "position" : "absolute",
-        "top" : "5px",
-        "left" : "5px",
-        "right" : "5px",
-        "bottom" : "5px"
-      });
-      $(el).find(".Crash span").css({
-        "font-weight" : "bold"
-      });
-
-      $(el).find(".error").css({
-        "position" : "absolute",
-        "top" : "20px",
-        "left" : "0px",
-        "right" : "0px",
-        "bottom" : "140px"
-      }).find("textarea").val(self.error || self.alternative);
-
-      $(el).find(".trace").css({
-        "position" : "absolute",
-        "top" : "120px",
-        "left" : "0px",
-        "right" : "0px",
-        "bottom" : "0px"
-      }).find("textarea").val(self.trace);
-
-      $(el).find("textarea").css({
-        "resize" : "none",
-        "position" : "absolute",
-        "top" : "15px",
-        "left" : "0px",
-        "right" : "0px",
-        "bottom" : "0px",
-        "width" : "580px",
-        "height" : "70px"
-      });
-    }
-
 
   }); // @endclass
 

@@ -44,6 +44,12 @@ abstract class Dialog
     ),
     "UploadOperationDialog" => Array(
       "resources" => Array("dialog.upload.js")
+    ),
+    "CompabilityDialog" => Array(
+      "resources" => Array("dialog.compability.js")
+    ),
+    "CrashDialog" => Array(
+      "resources" => Array("dialog.crash.js")
     )
   );
 

@@ -46,6 +46,8 @@
   <script type="text/javascript" src="/?library=core.js"></script>
   <script type="text/javascript" src="/?library=main.js"></script>
 
+  <script type="text/javascript" src="/?resource=dialog.crash.js"></script>
+  <script type="text/javascript" src="/?resource=dialog.compability.js"></script>
   <script type="text/javascript" src="/?resource=dialog.input.js"></script>
   <script type="text/javascript" src="/?resource=dialog.panel.js"></script>
   <script type="text/javascript" src="/?resource=dialog.launch.js"></script>
