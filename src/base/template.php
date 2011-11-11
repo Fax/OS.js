@@ -10,15 +10,12 @@
   <title>OS.js <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)</title>
 
   <!-- Compability -->
-<!--
-  <meta http-equiv="X-UA-Compatible" content="IE=9" />
-  <meta http-equiv="Content-Style-Type" content="text/css; charset=utf-8" />
--->
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <!--<meta http-equiv="X-UA-Compatible" content="IE=9" />
+  <meta http-equiv="Content-Style-Type" content="text/css; charset=utf-8" />-->
 
   <!-- Vendor libraries -->
   <link rel="stylesheet" type="text/css" href="/css/vendor/ui-lightness/jquery-ui-1.8.13.custom.css" />
-
   <script type="text/javascript" src="/js/vendor/json2.js"></script>
   <script type="text/javascript" src="/js/vendor/sprintf-0.7-beta1.js"></script>
   <script type="text/javascript" src="/js/vendor/fileuploader.js"></script>
@@ -26,14 +23,16 @@
   <script type="text/javascript" src="/js/vendor/jquery-ui-1.8.13.custom.min.js"></script>
   <script type="text/javascript" src="/js/vendor/jquery.touch.compact.js"></script>
 
-  <!-- Main resources -->
+  <!-- Utiltiy libraries -->
+  <script type="text/javascript" src="/js/utils.js"></script>
+
+  <!-- OS.js stylesheets -->
   <link rel="stylesheet" type="text/css" href="/css/main.css" />
   <link rel="stylesheet" type="text/css" href="/css/glade.css" />
   <link rel="stylesheet" type="text/css" href="/css/pimp.css" />
 <!--[if lt IE 9]>
 <link rel="stylesheet" type="text/css" href="/css/ie.css" />
 <![endif]-->
-  <script type="text/javascript" src="/js/utils.js"></script>
 
   <!-- OS.js defineable -->
   <link rel="stylesheet" type="text/css" href="/?font=Sansation" id="FontFace" />
@@ -41,11 +40,12 @@
   <link rel="stylesheet" type="text/css" href="/?theme=dark" id="ThemeFace" />
   <link rel="stylesheet" type="text/css" href="/?cursor=default" id="CursorFace" />
 
-  <!-- Preloads -->
+  <!-- OS.js libraries -->
   <script type="text/javascript" src="/?library=init.js"></script>
   <script type="text/javascript" src="/?library=core.js"></script>
   <script type="text/javascript" src="/?library=main.js"></script>
 
+  <!-- OS.js sources -->
   <script type="text/javascript" src="/?resource=dialog.crash.js"></script>
   <script type="text/javascript" src="/?resource=dialog.compability.js"></script>
   <script type="text/javascript" src="/?resource=dialog.input.js"></script>
@@ -57,6 +57,7 @@
   <script type="text/javascript" src="/?resource=dialog.copy.js"></script>
   <script type="text/javascript" src="/?resource=dialog.color.js"></script>
 
+  <!-- Google Analytics -->
   <script type="text/javascript">
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-26635797-1']);
@@ -71,17 +72,17 @@
 </head>
 <body>
 
+<!-- Main Container -->
 <div id="Desktop">
   <!-- Panel -->
   <div class="DesktopPanel AlignTop" id="Panel"><ul></ul></div>
 
+  <!-- Context items -->
   <div id="ContextMenu">&nbsp;</div>
-
   <div id="ContextRectangle">&nbsp;</div>
-
   <div id="Tooltip">&nbsp;</div>
 
-  <!-- Content -->
+  <!-- Loaded content will appear here -->
 </div>
 
 <!-- Loading -->

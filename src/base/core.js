@@ -2890,6 +2890,7 @@
    * Panel -- The Desktop Panel Class
    * Panels can be added to desktop. Contains PanelItem(s) or Widgets
    *
+   * @TODO    Remember to remove element from template.php when doing multiple panels
    * @extends Process
    * @class
    */
