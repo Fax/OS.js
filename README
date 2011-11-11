@@ -57,7 +57,8 @@ Built-In Applications, Dialogs and Panel Items:
 * Application: Image Viewer
 * Application: Tick-tack-toe game
 * Application: Arkanoid game (HTML5-Canvas)
-* Application: HTML Viewer (Browser)
+* Application: HTML Viewer / Browser
+* Application: PDF Viewer (SVG)
 * System: About
 * System: User Information
 * System: Settings

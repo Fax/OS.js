@@ -65,7 +65,8 @@
     <li>Application: Image Viewer</li>
     <li>Application: Tick-tack-toe game</li>
     <li>Application: Arkanoid game (HTML5-Canvas)</li>
-    <li>Application: HTML Viewer (Browser)</li>
+    <li>Application: HTML Viewer / Browser</li>
+    <li>Application: PDF Viewer (SVG)</li>
     <li>System: About</li>
     <li>System: User Information</li>
     <li>System: Settings</li>
