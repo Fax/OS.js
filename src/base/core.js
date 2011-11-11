@@ -253,7 +253,7 @@
    */
   var API = {
 
-    'Socket' : function() {
+    'Socket' : function() { // FIXME: Move to Application::createSocket()
       return new Socket();
     },
 
@@ -276,12 +276,17 @@
     },
 
     //
-    // API: USER INTEFACE
+    // API::UI
     //
 
     'ui' : {
       'windows' : {
         'tile' : function() {
+          if ( !_WM ) {
+            alert(OSjs.Labels.WindowManagerMissing);
+            return;
+          }
+
           _WM.sortWindows('tile');
         }
       },
@@ -369,11 +374,16 @@
     },
 
     //
-    // API: SYSTEM
+    // API::SYSTEM
     //
 
     'system' : {
       'run' : function(path, mime) {
+        if ( !_WM ) {
+          alert(OSjs.Labels.WindowManagerMissing);
+          return;
+        }
+
         if ( mime ) {
           if ( mime == "ajwm/application" ) {
             var expl = path.split("/");
@@ -445,6 +455,11 @@
         }
         windows = windows || {};
 
+        if ( !_WM ) {
+          alert(OSjs.Labels.WindowManagerMissing);
+          return;
+        }
+
         var wins = _WM.stack;
         for ( var i = 0; i < wins.length; i++ ) {
           if ( wins[i].app && wins[i].app._name == app_name ) {
@@ -478,6 +493,11 @@
       },
 
       'dialog' : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
+        if ( !_WM ) {
+          alert(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
         type = type || "error";
         message = message || "Unknown error";
 
@@ -487,24 +507,44 @@
       },
 
       'dialog_input' : function(path, desc, clb_finish) {
+        if ( !_WM ) {
+          alert(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
         console.info("=> API Input Dialog");
 
         return _WM.addWindow(new OSjs.Dialogs.InputOperationDialog(OperationDialog, API, [path, desc, clb_finish]));
       },
 
       'dialog_rename' : function(path, clb_finish) {
+        if ( !_WM ) {
+          alert(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
         console.info("=> API Rename Dialog");
 
         return _WM.addWindow(new OSjs.Dialogs.RenameOperationDialog(OperationDialog, API, [path, clb_finish]));
       },
 
       'dialog_upload' : function(path, clb_finish, clb_progress, clb_cancel) {
+        if ( !_WM ) {
+          alert(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
         console.info("=> API Upload Dialog");
 
         return _WM.addWindow(new OSjs.Dialogs.UploadOperationDialog(OperationDialog, API, [path, clb_finish, clb_progress, clb_cancel]));
       },
 
       'dialog_file' : function(clb_finish, mime_filter, type, cur_dir) {
+        if ( !_WM ) {
+          alert(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
         mime_filter = mime_filter || [];
         type = type || "open";
         cur_dir = cur_dir || "/";
@@ -515,12 +555,22 @@
       },
 
       'dialog_launch' : function(list, clb_finish, not_found) {
+        if ( !_WM ) {
+          alert(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
         console.info("=> API Launch Dialog");
 
         return _WM.addWindow(new OSjs.Dialogs.LaunchOperationDialog(OperationDialog, API, [list, clb_finish, not_found]));
       },
 
       'dialog_color' : function(start_color, clb_finish) {
+        if ( !_WM ) {
+          alert(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
         console.info("=> API Color Dialog");
 
         return _WM.addWindow(new OSjs.Dialogs.ColorOperationDialog(OperationDialog, API, [start_color, clb_finish]));
@@ -529,7 +579,7 @@
     },
 
     //
-    // API: APPLICATION
+    // API::APPLICATION
     //
 
     'application' : {
@@ -580,7 +630,7 @@
     },
 
     //
-    // API: USER
+    // API::USER
     //
 
     'user' : {
@@ -622,44 +672,12 @@
     },
 
     //
-    // API: SESSION
+    // API::SESSION
     //
 
     'session' : {
       'processes' : function() {
-        var now = (new Date()).getTime();
-        var procs = [];
-
-        var i = 0;
-        var l = _Processes.length;
-        var p, icon, title;
-        if ( l ) {
-          for ( i; i < l; i++ ) {
-            p = _Processes[i];
-
-            if ( p !== undefined ) {
-              var ckill = (function(pp) {
-                return function() {
-                  return pp.kill();
-                };
-              })(p);
-
-              procs.push({
-                'pid'     : p._pid,
-                'name'    : p._name,
-                'uuid'    : p._uuid,
-                'time'    : (now - p._started.getTime()),
-                'icon'    : p._proc_icon,
-                'title'   : p._proc_name,
-                'locked'  : p._locked,
-                //'windows' : (p instanceof Application ? p._windows : []),
-                'kill'    : ckill
-              });
-            }
-          }
-        }
-
-        return procs;
+        return _Core.getProcesses();
       },
 
       'save' : function(save) {
@@ -1013,6 +1031,8 @@
    */
   var Core = Process.extend({
 
+    running : false,        //!< If core is running
+
     /**
      * Core::init() -- Constructor
      * @constructor
@@ -1020,6 +1040,7 @@
     init : function() {
       var self = this;
 
+      this.running = false;
       this._super("(Core)", "status/computer-fail.png", true);
 
       API.loading.show();
@@ -1080,6 +1101,8 @@
             API.loading.progress(100);
             API.loading.hide();
           },200);
+
+          self.running = true;
         } else {
           alert(data.error);
         }
@@ -1092,6 +1115,18 @@
      * @destructor
      */
     destroy : function() {
+      // Unbind global events
+      if ( this.running ) {
+        $(document).unbind("keydown",     this.global_keydown);
+        $(document).unbind("mousedown",   this.global_mousedown);
+        $(document).unbind("mouseup",     this.global_mouseup);
+        $(document).unbind("mousemove",   this.global_mousemove);
+        $(document).unbind("click",       this.global_click);
+        $(document).unbind("dblclick",    this.global_dblclick);
+        $(document).unbind("contextmenu", this.global_contextmenu);
+        $(document).unbind('touchmove',   this.global_touchmove, false);
+      }
+
       if ( _Tooltip ) {
         _Tooltip.destroy();
       }
@@ -1122,6 +1157,7 @@
       _Processes  = [];
       _TopIndex   = 11;
 
+      // Try to remove remaining events
       try {
         $("*").unbind();
         $("*").die();
@@ -1129,6 +1165,8 @@
 
       this._super();
     },
+
+    // EVENTS
 
     /**
      * Core::global_keydown() -- Global Event Handler: keydown
@@ -1258,6 +1296,46 @@
     },
 
     // GETTERS / SETTERS
+
+    /**
+     * Core::getProccesses() -- Get all running processes
+     * @return Array
+     */
+    getProcesses : function() {
+      var now = (new Date()).getTime();
+      var procs = [];
+
+      var i = 0;
+      var l = _Processes.length;
+      var p, icon, title;
+      if ( l ) {
+        for ( i; i < l; i++ ) {
+          p = _Processes[i];
+
+          if ( p !== undefined ) {
+            var ckill = (function(pp) {
+              return function() {
+                return pp.kill();
+              };
+            })(p);
+
+            procs.push({
+              'pid'     : p._pid,
+              'name'    : p._name,
+              'uuid'    : p._uuid,
+              'time'    : (now - p._started.getTime()),
+              'icon'    : p._proc_icon,
+              'title'   : p._proc_name,
+              'locked'  : p._locked,
+              //'windows' : (p instanceof Application ? p._windows : []),
+              'kill'    : ckill
+            });
+          }
+        }
+      }
+
+      return procs;
+    },
 
     /**
      * Core::getSession() -- Get current Desktop session data

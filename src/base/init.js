@@ -89,7 +89,8 @@
     "CrashApplicationResourceStack"       : "[LaunchApplication]API::system::launch()\n  Application: %s\n  Arguments: %s",
     "CrashDialogTitleApplication"         : "Application '%s' crashed!",
     "CrashDialogTitleProcess"             : "Process '%s' crashed!",
-    "InitLaunchError"                     : "Cannot launch '%s'.\nMaximum allowed processes are: %d"
+    "InitLaunchError"                     : "Cannot launch '%s'.\nMaximum allowed processes are: %d",
+    "WindowManagerMissing"                : "Cannot perform this operation because the Window Manager is not running."
   };
 
   // Application Compability error exceptions
