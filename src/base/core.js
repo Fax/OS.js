@@ -1009,6 +1009,7 @@
    */
   var Core = Process.extend({
 
+    online  : false,        //!< We are online, are we ?
     running : false,        //!< If core is running
 
     /**
@@ -1018,7 +1019,9 @@
     init : function() {
       var self = this;
 
+      this.online  = false;
       this.running = false;
+
       this._super("(Core)", "status/computer-fail.png", true);
 
       var load = $("#Loading");
@@ -1043,6 +1046,10 @@
           $(document).bind("dblclick",    self.global_dblclick);
           $(document).bind("contextmenu", self.global_contextmenu);
           $(document).bind('touchmove',   self.global_touchmove, false);
+
+          /* window.addEventListener('offline', function(ev) {
+            self.global_offline(ev, !(navigator.onLine === false));
+          }, true); TODO */
 
           // Set some global variables
           if ( data.result.config ) {
@@ -1085,6 +1092,7 @@
           },200);
 
           self.running = true;
+          self.online  = true;
         } else {
           alert(data.error);
         }
@@ -1107,6 +1115,10 @@
         $(document).unbind("dblclick",    this.global_dblclick);
         $(document).unbind("contextmenu", this.global_contextmenu);
         $(document).unbind('touchmove',   this.global_touchmove, false);
+
+        /* window.removeEventListener('offline', function(ev) {
+          self.global_offline(ev, !(navigator.onLine === false));
+        }, true); TODO */
       }
 
       if ( _Tooltip ) {
@@ -1149,6 +1161,23 @@
     },
 
     // EVENTS
+
+    /**
+     * Core::global_offline() -- The Browser 'offline' event handler
+     * @TODO
+     * @param   DOMEvent    ev      DOM Event
+     * @param   bool        state   If we went off-line
+     * @return  void
+     */
+    global_offline : function(ev, state) {
+      if ( state ) { // Offline
+        this.online = false;
+
+        alert(OSjs.Labels.WentOffline);
+      } else { // Online
+        this.online = true;
+      }
+    },
 
     /**
      * Core::global_keydown() -- Global Event Handler: keydown
@@ -1394,16 +1423,6 @@
       init : function() {
         this.resources = [];
         this.links = [];
-
-        /*
-        window.addEventListener('offline', function() {
-          if(navigator.onLine == false) {
-            alert('We went offline');
-          } else {
-            alert('We are online again!');
-          }
-        }, true);
-        */
 
         this._super("(ResourceManager)", "apps/system-software-install.png", true);
       },

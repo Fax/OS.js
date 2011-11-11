@@ -90,7 +90,8 @@
     "CrashDialogTitleApplication"         : "Application '%s' crashed!",
     "CrashDialogTitleProcess"             : "Process '%s' crashed!",
     "InitLaunchError"                     : "Cannot launch '%s'.\nMaximum allowed processes are: %d",
-    "WindowManagerMissing"                : "Cannot perform this operation because the Window Manager is not running."
+    "WindowManagerMissing"                : "Cannot perform this operation because the Window Manager is not running.",
+    "WentOffline"                         : "Seems like you went offline. Please re-connect to continue using OS.js"
   };
 
   // Application Compability error exceptions
