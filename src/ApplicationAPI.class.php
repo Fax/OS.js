@@ -69,6 +69,23 @@ class ApplicationAPI
     return false;
   }
 
+  /**
+   * Read PDF File
+   * @param   String      $fname      Relative file name
+   * @see     PDF
+   * @return  Mixed
+   */
+  public static function readPDF($fname) {
+    if ( $path = ApplicationVFS::exists($fname) ) {
+      require PATH_PROJECT_LIB . "/PDF.class.php";
+      if ( $ret = PDF::PDFtoSVG($path) ) {
+        return $ret;
+      }
+    }
+
+    return false;
+  }
+
 }
 
 ?>

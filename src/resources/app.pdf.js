@@ -101,6 +101,16 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
         root_window.show();
 
         // Do your stuff here
+        if ( argv && argv.path ) {
+          API.system.call("readpdf", argv.path, function(result, error) {
+            if ( error === null ) {
+              console.log(root_window.$element.find(".fixed1"));
+              root_window.$element.find(".fixed1").html($(result));
+            } else {
+              alert("Cannot open document: " + error);
+            }
+          });
+        }
       }
     });
 
