@@ -664,7 +664,7 @@
 
       'save' : function(save) {
         save = save || false;
-        var sess = save ? _WM.getSession() : {};
+        var sess = save ? _Core.getSession() : {};
 
         console.info("=> API Session save", sess);
 
@@ -672,7 +672,6 @@
       },
 
       'restore' : function() {
-
         if ( OSjs.Compability.SUPPORT_LSTORAGE ) {
           var item = localStorage.getItem('session');
           if ( item ) {
@@ -680,24 +679,14 @@
 
             console.info("=> API restore session", session);
 
-            var i = 0;
-            var l = session.length;
-            var s;
-
-            for ( i; i < l; i++ ) {
-              s = session[i];
-              if ( s ) {
-                API.system.launch(s.name, s.argv, s.windows);
-              }
-            }
-
+            _Core.setSession(session);
           }
         }
 
       },
 
-      'shutdown' : function() {
-        var ssess = _WM.getSession();
+      'shutdown' : function() { // FIXME
+        var ssess = _Core.getSession();
         var ssett = _Settings.getSession();
 
         console.info("=> API Shutdown session");
@@ -1266,6 +1255,54 @@
         return false;
       }
       return true;
+    },
+
+    // GETTERS / SETTERS
+
+    /**
+     * Core::getSession() -- Get current Desktop session data
+     * @return JSON
+     */
+    getSession : function() {
+      var sess = [];
+
+      var i = 0;
+      var l = _Processes.length;
+      var p, s;
+      for ( i; i < l; i++ ) {
+        p = _Processes[i];
+        if ( p !== undefined && (p instanceof Application) ) {
+          s = p._getSession();
+          if ( s !== false ) {
+            sess.push(s);
+          }
+        }
+      }
+
+      return sess;
+    },
+
+
+    /**
+     * Core::setSession() -- Restore a session
+     * @return void
+     */
+    setSession : function(session, full) {
+      full = full ? true : false;
+
+      if ( full ) {
+        (function() {})(); // TODO: Clear current session
+      }
+
+      var i = 0;
+      var l = session.length;
+      var s;
+      for ( i; i < l; i++ ) {
+        s = session[i];
+        if ( s ) {
+          API.system.launch(s.name, s.argv, s.windows);
+        }
+      }
     }
 
   }); // @endclass
@@ -2287,7 +2324,6 @@
       console.groupEnd();
     },
 
-
     // GETTERS / SETTERS
 
     /**
@@ -2311,29 +2347,6 @@
         'w' : w - (margin * 2),
         'h' : (ph ? (h - ph) : h) - (margin * 2)
       };
-    },
-
-    /**
-     * WindowManager::getSession() -- Get current Desktop session data
-     * @return JSON
-     */
-    getSession : function() {
-      var sess = [];
-
-      var i = 0;
-      var l = _Processes.length;
-      var p, s;
-      for ( i; i < l; i++ ) {
-        p = _Processes[i];
-        if ( p !== undefined && (p instanceof Application) ) {
-          s = p._getSession();
-          if ( s !== false ) {
-            sess.push(s);
-          }
-        }
-      }
-
-      return sess;
     }
 
   });
