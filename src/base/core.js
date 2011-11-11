@@ -253,28 +253,6 @@
    */
   var API = {
 
-    'Socket' : function() { // FIXME: Move to Application::createSocket()
-      return new Socket();
-    },
-
-    'loading' : {
-      'show' : function() {
-        $("#Loading").show();
-      },
-
-      'hide' : function() {
-        setTimeout(function() {
-          $("#Loading").fadeOut(ANIMATION_SPEED);
-        }, 100);
-      },
-
-      'progress' : function(v) {
-        $("#LoadingBar").progressbar({
-          value : v
-        });
-      }
-    },
-
     //
     // API::UI
     //
@@ -1043,12 +1021,16 @@
       this.running = false;
       this._super("(Core)", "status/computer-fail.png", true);
 
-      API.loading.show();
-      API.loading.progress(5);
+      var load = $("#Loading");
+      var bar = $("#LoadingBar");
+
+      load.show();
+      bar.progressbar({value : 5});
 
       // Load initial data
       $.post(AJAX_URI, {'ajax' : true, 'action' : 'init'}, function(data) {
         if ( data.success ) {
+
           // Initialize resources
           _Resources = new ResourceManager();
 
@@ -1069,20 +1051,20 @@
 
           // Initialize settings
           _Settings = new SettingsManager(data.result.settings);
-          API.loading.progress(10);
+          bar.progressbar({value : 10});
 
           // Initialize desktop etc.
           _Tooltip = new Tooltip();
           _Desktop = new Desktop();
           _WM      = new WindowManager();
-          API.loading.progress(15);
+          bar.progressbar({value : 15});
 
-          API.loading.progress(30);
+          bar.progressbar({value : 30});
           _Desktop.run();
-          API.loading.progress(40);
+          bar.progressbar({value : 40});
 
           _WM.run();
-          API.loading.progress(70);
+          bar.progressbar({value : 70});
 
           if ( _Settings._get("user.first-run") === "true" ) {
             _WM.addWindow(new BrowserDialog());
@@ -1090,16 +1072,16 @@
           }
 
           setTimeout(function() {
-            API.loading.progress(80);
+            bar.progressbar({value : 80});
 
             API.session.restore();
 
-            API.loading.progress(80);
+            bar.progressbar({value : 90});
           }, 0);
 
           setTimeout(function() {
-            API.loading.progress(100);
-            API.loading.hide();
+            bar.progressbar({value : 100});
+            load.fadeOut(ANIMATION_SPEED);
           },200);
 
           self.running = true;
@@ -1843,6 +1825,15 @@
 
         this._running = true;
       }
+    },
+
+    /**
+     * Application::createSocket() -- Create a new Socket instance
+     * @see     Socket
+     * @return  Socket
+     */
+    createSocket : function(uri) {
+      return new Socket(uri);
     },
 
     /**
