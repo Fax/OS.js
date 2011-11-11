@@ -1,15 +1,17 @@
-* TODO: Move all labels to init.js (into namespace)
-* TODO: "Set this application as default [for this mime]"
-* TODO: Finish multiple-sessions
-* TODO: Login
-* TODO: Rewrite settings manager
-* TODO: Multiple panels
-* TODO: Add/Remove panel item storage
-* TODO: Panel item sorting and alignments (snapping etc)
-* FIXME: replace parents() with closest()
-* FIXME: IE and Opera suffers the same CSS [table] bugs
-* FIXME: Fix ContextMenu pop-out problems
-* FIXME: Respond with a crash dialog upon Application::Event => "Failed to handle Application"
+* TODO [HIG]: Move all labels to init.js (into namespace)
+* TODO [HIG]: "Set this application as default [for this mime]"
+* TODO [MED]: Multiple panels
+* TODO [MED]: Add/Remove panel item storage
+* TODO [MED]: Panel item sorting and alignments (snapping etc)
+* TODO [MED]: Finish multiple-sessions
+* TODO [LOW]: Login
+* TODO [LOW]: Rewrite settings manager
+* TODO [---]: Write custom $ library
+* TODO [---]: Write custom Ajax uploading lib
+* FIXME [HIG]: IE and Opera suffers the same CSS [table] bugs
+* FIXME [MED]: replace parents() with closest()
+* FIXME [MED]: Fix ContextMenu pop-out problems
+* FIXME [LOW]: Respond with a crash dialog upon Application::Event => "Failed to handle Application"
 * NOTE: http://trac.webkit.org/export/41842/trunk/LayoutTests/scrollbars/overflow-scrollbar-combinations.html
 
-There are more TODO/FIXME scattered around in core.js
+*** There are more TODO/FIXME scattered around in core.js ***
