@@ -1,3 +1,4 @@
+* TODO: Move all labels to init.js (into namespace)
 * TODO: "Set this application as default [for this mime]"
 * TODO: Finish multiple-sessions
 * TODO: Login
