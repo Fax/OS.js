@@ -83,12 +83,15 @@
 
 
   /**
-   * InitLaunch() -- Initialize a launching of exec
+   * InitLaunch() -- Initialize a launching of process
+   * @param   String    name      Name of process to launch
    * @return  bool
    * @function
    */
   function InitLaunch(name) {
     var list = API.session.processes();
+
+    // Check if we exceed the process conut limit
     if ( list.length >= MAX_PROCESSES ) {
       var msg = sprintf(OSjs.Labels.InitLaunchError, name, MAX_PROCESSES);
       var trace = sprintf("InitLaunch(%s)", name);
@@ -99,6 +102,7 @@
       }
       return false;
     }
+
     return true;
   } // @endfunction
 
@@ -584,6 +588,9 @@
         'save' : function(settings) {
           _Settings._apply(settings);
 
+          if ( _WM ) {
+            _WM.applySettings();
+          }
           if ( _Desktop ) {
             _Desktop.applySettings();
           }
@@ -1065,12 +1072,20 @@
           API.loading.progress(40);
 
           _WM.run();
-          API.loading.progress(95);
+          API.loading.progress(70);
 
           if ( _Settings._get("user.first-run") === "true" ) {
             _WM.addWindow(new BrowserDialog());
             _Settings._set("user.first-run", "false");
           }
+
+          setTimeout(function() {
+            API.loading.progress(80);
+
+            API.session.restore();
+
+            API.loading.progress(80);
+          }, 0);
 
           setTimeout(function() {
             API.loading.progress(100);
@@ -2018,7 +2033,7 @@
         return;
       }
 
-      API.session.restore();
+      this.applySettings();
 
       this.running = true;
     },
@@ -2063,7 +2078,7 @@
      * @return  void
      */
     insertWindow : function(el) {
-      console.log("Windowmanager::insertWindow()");
+      console.log("WindowManager::insertWindow()");
 
       $("#Desktop").append(el);
     },
@@ -2239,6 +2254,42 @@
       }
     },
 
+    // SETTINGS / SESSION
+
+    /**
+     * WindowManager::applySettings() -- Apply changes from ResourceManger
+     * @return void
+     */
+    applySettings : function() {
+      var map = {
+      };
+
+      console.group("WindowManager::applySettings() Applying user settings");
+
+      var s;
+      var c = 0;
+      for ( var i in map ) {
+        if ( map.hasOwnProperty(i) ) {
+          s = _Settings._get(i);
+          if ( s ) {
+            if ( typeof this[map[i]] == 'function' ) {
+              console.log(i, s);
+
+              this[map[i]](s);
+
+              c++;
+            }
+          }
+        }
+      }
+
+      console.log(sprintf("Applied %d setting(s)...", c));
+      console.groupEnd();
+    },
+
+
+    // GETTERS / SETTERS
+
     /**
      * WindowManager::getWindowSpace() -- Get free window space rect
      * @return Object
@@ -2389,7 +2440,6 @@
 
       this.applySettings();
 
-
       // Create panel and items from localStorage
       this.panel = new Panel();
       var items = _Settings._get("desktop.panel.items", false, true);
@@ -2455,8 +2505,9 @@
             dir = "/";
           }
           API.system.dialog_file(function(fname) {
-            _Settings._set("desktop.wallpaper.path", fname);
-            _Desktop.applySettings();
+            API.user.settings.save({
+              "desktop.wallpaper.path" : fname
+            });
           }, ["image/*"], "open", dir);
         }
       },
@@ -2509,26 +2560,36 @@
      * @return void
      */
     applySettings : function() {
-      var wp = _Settings._get('desktop.wallpaper.path');
-      if ( wp ) {
-        this.setWallpaper(wp);
-      }
-      var theme = _Settings._get('desktop.theme');
-      if ( theme ) {
-        this.setTheme(theme);
-      }
-      var font = _Settings._get('desktop.font');
-      if ( font ) {
-        this.setFont(font);
-      }
-      var cursor = _Settings._get('desktop.cursor.theme');
-      if ( cursor ) {
-        this.setCursorTheme(cursor.split(" ")[0]);
+      var map = {
+        'desktop.wallpaper.path' : 'setWallpaper',
+        'desktop.theme'          : 'setTheme',
+        'desktop.font'           : 'setFont',
+        'desktop.cursor.theme'   : 'setCursorTheme'
+      };
+
+      console.group("Desktop::applySettings() Applying user settings");
+
+      var s;
+      var c = 0;
+      for ( var i in map ) {
+        if ( map.hasOwnProperty(i) ) {
+          s = _Settings._get(i);
+          if ( i == 'desktop.cursor.theme' ) {
+            s = s.split(" ")[0];
+          }
+          if ( s ) {
+            if ( typeof this[map[i]] == 'function' ) {
+              console.log(i, s);
+
+              this[map[i]](s);
+
+              c++;
+            }
+          }
+        }
       }
 
-      console.group("Applied used settings");
-      console.log("wallpaper", wp);
-      console.log("theme", theme);
+      console.log(sprintf("Applied %d setting(s)...", c));
       console.groupEnd();
     },
 

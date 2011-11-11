@@ -259,7 +259,8 @@ $doc = <<<EOHTML
 <body>
   <h1>OS.js JavaScript API</h1>
   <p>
-    Contains complete API documentation for OS.js JavaScript Core.
+    Contains (almost) complete API documentation for OS.js JavaScript Core.<br />
+    <b>The documentation generator has some bugs</b>
   </p>
 
   <h1>Constants:</h1>
