@@ -706,7 +706,7 @@
   };
 
   /////////////////////////////////////////////////////////////////////////////
-  // Server Services
+  // SERVICE
   /////////////////////////////////////////////////////////////////////////////
 
   /**
@@ -772,6 +772,10 @@
     }
 
   }); // @endclass
+
+  /////////////////////////////////////////////////////////////////////////////
+  // SOCKET
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
    * Socket -- WebSocket abstraction (w/TCP)
@@ -1361,7 +1365,7 @@
       for ( i; i < l; i++ ) {
         p = _Processes[i];
         if ( p !== undefined && (p instanceof Application) ) {
-          s = p._getSession();
+          s = p._getSessionData();
           if ( s !== false ) {
             sess.push(s);
           }
@@ -2063,13 +2067,14 @@
     },
 
     /**
-     * Application::_getSession() -- Get current Application session data
+     * Application::_getSessionData() -- Get current Application session data
+     * @TODO   Save other windows aswell
      * @return JSON
      */
-    _getSession : function() {
+    _getSessionData : function() {
       if ( this._root_window ) {
         var wname = this._root_window._name;
-        var win   = this._root_window._getSession();
+        var win   = this._root_window.getAttributes();
 
         var windows = {};
         windows[wname] = win;
@@ -4106,24 +4111,23 @@
     },
 
     /**
-     * Window::_getSession() -- Get current Window session data
-     * @return JSON
+     * Window::getAttributes() -- Get current Window attributes
+     * @return Object
      */
-    _getSession : function() {
-      if ( !this._is_sessionable ) {
-        return false;
+    getAttributes : function() {
+      if ( this._is_sessionable ) {
+        return {
+          is_maximized : this._is_maximized,
+          is_minimized : this._is_minimized,
+          is_ontop     : this._is_ontop,
+          zindex       : this._zindex,
+          width        : this._width,
+          height       : this._height,
+          top          : this._top,
+          left         : this._left
+        };
       }
-
-      return {
-        is_maximized : this._is_maximized,
-        is_minimized : this._is_minimized,
-        is_ontop     : this._is_ontop,
-        zindex       : this._zindex,
-        width        : this._width,
-        height       : this._height,
-        top          : this._top,
-        left         : this._left
-      };
+      return false;
    }
 
   }); // @endclass
