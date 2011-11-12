@@ -109,7 +109,7 @@
   </application>
   <application name="PDF" title="PDF Viewer" icon="mimetypes/gnome-mime-application-pdf.png" system="false" category="utilities" class="ApplicationPDF" file="ApplicationPDF.class.php">
     <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"PDF Viewer","icon":"mimetypes\/gnome-mime-application-pdf.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":440,"height":440,"gravity":""}]]></property>
+      <property name="properties"><![CDATA[{"type":"window","title":"PDF Viewer","icon":"mimetypes\/gnome-mime-application-pdf.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":400,"height":400,"gravity":""}]]></property>
     </window>
     <resource>app.pdf.css</resource>
     <resource>app.pdf.js</resource>

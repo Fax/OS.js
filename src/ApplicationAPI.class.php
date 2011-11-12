@@ -79,7 +79,10 @@ class ApplicationAPI
     if ( $path = ApplicationVFS::exists($fname) ) {
       require PATH_PROJECT_LIB . "/PDF.class.php";
       if ( $ret = PDF::PDFtoSVG($path) ) {
-        return $ret;
+        return Array(
+          "info" => PDF::PDFInfo($path),
+          "document" => $ret
+        );
       }
     }
 

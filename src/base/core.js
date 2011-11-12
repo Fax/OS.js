@@ -2195,7 +2195,7 @@
       if ( this.bindings && this.bindings[mname] ) {
         var r;
         for ( var i = 0; i < this.bindings[mname].length; i++ ) {
-          r = this.bindings[mname][i].call(this, mname, margs);
+          r = this.bindings[mname][i].call(_Desktop, mname, margs); // FIXME: _Desktop is not this
         }
       }
     },
@@ -2536,20 +2536,11 @@
         return self.mousedownHandler(ev);
       });
 
-      if ( _WM ) {
-        _WM.bind("window_add", this.defaultHandler);
-        _WM.bind("window_remove", this.defaultHandler);
-        _WM.bind("window_focus", this.defaultHandler);
-        _WM.bind("window_blur", this.defaultHandler);
-        _WM.bind("window_updated", this.defaultHandler);
-      }
-
       this.applySettings();
 
       // Create panel and items from localStorage
-      this.panel = new Panel();
+      var panel = new Panel();
       var items = _Settings._get("desktop.panel.items", false, true);
-
       var el, iname, iargs, ialign;
       for ( var i = 0; i < items.length; i++ ) {
         el = items[i];
@@ -2557,7 +2548,17 @@
         iargs  = el[1];
         ialign = el[2] || "left";
 
-        LaunchPanelItem(i, iname, iargs, ialign, self.panel);
+        LaunchPanelItem(i, iname, iargs, ialign, panel);
+      }
+      this.addPanel(panel);
+
+      // After panel
+      if ( _WM ) {
+        _WM.bind("window_add", this.defaultHandler);
+        _WM.bind("window_remove", this.defaultHandler);
+        _WM.bind("window_focus", this.defaultHandler);
+        _WM.bind("window_blur", this.defaultHandler);
+        _WM.bind("window_updated", this.defaultHandler);
       }
 
       this.running = true;
