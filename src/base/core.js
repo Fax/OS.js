@@ -1259,7 +1259,7 @@
      */
     global_mousedown : function(ev) {
       var t = ev.target || ev.srcElement;
-      if ( t ) {
+      if ( t && t.tagName ) {
         var tagName = t.tagName.toLowerCase();
         if ( tagName !== "input" && tagName !== "textarea" && tagName !== "select" ) {
           ev.preventDefault();

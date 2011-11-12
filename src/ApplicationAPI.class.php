@@ -75,10 +75,10 @@ class ApplicationAPI
    * @see     PDF
    * @return  Mixed
    */
-  public static function readPDF($fname) {
+  public static function readPDF($fname, $page = -1) {
     if ( $path = ApplicationVFS::exists($fname) ) {
       require PATH_PROJECT_LIB . "/PDF.class.php";
-      if ( $ret = PDF::PDFtoSVG($path) ) {
+      if ( $ret = PDF::PDFtoSVG($path, $page) ) {
         return Array(
           "info" => PDF::PDFInfo($path),
           "document" => $ret

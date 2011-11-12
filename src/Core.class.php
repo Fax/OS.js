@@ -462,11 +462,15 @@ EOCSS;
               $json['error'] = "Failed to read '{$src}'";
             }
           } else if ( $method == "readpdf" ) {
-            if ( $ret = ApplicationAPI::readPDF($argv) ) {
+            $tmp  = explode(":", $argv);
+            $pdf  = $tmp[0];
+            $page = isset($tmp[1]) ? $tmp[1] : -1;
+
+            if ( $ret = ApplicationAPI::readPDF($pdf, $page) ) {
               $json['result'] = $ret;
               $json['success'] = true;
             } else {
-              $json['error'] = "Failed to read '{$src}'";
+              $json['error'] = "Failed to read '{$argv}'";
             }
           } else {
             if ( function_exists($method) ) {

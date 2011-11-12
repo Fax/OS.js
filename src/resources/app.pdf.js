@@ -22,6 +22,7 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
     // WINDOWS
     ///////////////////////////////////////////////////////////////////////////
 
+    var IS_LOADING = false;
 
     /**
      * GtkWindow Class
@@ -86,6 +87,19 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
 
           // Do your stuff here
 
+          el.find(".fixed1").scroll(function(e) {
+            if ( IS_LOADING ) {
+              return;
+            }
+
+            var myDiv = $(this).get(0);
+            if ( (myDiv.offsetHeight + myDiv.scrollTop) >= myDiv.scrollHeight ) {
+              self.app.navigatePage(true, myDiv);
+            } else if ( myDiv.scrollTop === 0 ) {
+              self.app.navigatePage(false, myDiv);
+            }
+          });
+
           return true;
         }
 
@@ -112,9 +126,11 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
         this._super("ApplicationPDF", argv);
         this._compability = [];
 
-        this.page_number = -1;
-        this.page_total = -1;
-        this.pdf_info = null;
+        this.page_number  = -1;
+        this.page_total   = -1;
+        this.pdf_info     = null;
+        this.pdf_cache    = null;
+        this.pdf_path     = null;
       },
 
       destroy : function() {
@@ -136,32 +152,57 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
         }
       },
 
-      openDocument: function(path) {
+      errorDocument : function(error) {
+        this.page_number  = -1;
+        this.page_total   = -1;
+        this.pdf_info     = null;
+        this.pdf_cache    = null;
+        this.pdf_path     = null;
+
+        this._root_window.$element.find(".fixed1").html($(sprintf("<h1>Failed to open document:</h1><p>%s</p>", error)));
+        this._root_window.updateStatusbar("An error occured...");
+
+        this._argv['path'] = null;
+
+        setTimeout(function() {
+          IS_LOADING = false;
+        }, 100);
+      },
+
+      readDocument : function(path, result, page) {
+        this._root_window.$element.find(".fixed1").html($(result.document));
+        this.page_number  = page;
+        this.page_total   = parseInt(result.info.PageCount, 10);
+        this.pdf_info     = result.info;
+        this.pdf_path     = path;
+
+        this._root_window.updateStatusbar(sprintf("Page %d of %d", this.page_number, this.page_total));
+
+        this._argv['path'] = path;
+
+        setTimeout(function() {
+          IS_LOADING = false;
+        }, 100);
+      },
+
+      openDocument: function(path, page) {
         var self = this;
 
-        API.system.call("readpdf", path, function(result, error) {
+        IS_LOADING = true;
+
+        page = (page === undefined) ? 1 : parseInt(page, 10);
+
+        var source = (page > 0) ? (sprintf("%s:%d", path, page)) : (path);
+        API.system.call("readpdf", source, function(result, error) {
           if ( error === null ) {
-            self._root_window.$element.find(".fixed1").html($(result.document));
-            self._argv['path'] = path;
-
-            self.page_number  = 1;
-            self.page_total   = parseInt(result.info.PageCount, 10);
-            self.pdf_info     = result.info;
-
-            self._root_window.updateStatusbar(sprintf("Page %d of %d", self.page_number, self.page_total));
-
+            self.readDocument(path, result, page);
           } else {
-            self.page_number  = -1;
-            self.page_total   = -1;
-            self.pdf_info     = null;
-
-            self._root_window.$element.find(".fixed1").html($(sprintf("<h1>Failed to open document:</h1><p>%s</p>", error)));
-            self._root_window.updateStatusbar("An error occured...");
+            self.errorDocument(error);
           }
         });
       },
 
-      navigatePage: function(op) {
+      navigatePage: function(op, container) {
         if ( this.page_number == -1 || this.page_total == -1 ) {
           return;
         }
@@ -169,10 +210,14 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
         if ( op ) { // Next
           if ( this.page_number < this.page_total ) {
             this.page_number++;
+            this.openDocument(this.pdf_path, this.page_number);
+            container.scrollTop = 0;
           }
         } else { // Prev
-          if ( this.page_number > 1 ) {
+          if ( this.page_number >= 2 ) {
             this.page_number--;
+            this.openDocument(this.pdf_path, this.page_number);
+            container.scrollTop = 0;
           }
         }
 
