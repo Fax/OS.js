@@ -356,6 +356,20 @@ class     ServiceXML
   public function __construct() {
     parent::__construct(Service::TYPE_XML);
   }
+
+  /**
+   * @see Service::call()
+   */
+  public function call($uri, $data, $timeout = 30, Array $options = Array()) {
+    if ( $res = parent::call($uri, $data, $timeout, $options) ) {
+      if ( class_exists("SimpleXMLElement") ) {
+        return new SimpleXMLElement($res);
+      }
+      return $res;
+    }
+
+    return null;
+  }
 }
 
 ?>
