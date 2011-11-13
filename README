@@ -70,7 +70,7 @@ Built-In Applications, Dialogs and Panel Items:
 * Panel Item: Launcher Dock
 * Panel Item: Clock
 * Dialog: Color Picker
-* Dialog: File Copy, Upload
+* Dialog: File Copy, Upload (HTML5)
 * Dialog: File Open, Save, Rename
 * Dialog: Lauch Application
 * Dialog: Modify Panel/PanelItem
