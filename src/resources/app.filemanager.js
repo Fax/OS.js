@@ -301,7 +301,7 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
 
           el.find(".imagemenuitem_new").click(function(ev) {
             self.EventMenuNew(this, ev);
-          });
+          }).find("span").html("Upload");
 
           el.find(".imagemenuitem_close").click(function(ev) {
             self.EventMenuClose(this, ev);

@@ -1079,8 +1079,8 @@
           _WM.run();
           bar.progressbar({value : 70});
 
-          _WM.addWindow(new OSjs.Dialogs.CompabilityDialog(Window, Application, []));
           if ( _Settings._get("user.first-run") === "true" ) {
+            _WM.addWindow(new OSjs.Dialogs.CompabilityDialog(Window, Application, []));
             _Settings._set("user.first-run", "false");
           }
 
