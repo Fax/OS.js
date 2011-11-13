@@ -18,7 +18,6 @@
   <link rel="stylesheet" type="text/css" href="/css/vendor/ui-lightness/jquery-ui-1.8.13.custom.css" />
   <script type="text/javascript" src="/js/vendor/json2.js"></script>
   <script type="text/javascript" src="/js/vendor/sprintf-0.7-beta1.js"></script>
-  <script type="text/javascript" src="/js/vendor/fileuploader.js"></script>
   <script type="text/javascript" src="/js/vendor/jquery-1.7.min.js"></script>
   <script type="text/javascript" src="/js/vendor/jquery-ui-1.8.13.custom.min.js"></script>
   <script type="text/javascript" src="/js/vendor/jquery.touch.compact.js"></script>

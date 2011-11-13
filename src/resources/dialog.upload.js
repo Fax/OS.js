@@ -36,47 +36,65 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
           value : 0
         });
 
-        var trigger = this.$element.find(".DialogButtons .Choose").show();
         var pbar    = this.$element.find(".ProgressBar");
+        this.$element.find(".DialogButtons").hide();
 
-        this.uploader = new qq.FileUploader({
-          element : trigger[0],
-          action  : '/',
-          params : {
-            ajax   : true,
-            action : 'upload',
-            path : self.upload_path
-          },
-          onSubmit: function(id, fileName){
-            $(trigger).html(fileName);
-            self.$element.find("p.Status").html(sprintf("Uploading '%s'", fileName));
-            return true;
-          },
-          onProgress: function(id, fileName, loaded, total){
-            var percentage = Math.round(loaded / total * 100);
-            $(pbar).progressbar({
-              value : percentage
-            });
+        // Create uploader
+        var u = new API.system.uploader();
+        u.form(function(data) {
+          if ( data instanceof Object ) {
+            if ( data.document ) {
+              // Insert form
+              var doc = $(data.document);
+              self.$element.find(".OperationDialogInner").append(doc);
 
-            self.$element.find("p.Status").html(sprintf("Uploading '%s' %d of %d (%d%%)", fileName, loaded, total, percentage));
-            self.clb_progress(fileName, loaded, total, percentage);
-          },
-          onComplete: function(id, fileName, responseJSON){
-            self.$element.find(".ActionClose").click();
+              // Cancel button
+              doc.find(".CancelForm").get(0).onsubmit = function(ev) {
+                ev = ev || window.event;
+                if ( u.interval ) {
+                  u.clearInterval();
 
-            self.clb_finish(fileName, responseJSON);
-          },
-          onCancel: function(id, fileName){
-            API.system.dialog("error", "File upload '" + fileName + "' was cancelled!");
-            self.$element.find(".ActionClose").click();
+                  self.$element.find(".FileForm").find("input[type=submit]").attr("disabled", false);
+                  self.$element.find(".CancelForm").find("input[type=submit]").attr("disabled", true);
+                }
+              };
+              self.$element.find(".CancelForm").find("input[type=submit]").attr("disabled", true);
 
-            self.clb_cancel(fileName);
+              // Upload button
+              doc.find(".FileForm").get(0).onsubmit = function(ev) {
+                ev = ev || window.event;
+
+                self.$element.find(".FileForm").find("input[type=submit]").attr("disabled", true);
+                self.$element.find(".CancelForm").find("input[type=submit]").attr("disabled", false);
+
+                u.interval = setInterval(function() {
+                  u.progress(function(pdata) {
+                    // Progress could not be found, cancel
+                    if ( pdata === false || pdata === "false" ) {
+                      self.$element.find(".FileForm").find("input[type=submit]").attr("disabled", false);
+                      self.$element.find(".CancelForm").find("input[type=submit]").attr("disabled", true);
+
+                      alert("The upload operation was cancelled. Could not get status");
+                      u.cancel(function() {});
+                      u.clearInterval();
+                      return;
+                    }
+
+                    // Handle progress data
+                    console.log(pdata);
+                  });
+                }, 200);
+              };
+            }
           }
         });
+
+        this.uploader = u;
       },
 
       destroy : function() {
         if ( this.uploader ) {
+          this.uploader.destroy();
           this.uploader = null;
         }
 

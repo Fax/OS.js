@@ -62,23 +62,11 @@ class ApplicationVFS
    * @param  String   $path     Upload path
    * @retrun Mixed
    */
-  public static function upload($path) {
-    require PATH_PROJECT_VENDOR . "/AjaxUpload.php";
-
-    // list of valid extensions, ex. array("jpeg", "xml", "bmp")
-    $allowedExtensions = array();
-    // max file size in bytes
-    $sizeLimit = 10 * 1024 * 1024;
-
-    $base     = PATH_PROJECT_HTML . "/media/" . ($path ? "{$path}/" : "");
-    $uploader = new qqFileUploader($allowedExtensions, $sizeLimit);
-    if ( $result = $uploader->handleUpload($base) ) {
-      // to pass data through iframe you will need to encode all html tags
-      //echo htmlspecialchars(json_encode($result), ENT_NOQUOTES);
-      return $result;
+  public static function upload($file, $path) {
+    if ( !class_exists("Upload") ) {
+      require PATH_PROJECT_LIB . "/Upload.class.php";
     }
-
-    return $result;
+    return Upload::uploadFile($file, $path);
   }
 
   /**
@@ -195,6 +183,8 @@ class ApplicationVFS
    * @return Mixed
    */
   public static function extract_archive($arch, $dest) {
+    require PATH_PROJECT_LIB . "/Archive.php";
+
     if ( $a = Archive::open($arch) ) {
       return $a->extract($dest);
     }
@@ -208,6 +198,8 @@ class ApplicationVFS
    * @return Array
    */
   public static function ls_archive($arch, $path = "/") {
+    require PATH_PROJECT_LIB . "/Archive.php";
+
     $result = Array("dir" => Array(), "file" => Array());
 
     try {

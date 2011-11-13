@@ -12,6 +12,7 @@
 //
 
 error_reporting(E_ALL | E_STRICT);
+ini_set("session.upload_progress.enabled", true);
 
 //
 // Project
@@ -30,7 +31,6 @@ define("PROJECT_HOST",      (php_uname('n')));
 define("ENV_PRODUCTION",      (PROJECT_HOST != "amitop"));
 define("DEFAULT_TIMEZONE",    "Europe/Oslo");
 define("ENABLE_CACHE",        false);
-define("ARCHIVE_SYSETM",      false); // lib/Archive.php
 
 //
 // Server
@@ -83,8 +83,6 @@ require 'vendor/Propel/runtime/lib/Propel.php';
 
 // Internal libraries
 require "lib/Functions.php";
-require "lib/Archive.php";
-require "lib/Services.php";
 require "lib/UUID.class.php";
 
 // Main sources

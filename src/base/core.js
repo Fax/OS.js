@@ -45,6 +45,7 @@
   var THEME_URI          = "/?theme=";              //!< Themes loading URI (GET)
   var FONT_URI           = "/?font=";               //!< Font loading URI (GET)
   var CURSOR_URI         = "/?cursor=";             //!< Cursor loading URI (GET)
+  var UPLOAD_URI         = "/upload.php";           //!< File upload URI (POST)
   // @endconstants
 
   /**
@@ -356,6 +357,45 @@
     //
 
     'system' : {
+      'uploader' : Class.extend({
+
+        init : function() {
+          this.interval = null;
+        },
+
+        destroy : function() {
+          this.clearInterval();
+        },
+
+        progress : function(callback) {
+          $.post(UPLOAD_URI, {'upload' : true, 'action' : "upload_progress"}, function(data) {
+            callback(JSON.parse(data));
+          });
+        },
+
+        cancel : function(callback) {
+          var self = this;
+          $.post(UPLOAD_URI, {'upload' : true, 'action' : "upload_cancel"}, function(data) {
+            callback(data);
+
+            self.clearInterval();
+          });
+        },
+
+        form : function(callback) {
+          $.post(UPLOAD_URI, {'upload' : true, 'action' : "upload_form"}, function(data) {
+            callback(JSON.parse(data));
+          });
+        },
+
+        clearInterval : function() {
+          if ( this.interval ) {
+            clearInterval(this.interval);
+            this.interval = null;
+          }
+        }
+      }),
+
       'run' : function(path, mime) {
         if ( !_WM ) {
           alert(OSjs.Labels.WindowManagerMissing);

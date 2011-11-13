@@ -2,7 +2,7 @@
 /*!
  * @file
  * Contains Core Class
- * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @license GPLv3 (see http://www.gnu.org/licenses/gpl-3.0.txt)
  * @created 2011-05-22
  */
@@ -264,10 +264,12 @@ EOCSS;
    * @return Mixed
    */
   public function doGET(Array $args) {
+    /*
     // Upload "POST"
     if ( isset($args['ajax']) && isset($args['action']) && isset($args['qqfile']) && isset($args['path']) ) {
       return json_encode(ApplicationVFS::upload($args['path']));
     }
+    */
 
     return false;
   }
@@ -280,8 +282,10 @@ EOCSS;
   public function doPOST(Array $args) {
     if ( sizeof($args) ) {
 
+      // Make sure DB is running
       Propel::init(PROPEL_CONFIG);
 
+      // API Operations
       if ( isset($args['ajax']) ) {
         $json = Array("success" => false, "error" => "Unknown error", "result" => null);
 
@@ -379,6 +383,8 @@ EOCSS;
          * Services
          */
         else if ( $args['action'] == "service" && isset($args['arguments']) ) {
+          require PATH_PROJECT_LIB . "/Services.php";
+
           $iargs = $args['arguments'];
           if ( isset($iargs['type']) && isset($iargs['uri']) && isset($iargs['data']) && isset($iargs['options']) && isset($iargs['timeout']) ) {
             if ( $s = Service::createFromType($iargs['type']) ) {
@@ -403,7 +409,7 @@ EOCSS;
         }
 
         /**
-         * API
+         * VFS
          */
         else if ( $args['action'] == "call" && isset($args['method']) && isset($args['args']) ) {
           $method = $args['method'];
