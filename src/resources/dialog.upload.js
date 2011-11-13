@@ -55,7 +55,7 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
           }, function(progress) {
             var pr = (parseInt(progress, 10) || 0);
             pbar.progressbar({ value : pr });
-            sbar.html(sprintf("%s (%s of %s)", fname, pr, fsize));
+            sbar.html(sprintf("%s (%s%% of %s)", fname, pr, fsize));
 
             self.clb_progress(fname, pr, fsize);
           }, function(response) {
