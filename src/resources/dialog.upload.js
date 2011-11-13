@@ -83,7 +83,11 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
                 var doc = $(data.document);
                 self.$element.find(".OperationDialogInner").append(doc);
                 self.$element.find("form").get(0).onsubmit = function() {
-                  u.upload(self.$element.find("form"));
+                  if ( fname ) {
+                    u.upload(self.$element.find("form"));
+                  } else {
+                    alert("You need to choose a file first!");
+                  }
                   return false;
                 };
 

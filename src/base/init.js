@@ -120,7 +120,7 @@
     "databaseStorage" : "window.databaseStorage()",
     "socket"          : "window.WebSocket()",
     "richtext"        : "window.contentEditable (Rich Text Editing)",
-    "upload"          : "Your browser does not support HTML5 file-upload"
+    "upload"          : "Your browser does not support async uploads"
   };
 
   // Compability mapping
@@ -140,7 +140,8 @@
     "globalStorage"   : OSjs.Compability.SUPPORT_GSTORAGE,
     "databaseStorage" : OSjs.Compability.SUPPORT_DSTORAGE,
     "socket"          : OSjs.Compability.SUPPORT_SOCKET,
-    "richtext"        : OSjs.Compability.SUPPORT_RICHTEXT
+    "richtext"        : OSjs.Compability.SUPPORT_RICHTEXT,
+    "upload"          : OSjs.Compability.SUPPORT_UPLOAD
   };
 
   // Browser Compability list
@@ -153,7 +154,8 @@
     "WebGL"            : OSjs.Compability.SUPPORT_WEBGL,
     "Audio"            : OSjs.Compability.SUPPORT_AUDIO,
     "Video"            : OSjs.Compability.SUPPORT_VIDEO,
-    "Sockets"          : OSjs.Compability.SUPPORT_SOCKET
+    "Sockets"          : OSjs.Compability.SUPPORT_SOCKET,
+    "Async Upload"     : OSjs.Compability.SUPPORT_UPLOAD
   };
 
   console.log("Compability", OSjs.Compability);

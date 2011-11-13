@@ -37,7 +37,7 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
         }
 
         this._super("Crash", false);
-        this._content = "<div style=\"padding:10px;\"><div><b>Your browser is: <span style=\"color:" + color + ";\">" + supported + "</span></b></div> <table class=\"chart\"></table><div class=\"notes\"></div></div>";
+        this._content = "<div style=\"padding:10px;\"><div><b>Your browser is: <span style=\"color:" + color + ";\">" + supported + "</span></b></div> <table class=\"outer\"><tr><td class=\"content\"><table class=\"chart\"></table></td><td class=\"space\">&nbsp;</td><td class=\"content\"><div class=\"notes\"></div></td></tr></table></div>";
         this._title = "Browser compability";
         this._icon = 'status/software-update-available.png';
         this._is_draggable = true;
@@ -50,7 +50,7 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
         this._is_orphan = false;
         this._is_ontop = true;
         this._width = 500;
-        this._height = 330;
+        this._height = 350;
         this._gravity = "center";
       },
 
@@ -62,6 +62,16 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
       create : function(id, mcallback) {
         var self = this;
         var el = this._super(id, mcallback);
+
+        var mtable = el.find("table.outer");
+        mtable.find("td.content").css({
+          "width" : "230px",
+          "verticalAlign" : "top",
+          "backgroundColor" : "#fff"
+        });
+        mtable.find("td.space").css({
+          "width" : "5px"
+        });
 
         var table  = el.find("table.chart");
         var _row   = "<tr><td width=\"16\"><img alt=\"\" src=\"/img/icons/16x16/emblems/emblem-%s.png\" /></td><td>%s</td></tr>";
@@ -77,16 +87,19 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
           }
         }
 
-        $(table).css({
-          "float" : "left",
-          "width" : "49%",
-          "margin-top" : "10px",
-          "background" : "#fff",
-          "height" : "226px"
-        }).find("td").css({
+        $(table).find("td").css({
           "padding" : "3px",
           "vertical-align" : "middle"
         });
+
+        var details = [];
+
+        if ( !OSjs.Compability.SUPPORT_UPLOAD ) {
+          details.push("You will not be able to upload any files into the filesystem because 'Async Upload' is not supported.");
+        }
+        if ( !OSjs.Compability.SUPPORT_WEBGL ) {
+          details.push("No 3d content can be desplayed as WebGL is not supported.");
+        }
 
         var notes = el.find("div.notes");
         if ( $.browser.msie || $.browser.opera ) {
@@ -102,15 +115,26 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
             notes.append("<p>Your browser does not have any known problems.</p>");
           }
         }
-        notes.append("<p><b>This message will only be showed once!</b></p>");
 
-        $(notes).css({
-          "float" : "right",
-          "width" : "49%",
-          "margin-top" : "10px",
-          "background" : "#fff",
-          "height" : "255px"
-        }).find("p").css({"padding" : "5px", "margin" : "0"});
+        if ( details.length ) {
+          notes.append($("<p><b>Please note that:</b></p>"));
+          notes.append($("<p>" + details.join("<br />") + "</p>"));
+          notes.append($("<hr />").css({
+            "background"  : "transparent",
+            "display"     : "block",
+            "position"    : "relative",
+            "overflow"    : "hidden",
+            'borderColor' : "#000",
+            'borderWidth' : "1px",
+            'borderBottom': "0 none",
+            "color"       : "#000",
+            "width"       : "95%"
+          }));
+        }
+
+        notes.append($("<p><b>This message will only be showed once!</b></p>").css("textAlign", "center"));
+
+        $(notes).find("p").css({"padding" : "5px", "margin" : "0"});
       }
 
     }); // @endclass
