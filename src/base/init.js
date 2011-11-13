@@ -64,7 +64,8 @@
     // Dynamic namespace containers
     Applications : { /* ... */ },
     Dialogs      : { /* ... */ },
-    PanelItems   : { /* ... */ }
+    PanelItems   : { /* ... */ },
+    Classes      : { /* ... */ }
   };
 
   // Compability cont.

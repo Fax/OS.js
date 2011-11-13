@@ -105,6 +105,7 @@ $base_files = Array(
   "theme.light.css",
   "cursor.default.css",
   "init.js",
+  "classes.js",
   "core.js",
   "main.js"
 );

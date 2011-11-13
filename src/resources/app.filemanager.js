@@ -51,8 +51,16 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
       EventMenuNew : function(el, ev) {
         var self = this;
 
-        this.app.createUploadDialog(_CurrentDir, function() {
-          self.chdir(_CurrentDir);
+        this.app.createUploadDialog(_CurrentDir, function(path, fname) {
+          self.chdir(_CurrentDir, undefined, function() {
+            self.$element.find(".ApplicationFileManager .iconview1 .type_file").each(function() {
+              var name = $(this).find("input[name=name]").val();
+              if ( name == fname ) {
+                $(this).find(".Inner").mousedown();
+              }
+            });
+          });
+
         });
       },
 
@@ -93,8 +101,10 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
       EventIconviewSelect : function(el, ev) {
       },
 
-      chdir : function(dir, hist) {
+      chdir : function(dir, hist, callback) {
         var self = this;
+
+        callback = callback || function() {};
 
         this.app._event("browse", {"path" : dir, "view" : self.app._argv['view_type']}, function(result, error) {
           self._destroyView();
@@ -116,6 +126,10 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
           self._call("resize");
 
           self.$element.find(".statusbar1").html(_defaultStatusText);
+
+          setTimeout(function() {
+            callback();
+          }, 0);
         });
 
         _CurrentDir = dir;

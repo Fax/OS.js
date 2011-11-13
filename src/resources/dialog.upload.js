@@ -13,8 +13,9 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
     var _UploadOperationDialog = OperationDialog.extend({
-      init : function(path, clb_finish, clb_progress, clb_cancel) {
-        this.uploader = null;
+      init : function(uri, path, clb_finish, clb_progress, clb_cancel) {
+        this.upload_uri   = uri;
+        this.uploader     = null;
         this.upload_path  = path;
         this.clb_finish   = clb_finish   || function() {};
         this.clb_progress = clb_progress || function() {};
@@ -31,11 +32,7 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
       create : function(id, mcallback) {
         this._super(id, mcallback);
 
-        var self = this;
-        $(this.$element).find(".ProgressBar").progressbar({
-          value : 0
-        });
-
+        var self    = this;
         var pbar    = this.$element.find(".ProgressBar");
         var sbar    = this.$element.find("p.Status");
         this.$element.find(".DialogButtons").hide();
@@ -46,29 +43,36 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
         var ftype = "";
 
         try {
-          var u = new API.system.uploader(self.upload_path, function(name, size, type) {
+          pbar.progressbar({ value : 0 });
+
+          var u = new OSjs.Classes.Uploader(self.upload_uri, self.upload_path, function(name, size, type) {
             fname = name;
             fsize = size;
             ftype = type;
 
             pbar.progressbar({ value : 0 });
-            sbar.html(sprintf("%s (%s %s)", fname, fsize, ftype));
+            sbar.html(sprintf("%s (%s)", fname, fsize));
           }, function(progress) {
-            pbar.progressbar({ value : (parseInt(progress, 10) || 0) });
+            var pr = (parseInt(progress, 10) || 0);
+            pbar.progressbar({ value : pr });
+            sbar.html(sprintf("%s (%s of %s)", fname, pr, fsize));
+
+            self.clb_progress(fname, pr, fsize);
           }, function(response) {
             pbar.progressbar({ value : 100 });
             sbar.html(sprintf("Finished %s (%s)", fname, fsize));
 
-            //alert(sprintf("Finished uploading %s", fname));
             setTimeout(function() {
               self.$element.find(".ActionClose").click();
             }, 100);
 
-            self.clb_finish();
+            self.clb_finish(fname);
           }, function(error) {
             sbar.html(sprintf("Failed %s", fname));
 
             alert(sprintf("Failed to upload %s: %s", fname, error));
+
+            self.clb_cancel(fname, error);
           });
 
           // Insert form
@@ -82,7 +86,6 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
                   u.upload(self.$element.find("form"));
                   return false;
                 };
-
 
                 u.run(self.$element.find("input[type=file]").get(0));
               }

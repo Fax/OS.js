@@ -41,6 +41,7 @@
 
   <!-- OS.js libraries -->
   <script type="text/javascript" src="/?library=init.js"></script>
+  <script type="text/javascript" src="/?library=classes.js"></script>
   <script type="text/javascript" src="/?library=core.js"></script>
   <script type="text/javascript" src="/?library=main.js"></script>
 
