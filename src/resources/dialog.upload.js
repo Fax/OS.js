@@ -37,59 +37,62 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
         });
 
         var pbar    = this.$element.find(".ProgressBar");
+        var sbar    = this.$element.find("p.Status");
         this.$element.find(".DialogButtons").hide();
 
         // Create uploader
-        var u = new API.system.uploader();
-        u.form(function(data) {
-          if ( data instanceof Object ) {
-            if ( data.document ) {
-              // Insert form
-              var doc = $(data.document);
-              self.$element.find(".OperationDialogInner").append(doc);
+        var fname = "";
+        var fsize = 0;
+        var ftype = "";
 
-              // Cancel button
-              doc.find(".CancelForm").get(0).onsubmit = function(ev) {
-                ev = ev || window.event;
-                if ( u.interval ) {
-                  u.clearInterval();
+        try {
+          var u = new API.system.uploader(self.upload_path, function(name, size, type) {
+            fname = name;
+            fsize = size;
+            ftype = type;
 
-                  self.$element.find(".FileForm").find("input[type=submit]").attr("disabled", false);
-                  self.$element.find(".CancelForm").find("input[type=submit]").attr("disabled", true);
-                }
-              };
-              self.$element.find(".CancelForm").find("input[type=submit]").attr("disabled", true);
+            pbar.progressbar({ value : 0 });
+            sbar.html(sprintf("%s (%s %s)", fname, fsize, ftype));
+          }, function(progress) {
+            pbar.progressbar({ value : (parseInt(progress, 10) || 0) });
+          }, function(response) {
+            pbar.progressbar({ value : 100 });
+            sbar.html(sprintf("Finished %s (%s)", fname, fsize));
 
-              // Upload button
-              doc.find(".FileForm").get(0).onsubmit = function(ev) {
-                ev = ev || window.event;
+            //alert(sprintf("Finished uploading %s", fname));
+            setTimeout(function() {
+              self.$element.find(".ActionClose").click();
+            }, 100);
 
-                self.$element.find(".FileForm").find("input[type=submit]").attr("disabled", true);
-                self.$element.find(".CancelForm").find("input[type=submit]").attr("disabled", false);
+            self.clb_finish();
+          }, function(error) {
+            sbar.html(sprintf("Failed %s", fname));
 
-                u.interval = setInterval(function() {
-                  u.progress(function(pdata) {
-                    // Progress could not be found, cancel
-                    if ( pdata === false || pdata === "false" ) {
-                      self.$element.find(".FileForm").find("input[type=submit]").attr("disabled", false);
-                      self.$element.find(".CancelForm").find("input[type=submit]").attr("disabled", true);
+            alert(sprintf("Failed to upload %s: %s", fname, error));
+          });
 
-                      alert("The upload operation was cancelled. Could not get status");
-                      u.cancel(function() {});
-                      u.clearInterval();
-                      return;
-                    }
+          // Insert form
+          u.form(function(data) {
+            if ( data instanceof Object ) {
+              if ( data.document ) {
+                // Insert form
+                var doc = $(data.document);
+                self.$element.find(".OperationDialogInner").append(doc);
+                self.$element.find("form").get(0).onsubmit = function() {
+                  u.upload(self.$element.find("form"));
+                  return false;
+                };
 
-                    // Handle progress data
-                    console.log(pdata);
-                  });
-                }, 200);
-              };
+
+                u.run(self.$element.find("input[type=file]").get(0));
+              }
             }
-          }
-        });
+          });
 
-        this.uploader = u;
+          this.uploader = u;
+        } catch ( eee ) {
+          alert("You cannot upload files because an error occured:\n" + eee);
+        }
       },
 
       destroy : function() {

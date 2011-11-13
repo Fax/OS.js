@@ -20,11 +20,11 @@ if ( sizeof($_POST) ) {
     } else {
       if ( isset($_POST['action']) ) {
         $method = $_POST['action'];
-        if ( $method == "upload_progress" ) {
+        /*if ( $method == "upload_progress" ) {
           $return = json_encode(Upload::getStatus());
         } else if ( $method == "upload_cancel" ){
           $return = json_encode(Upload::cancelUpload());
-        } else if ( $method == "upload_form" ) {
+        } else */ if ( $method == "upload_form" ) {
           $return = json_encode(Array("document" => Upload::createForm()));
         }
       }

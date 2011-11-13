@@ -21,6 +21,12 @@
 
   var video_supported = !!document.createElement('video').canPlayType;
   var audio_supported = !!document.createElement('audio').canPlayType;
+  var upload_supported = false;
+
+  try {
+    var xhr = new XMLHttpRequest();
+    upload_supported = (!! (xhr && ('upload' in xhr) && ('onprogress' in xhr.upload)));
+  } catch ( eee ) {}
 
   //
   // Main OS.js namespace
@@ -29,6 +35,7 @@
   {
     // Compability
     Compability : {
+      "SUPPORT_UPLOAD"         : (upload_supported),
       "SUPPORT_LSTORAGE"       : (('localStorage'    in window) && window['localStorage']   !== null),
       "SUPPORT_SSTORAGE"       : (('sessionStorage'  in window) && window['sessionStorage'] !== null),
       "SUPPORT_GSTORAGE"       : (('globalStorage'   in window) && window['globalStorage']  !== null),
@@ -111,7 +118,8 @@
     "globalStorage"   : "window.globalStorage()",
     "databaseStorage" : "window.databaseStorage()",
     "socket"          : "window.WebSocket()",
-    "richtext"        : "window.contentEditable (Rich Text Editing)"
+    "richtext"        : "window.contentEditable (Rich Text Editing)",
+    "upload"          : "Your browser does not support HTML5 file-upload"
   };
 
   // Compability mapping

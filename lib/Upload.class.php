@@ -28,6 +28,7 @@ abstract class Upload
    * @return  bool
    */
   public final static function uploadFile($file, $dest) {
+    $dest = str_replace("//", "/", ($dest . $file["name"]));
     return move_uploaded_file($file["tmp_name"], $dest);
   }
 
@@ -36,7 +37,7 @@ abstract class Upload
    * @return String
    */
   protected final static function getKey() {
-    return ini_get("session.upload_progress.prefix") . "OSjs"; //ini_get("session.upload-progress.name");
+    return ini_get("session.upload_progress.prefix") . ini_get("session.upload-progress.name");
   }
 
   /**
@@ -50,14 +51,10 @@ abstract class Upload
 
   /**
    * Cancel Upload
-   * @param   String    $key      Custom key (defaults to internal ('OSjs'))
    * @return  bool
    */
-  public final static function cancelUpload($key = null) {
-    if ( !$key ) {
-      $key = self::getKey();
-    }
-
+  public final static function cancelUpload() {
+    $key = self::getKey();
     if ( isset($_SESSION[$key]) ) {
       $_SESSION[$key]["cancel_upload"] = true;
       return true;
@@ -68,29 +65,22 @@ abstract class Upload
 
   /**
    * Crate upload Form
-   * @param   String    $value      The custom key (defaults to 'OSjs')
    * @return  String
    */
-  public final static function createForm($value = null) {
+  public final static function createForm() {
     $session = ini_get("session.upload_progress.name");
-    $value   = $value ? $value : "OSjs";
+    $value   = "OSjs";
 
     return <<<EOHTML
 <div style="position:relative;margin-top:10px;">
-  <iframe name="Upload" src="about:blank" width="100" height="20" frameborder="0" style="margin:0;padding:0;border:0 none;background:#000;display:none;"></iframe>
-  <form action="/upload.php" method="post" enctype="multipart/form-data" target="Upload" class="FileForm">
+  <form action="/upload.php" method="post" enctype="multipart/form-data" class="FileForm">
     <input type="hidden" name="{$session}" value="{$value}" />
+    <input type="hidden" name="path" value="/" />
     <div class="file">
       <input type="file" name="upload" />
     </div>
     <div class="button" style="display:block;position:absolute;bottom:-40px;left:0px;">
       <input type="submit" name="upload" value="Upload"/>
-    </div>
-  </form>
-  <form action="/upload.php" method="post" enctype="multipart/form-data" target="Upload" class="CancelForm">
-    <input type="hidden" name="action" value="upload_cancel" />
-    <div class="button" style="display:block;position:absolute;bottom:-40px;left:65px;">
-      <input type="submit" name="upload" value="Cancel" />
     </div>
   </form>
 </div>

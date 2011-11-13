@@ -66,6 +66,7 @@ class ApplicationVFS
     if ( !class_exists("Upload") ) {
       require PATH_PROJECT_LIB . "/Upload.class.php";
     }
+    $path = PATH_PROJECT_HTML . "/media/" . $path;
     return Upload::uploadFile($file, $path);
   }
 
