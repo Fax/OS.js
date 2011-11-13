@@ -59,15 +59,21 @@ class ApplicationVFS
 
   /**
    * Upload a file
-   * @param  String   $path     Upload path
-   * @retrun Mixed
+   * @param   String   $path     Upload path
+   * @retrun  Mixed
    */
   public static function upload($file, $path) {
-    if ( !class_exists("Upload") ) {
-      require PATH_PROJECT_LIB . "/Upload.class.php";
+    foreach ( self::$VirtualDirs as $k => $v ) {
+      if ( startsWith($path, $k) ) {
+        if ( $v['attr'] != "rw" ) {
+          return false; // TODO: Exception
+        }
+      }
     }
+
     $path = PATH_PROJECT_HTML . "/media/" . $path;
-    return Upload::uploadFile($file, $path);
+    $dest = str_replace("//", "/", ($path . $file["name"]));
+    return move_uploaded_file($file["tmp_name"], $dest);
   }
 
   /**

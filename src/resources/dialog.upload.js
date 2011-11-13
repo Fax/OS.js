@@ -75,26 +75,27 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
             self.clb_cancel(fname, error);
           });
 
-          // Insert form
-          u.form(function(data) {
-            if ( data instanceof Object ) {
-              if ( data.document ) {
-                // Insert form
-                var doc = $(data.document);
-                self.$element.find(".OperationDialogInner").append(doc);
-                self.$element.find("form").get(0).onsubmit = function() {
-                  if ( fname ) {
-                    u.upload(self.$element.find("form"));
-                  } else {
-                    alert("You need to choose a file first!");
-                  }
-                  return false;
-                };
 
-                u.run(self.$element.find("input[type=file]").get(0));
-              }
-            }
+          var form = sprintf("<div style=\"position:relative;margin-top:10px;\"><form action=\"%s\" method=\"post\" enctype=\"multipart/form-data\" class=\"FileForm\"><input type=\"hidden\" name=\"path\" value=\"/\" /><div class=\"file\"><input type=\"file\" name=\"upload\" /></div><div class=\"button\"><input type=\"submit\" name=\"upload\" value=\"Upload\"/></div></form></div>", this.upload_uri);
+          var doc = $(form);
+          $(doc).find("div.button").css({
+            "display"   : "block",
+            "position"  : "absolute",
+            "bottom"    : "-40px",
+            "left"      : "0px"
           });
+
+          this.$element.find(".OperationDialogInner").append(doc);
+          this.$element.find("form").get(0).onsubmit = function() {
+            if ( fname ) {
+              u.upload(self.$element.find("form"));
+            } else {
+              alert("You need to choose a file first!");
+            }
+            return false;
+          };
+
+          u.run(this.$element.find("input[type=file]").get(0));
 
           this.uploader = u;
         } catch ( eee ) {

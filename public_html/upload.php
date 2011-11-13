@@ -13,21 +13,8 @@ require "../header.php";
 $return = 'null';
 if ( sizeof($_POST) ) {
   if ( isset($_POST['upload']) ) {
-    require PATH_PROJECT_LIB . "/Upload.class.php";
-
     if ( isset($_FILES['upload']) ) {
       $return = json_encode(ApplicationVFS::upload($_FILES['upload'], $_POST['path']));
-    } else {
-      if ( isset($_POST['action']) ) {
-        $method = $_POST['action'];
-        /*if ( $method == "upload_progress" ) {
-          $return = json_encode(Upload::getStatus());
-        } else if ( $method == "upload_cancel" ){
-          $return = json_encode(Upload::cancelUpload());
-        } else */ if ( $method == "upload_form" ) {
-          $return = json_encode(Array("document" => Upload::createForm()));
-        }
-      }
     }
   }
 }

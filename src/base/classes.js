@@ -39,12 +39,6 @@
       }
     },
 
-    form : function(callback) {
-      $.post(this.uri, {'upload' : true, 'action' : "upload_form"}, function(data) {
-        callback(JSON.parse(data));
-      });
-    },
-
     run : function(file) {
       var self = this;
       file.onchange = function(evt) {
