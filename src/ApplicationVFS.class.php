@@ -376,6 +376,10 @@ class ApplicationVFS
                     $icon = "mimetypes/binary.png";
                   break;
 
+                  case "application/xml" :
+                    $icon = "mimetypes/text-x-opml+xml.png";
+                  break;
+
                   case "application/zip" :
                   case "application/x-tar" :
                   case "application/x-bzip2" :
@@ -418,6 +422,10 @@ class ApplicationVFS
                       case "bz"  :
                       case "tar" :
                         $icon = "mimetypes/folder_tar.png";
+                      break;
+
+                      case "xml" :
+                        $icon = "mimetypes/text-x-opml+xml.png";
                       break;
                     }
                   break;
