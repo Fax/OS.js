@@ -327,6 +327,9 @@ class ApplicationVFS
           $abs_path = "{$absolute}/{$file}";
           $rel_path = "{$path}/{$file}";
 
+          $expl = explode(".", $file);
+          $ext = end($expl);
+
           if ( !is_dir($abs_path) ) {
             $icon  = "mimetypes/binary.png";
             $type  = "file";
@@ -368,6 +371,55 @@ class ApplicationVFS
                   break;
                   case "application/pdf" :
                     $icon = "mimetypes/gnome-mime-application-pdf.png";
+                  break;
+                  case "application/x-dosexec" :
+                    $icon = "mimetypes/binary.png";
+                  break;
+
+                  case "application/zip" :
+                  case "application/x-tar" :
+                  case "application/x-bzip2" :
+                  case "application/x-bzip" :
+                  case "application/x-gzip" :
+                  case "application/x-rar" :
+                    $icon = "mimetypes/folder_tar.png";
+                  break;
+
+                  break;
+                  case "application/octet-stream" :
+                    switch ( strtolower($ext) ) {
+                      case "mp3"  :
+                      case "ogg"  :
+                      case "flac" :
+                        $icon = "mimetypes/audio-x-generic.png";
+                      break;
+
+                      case "mp4"  :
+                      case "mpeg" :
+                      case "avi"  :
+                      case "3gp"  :
+                      case "flv"  :
+                      case "mkv"  :
+                        $icon = "mimetypes/video-x-generic.png";
+                      break;
+
+                      case "bmp"  :
+                      case "jpeg" :
+                      case "jpg"  :
+                      case "gif"  :
+                      case "png"  :
+                        $icon = "mimetypes/image-x-generic.png";
+                      break;
+
+                      case "zip" :
+                      case "rar" :
+                      case "gz"  :
+                      case "bz2" :
+                      case "bz"  :
+                      case "tar" :
+                        $icon = "mimetypes/folder_tar.png";
+                      break;
+                    }
                   break;
                 }
               break;
