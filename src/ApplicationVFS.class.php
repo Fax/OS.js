@@ -366,6 +366,9 @@ class ApplicationVFS
                   case "application/ogg" :
                     $icon = "mimetypes/video-x-generic.png"; // TODO EXTENSION CHECK
                   break;
+                  case "application/pdf" :
+                    $icon = "mimetypes/gnome-mime-application-pdf.png";
+                  break;
                 }
               break;
               case "image" :
