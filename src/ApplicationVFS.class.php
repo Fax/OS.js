@@ -270,6 +270,7 @@ class ApplicationVFS
       }
     }
 
+    // If we are browsing apps folder
     if ( $apps ) {
       $items = Array();
       $xpath = explode("/", $path);
@@ -300,7 +301,7 @@ class ApplicationVFS
       return $items;
     }
 
-
+    // Read directory
     if ( is_dir($absolute) && $handle = opendir($absolute)) {
       $items = Array("dir" => Array(), "file" => Array());
       while (false !== ($file = readdir($handle))) {
@@ -314,6 +315,7 @@ class ApplicationVFS
         $mime      = "";
         $protected = false;
 
+        // Previous dir
         if ( $file == ".." ) {
           $xpath = explode("/", $path);
           array_pop($xpath);
@@ -322,7 +324,10 @@ class ApplicationVFS
             $fpath = "/";
           }
           $icon = "status/folder-visiting.png";
-        } else {
+        }
+
+        // New dir
+        else {
 
           $abs_path = "{$absolute}/{$file}";
           $rel_path = "{$path}/{$file}";
@@ -331,9 +336,9 @@ class ApplicationVFS
           $ext = end($expl);
 
           if ( !is_dir($abs_path) ) {
-            $icon  = "mimetypes/binary.png";
             $type  = "file";
 
+            // Read MIME info
             $finfo = finfo_open(FILEINFO_MIME);
             $mime  = explode("; charset=", finfo_file($finfo, $abs_path));
             $mime  = trim(reset($mime));
@@ -362,93 +367,7 @@ class ApplicationVFS
             }
 
             $fsize = filesize($abs_path);
-
-            switch ( $mmime ) {
-              case "application" :
-                switch ( $mime ) {
-                  case "application/ogg" :
-                    $icon = "mimetypes/video-x-generic.png"; // TODO EXTENSION CHECK
-                  break;
-                  case "application/pdf" :
-                    $icon = "mimetypes/gnome-mime-application-pdf.png";
-                  break;
-                  case "application/x-dosexec" :
-                    $icon = "mimetypes/binary.png";
-                  break;
-
-                  case "application/xml" :
-                    $icon = "mimetypes/text-x-opml+xml.png";
-                  break;
-
-                  case "application/zip" :
-                  case "application/x-tar" :
-                  case "application/x-bzip2" :
-                  case "application/x-bzip" :
-                  case "application/x-gzip" :
-                  case "application/x-rar" :
-                    $icon = "mimetypes/folder_tar.png";
-                  break;
-
-                  break;
-                  case "application/octet-stream" :
-                    switch ( strtolower($ext) ) {
-                      case "mp3"  :
-                      case "ogg"  :
-                      case "flac" :
-                        $icon = "mimetypes/audio-x-generic.png";
-                      break;
-
-                      case "mp4"  :
-                      case "mpeg" :
-                      case "avi"  :
-                      case "3gp"  :
-                      case "flv"  :
-                      case "mkv"  :
-                        $icon = "mimetypes/video-x-generic.png";
-                      break;
-
-                      case "bmp"  :
-                      case "jpeg" :
-                      case "jpg"  :
-                      case "gif"  :
-                      case "png"  :
-                        $icon = "mimetypes/image-x-generic.png";
-                      break;
-
-                      case "zip" :
-                      case "rar" :
-                      case "gz"  :
-                      case "bz2" :
-                      case "bz"  :
-                      case "tar" :
-                        $icon = "mimetypes/folder_tar.png";
-                      break;
-
-                      case "xml" :
-                        $icon = "mimetypes/text-x-opml+xml.png";
-                      break;
-                    }
-                  break;
-                }
-              break;
-              case "image" :
-                $icon = "mimetypes/image-x-generic.png";
-              break;
-              case "video" :
-                $icon = "mimetypes/video-x-generic.png";
-              break;
-              case "audio" :
-                $icon = "mimetypes/audio-x-generic.png";
-              break;
-              case "text" :
-                $icon = "mimetypes/text-x-generic.png";
-                switch ( $mime ) {
-                  case "text/html" :
-                    $icon = "mimetypes/text-html.png";
-                  break;
-                }
-              break;
-            }
+            $icon  = self::getFileIcon($mmime, $mime, $ext);
           } else {
             $tpath = str_replace("//", "/", $rel_path);
             if ( isset(self::$VirtualDirs[$tpath]) ) {
@@ -465,8 +384,6 @@ class ApplicationVFS
             break;
           }
         }
-
-
 
         $items[$type][$file] =  Array(
           "path"       => $fpath,
@@ -488,6 +405,128 @@ class ApplicationVFS
     }
 
     return false;
+  }
+
+  /**
+   * Get File Icon from:
+   * @param  String   $mmime      Mime base type
+   * @param  String   $mime       Full mime type
+   * @param  String   $ext        File-extension
+   * @return String
+   */
+  public final static function getFileIcon($mmime, $mime, $ext) {
+    $icon  = "mimetypes/binary.png";
+
+    switch ( $mmime ) {
+      case "application" :
+        switch ( $mime ) {
+          case "application/ogg" :
+            $icon = "mimetypes/video-x-generic.png";
+          break;
+
+          case "application/pdf" :
+            $icon = "mimetypes/gnome-mime-application-pdf.png";
+          break;
+
+          case "application/x-dosexec" :
+            $icon = "mimetypes/binary.png";
+          break;
+
+          case "application/xml" :
+            $icon = "mimetypes/text-x-opml+xml.png";
+          break;
+
+          case "application/zip" :
+          case "application/x-tar" :
+          case "application/x-bzip2" :
+          case "application/x-bzip" :
+          case "application/x-gzip" :
+          case "application/x-rar" :
+            $icon = "mimetypes/folder_tar.png";
+          break;
+
+          case "application/octet-stream" :
+            $icon = self::_getFileIcon($ext);
+          break;
+        }
+      break;
+
+      case "image" :
+        $icon = "mimetypes/image-x-generic.png";
+      break;
+
+      case "video" :
+        $icon = "mimetypes/video-x-generic.png";
+      break;
+
+      case "audio" :
+        $icon = "mimetypes/audio-x-generic.png";
+      break;
+
+      case "text" :
+        $icon = "mimetypes/text-x-generic.png";
+        switch ( $mime ) {
+          case "text/html" :
+            $icon = "mimetypes/text-html.png";
+          break;
+        }
+      break;
+
+      default :
+        $icon = self::_getFileIcon($ext);
+      break;
+    }
+
+    return $icon;
+  }
+
+  /**
+   * Get file icon only from extension
+   * @see ApplicationVFS::getFileIcon
+   * @return String
+   */
+  protected final static function _getFileIcon($ext) {
+    $icon  = "mimetypes/binary.png";
+
+    switch ( strtolower($ext) ) {
+      case "mp3"  :
+      case "ogg"  :
+      case "flac" :
+        $icon = "mimetypes/audio-x-generic.png";
+      break;
+
+      case "mp4"  :
+      case "mpeg" :
+      case "avi"  :
+      case "3gp"  :
+      case "flv"  :
+      case "mkv"  :
+        $icon = "mimetypes/video-x-generic.png";
+      break;
+
+      case "bmp"  :
+      case "jpeg" :
+      case "jpg"  :
+      case "gif"  :
+      case "png"  :
+        $icon = "mimetypes/image-x-generic.png";
+      break;
+
+      case "zip" :
+      case "rar" :
+      case "gz"  :
+      case "bz2" :
+      case "bz"  :
+      case "tar" :
+        $icon = "mimetypes/folder_tar.png";
+      break;
+
+      case "xml" :
+        $icon = "mimetypes/text-x-opml+xml.png";
+      break;
+    }
+
+    return $icon;
   }
 
   /////////////////////////////////////////////////////////////////////////////
