@@ -35,6 +35,7 @@
     <li>TCP/IP Socket connections via WebSocket wrapper (hybi-00 and hybi-10)</li>
     <li>Application Compiler (Compiles Application+Glade-XML into JavaScript, CSS and PHP code, also minifies the code)</li>
     <li>VFS - Virtual Filesystem support (Block devices, Network connections, Compressed files etc.)</li>
+    <li>Application WebWorkers for faster processing of complex data</li>
   </ul>
 
 <h1>Compability (Client-Side):</h1>

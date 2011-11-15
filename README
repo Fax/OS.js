@@ -31,6 +31,7 @@ Features and Highlights:
 * TCP/IP Socket connections via WebSocket wrapper (hybi-00 and hybi-10)
 * Application Compiler (Compiles Application+Glade-XML into JavaScript, CSS and PHP code, also minifies the code)
 * VFS - Virtual Filesystem support (Block devices, Network connections, Compressed files etc.)
+* Application WebWorkers for faster processing of complex data
 
 Compability (Client-Side):
 -------------------------------------------------------------------------------
