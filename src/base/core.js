@@ -1004,6 +1004,100 @@
   }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
+  // WEBWORKER
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * WebWorker -- Main Background Worker Class
+   *
+   * @extends Process
+   * @class
+   */
+  var WebWorker = Process.extend({
+
+    _worker      : null,          //!< Worker object
+    _worker_uri  : null,          //!< Worker URI
+    _on_process  : null,          //!< Worker (onmessage) Processing callback
+
+    /**
+     * WebWorker::init() -- Constructor
+     * @throws Exception
+     * @constructor
+     */
+    init : function(uri, process_callback) {
+      if ( !OSjs.Compability.SUPPORT_WORKER ) {
+        throw ("Cannot create Worker: " + OSjs.Public.CompabilityErrors.worker);
+      }
+
+      this._worker_uri = uri;
+      this._worker     = new Worker(this._worker_uri);
+      this._on_process = (typeof process_callback == "function") ? process_callback : function() {};
+
+      var self = this;
+      this._worker.onmessage = function(ev) {
+        self.process(ev, ev.data);
+      };
+
+      var src = uri.split("/").pop();
+      this._super(sprintf("WebWorker [%s]", src), "actions/gtk-execute.png", true);
+    },
+
+    /**
+     * WebWorker::destroy() -- Destructor
+     * @destructor
+     */
+    destroy : function() {
+      if ( this._worker ) {
+        try {
+          this.terminate();
+        } catch ( eee ) {}
+
+        this._worker.onmessage = null;
+        this._worker = null;
+      }
+
+      this._worker_uri = null;
+      this._on_process = null;
+
+      this._super();
+    },
+
+    /**
+     * WebWorker::terminate() -- Terminate Worker communication
+     * @return bool
+     */
+    terminate : function() {
+      if ( this._worker ) {
+        this._worker.terminate();
+        return true;
+      }
+      return false;
+    },
+
+    /**
+     * WebWorker::process() -- Process incoming data
+     * @return void
+     */
+    process : function(ev, data) {
+      return this._on_process(ev, data);
+    },
+
+    /**
+     * WebWorker::post() -- Post a message
+     * @param   Mixed     message     Message to send
+     * @return  Mixed
+     */
+    post : function(message) {
+      if ( this._worker ) {
+        return this._worker.postMessage(message);
+      }
+
+      return false;
+    }
+
+  }); // @endclass
+
+  /////////////////////////////////////////////////////////////////////////////
   // CORE
   /////////////////////////////////////////////////////////////////////////////
 
@@ -1767,6 +1861,7 @@
     _storage      : {},           //!< Application Storage
     _storage_on   : false,        //!< Application Storage enabled state
     _compability  : [],           //!< Application compability list
+    _workers      : {},           //!< Application WebWorker(s)
 
     /**
      * Application::init() -- Constructor
@@ -1784,6 +1879,7 @@
       this._storage     = {};
       this._storage_on  = false;
       this._compability = [];
+      this._workers     = {};
 
       console.log("Application::" + this._name + "::NULL::init()");
 
@@ -1805,7 +1901,8 @@
           });
         }
 
-        this._saveStorage();
+        this._saveStorage();      // Save storage settings
+        this._clearWorkers();     // Clear WebWorkers
 
         if ( this._root_window ) {
           setTimeout(function() { // NOTE: Required!
@@ -1935,6 +2032,70 @@
       this._addWindow(API.system.dialog_input(path, desc, function(fname) {
         callback(fname);
       }));
+    },
+
+    /**
+     * Application::addWorker() -- Create a WebWorker
+     * @param   String  name      Worker name
+     * @param   String  uri       Worker URI (script path)
+     * @see     WebWorker
+     * @return  WebWorker
+     */
+    addWorker : function(name, uri) {
+      if ( !this._workers[name] ) {
+        var w = new WebWorker(uri);
+        this._workers[name] = w;
+        return w;
+      }
+
+      return true;
+    },
+
+    /**
+     * Application::getWorker() -- Get a WebWorker
+     * @param   String  name      Worker name
+     * @see     WebWorker
+     * @return  Worker
+     */
+    getWorker : function(name) {
+      if ( this._workers[name] ) {
+        return this._workers[name];
+      }
+      return null;
+    },
+
+    /**
+     * Application::removeWorker() -- Remove a WebWorker
+     * @param   String  name      Worker name
+     * @see     WebWorker
+     * @return  bool
+     */
+    removeWorker : function(name) {
+      var self = this;
+      if ( this._workers[name] ) {
+        this._workers[name].destroy();
+        setTimeout(function() {
+          delete self._workers[name];
+        }, 0);
+
+        return true;
+      }
+      return false;
+    },
+
+    /**
+     * Application::_clearWorkers() -- Remove all WebWorkers
+     * @see     WebWorker
+     * @return  void
+     */
+    _clearWorkers : function() {
+      var i;
+      for ( i in this._workers ) {
+        if ( this._workers.hasOwnProperty(i) ) {
+          this._workers[i].destroy();
+        }
+      }
+      this._workers = {};
     },
 
     /**

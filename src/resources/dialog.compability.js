@@ -50,7 +50,7 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
         this._is_orphan = false;
         this._is_ontop = true;
         this._width = 500;
-        this._height = 350;
+        this._height = 380;
         this._gravity = "center";
       },
 
@@ -95,10 +95,13 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
         var details = [];
 
         if ( !OSjs.Compability.SUPPORT_UPLOAD ) {
-          details.push("You will not be able to upload any files into the filesystem because 'Async Upload' is not supported.");
+          details.push("<li>You will not be able to upload any files into the filesystem because 'Async Upload' is not supported.</li>");
         }
         if ( !OSjs.Compability.SUPPORT_WEBGL ) {
-          details.push("No 3d content can be desplayed as WebGL is not supported.");
+          details.push("<li>No 3D (OpenGL) content can be desplayed as WebGL is not supported. (Check your browser documentation)</li>");
+        }
+        if ( OSjs.Compability.SUPPORT_WORKER ) {
+          details.push("<li>Some applications uses Web Workers to handle intensive operations to decrease processing times.</li>");
         }
 
         var notes = el.find("div.notes");
@@ -118,7 +121,9 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
 
         if ( details.length ) {
           notes.append($("<p><b>Please note that:</b></p>"));
-          notes.append($("<p>" + details.join("<br />") + "</p>"));
+          if ( details.length ) {
+            notes.append($("<ul class=\"CompactList\">" + details.join("") + "</ul>"));
+          }
           notes.append($("<hr />").css({
             "background"  : "transparent",
             "display"     : "block",

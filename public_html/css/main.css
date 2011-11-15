@@ -36,6 +36,17 @@ body {
   height: 100%; /* IE6: treated as min-height*/
 }
 
+ul.CompactList {
+  margin : 0;
+  padding : 0;
+  margin-left : 25px;
+}
+ul.CompactList li {
+  padding : 5px;
+  margin : 0;
+}
+
+
 /*
 input.Disabled {
 }

@@ -41,6 +41,7 @@
       "SUPPORT_GSTORAGE"       : (('globalStorage'   in window) && window['globalStorage']  !== null),
       "SUPPORT_DSTORAGE"       : (('openDatabase'    in window) && window['openDatabase']   !== null),
       "SUPPORT_SOCKET"         : (('WebSocket'       in window) && window['WebSocket']      !== null),
+      "SUPPORT_WORKER"         : (('Worker'          in window) && window['Worker']         !== null),
       "SUPPORT_CANVAS"         : (!!document.createElement('canvas').getContext),
       "SUPPORT_WEBGL"          : false,
       "SUPPORT_CANVAS_CONTEXT" : [],
@@ -120,7 +121,8 @@
     "databaseStorage" : "window.databaseStorage()",
     "socket"          : "window.WebSocket()",
     "richtext"        : "window.contentEditable (Rich Text Editing)",
-    "upload"          : "Your browser does not support async uploads"
+    "upload"          : "Your browser does not support async uploads",
+    "worker"          : "Your browser does not support Web Workers"
   };
 
   // Compability mapping
@@ -141,7 +143,8 @@
     "databaseStorage" : OSjs.Compability.SUPPORT_DSTORAGE,
     "socket"          : OSjs.Compability.SUPPORT_SOCKET,
     "richtext"        : OSjs.Compability.SUPPORT_RICHTEXT,
-    "upload"          : OSjs.Compability.SUPPORT_UPLOAD
+    "upload"          : OSjs.Compability.SUPPORT_UPLOAD,
+    "worker"          : OSjs.Compability.SUPPORT_WORKER
   };
 
   // Browser Compability list
@@ -155,7 +158,8 @@
     "Audio"            : OSjs.Compability.SUPPORT_AUDIO,
     "Video"            : OSjs.Compability.SUPPORT_VIDEO,
     "Sockets"          : OSjs.Compability.SUPPORT_SOCKET,
-    "Async Upload"     : OSjs.Compability.SUPPORT_UPLOAD
+    "Async Upload"     : OSjs.Compability.SUPPORT_UPLOAD,
+    "Web Workers"      : OSjs.Compability.SUPPORT_WORKER
   };
 
   console.log("Compability", OSjs.Compability);
