@@ -22,3 +22,8 @@ First run:
 * chown the 'logs' directory to Apache user/group
 * Run './bin/propel-gen' to initialize propel database setup
 * Run './bin/propel-gen insert-sql' to set-up database tables etc
+
+Update to latest revision:
+-------------------------------------------------------------------------------
+Run './bin/update_revision'.
+Note: You may have to change the script and set the appropriate Apache user/group
