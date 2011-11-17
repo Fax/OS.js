@@ -1026,7 +1026,7 @@
      */
     init : function(uri, process_callback) {
       if ( !OSjs.Compability.SUPPORT_WORKER ) {
-        throw ("Cannot create Worker: " + OSjs.Public.CompabilityErrors.worker);
+        throw ("Cannot create WebWorker: " + OSjs.Public.CompabilityErrors.worker);
       }
 
       this._worker_uri = uri;

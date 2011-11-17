@@ -13,6 +13,18 @@
   OSjs.Classes.Uploader = Class.extend({
     // http://www.matlus.com/html5-file-upload-with-progress/
 
+    xhr                : null,      //!< Uploader XHR Object
+    uri                : null,      //!< Uploader Source Path
+    dest               : null,      //!< Uploader Destination Path
+    callback_choose    : null,      //!< Uploader Selection callback
+    callback_progress  : null,      //!< Uploader Progress callback
+    callback_finished  : null,      //!< Uploader Finish callback
+    callback_failed    : null,      //!< Uploader Failure callback
+
+    /**
+     * Uploader::init() -- Constructor
+     * @constructor
+     */
     init : function(uri, dest, fChoose, fProgress, fFinished, fFailed) {
       if ( !OSjs.Compability.SUPPORT_UPLOAD ) {
         throw OSjs.Public.CompabilityErrors.upload;
@@ -27,6 +39,10 @@
       this.callback_failed    = fFailed   || function() {};
     },
 
+    /**
+     * Uploader::destroy() -- Constructor
+     * @constructor
+     */
     destroy : function() {
       var self = this;
 
@@ -39,6 +55,10 @@
       }
     },
 
+    /**
+     * Uploader::run() -- Destructor
+     * @return void
+     */
     run : function(file) {
       var self = this;
       file.onchange = function(evt) {
@@ -46,6 +66,11 @@
       };
     },
 
+    /**
+     * Uploader::upload() -- Upload A file
+     * @param  DOMElement     form      DOM Form Element
+     * @return void
+     */
     upload : function(form) {
       var self = this;
 
@@ -53,7 +78,7 @@
       var fd  = new FormData();
       fd.append("upload", 1);
       fd.append("path", this.dest);
-      fd.append("upload", form.find("input[type=file]").get(0).files[0]);
+      fd.append("upload", $(form).find("input[type=file]").get(0).files[0]);
 
       xhr.upload.addEventListener("progress", function(evt) { self.uploadProgress(evt); }, false);
       xhr.addEventListener("load", function(evt) { self.uploadComplete(evt); }, false);
@@ -65,6 +90,10 @@
       this.xhr = xhr;
     },
 
+    /**
+     * Uploader::fileSelected() -- Constructor
+     * @return void
+     */
     fileSelected : function(evt, file) {
       if (file) {
         var fileSize = 0;
@@ -77,6 +106,11 @@
       }
     },
 
+    /**
+     * Uploader::uploadProgress() -- Upload Progress Update
+     * @param  Event      evt       Browser Event
+     * @return void
+     */
     uploadProgress : function(evt) {
       if ( evt.lengthComputable ) {
         var percentComplete = Math.round(evt.loaded * 100 / evt.total);
@@ -86,14 +120,29 @@
       }
     },
 
+    /**
+     * Uploader::uploadComplete() -- Constructor
+     * @param  Event      evt       Browser Event
+     * @return void
+     */
     uploadComplete : function(evt) {
       this.callback_finished(evt.target.responseText);
     },
 
+    /**
+     * Uploader::uploadFailed() -- Constructor
+     * @param  Event      evt       Browser Event
+     * @return void
+     */
     uploadFailed : function(evt) {
       this.callback_failed("There was an error attempting to upload the file.");
     },
 
+    /**
+     * Uploader::uploadCanceled() -- Constructor
+     * @param  Event      evt       Browser Event
+     * @return void
+     */
     uploadCanceled : function(evt) {
       this.callback_failed("The upload has been canceled by the user or the browser dropped the connection.");
     }
