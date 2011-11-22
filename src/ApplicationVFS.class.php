@@ -75,10 +75,11 @@ class ApplicationVFS
       }
     }
 
-    $path = PATH_PROJECT_HTML . "/media/" . $path;
-    $dest = str_replace("//", "/", ($path . $file["name"]));
+    $path  = PATH_PROJECT_HTML . "/media/" . $path;
+    $fname = str_replace("/", "", $file["name"]);
+    $dest  = str_replace("//", "/", ($path . $fname));
     if ( $result = move_uploaded_file($file["tmp_name"], $dest) ) {
-      chmod($dest, "0555");
+      //chmod($dest, "0555");
       return $result;
     }
 
