@@ -5,6 +5,8 @@ sudo chown -R anders:anders .git
 git checkout -- src/build/applications.xml
 git pull origin master
 sudo chown -R www-data:www-data public_html/media
+sudo chmod 644 public_html/media/System
+sudo chmod 644 public_html/media/Cloud
 #./bin/documentation-gen
 ./bin/application-gen
 ./bin/minimize-scripts
