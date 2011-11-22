@@ -9,7 +9,6 @@
   <resource>app.videoplayer.js</resource>
 
   <mime>video/*</mime>
-  <mime>application/ogg</mime>
 
   <compability>video</compability>
 </application>

@@ -9,7 +9,6 @@
   <resource>app.musicplayer.js</resource>
 
   <mime>audio/*</mime>
-  <mime>application/ogg</mime>
 
   <compability>audio</compability>
 </application>
