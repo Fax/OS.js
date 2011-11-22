@@ -6,6 +6,7 @@ vim.session
 template/*.php
 doc/doxygen.log
 doc/api/*
+public_html/.htpasswd
 
 # Propel
 src/build/classes/*/map/*
