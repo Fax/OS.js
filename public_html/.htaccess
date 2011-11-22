@@ -1,3 +1,5 @@
+# Secure the media directory from execution
+
 <IfModule mod_headers.c>
   <FilesMatch "\.(php|js|css)$">
     # Never
@@ -14,18 +16,3 @@
 
 # HTML5 Manifest
 AddEncoding text/cache-manifest .manifest
-
-# Secure the media directory from execution
-<Directory media>
-  AddHandler cgi-script .php .php3 .php4 .phtml .pl .py .jsp .asp .htm .shtml .sh .cgi
-  Options –ExecCGI -Indexes
-  php_flag engine off
-</Directory>
-
-#<Directory media/System>
-  #AuthUserFile .htpasswd
-  #AuthGroupFile /dev/null
-#  AuthName "OS.js Login"
-#  AuthType Basic
-#  require valid-user
-#</Directory>
