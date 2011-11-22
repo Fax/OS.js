@@ -501,9 +501,11 @@ class ApplicationVFS
     $icon  = "mimetypes/binary.png";
 
     switch ( strtolower($ext) ) {
-      case "mp3"  :
-      case "ogg"  :
-      case "flac" :
+      case "mp3"    :
+      case "ogg"    :
+      case "flac"   :
+      case "aac"    :
+      case "vorbis" :
         $icon = "mimetypes/audio-x-generic.png";
       break;
 
@@ -513,6 +515,8 @@ class ApplicationVFS
       case "3gp"  :
       case "flv"  :
       case "mkv"  :
+      case "webm" :
+      case "ogv"  :
         $icon = "mimetypes/video-x-generic.png";
       break;
 
