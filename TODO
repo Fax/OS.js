@@ -10,6 +10,7 @@
 * TODO [MED]: Finish multiple-sessions
 * TODO [LOW]: Login
 * TODO [LOW]: Rewrite settings manager
+* TODO [LOW]: Refresh windows listing files when saving (file monitorig)
 * TODO [---]: Write custom $ library
 * TODO [---]: Write custom Ajax uploading lib
 * FIXME [HIG]: IE and Opera suffers the same CSS [table] bugs

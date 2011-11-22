@@ -80,6 +80,7 @@ class ApplicationVFS
     $dest  = str_replace("//", "/", ($path . $fname));
     if ( $result = move_uploaded_file($file["tmp_name"], $dest) ) {
       //chmod($dest, "0555");
+      //chmod($dest, "0644");
       return $result;
     }
 
@@ -431,7 +432,8 @@ class ApplicationVFS
       case "application" :
         switch ( $mime ) {
           case "application/ogg" :
-            $icon = "mimetypes/video-x-generic.png";
+            //$icon = "mimetypes/video-x-generic.png";
+            $icon = "mimetypes/audio-x-generic.png";
           break;
 
           case "application/pdf" :
