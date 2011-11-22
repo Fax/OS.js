@@ -57,6 +57,10 @@ class ApplicationVFS
     )
   );
 
+  protected static function _checkDirectory($file, $path) {
+
+  }
+
   /**
    * Upload a file
    * @param   String   $path     Upload path
