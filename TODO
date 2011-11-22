@@ -1,3 +1,6 @@
+* TODO [HIG] : Seems like you are using the getYear() function for your task bar (111). Using getFullYear() should fix this (2011).
+* TODO [MED]: Contect mrnu ovrrride
+* TODO [HIG]: Error messages when opening invalid filetypes in apps!!!!!!
 * TODO [HIG]: Custom Exception class
 * TODO [HIG]: Move all labels to init.js (into namespace)
 * TODO [HIG]: "Set this application as default [for this mime]"
