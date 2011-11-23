@@ -22,12 +22,12 @@ OSjs.PanelItems.PanelItemClock = (function($, undefined) {
         $(ret).append("<span></span>");
 
         var d = new Date();
-        $(ret).find("span").html(sprintf("%02d/%02d/%02d %02d:%02s", d.getDate(), d.getMonth(), d.getYear(), d.getHours(), d.getMinutes()));
+        $(ret).find("span").html(sprintf("%02d/%02d/%02d %02d:%02s", d.getDate(), d.getMonth(), d.getFullYear(), d.getHours(), d.getMinutes()));
 
         // Start clock
         this.clock_interval = setInterval(function() {
           var d = new Date();
-          $(ret).find("span").html(sprintf("%02d/%02d/%02d %02d:%02s", d.getDate(), d.getMonth(), d.getYear(), d.getHours(), d.getMinutes()));
+          $(ret).find("span").html(sprintf("%02d/%02d/%02d %02d:%02s", d.getDate(), d.getMonth(), d.getFullYear(), d.getHours(), d.getMinutes()));
         }, 500);
 
         return ret;

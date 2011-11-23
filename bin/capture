@@ -1,0 +1,2 @@
+#!/bin/sh
+xvidcap --audio yes --audio_channels 2 --aucodec mp3 --codec mpeg4 --mf --gui yes --quality 100 --continue yes --file OSjs%03d.mpg $*

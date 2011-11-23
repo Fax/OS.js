@@ -35,6 +35,7 @@ define("PROJECT_HOST",      (php_uname('n')));
 define("ENV_PRODUCTION",      (PROJECT_HOST != "amitop"));
 define("DEFAULT_TIMEZONE",    "Europe/Oslo");
 define("ENABLE_CACHE",        false);
+define("ENABLE_LOGGING",      true);
 
 //
 // Server
@@ -59,6 +60,7 @@ define("PATH_PROJECT_VENDOR",        PATH_PROJECT . "/vendor");
 define("PATH_PROJECT_HTML",          PATH_PROJECT . "/public_html");
 define("PATH_PROJECT_BUILD",         PATH_PROJECT . "/src/build");
 define("PATH_PROJECT_LOG",           PATH_PROJECT . "/logs");
+define("PATH_PROJECT_LOG_FILE",      PATH_PROJECT . "/logs/messages");
 define("PATH_APPS",                  PATH_PROJECT . "/src/apps");
 define("PATH_RESOURCES",             PATH_PROJECT . "/src/resources");
 define("PATH_RESOURCES_COMPRESSED",  PATH_PROJECT_BUILD . "/src/resources");
@@ -88,6 +90,7 @@ require 'vendor/Propel/runtime/lib/Propel.php';
 // Internal libraries
 require "lib/Functions.php";
 require "lib/UUID.class.php";
+require "lib/Logger.class.php";
 
 // Main sources
 require 'src/Core.class.php';
@@ -99,5 +102,8 @@ require "src/ApplicationAPI.class.php";
 require "src/Panel.class.php";
 require "src/Dialog.class.php";
 require "src/Application.class.php";
+
+// Misc Initialization
+date_default_timezone_set("UTC");
 
 ?>
