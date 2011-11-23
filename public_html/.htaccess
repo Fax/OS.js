@@ -1,4 +1,4 @@
-# Cachig of files -- Moved to PHP
+# Cachig of scripts -- Moved to PHP
 #<IfModule mod_headers.c>
 #  <FilesMatch "\.(php|js|css)$">
 #    # Never
@@ -8,10 +8,19 @@
 #    Header set Pragma "no-cache"
 #    Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
 #  </FilesMatch>
+#</IfModule>
+
+# Caching of images -- Browser; do your best
+#<IfModule mod_headers.c>
 #  #<FilesMatch "\.(jpg|jpeg|png|gif|swf)$">
 #  #  Header set Cache-Control "max-age=604800, public"
 #  #</FilesMatch>
 #</IfModule>
 
-# HTML5 Manifest
+# HTML5 Manifest MIME
 AddEncoding text/cache-manifest .manifest
+
+# Media MIME
+AddEncoding video/webm .webm
+AddEncoding video/ogg .ogv
+AddEncoding audio/ogg .ogg
