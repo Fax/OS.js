@@ -432,8 +432,10 @@ class ApplicationVFS
       case "application" :
         switch ( $mime ) {
           case "application/ogg" :
-            //$icon = "mimetypes/video-x-generic.png";
             $icon = "mimetypes/audio-x-generic.png";
+            if ( $ext == "ogv" ) {
+              $icon = "mimetypes/video-x-generic.png";
+            }
           break;
 
           case "application/pdf" :
