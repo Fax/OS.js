@@ -64,7 +64,8 @@ class ApplicationVFS
       $special_chars  = array("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
     }
     $filename       = str_replace($special_chars, '', $fn);
-    $filename       = preg_replace('/[\s-]+/', '-', $filename);
+    //$filename       = preg_replace('/[\s-]+/', '-', $filename);
+    $filename       = preg_replace('/\s+/', ' ', $filename);
     return trim(trim($filename, '.-_'));
   }
 
@@ -115,6 +116,7 @@ class ApplicationVFS
    */
   public static function exists($argv) {
     $path = PATH_PROJECT_HTML . "/media/" . self::_safeName($argv, true);
+
     return file_exists($path) ? $path : false;
   }
 

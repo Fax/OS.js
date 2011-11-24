@@ -40,6 +40,7 @@ class ApplicationAPI
    */
   public static function audioInfo($fname) {
     if ( $path = ApplicationVFS::exists($fname) ) {
+
       $pcmd   = escapeshellarg($path);
       $result = exec("exiftool -j {$pcmd}", $outval, $retval);
       if ( $retval == 0 && $result ) {
