@@ -405,9 +405,7 @@ class ApplicationVFS
             $icon  = self::getFileIcon($mmime, $mime, $ext);
 
             // FIX Unknown mime types
-            if ( $mime == "application/octet-stream"  ) {
-              $mime = self::_fixMIME($mime, $ext);
-            }
+            $mime = self::_fixMIME($mime, $ext);
 
 
           } else {
@@ -585,17 +583,29 @@ class ApplicationVFS
    * @return String
    */
   protected final static function _fixMIME($mime, $ext) {
-    switch ( strtolower($ext) ) {
-      case "webm" :
-        $mime = "video/webm";
-      break;
-      case "ogv" :
-        $mime = "video/ogg";
-      break;
-      case "ogg" :
-        $mime = "audio/ogg";
-      break;
+    if ( $mime == "application/octet-stream"  ) {
+      switch ( strtolower($ext) ) {
+        case "webm" :
+          $mime = "video/webm";
+        break;
+        case "ogv" :
+          $mime = "video/ogg";
+        break;
+        case "ogg" :
+          $mime = "audio/ogg";
+        break;
+      }
+    } else if ( $mime == "application/ogg" ) {
+      switch ( strtolower($ext) ) {
+        case "ogv" :
+          $mime = "video/ogg";
+        break;
+        case "ogg" :
+          $mime = "audio/ogg";
+        break;
+      }
     }
+
     return $mime;
   }
 
