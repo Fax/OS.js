@@ -99,8 +99,9 @@ class ApplicationVFS
      */
 
     if ( $result = move_uploaded_file($file["tmp_name"], $dest) ) {
-      //chmod($dest, "0555");
-      //chmod($dest, "0644");
+      //chown($dest, VFS_USER);
+      //chgrp($dest, VFS_GROUP);
+      //chmod($dest, VFS_FPERM);
       return $result;
     }
 
@@ -202,7 +203,7 @@ class ApplicationVFS
       }
 
       $old_path = PATH_PROJECT_HTML . "/media/" . self::_safeName($path);
-      $new_path = PATH_PROJECT_HTML . "/media/" . self::safeName(str_replace($src, $dest, $path));
+      $new_path = PATH_PROJECT_HTML . "/media/" . self::_safeName(str_replace($src, $dest, $path));
 
       if ( file_exists($new_path) ) {
         return false;
@@ -370,11 +371,14 @@ class ApplicationVFS
             $type  = "file";
 
             // Read MIME info
-            $finfo = finfo_open(FILEINFO_MIME);
-            $mime  = explode("; charset=", finfo_file($finfo, $abs_path));
+
+            //$fi = new finfo(FILEINFO_MIME, MIME_MAGIC);
+            $fi = new finfo(FILEINFO_MIME);
+            $finfo = $fi->file($abs_path);
+            $mime  = explode("; charset=", $finfo);
             $mime  = trim(reset($mime));
             $mmime = trim(strstr($mime, "/", true));
-            finfo_close($finfo);
+            unset($fi);
 
             $add = sizeof($mimes) ? false : true;
             foreach ( $mimes as $m ) {
@@ -399,6 +403,13 @@ class ApplicationVFS
 
             $fsize = filesize($abs_path);
             $icon  = self::getFileIcon($mmime, $mime, $ext);
+
+            // FIX Unknown mime types
+            if ( $mime == "application/octet-stream"  ) {
+              $mime = self::_fixMIME($mime, $ext);
+            }
+
+
           } else {
             $tpath = str_replace("//", "/", $rel_path);
             if ( isset(self::$VirtualDirs[$tpath]) ) {
@@ -565,6 +576,27 @@ class ApplicationVFS
     }
 
     return $icon;
+  }
+
+  /**
+   * Fix unknown MIME by using file extension
+   * @param  String   $mime   MIME Type
+   * @param  String   $ext    File Extenstion
+   * @return String
+   */
+  protected final static function _fixMIME($mime, $ext) {
+    switch ( strtolower($ext) ) {
+      case "webm" :
+        $mime = "video/webm";
+      break;
+      case "ogv" :
+        $mime = "video/ogg";
+      break;
+      case "ogg" :
+        $mime = "audio/ogg";
+      break;
+    }
+    return $mime;
   }
 
   /////////////////////////////////////////////////////////////////////////////

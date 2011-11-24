@@ -1,3 +1,4 @@
+* TODO [HIG]: Fix MIME problems on public server(s)
 * TODO [MED]: Contect mrnu ovrrride
 * TODO [HIG]: Error messages when opening invalid filetypes in apps!!!!!!
 * TODO [HIG]: Custom Exception class

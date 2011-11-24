@@ -37,6 +37,11 @@ define("DEFAULT_TIMEZONE",    "Europe/Oslo");
 define("ENABLE_CACHE",        false);
 define("ENABLE_LOGGING",      true);
 
+define("VFS_USER",            (PROJECT_HOST != "amitop" ? "www-data" : "apache")); // chown() user
+define("VFS_GROUP",           (PROJECT_HOST != "amitop" ? "www-data" : "apache")); // chown() group
+define("VFS_FPERM",           "0555"/*0644*/); // chmod() for uploaded files
+define("VFS_DPERM",           "0555"/*0644*/); // chmod() for uploaed dirs
+
 //
 // Server
 //
@@ -52,29 +57,31 @@ define("SERVER_NONBLOCK", false); // TODO
 //
 
 define("PATH_PROJECT",               dirname(__FILE__));
-define("PATH_PROJECT_DOC",           PATH_PROJECT . "/doc");
-define("PATH_PROJECT_BIN",           PATH_PROJECT . "/bin");
-define("PATH_PROJECT_SRC",           PATH_PROJECT . "/src");
-define("PATH_PROJECT_LIB",           PATH_PROJECT . "/lib");
-define("PATH_PROJECT_VENDOR",        PATH_PROJECT . "/vendor");
-define("PATH_PROJECT_HTML",          PATH_PROJECT . "/public_html");
-define("PATH_PROJECT_BUILD",         PATH_PROJECT . "/src/build");
-define("PATH_PROJECT_LOG",           PATH_PROJECT . "/logs");
-define("PATH_PROJECT_LOG_FILE",      PATH_PROJECT . "/logs/messages");
-define("PATH_APPS",                  PATH_PROJECT . "/src/apps");
-define("PATH_RESOURCES",             PATH_PROJECT . "/src/resources");
-define("PATH_RESOURCES_COMPRESSED",  PATH_PROJECT_BUILD . "/src/resources");
-define("PATH_JSBASE",                PATH_PROJECT . "/src/base");
-define("PATH_JSBASE_COMPRESSED",     PATH_PROJECT_BUILD . "/src/base");
-define("APPLICATION_BUILD",          PATH_PROJECT_BUILD . "/applications.xml");
+define("PATH_PROJECT_DOC",           PATH_PROJECT         . "/doc");
+define("PATH_PROJECT_BIN",           PATH_PROJECT         . "/bin");
+define("PATH_PROJECT_SRC",           PATH_PROJECT         . "/src");
+define("PATH_PROJECT_LIB",           PATH_PROJECT         . "/lib");
+define("PATH_PROJECT_VENDOR",        PATH_PROJECT         . "/vendor");
+define("PATH_PROJECT_HTML",          PATH_PROJECT         . "/public_html");
+define("PATH_PROJECT_BUILD",         PATH_PROJECT         . "/src/build");
+define("PATH_PROJECT_LOG",           PATH_PROJECT         . "/logs");
+define("PATH_PROJECT_LOG_FILE",      PATH_PROJECT         . "/logs/messages");
+define("PATH_APPS",                  PATH_PROJECT         . "/src/apps");
+define("PATH_RESOURCES",             PATH_PROJECT         . "/src/resources");
+define("PATH_RESOURCES_COMPRESSED",  PATH_PROJECT_BUILD   . "/src/resources");
+define("PATH_JSBASE",                PATH_PROJECT         . "/src/base");
+define("PATH_JSBASE_COMPRESSED",     PATH_PROJECT_BUILD   . "/src/base");
+
+define("APPLICATION_BUILD",          PATH_PROJECT_BUILD   . "/applications.xml");
+define("MIME_MAGIC",                 PATH_PROJECT_VENDOR  . "/mime.mgc");
 
 //
 // Propel Config
 //
 
 $inifile = parse_ini_file(PATH_PROJECT . "/build.properties");
-define("PROPEL_PROJECT",         $inifile["propel.project"]);
-define("PROPEL_CONFIG",          sprintf("%s/conf/%s-conf.php", PATH_PROJECT_BUILD, PROPEL_PROJECT));
+define("PROPEL_PROJECT",  $inifile["propel.project"]);
+define("PROPEL_CONFIG",   sprintf("%s/conf/%s-conf.php", PATH_PROJECT_BUILD, PROPEL_PROJECT));
 unset($inifile);
 
 set_include_path(sprintf("%s/classes", PATH_PROJECT_BUILD) . PATH_SEPARATOR . get_include_path());
