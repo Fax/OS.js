@@ -96,11 +96,12 @@ OSjs.Applications.SystemProcesses = (function($, undefined) {
               (function(rel, proc) {
                 // Kill process
                 rel.find(".TT").click(function() {
-                  if ( confirm(sprintf("Are you sure you want to kill process \"%s\" (pid:%s)", proc.title || proc.name, proc.pid)) ) { // FIXME
+                  var msglabel = sprintf("Are you sure you want to kill process \"%s\" (pid:%s)", proc.title || proc.name, proc.pid);
+                  API.system.dialog("confirm", msglabel, null, function() {
                     if ( !proc.kill() ) {
-                      alert("Failed to kill process!"); // FIXME
+                      API.system.alert("Failed to kill process!");
                     }
-                  }
+                  });
                 });
 
                 // Highlight

@@ -82,6 +82,22 @@
   // HELPERS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * MessageBox() -- Crate a message box (alert)
+   * @param  String   msg       Message to display
+   * @param  String   type      Message type (default=error)
+   * @see    API
+   * @return void
+   * @function
+   */
+  function MessageBox(msg, type) {
+    type = type || "error";
+    if ( _WM ) {
+      API.system.dialog(type, msg);
+    } else {
+      alert(msg);
+    }
+  } // @endfunction
 
   /**
    * InitLaunch() -- Initialize a launching of process
@@ -99,7 +115,7 @@
       try {
         _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, [name, msg, trace]));
       } catch ( eee ) {
-        alert(msg);
+        MessageBox(msg);
       }
       return false;
     }
@@ -153,7 +169,7 @@
       } catch ( eee ) {}
     } catch ( ee ) {
       var label = OSjs.Labels.CrashApplication;
-      API.system.dialog("error", sprintf(label, app_name, ex));
+      MessageBox(sprintf(label, app_name, ex));
     }
   } // @endfunction
 
@@ -207,7 +223,7 @@
           } else {
             /*
             var error = "Application Script not found!";
-            API.system.dialog("error", error);
+            MessageBox(error);
             callback_error(error);
             */
             var errors = [];
@@ -232,7 +248,7 @@
           }, 50);
         });
       } else {
-        API.system.dialog("error", data.error);
+        MessageBox(data.error);
 
         callback_error(data.error);
 
@@ -262,7 +278,7 @@
       'windows' : {
         'tile' : function() {
           if ( !_WM ) {
-            alert(OSjs.Labels.WindowManagerMissing);
+            MessageBox(OSjs.Labels.WindowManagerMissing);
             return;
           }
 
@@ -360,7 +376,7 @@
 
       'run' : function(path, mime) {
         if ( !_WM ) {
-          alert(OSjs.Labels.WindowManagerMissing);
+          MessageBox(OSjs.Labels.WindowManagerMissing);
           return;
         }
 
@@ -420,7 +436,7 @@
               });
             }
           } else {
-            //API.system.dialog("error", "Found no suiting application for '" + path + "' (" + mime + ")");
+            //MessageBox("Found no suiting application for '" + path + "' (" + mime + ")");
             API.system.dialog_launch(all_apps, function(mapp, set_default) {
               __run(mapp);
             }, true);
@@ -436,7 +452,7 @@
         windows = windows || {};
 
         if ( !_WM ) {
-          alert(OSjs.Labels.WindowManagerMissing);
+          MessageBox(OSjs.Labels.WindowManagerMissing);
           return;
         }
 
@@ -463,7 +479,7 @@
             callback(data.result, null);
           } else {
             if ( show_alert ) {
-              API.system.dialog("error", data.error);
+              MessageBox(data.error);
             }
             callback(null, data.error);
           }
@@ -472,9 +488,13 @@
         console.info("=> API Call", method, argv);
       },
 
+      'alert' : function(msg, type) {
+        MessageBox(msg, type);
+      },
+
       'dialog' : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
         if ( !_WM ) {
-          alert(OSjs.Labels.WindowManagerMissing);
+          MessageBox(OSjs.Labels.WindowManagerMissing);
           return null;
         }
 
@@ -488,7 +508,7 @@
 
       'dialog_input' : function(path, desc, clb_finish) {
         if ( !_WM ) {
-          alert(OSjs.Labels.WindowManagerMissing);
+          MessageBox(OSjs.Labels.WindowManagerMissing);
           return null;
         }
 
@@ -499,7 +519,7 @@
 
       'dialog_rename' : function(path, clb_finish) {
         if ( !_WM ) {
-          alert(OSjs.Labels.WindowManagerMissing);
+          MessageBox(OSjs.Labels.WindowManagerMissing);
           return null;
         }
 
@@ -510,7 +530,7 @@
 
       'dialog_upload' : function(path, clb_finish, clb_progress, clb_cancel) {
         if ( !_WM ) {
-          alert(OSjs.Labels.WindowManagerMissing);
+          MessageBox(OSjs.Labels.WindowManagerMissing);
           return null;
         }
 
@@ -521,7 +541,7 @@
 
       'dialog_file' : function(clb_finish, mime_filter, type, cur_dir) {
         if ( !_WM ) {
-          alert(OSjs.Labels.WindowManagerMissing);
+          MessageBox(OSjs.Labels.WindowManagerMissing);
           return null;
         }
 
@@ -536,7 +556,7 @@
 
       'dialog_launch' : function(list, clb_finish, not_found) {
         if ( !_WM ) {
-          alert(OSjs.Labels.WindowManagerMissing);
+          MessageBox(OSjs.Labels.WindowManagerMissing);
           return null;
         }
 
@@ -547,7 +567,7 @@
 
       'dialog_color' : function(start_color, clb_finish) {
         if ( !_WM ) {
-          alert(OSjs.Labels.WindowManagerMissing);
+          MessageBox(OSjs.Labels.WindowManagerMissing);
           return null;
         }
 
@@ -695,7 +715,7 @@
               OSjs.__Stop();
             }, 100);
           } else {
-            API.system.dialog("error", data.error);
+            MessageBox(data.error);
           }
         });
       },
@@ -899,7 +919,7 @@
 
             this._socket = ws;
           } catch ( e ) {
-            API.system.dialog("error", "Failed to create socket: " + e);
+            MessageBox("Failed to create socket: " + e);
           }
 
           return true;
@@ -1194,7 +1214,7 @@
           self.running = true;
           self.online  = true;
         } else {
-          alert(data.error);
+          MessageBox(data.error);
         }
 
       });
@@ -1273,7 +1293,7 @@
       if ( state ) { // Offline
         this.online = false;
 
-        alert(OSjs.Labels.WentOffline);
+        MessageBox(OSjs.Labels.WentOffline); // FIXME
       } else { // Online
         this.online = true;
       }
@@ -3118,7 +3138,7 @@
           {"title" : "Panel", "disabled" : true, "attribute" : "header"},
           {"title" : "Add new item", "method" : function() {
             if ( !_WM ) {
-              alert(OSjs.Labels.WindowManagerMissing);
+              MessageBox(OSjs.Labels.WindowManagerMissing);
               return;
             }
 
