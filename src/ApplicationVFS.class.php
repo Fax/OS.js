@@ -382,17 +382,22 @@ class ApplicationVFS
             $mmime = trim(strstr($mime, "/", true));
             unset($fi);
 
+
+            // FIX Unknown mime types
+            $fmime  = self::_fixMIME($mime, $ext);
+            $fmmime = trim(strstr($fmime, "/", true));
+
             $add = sizeof($mimes) ? false : true;
             foreach ( $mimes as $m ) {
               $m = trim($m);
 
               if ( preg_match("/\/\*$/", $m) ) {
-                if ( strstr($m, "/", true) == $mmime ) {
+                if ( strstr($m, "/", true) == $fmmime ) {
                   $add = true;
                   break;
                 }
               } else {
-                if ( $mime == $m ) {
+                if ( $fmime == $m ) {
                   $add = true;
                   break;
                 }
@@ -405,10 +410,7 @@ class ApplicationVFS
 
             $fsize = filesize($abs_path);
             $icon  = self::getFileIcon($mmime, $mime, $ext);
-
-            // FIX Unknown mime types
-            $mime = self::_fixMIME($mime, $ext);
-
+            $mime  = $fmime;
 
           } else {
             $tpath = str_replace("//", "/", $rel_path);
