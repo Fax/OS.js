@@ -23,6 +23,7 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
     ///////////////////////////////////////////////////////////////////////////
 
     var IS_LOADING = false;
+    var CACHE = [];
 
     /**
      * GtkWindow Class
@@ -32,7 +33,7 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
 
       init : function(app) {
         this._super("Window_window1", false, app, windows);
-        this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationPDF window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_open\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkFixed fixed1\"></div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar1\"></div> </div> </td> </tr> </table> </div> </div> ").html();
+        this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationPDF window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_open\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <table class=\"GtkBox Horizontal box2\"> <tr> <td class=\"GtkBoxPosition Position_0\" style=\"width:70px\"> <div class=\"TableCellWrap\"> <button class=\"GtkButton button_prev\"><img alt=\"gtk-media-previous\" src=\"/img/icons/16x16/actions/media-skip-backward.png\"/>Prev</button> </div> </td> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkLabel label_navigation\"></div> </div> </td> <td class=\"GtkBoxPosition Position_3\" style=\"width:70px\"> <div class=\"TableCellWrap\"> <button class=\"GtkButton button_next\"><img alt=\"gtk-media-next\" src=\"/img/icons/16x16/actions/media-skip-forward.png\"/>Next</button> </div> </td> </tr> </table> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkFixed fixed1\"></div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_3\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar1\"></div> </div> </td> </tr> </table> </div> </div> ").html();
         this._title = 'PDF Viewer';
         this._icon = 'mimetypes/gnome-mime-application-pdf.png';
         this._is_draggable = true;
@@ -61,13 +62,21 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
         var my_mimes    = ["application\/pdf"];
 
         this.app.createFileDialog(function(fname) {
-          self.app.openDocument(fname);
+          self.app.loadDocument(fname);
         }, my_mimes);
 
       },
 
       EventMenuQuit : function(el, ev) {
         this.$element.find(".ActionClose").click();
+      },
+
+      EventPreviousPage : function(el, ev) {
+        this.app.navigatePage(false);
+      },
+
+      EventNextPage : function(el, ev) {
+        this.app.navigatePage(true);
       },
 
 
@@ -85,8 +94,19 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
             self.EventMenuQuit(this, ev);
           });
 
+          el.find(".button_prev").click(function(ev) {
+            self.EventPreviousPage(this, ev);
+          }).attr("disabled", "disabled");
+
+          el.find(".button_next").click(function(ev) {
+            self.EventNextPage(this, ev);
+          }).attr("disabled", "disabled");
+
           // Do your stuff here
 
+          el.find(".label_navigation").html("No file loaded...");
+
+          /*
           el.find(".fixed1").scroll(function(e) {
             if ( IS_LOADING ) {
               return;
@@ -94,11 +114,12 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
 
             var myDiv = $(this).get(0);
             if ( (myDiv.offsetHeight + myDiv.scrollTop) >= myDiv.scrollHeight ) {
-              self.app.navigatePage(true, myDiv);
+              self.app.navigatePage(true);
             } else if ( myDiv.scrollTop === 0 ) {
-              self.app.navigatePage(false, myDiv);
+              self.app.navigatePage(false);
             }
           });
+          */
 
           return true;
         }
@@ -108,6 +129,34 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
 
       updateStatusbar : function(str) {
         this.$element.find(".statusbar1").html(str);
+      },
+
+      updateStatus : function(str) {
+        this.$element.find(".label_navigation").html(str);
+      },
+
+      updateViewport : function(m) {
+        this.$element.find(".fixed1").html(m);
+      },
+
+      updateButtons : function(page, page_total) {
+        var el  = this.$element;
+        if ( !page_total || page_total < 0 ) {
+          el.find(".button_prev").attr("disabled", "disabled");
+          el.find(".button_next").attr("disabled", "disabled");
+        } else {
+          if ( page <= 1 ) {
+            el.find(".button_prev").attr("disabled", "disabled");
+          } else {
+            el.find(".button_prev").removeAttr("disabled");
+          }
+
+          if ( page >= (page_total) ) {
+            el.find(".button_next").attr("disabled", "disabled");
+          } else {
+            el.find(".button_next").removeAttr("disabled");
+          }
+        }
       }
     });
 
@@ -134,6 +183,9 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
       },
 
       destroy : function() {
+        CACHE = [];
+        IS_LOADING = false;
+
         this._super();
       },
 
@@ -148,35 +200,40 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
 
         // Do your stuff here
         if ( argv && argv.path ) {
-          this.openDocument(argv.path);
+          this.loadDocument(argv.path);
         }
       },
 
-      errorDocument : function(error) {
-        this.page_number  = -1;
-        this.page_total   = -1;
-        this.pdf_info     = null;
-        this.pdf_cache    = null;
-        this.pdf_path     = null;
+      /*
+      readDocument : function(path, result, page, from_cache) {
+        page = (page === undefined || page === null) ? 1 : parseInt(page, 10);
 
-        this._root_window.$element.find(".fixed1").html($(sprintf("<h1>Failed to open document:</h1><p>%s</p>", error)));
-        this._root_window.updateStatusbar("An error occured...");
+        if ( from_cache ) {
+          this._root_window.$element.find(".fixed1").html(CACHE[page - 1]);
+          return;
+        }
 
-        this._argv['path'] = null;
+        if ( path && (path != this.pdf_path) ) {
+          CACHE = [];
+        }
 
-        setTimeout(function() {
-          IS_LOADING = false;
-        }, 100);
-      },
+        if ( !this.pdf_path ) {
+          this._root_window.updateStatus(sprintf("Loading", basename(path)));
+        }
 
-      readDocument : function(path, result, page) {
-        this._root_window.$element.find(".fixed1").html($(result.document));
+        var svg = result.document;
+        CACHE[page - 1] = svg;
+
+        this._root_window.updateViewport(svg);
+
         this.page_number  = page;
         this.page_total   = parseInt(result.info.PageCount, 10);
         this.pdf_info     = result.info;
         this.pdf_path     = path;
 
-        this._root_window.updateStatusbar(sprintf("Page %d of %d", this.page_number, this.page_total));
+        this._root_window.updateStatusbar(basename(path));
+        this._root_window.updateStatus(sprintf("Showing page %d of %d", page, this.page_total));
+        this._root_window.updateButtons(page, this.page_total);
 
         this._argv['path'] = path;
 
@@ -184,25 +241,111 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
           IS_LOADING = false;
         }, 100);
       },
+      */
 
-      openDocument: function(path, page) {
+
+
+      // DOCUMENT LOADING
+
+      loadDocument : function(path) {
         var self = this;
 
         IS_LOADING = true;
+        CACHE      = [];
 
-        page = (page === undefined) ? 1 : parseInt(page, 10);
+        this._root_window.updateViewport(sprintf("Loading document: " + basename(path)));
+        this._root_window.updateStatus("");
+        this._root_window.updateButtons(-1, -1);
 
+        var page   = 1;
         var source = (page > 0) ? (sprintf("%s:%d", path, page)) : (path);
         API.system.call("readpdf", source, function(result, error) {
           if ( error === null ) {
-            self.readDocument(path, result, page);
+            self.page_number  = page;
+            self.page_total   = parseInt(result.info.PageCount, 10);
+            self.pdf_info     = result.info;
+            self.pdf_path     = path;
+
+            self.drawDocument($(result.document));
           } else {
-            self.errorDocument(error);
+            self.drawError(path, error);
           }
         });
       },
 
-      navigatePage: function(op, container) {
+      /**
+       * Draw error document
+       */
+      drawError : function(path, error) {
+        this._root_window.updateViewport(sprintf("<h1>Failed to open document:</h1><p>%s</p>", error));
+        this._root_window.updateStatusbar(basename(path));
+        this._root_window.updateStatus("Showing page 0 of 0");
+        this._root_window.updateButtons(-1, -1);
+
+        this.page_number    = -1;
+        this.page_total     = -1;
+        this.pdf_info       = null;
+        this.pdf_cache      = null;
+        this.pdf_path       = null;
+
+        this._argv['path']  = null;
+
+        setTimeout(function() {
+          IS_LOADING = false;
+        }, 100);
+
+        this._root_window.$element.find(".fixed1").get(0).scrollTop = 0;
+      },
+
+      /**
+       * Draw the document
+       */
+      drawDocument : function(svg) {
+        this._root_window.updateViewport(svg);
+        this._root_window.updateStatusbar(basename(this.pdf_path));
+        this._root_window.updateStatus(sprintf("Showing page %d of %d", this.page_number, this.page_total));
+        this._root_window.updateButtons(this.page_number, this.page_total);
+        this._root_window.$element.find(".fixed1").get(0).scrollTop = 0;
+      },
+
+      /**
+       * Change page (Internal)
+       */
+      navigateDocument : function(page) {
+        var self = this;
+
+        if ( CACHE[page] !== undefined ) {
+          this.drawDocument($(CACHE[page]));
+          return;
+        }
+
+        this._root_window.updateViewport(sprintf("Loading page %d (please wait)...", page));
+
+        var path   = this.pdf_path;
+        var source = (page > 0) ? (sprintf("%s:%d", path, page)) : (path);
+        API.system.call("readpdf", source, function(result, error) {
+          if ( error === null ) {
+            var svg = result.document;
+            CACHE[page] = svg;
+
+            self.drawDocument($(svg));
+          } else {
+            self.drawError(self.pdf_path, error);
+          }
+
+          self._root_window.$element.find(".fixed1").get(0).scrollTop = 0;
+        });
+
+      },
+
+      /**
+       * Change page (Frontend)
+       */
+      navigatePage: function(op) {
+        if ( !this.page_total ) {
+          return;
+        }
+
         if ( this.page_number == -1 || this.page_total == -1 ) {
           return;
         }
@@ -210,18 +353,14 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
         if ( op ) { // Next
           if ( this.page_number < this.page_total ) {
             this.page_number++;
-            this.openDocument(this.pdf_path, this.page_number);
-            container.scrollTop = 0;
+            this.navigateDocument(this.page_number);
           }
         } else { // Prev
           if ( this.page_number >= 2 ) {
             this.page_number--;
-            this.openDocument(this.pdf_path, this.page_number);
-            container.scrollTop = 0;
+            this.navigateDocument(this.page_number);
           }
         }
-
-        this._root_window.updateStatusbar(sprintf("Page %d of %d", this.page_number, this.page_total));
       }
     });
 

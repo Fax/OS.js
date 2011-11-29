@@ -22,7 +22,6 @@
     <resource>app.videoplayer.css</resource>
     <resource>app.videoplayer.js</resource>
     <mime>video/*</mime>
-    <mime>application/ogg</mime>
   </application>
   <application name="Terminal" title="Terminal" icon="apps/utilities-terminal.png" system="false" category="utilities" class="ApplicationTerminal" file="ApplicationTerminal.class.php">
     <window id="window1">

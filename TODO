@@ -5,7 +5,8 @@ APPLICATIONS:
 * TODO: Finish PDF Viewer
 
 FIXES:
-* TODO [HIG]
+* TODO [HIG]: Context menu must show when popping up at bottom off screen
+              Remove hack from PanelItemMenu
 * TODO [MED]: Contect menu ovrrride
 * TODO [HIG]: Error messages when opening invalid filetypes in apps!!!!!!
 * TODO [HIG]: Custom Exception class

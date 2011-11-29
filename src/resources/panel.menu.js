@@ -107,13 +107,12 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
         $(el).click(function() {
           $(el).find(".GtkMenu:first").show();
 
+          // TODO -- REMOVE ME : GLOBAL FIX
           var mit = $(el).find("ul.GtkMenu:first");
           var ppos = self._panel.pos;
           if ( ppos == "bottom" ) {
-            console.log("BOTTOM", mit);
             mit.css("margin-top", "-" + (mit.height() + 10) + "px");
           } else {
-            console.log("TOP", mit);
             mit.css("margin-top", "0px");
           }
         });

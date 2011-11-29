@@ -611,6 +611,7 @@
               }
             });
 
+            // TODO: Check if we crash with bottom of the viewport
             var off = mpos ? ({'left' : ev.pageX, 'top' : ev.pageY - 20}) : $(where).offset();
             $("#ContextMenu").css(
               {
