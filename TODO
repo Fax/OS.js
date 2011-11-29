@@ -1,9 +1,6 @@
 SUGGESTIONS:
 * some sort of an application launcher. just an autocomplete search input somewhere in the header bar would be awesome.
 
-APPLICATIONS:
-* TODO: Finish PDF Viewer
-
 FIXES:
 * TODO [HIG]: Context menu must show when popping up at bottom off screen
               Remove hack from PanelItemMenu
