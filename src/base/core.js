@@ -86,17 +86,24 @@
    * MessageBox() -- Crate a message box (alert)
    * @param  String   msg       Message to display
    * @param  String   type      Message type (default=error)
+   * @param  Mixed    misc      Message box extra argument
    * @see    API
-   * @return void
+   * @return Mixed
    * @function
    */
-  function MessageBox(msg, type) {
+  function MessageBox(msg, type, misc) {
     type = type || "error";
     if ( _WM ) {
-      API.system.dialog(type, msg);
+      API.system.dialog(type, msg, undefined, misc);
     } else {
-      alert(msg);
+      if ( type == "confirm" ) {
+        return confirm(msg);
+      } else {
+        alert(msg);
+      }
     }
+
+    return null;
   } // @endfunction
 
   /**
