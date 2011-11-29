@@ -3126,10 +3126,12 @@
             _Settings._set("desktop.panel.position", "top");
             self.$element.removeClass("Bottom");
             self.$element.css({"top" : "0px"});
+            self.pos = "top";
           } else {
             _Settings._set("desktop.panel.position", "bottom");
             self.$element.addClass("Bottom");
             self.$element.css({"top" : "auto", "bottom" : "0px"});
+            self.pos = "bottom";
           }
         }
       });
