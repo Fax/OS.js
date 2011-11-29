@@ -63,7 +63,7 @@ OSjs.Applications.ApplicationVideoPlayer = (function($, undefined) {
           self.app.Play(fname);
         };
 
-        var my_mimes    = ["video\/*","application\/ogg"];
+        var my_mimes    = ["video\/*"];
 
         this.app.createFileDialog(function(fname) {
           my_callback(fname);
