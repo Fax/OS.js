@@ -1,5 +1,12 @@
-* TODO [HIG]: Fix MIME problems on public server(s)
-* TODO [MED]: Contect mrnu ovrrride
+SUGGESTIONS:
+* some sort of an application launcher. just an autocomplete search input somewhere in the header bar would be awesome.
+
+APPLICATIONS:
+* TODO: Finish PDF Viewer
+
+FIXES:
+* TODO [HIG]
+* TODO [MED]: Contect menu ovrrride
 * TODO [HIG]: Error messages when opening invalid filetypes in apps!!!!!!
 * TODO [HIG]: Custom Exception class
 * TODO [HIG]: Move all labels to init.js (into namespace)
@@ -11,6 +18,7 @@
 * TODO [LOW]: Login
 * TODO [LOW]: Rewrite settings manager
 * TODO [LOW]: Refresh windows listing files when saving (file monitorig)
+* TODO [LOW]: Fix MIME problems on public server(s) [WORKAROUND FOR NOW]
 * TODO [---]: Write custom $ library
 * FIXME [HIG]: IE and Opera suffers the same CSS [table] bugs
 * FIXME [MED]: replace parents() with closest()
