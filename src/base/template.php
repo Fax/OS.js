@@ -77,6 +77,9 @@
   <!-- Panel -->
   <div class="DesktopPanel AlignTop" id="Panel"><ul></ul></div>
 
+  <!-- Notifications -->
+  <div id="DesktopNotifications"></div>
+
   <!-- Context items -->
   <div id="ContextMenu">&nbsp;</div>
   <div id="ContextRectangle">&nbsp;</div>

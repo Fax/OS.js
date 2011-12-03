@@ -26,13 +26,14 @@
   /**
    * @constants Local settings
    */
-  var ENABLE_CACHE       = false;                   //!< Enabled caching
-  var SETTING_REVISION   = 26;                      //!< The settings revision
-  var ENABLE_LOGIN       = false;                   //!< Use login
-  var ANIMATION_SPEED    = 400;                     //!< Animation speed in ms
-  var TEMP_COUNTER       = 1;                       //!< Internal temp. counter
-  var TOOLTIP_TIMEOUT    = 300;                     //!< Tooltip timeout in ms
-  var MAX_PROCESSES      = 50;
+  var ENABLE_CACHE           = false;               //!< Enabled caching
+  var SETTING_REVISION       = 26;                  //!< The settings revision
+  var ENABLE_LOGIN           = false;               //!< Use login
+  var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
+  var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
+  var TOOLTIP_TIMEOUT        = 300;                 //!< Tooltip timeout in ms
+  var NOTIFICATION_TIMEOUT   = 5000;                //!< Desktop notification timeout
+  var MAX_PROCESSES          = 50;                  //!< Max processes running (except core procs)
   // @endconstants
 
   /**
@@ -2650,9 +2651,10 @@
    */
   var Desktop = Process.extend({
 
-    $element : null,          //!< Desktop DOM Element
-    running  : false,         //!< Desktop running ?
-    panel    : null,          //!< Panel instance
+    $element       : null,          //!< Desktop DOM Element
+    running        : false,         //!< Desktop running ?
+    panel          : null,          //!< Panel instance
+    notifications  : [],            //!< Desktop notification popups
 
     /**
      * Desktop::init() -- Constructor
@@ -2752,6 +2754,8 @@
         _WM.bind("window_blur", this.defaultHandler);
         _WM.bind("window_updated", this.defaultHandler);
       }
+
+      this.createNotification();
 
       this.running = true;
     },
@@ -2944,6 +2948,33 @@
       if ( $(css).attr("href") != href ) {
         $(css).attr("href", href);
       }
+    },
+
+    /**
+     * Desktop::createNotification() -- Create a Desktop notification
+     * @param   String    title     Title
+     * @param   String    message   Message
+     * @param   String    icon      Icon (if any)
+     * @return  void
+     */
+    createNotification : function(title, message, icon) {
+      title     = title   || "Notification";
+      message   = message || "Unknonwn notification";
+      icon      = icon    || null;
+
+      var root = $("#DesktopNotifications");
+      var del = $(sprintf('<div class="DesktopNotification"><h1>%s</h1><p>%s</p></div>', title, message));
+      if ( icon ) {
+        del.css({
+          'backgroundImage' : sprintf("url('%s')", icon)
+        });
+      }
+
+      root.append(del);
+
+      setTimeout(function() {
+        del.remove();
+     }, NOTIFICATION_TIMEOUT);
     },
 
     /**

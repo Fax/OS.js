@@ -162,7 +162,39 @@
     "Web Workers"      : OSjs.Compability.SUPPORT_WORKER
   };
 
-  console.log("Compability", OSjs.Compability);
+  // File-extension => MIME types
+  OSjs.Public.FileExtensions = { // TODO
+    "avi" : "video/avi",
+    "mp4" : "video/mp4",
+    "webm": "video/webm",
+    "ogv" : "video/ogg",
+    "mpg" : "video/mpeg",
+    "mpeg": "video/mpeg",
+    "flv" : "video/flv",
+    "mkv" : "video/matroska",
+
+    "mp3" : "audio/mp3",
+    "ogg" : "audio/ogg",
+    "wav" : "audio/wav",
+    "flac": "audio/flac",
+    "aac" : "audio/aac",
+
+    "png" : "image/png",
+    "jpg" : "image/jpg",
+    "jpeg": "image/jpeg",
+    "bmp" : "image/bmp",
+    "svg" : "image/svg"
+  };
+
+  console.group("OSjs Namespace");
+    console.log(OSjs);
+    console.group("Inited settings");
+      console.log("Compability", OSjs.Compability);
+      console.log("Language", OSjs.Labels);
+      console.log("Public", OSjs.Public);
+    console.groupEnd();
+  console.groupEnd();
+
   console.groupEnd();
 
 })($);

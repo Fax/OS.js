@@ -235,3 +235,8 @@ textarea {
   cursor : pointer;
 }
   */
+.DesktopNotification {
+  background : #3c3c3d;
+  color : #fff;
+  border : 1px solid #222;
+}

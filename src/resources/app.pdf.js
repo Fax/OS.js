@@ -106,21 +106,6 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
 
           el.find(".label_navigation").html("No file loaded...");
 
-          /*
-          el.find(".fixed1").scroll(function(e) {
-            if ( IS_LOADING ) {
-              return;
-            }
-
-            var myDiv = $(this).get(0);
-            if ( (myDiv.offsetHeight + myDiv.scrollTop) >= myDiv.scrollHeight ) {
-              self.app.navigatePage(true);
-            } else if ( myDiv.scrollTop === 0 ) {
-              self.app.navigatePage(false);
-            }
-          });
-          */
-
           return true;
         }
 
@@ -183,8 +168,7 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
       },
 
       destroy : function() {
-        CACHE = [];
-        IS_LOADING = false;
+        this.reset();
 
         this._super();
       },
@@ -204,49 +188,25 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
         }
       },
 
-      /*
-      readDocument : function(path, result, page, from_cache) {
-        page = (page === undefined || page === null) ? 1 : parseInt(page, 10);
+      /**
+       * Reset internals
+       * @return void
+       */
+      reset : function() {
+        CACHE = [];
+        IS_LOADING = false;
 
-        if ( from_cache ) {
-          this._root_window.$element.find(".fixed1").html(CACHE[page - 1]);
-          return;
-        }
-
-        if ( path && (path != this.pdf_path) ) {
-          CACHE = [];
-        }
-
-        if ( !this.pdf_path ) {
-          this._root_window.updateStatus(sprintf("Loading", basename(path)));
-        }
-
-        var svg = result.document;
-        CACHE[page - 1] = svg;
-
-        this._root_window.updateViewport(svg);
-
-        this.page_number  = page;
-        this.page_total   = parseInt(result.info.PageCount, 10);
-        this.pdf_info     = result.info;
-        this.pdf_path     = path;
-
-        this._root_window.updateStatusbar(basename(path));
-        this._root_window.updateStatus(sprintf("Showing page %d of %d", page, this.page_total));
-        this._root_window.updateButtons(page, this.page_total);
-
-        this._argv['path'] = path;
-
-        setTimeout(function() {
-          IS_LOADING = false;
-        }, 100);
+        this.page_number    = -1;
+        this.page_total     = -1;
+        this.pdf_info       = null;
+        this.pdf_cache      = null;
+        this.pdf_path       = null;
       },
-      */
 
-
-
-      // DOCUMENT LOADING
-
+      /**
+       * Load a new document
+       * @return void
+       */
       loadDocument : function(path) {
         var self = this;
 
@@ -270,11 +230,14 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
           } else {
             self.drawError(path, error);
           }
+
+          IS_LOADING = false;
         });
       },
 
       /**
        * Draw error document
+       * @return void
        */
       drawError : function(path, error) {
         this._root_window.updateViewport(sprintf("<h1>Failed to open document:</h1><p>%s</p>", error));
@@ -282,23 +245,16 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
         this._root_window.updateStatus("Showing page 0 of 0");
         this._root_window.updateButtons(-1, -1);
 
-        this.page_number    = -1;
-        this.page_total     = -1;
-        this.pdf_info       = null;
-        this.pdf_cache      = null;
-        this.pdf_path       = null;
+        this.reset();
 
         this._argv['path']  = null;
-
-        setTimeout(function() {
-          IS_LOADING = false;
-        }, 100);
 
         this._root_window.$element.find(".fixed1").get(0).scrollTop = 0;
       },
 
       /**
-       * Draw the document
+       * Draw the document (page)
+       * @return void
        */
       drawDocument : function(svg) {
         this._root_window.updateViewport(svg);
@@ -310,8 +266,9 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
 
       /**
        * Change page (Internal)
+       * @return void
        */
-      navigateDocument : function(page) {
+      _navigatePage : function(page) {
         var self = this;
 
         if ( CACHE[page] !== undefined ) {
@@ -339,7 +296,8 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
       },
 
       /**
-       * Change page (Frontend)
+       * Navigate to a page
+       * @return void
        */
       navigatePage: function(op) {
         if ( !this.page_total ) {
@@ -350,17 +308,28 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
           return;
         }
 
-        if ( op ) { // Next
+        if ( op === true ) {          // Next
           if ( this.page_number < this.page_total ) {
             this.page_number++;
-            this.navigateDocument(this.page_number);
-          }
-        } else { // Prev
-          if ( this.page_number >= 2 ) {
-            this.page_number--;
-            this.navigateDocument(this.page_number);
           }
         }
+        else if ( op === false ) {    // Prev
+          if ( this.page_number >= 2 ) {
+            this.page_number--;
+          }
+        }
+        else {                        // Custom page
+          if ( typeof op == "number" ) {
+            op = parseInt(op, 10);
+            if (!isNan(op) && op ) {
+              if ( (op > 0) && (op < this.page_total) ) {
+                this.page_number = op;
+              }
+            }
+          }
+        }
+
+        this._navigatePage(this.page_number);
       }
     });
 

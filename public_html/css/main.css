@@ -540,6 +540,8 @@ input.Disabled {
   margin-bottom : 10px;
 }
 #LoginWindow .Row label {
+  width : 300px;
+  height : 200px;
   display : block;
 }
 #LoginWindow .Row input {
@@ -573,4 +575,27 @@ input.Disabled {
   margin : 0;
   padding : 0;
   font-size : 120%;
+}
+
+#DesktopNotifications {
+  position : absolute;
+  top : 30px;
+  right : 10px;
+}
+
+.DesktopNotification {
+  margin : 10px;
+  padding : 10px;
+  margin-bottom : 10px;
+}
+.DesktopNotification h1 {
+  font-size : 100%;
+  margin : 0;
+  padding : 0;
+  margin-bottom : 10px;
+}
+
+.DesktopNotification p {
+  margin : 0;
+  padding : 0;
 }
