@@ -16,6 +16,7 @@
   var ZINDEX_MENU         = 100000000;              //!< Default Menu z-index
   var ZINDEX_RECT         = 100000000;              //!< Default Rect z-index
   var ZINDEX_TOOLTIP      = 100000001;              //!< Default Tooltip z-index
+  var ZINDEX_NOTIFICATION = 100000002;              //!< Default Notification z-index
   var ZINDEX_PANEL        = 1000000;                //!< Default Panel z-index
   var ZINDEX_WINDOW       = 10;                     //!< Default Window z-index
   var ZINDEX_WINDOW_MAX   = 88888889;               //!< Max Window z-index
@@ -2654,7 +2655,7 @@
     $element       : null,          //!< Desktop DOM Element
     running        : false,         //!< Desktop running ?
     panel          : null,          //!< Panel instance
-    notifications  : [],            //!< Desktop notification popups
+    notifications  : 0,             //!< Desktop notification counter
 
     /**
      * Desktop::init() -- Constructor
@@ -2754,8 +2755,6 @@
         _WM.bind("window_blur", this.defaultHandler);
         _WM.bind("window_updated", this.defaultHandler);
       }
-
-      this.createNotification();
 
       this.running = true;
     },
@@ -2958,23 +2957,54 @@
      * @return  void
      */
     createNotification : function(title, message, icon) {
+      var self = this;
+
       title     = title   || "Notification";
       message   = message || "Unknonwn notification";
       icon      = icon    || null;
 
+      console.group("Desktop::createNotification()");
+      console.log("title", title);
+      console.log("message", message);
+      console.log("icon", icon);
+      console.groupEnd();
+
+      // Create element
       var root = $("#DesktopNotifications");
-      var del = $(sprintf('<div class="DesktopNotification"><h1>%s</h1><p>%s</p></div>', title, message));
+      var del = $(sprintf('<div class="DesktopNotification" style="display:none"><h1>%s</h1><p>%s</p></div>', title, message));
       if ( icon ) {
         del.css({
-          'backgroundImage' : sprintf("url('%s')", icon)
+          'backgroundImage'     : sprintf("url('%s')", icon),
+          'backgroundRepeat'    : "no-repeat",
+          //'backgroundPosition'  : "center left",
+          'backgroundPosition'  : "5px 14px",
+          'paddingLeft'         : "42px"
         });
       }
-
       root.append(del);
+      del.fadeIn(ANIMATION_SPEED);
 
-      setTimeout(function() {
-        del.remove();
-     }, NOTIFICATION_TIMEOUT);
+      // Removal functions
+      var to;
+      var fu = function() {
+        del.fadeOut(ANIMATION_SPEED, function() {
+          del.remove();
+        });
+
+        if ( to ) {
+          clearTimeout(to);
+          to = null;
+        }
+
+        if ( self.notifications ) {
+          self.notifications--;
+        }
+     };
+
+      del.click(fu);
+      to = setTimeout(fu, NOTIFICATION_TIMEOUT);
+
+      this.notifications++;
     },
 
     /**
