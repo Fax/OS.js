@@ -35,6 +35,7 @@
   var TOOLTIP_TIMEOUT        = 300;                 //!< Tooltip timeout in ms
   var NOTIFICATION_TIMEOUT   = 5000;                //!< Desktop notification timeout
   var MAX_PROCESSES          = 50;                  //!< Max processes running (except core procs)
+  var ONLINECHK_FREQ         = 1000;                //!< On-line checking frequenzy
   // @endconstants
 
   /**
@@ -417,6 +418,8 @@
                         found.push(i);
                         list.push(app);
                       }
+
+        API.notification("Warning", "You are now off-line!");
                     } else {
                       if ( app.mimes[check] == mime ) {
                         found.push(i);
@@ -583,6 +586,12 @@
         console.info("=> API Color Dialog");
 
         return _WM.addWindow(new OSjs.Dialogs.ColorOperationDialog(OperationDialog, API, [start_color, clb_finish]));
+      },
+
+      'notification' : function(title, message, icon) {
+        if ( _Desktop ) {
+          _Desktop.createNotification(title, message, icon);
+        }
       }
 
     },
@@ -1141,6 +1150,7 @@
 
     online  : false,        //!< We are online, are we ?
     running : false,        //!< If core is running
+    olint   : null,         //!< On-line checker interval
 
     /**
      * Core::init() -- Constructor
@@ -1163,6 +1173,7 @@
       // Load initial data
       $.post(AJAX_URI, {'ajax' : true, 'action' : 'init'}, function(data) {
         if ( data.success ) {
+          self.online  = true;
 
           // Initialize resources
           _Resources = new ResourceManager();
@@ -1177,9 +1188,13 @@
           $(document).bind("contextmenu", self.global_contextmenu);
           $(document).bind('touchmove',   self.global_touchmove, false);
 
-          /* window.addEventListener('offline', function(ev) {
+          /*window.addEventListener('offline', function(ev) {
             self.global_offline(ev, !(navigator.onLine === false));
-          }, true); TODO */
+          }, true);*/
+
+          this.olint = setInterval(function(ev) {
+            self.global_offline(ev, !(navigator.onLine === false));
+          }, ONLINECHK_FREQ);
 
           // Set some global variables
           if ( data.result.config ) {
@@ -1222,7 +1237,6 @@
           },200);
 
           self.running = true;
-          self.online  = true;
         } else {
           MessageBox(data.error);
         }
@@ -1246,9 +1260,14 @@
         $(document).unbind("contextmenu", this.global_contextmenu);
         $(document).unbind('touchmove',   this.global_touchmove, false);
 
-        /* window.removeEventListener('offline', function(ev) {
+        /*window.removeEventListener('offline', function(ev) {
           self.global_offline(ev, !(navigator.onLine === false));
-        }, true); TODO */
+        }, true);
+        */
+        if ( this.olint ) {
+          clearInterval(this.olint);
+          this.olint = null;
+        }
       }
 
       if ( _Tooltip ) {
@@ -1294,18 +1313,27 @@
 
     /**
      * Core::global_offline() -- The Browser 'offline' event handler
-     * @TODO
      * @param   DOMEvent    ev      DOM Event
      * @param   bool        state   If we went off-line
      * @return  void
      */
     global_offline : function(ev, state) {
-      if ( state ) { // Offline
-        this.online = false;
+      if ( !state ) { // Offline
+        if ( this.online ) {
+          this.online = false;
 
-        MessageBox(OSjs.Labels.WentOffline); // FIXME
+          API.system.notification("Warning", "You are now off-line!");
+
+          console.log("Core::global_offline()", this.online);
+        }
       } else { // Online
-        this.online = true;
+        if ( !this.online ) {
+          this.online = true;
+
+          API.system.notification("Information", "You are now back on-line!");
+
+          console.log("Core::global_offline()", this.online);
+        }
       }
     },
 
