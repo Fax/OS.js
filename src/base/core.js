@@ -841,6 +841,7 @@
       this.on_open    = function(ev) {};
       this.on_message = function(ev, js, data, err) {};
       this.on_close   = function(ev) {};
+      this.on_error   = function(ev) {};
 
       console.group("Socket::init()");
       console.log("Support", OSjs.Compability.SUPPORT_SOCKET);
@@ -860,6 +861,17 @@
         } catch ( e ) {}
         this._socket = null;
       }
+    },
+
+    /**
+     * Socket::_on_error() -- Base onerror event
+     * @param   Mixed     ev      WebSocket Event
+     * @return  void
+     */
+    _on_error : function(ev) {
+      console.log("Socket::error()", this);
+
+      this.on_error(ev);
     },
 
     /**
@@ -934,6 +946,9 @@
             };
             ws.onclose = function(ev) {
               self._on_close(ev);
+            };
+            ws.onerror = function(ev) {
+              self._on_error(ev);
             };
 
             this._socket = ws;

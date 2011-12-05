@@ -89,6 +89,9 @@
     delete i;
   }
 
+  // Misc
+  OSjs.Public.ENV = ((window.location.hostname.toLowerCase() == "OSjs.local") ? "dev" : "prod");
+
   // Labels
   OSjs.Labels = {
     "ApplicationCheckCompabilityMessage"  : "Your browser does not support '%s'",
