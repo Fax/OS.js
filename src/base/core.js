@@ -419,7 +419,7 @@
                         list.push(app);
                       }
 
-        API.notification("Warning", "You are now off-line!");
+                      API.notification("Warning", "You are now off-line!");
                     } else {
                       if ( app.mimes[check] == mime ) {
                         found.push(i);
@@ -1207,9 +1207,9 @@
             self.global_offline(ev, !(navigator.onLine === false));
           }, true);*/
 
-          this.olint = setInterval(function(ev) {
+          /*this.olint = setInterval(function(ev) {
             self.global_offline(ev, !(navigator.onLine === false));
-          }, ONLINECHK_FREQ);
+          }, ONLINECHK_FREQ);*/
 
           // Set some global variables
           if ( data.result.config ) {
