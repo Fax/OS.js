@@ -107,16 +107,17 @@ abstract class Application
    */
   public static function Handle($uuid, $action, $instance) {
     if ( $uuid && $action && $instance ) {
-      $cname    = $instance['name'];
-      $aargs    = $instance['args'];
-      $action   = $instance['action'];
+      if ( isset($instance['name']) && isset($instance['args']) && isset($instance['action']) ) {
+        $cname    = $instance['name'];
+        $aargs    = $instance['args'];
+        $action   = $instance['action'];
 
-      Application::init(APPLICATION_BUILD, $cname);
+        Application::init(APPLICATION_BUILD, $cname);
 
-      if ( class_exists($cname) ) {
-        return $cname::Event($uuid, $action, $aargs ? $aargs : Array());
+        if ( class_exists($cname) ) {
+          return $cname::Event($uuid, $action, $aargs ? $aargs : Array());
+        }
       }
-
     }
 
     return false;
