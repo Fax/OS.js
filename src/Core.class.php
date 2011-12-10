@@ -458,14 +458,14 @@ EOCSS;
               $json['result'] = $argv;
               $json['success'] = true;
             } else {
-              $json['error'] = "Failed to delete '{$src}'";
+              $json['error'] = "Failed to delete '{$argv}'";
             }
           } else if ( $method == "readurl" ) {
             if ( $ret = ApplicationAPI::readurl($argv) ) {
               $json['result'] = $ret;
               $json['success'] = true;
             } else {
-              $json['error'] = "Failed to read '{$src}'";
+              $json['error'] = "Failed to read '{$argv}'";
             }
           } else if ( $method == "readpdf" ) {
             $tmp  = explode(":", $argv);

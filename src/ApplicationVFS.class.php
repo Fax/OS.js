@@ -180,8 +180,10 @@ class ApplicationVFS
         }
       }
       $dpath = PATH_PROJECT_HTML . "/media/" . self::_safeName($path, true);
-      if ( is_file($dpath) || is_dir($dpath) ) {
+      if ( is_file($dpath) ) {
         return unlink($dpath);
+      } else if ( is_dir($dpath) ) {
+        return false; // TODO
       }
     }
     return null;
