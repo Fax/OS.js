@@ -57,16 +57,76 @@ class ApplicationVFS
     )
   );
 
-  protected static function _safeName($fn, $dir = false) {
-    if ( $dir ) {
-      $special_chars  = array("?", "[", "]", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
-    } else {
-      $special_chars  = array("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
+  /**
+   * Secure a file path
+   * @return Array
+   */
+  protected static function _secure($filename, $path = null, $exists = true) {
+    $base           = sprintf("%s/media", PATH_PROJECT_HTML);
+    $special_charsa = array("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
+    $special_charsb = array("?", "[", "]", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
+
+    // Convert single $filename into $path and $filename
+    if ( $filename && !$path ) {
+      $spl = preg_split("/\//", $filename, 2, PREG_SPLIT_NO_EMPTY);
+      if ( sizeof($spl) == 1 ) {
+        $path     = "/";
+        $filename = $spl[0];
+      } else if ( sizeof($spl) == 2 ) {
+        $path     = $spl[0] ? "/{$spl[0]}/" : "/";
+        $filename = $spl[1];
+      } else {
+        return false;
+      }
     }
-    $filename       = str_replace($special_chars, '', $fn);
-    //$filename       = preg_replace('/[\s-]+/', '-', $filename);
-    $filename       = preg_replace('/\s+/', ' ', $filename);
-    return trim(trim($filename, '.-_'));
+
+    // Ouput vars, Clean up strings
+    $filename     = $filename ? trim(preg_replace('/\s+/', ' ', str_replace($special_charsa, '', $filename)), '.-_')  : null;
+    $path         = $path     ? trim(preg_replace('/\s+/', ' ', str_replace($special_charsb, '', $path)), '.-_')      : null;
+    $location     = null;
+    $destination  = null;
+
+    // Check if the destination is not secured
+    if ( $path !== null ) {
+      foreach ( self::$VirtualDirs as $k => $v ) {
+        if ( startsWith($path, $k) ) {
+          if ( $v['attr'] != "rw" ) {
+            return false;
+          }
+        }
+      }
+
+      // Build real path
+      $location = $base . $path;
+      if ( $filename !== null ) {
+        $location .= "/{$filename}";
+      }
+      $location = realpath(dirname($location));
+
+      // Make sure we are inside the media folder
+      if ( !($location) || !(startsWith($location, $base)) ) {
+        return false;
+      }
+
+      // Create destination string
+      if ( $filename !== null ) {
+        $destination = "{$location}/{$filename}";
+      }
+    }
+
+    // Check for existance (if required)
+    if ( $exists && $destination ) {
+      if ( !(is_file($destination) || is_link($destination) || is_dir($destination)) ) {
+        return false;
+      }
+    }
+
+    return Array(
+      "filename"    => $filename,
+      "path"        => $path,
+      "location"    => $location,
+      "destination" => $destination
+    );
   }
 
   /**
@@ -75,35 +135,13 @@ class ApplicationVFS
    * @retrun  Mixed
    */
   public static function upload($file, $path) {
-    $pname = self::_safeName($path, true);
-
-    foreach ( self::$VirtualDirs as $k => $v ) {
-      if ( startsWith($pname, $k) ) {
-        if ( $v['attr'] != "rw" ) {
-          return false; // TODO: Exception
-        }
+    if ( ($res = self::_secure($file["name"], $path, false)) !== false ) {
+      if ( $result = move_uploaded_file($file["tmp_name"], $res["destination"]) ) {
+        //chown($dest, VFS_USER);
+        //chgrp($dest, VFS_GROUP);
+        //chmod($dest, VFS_FPERM);
+        return $result;
       }
-    }
-
-    $fname = self::_safeName($file["name"]);
-    $dest  = sprintf("%s/media%s/%s", PATH_PROJECT_HTML, $pname, $fname);
-
-    /*
-    Logger::get()->logInfo("-----------------------------------------------");
-    Logger::get()->logInfo("Base path:  " . PATH_PROJECT_HTML);
-    Logger::get()->logInfo("Input path: " . $path);
-    Logger::get()->logInfo("Safe path:  " . $pname);
-    Logger::get()->logInfo("Safe dest:  " . $fname);
-    Logger::get()->logInfo($dest);
-    Logger::get()->logInfo($file);
-    Logger::get()->logInfo("-----------------------------------------------");
-     */
-
-    if ( $result = move_uploaded_file($file["tmp_name"], $dest) ) {
-      //chown($dest, VFS_USER);
-      //chgrp($dest, VFS_GROUP);
-      //chmod($dest, VFS_FPERM);
-      return $result;
     }
 
     return false;
@@ -115,9 +153,9 @@ class ApplicationVFS
    * @return Mixed
    */
   public static function exists($argv) {
-    $path = PATH_PROJECT_HTML . "/media/" . self::_safeName($argv, true);
-
-    return file_exists($path) ? $path : false;
+    if ( $res = self::_secure($argv, null, true) ) {
+      return file_exists($res["destination"]);
+    }
   }
 
   /**
@@ -126,40 +164,33 @@ class ApplicationVFS
    * @return String
    */
   public static function cat($argv) {
-    $path = PATH_PROJECT_HTML . "/media/" . self::_safeName($argv, true);
-    if ( file_exists($path) && is_file($path) ) {
-      return file_get_contents($path);
+    if ( $res = self::_secure($argv) ) {
+      if ( file_exists($res["destination"]) ) {
+        return file_get_contents($res["destination"]);
+      }
     }
+
     return false;
   }
 
   /**
    * Write a file (put)
+   * TODO : OVERWRITE
    * @param  String   $argv     Argument
    * @return bool
    */
   public static function put($argv) {
-    $path = PATH_PROJECT_HTML . "/media/" . self::_safeName($argv['file'], true);
-    $encoding = isset($argv['encoding']) ? $argv['encoding'] : null;
-    $content = $argv['content'];
+    if ( $res = self::_secure($argv['file'], null, false) ) {
+      $encoding = isset($argv['encoding']) ? $argv['encoding'] : null;
+      $content  = $argv['content'];
 
-    foreach ( self::$VirtualDirs as $k => $v ) {
-      if ( startsWith($argv['file'], $k) ) {
-        if ( $v['attr'] != "rw" ) {
-          return false; // TODO: Exception
-        }
+      if ( $encoding === "data:image/png;base64" ) {
+        $content = base64_decode(str_replace(Array("{$encoding},", " "), Array("", "+"), $content));
       }
-    }
 
-
-    if ( $encoding === "data:image/png;base64" ) {
-      $content = base64_decode(str_replace(Array("{$encoding},", " "), Array("", "+"), $content));
-    }
-
-    // TODO : OVERWRITE
-    //if ( file_exists($path) && is_file($path) ) {
-    if ( file_put_contents($path, $content) ) {
-      return true;
+      if ( file_put_contents($res["destination"], $content) ) {
+        return true;
+      }
     }
 
     return false;
@@ -171,22 +202,17 @@ class ApplicationVFS
    * @return bool
    */
   public static function rm($path) {
-    if ( $path ) {
-      foreach ( self::$VirtualDirs as $k => $v ) {
-        if ( startsWith($path, $k) ) {
-          if ( $v['attr'] != "rwa" ) {
-            return false;
-          }
-        }
-      }
-      $dpath = PATH_PROJECT_HTML . "/media/" . self::_safeName($path, true);
-      if ( is_file($dpath) ) {
-        return unlink($dpath);
-      } else if ( is_dir($dpath) ) {
-        return false; // TODO
+    if ( $res = self::_secure($path, null, true) ) {
+      if ( is_file($res["destination"]) || is_link($res["destination"]) ) {
+        return unlink($res["destination"]);
+      } else if ( is_dir($res["destination"]) ) {
+        return rmdir($res["destination"]);
       }
     }
-    return null;
+
+    return false;
+
+
   }
 
   /**
@@ -197,26 +223,15 @@ class ApplicationVFS
    * @return bool
    */
   public static function mv($path, $src, $dest) {
-    if ( $dest ) {
-      foreach ( self::$VirtualDirs as $k => $v ) {
-        if ( startsWith($path, $k) ) {
-          if ( $v['attr'] != "rw" ) {
-            return false;
-          }
+    if ( $res_src = self::_secure($src, $path) ) {
+      if ( $res_dest = self::_secure($dest, null, false) ) {
+        if ( !file_exists($res_dest["destination"]) ) {
+          return rename($res_src["destination"], $res_dest["destination"]);
         }
       }
-
-      $old_path = PATH_PROJECT_HTML . "/media/" . self::_safeName($path);
-      $new_path = PATH_PROJECT_HTML . "/media/" . self::_safeName(str_replace($src, $dest, $path));
-
-      if ( file_exists($new_path) ) {
-        return false;
-      }
-
-      return rename($old_path, $new_path);
     }
 
-    return null;
+    return false;
   }
 
   /**

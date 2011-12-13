@@ -200,6 +200,27 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
         this.$element.find(".DialogButtons .Cancel").show();
 
         this.$element.find(".DialogButtons .Ok").show().click(function() {
+          if ( is_save ) {
+            if ( !self.selected_file ) {
+              var val = $(inp).val();
+
+              if ( val ) {
+                if ( !val.match(/^\//) ) {
+                  val = (current_dir == "/" ? "/" : (current_dir + "/")) + val;
+                }
+
+                self.selected_file = {
+                  "path" : val,
+                  "size" : -1,
+                  "mime" : "",
+                  "icon" : "",
+                  "type" : "file"
+                };
+              }
+            }
+
+          }
+
           if ( self.selected_file ) {
             self.clb_finish(self.selected_file.path, self.selected_file.mime);
           }
