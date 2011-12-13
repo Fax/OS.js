@@ -27,7 +27,7 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
 
       init : function(app) {
         this._super("ApplicationFileManager", false, app, windows);
-        this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationFileManager window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_close\"> <img alt=\"gtk-close\" src=\"/img/icons/16x16/actions/gtk-close.png\"/> <span>Close</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem2\"> <span><u>G</u>o</span> <ul class=\"GtkMenu menu2\"> <li class=\"GtkImageMenuItem imagemenuitem_home\"> <img alt=\"gtk-home\" src=\"/img/icons/16x16/actions/gtk-home.png\"/> <span>Home</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem3\"> <span><u>V</u>iew</span> <ul class=\"GtkMenu menu3\"> <li class=\"GtkImageMenuItem menuitem_refresh\"> <img alt=\"gtk-refresh\" src=\"/img/icons/16x16/actions/gtk-refresh.png\"/> <span>Refresh</span> </li> <li class=\"GtkRadioMenuItem menuitem_list\"> <span>List view</span> </li> <li class=\"GtkRadioMenuItem menuitem_icon\"> <span>Icon View</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview1\"></div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar1\"></div> </div> </td> </tr> </table> </div> </div> ").html();
+        this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationFileManager window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_mkdir\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_close\"> <img alt=\"gtk-close\" src=\"/img/icons/16x16/actions/gtk-close.png\"/> <span>Close</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem2\"> <span><u>G</u>o</span> <ul class=\"GtkMenu menu2\"> <li class=\"GtkImageMenuItem imagemenuitem_home\"> <img alt=\"gtk-home\" src=\"/img/icons/16x16/actions/gtk-home.png\"/> <span>Home</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem3\"> <span><u>V</u>iew</span> <ul class=\"GtkMenu menu3\"> <li class=\"GtkImageMenuItem menuitem_refresh\"> <img alt=\"gtk-refresh\" src=\"/img/icons/16x16/actions/gtk-refresh.png\"/> <span>Refresh</span> </li> <li class=\"GtkRadioMenuItem menuitem_list\"> <span>List view</span> </li> <li class=\"GtkRadioMenuItem menuitem_icon\"> <span>Icon View</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview1\"></div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar1\"></div> </div> </td> </tr> </table> </div> </div> ").html();
         this._title = 'File Manager';
         this._icon = 'apps/file-manager.png';
         this._is_draggable = true;
@@ -53,15 +53,28 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
 
         this.app.createUploadDialog(_CurrentDir, function(path, fname) {
           self.chdir(_CurrentDir, undefined, function() {
-            self.$element.find(".ApplicationFileManager .iconview1 .type_file").each(function() {
-              var name = $(this).find("input[name=name]").val();
-              if ( name == fname ) {
-                $(this).find(".Inner").mousedown();
+            self.__selItem(fname);
+          });
+        });
+      },
+
+      EventMenuMkdir : function(el, ev) {
+        var self = this;
+
+        this.app.createInputDialog("New Directory", "Directory name:", function(dir) {
+          if ( dir ) {
+            API.system.call("mkdir", (_CurrentDir + "/" + dir), function(result, error) {
+              if ( error === null ) {
+                self.chdir(_CurrentDir, undefined, function() {
+                  self.__selItem(result);
+                });
               }
             });
-          });
-
+          } else {
+            self.app.createMessageDialog("error", "Cannot create this directory");
+          }
         });
+
       },
 
 
@@ -231,6 +244,15 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
         this.$element.find(".ApplicationFileManager td").addClass("ContextMenu");
       },
 
+      __selItem : function(what) {
+        this.$element.find(".ApplicationFileManager .iconview1 .type_file").each(function() {
+          var name = $(this).find("input[name=name]").val();
+          if ( name == what ) {
+            $(this).find(".Inner").mousedown();
+          }
+        });
+      },
+
 
       _selItem : function(t) {
         var self = this;
@@ -302,6 +324,10 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
           el.find(".imagemenuitem_new").click(function(ev) {
             self.EventMenuNew(this, ev);
           }).find("span").html("Upload");
+
+          el.find(".imagemenuitem_mkdir").click(function(ev) {
+            self.EventMenuMkdir(this, ev);
+          }).find("span").html("Create Directory");
 
           el.find(".imagemenuitem_close").click(function(ev) {
             self.EventMenuClose(this, ev);

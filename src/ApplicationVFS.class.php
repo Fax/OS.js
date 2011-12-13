@@ -58,6 +58,33 @@ class ApplicationVFS
   );
 
   /**
+   * Set permissions
+   * @return void
+   */
+  protected static function _permissions($dest, $dir = false) {
+    if ( VFS_SET_PERM ) {
+      if ( $u = VFS_USER ) {
+        chown($dest, $u);
+      }
+      if ( $g = VFS_GROUP ) {
+        chgrp($dest, $g);
+      }
+      if ( $dir ) {
+        if ( $p = VFS_DPERM ) {
+          chmod($dest, $p);
+        }
+      } else {
+        if ( $p = VFS_FPERM ) {
+          chmod($dest, $p);
+        }
+      }
+      if ( $m = VFS_UMASK ) {
+        umask($dest, $m);
+      }
+    }
+  }
+
+  /**
    * Secure a file path
    * @return Array
    */
@@ -111,6 +138,8 @@ class ApplicationVFS
       // Create destination string
       if ( $filename !== null ) {
         $destination = "{$location}/{$filename}";
+      } else {
+        $destination = "{$location}{$path}";
       }
     }
 
@@ -137,10 +166,28 @@ class ApplicationVFS
   public static function upload($file, $path) {
     if ( ($res = self::_secure($file["name"], $path, false)) !== false ) {
       if ( $result = move_uploaded_file($file["tmp_name"], $res["destination"]) ) {
-        //chown($dest, VFS_USER);
-        //chgrp($dest, VFS_GROUP);
-        //chmod($dest, VFS_FPERM);
+        self::_permissions($res["destination"]);
+
         return $result;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Create a directory
+   * @param   String   $path     Directory path name
+   * @retrun  bool
+   */
+  public static function mkdir($argv) {
+    if ( $res = self::_secure($argv, null, false) ) {
+      if ( !is_dir($res["destination"]) ) {
+        if ( mkdir($res["destination"]) ) {
+          self::_permissions($res["destination"], true);
+
+          return basename($res["destination"]);
+        }
       }
     }
 
@@ -152,10 +199,14 @@ class ApplicationVFS
    * @param  String   $argv     Argument
    * @return Mixed
    */
-  public static function exists($argv) {
+  public static function exists($argv, $ret_name = false) {
     if ( $res = self::_secure($argv, null, true) ) {
-      return file_exists($res["destination"]);
+      if ( file_exists($res["destination"]) ) {
+        return $ret_name ? $res["destination"] : true;
+      }
     }
+
+    return false;
   }
 
   /**
@@ -175,11 +226,11 @@ class ApplicationVFS
 
   /**
    * Write a file (put)
-   * TODO : OVERWRITE
-   * @param  String   $argv     Argument
+   * @param  String   $argv         Argument
+   * @param  bool     $overwrite    Overwrite existing file
    * @return bool
    */
-  public static function put($argv) {
+  public static function put($argv, $overwrite = true) {
     if ( $res = self::_secure($argv['file'], null, false) ) {
       $encoding = isset($argv['encoding']) ? $argv['encoding'] : null;
       $content  = $argv['content'];
@@ -188,8 +239,10 @@ class ApplicationVFS
         $content = base64_decode(str_replace(Array("{$encoding},", " "), Array("", "+"), $content));
       }
 
-      if ( file_put_contents($res["destination"], $content) ) {
-        return true;
+      if ( $overwrite || !file_exists($res["destination"]) ) {
+        if ( file_put_contents($res["destination"], $content) ) {
+          return true;
+        }
       }
     }
 

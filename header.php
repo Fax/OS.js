@@ -37,10 +37,12 @@ define("DEFAULT_TIMEZONE",    "Europe/Oslo");
 define("ENABLE_CACHE",        false);
 define("ENABLE_LOGGING",      true);
 
-define("VFS_USER",            (PROJECT_HOST != "amitop" ? "www-data" : "apache")); // chown() user
-define("VFS_GROUP",           (PROJECT_HOST != "amitop" ? "www-data" : "apache")); // chown() group
+define("VFS_SET_PERM",        false);
+define("VFS_USER",            "www-data"); //(PROJECT_HOST != "amitop" ? "www-data" : "apache")); // chown() user
+define("VFS_GROUP",           "www-data"); //(PROJECT_HOST != "amitop" ? "www-data" : "apache")); // chown() group
 define("VFS_FPERM",           "0555"/*0644*/); // chmod() for uploaded files
 define("VFS_DPERM",           "0555"/*0644*/); // chmod() for uploaed dirs
+define("VFS_UMASK",           ""); // umask()
 
 //
 // Server

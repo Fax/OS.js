@@ -427,6 +427,7 @@ EOCSS;
               $json['error'] = "Invalid argument";
             }
           } else if ( $method == "write" ) {
+            // TODO: Overwrite parameter
             if ( ApplicationVFS::put($argv) ) {
               $json['success'] = true;
               $json['result'] = true;
@@ -459,6 +460,13 @@ EOCSS;
               $json['success'] = true;
             } else {
               $json['error'] = "Failed to delete '{$argv}'";
+            }
+          } else if ( $method == "mkdir" ) {
+            if ( $res = ApplicationVFS::mkdir($argv) ) {
+              $json['result'] = $res;
+              $json['success'] = true;
+            } else {
+              $json['error'] = "Failed to create directory '{$argv}'";
             }
           } else if ( $method == "readurl" ) {
             if ( $ret = ApplicationAPI::readurl($argv) ) {
