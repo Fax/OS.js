@@ -4738,8 +4738,8 @@
       this.cmd_cancel = cmd_cancel || function() {};
 
       this._super("Dialog", type);
-      this._width    = 200;
-      this._height   = 70;
+      this._width    = 220;
+      this._height   = 90;
       this._gravity  = "center";
       this._content  = message;
       this._is_ontop = true;

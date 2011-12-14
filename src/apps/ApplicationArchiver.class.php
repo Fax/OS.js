@@ -26,13 +26,9 @@ class ApplicationArchiver
   }
 
   public static function Event($uuid, $action, Array $args) {
-    $base     = PATH_PROJECT_HTML . "/media";
-    $path     = "{$base}{$args['path']}";
-
     if ( $action == "extract" ) {
-      $dest = "{$base}{$args['destination']}";
       try {
-        if ( ($a = ApplicationVFS::extract_archive($path, $dest)) !== false ) {
+        if ( ($a = ApplicationVFS::extract_archive($args['path'], $args['destination'])) !== false ) {
           return Array("result" => $a);
         } else {
           return Array("error" => "Failed to open");
@@ -45,7 +41,7 @@ class ApplicationArchiver
       $total = 0;
       $bytes = 0;
 
-      if ( ($a = ApplicationVFS::ls_archive($path)) ) {
+      if ( ($a = ApplicationVFS::ls_archive($args['path'])) ) {
 
         $i = 0;
         foreach ( $a as $file => $info ) {
@@ -103,6 +99,7 @@ EOHTML;
 </div>
 EOHTML;
 
+        $path = $args['path'];
         return Array("items" => $out, "total" => $total, "bytes" => $bytes, "path" => ($path == "/" ? "Home" : $path));
       }
     }

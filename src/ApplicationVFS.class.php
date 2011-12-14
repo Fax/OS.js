@@ -108,8 +108,8 @@ class ApplicationVFS
     }
 
     // Ouput vars, Clean up strings
-    $filename     = $filename ? trim(preg_replace('/\s+/', ' ', str_replace($special_charsa, '', $filename)), '.-_')  : null;
-    $path         = $path     ? trim(preg_replace('/\s+/', ' ', str_replace($special_charsb, '', $path)), '.-_')      : null;
+    $filename     = $filename !== null ? trim(preg_replace('/\s+/', ' ', str_replace($special_charsa, '', $filename)), '.-_')  : null;
+    $path         = $path     !== null ? trim(preg_replace('/\s+/', ' ', str_replace($special_charsb, '', $path)), '.-_')      : null;
     $location     = null;
     $destination  = null;
 
@@ -128,6 +128,7 @@ class ApplicationVFS
       if ( $filename !== null ) {
         $location .= "/{$filename}";
       }
+
       $location = realpath(dirname($location));
 
       // Make sure we are inside the media folder
@@ -294,10 +295,13 @@ class ApplicationVFS
    * @return Mixed
    */
   public static function extract_archive($arch, $dest) {
-    require PATH_PROJECT_LIB . "/Archive.php";
-
-    if ( $a = Archive::open($arch) ) {
-      return $a->extract($dest);
+    if ( $res_a = self::_secure($arch, null, true) ) {
+      if ( $res_d = self::_secure("foo", $dest, false) ) {
+        require PATH_PROJECT_LIB . "/Archive.php";
+        if ( $a = Archive::open($res_a["destination"]) ) {
+          return $a->extract(dirname($res_d["destination"]));
+        }
+      }
     }
     return false;
   }
@@ -313,8 +317,15 @@ class ApplicationVFS
 
     $result = Array("dir" => Array(), "file" => Array());
 
+    if ( ($tmp = self::_secure($arch, $path, true)) === false ) {
+      return false;
+    }
+
+    $apath = $tmp["destination"];
+    unset($tmp);
+
     try {
-      if ( $a = Archive::open($arch) ) {
+      if ( $a = Archive::open($apath) ) {
         foreach ( $a->read() as $f ) {
           $file  = trim($f['name']);
           $size  = $f['size_real'];
