@@ -56,6 +56,7 @@
   <script type="text/javascript" src="/?resource=dialog.rename.js"></script>
   <script type="text/javascript" src="/?resource=dialog.copy.js"></script>
   <script type="text/javascript" src="/?resource=dialog.color.js"></script>
+  <script type="text/javascript" src="/?resource=dialog.properties.js"></script>
 
   <!-- Google Analytics -->
   <script type="text/javascript">
@@ -227,6 +228,37 @@
     <div class="FileChooserInput">
       <input type="text" />
     </div>
+  </div>
+</div>
+
+<div id="OperationDialogFileProperties" style="display:none">
+  <div class="OperationDialog OperationDialogFileProperties">
+    <table>
+      <tr>
+        <td class="pri">Filename<td>
+        <td class="sec TDName">&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="pri">Path<td>
+        <td class="sec TDPath">&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="pri">Size<td>
+        <td class="sec TDSize">&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="pri">MIME<td>
+        <td class="sec TDMIME">&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="pri">Information<td>
+        <td class="sec TDInfo">
+          <div class="InfoBox">
+            <pre></pre>
+          </div>
+        </td>
+      </tr>
+    </table>
   </div>
 </div>
 

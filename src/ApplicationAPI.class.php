@@ -34,12 +34,15 @@ class ApplicationAPI
   }
 
   /**
-   * Get Audio-file information
+   * Get Media-file information
    * @param  String   $fname      Audio-file path
    * @return Mixed
    */
-  public static function audioInfo($fname) {
-    if ( $path = ApplicationVFS::exists($fname) ) {
+  public static function mediaInfo($fname, $exists = true) {
+    if ( !$exists || $path = ApplicationVFS::exists($fname, true) ) {
+      if ( !$exists ) {
+        $path = $fname;
+      }
 
       $pcmd   = escapeshellarg($path);
       $result = exec("exiftool -j {$pcmd}", $outval, $retval);

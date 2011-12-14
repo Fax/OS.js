@@ -211,6 +211,56 @@ class ApplicationVFS
   }
 
   /**
+   * File Information
+   * @param  String   $argv     Argument
+   * @return Mixed
+   */
+  public static function file_info($argv) {
+    if ( $res = self::_secure($argv, null, true) ) {
+      if ( file_exists($res["destination"]) ) {
+        $base = sprintf("%s/media", PATH_PROJECT_HTML);
+
+        // Read MIME info
+        $fi = new finfo(FILEINFO_MIME);
+        $finfo = $fi->file($res["destination"]);
+        //$mime  = explode("; charset=", $finfo);
+        $mime  = explode(";", $finfo);
+        $mime  = trim(reset($mime));
+        $fmime = self::_fixMIME($mime, $ext);
+        unset($fi);
+
+        $fmmime = trim(strstr($fmime, "/", true));
+        $info   = null;
+        switch ( $fmmime ) {
+          case "image" :
+            $info = ApplicationAPI::mediaInfo($res["destination"], false);
+          break;
+          case "audio" :
+            $info = ApplicationAPI::mediaInfo($res["destination"], false);
+          break;
+          case "video" :
+            $info = ApplicationAPI::mediaInfo($res["destination"], false);
+          break;
+        }
+
+        if ( !($loc = str_replace($base, "", $res["location"])) ) {
+          $loc = "/";
+        }
+
+        return Array(
+          "filename" => $res["filename"],
+          "path"     => $loc,
+          "size"     => filesize($res["destination"]),
+          "mime"     => $fmime,
+          "info"     => $info
+        );
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * Read a file (cat)
    * @param  String   $argv     Argument
    * @return String

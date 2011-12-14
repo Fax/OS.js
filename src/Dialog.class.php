@@ -45,6 +45,9 @@ abstract class Dialog
     "UploadOperationDialog" => Array(
       "resources" => Array("dialog.upload.js")
     ),
+    "FilePropertyOperationDialog" => Array(
+      "resources" => Array("dialog.properties.js")
+    ),
     "CompabilityDialog" => Array(
       "resources" => Array("dialog.compability.js")
     ),

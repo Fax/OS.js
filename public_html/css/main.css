@@ -602,3 +602,23 @@ input.Disabled {
   margin : 0;
   padding : 0;
 }
+
+.OperationDialogFileProperties table {
+  width : 382px;
+}
+
+.OperationDialogFileProperties td.pri {
+  font-weight : bold;
+  width : 70px;
+}
+
+.OperationDialogFileProperties td {
+  vertical-align : top;
+}
+
+.OperationDialogFileProperties .InfoBox {
+  height : 245px;
+  width : 300px;
+  overflow:auto;
+  background:#fff;
+}

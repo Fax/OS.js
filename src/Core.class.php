@@ -486,7 +486,16 @@ EOCSS;
             } else {
               $json['error'] = "Failed to read '{$argv}'";
             }
-          } else {
+
+          } else if ( $method == "fileinfo" ) {
+            if ( $ret = ApplicationVFS::file_info($argv) ) {
+              $json['result'] = $ret;
+              $json['success'] = true;
+            } else {
+              $json['error'] = "Failed to read '{$argv}'";
+            }
+          }
+        }/* else {
             if ( function_exists($method) ) {
               $json['result']  = call_user_func_array($method, $argv);
               $json['success'] = true;
@@ -494,7 +503,7 @@ EOCSS;
               $json['error'] = "Function does not exist";
             }
           }
-        }
+        }*/
 
         return json_encode($json);
       }

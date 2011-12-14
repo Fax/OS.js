@@ -232,7 +232,13 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
                     }
                   });
                 });
-              }}/*,
+              }},
+              {"title" : "Properties", "method" : function() {
+                self.app.createFilePropertyDialog(path, function(result) {
+                  return;
+                });
+              }}
+              /*,
               {"title" : "Download", "method" : function() {
                 alert('Not implemented yet'); // TODO
               }}*/

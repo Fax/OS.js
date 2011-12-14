@@ -27,7 +27,7 @@ class ApplicationMusicPlayer
 
   public static function Event($uuid, $action, Array $args) {
     if ( $action == "info" ) {
-      return ApplicationAPI::audioInfo($args['path']);
+      return ApplicationAPI::mediaInfo($args['path']);
     }
 
     return false;

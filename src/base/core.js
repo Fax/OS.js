@@ -586,6 +586,17 @@
         return _WM.addWindow(new OSjs.Dialogs.ColorOperationDialog(OperationDialog, API, [start_color, clb_finish]));
       },
 
+      'dialog_properties' : function(filename, clb_finish) {
+        if ( !_WM ) {
+          MessageBox(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
+        console.info("=> API File Properties Dialog");
+
+        return _WM.addWindow(new OSjs.Dialogs.FilePropertyOperationDialog(OperationDialog, API, [filename, clb_finish]));
+      },
+
       'notification' : function(title, message, icon) {
         if ( _Desktop ) {
           _Desktop.createNotification(title, message, icon);
@@ -2106,6 +2117,17 @@
     },
 
     /**
+     * Application::createFilePropertyDialog() -- Create Dialog: File properties
+     * @see     API.system.dialog_properties
+     * @return  void
+     */
+    createFilePropertyDialog : function(filename, callback) {
+      this._addWindow(API.system.dialog_properties(filename, function(result) {
+        callback(result);
+      }));
+    },
+
+    /**
      * Application::addWorker() -- Create a WebWorker
      * @param   String  name      Worker name
      * @param   String  uri       Worker URI (script path)
@@ -3254,7 +3276,7 @@
               return;
             }
 
-            var pitem = new PanelItemOperationDialog(OperationDialog, API, [this, function(diag) {
+            var pitem = new OSjs.Dialogs.PanelItemOperationDialog(OperationDialog, API, [this, function(diag) {
             var items = _Settings._get("system.panel.registered", true);
 
             var name, li, current, selected;
@@ -3541,7 +3563,7 @@
     configure : function() {
       var self = this;
       if ( self.configurable ) {
-        _WM.addWindow(new PanelItemOperationDialog(OperationDialog, API, [this, function() {
+        _WM.addWindow(new OSjs.Dialogs.PanelItemOperationDialog(OperationDialog, API, [this, function() {
           self.reload();
         }]));
       }
