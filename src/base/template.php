@@ -1,3 +1,13 @@
+<?php
+  $str = '  <script type="text/javascript" src="/?resource=%s"></script>';
+  $resources = Array();
+  foreach ( Dialog::$Registered as $name => $opts ) {
+    foreach ( $opts["resources"] as $res ) {
+      $resources[] = sprintf($str, $res);
+    }
+  }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,17 +56,7 @@
   <script type="text/javascript" src="/?library=main.js"></script>
 
   <!-- OS.js sources -->
-  <script type="text/javascript" src="/?resource=dialog.crash.js"></script>
-  <script type="text/javascript" src="/?resource=dialog.compability.js"></script>
-  <script type="text/javascript" src="/?resource=dialog.input.js"></script>
-  <script type="text/javascript" src="/?resource=dialog.panel.js"></script>
-  <script type="text/javascript" src="/?resource=dialog.launch.js"></script>
-  <script type="text/javascript" src="/?resource=dialog.file.js"></script>
-  <script type="text/javascript" src="/?resource=dialog.upload.js"></script>
-  <script type="text/javascript" src="/?resource=dialog.rename.js"></script>
-  <script type="text/javascript" src="/?resource=dialog.copy.js"></script>
-  <script type="text/javascript" src="/?resource=dialog.color.js"></script>
-  <script type="text/javascript" src="/?resource=dialog.properties.js"></script>
+<?php print implode("\n", $resources) . "\n"; ?>
 
   <!-- Google Analytics -->
   <script type="text/javascript">
