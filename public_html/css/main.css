@@ -622,3 +622,7 @@ input.Disabled {
   overflow:auto;
   background:#fff;
 }
+.OperationDialogFileProperties .InfoBox pre {
+  margin : 0;
+  padding : 0;
+}

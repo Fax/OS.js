@@ -221,6 +221,8 @@ class ApplicationVFS
         $base = sprintf("%s/media", PATH_PROJECT_HTML);
 
         // Read MIME info
+        $expl = explode(".", $file);
+        $ext = end($expl);
         $fi = new finfo(FILEINFO_MIME);
         $finfo = $fi->file($res["destination"]);
         //$mime  = explode("; charset=", $finfo);

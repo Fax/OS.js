@@ -46,7 +46,9 @@ OSjs.Dialogs.FilePropertyOperationDialog = (function($, undefined) {
               var html = "";
               for ( var x in result.info ) {
                 if ( result.info.hasOwnProperty(x) ) {
-                  html += (x + ": " + result.info[x] + "\n");
+                  if ( x && result.info[x] ) {
+                    html += (x + ": " + result.info[x] + "\n");
+                  }
                 }
               }
               infoel.html(html);
