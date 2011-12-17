@@ -34,8 +34,6 @@ OSjs.Dialogs.FilePropertyOperationDialog = (function($, undefined) {
 
         API.system.call("fileinfo", this.filename, function(result, error) {
           if ( !error && result ) {
-            console.log(result);
-            console.log(self.$element.find("table"));
             self.$element.find(".TDName").html(result.filename);
             self.$element.find(".TDPath").html(result.path);
             self.$element.find(".TDSize").html(result.size);
@@ -58,10 +56,11 @@ OSjs.Dialogs.FilePropertyOperationDialog = (function($, undefined) {
           }
         });
 
+        this.$element.find(".DialogButtons .Ok").hide();
         //this.$element.find(".DialogButtons .Close").hide();
         //this.$element.find(".DialogButtons .Cancel").show();
 
-        this.$element.find(".DialogButtons .Ok").show().click(function() {
+        this.$element.find(".DialogButtons .Close").show().click(function() {
           self.clb_finish();
         });
 

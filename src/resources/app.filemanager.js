@@ -170,24 +170,19 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
           return false;
         });
 
-        this.$element.find(".ApplicationFileManager .Inner").bind('click', function(ev) {
-          $(document).click(); // Trigger this! (deselects context-menu)
-          ev.stopPropagation();
-        }).bind('dblclick', function(ev) {
-
-
+        function __open(el) {
           var fname = fpath =  ftype = fmime = null;
 
-          if ( this.tagName == "td" ) {
-            fname = $(this).parent().find("input[name=name]").val();
-            fpath = $(this).parent().find("input[name=path]").val();
-            ftype = $(this).parent().find("input[name=type]").val();
-            fmime = $(this).parent().find("input[name=mime]").val();
+          if ( el.tagName == "td" ) {
+            fname = $(el).parent().find("input[name=name]").val();
+            fpath = $(el).parent().find("input[name=path]").val();
+            ftype = $(el).parent().find("input[name=type]").val();
+            fmime = $(el).parent().find("input[name=mime]").val();
           } else {
-            fname = $(this).find("input[name=name]").val();
-            fpath = $(this).find("input[name=path]").val();
-            ftype = $(this).find("input[name=type]").val();
-            fmime = $(this).find("input[name=mime]").val();
+            fname = $(el).find("input[name=name]").val();
+            fpath = $(el).find("input[name=path]").val();
+            ftype = $(el).find("input[name=type]").val();
+            fmime = $(el).find("input[name=mime]").val();
           }
 
           if ( ftype == "dir" ) {
@@ -195,17 +190,33 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
           } else {
             API.system.run(fpath, fmime);
           }
+        }
+
+        this.$element.find(".ApplicationFileManager .Inner").bind('click', function(ev) {
+          $(document).click(); // Trigger this! (deselects context-menu)
+          ev.stopPropagation();
+        }).bind('dblclick', function(ev) {
+          __open(this);
           //ev.stopPropagation();
           ev.preventDefault();
         }).bind('mousedown', function(ev) {
-          self._selItem(this);
+          var el = this;
+
+          self._selItem(el);
 
           //ev.stopPropagation();
           ev.preventDefault();
 
-          var pro = $(this).find("input[name=protected]").val() == "1";
-          var path = $(this).find("input[name='path']").val();
-          var fname = $(this).find("input[name='name']").val();
+          var pro, path, fname;
+          if ( this.tagName == "td" ) {
+            pro = $(this).find("input[name=protected]").val() == "1";
+            path = $(this).find("input[name='path']").val();
+            fname = $(this).find("input[name='name']").val();
+          } else {
+            pro = $(this).parent().find("input[name=protected]").val() == "1";
+            path = $(this).parent().find("input[name='path']").val();
+            fname = $(this).parent().find("input[name='name']").val();
+          }
 
           if ( pro ) {
             return API.application.context_menu(ev, [
@@ -215,6 +226,9 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
             ], $(this));
           } else {
             return API.application.context_menu(ev, [
+              {"title" : "Open", "method" : function() {
+                __open(el);
+              }},
               {"title" : "Delete", "method" : function() {
                 self.app.createMessageDialog("confirm", "Are you sure you want to delete '" + fname + "'?", null, function() {
                   API.system.call("delete", path, function(result, error) {
