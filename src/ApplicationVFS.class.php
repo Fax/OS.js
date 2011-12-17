@@ -88,20 +88,20 @@ class ApplicationVFS
    * Secure a file path
    * @return Array
    */
-  protected static function _secure($filename, $path = null, $exists = true) {
+  protected static function _secure($filename, $path = null, $exists = true, $write = true) {
     $base           = sprintf("%s/media", PATH_PROJECT_HTML);
     $special_charsa = array("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
     $special_charsb = array("?", "[", "]", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
 
     // Convert single $filename into $path and $filename
     if ( $filename && !$path ) {
-      $spl = preg_split("/\//", $filename, 2, PREG_SPLIT_NO_EMPTY);
+      $spl = preg_split("/\//", $filename, -1, PREG_SPLIT_NO_EMPTY);
       if ( sizeof($spl) == 1 ) {
         $path     = "/";
         $filename = $spl[0];
-      } else if ( sizeof($spl) == 2 ) {
-        $path     = $spl[0] ? "/{$spl[0]}/" : "/";
-        $filename = $spl[1];
+      } else if ( sizeof($spl) > 1 ) {
+        $filename = array_pop($spl);
+        $path     = "/" . implode("/", $spl) . "/";
       } else {
         return false;
       }
@@ -115,10 +115,12 @@ class ApplicationVFS
 
     // Check if the destination is not secured
     if ( $path !== null ) {
-      foreach ( self::$VirtualDirs as $k => $v ) {
-        if ( startsWith($path, $k) ) {
-          if ( $v['attr'] != "rw" ) {
-            return false;
+      if ( $write ) {
+        foreach ( self::$VirtualDirs as $k => $v ) {
+          if ( startsWith($path, $k) ) {
+            if ( $v['attr'] != "rw" ) {
+              return false;
+            }
           }
         }
       }
@@ -269,10 +271,8 @@ class ApplicationVFS
    * @return String
    */
   public static function cat($argv) {
-    if ( $res = self::_secure($argv) ) {
-      if ( file_exists($res["destination"]) ) {
-        return file_get_contents($res["destination"]);
-      }
+    if ( $res = self::_secure($argv, null, true, false) ) {
+      return file_get_contents($res["destination"]);
     }
 
     return false;
