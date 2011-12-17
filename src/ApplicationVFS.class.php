@@ -221,6 +221,7 @@ class ApplicationVFS
         $base = sprintf("%s/media", PATH_PROJECT_HTML);
 
         // Read MIME info
+        $file = basename($res["destination"]);
         $expl = explode(".", $file);
         $ext = end($expl);
         $fi = new finfo(FILEINFO_MIME);
@@ -329,8 +330,9 @@ class ApplicationVFS
    * @return bool
    */
   public static function mv($path, $src, $dest) {
-    if ( $res_src = self::_secure($src, $path) ) {
-      if ( $res_dest = self::_secure($dest, null, false) ) {
+    $dir = dirname($path);
+    if ( $res_src = self::_secure($src, $dir) ) {
+      if ( $res_dest = self::_secure($dest, $dir, false) ) {
         if ( !file_exists($res_dest["destination"]) ) {
           return rename($res_src["destination"], $res_dest["destination"]);
         }
