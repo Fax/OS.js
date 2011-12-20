@@ -55,6 +55,7 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
             "development" : ["Development", "categories/applications-development.png", []],
             "games"       : ["Games", "categories/applications-games.png", []],
             "graphics"    : ["Graphics", "categories/applications-graphics.png", []],
+            "office"      : ["Office", "categories/applications-office.png", []],
             "internet"    : ["Internet", "categories/applications-internet.png", []],
             "multimedia"  : ["Multimedia", "categories/applications-multimedia.png", []],
             "system"      : ["System", "categories/applications-system.png", []],

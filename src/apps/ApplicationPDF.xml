@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application name="PDF" file="ApplicationPDF.class.php" schema="ApplicationPDF.glade" category="utilities">
+<application name="PDF" file="ApplicationPDF.class.php" schema="ApplicationPDF.glade" category="office">
   <property name="enabled">true</property>
   <property name="title">PDF Viewer</property>
   <property name="icon">mimetypes/gnome-mime-application-pdf.png</property>

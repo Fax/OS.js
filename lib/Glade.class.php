@@ -120,6 +120,10 @@ class Glade
       "element" => "li",
       "inner"   => "button"
     ),
+    "GtkToolButton" => Array(
+      "element" => "li",
+      "inner"   => "button"
+    ),
 
     "GtkNotebook" => Array(
       "element" => "div",
@@ -240,7 +244,44 @@ class Glade
     "gtk-media-next" => Array(
       "label" => "Next",
       "icon" => "actions/media-skip-forward.png"
-    )
+    ),
+
+    "gtk-bold" => Array(
+      "label" => "Bold",
+      "icon" => "actions/gtk-bold.png"
+    ),
+    "gtk-underline" => Array(
+      "label" => "Underline",
+      "icon" => "actions/gtk-underline.png"
+    ),
+    "gtk-italic" => Array(
+      "label" => "Italic",
+      "icon" => "actions/gtk-italic.png"
+    ),
+    "gtk-strikethrough" => Array(
+      "label" => "Strikethrough",
+      "icon" => "actions/gtk-strikethrough.png"
+    ),
+    "gtk-select-color" => Array(
+      "label" => "Color Selection",
+      "icon" => "apps/preferences-desktop-theme.png"
+    ),
+    "gtk-select-font" => Array(
+      "label" => "Font Selection",
+      "icon" => "apps/fonts.png"
+    ),
+    "format-justify-left" => Array(
+      "label" => "Align Left",
+      "icon" => "actions/format-justify-left.png"
+    ),
+    "format-justify-center" => Array(
+      "label" => "Align Center",
+      "icon" => "actions/format-justify-center.png"
+    ),
+    "format-justify-right" => Array(
+      "label" => "Align Right",
+      "icon" => "actions/format-justify-right.png"
+    ),
   );
 
   /**
@@ -616,7 +657,12 @@ class Glade
                     $img = $doc->createElement("img");
                     $img->setAttribute("alt", $orig);
                     $img->setAttribute("src", $icon);
-                    $node->appendChild($img);
+
+                    if ( $inner /*$class == "GtkToggleToolButton" || $class == "GtkToolButton"*/ ) {
+                      $inner->appendChild($img);
+                    } else {
+                      $node->appendChild($img);
+                    }
                   }
 
                   if ( $tooltip ) {
@@ -632,8 +678,11 @@ class Glade
                     } else {
                       $node->appendChild(new DomText($pv));
                     }
-                  } else if ( $class == "GtkToggleToolButton" || $class == "GtkCheckButton" ) {
-                    $inner->appendChild(new DomText($pv));
+                  } else if ( $class == "GtkToggleToolButton" || $class == "GtkCheckButton" || $class == "GtkToolButton" ) {
+                    //$inner->appendChild(new DomText($pv));
+                    $ttmp = $doc->createElement("span");
+                    $ttmp->appendChild(new DomText($pv));
+                    $inner->appendChild($ttmp);
                   } else if ( $class == "GtkMenuItem" || $class == "GtkImageMenuItem" || $class == "GtkRadioMenuItem" ) {
                     $node->appendChild(self::_getHotkeyed($doc, $pv));
                   }
