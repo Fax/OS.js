@@ -67,13 +67,19 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
             if ( apps.hasOwnProperty(a) ) {
               o = apps[a];
               (function(apn) {
-                cats[o.category][2].push({
+                var it = {
                   "title" : o.title,
                   "method" : function() {
                     api.system.launch(apn);
                   },
                   "icon" : o.icon.match(/^\/img/) ? o.icon : ("/img/icons/16x16/" + o.icon)
-                });
+                };
+
+                if ( cats[o.category] !== undefined ) {
+                  cats[o.category][2].push(it);
+                } else {
+                  cats["unknown"][2].push(it);
+                }
               })(a);
             }
           }
