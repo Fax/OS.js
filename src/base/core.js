@@ -41,17 +41,18 @@
   /**
    * @constants URIs
    */
-  var WEBSOCKET_URI      = "localhost:8888";        //!< WebSocket URI
-  var AJAX_URI           = "/";                     //!< AJAX URI (POST)
-  var RESOURCE_URI       = "/?resource=";           //!< Resource loading URI (GET)
-  var LIBRARY_URI        = "/?library=";            //!< Library URI (GET)
-  var THEME_URI          = "/?theme=";              //!< Themes loading URI (GET)
-  var FONT_URI           = "/?font=";               //!< Font loading URI (GET)
-  var CURSOR_URI         = "/?cursor=";             //!< Cursor loading URI (GET)
-  var UPLOAD_URI         = "/upload.php";           //!< File upload URI (POST)
-  var ICON_URI           = "/img/icons/%s/%s";      //!< Icons URI (GET)
-  var ICON_URI_16        = "/img/icons/16x16/%s";   //!< Icons URI 16x16 (GET)
-  var ICON_URI_32        = "/img/icons/32x32/%s";   //!< Icons URI 32x32 (GET)
+  var WEBSOCKET_URI    = "localhost:8888";          //!< WebSocket URI
+  var AJAX_URI         = "/";                       //!< AJAX URI (POST)
+  var RESOURCE_URI     = "/?resource=";             //!< Resource loading URI (GET)
+  var LIBRARY_URI      = "/?library=";              //!< Library URI (GET)
+  var THEME_URI        = "/?theme=";                //!< Themes loading URI (GET)
+  var FONT_URI         = "/?font=";                 //!< Font loading URI (GET)
+  var CURSOR_URI       = "/?cursor=";               //!< Cursor loading URI (GET)
+  var WORKER_URI       = "/?resource=worker.%s.js"; //!< WebWorker loading URI (GET)
+  var UPLOAD_URI       = "/upload.php";             //!< File upload URI (POST)
+  var ICON_URI         = "/img/icons/%s/%s";        //!< Icons URI (GET)
+  var ICON_URI_16      = "/img/icons/16x16/%s";     //!< Icons URI 16x16 (GET)
+  var ICON_URI_32      = "/img/icons/32x32/%s";     //!< Icons URI 32x32 (GET)
   // @endconstants
 
   /**
@@ -1095,13 +1096,14 @@
     _worker      : null,          //!< Worker object
     _worker_uri  : null,          //!< Worker URI
     _on_process  : null,          //!< Worker (onmessage) Processing callback
+    _on_error    : null,          //!< Worker (onerror) Error callback
 
     /**
      * WebWorker::init() -- Constructor
      * @throws Exception
      * @constructor
      */
-    init : function(uri, process_callback) {
+    init : function(uri, process_callback, process_error) {
       if ( !OSjs.Compability.SUPPORT_WORKER ) {
         throw ("Cannot create WebWorker: " + OSjs.Public.CompabilityErrors.worker);
       }
@@ -1109,14 +1111,22 @@
       this._worker_uri = uri;
       this._worker     = new Worker(this._worker_uri);
       this._on_process = (typeof process_callback == "function") ? process_callback : function() {};
+      this._on_error   = (typeof error_callback == "function") ? error_callback : function() {};
 
       var self = this;
       this._worker.onmessage = function(ev) {
         self.process(ev, ev.data);
       };
+      this._worker.onerror = function(ev) {
+        self.error(ev, ev.lineno, ev.filename, e.message);
+      };
 
       var src = uri.split("/").pop();
       this._super(sprintf("WebWorker [%s]", src), "actions/gtk-execute.png", true);
+
+      console.group("WebWorker::init()");
+      console.log("URI", uri);
+      console.groupEnd();
     },
 
     /**
@@ -1124,10 +1134,17 @@
      * @destructor
      */
     destroy : function() {
+      console.group("WebWorker::destroy()");
       if ( this._worker ) {
         try {
-          this.terminate();
-        } catch ( eee ) {}
+          if ( this.terminate() ) {
+            console.log("Terminated Worker");
+          } else {
+            console.error("Failed to Terminate Worker");
+          }
+        } catch ( eee ) {
+          console.error("Error", eee);
+        }
 
         this._worker.onmessage = null;
         this._worker = null;
@@ -1135,6 +1152,8 @@
 
       this._worker_uri = null;
       this._on_process = null;
+
+      console.groupEnd();
 
       this._super();
     },
@@ -1157,6 +1176,14 @@
      */
     process : function(ev, data) {
       return this._on_process(ev, data);
+    },
+
+    /**
+     * WebWorker::error() -- error incoming data
+     * @return void
+     */
+    error : function(ev, line, file, error) {
+      return this._on_error(ev, line, file, error);
     },
 
     /**
@@ -2158,14 +2185,16 @@
 
     /**
      * Application::addWorker() -- Create a WebWorker
-     * @param   String  name      Worker name
-     * @param   String  uri       Worker URI (script path)
+     * @param   String    name        Worker name
+     * @param   String    resource    Worker resource name (worker.NAME.js)
+     * @param   Function  mcallback   Process callback function
+     * @param   Function  ecallback   Error callback function
      * @see     WebWorker
      * @return  WebWorker
      */
-    addWorker : function(name, uri) {
+    addWorker : function(name, resource, mcallback, ecallback) {
       if ( !this._workers[name] ) {
-        var w = new WebWorker(uri);
+        var w = new WebWorker(sprintf(WORKER_URI, resource), mcallback, ecallback);
         this._workers[name] = w;
         return w;
       }

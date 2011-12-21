@@ -389,7 +389,6 @@ OSjs.Applications.ApplicationWriter = (function($, undefined) {
         this._super(root_window);
         root_window.show();
 
-
         // Do your stuff here
       }
     });

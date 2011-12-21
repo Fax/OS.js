@@ -101,6 +101,20 @@ OSjs.Applications.ApplicationTest = (function($, undefined) {
         root_window.show();
 
         // Do your stuff here
+
+        console.group("ApplicationTest::Application::run()");
+        var w = this.addWorker("Test", "test", function(ev, data) {
+          console.log("ApplicationTest::_on_process()", ev, data);
+
+          self.removeWorker("Test");
+        }, function(ev, line, file, error) {
+          console.error("ApplicationTest::_on_error()", ev, [line, file, error]);
+
+          self.removeWorker("Test");
+        });
+        console.log("Worker: ", w);
+        console.log("Init", w.post("5"));
+        console.groupEnd();
       }
     });
 
