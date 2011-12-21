@@ -8,6 +8,10 @@
 OSjs.Applications.ApplicationTest = (function($, undefined) {
   "$:nomunge";
 
+  var THREADS    = 4;
+  var ITERATIONS = 100;
+  var STRETCH    = true;
+
   /**
    * @param GtkWindow     GtkWindow            GtkWindow API Reference
    * @param Application   Application          Application API Reference
@@ -32,14 +36,14 @@ OSjs.Applications.ApplicationTest = (function($, undefined) {
       init : function(app) {
         this._super("Window_window1", false, app, windows);
         this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationTest window1\"> <div class=\" \"></div> </div> </div> ").html();
-        this._title = 'Test';
+        this._title = 'WebWorker Test';
         this._icon = 'status/starred.png';
         this._is_draggable = true;
-        this._is_resizable = true;
+        this._is_resizable = false;
         this._is_scrollable = false;
         this._is_sessionable = true;
         this._is_minimizable = true;
-        this._is_maximizable = true;
+        this._is_maximizable = false;
         this._is_closable = true;
         this._is_orphan = false;
         this._skip_taskbar = false;
@@ -48,6 +52,8 @@ OSjs.Applications.ApplicationTest = (function($, undefined) {
         this._height = 300;
         this._gravity = null;
 
+        this.canvas = null;
+        this.context = null;
       },
 
       destroy : function() {
@@ -63,11 +69,26 @@ OSjs.Applications.ApplicationTest = (function($, undefined) {
         if ( el ) {
 
           // Do your stuff here
+          var test = $("<canvas width=\"490\" height=\"260\"></canvas>");
+          this.$element.find(".window1").html(test);
+
+          var canvas  = $(test).get(0);
+          var context = context.getContext("2d");
+
+          context.fillStyle = "rgb(0,0,0)";
+          context.fillRect(0, 0, 490, 260);
+
+          this.context = context;
+          this.canvas  = canvas;
 
           return true;
         }
 
         return false;
+      },
+
+      draw : function() {
+
       }
     });
 
@@ -84,7 +105,7 @@ OSjs.Applications.ApplicationTest = (function($, undefined) {
 
       init : function() {
         this._super("ApplicationTest", argv);
-        this._compability = [];
+        this._compability = ["canvas"];
       },
 
       destroy : function() {
@@ -102,20 +123,20 @@ OSjs.Applications.ApplicationTest = (function($, undefined) {
 
         // Do your stuff here
 
-        console.group("ApplicationTest::Application::run()");
-        var w = this.addWorker("Test", "test", function(ev, data) {
+        var canvas = root_window.canvas;
+        var context = root_window.context;
+
+        /*var w = this.addWorker("Test", "test", function(ev, data) {
           console.log("ApplicationTest::_on_process()", ev, data);
+        });*/
 
-          self.removeWorker("Test");
-        }, function(ev, line, file, error) {
-          console.error("ApplicationTest::_on_error()", ev, [line, file, error]);
-
-          self.removeWorker("Test");
-        });
-        console.log("Worker: ", w);
-        console.log("Init", w.post("5"));
+        console.group("ApplicationTest::Application::run()");
+        console.log("Canvas", canvas, context);
         console.groupEnd();
+
+        w.post();
       }
+
     });
 
     return new __ApplicationTest();
