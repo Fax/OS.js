@@ -190,6 +190,17 @@
   </div>
 </div>
 
+<div id="OperationDialogFont" style="display:none">
+  <div class="OperationDialog OperationDialogFont">
+    <div class="OperationDialogInner">
+      <select class="OperationDialogFontList" multiple="false" height="10"></select>
+      <select class="OperationDialogFontSize" multiple="false" height="10"></select>
+      <div class="OperationDialogFontPreview">
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="OperationDialogCopy" style="display:none">
   <div class="OperationDialog OperationDialogCopy">
     <h1>Copy file</h1>

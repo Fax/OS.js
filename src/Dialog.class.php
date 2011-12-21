@@ -24,6 +24,9 @@ abstract class Dialog
     "ColorOperationDialog" => Array(
       "resources" => Array("dialog.color.js")
     ),
+    "FontOperationDialog" => Array(
+      "resources" => Array("dialog.font.js")
+    ),
     "CopyOperationDialog" => Array(
       "resources" => Array("dialog.copy.js")
     ),

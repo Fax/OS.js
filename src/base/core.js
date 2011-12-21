@@ -586,6 +586,17 @@
         return _WM.addWindow(new OSjs.Dialogs.ColorOperationDialog(OperationDialog, API, [start_color, clb_finish]));
       },
 
+      'dialog_font' : function(current_font, current_size, clb_finish) {
+        if ( !_WM ) {
+          MessageBox(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
+        console.info("=> API Font Dialog");
+
+        return _WM.addWindow(new OSjs.Dialogs.FontOperationDialog(OperationDialog, API, [current_font, current_size, clb_finish]));
+      },
+
       'dialog_properties' : function(filename, clb_finish) {
         if ( !_WM ) {
           MessageBox(OSjs.Labels.WindowManagerMissing);
@@ -1433,16 +1444,20 @@
     /**
      * Core::global_mousedown() -- Global Event Handler: mousedown
      * @param   DOMEvent    ev      DOM Event
-     * @return  void
+     * @return  bool
      */
     global_mousedown : function(ev) {
       var t = ev.target || ev.srcElement;
       if ( t && t.tagName ) {
-        var tagName = t.tagName.toLowerCase();
-        if ( tagName !== "input" && tagName !== "textarea" && tagName !== "select" ) {
-          ev.preventDefault();
+        if ( !$(t).hasClass("textarea") && !$(t).parents(".textarea") ) {
+          var tagName = t.tagName.toLowerCase();
+          if ( tagName !== "input" && tagName !== "textarea" && tagName !== "select" && tagName != "option" ) {
+            ev.preventDefault();
+            return false;
+          }
         }
       }
+      return true;
     },
 
     /**
@@ -2057,6 +2072,17 @@
     createColorDialog : function(color, callback) {
       this._addWindow(API.system.dialog_color(color, function(rgb, hex) {
         callback(rgb, hex);
+      }));
+    },
+
+    /**
+     * Application::createFontDialog() -- Create Dialog: Font Chooser
+     * @see     API.system.dialog_font
+     * @return  void
+     */
+    createFontDialog : function(font, size, callback) {
+      this._addWindow(API.system.dialog_font(font, size, function(font, size) {
+        callback(font, size);
       }));
     },
 

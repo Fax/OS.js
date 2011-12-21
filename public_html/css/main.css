@@ -626,3 +626,39 @@ input.Disabled {
   margin : 0;
   padding : 0;
 }
+
+.OperationDialogFont {
+}
+.OperationDialogFontList {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  bottom : 10px;
+  width : 140px;
+  background : #fff;
+  border : 0 none;
+  margin : 0;
+  padding : 0;
+}
+.OperationDialogFontSize {
+  position : absolute;
+  top : 0px;
+  left : 150px;
+  bottom : 10px;
+  width : 40px;
+  background : #fff;
+  border : 0 none;
+  margin : 0;
+  padding : 0;
+}
+.OperationDialogFontPreview {
+  position : absolute;
+  top : 0px;
+  right : 0px;
+  bottom : 10px;
+  width : 140px;
+  background : #fff;
+  border : 0 none;
+  margin : 0;
+  padding : 0;
+}
