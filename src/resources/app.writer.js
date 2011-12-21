@@ -1,6 +1,9 @@
 /*!
  * Application: ApplicationWriter
  *
+ * https://developer.mozilla.org/en/rich-text_editing_in_mozilla
+ * http://dev.opera.com/articles/view/rich-html-editing-in-the-browser-part-1/
+ *
  * @package OSjs.Applications
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @class

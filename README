@@ -63,6 +63,8 @@ Built-In Applications, Dialogs and Panel Items:
 * Application: Arkanoid game (HTML5-Canvas)
 * Application: HTML Viewer / Browser
 * Application: PDF Viewer (SVG)
+* Application: File Archiver (FVS File Archives)
+* Application: Writer (HTML5 Text Editor)
 * System: About
 * System: User Information
 * System: Settings
@@ -74,9 +76,8 @@ Built-In Applications, Dialogs and Panel Items:
 * Panel Item: Weather Information (HTML5-Geolocation)
 * Panel Item: Launcher Dock
 * Panel Item: Clock
-* Dialog: Color Picker
-* Dialog: File Copy, Upload (HTML5)
-* Dialog: File Open, Save, Rename
+* Dialog: Font and Color Picker
+* Dialog: File Open, Save, Copy, Upload (HTML5)
 * Dialog: Lauch Application
 * Dialog: Modify Panel/PanelItem
-* Dialog: Input-box
+* Dialog: Confirm, Input and Message Boxes
