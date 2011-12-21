@@ -24,6 +24,7 @@ Features and Highlights:
 * Follows strict coding standards, fully documented
 * Uses HTML5 and CSS2+ features (Supported features are detected on first run.)
 * Uses a light-weight PHP backend
+* Lazy-loading of resources (on-demand loading to reduce bandwidth usage upon startup)
 * Simple process managment (process stack, kill processes etc)
 * Desktop environment (Customizable settings, themes, fonts, cursors etc)
 * Window Managment (With standard window actions like maximize, minimize, restore, on-top and so on)
