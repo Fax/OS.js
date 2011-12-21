@@ -42,13 +42,13 @@ Compability (Client-Side):
 -------------------------------------------------------------------------------
 Tested on Linux and Windows platforms
 
-* Working: Linux with WebKit/Safari/Chrome, Gecko/Mozilla/Firefox
-* Wokring: Google Android 2.2 (Samsung Galaxy S tested 2.2/2.3)
-* Wokring: Apple iOS 4 (iPad iOS4 tested)
-* Probably working: Windows with WebKit/Safari/Chrome, Gecko/Mozilla/Firefox
-* Partially working: Opera 10+ – Problem with Glade/GTK CSS
-* Partially working: Internet Explorer 8 – Problem with Glade/GTK CSS, Missing WebSocket and Canvas
-* Not tested: Internet Explorer 9
+* Working: Linux with WebKit/Safari/Chrome, Gecko/Mozilla/Firefox (Safari has some [very] minor CSS issues with font styles, depends upon browser version.)
+* Wokring: Google Android (Tested  devices: Samsung I9000 with Froyo/Honeycomb/ICS)
+* Wokring: Apple iOS (Tested devices: iPad iOS4 tested)
+* Probably working: Windows with WebKit/Safari/Chrome, Gecko/Mozilla/Firefox (Should behave as in Linux)
+* Partially working: Opera 10+: Problem with Glade/GTK CSS
+* Partially working: Internet Explorer 8: Problem with Glade/GTK CSS, Missing WebSocket and Canvas
+* Not tested: Internet Explorer 9+
 
 Built-In Applications, Dialogs and Panel Items:
 -------------------------------------------------------------------------------
