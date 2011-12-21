@@ -1113,7 +1113,7 @@
 
       var _default_error = function(ev, line, file, error) {
         var name  = "WebWorker";
-        var msg   = sprintf("An error occured while processing WebWorker script '%s' on line %d", file, line);
+        var msg   = sprintf(OSjs.Labels.WebWorkerError, file, line);
         var trace = error;
 
         _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, [name, msg, trace]));
