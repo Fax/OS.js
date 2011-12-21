@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application name="Writer" file="ApplicationWriter.class.php" schema="ApplicationWriter.glade" category="office">
+  <property name="enabled">true</property>
+  <property name="title">Writer</property>
+  <property name="icon">apps/libreoffice34-writer.png</property>
+  <property name="system">false</property>
+
+  <resource>app.writer.css</resource>
+  <resource>app.writer.js</resource>
+  <mime>text/*</mime>
+</application>

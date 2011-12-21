@@ -49,7 +49,7 @@
     <resource>app.clock.css</resource>
     <resource>app.clock.js</resource>
   </application>
-  <application name="Textpad" title="Textpad" icon="apps/text-editor.png" system="false" category="utilities" class="ApplicationTextpad" file="ApplicationTextpad.class.php">
+  <application name="Textpad" title="Textpad" icon="apps/text-editor.png" system="false" category="office" class="ApplicationTextpad" file="ApplicationTextpad.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"Textpad","icon":"apps\/text-editor.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":400,"height":400,"gravity":""}]]></property>
     </window>
@@ -86,6 +86,14 @@
     <resource>app.musicplayer.js</resource>
     <mime>audio/*</mime>
   </application>
+  <application name="Writer" title="Writer" icon="apps/libreoffice34-writer.png" system="false" category="office" class="ApplicationWriter" file="ApplicationWriter.class.php">
+    <window id="window1">
+      <property name="properties"><![CDATA[{"type":"window","title":"Textpad","icon":"apps\/libreoffice34-writer.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":400,"height":400,"gravity":""}]]></property>
+    </window>
+    <resource>app.writer.css</resource>
+    <resource>app.writer.js</resource>
+    <mime>text/*</mime>
+  </application>
   <application name="IRC" title="IRC" icon="apps/system-users.png" system="false" category="internet" class="ApplicationIRC" file="ApplicationIRC.class.php">
     <window id="dialog1">
       <property name="properties"><![CDATA[{"type":"dialog","title":"IRC Options","icon":"apps\/system-users.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":320,"height":260,"gravity":""}]]></property>
@@ -118,7 +126,7 @@
     <resource>sys.user.css</resource>
     <resource>sys.user.js</resource>
   </application>
-  <application name="PDF" title="PDF Viewer" icon="mimetypes/gnome-mime-application-pdf.png" system="false" category="utilities" class="ApplicationPDF" file="ApplicationPDF.class.php">
+  <application name="PDF" title="PDF Viewer" icon="mimetypes/gnome-mime-application-pdf.png" system="false" category="office" class="ApplicationPDF" file="ApplicationPDF.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"PDF Viewer","icon":"mimetypes\/gnome-mime-application-pdf.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":400,"height":400,"gravity":""}]]></property>
     </window>
