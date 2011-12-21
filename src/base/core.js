@@ -1097,29 +1097,41 @@
     _worker_uri  : null,          //!< Worker URI
     _on_process  : null,          //!< Worker (onmessage) Processing callback
     _on_error    : null,          //!< Worker (onerror) Error callback
+    _running     : null,          //!< Worker running state
 
     /**
      * WebWorker::init() -- Constructor
      * @throws Exception
      * @constructor
      */
-    init : function(uri, process_callback, process_error) {
+    init : function(uri, process_callback, error_callback) {
+      var self = this;
+
       if ( !OSjs.Compability.SUPPORT_WORKER ) {
         throw ("Cannot create WebWorker: " + OSjs.Public.CompabilityErrors.worker);
       }
 
+      var _default_error = function(ev, line, file, error) {
+        var name  = "WebWorker";
+        var msg   = sprintf("An error occured while processing WebWorker script '%s' on line %d", file, line);
+        var trace = error;
+
+        _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, [name, msg, trace]));
+
+        self.destroy();
+      };
+
       this._worker_uri = uri;
       this._worker     = new Worker(this._worker_uri);
       this._on_process = (typeof process_callback == "function") ? process_callback : function() {};
-      this._on_error   = (typeof error_callback == "function") ? error_callback : function() {};
+      this._on_error   = (typeof error_callback == "function") ? error_callback : _default_error;
 
-      var self = this;
-      this._worker.onmessage = function(ev) {
+      this._worker.addEventListener('message', function(ev) {
         self.process(ev, ev.data);
-      };
-      this._worker.onerror = function(ev) {
-        self.error(ev, ev.lineno, ev.filename, e.message);
-      };
+      }, false);
+      this._worker.addEventListener('error', function(ev) {
+        self.error(ev, ev.lineno, ev.filename, ev.message);
+      }, false);
 
       var src = uri.split("/").pop();
       this._super(sprintf("WebWorker [%s]", src), "actions/gtk-execute.png", true);
@@ -1136,6 +1148,16 @@
     destroy : function() {
       console.group("WebWorker::destroy()");
       if ( this._worker ) {
+
+        try {
+          this._worker.removeEventListener('message', function(ev) {
+            self.process(ev, ev.data);
+          }, false);
+          this._worker.removeEventListener('error', function(ev) {
+            self.error(ev, ev.lineno, ev.filename, ev.message);
+          }, false);
+        } catch ( eee ) {}
+
         try {
           if ( this.terminate() ) {
             console.log("Terminated Worker");
@@ -1146,12 +1168,13 @@
           console.error("Error", eee);
         }
 
-        this._worker.onmessage = null;
         this._worker = null;
       }
 
       this._worker_uri = null;
       this._on_process = null;
+      this._on_error   = null;
+      this._running    = false;
 
       console.groupEnd();
 
@@ -1165,6 +1188,7 @@
     terminate : function() {
       if ( this._worker ) {
         this._worker.terminate();
+        this._running = false;
         return true;
       }
       return false;
@@ -1175,7 +1199,11 @@
      * @return void
      */
     process : function(ev, data) {
-      return this._on_process(ev, data);
+      var res = this._on_process(ev, data);
+      if ( res ) {
+        this._running = true;
+      }
+      return res;
     },
 
     /**
