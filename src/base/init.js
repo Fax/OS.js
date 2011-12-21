@@ -107,6 +107,7 @@
     "WentOnline"                          : "You are now back on-line!",
     "Quit"                                : "Are you sure you want to quit? To save your session use the Logout functionallity.",
     "PanelItemRemove"                     : "Are you sure you want to remove this item?",
+    "WebWorkerError"                      : "An error occured while processing WebWorker script '%s' on line %d",
     "ContextMenuPanel"                    : {
       "title"     : "Panel",
       "add"       : "Add new item"
