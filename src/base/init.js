@@ -103,7 +103,36 @@
     "CrashDialogTitleProcess"             : "Process '%s' crashed!",
     "InitLaunchError"                     : "Cannot launch '%s'.\nMaximum allowed processes are: %d",
     "WindowManagerMissing"                : "Cannot perform this operation because the Window Manager is not running.",
-    "WentOffline"                         : "Seems like you went offline. Please re-connect to continue using OS.js"
+    "WentOffline"                         : "Seems like you went offline. Please re-connect to continue using OS.js",
+    "WentOnline"                          : "You are now back on-line!",
+    "Quit"                                : "Are you sure you want to quit? To save your session use the Logout functionallity.",
+    "PanelItemRemove"                     : "Are you sure you want to remove this item?",
+    "ContextMenuPanel"                    : {
+      "title"     : "Panel",
+      "add"       : "Add new item"
+    },
+    "ContextMenuDesktop"                  : {
+      "title"     : "Desktop",
+      "wallpaper" : "Change Wallpaper",
+      "sort"      : "Tile Windows"
+    },
+    "ContextMenuWindowMenu"               : {
+      "max"     : "Maximize",
+      "min"     : "Minimize",
+      "restore" : "Restore",
+      "show"    : "Show",
+      "ontop"   : "Always on top",
+      "same"    : "Same as other windows",
+      "close"   : "Close"
+    },
+    "DialogTitles"                        : {
+      "info"      : "Information",
+      "error"     : "Error",
+      "question"  : "Question",
+      "confirm"   : "Confirm",
+      "warning"   : "Warning",
+      "default"   : "Dialog"
+    }
   };
 
   // Application Compability error exceptions

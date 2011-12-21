@@ -49,6 +49,9 @@
   var FONT_URI           = "/?font=";               //!< Font loading URI (GET)
   var CURSOR_URI         = "/?cursor=";             //!< Cursor loading URI (GET)
   var UPLOAD_URI         = "/upload.php";           //!< File upload URI (POST)
+  var ICON_URI           = "/img/icons/%s/%s";      //!< Icons URI (GET)
+  var ICON_URI_16        = "/img/icons/16x16/%s";   //!< Icons URI 16x16 (GET)
+  var ICON_URI_32        = "/img/icons/32x32/%s";   //!< Icons URI 32x32 (GET)
   // @endconstants
 
   /**
@@ -1357,7 +1360,7 @@
         if ( this.online ) {
           this.online = false;
 
-          API.system.notification("Warning", "You are now off-line!");
+          API.system.notification("Warning", OSjs.Labels.WentOffline);
 
           console.log("Core::global_offline()", this.online);
         }
@@ -1365,7 +1368,7 @@
         if ( !this.online ) {
           this.online = true;
 
-          API.system.notification("Information", "You are now back on-line!");
+          API.system.notification("Information", OSjs.Labels.WentOnline);
 
           console.log("Core::global_offline()", this.online);
         }
@@ -2882,9 +2885,10 @@
         return true;
       }
 
+      var labels = OSjs.Labels.ContextMenuDesktop;
       var ret = API.application.context_menu(ev, [
-        {"title" : "Desktop", "disabled" : true, "attribute" : "header"},
-        {"title" : "Change wallpaper", "method" : function() {
+        {"title" : labels.title, "disabled" : true, "attribute" : "header"},
+        {"title" : labels.wallpaper, "method" : function() {
           var dir = _Settings._get("desktop.wallpaper.path");
           if ( dir ) {
             var tmp = dir.split("/");
@@ -2902,7 +2906,7 @@
           }, ["image/*"], "open", dir);
         }
       },
-      {"title" : "Tile windows", "method" : function() { 
+      {"title" : labels.sort, "method" : function() { 
         API.ui.windows.tile();
       }}
 
@@ -3294,9 +3298,10 @@
 
       this.$element.mousedown(function(ev) {
 
+        var labels = OSjs.Labels.ContextMenuPanel;
         var ret = API.application.context_menu(ev, [
-          {"title" : "Panel", "disabled" : true, "attribute" : "header"},
-          {"title" : "Add new item", "method" : function() {
+          {"title" : labels.title, "disabled" : true, "attribute" : "header"},
+          {"title" : labels.add, "method" : function() {
             if ( !_WM ) {
               MessageBox(OSjs.Labels.WindowManagerMissing);
               return;
@@ -3577,7 +3582,7 @@
     crash : function(error) {
       this.$element.find("*").remove();
       this.$element.addClass("Crashed");
-      this.$element.html("<img alt=\"\" src=\"/img/icons/16x16/status/error.png\"/><span>" + error + "</span>");
+      this.$element.html("<img alt=\"\" src=\"" + sprintf(ICON_URI_16, "status/error.png") + "\"/><span>" + error + "</span>");
 
       this._crashed = true;
     },
@@ -3605,7 +3610,7 @@
         {"title" : self._named, "disabled" : true, "attribute" : "header"},
         {"title" : "Move", "method" : function() {}, "disabled" : true},
         {"title" : "Remove", "method" : function() {
-          API.system.dialog("confirm", "Are you sure you want to remove this item?", null, function() {
+          API.system.dialog("confirm", OSjs.Labels.PanelItemRemove, null, function() {
             self._panel.removeItem(self);
           });
         }}
@@ -3853,7 +3858,7 @@
             }
 
             if ( icon ) {
-              el.find(".WindowTopInner img").attr("src", sprintf("/img/icons/16x16/status/gtk-dialog-%s.png", icon));
+              el.find(".WindowTopInner img").attr("src", sprintf(ICON_URI_16, sprintf("status/gtk-dialog-%s.png", icon)));
             } else {
               el.find(".WindowTopInner img").hide();
             }
@@ -3863,21 +3868,22 @@
           el.find(".WindowContentInner").html(this._content);
 
           el.find(".WindowTopInner img").click(function(ev) {
+            var labels = OSjs.Labels.ContextMenuWindowMenu;
             API.application.context_menu(ev, [
-              {"title" : (self._is_maximized ? "Restore" : "Maximize"), "icon" : "actions/window_fullscreen.png", "disabled" : !self._is_maximizable, "method" : function() {
+              {"title" : (self._is_maximized ? labels.restore : labels.max), "icon" : "actions/window_fullscreen.png", "disabled" : !self._is_maximizable, "method" : function() {
                 if ( self._is_maximizable ) {
                   el.find(".ActionMaximize").click();
                 }
               }},
-              {"title" : (self._is_ontop ? "Same as other windows" : "Always on top"), "icon" : "actions/zoom-original.png", "method" : function() {
+              {"title" : (self._is_ontop ? labels.same : labels.ontop), "icon" : "actions/zoom-original.png", "method" : function() {
                 self._ontop();
               }},
-              {"title" : (self._is_minimized ? "Show" : "Minimize"), "icon" : "actions/window_nofullscreen.png", "disabled" : !self._is_minimizable, "method" : function() {
+              {"title" : (self._is_minimized ? labels.show : labels.min), "icon" : "actions/window_nofullscreen.png", "disabled" : !self._is_minimizable, "method" : function() {
                 if ( self._is_minimizable ) {
                   el.find(".ActionMinimize").click();
                 }
               }},
-              {"title" : "Close", "disabled" : !self._is_closable, "icon" : "actions/window-close.png", "method" : function() {
+              {"title" : labels.close, "disabled" : !self._is_closable, "icon" : "actions/window-close.png", "method" : function() {
                 if ( self._is_closable ) {
                   el.find(".ActionClose").click();
                 }
@@ -4208,7 +4214,7 @@
       if ( this._icon.match(/^\/img/) ) {
         return this._icon;
       }
-      return sprintf("/img/icons/%s/%s", size, this._icon);
+      return sprintf(ICON_URI, size, this._icon);
     },
 
     //
@@ -4792,26 +4798,18 @@
       this._content  = message;
       this._is_ontop = true;
 
-      // FIXME: Labels
       switch ( type ) {
-        case "info" :
-          this._title    = "Information";
+        case "info"       :
+        case "error"      :
+        case "confirm"    :
+        case "question"   :
+        case "warning"    :
+          this._title    = OSjs.Labels[type];
         break;
-        case "error" :
-          this._title    = "Error";
-        break;
-        case "question" :
-          this._title    = "Question";
-        break;
-        case "confirm"  :
-          this._title    = "Confirmation";
-        break;
-        case "warning" :
-          this._title    = "Warning";
-        break;
+
         default :
           if ( !this._title ) {
-            this._title  = "Dialog";
+            this._title  = OSjs.Labels["default"];
           }
         break;
       }
@@ -4963,7 +4961,7 @@
         ev.preventDefault();
       }
 
-      var msg = 'Are you sure you want to quit? To save your session use the Logout functionallity.';
+      var msg = OSjs.Labels.Quit;
       ev.returnValue = msg;
       return msg;
     }
