@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application name="Test" file="ApplicationTest.class.php" schema="ApplicationTest.glade" category="other">
+  <property name="enabled">true</property>
+  <property name="title">WebWorker Test</property>
+  <property name="icon">status/starred.png</property>
+  <property name="system">false</property>
+
+  <resource>app.test.css</resource>
+  <resource>app.test.js</resource>
+  <!--
+  <resource>worker.test.js</resource>
+  -->
+</application>

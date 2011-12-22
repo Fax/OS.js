@@ -78,6 +78,13 @@
     <resource>sys.logout.css</resource>
     <resource>sys.logout.js</resource>
   </application>
+  <application name="Test" title="WebWorker Test" icon="status/starred.png" system="false" category="other" class="ApplicationTest" file="ApplicationTest.class.php">
+    <window id="window1">
+      <property name="properties"><![CDATA[{"type":"window","title":"WebWorker Test","icon":"status\/starred.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":500,"height":300,"gravity":""}]]></property>
+    </window>
+    <resource>app.test.css</resource>
+    <resource>app.test.js</resource>
+  </application>
   <application name="MusicPlayer" title="Music Player" icon="status/audio-volume-high.png" system="false" category="multimedia" class="ApplicationMusicPlayer" file="ApplicationMusicPlayer.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"Music Player","icon":"status\/audio-volume-high.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":450,"height":450,"gravity":""}]]></property>
