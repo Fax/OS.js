@@ -737,16 +737,21 @@ OSjs.Applications.ApplicationDraw = (function($, undefined) {
           Style.cap    = $(el).find(".combobox_linecap").val();
           Style.join   = $(el).find(".combobox_linejoin").val();
 
+          try {
           DrawDocument.init(el);
 
-          var fname = null;
-          if ( argv['path'] ) {
-            fname = argv['path'];
-            DrawDocument.open("/media/" + fname, function() {
+            var fname = null;
+            if ( argv['path'] ) {
+              fname = argv['path'];
+              DrawDocument.open("/media/" + fname, function() {
+                self._update(fname);
+              }, null);
+            } else {
               self._update(fname);
-            }, null);
-          } else {
-            self._update(fname);
+            }
+
+          } catch ( e ) {
+            console.error("Failed to init DrawDocument", e);
           }
 
         }
