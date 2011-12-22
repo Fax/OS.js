@@ -154,8 +154,8 @@
     "databaseStorage" : "window.databaseStorage()",
     "socket"          : "window.WebSocket()",
     "richtext"        : "window.contentEditable (Rich Text Editing)",
-    "upload"          : "Your browser does not support async uploads",
-    "worker"          : "Your browser does not support Web Workers"
+    "upload"          : "Asynchronous Uploads",
+    "worker"          : "Web Workers"
   };
 
   // Compability mapping
