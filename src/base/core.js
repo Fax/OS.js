@@ -1740,6 +1740,9 @@
         if ( this.hasResource(res) )
           return;
 
+        if ( res.match(/^worker\./) )
+          return;
+
         var type = res.split(".");
         type = type[type.length - 1];
 

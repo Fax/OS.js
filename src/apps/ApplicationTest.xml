@@ -7,7 +7,5 @@
 
   <resource>app.test.css</resource>
   <resource>app.test.js</resource>
-  <!--
   <resource>worker.test.js</resource>
-  -->
 </application>
