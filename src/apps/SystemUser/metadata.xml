@@ -1,4 +1,4 @@
-<application name="User" file="SystemUser.class.php" schema="SystemUser.glade">
+<application name="User" file="SystemUser.class.php" schema="schema.glade">
   <property name="enabled">true</property>
   <property name="title">User Information</property>
   <property name="icon">apps/user-info.png</property>

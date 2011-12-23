@@ -377,7 +377,7 @@ EOCSS;
 if ( $dh  = opendir($root) ) {
   while (false !== ($filename = readdir($dh))) {
     if ( preg_match("/^(Application|System)(.*)$/", $filename) ) {
-      $path = $root . $filename . "/{$filename}.xml";
+      $path = $root . $filename . "/metadata.xml";
       if ( !file_exists($path) )
         continue;
 

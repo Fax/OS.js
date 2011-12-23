@@ -1,4 +1,4 @@
-<application name="Settings" file="SystemSettings.class.php" schema="SystemSettings.glade">
+<application name="Settings" file="SystemSettings.class.php" schema="schema.glade">
   <property name="enabled">true</property>
   <property name="title">Settings</property>
   <property name="icon">categories/applications-system.png</property>

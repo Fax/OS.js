@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application name="Viewer" file="ApplicationTickTackToe.class.php" schema="ApplicationTickTackToe.glade" category="games">
+<application name="Viewer" file="ApplicationTickTackToe.class.php" schema="schema.glade" category="games">
   <property name="enabled">true</property>
   <property name="title">Tick-tack-toe</property>
   <property name="icon">/img/app.ticktacktoe/ttt.png</property>

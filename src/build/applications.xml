@@ -156,12 +156,4 @@
     <resource>main.js</resource>
     <mime>video/*</mime>
   </application>
-  <application name="Textpad" title="Textpad" icon="apps/text-editor.png" system="false" category="office" class="ApplicationTextpad" file="ApplicationTextpad.class.php">
-    <window id="window1">
-      <property name="properties"><![CDATA[{"type":"window","title":"Textpad","icon":"apps\/text-editor.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":400,"height":400,"gravity":""}]]></property>
-    </window>
-    <resource>main.css</resource>
-    <resource>main.js</resource>
-    <mime>text/*</mime>
-  </application>
 </applications>

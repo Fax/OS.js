@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application name="Draw" file="ApplicationDraw.class.php" schema="ApplicationDraw.glade" category="graphics">
+<application name="Arkanoid" file="ApplicationArkanoid.class.php" schema="schema.glade" category="games">
   <property name="enabled">true</property>
-  <property name="title">Draw</property>
-  <property name="icon">categories/gnome-graphics.png</property>
+  <property name="title">Arkanoid</property>
+  <property name="icon">emblems/emblem-new.png</property>
   <property name="system">false</property>
 
   <resource>main.css</resource>
   <resource>main.js</resource>
-
-  <mime>image/*</mime>
 
   <compability>canvas</compability>
 </application>

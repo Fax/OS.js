@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application name="FileManager" file="ApplicationFileManager.class.php" schema="ApplicationFileManager.glade" category="utilities">
+<application name="FileManager" file="ApplicationFileManager.class.php" schema="schema.glade" category="utilities">
   <property name="enabled">true</property>
   <property name="title">File Manager</property>
   <property name="icon">apps/file-manager.png</property>

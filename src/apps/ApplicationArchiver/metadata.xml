@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application name="Archiver" file="ApplicationArchiver.class.php" schema="ApplicationArchiver.glade" category="utilities">
+<application name="Archiver" file="ApplicationArchiver.class.php" schema="schema.glade" category="utilities">
   <property name="enabled">true</property>
   <property name="title">File Archiver</property>
   <property name="icon">mimetypes/package-x-generic.png</property>

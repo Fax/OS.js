@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application name="Viewer" file="ApplicationViewer.class.php" schema="ApplicationViewer.glade" category="graphics">
+<application name="Viewer" file="ApplicationViewer.class.php" schema="schema.glade" category="graphics">
   <property name="enabled">true</property>
   <property name="title">Image Viewer</property>
   <property name="icon">mimetypes/image-x-generic.png</property>

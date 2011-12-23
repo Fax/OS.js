@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application name="VideoPlayer" file="ApplicationVideoPlayer.class.php" schema="ApplicationVideoPlayer.glade" category="multimedia">
+<application name="VideoPlayer" file="ApplicationVideoPlayer.class.php" schema="schema.glade" category="multimedia">
   <property name="enabled">true</property>
   <property name="title">Video Player</property>
   <property name="icon">mimetypes/video-x-generic.png</property>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application name="About" file="SystemAbout.class.php" schema="SystemAbout.glade">
+<application name="About" file="SystemAbout.class.php" schema="schema.glade">
   <property name="enabled">true</property>
   <property name="title">About</property>
   <property name="icon">actions/gtk-about.png</property>

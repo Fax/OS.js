@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application name="IRC" file="ApplicationIRC.class.php" schema="ApplicationIRC.glade" category="internet">
+<application name="IRC" file="ApplicationIRC.class.php" schema="schema.glade" category="internet">
   <property name="enabled">true</property>
   <property name="title">IRC</property>
   <property name="icon">apps/system-users.png</property>

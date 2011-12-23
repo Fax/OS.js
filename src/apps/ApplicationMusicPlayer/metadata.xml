@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application name="MusicPlayer" file="ApplicationMusicPlayer.class.php" schema="ApplicationMusicPlayer.glade" category="multimedia">
+<application name="MusicPlayer" file="ApplicationMusicPlayer.class.php" schema="schema.glade" category="multimedia">
   <property name="enabled">true</property>
   <property name="title">Music Player</property>
   <property name="icon">status/audio-volume-high.png</property>

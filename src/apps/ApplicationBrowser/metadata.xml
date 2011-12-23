@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application name="Browser" file="ApplicationBrowser.class.php" schema="ApplicationBrowser.glade" category="internet">
+<application name="Browser" file="ApplicationBrowser.class.php" schema="schema.glade" category="internet">
   <property name="enabled">true</property>
   <property name="title">HTML Browser</property>
   <property name="icon">apps/web-browser.png</property>
