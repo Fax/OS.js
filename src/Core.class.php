@@ -120,6 +120,7 @@ class Core
    * @return Mixed
    */
   public static function getCursor($theme, $compress) {
+    $theme = preg_replace("/[^a-zA-Z0-9]/", "", $theme);
     $path = sprintf("%s/%scursor.%s.css", PATH_JSBASE, ($compress ? "_min/" : ""), $theme);
     if ( file_exists($path) ) {
       if ( !($content = file_get_contents($path)) ) {
@@ -137,6 +138,7 @@ class Core
    * @return Mixed
    */
   public static function getTheme($theme, $compress) {
+    $theme = preg_replace("/[^a-zA-Z0-9]/", "", $theme);
     $path = sprintf("%s/%stheme.%s.css", PATH_JSBASE, ($compress ? "_min/" : ""), $theme);
     if ( file_exists($path) ) {
       if ( !($content = file_get_contents($path)) ) {
@@ -155,6 +157,7 @@ class Core
    * @return String
    */
   public static function getFont($font, $compress) {
+    $font   = preg_replace("/[^a-zA-Z0-9]/", "", $font);
     $italic = $font == "FreeSerif" ? "Italic" : "Oblique";
     $bos    = $font == "Sansation" ? "/*" : "";
     $boe    = $font == "Sansation" ? "*/" : "";
@@ -219,10 +222,9 @@ EOCSS;
   public static function getFile($resource, $input, $application, $compress) {
     $content = "";
 
-    $type = preg_match("/\.js$/", $input) ? "js" : "css";
-    $res  = str_replace(Array("../", "./"), Array("", ""), $input);
-    $res  = addslashes($res);
-    $app  = $application ? str_replace(Array("../", "./"), Array("", ""), $application): null;
+    $res   = preg_replace("/\.+/", ".", preg_replace("/[^a-zA-Z0-9\.]/", "", $input));
+    $app   = $application ? preg_replace("/[^a-zA-Z0-9]/", "", $application) : null;
+    $type  = preg_match("/\.js$/", $res) ? "js" : "css";
 
     if ( $compress ) {
       if ( $resource ) {
