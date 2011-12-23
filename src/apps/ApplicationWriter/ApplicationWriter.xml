@@ -5,7 +5,8 @@
   <property name="icon">apps/libreoffice34-writer.png</property>
   <property name="system">false</property>
 
-  <resource>app.writer.css</resource>
-  <resource>app.writer.js</resource>
+  <resource>main.css</resource>
+  <resource>main.js</resource>
+
   <mime>text/*</mime>
 </application>

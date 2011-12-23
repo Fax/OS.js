@@ -11,6 +11,6 @@
   <mime>application/x-rar</mime>
   <mime>application/x-tar</mime>
 
-  <resource>app.archiver.css</resource>
-  <resource>app.archiver.js</resource>
+  <resource>main.css</resource>
+  <resource>main.js</resource>
 </application>

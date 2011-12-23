@@ -5,7 +5,7 @@
   <property name="icon">status/starred.png</property>
   <property name="system">false</property>
 
-  <resource>app.test.css</resource>
-  <resource>app.test.js</resource>
-  <resource>worker.test.js</resource>
+  <resource>main.css</resource>
+  <resource>main.js</resource>
+  <resource>worker.js</resource>
 </application>

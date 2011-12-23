@@ -4,6 +4,6 @@
   <property name="icon">apps/utilities-system-monitor.png</property>
   <property name="system">true</property>
 
-  <resource>sys.processes.css</resource>
-  <resource>sys.processes.js</resource>
+  <resource>main.css</resource>
+  <resource>main.js</resource>
 </application>

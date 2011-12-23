@@ -5,8 +5,8 @@
   <property name="icon">status/audio-volume-high.png</property>
   <property name="system">false</property>
 
-  <resource>app.musicplayer.css</resource>
-  <resource>app.musicplayer.js</resource>
+  <resource>main.css</resource>
+  <resource>main.js</resource>
 
   <mime>audio/*</mime>
 

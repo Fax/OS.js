@@ -1737,7 +1737,9 @@
        * @return  void
        */
       addResource : function(res, app) {
-        if ( this.hasResource(res) )
+        app = app || "";
+
+        if ( this.hasResource(res + (app ? (app + "/" + res) : "")) )
           return;
 
         if ( res.match(/^worker\./) )
@@ -1772,7 +1774,7 @@
         console.log(ie ? el : el.get(0));
         console.groupEnd();
 
-        this.resources.push(res);
+        this.resources.push(res + (app ? (app + "/" + res) : ""));
         this.links.push(el);
       },
 
@@ -1784,6 +1786,11 @@
        * @return  void
        */
       addResources : function(res, app, callback) {
+        console.group("ResourceManager::addResources");
+        console.log("Adding", res);
+        console.log("Application", app);
+        console.groupEnd();
+
         var i = 0;
         var l = res.length;
 
@@ -2231,7 +2238,7 @@
      */
     addWorker : function(name, resource, mcallback, ecallback) {
       if ( !this._workers[name] ) {
-        var w = new WebWorker(RESOURCE_URI + sprintf("worker.%s.js&application=%s", resource, this._name), mcallback, ecallback);
+        var w = new WebWorker(RESOURCE_URI + sprintf("%s&application=%s", resource, this._name), mcallback, ecallback);
         this._workers[name] = w;
         return w;
       }

@@ -388,7 +388,7 @@ OSjs.Applications.ApplicationTest = (function($, undefined) {
           var i = 0;
 
           for ( i; i < count; i++ ) {
-            w = this._app.addWorker("ApplicationTest_" + i, "test", function(ev, data) {
+            w = this._app.addWorker("ApplicationTest_" + i, "worker.js", function(ev, data) {
               self.WorkerJobFinished(ev, data);
             });
           }

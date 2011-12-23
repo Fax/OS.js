@@ -5,8 +5,8 @@
   <property name="icon">apps/system-users.png</property>
   <property name="system">false</property>
 
-  <resource>app.irc.css</resource>
-  <resource>app.irc.js</resource>
+  <resource>main.css</resource>
+  <resource>main.js</resource>
 
   <compability>socket</compability>
 </application>

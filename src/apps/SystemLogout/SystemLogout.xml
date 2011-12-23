@@ -4,6 +4,6 @@
   <property name="icon">actions/gnome-logout.png</property>
   <property name="system">true</property>
 
-  <resource>sys.logout.css</resource>
-  <resource>sys.logout.js</resource>
+  <resource>main.css</resource>
+  <resource>main.js</resource>
 </application>

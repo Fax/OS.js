@@ -5,7 +5,8 @@
   <property name="icon">apps/text-editor.png</property>
   <property name="system">false</property>
 
-  <resource>app.textpad.css</resource>
-  <resource>app.textpad.js</resource>
+  <resource>main.css</resource>
+  <resource>main.js</resource>
+
   <mime>text/*</mime>
 </application>

@@ -5,7 +5,8 @@
   <property name="icon">mimetypes/image-x-generic.png</property>
   <property name="system">false</property>
 
-  <resource>app.viewer.css</resource>
-  <resource>app.viewer.js</resource>
+  <resource>main.css</resource>
+  <resource>main.js</resource>
+
   <mime>image/*</mime>
 </application>

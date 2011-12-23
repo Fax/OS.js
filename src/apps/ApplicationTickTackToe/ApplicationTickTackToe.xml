@@ -5,6 +5,6 @@
   <property name="icon">/img/app.ticktacktoe/ttt.png</property>
   <property name="system">false</property>
 
-  <resource>app.ticktacktoe.css</resource>
-  <resource>app.ticktacktoe.js</resource>
+  <resource>main.css</resource>
+  <resource>main.js</resource>
 </application>

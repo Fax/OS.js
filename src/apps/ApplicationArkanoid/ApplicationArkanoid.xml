@@ -5,8 +5,8 @@
   <property name="icon">emblems/emblem-new.png</property>
   <property name="system">false</property>
 
-  <resource>app.arkanoid.css</resource>
-  <resource>app.arkanoid.js</resource>
+  <resource>main.css</resource>
+  <resource>main.js</resource>
 
   <compability>canvas</compability>
 </application>
