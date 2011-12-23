@@ -7,6 +7,64 @@
 (function($, undefined) {
 
   /**
+   * --OSjs::Classes::OSjsException -- Base Exception
+   * @class
+   */
+  var OSjsException = Class.extend({
+    _lineno   : 0,
+    _filename : "",
+    _message  : "",
+
+    init : function(lineno, filename, message) {
+      this._lineno    = parseInt(lineno, 10) || 0;
+      this._filename  = filename;
+      this._message   = message;
+    },
+
+    getLineNo : function() {
+      return this._lineno;
+    },
+
+    getFilename : function() {
+      return this._filename;
+    },
+
+    getMessage : function() {
+      return this._message;
+    }
+  });
+
+  /**
+   * OSjs::Classes::IOException -- IOException Exception
+   * @exception
+   */
+  OSjs.Classes.IOException = OSjsException.extend({
+    init : function(lineno, filename, message) {
+      this._super(lineno, filename, message);
+    }
+  });
+
+  /**
+   * OSjs::Classes::ApplicationException -- ApplicationException Exception
+   * @exception
+   */
+  OSjs.Classes.ApplicationException = OSjsException.extend({
+    init : function(lineno, filename, message) {
+      this._super(lineno, filename, message);
+    }
+  });
+
+  /**
+   * OSjs::Classes::CoreException -- CoreException Exception
+   * @exception
+   */
+  OSjs.Classes.CoreException = OSjsException.extend({
+    init : function(lineno, filename, message) {
+      this._super(lineno, filename, message);
+    }
+  });
+
+  /**
    * OSjs::Classes::Uploader -- Uploader class
    * @class
    */
