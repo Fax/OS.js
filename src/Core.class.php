@@ -212,15 +212,17 @@ EOCSS;
    * Get a resource file (CSS or JS) [with compression]
    * @param  bool     $resource     Resource file?
    * @param  String   $input        Filename
+   * @param  String   $application  Application name (If any)
    * @param  bool     $compress     Enable Compression
    * @return Mixed
    */
-  public static function getFile($resource, $input, $compress) {
+  public static function getFile($resource, $input, $application, $compress) {
     $content = "";
 
     $type = preg_match("/\.js$/", $input) ? "js" : "css";
     $res  = str_replace(Array("../", "./"), Array("", ""), $input);
     $res  = addslashes($res);
+    $app  = $application ? str_replace(Array("../", "./"), Array("", ""), $application): null;
 
     if ( $compress ) {
       if ( $resource ) {
@@ -230,7 +232,11 @@ EOCSS;
       }
     } else {
       if ( $resource ) {
-        $path = sprintf("%s/%s", PATH_RESOURCES, $res);
+        if ( $app ) {
+          $path = sprintf("%s/%s/%s", PATH_APPS, $application, $res);
+        } else {
+          $path = sprintf("%s/%s", PATH_RESOURCES, $res);
+        }
       } else {
         $path = sprintf("%s/%s", PATH_JSBASE, $res);
       }

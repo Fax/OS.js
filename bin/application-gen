@@ -376,20 +376,22 @@ EOCSS;
 
 if ( $dh  = opendir($root) ) {
   while (false !== ($filename = readdir($dh))) {
-    if ( preg_match("/^(Application|System)(.*)(\.xml)$/", $filename) ) {
+    if ( preg_match("/^(Application|System)(.*)$/", $filename) ) {
+      $path = $root . $filename . "/{$filename}.xml";
+      if ( !file_exists($path) )
+        continue;
 
-      $path = $root . $filename;
       $xml = new SimpleXmlElement(file_get_contents($path));
 
-      $gfilename = str_replace(basename($filename), ((string) $xml['schema']), $filename);
+      $gfilename = str_replace(basename($path), ((string) $xml['schema']), $path);
       $cname = str_replace(".xml", "", $filename);
       $class_file = (string) $xml['file'];
 
-      if ( file_exists(PATH_APPS . "/{$class_file}") ) {
-        require_once PATH_APPS . "/{$class_file}";
+      if ( file_exists(PATH_APPS . "/{$cname}/{$class_file}") ) {
+        require_once PATH_APPS . "/{$cname}/{$class_file}";
       }
 
-      echo "Building {$filename} ($gfilename)...\n";
+      echo "Building {$filename} " . basename($gfilename) . "...\n";
 
       $xml_app_title  = Application::APPLICATION_TITLE;
       $xml_app_icon   = Application::APPLICATION_ICON;
@@ -450,7 +452,7 @@ if ( $dh  = opendir($root) ) {
       }
 
 
-      if ( $glade = Glade::parse($root . $gfilename) ) {
+      if ( $glade = Glade::parse($gfilename) ) {
         $windows = $glade->getWindows();
 
         $node = $doc->createElement("application");

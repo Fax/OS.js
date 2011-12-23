@@ -58,7 +58,8 @@ if ( isset($_GET['cursor']) && !empty($_GET['cursor']) ) {
 
 if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
   $type = preg_match("/\.js$/", $_GET['resource']) ? "js" : "css";
-  if ( ($content = Core::getFile(true, $_GET['resource'], ENV_PRODUCTION)) === false ) {
+  $app  = isset($_GET['application']) ? $_GET['application'] : null;
+  if ( ($content = Core::getFile(true, $_GET['resource'], $app, ENV_PRODUCTION)) === false ) {
     header("HTTP/1.0 404 Not Found");
     exit;
   }
@@ -68,7 +69,7 @@ if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
   exit;
 
 } else if ( isset($_GET['library']) ) {
-  if ( ($content = Core::getFile(false, $_GET['library'], ENV_PRODUCTION)) === false ) {
+  if ( ($content = Core::getFile(false, $_GET['library'], null, ENV_PRODUCTION)) === false ) {
     header("HTTP/1.0 404 Not Found");
     exit;
   }

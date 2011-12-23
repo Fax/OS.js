@@ -48,7 +48,6 @@
   var THEME_URI        = "/?theme=";                //!< Themes loading URI (GET)
   var FONT_URI         = "/?font=";                 //!< Font loading URI (GET)
   var CURSOR_URI       = "/?cursor=";               //!< Cursor loading URI (GET)
-  var WORKER_URI       = "/?resource=worker.%s.js"; //!< WebWorker loading URI (GET)
   var UPLOAD_URI       = "/upload.php";             //!< File upload URI (POST)
   var ICON_URI         = "/img/icons/%s/%s";        //!< Icons URI (GET)
   var ICON_URI_16      = "/img/icons/16x16/%s";     //!< Icons URI 16x16 (GET)
@@ -152,7 +151,7 @@
       var reg = _Settings._get("system.panel.registered", true);
       var resources =  reg[iname] ? reg[iname]['resources'] : [];
 
-      _Resources.addResources(resources, function() {
+      _Resources.addResources(resources, null, function() {
         if ( OSjs.PanelItems[iname] ) {
           var item = new OSjs.PanelItems[iname](_PanelItem, panel, API, iargs);
           if ( item ) {
@@ -209,7 +208,7 @@
 
     $.post(AJAX_URI, {'ajax' : true, 'action' : 'load', 'app' : app_name}, function(data) {
       if ( data.success ) {
-        _Resources.addResources(data.result.resources, function() {
+        _Resources.addResources(data.result.resources, app_name, function() {
 
           var app_ref = OSjs.Applications[app_name];
           if ( app_ref ) {
@@ -1734,28 +1733,34 @@
       /**
        * ResourceManager::addResource() -- Add a resource (load)
        * @param   String      res       Resource URI
+       * @param   String      app       Application Name (if any)
        * @return  void
        */
-      addResource : function(res) {
+      addResource : function(res, app) {
         if ( this.hasResource(res) )
           return;
 
         if ( res.match(/^worker\./) )
           return;
 
+        var extra = "";
         var type = res.split(".");
         type = type[type.length - 1];
+
+        if ( app ) {
+          extra = "&application=" + app;
+        }
 
         var el = null;
         var ie = false;
         if ( type == "js" ) {
-          el = $("<script type=\"text/javascript\" src=\"" + RESOURCE_URI + res + "\"></script>");
+          el = $("<script type=\"text/javascript\" src=\"" + RESOURCE_URI + res + extra + "\"></script>");
         } else {
           if ( document.createStyleSheet ) {
             ie = true;
             el = document.createStyleSheet(RESOURCE_URI + res);
           } else {
-            el = $("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + RESOURCE_URI + res + "\" />");
+            el = $("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + RESOURCE_URI + res + extra + "\" />");
           }
         }
 
@@ -1774,15 +1779,16 @@
       /**
        * ResourceManager::addResources() -- Add an array with resources and call-back
        * @param   Array     res         Resource URI array
+       * @param   String    app         Application Name (if any)
        * @param   Function  callback    Call when done adding
        * @return  void
        */
-      addResources : function(res, callback) {
+      addResources : function(res, app, callback) {
         var i = 0;
         var l = res.length;
 
         for ( i; i < l; i++ ) {
-          this.addResource(res[i]);
+          this.addResource(res[i], app);
         }
 
         callback();
@@ -2225,7 +2231,7 @@
      */
     addWorker : function(name, resource, mcallback, ecallback) {
       if ( !this._workers[name] ) {
-        var w = new WebWorker(sprintf(WORKER_URI, resource), mcallback, ecallback);
+        var w = new WebWorker(RESOURCE_URI + sprintf("worker.%s.js&application=%s", resource, this._name), mcallback, ecallback);
         this._workers[name] = w;
         return w;
       }

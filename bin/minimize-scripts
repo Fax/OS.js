@@ -13,14 +13,14 @@ require "header.php";
 $total_before = 0;
 $total_after = 0;
 
-function compress_list($resource, $files) {
+function compress_list($itype, $files) {
   global $total_before;
   global $total_after;
 
   foreach ( $files as $file ) {
     // Build command
     $type = preg_match("/\.js$/", $file) ? "js" : "css";
-    $path = ($resource ? PATH_RESOURCES : PATH_JSBASE) . "/{$file}";
+    $path = ($itype == 1 ? PATH_RESOURCES : ($itype === 0 ? PATH_JSBASE : PATH_APPS)) . "/{$file}";
     if ( file_exists($path) ) {
 
       $cmd  = PATH_PROJECT_BIN . "/yui.sh";
@@ -58,12 +58,12 @@ function compress_list($resource, $files) {
         $total_after  += $comp;
       }
 
-      $label = "Minimized {$file}";
-      $spaces = str_pad("", (40 - strlen($label)));
+      $label = "\t{$file}";
+      $spaces = str_pad("", (30 - strlen($label)));
       print sprintf("%s%s ($size => $comp, $perc%%)\n", $label, $spaces);
 
       // Write cached file
-      $out_path = ($resource ? PATH_RESOURCES_COMPRESSED : PATH_JSBASE_COMPRESSED) . "/{$file}";
+      $out_path = ($itype ? PATH_RESOURCES_COMPRESSED : PATH_JSBASE_COMPRESSED) . "/" . basename($file);
       file_put_contents($out_path, $content);
     }
   }
@@ -73,8 +73,9 @@ function compress_list($resource, $files) {
 // MAIN
 //
 
-$base_files     = Array();
-$resource_files = Array();
+$base_files         = Array();
+$resource_files     = Array();
+$application_files  = Array();
 
 // Read registered panel items
 foreach ( Panel::$Registered as $n => $v ) {
@@ -90,9 +91,9 @@ foreach ( Dialog::$Registered as $n => $v ) {
 if ( $xml = file_get_contents(APPLICATION_BUILD) ) {
   if ( $xml = new SimpleXmlElement($xml) ) {
     foreach ( $xml->application as $app ) {
-      $app_name     = (string) $app['name'];
+      $app_name     = (string) $app['class'];
       foreach ( $app->resource as $res ) {
-        $resource_files[] = ((string) $res);
+        $application_files[] = "{$app_name}/" . ((string) $res);
       }
     }
   }
@@ -110,8 +111,12 @@ $base_files = Array(
   "main.js"
 );
 
-compress_list(false, $base_files);
-compress_list(true, $resource_files);
+print "Compressing base files...\n";
+compress_list(0, $base_files);
+print "Compressing applications...\n";
+compress_list(2, $application_files);
+print "Compressing resources...\n";
+compress_list(1, $resource_files);
 
 $perc = 0;
 if ( $total_before && $total_after ) {
