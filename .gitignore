@@ -8,6 +8,11 @@ doc/doxygen.log
 doc/api/*
 public_html/.htpasswd
 
+# Fixes
+src/apps/*/_min
+src/resources/_min
+src/base/_min
+
 # Propel
 src/build/classes/*/map/*
 src/build/classes/*/om/*

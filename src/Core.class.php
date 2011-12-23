@@ -120,7 +120,7 @@ class Core
    * @return Mixed
    */
   public static function getCursor($theme, $compress) {
-    $path = sprintf("%s/cursor.%s.css", ($compress ? PATH_JSBASE_COMPRESSED : PATH_JSBASE), $theme);
+    $path = sprintf("%s/%scursor.%s.css", PATH_JSBASE, ($compress ? "_min/" : ""), $theme);
     if ( file_exists($path) ) {
       if ( !($content = file_get_contents($path)) ) {
         $content = "/* FAILED TO GET CONTENTS */";
@@ -137,7 +137,7 @@ class Core
    * @return Mixed
    */
   public static function getTheme($theme, $compress) {
-    $path = sprintf("%s/theme.%s.css", ($compress ? PATH_JSBASE_COMPRESSED : PATH_JSBASE), $theme);
+    $path = sprintf("%s/%stheme.%s.css", PATH_JSBASE, ($compress ? "_min/" : ""), $theme);
     if ( file_exists($path) ) {
       if ( !($content = file_get_contents($path)) ) {
         $content = "/* FAILED TO GET CONTENTS */";
@@ -226,9 +226,13 @@ EOCSS;
 
     if ( $compress ) {
       if ( $resource ) {
-        $path = sprintf("%s/%s", PATH_RESOURCES_COMPRESSED, $res);
+        if ( $app ) {
+          $path = sprintf("%s/%s/_min/%s", PATH_APPS, $application, $res);
+        } else {
+          $path = sprintf("%s/_min/%s", PATH_RESOURCES, $res);
+        }
       } else {
-        $path = sprintf("%s/%s", PATH_JSBASE_COMPRESSED, $res);
+        $path = sprintf("%s/_min/%s", PATH_JSBASE, $res);
       }
     } else {
       if ( $resource ) {

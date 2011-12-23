@@ -63,7 +63,17 @@ function compress_list($itype, $files) {
       print sprintf("%s%s ($size => $comp, $perc%%)\n", $label, $spaces);
 
       // Write cached file
-      $out_path = ($itype ? PATH_RESOURCES_COMPRESSED : PATH_JSBASE_COMPRESSED) . "/" . basename($file);
+      if ( $itype === 2 ) {
+        $out_path = PATH_APPS . "/" . dirname($file) . "/_min/" . basename($file) ;
+      } else if ( $itype === 1 ) {
+        $out_path = PATH_RESOURCES . "/_min/" . basename($file);
+      } else {
+        $out_path = PATH_JSBASE . "/_min/" . basename($file);
+      }
+
+      if ( !is_dir(dirname($out_path)) ) {
+        mkdir(dirname($out_path));
+      }
       file_put_contents($out_path, $content);
     }
   }
