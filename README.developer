@@ -14,20 +14,20 @@ public_html/             Apache Public directory
   img/                      Image files, icons, etc
   js/                       JavaScript library files
     vendor/                   Vendor library JavaScript files
-      [fileuploader.js]         AJAX file upload script
       [jquery-*.js]             jQuery script(s)
       [json2.js]                JSON library
       [sprintf-*.js]            sprintf() function
     [utils.js]                Public OS.js utilities
   media/                    Public media directory (VFS)
   [index.php]               Main PHP script
-  [help.php]                Help file
+  [help.php]                Help file (Reads the README file)
 src/                    Main sources
   apps/                   Application build files (XML, Glade and PHP)
   base/                   Core JavaScript, CSS and Templates
     [init.js]               OS.js Namespace init
     [core.js]               OS.js Core
     [main.js]               OS.js main initialization
+    [classes.js]            OS.js Public classes
     [theme.*.js]            Theme stylesheet(s)
     [cursor.*.js]           Cursor stylesheet(s)
     [template.php]          HTML Template
@@ -37,13 +37,11 @@ src/                    Main sources
     conf/                   Propel ORM Configuration files
     migrations/             Propel ORM Migration files
     sql/                    Propel ORM SQL Build files
-    src/                    Minimized sources for Core and Application resources
     [applications.xml]      Compiled application XML metadata
   resources/              Application resource files (CSS, JavaScript)
 vendor/                 Vendor libraries
   Propel/                 Propel ORM installation base directory
   [yuicompressor-*.jar]   Yahoo Script Compressor
-  [AjaxUpload.php]        AJAX file upload script
 [header.php]            PHP Bootstrap, configurations
 [server.php]            WebSocket server PHP script
 [build.properties]      Propel ORM build file
@@ -54,19 +52,23 @@ vendor/                 Vendor libraries
 The 'public_html/' directory does not expose or contain any core script files.
 All
 
+All folders named '_min' are minimized versions of scripts from the
+script 'bin/minimize-scripts'
+
 Building applications:
 -------------------------------------------------------------------------------
 Look at the example files to see how this is done.
 
 New Application:
+* Create Application directory in 'src/apps/ApplicationXXX/'
 * Create Glade Interface file, place in 'src/apps/ApplicationXXX.glade'
 * Create XML build-file, place in 'src/apps/ApplicationXXX.xml'
 * Update Database schema 'schema.xml' if needed
 * Run './bin/application-gen'
 * Run './bin/database-gen' if database schema was updated
-* Copy 'src/build/ApplicationXXX.class.php' to 'src/apps/'
-* Copy 'src/build/apps/app.XXX.js' to 'src/resources/'
-* Copy 'src/build/apps/app.XXX.css' to 'src/resources/'
+* Copy 'src/build/ApplicationXXX.class.php' to 'src/apps/ApplicationXXX/'
+* Copy 'src/build/apps/app.XXX.js' to 'src/apps/ApplicationXXX/main.js'
+* Copy 'src/build/apps/app.XXX.css' to 'src/apps/ApplicationXXX/main.css'
 * Run './bin/minimize-scripts.php' if you want minimized scripts for production servers
 
 Update:

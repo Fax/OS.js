@@ -175,13 +175,7 @@ abstract class Application
           }
 
           foreach ( $app->resource as $res ) {
-            $res = (string) $res;
-
-            //$type = preg_match("/\.css$/", $res) ? "css" : "js";
-            //$path = sprintf("%s/%s/%s", PATH_PROJECT_HTML, $type, $res);
-            //$path = sprintf("%s/resources/%s/%s", PATH_APPS, $type, $res);
-
-            $resources[] = $res;
+            $resources[] = (string) $res;
           }
 
           foreach ( $app->mime as $mime ) {
