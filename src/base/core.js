@@ -2350,19 +2350,6 @@
     },
 
     /**
-     * Application::getWorker() -- Get a WebWorker
-     * @param   String  name      Worker name
-     * @see     WebWorker
-     * @return  Worker
-     */
-    getWorker : function(name) {
-      if ( this._workers[name] ) {
-        return this._workers[name];
-      }
-      return null;
-    },
-
-    /**
      * Application::removeWorker() -- Remove a WebWorker
      * @param   String  name      Worker name
      * @see     WebWorker
@@ -2526,6 +2513,19 @@
           callback(data.result, data.error);
         });
       }
+    },
+
+    /**
+     * Application::getWorker() -- Get a WebWorker
+     * @param   String  name      Worker name
+     * @see     WebWorker
+     * @return  Worker
+     */
+    getWorker : function(name) {
+      if ( this._workers[name] ) {
+        return this._workers[name];
+      }
+      return null;
     },
 
     /**
