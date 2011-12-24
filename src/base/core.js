@@ -119,12 +119,22 @@
    * @function
    */
   function InitLaunch(name) {
-    var list = API.session.processes();
+    var list  = API.session.processes();
+    var count = 0;
+
+    for ( var i = 0; i < list.length; i++ ) {
+      if ( !list[i].service ) {
+        count++;
+      }
+    }
+
+    delete list;
 
     // Check if we exceed the process conut limit
-    if ( list.length >= MAX_PROCESSES ) {
-      var msg = sprintf(OSjs.Labels.InitLaunchError, name, MAX_PROCESSES);
+    if ( count >= MAX_PROCESSES ) {
+      var msg   = sprintf(OSjs.Labels.InitLaunchError, name, MAX_PROCESSES);
       var trace = sprintf("InitLaunch(%s)", name);
+
       try {
         _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, [name, msg, trace]));
       } catch ( eee ) {
@@ -1081,16 +1091,32 @@
   }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
+  // SERVICE META
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * ProcessService -- Main Process Service [META] Class
+   *
+   * @extends Process
+   * @class
+   */
+  var ProcessService = Process.extend({
+    init : function(name, icon, locked) {
+      this._super(name, icon, locked);
+    }
+  });
+
+  /////////////////////////////////////////////////////////////////////////////
   // WEBWORKER
   /////////////////////////////////////////////////////////////////////////////
 
   /**
    * WebWorker -- Main Background Worker Class
    *
-   * @extends Process
+   * @extends Service
    * @class
    */
-  var WebWorker = Process.extend({
+  var WebWorker = ProcessService.extend({
 
     _worker      : null,          //!< Worker object
     _worker_uri  : null,          //!< Worker URI
@@ -1601,6 +1627,7 @@
               'locked'  : p._locked,
               //'windows' : (p instanceof Application ? p._windows : []),
               'subp'    : (p.getWorkerCount) ? (p.getWorkerCount()) : 0,
+              'service' : (p instanceof ProcessService),
               'kill'    : ckill
             });
           }
