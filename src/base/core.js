@@ -2189,8 +2189,23 @@
      */
     createSocket : function(name, uri) {
       var s = new Socket(this._name, uri);
+      this.removeSocket(name);
       this._sockets[name] = s;
       return s;
+    },
+
+    /**
+     * Application::removeSocket() -- Remove a Socket
+     * @param   String    name      Socket name
+     * @return  bool
+     */
+    removeSocket : function(name) {
+      if ( this._sockets[name] !== undefined ) {
+        this._sockets[name].destroy();
+        delete this._sockets[name];
+        return true;
+      }
+      return false;
     },
 
     /**
