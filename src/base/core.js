@@ -1132,8 +1132,15 @@
         self.error(ev, ev.lineno, ev.filename, ev.message);
       }, false);
 
-      var src = uri.split("/").pop();
-      this._super(sprintf("WebWorker [%s]", src), "actions/gtk-execute.png", true);
+      var src = uri.split("/").pop().split(/^\?resource=(.*)&application=(.*)$/);
+      var title = "Unknown";
+      var fname = "Unknown";
+      if ( src.length == 4 ) {
+        title = src[2];
+        fname = src[1];
+      }
+
+      this._super(sprintf("%s > WebWorker [%s]", title, fname), "actions/gtk-execute.png", true);
 
       console.group("WebWorker::init()");
       console.log("URI", uri);
@@ -1593,6 +1600,7 @@
               'title'   : p._proc_name,
               'locked'  : p._locked,
               //'windows' : (p instanceof Application ? p._windows : []),
+              'subp'    : (p.getWorkerCount) ? (p.getWorkerCount()) : 0,
               'kill'    : ckill
             });
           }
@@ -2423,6 +2431,20 @@
           callback(data.result, data.error);
         });
       }
+    },
+
+    /**
+     * Application::getWorkerCount() -- Get WebWorker count
+     * @return  int
+     */
+    getWorkerCount : function() {
+      var c = 0;
+      for ( var i in this._workers ) {
+        if ( this._workers.hasOwnProperty(i) ) {
+          c++;
+        }
+      }
+      return c;
     },
 
     /**

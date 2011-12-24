@@ -154,14 +154,9 @@ OSjs.Applications.ApplicationTest = (function($, undefined) {
         return;
       }
 
-      console.group("ApplicationTest::Mandelbrot::WorkerJobFinished()");
-
       var iterCount = data.iterationCounts;
       var row       = data.row;
       var columns   = this._canvas.width;
-
-      console.log("Row", row);
-      console.log("Columns", columns);
 
       for ( var col = 0; col < columns; col++ ) {
         var ct = iterCount[col];
@@ -183,8 +178,6 @@ OSjs.Applications.ApplicationTest = (function($, undefined) {
         j.workerNum = data.workerNum;
         w.post(j);
       }
-
-      console.groupEnd();
     },
 
     //
