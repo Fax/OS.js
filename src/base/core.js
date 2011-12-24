@@ -780,6 +780,100 @@
   };
 
   /////////////////////////////////////////////////////////////////////////////
+  // PROCESS
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Process -- Process Class
+   *
+   * @class
+   */
+  var Process = Class.extend({
+
+    _pid        : -1,                     //!< Process ID
+    _started    : null,                   //!< Process started date
+    _proc_name  : "(unknown)",            //!< Process name identifier
+    _proc_icon  : "mimetypes/exec.png",   //!< Process icon
+    _locked     : false,
+
+    /**
+     * Process::init() -- Constructor
+     * @param   String    name          Process Name
+     * @param   String    icon          Process Icon
+     * @param   bool      locked        Not stoppable by user
+     * @constructor
+     */
+    init : function(name, icon, locked) {
+      this._pid       = (_Processes.push(this) - 1);
+      this._started   = new Date();
+      this._proc_name = "(unknown)";
+      this._proc_icon = "mimetypes/exec.png";
+      this._locked    = false;
+
+      if ( name !== undefined && name ) {
+        this._proc_name = name;
+      }
+      if ( icon !== undefined && icon ) {
+        this._proc_icon = icon;
+      }
+      if ( locked !== undefined ) {
+        this._locked    = locked;
+      }
+    },
+
+    /**
+     * Process::destroy() -- Destructor
+     * @destructor
+     */
+    destroy : function() {
+      if ( this._pid >= 0 ) {
+        _Processes[this._pid] = undefined;
+      }
+
+      // Destroy global references
+      // FIXME: Create a param in init for this!
+      if ( this._proc_name == "(Desktop)" ) {
+        _Desktop = null;
+      } else if ( this._proc_name == "(WindowManager)" ) {
+        _WM = null;
+      }
+
+      this._started = null;
+    },
+
+    /**
+     * Process::kill() -- Kill process
+     * @return bool
+     */
+    kill : function() {
+      if ( !this._locked ) {
+        this.destroy();
+
+        return true;
+      }
+      return false;
+    }
+
+  }); // @endclass
+
+  /////////////////////////////////////////////////////////////////////////////
+  // PROCESS METAS
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * ProcessService -- Main Process Service [META] Class
+   *
+   * @extends Process
+   * @class
+   */
+  var ProcessService = Process.extend({
+    init : function(name, icon, locked) {
+      //this._super(name, icon, locked);
+      this._super(name, icon, true);
+    }
+  });
+
+  /////////////////////////////////////////////////////////////////////////////
   // SERVICE
   /////////////////////////////////////////////////////////////////////////////
 
@@ -788,8 +882,9 @@
    *
    * @class
    */
-  var Service = Class.extend({
+  var Service = ProcessService.extend({
 
+    _name    : "",     //!< Service name
     _type    : -1,     //!< Service type
     _timeout : 30,     //!< Service default timeout
 
@@ -798,16 +893,27 @@
      * @param   int     type      Service type (default = SERVICE_GET)
      * @constructor
      */
-    init : function(type) {
+    init : function(name, type, timeout) {
+      this._name    = name || "Unknown";
       this._type    = parseInt(type, 10) || SERVICE_GET;
-      this._timeout = 30;
+      this._timeout = parseInt(timeout, 10) || 30;
+
+      console.group("Service::init()");
+      console.log("Name", this._name);
+      console.log("Type", this._type);
+      console.log("Timeout", this._timeout);
+      console.groupEnd();
+
+      this._super(this._name, "devices/network-wireless.png");
     },
 
     /**
      * Service::destroy() -- Destroy
      * @destructor
      */
-    destroy : function() {},
+    destroy : function() {
+      this._super();
+    },
 
     /**
      * Service::call() -- Call service
@@ -856,19 +962,24 @@
    *
    * @class
    */
-  var Socket = Class.extend({
+  var Socket = ProcessService.extend({
 
-    _socket : null,       //!< Socket instance reference
-    _uri    : null,       //!< Socket URI string
+    _running : false,      //!< Socket running state
+    _name    : "",         //!< Socket instance name
+    _socket  : null,       //!< Socket instance reference
+    _uri     : null,       //!< Socket URI string
 
     /**
      * Socket::init() -- Constructor
+     * @param   String      name    Connection name
      * @param   String      uri     Connection host/ip/uri/string
      * @constructor
      */
-    init : function(uri) {
-      this._socket = null;
-      this._uri    = "ws://" + (uri = uri || WEBSOCKET_URI);
+    init : function(name, uri) {
+      this._socket  = null;
+      this._name    = name || "Unknown";
+      this._uri     = "ws://" + (uri = uri || WEBSOCKET_URI);
+      this._running = true;
 
       // Overrides
       this.on_open    = function(ev) {};
@@ -877,10 +988,12 @@
       this.on_error   = function(ev) {};
 
       console.group("Socket::init()");
+      console.log("Name", this._name);
       console.log("Support", OSjs.Compability.SUPPORT_SOCKET);
-      console.log("URI", uri);
+      console.log("URI", this._uri);
       console.groupEnd();
 
+      this._super(this._name + " > Socket", "devices/network-wireless.png");
     },
 
     /**
@@ -888,12 +1001,16 @@
      * @destructor
      */
     destroy : function() {
-      if ( this._socket ) {
-        try {
-          this._socket.close();
-        } catch ( e ) {}
-        this._socket = null;
+      if ( this._running ) {
+        if ( this._socket ) {
+          try {
+            this._socket.close();
+          } catch ( e ) {}
+          this._socket = null;
+        }
       }
+
+      this._super();
     },
 
     /**
@@ -1012,99 +1129,6 @@
     }
 
   }); // @endclass
-
-  /////////////////////////////////////////////////////////////////////////////
-  // PROCESS
-  /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Process -- Process Class
-   *
-   * @class
-   */
-  var Process = Class.extend({
-
-    _pid        : -1,                     //!< Process ID
-    _started    : null,                   //!< Process started date
-    _proc_name  : "(unknown)",            //!< Process name identifier
-    _proc_icon  : "mimetypes/exec.png",   //!< Process icon
-    _locked     : false,
-
-    /**
-     * Process::init() -- Constructor
-     * @param   String    name          Process Name
-     * @param   String    icon          Process Icon
-     * @param   bool      locked        Not stoppable by user
-     * @constructor
-     */
-    init : function(name, icon, locked) {
-      this._pid       = (_Processes.push(this) - 1);
-      this._started   = new Date();
-      this._proc_name = "(unknown)";
-      this._proc_icon = "mimetypes/exec.png";
-      this._locked    = false;
-
-      if ( name !== undefined && name ) {
-        this._proc_name = name;
-      }
-      if ( icon !== undefined && icon ) {
-        this._proc_icon = icon;
-      }
-      if ( locked !== undefined ) {
-        this._locked    = locked;
-      }
-    },
-
-    /**
-     * Process::destroy() -- Destructor
-     * @destructor
-     */
-    destroy : function() {
-      if ( this._pid >= 0 ) {
-        _Processes[this._pid] = undefined;
-      }
-
-      // Destroy global references
-      // FIXME: Create a param in init for this!
-      if ( this._proc_name == "(Desktop)" ) {
-        _Desktop = null;
-      } else if ( this._proc_name == "(WindowManager)" ) {
-        _WM = null;
-      }
-
-      this._started = null;
-    },
-
-    /**
-     * Process::kill() -- Kill process
-     * @return bool
-     */
-    kill : function() {
-      if ( !this._locked ) {
-        this.destroy();
-
-        return true;
-      }
-      return false;
-    }
-
-  }); // @endclass
-
-  /////////////////////////////////////////////////////////////////////////////
-  // SERVICE META
-  /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * ProcessService -- Main Process Service [META] Class
-   *
-   * @extends Process
-   * @class
-   */
-  var ProcessService = Process.extend({
-    init : function(name, icon, locked) {
-      this._super(name, icon, locked);
-    }
-  });
 
   /////////////////////////////////////////////////////////////////////////////
   // WEBWORKER
@@ -2068,6 +2092,7 @@
     _storage_on   : false,        //!< Application Storage enabled state
     _compability  : [],           //!< Application compability list
     _workers      : {},           //!< Application WebWorker(s)
+    _sockets      : {},           //!< Applicaiton Socket(s)
 
     /**
      * Application::init() -- Constructor
@@ -2086,6 +2111,7 @@
       this._storage_on  = false;
       this._compability = [];
       this._workers     = {};
+      this._sockets     = {};
 
       console.log("Application::" + this._name + "::NULL::init()");
 
@@ -2109,6 +2135,7 @@
 
         this._saveStorage();      // Save storage settings
         this._clearWorkers();     // Clear WebWorkers
+        this._clearSockets();     // Clear Sockets
 
         if ( this._root_window ) {
           setTimeout(function() { // NOTE: Required!
@@ -2160,9 +2187,35 @@
      * @see     Socket
      * @return  Socket
      */
-    createSocket : function(uri) {
-      return new Socket(uri);
+    createSocket : function(name, uri) {
+      var s = new Socket(this._name, uri);
+      this._sockets[name] = s;
+      return s;
     },
+
+    /**
+     * Application::_clearSockets() -- Remove all Sockets
+     * @return  void
+     */
+    _clearSockets : function() {
+      for ( var i in this._sockets ) {
+        if ( this._sockets.hasOwnProperty(i) ) {
+          this._sockets[i].destroy();
+        }
+      }
+      this._sockets = {};
+    },
+
+
+    /**
+     * Application::createService() -- Create a new Service instance
+     * @TODO
+     * @see     Service
+     * @return  Service
+    createService : function(name, type) {
+      return new Service(name, type);
+    },
+     */
 
     /**
      * Application::createMessageDialog() -- Create Dialog: Message

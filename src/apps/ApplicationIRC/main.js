@@ -645,6 +645,8 @@ OSjs.Applications.ApplicationIRC = (function($, undefined) {
                 self.irc.print("<<< WebSocket server is not running!\n");
               }
             }
+          } else {
+            self.irc.print("<<< WebSocket server is not running!\n");
           }
         });
       },
@@ -668,7 +670,7 @@ OSjs.Applications.ApplicationIRC = (function($, undefined) {
           };
 
           this.irc.win = this._root_window;
-          this.irc.connect(this.createSocket());
+          this.irc.connect(this.createSocket("IRC"));
         }
       },
 

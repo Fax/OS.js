@@ -107,9 +107,9 @@ abstract class Application
    */
   public static function Handle($uuid, $action, $instance) {
     if ( $uuid && $action && $instance ) {
-      if ( isset($instance['name']) && isset($instance['args']) && isset($instance['action']) ) {
+      if ( isset($instance['name']) && isset($instance['action']) ) {
         $cname    = $instance['name'];
-        $aargs    = $instance['args'];
+        $aargs    = isset($instance['args']) ? $instance['args'] : null;
         $action   = $instance['action'];
 
         Application::init(APPLICATION_BUILD, $cname);
