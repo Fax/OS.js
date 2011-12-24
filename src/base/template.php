@@ -59,6 +59,7 @@
 <?php print implode("\n", $resources) . "\n"; ?>
 
   <!-- Google Analytics -->
+<?php if ( ENV_PRODUCTION ) { ?>
   <script type="text/javascript">
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-26635797-1']);
@@ -70,6 +71,9 @@
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
+<?php } else { ?>
+  <!-- Disabled on development environment -->
+<?php } ?>
 </head>
 <body>
 
