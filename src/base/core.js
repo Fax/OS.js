@@ -2821,6 +2821,7 @@
     running        : false,         //!< Desktop running ?
     panel          : null,          //!< Panel instance
     notifications  : 0,             //!< Desktop notification counter
+    _rtimeout      : null,          //!< Desktop resize timeout
 
     /**
      * Desktop::init() -- Constructor
@@ -2857,6 +2858,15 @@
       });
       */
 
+      $(window).bind("resize", function(ev) {
+        if ( self._rtimeout ) {
+          clearTimeout(self._rtimeout);
+        }
+        setTimeout(function() {
+          self.resize(ev);
+        }, 30);
+      });
+
       this._super("(Desktop)", "places/desktop.png");
     },
 
@@ -2865,7 +2875,22 @@
      * @destructor
      */
     destroy : function() {
+      var self = this;
+
       $("#Desktop").unbind("mousedown");
+
+      if ( this._rtimeout ) {
+        clearTimeout(this._rtimeout);
+      }
+
+      $(window).unbind("resize", function(ev) {
+        if ( self._rtimeout ) {
+          clearTimeout(self._rtimeout);
+        }
+        setTimeout(function() {
+          self.resize(ev);
+        }, 30);
+      });
 
       // Remove panel
       if ( this.panel ) {
@@ -2876,7 +2901,8 @@
       // Reset settings
       this.setWallpaper(null);
 
-      this._running = false;
+      this.running = false;
+      this._rtimeout = null;
 
       this._super();
     },
@@ -2922,6 +2948,10 @@
       }
 
       this.running = true;
+
+      setTimeout(function() {
+        self.resize();
+      }, 1000);
     },
 
     // HANDLERS
@@ -3018,6 +3048,18 @@
           this.panel.destroy();
         }
         this.panel = null;
+      }
+    },
+
+    /**
+     * Desktop::resize() -- Resize desktop
+     * @param  DOMEvent   ev      Event
+     * @return void
+     */
+    resize : function(ev) {
+      var p = this.getPanel();
+      if ( p ) {
+        p.triggerExpand();
       }
     },
 
@@ -3525,6 +3567,46 @@
         }
       }
       return false;
+    },
+
+    /**
+     * Panel::triggerExpand() -- Trigger expanding of items
+     * @FIXME   This is not finished yet
+     * @param   _PanelItem    x       Item
+     * @return  bool
+     */
+    triggerExpand : function() {
+      console.group("Panel::triggerExpand()");
+      var i;
+      var fs = 0;
+      var is = 0;
+      var ts = this.$element.width();
+
+      for ( i = 0; i < this.items.length; i++ ) {
+        if ( !this.items[i]._expand ) {
+          is += (this.items[i].$element.width() + 10);
+        } else {
+          is += 10;
+        }
+      }
+
+      fs = (ts - is);
+
+      console.log("Total Space", ts);
+      console.log("Item Space", is);
+      console.log("Free Space", fs);
+
+      if ( fs > 0 ) {
+        for ( i = 0; i < this.items.length; i++ ) {
+          if ( this.items[i]._expand ) {
+            console.log("Giving item", i, ":", fs, "space", this.items[i].$element);
+            this.items[i].$element.width(fs);
+            break;
+          }
+        }
+      }
+
+      console.groupEnd();
     }
 
   }); // @endclass
@@ -3648,6 +3730,16 @@
     },
 
     /**
+     * _PanelItem::expand() -- Expand item to max size
+     * @return void
+     */
+    expand : function() {
+      if ( this._expand ) {
+        (function(){})();
+      }
+    },
+
+    /**n
      * _PanelItem::crash() -- Make PanelItem Crash
      * @param   String      error     Error message
      * @return  void

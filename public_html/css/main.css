@@ -196,7 +196,7 @@ input.Disabled {
   vertical-align : middle;
 }
 
-.PanelWindowList {
+.PanelItemWindowList {
   overflow : hidden;
 }
 
@@ -209,6 +209,7 @@ input.Disabled {
 }
 
 .PanelItemWeather {
+  min-width : 100px;
 }
 .PanelItemWeather img {
   vertical-align : middle;
