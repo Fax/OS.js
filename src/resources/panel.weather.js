@@ -92,9 +92,13 @@ OSjs.PanelItems.PanelItemWeather = (function($, undefined) {
             } else {
               self.crash("No Weather data");
             }
+
+            self.onRedraw();
           },
           error : function() {
             self.crash("No Weather data");
+
+            self.onRedraw();
           }
         });
       },

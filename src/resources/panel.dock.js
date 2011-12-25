@@ -21,6 +21,7 @@ OSjs.PanelItems.PanelItemDock = (function($, undefined) {
       },
 
       create : function(pos) {
+        var self = this;
         var el = this._super(pos);
 
         var e, o;
@@ -45,6 +46,10 @@ OSjs.PanelItems.PanelItemDock = (function($, undefined) {
             api.system.launch(app);
           }
         });
+
+        setTimeout(function() {
+          self.onRedraw();
+        }, 0);
 
         return el;
       },

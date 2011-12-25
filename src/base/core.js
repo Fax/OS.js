@@ -3065,6 +3065,7 @@
       }
 
       this.running = true;
+      this.panel.run();
 
       setTimeout(function() {
         self.resize();
@@ -3478,6 +3479,7 @@
     $element    : null,       //!< DOM Element
     pos         : "",         //!< Panel Position
     items       : [],         //!< Panel Items
+    running     : false,      //!< Panel running state
 
     /**
      * Panel::init() -- Constructor
@@ -3486,9 +3488,10 @@
     init : function() {
       var self = this;
 
-      this.pos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
+      this.pos      = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
       this.$element = $("#Panel").show();
-      this.items = [];
+      this.items    = [];
+      this.running  = false;
 
       // Panel item dragging
       var oldPos = {'top' : 0, 'left' : 0};
@@ -3615,7 +3618,17 @@
         _Desktop.removePanel(this, true);
       }
 
+      this.running = false;
+
       this._super();
+    },
+
+    /**
+     * Panel::run() -- Set panel to running state
+     * @return  void
+     */
+    run : function() {
+      this.running = true;
     },
 
     /**
@@ -3694,31 +3707,33 @@
      */
     triggerExpand : function() {
       console.group("Panel::triggerExpand()");
-      var i;
-      var fs = 0;
-      var is = 0;
-      var ts = this.$element.width();
+      if ( this.running ) {
+        var i;
+        var fs = 0;
+        var is = 0;
+        var ts = this.$element.width();
 
-      for ( i = 0; i < this.items.length; i++ ) {
-        if ( !this.items[i]._expand ) {
-          is += (this.items[i].$element.width() + 10);
-        } else {
-          is += 10;
-        }
-      }
-
-      fs = (ts - is);
-
-      console.log("Total Space", ts);
-      console.log("Item Space", is);
-      console.log("Free Space", fs);
-
-      if ( fs > 0 ) {
         for ( i = 0; i < this.items.length; i++ ) {
-          if ( this.items[i]._expand ) {
-            console.log("Giving item", i, ":", fs, "space", this.items[i].$element);
-            this.items[i].$element.width(fs);
-            break;
+          if ( !this.items[i]._expand ) {
+            is += (this.items[i].$element.width() + 10);
+          } else {
+            is += 10;
+          }
+        }
+
+        fs = (ts - is);
+
+        console.log("Total Space", ts);
+        console.log("Item Space", is);
+        console.log("Free Space", fs);
+
+        if ( fs > 0 ) {
+          for ( i = 0; i < this.items.length; i++ ) {
+            if ( this.items[i]._expand ) {
+              console.log("Giving item", i, ":", fs, "space", this.items[i].$element);
+              this.items[i].$element.width(fs);
+              break;
+            }
           }
         }
       }
@@ -3853,6 +3868,17 @@
     expand : function() {
       if ( this._expand ) {
         (function(){})();
+      }
+    },
+
+    /**
+     * _PanelItem::onRedraw() -- Bubble a redraw event down to panel
+     * This function is called in a panel item when chaning content
+     * @return void
+     */
+    onRedraw : function() {
+      if ( this._panel ) {
+        this._panel.triggerExpand();
       }
     },
 
