@@ -63,6 +63,11 @@ OSjs.Applications.ApplicationClock = (function($, undefined) {
             var srotate = "rotate(" + sdegree + "deg)";
 
             sec.css("-webkit-transform", srotate );
+            sec.css("-moz-transform", srotate );
+            if ( $.browser.msie ) {
+              sec.css("-o-transform", srotate );
+              sec.css("-ms-transform", srotate );
+            }
 
           }, 1000 );
 
@@ -74,6 +79,11 @@ OSjs.Applications.ApplicationClock = (function($, undefined) {
             var hrotate = "rotate(" + hdegree + "deg)";
 
             hour.css("-webkit-transform", hrotate );
+            hour.css("-moz-transform", hrotate );
+            if ( $.browser.msie ) {
+              hour.css("-o-transform", hrotate );
+              hour.css("-ms-transform", hrotate );
+            }
 
           }, 1000 );
 
@@ -84,6 +94,11 @@ OSjs.Applications.ApplicationClock = (function($, undefined) {
             var mrotate = "rotate(" + mdegree + "deg)";
 
             min.css("-webkit-transform", mrotate );
+            min.css("-moz-transform", mortate );
+            if ( $.browser.msie ) {
+              min.css("-o-transform", mortate );
+              min.css("-ms-transform", mortate );
+            }
           }, 1000 );
         }
 
