@@ -2938,6 +2938,7 @@
     running        : false,         //!< Desktop running ?
     panel          : null,          //!< Panel instance
     notifications  : 0,             //!< Desktop notification counter
+    iconview       : null,          //!< Desktop IconView
     _rtimeout      : null,          //!< Desktop resize timeout
 
     /**
@@ -3015,6 +3016,12 @@
       }
       this.panel = null;
 
+      // Remove IconView
+      if ( this.iconview ) {
+        this.iconview.destroy();
+      }
+      this.iconview = null;
+
       // Reset settings
       this.setWallpaper(null);
 
@@ -3034,15 +3041,60 @@
         return;
       }
 
+      //
       // Events
+      //
       $("#Desktop").mousedown(function(ev) {
         return self.mousedownHandler(ev);
       });
 
       this.applySettings();
 
+      //
+      // Create IconView and items from localStorage
+      //
+      $("#DesktopGrid").remove();
+      /*
+      var icolumns = [
+        { "className" : "Image", "style" : null, "title" : null },
+        { "className" : "Title", "style" : null, "title" : null },
+        { "className" : "Info", "style" : "display:none;", "title" : null }
+      ];
+
+      var iitems = [
+        { "icon"       : "/img/icons/32x32/places/user-home.png",
+          "type"       : "dir",
+          "mime"       : "",
+          "name"       : "Home",
+          "path"       : "/",
+          "size"       : 0,
+          "class"      : "",
+          "protected"  : true }
+      ];
+
+      this.iconview = new OSjs.Classes.IconView($("#DesktopGrid"), 3, iitems, icolumns, function(el, item, type, index) {
+        el.find(".Title").html(item.name);
+        el.find(".Image").html(sprintf("<img alt=\"\" src=\"%s\" width=\"32\" height=\"32\" />", item.icon));
+
+        var tmp = el.find(".Info");
+        for ( var x in item ) {
+          if ( item.hasOwnProperty(x) ) {
+            tmp.append(sprintf("<input type=\"hidden\" name=\"%s\" value=\"%s\" />", x, item[x]));
+          }
+        }
+      }, function(el, item) {
+        API.system.launch("ApplicationFileManager", item.path);
+
+        self.iconview.selectItem();
+      }, function() {
+        return true; // Select
+      }, true);
+      */
+
+      //
       // Create panel and items from localStorage
-      var panel = new Panel();
+      //
+      var panel = new Panel(this);
       var items = _Settings._get("desktop.panel.items", false, true);
       var el, iname, iargs, ialign;
       for ( var i = 0; i < items.length; i++ ) {
@@ -3055,7 +3107,9 @@
       }
       this.addPanel(panel);
 
-      // After panel
+      //
+      // Now apply bindings and run desktop
+      //
       if ( _WM ) {
         _WM.bind("window_add", this.defaultHandler);
         _WM.bind("window_remove", this.defaultHandler);
@@ -3066,6 +3120,8 @@
 
       this.running = true;
       this.panel.run();
+
+      this.updatePanelPosition(panel);
 
       setTimeout(function() {
         self.resize();
@@ -3166,6 +3222,19 @@
           this.panel.destroy();
         }
         this.panel = null;
+      }
+    },
+
+    /**
+     * Desktop::updatePanelPosition() -- Triggered upon panel position update
+     * @param   Panel     p           Panel or null
+     * @return  void
+     */
+    updatePanelPosition : function(p) {
+      if ( this.iconview ) {
+        var ppos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
+        $("#DesktopGrid").attr("class", "");
+        $("#DesktopGrid").addClass(ppos);
       }
     },
 
@@ -3522,6 +3591,10 @@
             self.$element.addClass("Bottom");
             self.$element.css({"top" : "auto", "bottom" : "0px"});
             self.pos = "bottom";
+          }
+
+          if ( _Desktop ) {
+            _Desktop.updatePanelPosition(self);
           }
         }
       });

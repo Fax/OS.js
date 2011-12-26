@@ -98,8 +98,17 @@
   // ICON VIEW
   /////////////////////////////////////////////////////////////////////////////
 
-  var ICONVIEW_ICON    = 0;
-  var ICONVIEW_DETAIL  = 1;
+  var ICONVIEW_ICON  = 0;
+  var ICONVIEW_LIST  = 1;
+  var ICONVIEW_TREE  = 2;
+  var ICONVIEW_GRID  = 3;
+
+  var ICONVIEW_TYPES = {
+    "icon" : ICONVIEW_ICON,
+    "list" : ICONVIEW_LIST,
+    "tree" : ICONVIEW_TREE,
+    "grid" : ICONVIEW_GRID
+  };
 
   /**
    * OSjs::Classes::IconView -- IconView Class
@@ -110,6 +119,7 @@
     type          : -1,                   //!< View Type
     list          : [],                   //!< List
     columns       : [],                   //!< Columns
+    transparent   : false,                //!< Bubble events?
     $root         : null,                 //!< Root Container DOM Element
     $element      : null,                 //!< View DOM Element
     $selected     : null,                 //!< Selected DOM Element
@@ -121,36 +131,66 @@
      * IconView::init() -- Constructor
      * @constructor
      */
-    init : function(root, type, list, columns, on_render, on_activate, on_toggle) {
-      this.type       = type || 0;
-      this.list       = [];
-      this.columns    = [];
-      this.$root      = root;
-      this.$element   = null;
-      this.$selected  = null;
+    init : function(root, type, list, columns, on_render, on_activate, on_toggle, transparent) {
+      this.list         = [];
+      this.columns      = [];
+      this.transparent  = transparent === undefined ? false : transparent;
+      this.$root        = null;
+      this.$element     = null;
+      this.$selected    = null;
 
       this.on_render    = on_render   || function() {};
       this.on_activate  = on_activate || function() {};
       this.on_toggle    = on_toggle   || function() {};
 
+      if ( $(root).hasClass("GtkIconView") ) {
+        this.$root = root;
+      } else {
+        var tmp = $("<div class=\"GtkIconView\"></div>");
+        this.$root = tmp;
+        $(root).append(tmp);
+      }
+
+      this.setListType(type, false);
       if ( this.setList(list, columns) ) {
         this.renderList(this.list, this.columns);
       }
 
       var self = this;
-      this.$root.bind("mousedown", function(ev) {
-        ev.preventDefault();
-        $(document).click(); // Trigger this! (deselects context-menu)
-        return false;
-      }).bind("click", function(ev) {
-        ev.preventDefault();
+
+      if ( this.transparent ) {
+        this.$root.bind("mousedown", function(ev) {
+          $(document).click(); // Trigger this! (deselects context-menu)
+          ev.preventDefault();
+        });
+      } else {
+        this.$root.bind("mousedown", function(ev) {
+          $(document).click(); // Trigger this! (deselects context-menu)
+          ev.preventDefault();
+          return false;
+        });
+      }
+
+      this.$root.bind("click", function(ev) {
         self._selectItem(ev, null, null, false);
         $(document).click(); // Trigger this! (deselects context-menu)
+
+        if ( !self.transparent ) {
+          ev.preventDefault();
+          return true;
+        }
+
         return false;
-      }).bind("contextmenu", function(ev) {
+      });
+
+      this.$root.bind("contextmenu", function(ev) {
         ev.preventDefault();
         self._selectItem(ev, null, null, false);
-        $(document).click(); // Trigger this! (deselects context-menu)
+
+        if ( !self.transparent ) {
+          $(document).click(); // Trigger this! (deselects context-menu)
+          return true;
+        }
         return false;
       });
     },
@@ -184,7 +224,7 @@
      */
     resize : function() {
       var self = this;
-      if ( this.type == ICONVIEW_DETAIL ) {
+      if ( this.type == ICONVIEW_LIST ) {
         this.$element.find(".TableHead td").each(function(ind, el) {
           var pel = self.$element.find(".TableBody tr:first-child td").get(ind);
           if ( pel ) {
@@ -231,7 +271,7 @@
       var self = this;
 
       var el;
-      if ( this.type === ICONVIEW_ICON ) {
+      if ( this.type === ICONVIEW_ICON || this.type === ICONVIEW_GRID ) {
         el = $("<ul class=\"ListWrap\"></ul>");
       } else {
         el = $("<div class=\"TableWrap\"><table class=\"TableHead GtkIconViewHeader\"><tbody></tbody></table><div class=\"TableBodyWrap\"><table class=\"TableBody\"><tbody></tbody></table></div></div>");
@@ -266,7 +306,7 @@
 
       // Figure out what container to use
       var table = false;
-      if ( this.type === ICONVIEW_ICON ) {
+      if ( this.type === ICONVIEW_ICON || this.type === ICONVIEW_GRID ) {
         b = this.$element;//.find(".ListWrap");
       } else {
         b = this.$element.find(".TableBody tbody");
@@ -281,7 +321,7 @@
         var hb = this.$element.find(".TableHead tbody").empty();
         for ( i = 0; i < cl; i++ ) {
           cel = columns[i];
-          el = $(sprintf("<td class=\"%s\" style=\"%s\">%s</td>", cel.className, cel.style, cel.title));
+          el = $(sprintf("<td class=\"%s\" style=\"%s\">%s</td>", cel.className || "", cel.style || "", cel.title || ""));
           hb.append(el);
         }
       }
@@ -290,12 +330,12 @@
       for ( i = 0; i < l; i++ ) {
         item = list[i];
 
-        if ( this.type === ICONVIEW_ICON ) {
+        if ( this.type === ICONVIEW_ICON || this.type === ICONVIEW_GRID ) {
           el = $("<li><div class=\"Inner\"></div></li>");
 
           for ( x = 0; x < cl; x++ ) {
             cel = columns[x];
-            el.find(".Inner").append(sprintf("<div class=\"%s\" style=\"%s\">%s</div>", cel.className, cel.style, cel.title));
+            el.find(".Inner").append(sprintf("<div class=\"%s\" style=\"%s\">%s</div>", cel.className || "", cel.style || "", cel.title || ""));
           }
 
           el.find(".Inner").click((function(it) {
@@ -326,7 +366,7 @@
 
           for ( x = 0; x < cl; x++ ) {
             cel = columns[x];
-            el.append($(sprintf("<td class=\"%s\" style=\"%s\">%s</td>", cel.className, cel.style, cel.title)));
+            el.append($(sprintf("<td class=\"%s\" style=\"%s\">%s</td>", cel.className || "", cel.style || "", cel.title || "")));
           }
 
           if ( item['class'] !== undefined ) {
@@ -420,9 +460,13 @@
      * @return void
      */
     selectItem : function(key, value) {
-      var item = this.findItem(key, value);
-      if ( item ) {
-        this._selectItem(null, item[0], item[1]);
+      if ( key && value ) {
+        var item = this.findItem(key, value);
+        if ( item ) {
+          this._selectItem(null, item[0], item[1]);
+        }
+      } else {
+        this._selectItem(null, null, null, false);
       }
     },
 
@@ -442,7 +486,7 @@
       for ( var i = 0; i < test.length; i++ ) {
         el = $(test[i]);
         if ( el.val() == value ) {
-          if ( this.type == ICONVIEW_ICON ) {
+          if ( this.type === ICONVIEW_ICON || this.type === ICONVIEW_GRID ) {
             els = el.parents("li");
           } else {
             els = el.parents("td");
@@ -487,6 +531,10 @@
      * @return void
      */
     setListType : function(type, refresh) {
+      if ( ICONVIEW_TYPES[type] !== undefined ) {
+        type = ICONVIEW_TYPES[type];
+      }
+
       this.type = parseInt(type, 10) || 0;
 
       if ( refresh === true ) {

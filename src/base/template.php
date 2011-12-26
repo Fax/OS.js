@@ -79,6 +79,9 @@
 
 <!-- Main Container -->
 <div id="Desktop">
+  <!-- IconView -->
+  <div id="DesktopGrid"></div>
+
   <!-- Panel -->
   <div class="DesktopPanel AlignTop" id="Panel"><ul></ul></div>
 

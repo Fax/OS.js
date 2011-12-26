@@ -71,6 +71,23 @@ body {
   opacity: 0.50;           /* fx, safari, opera */
 }
 
+#DesktopGrid {
+  color : #fff;
+  -moz-text-shadow: 0px 0px 2px #000;
+  -webkit-text-shadow: 0px 0px 2px #000;
+  text-shadow: 0px 0px 2px #000;
+
+  filter: alpha(opacity=90); /* internet explorer */
+  -khtml-opacity: 0.90;      /* khtml, old safari */
+  -moz-opacity: 0.90;       /* mozilla, netscape */
+  opacity: 0.90;           /* fx, safari, opera */
+}
+#DesktopGrid .Current {
+  -moz-border-radius: 10px; /* Firefox */
+  -webkit-border-radius: 10px; /* Safari, Chrome */
+  border-radius: 10px; /* CSS3 */
+}
+
 .PanelItemWindow {
 }
 .PanelItemWindow.Current {

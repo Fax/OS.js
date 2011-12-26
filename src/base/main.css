@@ -93,6 +93,33 @@ input.Disabled {
 }
   */
 
+#DesktopGrid {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 0px;
+}
+#DesktopGrid .GtkIconView {
+  background : transparent;
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 0px;
+}
+#DesktopGrid.top {
+  top : 40px;
+  bottom : 0px;
+}
+#DesktopGrid.bottom {
+  top : 0px;
+  bottom : 40px;
+}
+#DesktopGrid .Current {
+  background : #fff;
+}
+
 /* Panel */
 
 .DesktopPanel {
@@ -210,6 +237,7 @@ input.Disabled {
 
 .PanelItemWeather {
   min-width : 115px;
+  text-align : right;
 }
 .PanelItemWeather img {
   vertical-align : middle;
