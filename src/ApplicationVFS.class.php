@@ -452,7 +452,7 @@ class ApplicationVFS
           "mime"       => "",
           "icon"       => "status/folder-visiting.png",
           "type"       => "dir",
-          "protected"  => 1,
+          "protected"  => 1
       );
 
       Application::init(APPLICATION_BUILD);
@@ -493,6 +493,7 @@ class ApplicationVFS
             $fpath = "/";
           }
           $icon = "status/folder-visiting.png";
+          $protected = true;
         }
 
         // New dir

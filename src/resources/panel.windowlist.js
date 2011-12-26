@@ -34,11 +34,16 @@ OSjs.PanelItems.PanelItemWindowList = (function($, undefined) {
         }
 
         var getTitle = function(w) {
-          w = w.getTitle();
-          if ( w.length > 20 ) {
-            w = w.substr(0, 20) + "...";
+          if ( w ) {
+            w = w.getTitle();
+            if ( w ) {
+              if ( w.length > 20 ) {
+                w = w.substr(0, 20) + "...";
+              }
+              return w;
+            }
           }
-          return w;
+          return "Unknown";
         };
 
         if ( ev == "window_add" ) {

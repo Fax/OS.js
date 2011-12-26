@@ -39,6 +39,55 @@ class ApplicationFileManager
         $ignores[] = "..";
       }
 
+      if ( $view == "icon" ) {
+        $columns = Array(
+          Array(
+            "className" => "Image",
+            "style"     => null,
+            "title"     => null
+          ),
+          Array(
+            "className" => "Title",
+            "style"     => null,
+            "title"     => null
+          ),
+          Array(
+            "className" => "Info",
+            "style"     => "display:none;",
+            "title"     => null
+          )
+        );
+      } else {
+        $columns = Array(
+          Array(
+            "className" => "Image Space First",
+            "style"     => null,
+            "title"     => "&nbsp;"
+          ),
+          Array(
+            "className" => "Title Space",
+            "style"     => null,
+            "title"     => "Filename"
+          ),
+          Array(
+            "className" => "Size Space",
+            "style"     => null,
+            "title"     => "Size"
+          ),
+          Array(
+            "className" => "Type Space Last",
+            "style"     => null,
+            "title"     => "Type"
+          ),
+          Array(
+            "className" => "Info",
+            "style"     => "display:none;",
+            "title"     => "&nbsp;"
+          ),
+        );
+      }
+
+      $files   = Array();
       if ( ($items = ApplicationVFS::ls($path, $ignores)) !== false ) {
         $i = 0;
         foreach ( $items as $file => $info ) {
@@ -47,85 +96,30 @@ class ApplicationFileManager
             $icon = $info['icon'];
           }
 
-          if ( $view == "icon" ) {
-            $result[] = <<<EOHTML
-        <li class="type_{$info['type']}">
-          <div class="Inner">
-            <div class="Image"><img alt="" src="{$icon}" width="32" height="32" /></div>
-            <div class="Title">{$file}</div>
-            <div class="Info" style="display:none;">
-              <input type="hidden" name="type" value="{$info['type']}" />
-              <input type="hidden" name="mime" value="{$info['mime']}" />
-              <input type="hidden" name="name" value="{$file}" />
-              <input type="hidden" name="path" value="{$info['path']}" />
-              <input type="hidden" name="size" value="{$info['size']}" />
-              <input type="hidden" name="protected" value="{$info['protected']}" />
-            </div>
-          </div>
-        </li>
-EOHTML;
-          } else {
-            $class = $i % 2 ? "odd" : "even";
-            $size = $info['type'] == "dir" ? "" : $info['size'];
-            $mime = $info['type'] == "dir" ? "" : $info['mime'];
-            $result[] = <<<EOHTML
-        <tr class="type_{$info['type']} {$class} Inner">
-          <td class="Image Space First"><img alt="" src="{$icon}" width="16" height="16" /></td>
-          <td class="Title Space">{$file}</td>
-          <td class="Size Space">{$size}</td>
-          <td class="Type Space Last">{$mime}</td>
-          <td class="Info" style="display:none;">
-            <input type="hidden" name="type" value="{$info['type']}" />
-            <input type="hidden" name="mime" value="{$info['mime']}" />
-            <input type="hidden" name="name" value="{$file}" />
-            <input type="hidden" name="path" value="{$info['path']}" />
-            <input type="hidden" name="size" value="{$info['size']}" />
-            <input type="hidden" name="protected" value="{$info['protected']}" />
-          </td>
-        </tr>
-EOHTML;
+          $class = $i % 2 ? "odd" : "even";
 
-            $i++;
-          }
+          $files[] = Array(
+            "icon"      => $icon,
+            "type"      => $info["type"],
+            "mime"      => $info["mime"],
+            "name"      => $file,
+            "path"      => $info["path"],
+            "size"      => $info["size"],
+            "class"     => $class,
+            "protected" => $info["protected"]
+          );
+
+          $i++;
 
           $total++;
           $bytes += (int) $info['size'];
         }
       }
 
-      if ( $view == "icon" ) {
-        $out = "<ul class=\"ListWrap\">" . implode("", $result) . "</ul>";
-      } else {
-        $rows = implode("", $result);
-        $out = <<<EOHTML
-<div class="TableWrap">
-  <table class="TableHead GtkIconViewHeader">
-    <tbody>
-      <tr class="">
-        <td class="Image Space First">&nbsp;</td>
-        <td class="Title Space">Filename</td>
-        <td class="Size Space">Size</td>
-        <td class="Type Space Last">Type</td>
-        <td class="Info" style="display:none;">&nbsp;</td>
-      </tr>
-    </tbody>
-  </table>
-  <div class="TableBodyWrap">
-    <table class="TableBody">
-      <tbody>
-    {$rows}
-      </tbody>
-    </table>
-  </div>
-</div>
-EOHTML;
-      }
-
-      return Array("items" => $out, "total" => $total, "bytes" => $bytes, "path" => ($path == "/" ? "Home" : $path));
+      return Array("items" => $files, "columns" => $columns, "total" => $total, "bytes" => $bytes, "path" => ($path == "/" ? "Home" : $path));
     } else if ( $action == "upload" ) {
-
+      return true;
     }
-
 
     return false;
   }

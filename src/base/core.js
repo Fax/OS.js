@@ -4651,6 +4651,8 @@
      * @return void
      */
     _maximize : function() {
+      var self = this;
+
       if ( this._is_maximizable ) {
         if ( this._is_maximized ) {
           if ( this._attrs_temp !== null ) {
@@ -4664,7 +4666,9 @@
               'left'   : this._left + 'px',
               'width'  : this._width + 'px',
               'height' : this._height + 'px'
-            }, {'duration' : ANIMATION_SPEED});
+            }, {'duration' : ANIMATION_SPEED, 'complete' : function() {
+              self._call("resize");
+            }});
 
             this._attrs_temp === null;
           }
@@ -4695,7 +4699,9 @@
           }).animate({
             'width'  : (this._width) + "px",
             'height' : (this._height)  + "px"
-          }, {'duration' : ANIMATION_SPEED}, function() {
+          }, {'duration' : ANIMATION_SPEED, 'complete' : function() {
+            self._call("resize");
+          }}, function() {
             _WM.maximizeWindow(self);
           });
 
@@ -4706,7 +4712,6 @@
             this.$element.find(".ui-resizable-handle").hide();
           }
         }
-
       }
     },
 

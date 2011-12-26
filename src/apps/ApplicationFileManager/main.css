@@ -95,3 +95,29 @@
 
 .ApplicationFileManager .TableBodyWrap {
 }
+
+.ApplicationFileManager .GtkIconView {
+}
+.ApplicationFileManager .Loading {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 0px;
+  z-index : 1000;
+  background : #000;
+
+  filter: alpha(opacity=30); /* internet explorer */
+  -khtml-opacity: 0.30;      /* khtml, old safari */
+  -moz-opacity: 0.30;       /* mozilla, netscape */
+  opacity: 0.30;           /* fx, safari, opera */
+}
+.ApplicationFileManager .Loading img {
+  display : block;
+  position : absolute;
+  left : 50%;
+  top : 50%;
+  width : 64px;
+  height : 64px;
+  margin : -32px;
+}
