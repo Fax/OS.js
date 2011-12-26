@@ -2976,12 +2976,24 @@
       });
       */
 
+      // Global resize event
+      var curHeight = $(window).height();
+      var curWidth  = $(window).width();
       $(window).bind("resize", function(ev) {
+        var newHeight = $(window).height();
+        var newWidth  = $(window).width();
+
         if ( self._rtimeout ) {
           clearTimeout(self._rtimeout);
         }
+
         self._rtimeout = setTimeout(function() {
-          self.resize(ev);
+          if ( newHeight != curHeight || newWidth != curWidth ) {
+            self.resize(ev);
+
+            curHeight = newHeight;
+            curWidth  = newWidth;
+          }
         }, 30);
       });
 
@@ -3001,14 +3013,7 @@
         clearTimeout(this._rtimeout);
       }
 
-      $(window).unbind("resize", function(ev) {
-        if ( self._rtimeout ) {
-          clearTimeout(self._rtimeout);
-        }
-        setTimeout(function() {
-          self.resize(ev);
-        }, 30);
-      });
+      $(window).unbind("resize");
 
       // Remove panel
       if ( this.panel ) {
@@ -4447,7 +4452,7 @@
         if ( this._is_resizable ) {
           var ropts = {
             handles : "se",
-            start : function() {
+            start : function(ev) {
               if ( self._is_maximized ) {
                 API.ui.cursor("not-allowed");
                 return false;
@@ -4456,7 +4461,7 @@
 
               return true;
             },
-            stop : function() {
+            stop : function(ev) {
               el.removeClass("Blend");
 
               self._width = parseInt(self.$element.width(), 10);

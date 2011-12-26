@@ -143,14 +143,14 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
             _defaultStatusText = sprintf("%d items (%d bytes)", result.total, result.bytes);
           }
 
-          self._call("resize");
-
           self.$element.find(".statusbar1").html(_defaultStatusText);
 
           self.loading.hide();
 
           setTimeout(function() {
             callback();
+
+            self._call("resize");
           }, 0);
         });
 
