@@ -3189,9 +3189,9 @@
 
       ], $(this), 3, true);
 
-      if ( ev.which > 1 ) {
-        ev.preventDefault();
-      }
+      /*if ( ev.which > 1 ) {
+      }*/
+      ev.preventDefault();
 
       return ret;
     },
