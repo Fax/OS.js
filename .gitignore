@@ -28,10 +28,7 @@ public_html/js/vendor/jquery.touch.js.txt
 public_html/js/vendor/jquery.ui.touch-punch.min.js
 
 # Temp Applications
-public_html/css/app.email.css
 #public_html/img/app.draw/icons/
-public_html/js/app.email.js
-src/IMAP.class.php
 src/build/classes/ajwm/AppEmailMailbox.php
 src/build/classes/ajwm/AppEmailMailboxPeer.php
 src/build/classes/ajwm/AppEmailMailboxQuery.php
