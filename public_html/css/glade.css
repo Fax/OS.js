@@ -164,6 +164,76 @@
     background : #e6e6e6;
   }
 
+  .GtkIconView {
+    /*
+    position : absolute;
+    top : 2px;
+    left : 2px;
+    right : 2px;
+    bottom : 2px;
+    */
+    background : #fff;
+    overflow : auto;
+  }
+  .GtkIconView ul {
+    list-style-type : none;
+    padding : 0;
+    margin : 0;
+  }
+  .GtkIconView li {
+    float : left;
+    margin : 0;
+    padding : 10px;
+    text-align : center;
+    width : 48px;
+    height : 48px;
+    font-size : 10px;
+    word-wrap : break-word;
+  }
+
+  .GtkIconView .Inner,
+  .GtkIconView .Inner * {
+    cursor : pointer;
+  }
+  .GtkIconView tr.Current,
+  .GtkIconView tr.odd.Current {
+    background : #4f4f4f;
+    color : #fff;
+  }
+  .GtkIconView table {
+    border-collapse : collapse;
+    width : 100%;
+  }
+  .GtkIconView td {
+    padding : 2px;
+    white-space : nowrap;
+  }
+  .GtkIconView tr.odd {
+    background : #e6e6e6;
+  }
+
+
+  .GtkIconView table.TableHead {
+    height : 20px;
+    padding-top :5px;
+    padding-bottom : 5px;
+    overflow : hidden;
+    display : block;
+  }
+  .GtkIconView table.TableBody {
+    background : #fff;
+  }
+
+  .GtkIconView .TableWrap {
+  }
+
+  .GtkIconView .TableBodyWrap {
+  }
+
+  .GtkIconView .GtkIconView {
+  }
+
+
 /* GtkStatusbar */
 .GtkStatusbar {
   height : 10px;
@@ -443,3 +513,5 @@
   .GtkFileChooserButton button {
     width : 100%;
   }
+
+

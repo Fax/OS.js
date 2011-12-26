@@ -15,54 +15,9 @@
   background : #fff;
 }
   */
-.ApplicationFileManager .iconview1 {
-  /*
-  position : absolute;
-  top : 2px;
-  left : 2px;
-  right : 2px;
-  bottom : 2px;
-  */
-  background : #fff;
-  overflow : auto;
-}
-.ApplicationFileManager .iconview1 ul {
-  list-style-type : none;
-  padding : 0;
-  margin : 0;
-}
-.ApplicationFileManager .iconview1 li {
-  float : left;
-  margin : 0;
-  padding : 10px;
-  text-align : center;
-  width : 48px;
-  height : 48px;
-  font-size : 10px;
-  word-wrap : break-word;
-}
-
-.ApplicationFileManager .iconview1 .Inner,
-.ApplicationFileManager .iconview1 .Inner * {
-  cursor : pointer;
-}
 .ApplicationFileManager .iconview1 .Current .Title {
   background : #4f4f4f;
   color : #fff;
-}
-.ApplicationFileManager .iconview1 tr.Current,
-.ApplicationFileManager .iconview1 tr.odd.Current {
-  background : #4f4f4f;
-  color : #fff;
-}
-
-.ApplicationFileManager .iconview1 table {
-  border-collapse : collapse;
-  width : 100%;
-}
-.ApplicationFileManager .iconview1 td {
-  padding : 2px;
-  white-space : nowrap;
 }
 .ApplicationFileManager .iconview1 td.Image {
   width : 16px;
@@ -72,31 +27,6 @@
 }
 .ApplicationFileManager .iconview1 td.Type {
   width : 50px;
-}
-
-.ApplicationFileManager .iconview1 tr.odd {
-  background : #e6e6e6;
-}
-
-
-.ApplicationFileManager .iconview1 table.TableHead {
-  height : 20px;
-  padding-top :5px;
-  padding-bottom : 5px;
-  overflow : hidden;
-  display : block;
-}
-.ApplicationFileManager .iconview1 table.TableBody {
-  background : #fff;
-}
-
-.ApplicationFileManager .TableWrap {
-}
-
-.ApplicationFileManager .TableBodyWrap {
-}
-
-.ApplicationFileManager .GtkIconView {
 }
 .ApplicationFileManager .Loading {
   position : absolute;
