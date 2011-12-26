@@ -2980,7 +2980,7 @@
         if ( self._rtimeout ) {
           clearTimeout(self._rtimeout);
         }
-        setTimeout(function() {
+        self._rtimeout = setTimeout(function() {
           self.resize(ev);
         }, 30);
       });
@@ -3955,7 +3955,7 @@
       }
     },
 
-    /**n
+    /**
      * _PanelItem::crash() -- Make PanelItem Crash
      * @param   String      error     Error message
      * @return  void
