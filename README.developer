@@ -2,7 +2,6 @@ Directory structure:
 -------------------------------------------------------------------------------
 bin/                    Utilities and misc scripts
   [application-gen]         Application compiler
-  [database-gen]            Database compiler (Propel ORM)
   [count-lines]             Count code lines
   [update_revision]         Update to latest revision
   [yui.sh]                  Yahoo YUI Compressor launcher wrapper
@@ -33,21 +32,12 @@ src/                    Main sources
     [template.php]          HTML Template
   build/                  Compiled files
     apps/                   Application compiler output files
-    classes/                Propel ORM Classes
-    conf/                   Propel ORM Configuration files
-    migrations/             Propel ORM Migration files
-    sql/                    Propel ORM SQL Build files
     [applications.xml]      Compiled application XML metadata
   resources/              Application resource files (CSS, JavaScript)
 vendor/                 Vendor libraries
-  Propel/                 Propel ORM installation base directory
   [yuicompressor-*.jar]   Yahoo Script Compressor
 [header.php]            PHP Bootstrap, configurations
 [server.php]            WebSocket server PHP script
-[build.properties]      Propel ORM build file
-[buildtime-conf.xml]    Propel ORM build runtime config
-[runtime-conf.xml]      Propel ORM main runtime config
-[schema.xml]            Application(s) database Schema (Propel ORM)
 
 The 'public_html/' directory does not expose or contain any core script files.
 All
@@ -63,9 +53,6 @@ New Application:
 * Create Application directory in 'src/apps/ApplicationXXX/'
 * Create Glade Interface file, place in 'src/apps/ApplicationXXX.glade'
 * Create XML build-file, place in 'src/apps/ApplicationXXX.xml'
-* Update Database schema 'schema.xml' if needed
-* Run './bin/application-gen'
-* Run './bin/database-gen' if database schema was updated
 * Copy 'src/build/ApplicationXXX.class.php' to 'src/apps/ApplicationXXX/'
 * Copy 'src/build/apps/app.XXX.js' to 'src/apps/ApplicationXXX/main.js'
 * Copy 'src/build/apps/app.XXX.css' to 'src/apps/ApplicationXXX/main.css'
@@ -73,7 +60,6 @@ New Application:
 
 Update:
 * Run './bin/application-gen'
-* Run './bin/database-gen' if database schema was updated
 * Update your CSS and JS with new code found in 'src/build/app.FOO.BAR'
 * Run './bin/minimize-scripts.php' if you want minimized scripts for production servers
 

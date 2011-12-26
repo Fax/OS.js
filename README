@@ -16,7 +16,6 @@ Vendor libraries used:
 * JSON2 by Douglas Crockford
 * Sprintf by Alexandru Marasteanu
 * Yahoo YUI Compressor
-* Propel ORM (Core and Application database access)
 
 Features and Highlights:
 -------------------------------------------------------------------------------

@@ -12,7 +12,6 @@ Requirements:
 Install Vendor Stuff:
 -------------------------------------------------------------------------------
 * Copy a X11's icon theme 16x16 and 32x32 folders into 'public_html/img/icons/'
-* Install Propel ORM into 'vendor/Propel/' (By repository or archive)
 * 'exiftool' is required for some API stuff
 * 'pdf2svg' is required to read PDF files
 
@@ -20,8 +19,6 @@ First run:
 -------------------------------------------------------------------------------
 * chown the 'public_html/media' directory to Apache user/group (recursive)
 * chown the 'logs' directory to Apache user/group
-* Run './bin/propel-gen' to initialize propel database setup
-* Run './bin/propel-gen insert-sql' to set-up database tables etc
 
 Update to latest revision:
 -------------------------------------------------------------------------------

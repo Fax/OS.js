@@ -76,23 +76,8 @@ define("APPLICATION_BUILD",          PATH_PROJECT_BUILD   . "/applications.xml")
 define("MIME_MAGIC",                 PATH_PROJECT_VENDOR  . "/mime.mgc");
 
 //
-// Propel Config
-//
-
-$inifile = parse_ini_file(PATH_PROJECT . "/build.properties");
-define("PROPEL_PROJECT",  $inifile["propel.project"]);
-define("PROPEL_CONFIG",   sprintf("%s/conf/%s-conf.php", PATH_PROJECT_BUILD, PROPEL_PROJECT));
-unset($inifile);
-
-set_include_path(sprintf("%s/classes", PATH_PROJECT_BUILD) . PATH_SEPARATOR . get_include_path());
-set_include_path(sprintf("%s/classes/%s", PATH_PROJECT_BUILD, PROPEL_PROJECT) . PATH_SEPARATOR . get_include_path());
-
-//
 // Includes
 //
-
-// Vendor libraries
-require 'vendor/Propel/runtime/lib/Propel.php';
 
 // Internal libraries
 require "lib/Functions.php";

@@ -29,14 +29,3 @@ public_html/js/vendor/jquery.ui.touch-punch.min.js
 
 # Temp Applications
 #public_html/img/app.draw/icons/
-src/build/classes/ajwm/AppEmailMailbox.php
-src/build/classes/ajwm/AppEmailMailboxPeer.php
-src/build/classes/ajwm/AppEmailMailboxQuery.php
-src/build/classes/ajwm/AppEmailMessage.php
-src/build/classes/ajwm/AppEmailMessagePeer.php
-src/build/classes/ajwm/AppEmailMessageQuery.php
-src/build/classes/ajwm/Location.php
-src/build/classes/ajwm/LocationPeer.php
-src/build/classes/ajwm/LocationQuery.php
-src/build/migrations/PropelMigration_1307167424.php
-src/build/migrations/PropelMigration_1307167993.php

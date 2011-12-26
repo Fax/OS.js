@@ -29,9 +29,6 @@ class Core
    * @constructor
    */
   protected function __construct() {
-
-    /*$user       = $this->getUser();
-    $zone       = $user->getTimezone();*/
     $zone       = "Europe/Oslo";
     $tz         = new DateTimeZone($zone);
     $now        = new DateTime("now", $tz);
@@ -263,11 +260,7 @@ EOCSS;
    * @return User
    */
   public function getUser() {
-    /*if ( !class_exists("UserQuery") ) {
-      Propel::init(PROPEL_CONFIG);
-    }*/
-
-    return UserQuery::create()->findPK(1);
+    return null;
   }
 
   /**
@@ -294,9 +287,6 @@ EOCSS;
   public function doPOST(Array $args) {
     if ( sizeof($args) ) {
 
-      // Make sure DB is running
-      Propel::init(PROPEL_CONFIG);
-
       // API Operations
       if ( isset($args['ajax']) ) {
         $json = Array("success" => false, "error" => "Unknown error", "result" => null);
@@ -318,14 +308,8 @@ EOCSS;
           $settings = isset($args['settings']) ? $args['settings'] : Array();
           $session  = isset($args['session'])  ? $args['session']  : Array();
 
-          if ( $user = $this->getUser() ) {
-            $user->setSavedSettings(json_encode($settings));
-            $user->setSavedSession(json_encode($session));
-            $user->save();
-
-            $json['result'] = true;
-            $json['success'] = true;
-          }
+          $json['result'] = true;
+          $json['success'] = true;
         } else if ( $args['action'] == "init" ) {
           Application::init(APPLICATION_BUILD);
 
@@ -341,19 +325,15 @@ EOCSS;
          * USER
          */
         else if ( $args['action'] == "user" ) {
-          if ( $user = $this->getUser() ) {
-            $json['success'] = true;
-            $json['result'] = Array(
-              "Username"   => $user->getUsername(),
-              "Privilege"  => $user->getPrivilegeType(),
-              "Name"       => $user->getName(),
-              "Email"      => $user->getEmail(),
-              "Company"    => $user->getCompanyName(),
-              "Cellphone"  => $user->getCellphone()
-            );
-          } else {
-            $json['error'] = "You are not logged in!";
-          }
+          $json['success'] = true;
+          $json['result'] = Array(
+            "Username"   => "OS.js",
+            "Privilege"  => 8,
+            "Name"       => "Anders Evenrud",
+            "Email"      => "andersevenrud@gmail.com",
+            "Company"    => "",
+            "Cellphone"  => ""
+          );
         }
 
         /**
