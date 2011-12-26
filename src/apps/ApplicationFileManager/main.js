@@ -124,12 +124,7 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
 
         callback = callback || function() {};
 
-        if ( this.app._argv.view_type == "list" ) {
-          this.iconview.setListType(1);
-        } else {
-          this.iconview.setListType(0);
-        }
-
+        this.iconview.setListType(this.app._argv.view_type);
         this.iconview.clear();
         this.loading.show();
 
@@ -225,7 +220,7 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
 
           el.addClass(this.name);
 
-          var t = self.app._argv.view_type == "list" ? 1 : 0;
+          var t = self.app._argv.view_type;
           var iv = this.$element.find(".iconview1");
 
           this.iconview = new OSjs.Classes.IconView(iv, t, [], [], function(el, item, type, index) {
