@@ -11,7 +11,7 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * --OSjs::Classes::OSjsException -- Base Exception
+   * OSjs::Classes::OSjsException -- Base Exception
    * @class
    */
   var OSjsException = Class.extend({
@@ -19,22 +19,48 @@
     _filename : "",
     _message  : "",
 
+    /**
+     * OSjsException::init() -- Constructor
+     * @constructor
+     */
     init : function(lineno, filename, message) {
       this._lineno    = parseInt(lineno, 10) || 0;
       this._filename  = filename;
       this._message   = message;
     },
 
+    /**
+     * OSjsException::getLineNo() -- Get Exception Line Number
+     * @return Mixed
+     */
     getLineNo : function() {
       return this._lineno;
     },
 
+    /**
+     * OSjsException::getFilename() -- Get File Name
+     * @return Mixed
+     */
     getFilename : function() {
       return this._filename;
     },
 
+    /**
+     * OSjsException::getMessage() -- Get Exception Message / Stack
+     * @return Mixed
+     */
     getMessage : function() {
       return this._message;
+    }
+  });
+
+  /**
+   * OSjs::Classes::AJAXException -- AJAXException Exception
+   * @exception
+   */
+  OSjs.Classes.AJAXException = OSjsException.extend({
+    init : function(lineno, filename, message) {
+      this._super(lineno, filename, message);
     }
   });
 
