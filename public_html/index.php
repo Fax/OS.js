@@ -69,12 +69,13 @@ if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
   exit;
 
 } else if ( isset($_GET['library']) ) {
+  $type = preg_match("/\.js$/", $_GET['library']) ? "js" : "css";
   if ( ($content = Core::getFile(false, $_GET['library'], null, ENV_PRODUCTION)) === false ) {
     header("HTTP/1.0 404 Not Found");
     exit;
   }
 
-  header("Content-Type: application/x-javascript; charset=utf-8");
+  header(sprintf("Content-Type: %s; charset=utf-8", $type == "js" ? "application/x-javascript" : "text/css"));
   print $content;
   exit;
 }

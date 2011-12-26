@@ -36,11 +36,11 @@
   <script type="text/javascript" src="/js/utils.js"></script>
 
   <!-- OS.js stylesheets -->
-  <link rel="stylesheet" type="text/css" href="/css/main.css" />
-  <link rel="stylesheet" type="text/css" href="/css/glade.css" />
-  <link rel="stylesheet" type="text/css" href="/css/pimp.css" />
+  <link rel="stylesheet" type="text/css" href="/?library=main.css" />
+  <link rel="stylesheet" type="text/css" href="/?library=glade.css" />
+  <link rel="stylesheet" type="text/css" href="/?library=pimp.css" />
 <!--[if lt IE 9]>
-<link rel="stylesheet" type="text/css" href="/css/ie.css" />
+<link rel="stylesheet" type="text/css" href="/?resource=ie.css" />
 <![endif]-->
 
   <!-- OS.js defineable -->
