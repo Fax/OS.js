@@ -94,10 +94,10 @@ OSjs.Applications.ApplicationClock = (function($, undefined) {
             var mrotate = "rotate(" + mdegree + "deg)";
 
             min.css("-webkit-transform", mrotate );
-            min.css("-moz-transform", mortate );
+            min.css("-moz-transform", mrotate );
             if ( $.browser.msie ) {
-              min.css("-o-transform", mortate );
-              min.css("-ms-transform", mortate );
+              min.css("-o-transform", mrotate );
+              min.css("-ms-transform", mrotate );
             }
           }, 1000 );
         }
