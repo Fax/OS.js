@@ -143,7 +143,7 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
 
       init : function(app) {
         this._super("Window_window_main", false, app, windows);
-        this._content = $("<div class=\"window_main\"> <div class=\"GtkWindow ApplicationMail window_main\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar_main\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_main_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_main_options\"> <img alt=\"gtk-options\" src=\"/img/icons/16x16/categories/applications-system.png\"/> <span>Options</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_main_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <table class=\"GtkBox Horizontal box2\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\" style=\"width:200px\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview_list\"></div> </div> </td> <td class=\"Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview_mail\"></div> </div> </td> </tr> </table> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar_main\"></div> </div> </td> </tr> </table> </div> </div> ").html();
+        this._content = $("<div class=\"window_main\"> <div class=\"GtkWindow ApplicationMail window_main\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar_main\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_main_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_main_options\"> <img alt=\"gtk-options\" src=\"/img/icons/16x16/categories/applications-system.png\"/> <span>Options</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_main_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <table class=\"GtkBox Horizontal box2\"> <tr> <td class=\"GtkBoxPosition Position_0\" style=\"width:200px\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview_list\"></div> </div> </td> <td class=\"GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview_mail\"></div> </div> </td> </tr> </table> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar_main\"></div> </div> </td> </tr> </table> </div> </div> ").html();
         this._title = 'Mail (UNDER DEVELOPMENT)';
         this._icon = 'status/mail-unread.png';
         this._is_draggable = true;
@@ -160,11 +160,18 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
         this._height = 440;
         this._gravity = null;
 
+        this.iconview       = null;
         this.currentAccount = {};
         this.currentFolder  = "INBOX";
+        this.currentFilter  = "ALL";
       },
 
       destroy : function() {
+        if ( this.iconview ) {
+          this.iconview.destroy();
+          this.iconview = null;
+        }
+
         this._super();
       },
 
@@ -205,10 +212,6 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
         this.$element.find(".iconview_list").html(content);
       },
 
-      UpdateMessagesContent : function(content) {
-        this.$element.find(".iconview_mail").html(content);
-      },
-
       UpdateFolders : function(folders, current) {
         current = current || 0;
 
@@ -224,7 +227,7 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
         for ( i; i < l; i++ ) {
           iter = folders[i];
           el = $(sprintf('<div>%s</div>', iter.name));
-          if ( (current == iter.name) || (current === i) ) {
+          if ( !currentItem && (current == iter.name) || (current === i) ) {
             el.addClass("Current");
             currentItem = el;
           }
@@ -245,14 +248,24 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
             };
           })(iter));
 
+          if ( i === 0 ) {
+            this.app.SaveFolderTimestamp("default", iter.name, (new Date()).getTime());
+          }
+
           r.append(el);
         }
       },
 
-      UpdateMessages : function(list, current) {
+      UpdateMessages : function(result, current) {
         current = current || 0;
 
         var self = this;
+
+        this.iconview.clear();
+        this.iconview.setList(result.items, result.columns, true);
+
+        this.app.SaveFolderMessages("default", this.currentFolder, result);
+        /*
         var el, iter;
         var i = 0;
         var l = list.length;
@@ -264,7 +277,7 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
         for ( i; i < l; i++ ) {
           iter = list[i];
           el = $(sprintf('<div>%s</div>', iter.subject));
-          if ( (current == iter.header) || (current === i) ) {
+          if ( !currentItem && (current == iter.header) || (current === i) ) {
             el.addClass("Current");
             currentItem = el;
           }
@@ -296,6 +309,7 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
 
           r.append(el);
         }
+        */
       },
 
       Connect : function(account) {
@@ -304,8 +318,13 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
         this.currentAccount = account;
 
         this.UpdateFoldersContent($("<div>Loading folders...</div>"));
-        this.UpdateMessagesContent($("<div>Loading messages...</div>"));
         this.UpdateStatusBar("Logging in...");
+
+        if ( account.folders && account.folders[this.currentFolder] ) {
+          if ( account.folders[this.currentFolder]["messages"] ) {
+            this.UpdateMessages(account.folders[this.currentFolder]["messages"]);
+          }
+        }
 
         this.MailReadAccount(function(error, result) {
           if ( error ) {
@@ -313,11 +332,11 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
             self.UpdateStatusBar("Error loading folders: " + error);
           } else {
             self.UpdateStatusBar("Loading messages...");
-            self.MailReadFolder(self.currentFoler, function(error, result) {
+            self.MailReadFolder(self.currentFolder, function(error, result) {
               if ( error ) {
-                self.UpdateMessagesContent($("<div>Failed loading messages...</div>"));
+                self.UpdateStatusBar("Error loading messages: " + error);
               } else {
-                self.UpdateStatusBar(sprintf("Total messages: %d, Unread: %d", result.length, -1));
+                self.UpdateStatusBar(sprintf("Total messages: %d, Unread: %d", sizeof(result), -1));
               }
             });
           }
@@ -329,12 +348,10 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
 
         this.currentFolder = name;
 
-        this.UpdateMessagesContent($("<div>Loading messages...</div>"));
         this.UpdateStatusBar("Loading messages...");
 
         this.MailReadFolder(this.currentFolder, function(error, result) {
           if ( error ) {
-            self.UpdateMessagesContent($("<div>Failed loading messages...</div>"));
             self.UpdateStatusBar("Error loading messages: " + error);
           } else {
             self.UpdateStatusBar(sprintf("Total messages: %d, Unread: %d", result.length, -1));
@@ -361,7 +378,7 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
         callback = callback || function() {};
 
         var self = this;
-        this.app._event("folder", {"account" : self.currentAccount, "folder" : folder}, function(result, error) {
+        this.app._event("folder", {"account" : self.currentAccount, "folder" : folder, "iconview" : true, "filter" : self.currentFilter}, function(result, error) {
           if ( !error ) {
             self.UpdateMessages(result);
           }
@@ -414,6 +431,27 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
           });
 
           // Do your stuff here
+          var iv = this.$element.find(".iconview_mail");
+          var t  = "list";
+
+          this.iconview = new OSjs.Classes.IconView(iv, t, [], [], function(el, item, type, index) {
+            el.find(".Sender").html(item.sender);
+            el.find(".Subject").html(item.subject);
+            el.find(".Date").html(item.date);
+          }, function(el, item) {
+            var win = self.app.OpenMailWindow();
+            if ( win ) {
+              self.MailRead(item.uid, function(error, result) {
+                if ( !error ) {
+                  win.ReadMail(item, result, self.currentAccount);
+                }
+              });
+            }
+
+            //self.onIconViewActivate(el, item);
+          }, function(ev, el, item) {
+            //self.onIconViewToggle(ev, el, item);
+          });
 
           return true;
         }
@@ -572,14 +610,48 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
           this.accounts[name] = opts;
         }
 
-        this._storage = {
-          "accounts" : self.accounts
-        };
+        if ( !this._storage.accounts ) {
+          this._storage.accounts = {};
+        }
+        for ( var i in this.accounts ) {
+          if ( this.accounts.hasOwnProperty(i) ) {
+            if ( !this.accounts[i].folders ) {
+              this.accounts[i].folders = {};
+            }
+            this._storage.accounts[i] = this.accounts[i];
+          }
+        }
+
         this._saveStorage();
 
         var acc = this._storage.accounts['default'];
         if ( acc && reconnect ) {
           this._root_window.Connect(acc);
+        }
+      },
+
+      _SaveFolder : function(accName, folderName) {
+        if ( !this._storage.accounts[accName].folders ) {
+          this._storage.accounts[accName].folders = {};
+        }
+        if ( !this._storage.accounts[accName].folders[folderName] ) {
+          this._storage.accounts[accName].folders[folderName] = {
+            "timestamp" : null,
+            "messages"  : null
+          };
+        }
+      },
+
+      SaveFolderTimestamp : function(accName, folderName, stamp) {
+        if ( this._storage.accounts[accName] ) {
+          this._SaveFolder(accName, folderName);
+          this._storage.accounts[accName].folders[folderName]["timestamp"] = stamp;
+        }
+      },
+      SaveFolderMessages : function(accName, folderName, msgs) {
+        if ( this._storage.accounts[accName] ) {
+          this._SaveFolder(accName, folderName);
+          this._storage.accounts[accName].folders[folderName]["messages"] = msgs;
         }
       },
 

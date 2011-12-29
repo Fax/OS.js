@@ -262,11 +262,22 @@ class IMAP
 
           $result[] = Array(
             "id"      => $overview[0]->message_id,
+            "uid"     => $overview[0]->uid,
+            "msgno"   => $overview[0]->msgno,
             "status"  => $overview[0]->seen ? "read" : "unread",
             "subject" => $overview[0]->subject,
-            "from"    => $overview[0]->from,
+            "sender"  => $overview[0]->from,
+            "size"    => $overview[0]->size,
             "date"    => $date,
-            "body"    => $message ? $message : null
+            "body"    => $message ? $message : null,
+            "flags"   => Array(
+              "recent"    => $overview[0]->recent,
+              "flagged"   => $overview[0]->flagged,
+              "answered"  => $overview[0]->answered,
+              "deleted"   => $overview[0]->deleted,
+              "seen"      => $overview[0]->seen,
+              "draft"     => $overview[0]->draft
+            )
           );
         }
       }

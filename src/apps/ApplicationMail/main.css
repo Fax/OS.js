@@ -47,7 +47,7 @@
 }
 
 .ApplicationMail .GtkIconView {
-  overflow : hidden;
+  overflow : auto;
 }
 
 .ApplicationMail .Loading {

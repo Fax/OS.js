@@ -35,6 +35,9 @@
   var TOOLTIP_TIMEOUT        = 300;                 //!< Tooltip timeout in ms
   var NOTIFICATION_TIMEOUT   = 5000;                //!< Desktop notification timeout
   var MAX_PROCESSES          = 50;                  //!< Max processes running (except core procs)
+  var WARN_STORAGE_SIZE      = (1024 * 4) * 1000;   //!< Warning localStorage size
+  var MAX_STORAGE_SIZE       = (1024 * 5) * 1000;   //!< Max localstorage size
+  var STORAGE_SIZE_FREQ      = 1000;                //!< Storage check usage frequenzy
   var ONLINECHK_FREQ         = 1000;                //!< On-line checking frequenzy
   // @endconstants
 
@@ -93,14 +96,16 @@
    * @param  String   msg       Message to display
    * @param  String   type      Message type (default=error)
    * @param  Mixed    misc      Message box extra argument
+   * @param  Function callback  Callback on close (optional)
    * @see    API
    * @return Mixed
    * @function
    */
-  function MessageBox(msg, type, misc) {
+  function MessageBox(msg, type, misc, callback) {
+    callback = callback || function() {};
     type = type || "error";
     if ( _WM ) {
-      API.system.dialog(type, msg, undefined, misc);
+      API.system.dialog(type, msg, callback, misc);
     } else {
       if ( type == "confirm" ) {
         return confirm(msg);
@@ -397,6 +402,10 @@
 
     'system' : {
 
+      'storageUsage' : function() {
+        return _Settings.getStorageUsage();
+       },
+
       'run' : function(path, mime) {
         if ( !_WM ) {
           MessageBox(OSjs.Labels.WindowManagerMissing);
@@ -511,8 +520,8 @@
         console.info("=> API Call", method, argv);
       },
 
-      'alert' : function(msg, type) {
-        MessageBox(msg, type);
+      'alert' : function(msg, type, callback) {
+        MessageBox(msg, type, null, callback);
       },
 
       'dialog' : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
@@ -1878,6 +1887,8 @@
 
     return Process.extend({
 
+      _cinterval : null,
+
       /**
        * SettingsManager::init() -- Constructor
        * @param   Object    defaults      Default settings
@@ -1886,6 +1897,7 @@
       init : function(defaults) {
         _avail = defaults;
 
+        var self = this;
         var rev = localStorage.getItem("SETTING_REVISION");
         var force = false;
         if ( parseInt(rev, 10) !== parseInt(SETTING_REVISION, 10) ) {
@@ -1918,9 +1930,32 @@
           }
         }
 
+        var warnOpen = false;
+        var alertOpen = false;
+        this._cinterval = setInterval(function() {
+          var size = self.getStorageUsage()['localStorage'];
+          if ( size >= WARN_STORAGE_SIZE ) {
+            if ( !warnOpen ) {
+              API.system.alert(sprintf(OSjs.Labels.StorageWarning, size, WARN_STORAGE_SIZE), "warning", function() {
+                warnOpen = false;
+              });
+              warnOpen = true;
+            }
+          }
+          if ( size >= MAX_STORAGE_SIZE ) {
+            if ( !alertOpen ) {
+              API.system.alert(sprintf(OSjs.Labels.StorageAlert, size, MAX_STORAGE_SIZE), "error", function() {
+                alertOpen = false;
+              });
+              alertOpen = true;
+            }
+          }
+        }, STORAGE_SIZE_FREQ);
+
         console.group("SettingsManager::init()");
         console.log(_avail);
         console.log(_stores);
+        console.log(this.getStorageUsage());
         console.groupEnd();
 
         this._super("(SettingsManager)", "apps/system-software-update.png", true);
@@ -1932,6 +1967,11 @@
        */
       destroy : function() {
         _avail = null;
+
+        if ( this._cinterval ) {
+          clearInterval(this._cinterval);
+        }
+        this._cinterval = null;
 
         this._super();
       },
@@ -2062,6 +2102,24 @@
           exp[_stores[i]] = localStorage.getItem(_stores[i]);
         }
         return exp;
+      },
+
+      /**
+       * SettingsManager::getStorageUsage() -- Get storage usage
+       * @return Array
+       */
+      getStorageUsage : function() {
+        var ls = 0;
+
+        for ( var l in localStorage ) {
+          if ( localStorage.hasOwnProperty(l) ) {
+            ls += localStorage[l].length;
+          }
+        }
+
+        return {
+          'localStorage' : ls
+        };
       }
 
     }); // @endclass
@@ -5071,23 +5129,35 @@
         //
 
         setTimeout(function() {
-          el.find("td.Fill").each(function() {
-            if ( !$(this).hasClass("Expand") ) {
-              //var height = parseInt($(this).css("height"), 10);
-              //if ( !height || isNaN(height) ) {
-              //}
-              var first = $(this).find(".TableCellWrap :first-child");
-              var height = parseInt(first.height(), 10);
-              if ( !isNaN(height) && height ) {
-                $(this).parent().css("height", height + "px");
-                //$(this).css("height", height + "px");
-              }
-            }
-          });
+          self.__calculateExpansion();
         }, 0);
+
+        /*this._bind("resize", function() {
+          self.__calculateExpansion();
+        });*/
       }
 
       return el;
+    },
+
+    /**
+     * GtkWindow::__calculateExpansion() -- Do GTK+ Expansions
+     * @return void
+     */
+    __calculateExpansion : function() {
+      this.$element.find("td.Fill").each(function() {
+        if ( !$(this).hasClass("Expand") ) {
+          //var height = parseInt($(this).css("height"), 10);
+          //if ( !height || isNaN(height) ) {
+          //}
+          var first = $(this).find(".TableCellWrap :first-child");
+          var height = parseInt(first.height(), 10);
+          if ( !isNaN(height) && height ) {
+            $(this).parent().css("height", height + "px");
+            //$(this).css("height", height + "px");
+          }
+        }
+      });
     }
 
   }); // @endclass
@@ -5225,12 +5295,12 @@
         case "confirm"    :
         case "question"   :
         case "warning"    :
-          this._title    = OSjs.Labels[type];
+          this._title    = OSjs.Labels.DialogTitles[type];
         break;
 
         default :
           if ( !this._title ) {
-            this._title  = OSjs.Labels["default"];
+            this._title  = OSjs.Labels.DialogTitles["default"];
           }
         break;
       }

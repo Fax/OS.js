@@ -618,3 +618,19 @@ var CanvasHelper = Class.extend({
 
 });
 
+function sizeof(o) {
+  var x = 0;
+  if ( o instanceof Object ) {
+    for ( var i in o ) {
+      if ( o.hasOwnProperty(i) ) {
+        x++;
+      }
+    }
+  } else if ( o instanceof Array ) {
+    x = o.length;
+  } else {
+    x = -1;
+  }
+
+  return x;
+}

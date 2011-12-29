@@ -101,8 +101,8 @@ class ApplicationFileManager
           $files[] = Array(
             "icon"      => $icon,
             "type"      => $info["type"],
-            "mime"      => $info["mime"],
-            "name"      => $file,
+            "mime"      => htmlspecialchars($info["mime"]),
+            "name"      => htmlspecialchars($file),
             "path"      => $info["path"],
             "size"      => $info["size"],
             "class"     => $class,
