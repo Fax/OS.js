@@ -2440,7 +2440,20 @@
     })(),
 
     /**
-     * Application::_addWindow() -- Add a new window to application
+     * Application::addWindow() -- Add a new window to application
+     * @param   Window    win     Window to add
+     * @return  void
+     */
+    addWindow : function(win) {
+      var w = _WM.addWindow(win);
+      if ( w ) {
+        this._addWindow(win);
+      }
+      return w ? w : false;
+    },
+
+    /**
+     * Application::_addWindow() -- Add a new window to application (internal)
      * @param   Window    win     Window to add
      * @return  void
      */
@@ -2468,6 +2481,8 @@
       if ( this._name && this._storage_on ) {
         this._storage = _Settings.saveApp(this._name, this._storage);
       }
+
+      console.log("Application::" + this._name + "::" + this._uuid + "::_saveStorage()", this._storage);
     },
 
     /**
@@ -2481,6 +2496,8 @@
           this._storage = s;
         }
       }
+
+      console.log("Application::" + this._name + "::" + this._uuid + "::_restoreStorage()", this._storage);
     },
 
     /**
@@ -2491,6 +2508,8 @@
       if ( this._name && this._storage_on ) {
         this._storage = _Settings.saveApp(this._name, {});
       }
+
+      console.log("Application::" + this._name + "::" + this._uuid + "::_flushStorage()", this._storage);
     },
 
     /**
@@ -2503,7 +2522,18 @@
     _event : function(ev, args, callback) {
       var self = this;
       if ( this._uuid ) {
-        var pargs = {'ajax' : true, 'action' : 'event', 'cname' : self._name ,'uuid' : self._uuid, 'instance' : {'name' : self._name, 'action' : ev, 'args' : args }};
+        var pargs = {
+          'ajax'      : true,
+          'action'    : 'event',
+          'cname'     : self._name ,
+          'uuid'      : self._uuid,
+          'instance'  : {
+            'name'      : self._name,
+            'action'    : ev,
+            'args'      : args || {}
+          }
+        };
+
         $.post(AJAX_URI, pargs, function(data) {
 
           console.group("Application::" + self._name + "::" + self._uuid + "::_event()");
@@ -3050,7 +3080,7 @@
       // Events
       //
       $("#Desktop").mousedown(function(ev) {
-        return self.mousedownHandler(ev);
+        /*return */self.mousedownHandler(ev);
       });
 
       this.applySettings();
@@ -3195,8 +3225,8 @@
       ], $(this), 3, true);
 
       /*if ( ev.which > 1 ) {
-      }*/
       ev.preventDefault();
+      }*/
 
       return ret;
     },
