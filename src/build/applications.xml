@@ -39,6 +39,19 @@
     <resource>main.js</resource>
     <mime>application/pdf</mime>
   </application>
+  <application name="Mail" title="Mail" icon="status/mail-read.png" system="false" category="internet" class="ApplicationMail" file="ApplicationMail.class.php">
+    <window id="window_mail">
+      <property name="properties"><![CDATA[{"type":"window","title":"Mail Reader\/Composer","icon":"status\/mail-read.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":440,"height":300,"gravity":""}]]></property>
+    </window>
+    <window id="window_main">
+      <property name="properties"><![CDATA[{"type":"window","title":"Mail","icon":"status\/mail-read.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":440,"height":440,"gravity":""}]]></property>
+    </window>
+    <window id="window_options">
+      <property name="properties"><![CDATA[{"type":"window","title":"Mail Options","icon":"status\/mail-read.png","is_draggable":true,"is_resizable":false,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":250,"height":250,"gravity":""}]]></property>
+    </window>
+    <resource>main.css</resource>
+    <resource>main.js</resource>
+  </application>
   <application name="Viewer" title="Image Viewer" icon="mimetypes/image-x-generic.png" system="false" category="graphics" class="ApplicationViewer" file="ApplicationViewer.class.php">
     <window id="window1">
       <property name="properties"><![CDATA[{"type":"window","title":"Image Viewer","icon":"mimetypes\/image-x-generic.png","is_draggable":true,"is_resizable":true,"is_scrollable":false,"is_sessionable":true,"is_minimizable":true,"is_maximizable":true,"is_closable":true,"is_orphan":false,"skip_taskbar":false,"skip_pager":false,"width":300,"height":200,"gravity":""}]]></property>
