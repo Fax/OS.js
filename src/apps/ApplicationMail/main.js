@@ -157,7 +157,7 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
 
       init : function(app) {
         this._super("Window_window_main", false, app, windows);
-        this._content = $("<div class=\"window_main\"> <div class=\"GtkWindow ApplicationMail window_main\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar_main\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_main_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_main_options\"> <img alt=\"gtk-options\" src=\"/img/icons/16x16/categories/applications-system.png\"/> <span>Options</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_main_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <table class=\"GtkBox Horizontal box2\"> <tr> <td class=\"GtkBoxPosition Position_0\" style=\"width:200px\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview_list\"></div> </div> </td> <td class=\"GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview_mail\"></div> </div> </td> </tr> </table> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar_main\"></div> </div> </td> </tr> </table> </div> </div> ").html();
+        this._content = $("<div class=\"window_main\"> <div class=\"GtkWindow ApplicationMail window_main\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar_main\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_main_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_main_options\"> <img alt=\"gtk-options\" src=\"/img/icons/16x16/categories/applications-system.png\"/> <span>Options</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_main_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> <li class=\"GtkMenuItem menuitem2\"> <span><u>M</u>ail</span> <ul class=\"GtkMenu menu2\"> <li class=\"GtkImageMenuItem imagemenuitem_main_fetch\"> <img alt=\"gtk-fetch\" src=\"/img/icons/16x16/status/stock_mail-replied.png\"/> <span>Fetch messages</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_main_reload\"> <img alt=\"gtk-reload\" src=\"/img/icons/16x16/status/stock_repeat.png\"/> <span>Reload messages</span> </li> </li> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <table class=\"GtkBox Horizontal box2\"> <tr> <td class=\"GtkBoxPosition Position_0\" style=\"width:200px\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview_list\"></div> </div> </td> <td class=\"GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview_mail\"></div> </div> </td> </tr> </table> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar_main\"></div> </div> </td> </tr> </table> </div> </div> ").html();
         this._title = 'Mail (UNDER DEVELOPMENT)';
         this._icon = 'status/mail-unread.png';
         this._is_draggable = true;
@@ -208,10 +208,18 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
         config_window.UpdateConfig(acc);
       },
 
+      EventMenuFetch : function(el, ev) {
+        this.app.TryConnect();
+      },
+
+      EventMenuReload : function(el, ev) {
+        var account = this.app.getConfigAccount("default");
+        this.app.setConfigAccount("default", account.host, account.username, account.password);
+        this.app.TryConnect();
+      },
+
       EventMenuQuit : function(el, ev) {
-        var self = this;
-
-
+        this.find.$element.find(".Close").click();
       },
 
       UpdateStatusBar : function(str) {
@@ -405,6 +413,14 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
             self.EventMenuOptions(this, ev);
           });
 
+          el.find(".imagemenuitem_main_fetch").click(function(ev) {
+            self.EventMenuFetch(this, ev);
+          });
+
+          el.find(".imagemenuitem_main_reload").click(function(ev) {
+            self.EventMenuReload(this, ev);
+          });
+
           el.find(".imagemenuitem_main_quit").click(function(ev) {
             self.EventMenuQuit(this, ev);
           });
@@ -464,7 +480,6 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
         this._width = 250;
         this._height = 250;
         this._gravity = null;
-
       },
 
       destroy : function() {

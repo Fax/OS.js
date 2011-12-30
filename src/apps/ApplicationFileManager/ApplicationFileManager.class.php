@@ -89,14 +89,11 @@ class ApplicationFileManager
 
       $files   = Array();
       if ( ($items = ApplicationVFS::ls($path, $ignores)) !== false ) {
-        $i = 0;
         foreach ( $items as $file => $info ) {
           $icon = "/img/icons/32x32/{$info['icon']}";
           if ( preg_match("/^\/img/", $info['icon']) ) {
             $icon = $info['icon'];
           }
-
-          $class = $i % 2 ? "odd" : "even";
 
           $files[] = Array(
             "icon"      => $icon,
@@ -105,11 +102,8 @@ class ApplicationFileManager
             "name"      => htmlspecialchars($file),
             "path"      => $info["path"],
             "size"      => $info["size"],
-            "class"     => $class,
             "protected" => $info["protected"]
           );
-
-          $i++;
 
           $total++;
           $bytes += (int) $info['size'];

@@ -98,15 +98,11 @@ class ApplicationMail
             );
 
             if ( $messages = $imap->getMessages($filter) ) {
-              $i = 0;
-
               foreach ( $messages as $msg ) {
-                $msg['class']   = $i % 2 ? "odd" : "even";
                 $msg['sender']  = htmlspecialchars($msg['sender']);
                 $msg['subject'] = htmlspecialchars($msg['subject']);
 
                 $items[] = $msg;
-                $i++;
               }
             }
 

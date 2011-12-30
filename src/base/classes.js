@@ -369,9 +369,11 @@
             el.append($(sprintf("<td class=\"%s\" style=\"%s\">%s</td>", cel.className || "", cel.style || "", cel.title || "")));
           }
 
-          if ( item['class'] !== undefined ) {
+          /*if ( item['class'] !== undefined ) {
             el.addClass(item['class']);
-          }
+          } else {
+          }*/
+          el.addClass(i % 2 ? "odd" : "even");
 
           el.click((function(it) {
             return function(ev) {
