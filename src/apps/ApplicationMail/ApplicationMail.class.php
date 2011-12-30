@@ -57,72 +57,71 @@ class ApplicationMail
             }
           }
         } else if ( $action == "folder" ) {
-          $fname    = (isset($args['fname'])    && ($args['folder']))   ? $args['folder'] : false;
-          $iconview = (isset($args['iconview']) && ($args['iconview'])) ? true            : false;
-          $filter   = (isset($args['filter'])   && ($args['filter']))   ? $args['filter'] : false;
+          $fname      = (isset($args['fname'])    && ($args['folder']))   ? $args['folder'] : false;
+          $iconview   = (isset($args['iconview']) && ($args['iconview'])) ? true            : false;
+          $filter     = (isset($args['filter'])   && ($args['filter']))   ? $args['filter'] : false;
 
           if ( $filter == "ALL" ) {
-            if ( isset($args['account']['folders']) ) {
-              if ( isset($args['account']['folders'][$fname]) ) {
-                $last   = $args['account']['folders'][$fname];
-                $stamp  = gmdate('d-M-Y G\:i', (((int) $last) - 300));
+            if ( isset($args['timestamp']) ) {
+              if ( $last = substr($args['timestamp'], 0, 10) ) {
+                //$stamp  = gmdate('d-M-Y G\:i', (((int) $last) - 300));
+                $stamp  = gmdate('d-M-Y', (((int) $last) - (60 * 60 * 24)));
                 $filter = sprintf('SINCE "%s"', $stamp);
               }
             }
           }
 
-          //if ( $messages = $imap->getMessageHeaders() ) {
-          if ( $messages = $imap->getMessages($filter) ) {
 
-            if ( $iconview ) {
-              $columns = Array(
-                Array(
-                  "className" => "Sender",
-                  "style"     => null,
-                  "title"     => "Sender"
-                ),
-                Array(
-                  "className" => "Subject",
-                  "style"     => null,
-                  "title"     => "Subject"
-                ),
-                Array(
-                  "className" => "Date",
-                  "style"     => null,
-                  "title"     => "Date"
-                ),
-                Array(
-                  "className" => "Info",
-                  "style"     => "display:none;",
-                  "title"     => null
-                )
-              );
+          if ( $iconview ) {
+            $items = Array();
+            $columns = Array(
+              Array(
+                "className" => "Sender",
+                "style"     => null,
+                "title"     => "Sender"
+              ),
+              Array(
+                "className" => "Subject",
+                "style"     => null,
+                "title"     => "Subject"
+              ),
+              Array(
+                "className" => "Date",
+                "style"     => null,
+                "title"     => "Date"
+              ),
+              Array(
+                "className" => "Info",
+                "style"     => "display:none;",
+                "title"     => null
+              )
+            );
 
-              $items = Array();
+            if ( $messages = $imap->getMessages($filter) ) {
               $i = 0;
 
               foreach ( $messages as $msg ) {
                 $msg['class']   = $i % 2 ? "odd" : "even";
-                $msg['header']  = htmlspecialchars($msg['header']);
                 $msg['sender']  = htmlspecialchars($msg['sender']);
                 $msg['subject'] = htmlspecialchars($msg['subject']);
 
                 $items[] = $msg;
                 $i++;
               }
+            }
 
-              $result = Array(
-                "filter"  => $filter,
-                "items"   => $items,
-                "columns" => $columns
-              );
-            } else {
-              $result = Array();
+            $result = Array(
+              "filter"  => $filter,
+              "items"   => $items,
+              "columns" => $columns
+            );
+          } else {
+            $result = Array();
+            if ( $messages = $imap->getMessages($filter) ) {
               foreach ( $messages as $msg ) {
                 $result[] = Array(
                   "id"      => $msg['id'],
                   "date"    => $msg['date'],
-                  "header"  => htmlspecialchars($msg['header']),
                   "sender"  => htmlspecialchars($msg['sender']),
                   "subject" => htmlspecialchars($msg['subject']),
                 );

@@ -9,6 +9,20 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
   "$:nomunge";
 
   var iframeCount = 0;
+  var defaultConfig = {
+    "accounts" : {
+      "default" : {
+        "host"      : null,
+        "username"  : null,
+        "password"  : null,
+        "timestamps": {},
+        "cache"     : {
+          "folders"   : [],
+          "messages"  : {}
+        }
+      }
+    }
+  };
 
   /**
    * @param GtkWindow     GtkWindow            GtkWindow API Reference
@@ -185,11 +199,7 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
       EventMenuOptions : function(el, ev) {
         var self = this;
 
-        var acc;
-        if ( this.app._storage && this.app._storage.accounts ) {
-          acc = this.app._storage.accounts['default'];
-        }
-
+        var acc = this.app.getConfigAccount("default");
         var config_window = new Window_window_options(this.app);
         if ( this.app.addWindow(config_window) ) {
           config_window.show();
@@ -248,84 +258,52 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
             };
           })(iter));
 
-          if ( i === 0 ) {
-            this.app.SaveFolderTimestamp("default", iter.name, (new Date()).getTime());
-          }
-
           r.append(el);
         }
+
+        this.app.setConfigAccountCacheFolders("default", folders);
       },
 
-      UpdateMessages : function(result, current) {
-        current = current || 0;
-
+      UpdateMessages : function(result, cache) {
         var self = this;
 
         this.iconview.clear();
-        this.iconview.setList(result.items, result.columns, true);
 
-        this.app.SaveFolderMessages("default", this.currentFolder, result);
-        /*
-        var el, iter;
-        var i = 0;
-        var l = list.length;
-        var r = this.$element.find(".iconview_mail");
-
-        var currentItem;
-
-        r.empty();
-        for ( i; i < l; i++ ) {
-          iter = list[i];
-          el = $(sprintf('<div>%s</div>', iter.subject));
-          if ( !currentItem && (current == iter.header) || (current === i) ) {
-            el.addClass("Current");
-            currentItem = el;
-          }
-
-          el.click(function() {
-            if ( currentItem ) {
-              $(currentItem).removeClass("Current");
-            }
-
-            if ( $(currentItem) != $(this) ) {
-              $(this).addClass("Current");
-            }
-
-            currentItem = this;
-          });
-
-          el.dblclick((function(iiter) {
-            return function() {
-              var win = self.app.OpenMailWindow();
-              if ( win ) {
-                self.MailRead(iiter.id, function(error, result) {
-                  if ( !error ) {
-                    win.ReadMail(iiter, result, self.currentAccount);
-                  }
-                });
-              }
-            };
-          })(iter));
-
-          r.append(el);
+        if ( !cache ) {
+          this.app.setConfigAccountCacheMessages("default", this.currentFolder, result, true);
+          this.app.setConfigAccountTimestamp("default", this.currentFolder, (new Date()).getTime());
         }
-        */
+
+        var mcache = this.app.getConfigAccountCacheMessages("default", this.currentFolder);
+        if ( mcache ) {
+          this.iconview.setList(mcache.items, mcache.columns, true);
+        }
+        //this.iconview.setList(result.items, result.columns, true);
       },
 
       Connect : function(account) {
         var self = this;
 
-        this.currentAccount = account;
+        this.currentAccount = {
+          "host"      : account.host,
+          "username"  : account.username,
+          "password"  : account.password
+        };
 
         this.UpdateFoldersContent($("<div>Loading folders...</div>"));
         this.UpdateStatusBar("Logging in...");
 
-        if ( account.folders && account.folders[this.currentFolder] ) {
-          if ( account.folders[this.currentFolder]["messages"] ) {
-            this.UpdateMessages(account.folders[this.currentFolder]["messages"]);
-          }
+        // Load data from cache first
+        var fcache = this.app.getConfigAccountCacheFolders("default");
+        var mcache = this.app.getConfigAccountCacheMessages("default", this.currentFolder);
+        if ( fcache ) {
+          this.UpdateFolders(fcache, true);
+        }
+        if ( mcache ) {
+          this.UpdateMessages(mcache, true);
         }
 
+        // Update
         this.MailReadAccount(function(error, result) {
           if ( error ) {
             self.UpdateFoldersContent($("<div>Failed loading folders...</div>"));
@@ -378,7 +356,8 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
         callback = callback || function() {};
 
         var self = this;
-        this.app._event("folder", {"account" : self.currentAccount, "folder" : folder, "iconview" : true, "filter" : self.currentFilter}, function(result, error) {
+        var stamp = this.app.getConfigAccountTimestamp("default", folder) || 0;
+        this.app._event("folder", {"account" : self.currentAccount, "folder" : folder, "iconview" : true, "filter" : self.currentFilter, "timestamp" : stamp}, function(result, error) {
           if ( !error ) {
             self.UpdateMessages(result);
           }
@@ -516,7 +495,8 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
               "username"  : self.$element.find("input[name=username]").val(),
               "password"  : self.$element.find("input[name=password]").val()
             };
-            self.app.SaveSettings("default", account, true);
+            self.app.setConfigAccount("default", account.host, account.username, account.password);
+            self.app.TryConnect();
 
             self.close();
           });
@@ -529,11 +509,7 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
           root.append(buttons);
 
           // Set options
-          var acc;
-          if ( this.app._storage && this.app._storage.accounts ) {
-            acc = this.app._storage.accounts['default'];
-          }
-
+          var acc = this.app.getConfigAccount("default");
           console.log(acc);
 
           if ( acc ) {
@@ -562,10 +538,10 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
 
       init : function() {
         this._super("ApplicationMail", argv);
-        this._compability = [];
-        this._storage_on = true;
 
-        this.accounts = [];
+        this._compability = [];
+        this._storage_on  = true;
+        this._storage     = defaultConfig;
       },
 
       destroy : function() {
@@ -580,78 +556,34 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
         root_window.show();
 
         // Do your stuff here
-        var acc;
-        if ( this.LoadSettings() ) {
-          acc = this._storage.accounts['default'];
+
+        // Backward-compability
+        try {
+          var x = this._storage.accounts["default"].cache.messages;
+          var y = this._storage.accounts["default"].timestamps;
+
+          if ( x === undefined || y === undefined ) {
+            throw "...";
+          }
+
+          delete x;
+          delete y;
+        } catch ( eee ) {
+          this._storage = defaultConfig;
+          this._saveStorage();
         }
 
-        if ( !acc ) {
+        this.TryConnect();
+      },
+
+      TryConnect : function() {
+        var acc = this.getConfigAccount("default");
+
+        if ( !acc || !acc.host || !acc.username || !acc.password ) {
+          API.system.alert("Configuration missing or incomplete.");
           this.OpenOptionsWindow();
         } else {
-          root_window.Connect(acc);
-        }
-
-      },
-
-      LoadSettings : function() {
-        if ( this._storage && this._storage.accounts ) {
-          this.accounts = this._storage.accounts;
-
-          return true;
-        }
-        return false;
-      },
-
-      SaveSettings : function(name, opts, reconnect) {
-        var self = this;
-
-        if ( name && opts ) {
-          this.accounts = {};
-          this.accounts[name] = opts;
-        }
-
-        if ( !this._storage.accounts ) {
-          this._storage.accounts = {};
-        }
-        for ( var i in this.accounts ) {
-          if ( this.accounts.hasOwnProperty(i) ) {
-            if ( !this.accounts[i].folders ) {
-              this.accounts[i].folders = {};
-            }
-            this._storage.accounts[i] = this.accounts[i];
-          }
-        }
-
-        this._saveStorage();
-
-        var acc = this._storage.accounts['default'];
-        if ( acc && reconnect ) {
           this._root_window.Connect(acc);
-        }
-      },
-
-      _SaveFolder : function(accName, folderName) {
-        if ( !this._storage.accounts[accName].folders ) {
-          this._storage.accounts[accName].folders = {};
-        }
-        if ( !this._storage.accounts[accName].folders[folderName] ) {
-          this._storage.accounts[accName].folders[folderName] = {
-            "timestamp" : null,
-            "messages"  : null
-          };
-        }
-      },
-
-      SaveFolderTimestamp : function(accName, folderName, stamp) {
-        if ( this._storage.accounts[accName] ) {
-          this._SaveFolder(accName, folderName);
-          this._storage.accounts[accName].folders[folderName]["timestamp"] = stamp;
-        }
-      },
-      SaveFolderMessages : function(accName, folderName, msgs) {
-        if ( this._storage.accounts[accName] ) {
-          this._SaveFolder(accName, folderName);
-          this._storage.accounts[accName].folders[folderName]["messages"] = msgs;
         }
       },
 
@@ -662,6 +594,121 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
 
       OpenOptionsWindow : function() {
         this._root_window.EventMenuOptions();
+      },
+
+      // Configuration(s)
+
+      setConfigAccount : function(name, host, username, password) {
+        this._storage.accounts[name] = {
+          "host"        : host,
+          "username"    : username,
+          "password"    : password,
+          "timestamps"  : {},
+          "cache"       : {
+            "folders"     : [],
+            "messages"    : {}
+          }
+        };
+
+        this._saveStorage();
+      },
+
+      setConfigAccountCacheFolders : function(name, items) {
+        name = name || "default";
+        this._storage.accounts[name].cache.folders = items;
+        this._saveStorage();
+      },
+
+      setConfigAccountCacheMessages : function(name, folder, items, append) {
+        name = name || "default";
+        if ( append ) {
+          // Use cache as a reference when appending
+          var tmp = this._storage.accounts[name].cache.messages[folder] || {"filter" : null, "items" : [], "columns" : []};
+          var tmpitems = tmp.items;
+
+          var chk = {};
+          var iter;
+
+          // Compile a list of uids
+          var x = 0;
+          var ll = tmpitems.length;
+          for ( x; x < ll; x++ ) {
+            iter = tmpitems[x];
+            chk[iter.uid] = true;
+          }
+
+          // Add missing messages to top of stack
+          var i = 0;
+          var initems = items.items;
+          var l = initems.length;
+          for ( i; i < l; i++ ) {
+            iter = initems[i];
+            if ( chk[iter.uid] === undefined ) {
+              tmpitems.unshift(iter);
+            }
+          }
+
+          // Set the new message list into cache
+          tmp.items = tmpitems;
+          this._storage.accounts[name].cache.messages[folder] = tmp;
+        } else {
+          this._storage.accounts[name].cache.messages[folder] = items;
+        }
+
+        this._saveStorage();
+      },
+
+      setConfigAccountTimestamp : function(name, folder, stamp) {
+        name = name || "default";
+        this._storage.accounts[name].timestamps[folder] = stamp;
+        this._saveStorage();
+      },
+
+      getConfigAccount : function(name) {
+        name = name || "default";
+
+        var tst = this._storage.accounts[name];
+        return tst ? tst :false;
+      },
+
+      getConfigAccountCache : function(name) {
+        name = name || "default";
+
+        var tst = this.getConfigAccount(name);
+        if ( tst && tst.cache ) {
+          return tst.cache;
+        }
+        return false;
+      },
+
+      getConfigAccountCacheFolders : function(name) {
+        name = name || "default";
+
+        var tst = this.getConfigAccountCache(name);
+        if ( tst && tst.folders ) {
+          return tst.folders;
+        }
+        return false;
+      },
+
+      getConfigAccountCacheMessages : function(name, folder) {
+        name = name || "default";
+
+        var tst = this.getConfigAccountCache(name);
+        if ( tst && tst.messages && tst.messages[folder] ) {
+          return tst.messages[folder];
+        }
+        return false;
+      },
+
+      getConfigAccountTimestamp : function(name, folder) {
+        name = name || "default";
+
+        var tst = this.getConfigAccount(name);
+        if ( tst && tst.timestamps && tst.timestamps[folder] ) {
+          return tst.timestamps[folder];
+        }
+        return false;
       }
 
     });

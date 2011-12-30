@@ -245,6 +245,9 @@ class IMAP
   }
 
   public function getMessages($filter = 'ALL', $body = false) {
+
+    error_log($filter);
+
     $result = Array();
     if ( $inbox = $this->_socket ) {
       if ( $emails = imap_search($inbox, $filter) ) {
