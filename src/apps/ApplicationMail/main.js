@@ -623,34 +623,36 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
         name = name || "default";
         if ( append ) {
           // Use cache as a reference when appending
-          var tmp = this._storage.accounts[name].cache.messages[folder] || {"filter" : null, "items" : [], "columns" : []};
-          var tmpitems = tmp.items;
+          var tmp = this._storage.accounts[name].cache.messages[folder];
+          if ( tmp && tmp.items.length && tmp.items.coulumns ) {
+            var tmpitems = tmp.items;
 
-          var chk = {};
-          var iter;
+            var chk = {};
+            var iter;
 
-          // Compile a list of uids
-          var x = 0;
-          var ll = tmpitems.length;
-          for ( x; x < ll; x++ ) {
-            iter = tmpitems[x];
-            chk[iter.uid] = true;
-          }
-
-          // Add missing messages to top of stack
-          var i = 0;
-          var initems = items.items;
-          var l = initems.length;
-          for ( i; i < l; i++ ) {
-            iter = initems[i];
-            if ( chk[iter.uid] === undefined ) {
-              tmpitems.unshift(iter);
+            // Compile a list of uids
+            var x = 0;
+            var ll = tmpitems.length;
+            for ( x; x < ll; x++ ) {
+              iter = tmpitems[x];
+              chk[iter.uid] = true;
             }
-          }
 
-          // Set the new message list into cache
-          tmp.items = tmpitems;
-          this._storage.accounts[name].cache.messages[folder] = tmp;
+            // Add missing messages to top of stack
+            var i = 0;
+            var initems = items.items;
+            var l = initems.length;
+            for ( i; i < l; i++ ) {
+              iter = initems[i];
+              if ( chk[iter.uid] === undefined ) {
+                tmpitems.unshift(iter);
+              }
+            }
+
+            // Set the new message list into cache
+            tmp.items = tmpitems;
+            this._storage.accounts[name].cache.messages[folder] = tmp;
+          }
         } else {
           this._storage.accounts[name].cache.messages[folder] = items;
         }
