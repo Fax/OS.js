@@ -624,7 +624,7 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
         if ( append ) {
           // Use cache as a reference when appending
           var tmp = this._storage.accounts[name].cache.messages[folder];
-          if ( tmp && tmp.items.length && tmp.items.coulumns.length ) {
+          if ( tmp && tmp.items.length && tmp.items.columns.length ) {
             var tmpitems = tmp.items;
 
             var chk = {};
@@ -652,6 +652,8 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
             // Set the new message list into cache
             tmp.items = tmpitems;
             this._storage.accounts[name].cache.messages[folder] = tmp;
+          } else {
+            this._storage.accounts[name].cache.messages[folder] = items;
           }
         } else {
           this._storage.accounts[name].cache.messages[folder] = items;
