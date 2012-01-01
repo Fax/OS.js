@@ -73,7 +73,17 @@ define("PATH_RESOURCES",             PATH_PROJECT         . "/src/resources");
 define("PATH_JSBASE",                PATH_PROJECT         . "/src/base");
 
 define("APPLICATION_BUILD",          PATH_PROJECT_BUILD   . "/applications.xml");
+define("DATABASE_FILE",              PATH_PROJECT_BUILD   . "/database.sdb");
 define("MIME_MAGIC",                 PATH_PROJECT_VENDOR  . "/mime.mgc");
+
+//
+// Database
+//
+
+define("DATABASE_DSN",      "sqlite:" . DATABASE_FILE);
+define("DATABASE_HOST",     "localhost");
+define("DATABASE_USER",     "");
+define("DATABASE_PASS",     "");
 
 //
 // Includes
@@ -83,6 +93,7 @@ define("MIME_MAGIC",                 PATH_PROJECT_VENDOR  . "/mime.mgc");
 require "lib/Functions.php";
 require "lib/UUID.class.php";
 require "lib/Logger.class.php";
+require "lib/DB.class.php";
 
 // Main sources
 require 'src/Core.class.php';
@@ -97,5 +108,7 @@ require "src/Application.class.php";
 
 // Misc Initialization
 date_default_timezone_set("UTC");
+
+DB::init();
 
 ?>
