@@ -448,6 +448,10 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
             //self.onIconViewToggle(ev, el, item);
           });
 
+          this._bind("resize", function() {
+            self.iconview.resize();
+          });
+
           return true;
         }
 
