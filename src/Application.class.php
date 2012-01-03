@@ -109,13 +109,13 @@ abstract class Application
     if ( $uuid && $action && $instance ) {
       if ( isset($instance['name']) && isset($instance['action']) ) {
         $cname    = $instance['name'];
-        $aargs    = isset($instance['args']) ? $instance['args'] : null;
+        $aargs    = isset($instance['args']) ? $instance['args'] : Array();
         $action   = $instance['action'];
 
         Application::init(APPLICATION_BUILD, $cname);
 
         if ( class_exists($cname) ) {
-          return $cname::Event($uuid, $action, $aargs ? $aargs : Array());
+          return $cname::Event($uuid, $action, $aargs);
         }
       }
     }
@@ -130,6 +130,7 @@ abstract class Application
    * @return void
    */
   public static function init($config, $classname = null) {
+    $return = null;
 
     // Parse application data
     if ( $xml = file_get_contents($config) ) {
@@ -182,7 +183,7 @@ abstract class Application
             $mimes[] = (string) $mime;
           }
 
-          Application::$Registered[$app_class] = Array(
+          $return = Array(
             "name"      => $app_name,
             "title"     => $app_title,
             "icon"      => $app_icon,
@@ -194,6 +195,8 @@ abstract class Application
             "system"    => $app_system*/
           );
 
+          Application::$Registered[$app_class] = $return;
+
           require_once PATH_APPS . "/{$app_class}/{$app_file}";
         }
       }
@@ -202,6 +205,8 @@ abstract class Application
     } else {
       die("Failed to read application build-data!");
     }
+
+    return $return;
   }
 
   /////////////////////////////////////////////////////////////////////////////

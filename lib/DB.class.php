@@ -17,29 +17,80 @@
 class DB
 {
 
-  protected static $__INSTANCE;
+  /**
+   * Running Instances
+   * @var
+   */
+  protected static $__INSTANCES;
 
-  private $__connection;
+  private $__connection;    //!< Current connection (PDO/Mongo)
 
-  protected function __construct(PDO $conn) {
+  /**
+   * Create a new instance
+   * @constructor
+   */
+  protected function __construct($conn) {
     $this->__connection = $conn;
   }
 
-  public final static function init() {
-    if ( $i == self::get() ) {
+  /**
+   * Call a connection function
+   * @param   String    $func       Function name
+   * @param   Mixed     $args       Calling Arguments
+   * @return  Mixed
+   */
+  public function __call($func, $args = null) {
+    if ( !is_array($args) ) {
+      $args = Array($args);
+    }
+
+    return call_user_func_array(Array($this->__connection, $func), $args);
+  }
+
+  /**
+   * Create a new DB connection
+   * @param   String    $dsn        Database connection string (PDO/Mongo syntax)
+   * @param   Mixed     $options    Connection options (Currently just for Mongo)
+   * @return DB
+   */
+  public final static function init($dsn = null, $options = null) {
+    if ( $i = self::get($dsn) ) {
       return $i;
     }
 
-    $db = null;
-    if ( $dsn == DATABASE_DSN ) {
-      $db = new PDO($dsn, DATABASE_USER, DATABASE_PASS);
+    // MongoDB
+    if ( strstr($dsn, "mongodb://") !== false ) {
+      if ( !$options ) {
+        $options = Array(
+          "connect" => true
+        );
+      }
+
+      $dbname = "";
+      if ( isset($options["database"]) ) {
+        $dbname = $options["database"];
+        unset($options["database"]);
+      }
+
+      $mongo  = new Mongo($dsn, $options);
+      $db     = new MongoDB($mongo, $dbname);
     }
 
-    return (self::$__INSTANCE = new self($db));
+    // PDO
+    else {
+      $db     = new PDO((is_string($dsn) ? $dsn : DATABASE_DSN), DATABASE_USER, DATABASE_PASS);
+    }
+
+    return (self::$__INSTANCES[$dsn] = new self($db));
   }
 
-  public final static function get() {
-    return self::$__INSTANCE;
+  /**
+   * Get a running Instance by DSN (Connection String)
+   * @see    DB::init()
+   * @return DB
+   */
+  public final static function get($dsn = null) {
+    return $dsn ? self::$__INSTANCES[$dsn] : reset(self::$__INSTANCES);
   }
 
 }
