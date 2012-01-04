@@ -94,9 +94,11 @@ require "lib/Functions.php";
 require "lib/UUID.class.php";
 require "lib/Logger.class.php";
 require "lib/DB.class.php";
+require "lib/DBObject.class.php";
 
 // Main sources
-require 'src/Core.class.php';
+require "src/Core.class.php";
+require "src/User.class.php";
 require "src/SettingsManager.class.php";
 require "src/ApplicationVFS.class.php";
 require "src/ApplicationAPI.class.php";
