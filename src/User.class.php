@@ -26,6 +26,14 @@ class User extends DBObject {
     "real_name"   => "str",
     "created_at"  => "date"
   );
+
+  public final function getUserInfo() {
+    return Array(
+      "Username"   => $this->username,
+      "Privilege"  => $this->privilege,
+      "Name"       => $this->real_name
+    );
+  }
 }
 
 ?>

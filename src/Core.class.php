@@ -326,14 +326,15 @@ EOCSS;
          */
         else if ( $args['action'] == "user" ) {
           $json['success'] = true;
-          $json['result'] = Array(
-            "Username"   => "OS.js",
-            "Privilege"  => 8,
-            "Name"       => "Anders Evenrud",
-            "Email"      => "andersevenrud@gmail.com",
-            "Company"    => "",
-            "Cellphone"  => ""
-          );
+          if ( $user = User::getById(1) ) {
+            $json['result'] = $user->getUserInfo();
+          } else {
+            $json['result'] = Array(
+              "Username"   => "Guest",
+              "Privilege"  => -1,
+              "Name"       => "Guest User"
+            );
+          }
         }
 
         /**
