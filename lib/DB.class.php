@@ -93,6 +93,22 @@ class DB
     return $dsn ? self::$__INSTANCES[$dsn] : reset(self::$__INSTANCES);
   }
 
+  /**
+   * Get the connection
+   * @return Mixed
+   */
+  public final function getConnection() {
+    return $this->__connection;
+  }
+
+  /**
+   * Check if connection is a MongoDB connection
+   * @return bool
+   */
+  public final function getIsMongo() {
+    return (!($this->__connection instanceof PDO));
+  }
+
 }
 
 

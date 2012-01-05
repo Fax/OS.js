@@ -10,7 +10,6 @@
 /**
  * DBObject -- Database Object Mapping
  *
- * @TODO    MongoDB support
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package OSjs.Libraries
  * @class
@@ -34,48 +33,80 @@ abstract class DBObject
     $mixed    = $mixed    ? $mixed    : Array();
     $limit    = (int) $limit;
 
-    // Build SQL
-    $result   = null;
+    // Perform MongoDB Operation
+    if ( $db->getIsMongo() ) {
+      $collection = new MongoCollection($db->getConnection(), $table);
+      if ( $limit === 0 ) {
+        $cursor = $collection->find($mixed, $columns);
+      } else if ( $limit === 1 ) {
+        $cursor = $collection->findOne($mixed, $columns);
+      } else {
+        $cursor = $collection->find($mixed, $columns)->limit($limit);
+      }
 
-    $keys     = array_keys($mixed);
-    $values   = array_values($mixed);
-    $limited  = ($limit ? "LIMIT {$limit}" : "");
-    $ordered  = "";
+      if ( is_array($order) ) {
+        $cursor = $cursor->order($order);
+      }
 
-    if ( is_array($order) && sizeof($order) ) {
-      $tmp = $order;
-      array_walk($tmp, function(&$item, $key) {
-        $item = "{$key} " . strtoupper($item);
-      });
+      if ( $cursor ) {
+        $result = Array();
+        foreach ( iterator_to_array($cursor) as $cid => $c ) {
+          $o = new $class();
+          foreach ( $c as $k => $v ) {
+            $o->$k = $v;
+          }
+          $result[] = $o;
+        }
+        return $result;
+      }
 
-      $ordered = "ORDER BY " . implode(", ", $tmp);
-      unset($tmp);
-    } else if ( is_string($order) && strlen($order) ) {
-      $ordered = "ORDER BY `{$order}`";
     }
 
-    if ( $columns == "*" ) {
-      $what     = "*";
-    } else {
-      $what     = implode(", ", array_map(function($n) {
-        return "`$n`";
-      }, $columns));
-    }
+    // Perform PDO Operation
+    else {
 
-    if ( sizeof($mixed) ) {
-      $where    = " WHERE " . implode(" AND ", array_map(function($n) {
-        return "`$n` = ?";
-      }, $keys));
-    }
+      // Build SQL
+      $result   = null;
 
+      $keys     = array_keys($mixed);
+      $values   = array_values($mixed);
+      $limited  = ($limit ? "LIMIT {$limit}" : "");
+      $ordered  = "";
 
-    $q = sprintf("SELECT %s FROM `%s`%s%s%s;", $what, $table, $where, $limited, $ordered);
+      if ( is_array($order) && sizeof($order) ) {
+        $tmp = $order;
+        array_walk($tmp, function(&$item, $key) {
+          $item = "{$key} " . strtoupper($item);
+        });
 
-    // Execute SQL
-    if ( $sth = $db->prepare($q) ) {
-      if ( $res = $sth->execute($values) ) {
-        if ( $result = $sth->fetchAll(PDO::FETCH_CLASS, $class) ) {
-          return ($limit === 1 ? reset($result) : $result);
+        $ordered = "ORDER BY " . implode(", ", $tmp);
+        unset($tmp);
+      } else if ( is_string($order) && strlen($order) ) {
+        $ordered = "ORDER BY `{$order}`";
+      }
+
+      if ( $columns == "*" ) {
+        $what     = "*";
+      } else {
+        $what     = implode(", ", array_map(function($n) {
+          return "`$n`";
+        }, $columns));
+      }
+
+      if ( sizeof($mixed) ) {
+        $where    = " WHERE " . implode(" AND ", array_map(function($n) {
+          return "`$n` = ?";
+        }, $keys));
+      }
+
+      $q = sprintf("SELECT %s FROM `%s`%s%s%s;", $what, $table, $where, $limited, $ordered);
+
+      // Execute SQL
+      if ( $sth = $db->prepare($q) ) {
+        if ( $res = $sth->execute($values) ) {
+          if ( $result = $sth->fetchAll(PDO::FETCH_CLASS, $class) ) {
+            return ($limit === 1 ? reset($result) : $result);
+          }
         }
       }
     }
