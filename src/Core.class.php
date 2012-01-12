@@ -17,6 +17,8 @@
 class Core
 {
 
+  const DEFAULT_UID   = 1;
+
   protected $_oTime = null;   //!< Current DateTime
   protected $_oZone = null;   //!< Current DateTimeZome
 
@@ -325,8 +327,9 @@ EOCSS;
          * USER
          */
         else if ( $args['action'] == "user" ) {
+          $uid = self::DEFAULT_UID;
           $json['success'] = true;
-          if ( $user = User::getById(1) ) {
+          if ( $user = User::getById($uid) ) {
             $json['result'] = $user->getUserInfo();
           } else {
             $json['result'] = Array(
@@ -334,6 +337,43 @@ EOCSS;
               "Privilege"  => -1,
               "Name"       => "Guest User"
             );
+          }
+        } else if ( $args['action'] == "login" ) {
+          $uname = "demo";
+          $upass = "demo";
+
+          if ( isset($args['form']) ) {
+            if ( isset($args['form']['username']) ) {
+              $uname = $args['form']['username'];
+            }
+            if ( isset($args['form']['password']) ) {
+              $upass = $args['form']['password'];
+            }
+          }
+
+          if ( $user = User::getByUsername($uname) ) {
+            if ( $user->password == $upass ) {
+              $json['success'] = true;
+              $json['result'] = Array(
+                "user"    => $user->getUserInfo()
+              );
+            }
+          } else {
+            $uid = self::DEFAULT_UID;
+            $json['success'] = true;
+            if ( $user = User::getById($uid) ) {
+              $json['result'] = Array(
+                "user"    => $user->getUserInfo()
+              );
+            } else {
+              $json['result'] = Array(
+                "user"    => Array(
+                  "Username"   => "Guest",
+                  "Privilege"  => -1,
+                  "Name"       => "Guest User"
+                )
+              );
+            }
           }
         }
 

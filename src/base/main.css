@@ -555,14 +555,14 @@ input.Disabled {
 #LoginWindow {
   width : 300px;
   height : 140px;
+  position : absolute;
+  top : 50%;
+  left : 50%;
+  margin-left : -150px;
+  margin-top : -70px;
 }
-#LoginWindow .WindowContent {
-  top : 0px;
-  left : 0px;
-  right : 0px;
-  bottom : 0px;
-  padding : 10px;
-  overflow : hidden;
+#LoginWindow form {
+  margin : 10px;
 }
 #LoginWindow .Row {
   clear : both;
@@ -570,7 +570,6 @@ input.Disabled {
 }
 #LoginWindow .Row label {
   width : 300px;
-  height : 200px;
   display : block;
 }
 #LoginWindow .Row input {
@@ -580,6 +579,13 @@ input.Disabled {
 #LoginWindow .Buttons {
   clear : both;
   text-align : center;
+}
+#LoginWindowStatus {
+  position : absolute;
+  top : 5px;
+  right : 5px;
+  font-size : 80%;
+  color : #888;
 }
 
 /*

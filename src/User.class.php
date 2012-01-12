@@ -34,6 +34,10 @@ class User extends DBObject {
       "Name"       => $this->real_name
     );
   }
+
+  public static function getByUsername($username, DB $db = null) {
+    return self::getByColumn($db, null, null, Array("username" => $username), 1);
+  }
 }
 
 ?>

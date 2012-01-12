@@ -39,6 +39,10 @@
   var MAX_STORAGE_SIZE       = (1024 * 5) * 1000;   //!< Max localstorage size
   var STORAGE_SIZE_FREQ      = 1000;                //!< Storage check usage frequenzy
   var ONLINECHK_FREQ         = 1000;                //!< On-line checking frequenzy
+  var DEFAULT_UID            = 1;                   //!< Default User ID
+  var DEFAULT_USERNAME       = "demo";              //!< Default User Username
+  var DEFAULT_PASSWORD       = "demo";              //!< Default User Password
+  var DEFAULT_LOGIN_TIMEOUT  = 5;                   //!< Default User Login Timeout (seconds)
   // @endconstants
 
   /**
@@ -286,6 +290,88 @@
       }
     });
   } // @endfunction
+
+  /**
+   * TransitionEffect() -- Apply a transition effect on an element
+   * @TODO
+   * @function
+  function TransitionEffect(el, t, trans, args, callback) {
+    trans     = trans     || true;
+    args      = args      || {};
+    callback  = callback  || function() {};
+
+    var eff     = _Settings._get(t) || "default";
+    var method  = "";
+    var vargs   = {
+      "duration" : ANIMATION_SPEED,
+      "complete" : callback
+    };
+
+    if ( eff == "default" ) {
+      switch ( t ) {
+        case "wm.animation.windowOpen" :
+          method = "show";
+          break;
+
+        case "wm.animation.windowClose" :
+          method = "fadeOut";
+          break;
+
+        case "wm.animation.windowMaximize" :
+          method = "animate";
+          break;
+
+        case "wm.animation.windowMinimize" :
+          method = "animate";
+          break;
+
+        case "wm.animation.windowRestore" :
+          break;
+
+        case "wm.animation.menuOpen" :
+          break;
+
+        case "wm.animation.menuClose" :
+          break;
+
+        default:
+          method = (trans ? "show" : "hide");
+        break;
+      }
+    } else {
+      switch ( eff ) {
+        case "fade" :
+          method = (trans ? "fadeIn" : "fadeOut");
+          break;
+
+        case "scroll":
+          method = "animate";
+          break;
+
+        case "grow" :
+          method = "animate";
+          break;
+
+        case "shrink" :
+          method = "animate";
+          break;
+
+        default :
+          method = (trans ? "show" : "hide");
+          break;
+      }
+    }
+
+    var res;
+    if ( method == "animate" ) {
+      res = $(el).animate(args, vargs);
+    } else {
+      res = $(el)[method](vargs);
+    }
+
+    return res;
+  } // @endfunction
+   */
 
   /////////////////////////////////////////////////////////////////////////////
   // PUBLIC API
@@ -1322,8 +1408,158 @@
 
       this._super("(Core)", "status/computer-fail.png", true);
 
-      var load = $("#Loading");
-      var bar = $("#LoadingBar");
+      console.group("Core::init()");
+
+      // Login window handling
+      var lw = $("#LoginWindow").show();
+      var lf = $("#LoginForm");
+      var lb = $("#LoginButton");
+      var un = $("#LoginUsername").val(DEFAULT_USERNAME);
+      var up = $("#LoginPassword").val(DEFAULT_PASSWORD);
+      var ls = $("#LoginWindowStatus span").html(DEFAULT_LOGIN_TIMEOUT);
+
+      var subbed = false;
+      var count = parseInt(ls.html(), 10);
+
+      var interval = setInterval(function() {
+        count--;
+
+        ls.html(count);
+
+        if ( !count ) {
+          clearInterval(interval);
+          interval = null;
+
+          lf.submit();
+        }
+
+      }, 1000);
+
+      lf.get(0).onsubmit = function() {
+        if ( !subbed ) {
+          self.login(un.val(), up.val(), function(success) {
+            if ( success ) {
+              subbed = true;
+
+              lf.get(0).onsubmit = null;
+              lw.hide().remove();
+
+              if ( interval ) {
+                clearInterval(interval);
+                interval = null;
+              }
+
+              self.run();
+            }
+          });
+        }
+        return false;
+      };
+
+
+      console.groupEnd();
+    },
+
+    /**
+     * Core::destroy() -- Destructor
+     * @destructor
+     */
+    destroy : function() {
+      // Unbind global events
+      if ( this.running ) {
+        $(document).unbind("keydown",     this.global_keydown);
+        $(document).unbind("mousedown",   this.global_mousedown);
+        $(document).unbind("mouseup",     this.global_mouseup);
+        $(document).unbind("mousemove",   this.global_mousemove);
+        $(document).unbind("click",       this.global_click);
+        $(document).unbind("dblclick",    this.global_dblclick);
+        $(document).unbind("contextmenu", this.global_contextmenu);
+        $(document).unbind('touchmove',   this.global_touchmove, false);
+
+        /*window.removeEventListener('offline', function(ev) {
+          self.global_offline(ev, !(navigator.onLine === false));
+        }, true);
+        */
+        if ( this.olint ) {
+          clearInterval(this.olint);
+          this.olint = null;
+        }
+      }
+
+      if ( _Tooltip ) {
+        _Tooltip.destroy();
+      }
+      if ( _Menu ) {
+        _Menu.destroy();
+      }
+      if ( _Desktop ) {
+        _Desktop.destroy();
+      }
+      if ( _WM ) {
+        _WM.destroy();
+      }
+      if ( _Settings ) {
+        _Settings.destroy();
+      }
+      if ( _Resources ) {
+        _Resources.destroy();
+      }
+
+      _Core       = null;
+      _Resources  = null;
+      _Settings   = null;
+      _Desktop    = null;
+      _WM         = null;
+      _Window     = null;
+      _Tooltip    = null;
+      _Menu       = null;
+      _Processes  = [];
+      _TopIndex   = 11;
+
+      // Try to remove remaining events
+      try {
+        $("*").unbind();
+        $("*").die();
+      } catch ( eee ) { }
+
+      this._super();
+    },
+
+    /**
+     * Core::login() -- Login function
+     * @param  Function   callback    Callback function
+     * @return void
+     */
+    login : function(username, password, callback) {
+      var self = this;
+      var form = {
+        "username" : username,
+        "password" : password
+      };
+
+      console.group("Core::login()");
+      console.log("Login data:", form);
+
+      $.post(AJAX_URI, {'ajax' : true, 'action' : 'login', 'form' : form}, function(data) {
+        console.log("Login success:", data.success);
+        console.log("Login result:", data.result);
+        console.groupEnd();
+
+        callback(data.success);
+      });
+    },
+
+    /**
+     * Core::run() -- Main startup procedure
+     * @return void
+     */
+    run : function() {
+      var self = this;
+
+      var load  = $("#Loading");
+      var bar   = $("#LoadingBar");
+
+      console.group("Core::run()");
 
       load.show();
       bar.progressbar({value : 5});
@@ -1399,75 +1635,14 @@
           MessageBox(data.error);
         }
 
+        console.groupEnd();
       });
     },
 
-    /**
-     * Core::destroy() -- Destructor
-     * @destructor
-     */
-    destroy : function() {
-      // Unbind global events
-      if ( this.running ) {
-        $(document).unbind("keydown",     this.global_keydown);
-        $(document).unbind("mousedown",   this.global_mousedown);
-        $(document).unbind("mouseup",     this.global_mouseup);
-        $(document).unbind("mousemove",   this.global_mousemove);
-        $(document).unbind("click",       this.global_click);
-        $(document).unbind("dblclick",    this.global_dblclick);
-        $(document).unbind("contextmenu", this.global_contextmenu);
-        $(document).unbind('touchmove',   this.global_touchmove, false);
 
-        /*window.removeEventListener('offline', function(ev) {
-          self.global_offline(ev, !(navigator.onLine === false));
-        }, true);
-        */
-        if ( this.olint ) {
-          clearInterval(this.olint);
-          this.olint = null;
-        }
-      }
-
-      if ( _Tooltip ) {
-        _Tooltip.destroy();
-      }
-      if ( _Menu ) {
-        _Menu.destroy();
-      }
-      if ( _Desktop ) {
-        _Desktop.destroy();
-      }
-      if ( _WM ) {
-        _WM.destroy();
-      }
-      if ( _Settings ) {
-        _Settings.destroy();
-      }
-      if ( _Resources ) {
-        _Resources.destroy();
-      }
-
-      _Core       = null;
-      _Resources  = null;
-      _Settings   = null;
-      _Desktop    = null;
-      _WM         = null;
-      _Window     = null;
-      _Tooltip    = null;
-      _Menu       = null;
-      _Processes  = [];
-      _TopIndex   = 11;
-
-      // Try to remove remaining events
-      try {
-        $("*").unbind();
-        $("*").die();
-      } catch ( eee ) { }
-
-      this._super();
-    },
-
+    //
     // EVENTS
+    //
 
     /**
      * Core::global_offline() -- The Browser 'offline' event handler
