@@ -29,7 +29,7 @@
    */
   var ENABLE_CACHE           = false;               //!< Enabled caching
   var SETTING_REVISION       = 26;                  //!< The settings revision
-  var ENABLE_LOGIN           = false;               //!< Use login
+  var ENABLE_LOGIN           = true;                //!< Use login
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
   var TOOLTIP_TIMEOUT        = 300;                 //!< Tooltip timeout in ms
@@ -1411,50 +1411,61 @@
       console.group("Core::init()");
 
       // Login window handling
-      var lw = $("#LoginWindow").show();
-      var lf = $("#LoginForm");
-      var lb = $("#LoginButton");
-      var un = $("#LoginUsername").val(DEFAULT_USERNAME);
-      var up = $("#LoginPassword").val(DEFAULT_PASSWORD);
-      var ls = $("#LoginWindowStatus span").html(DEFAULT_LOGIN_TIMEOUT);
-
       var subbed = false;
-      var count = parseInt(ls.html(), 10);
+      var interval = null;
 
-      var interval = setInterval(function() {
-        count--;
+      var _do_login = function(username, password) {
+        self.login(username, password, function(success) {
+          if ( success ) {
+            subbed = true;
 
-        ls.html(count);
+            $("#LoginForm").get(0).onsubmit = null;
+            $("#LoginWindow").hide().remove();
 
-        if ( !count ) {
-          clearInterval(interval);
-          interval = null;
-
-          lf.submit();
-        }
-
-      }, 1000);
-
-      lf.get(0).onsubmit = function() {
-        if ( !subbed ) {
-          self.login(un.val(), up.val(), function(success) {
-            if ( success ) {
-              subbed = true;
-
-              lf.get(0).onsubmit = null;
-              lw.hide().remove();
-
-              if ( interval ) {
-                clearInterval(interval);
-                interval = null;
-              }
-
-              self.run();
+            if ( interval ) {
+              clearInterval(interval);
+              interval = null;
             }
-          });
-        }
-        return false;
+
+            self.run();
+          }
+        });
       };
+
+
+      if ( ENABLE_LOGIN ) {
+        var lw = $("#LoginWindow").show();
+        var lf = $("#LoginForm");
+        var lb = $("#LoginButton").focus();
+        var un = $("#LoginUsername").val(DEFAULT_USERNAME);
+        var up = $("#LoginPassword").val(DEFAULT_PASSWORD);
+        var ls = $("#LoginWindowStatus span").html(DEFAULT_LOGIN_TIMEOUT);
+
+        var count = parseInt(ls.html(), 10);
+
+        interval = setInterval(function() {
+          count--;
+
+          ls.html(count);
+
+          if ( !count ) {
+            clearInterval(interval);
+            interval = null;
+
+            lf.submit();
+          }
+
+        }, 1000);
+
+        lf.get(0).onsubmit = function() {
+          if ( !subbed ) {
+            _do_login(un.val(), up.val());
+          }
+          return false;
+        };
+      } else {
+        _do_login(DEFAULT_USERNAME, DEFAULT_PASSWORD);
+      }
 
 
       console.groupEnd();
