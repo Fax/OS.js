@@ -21,6 +21,7 @@ class Core
 
   protected $_oTime = null;   //!< Current DateTime
   protected $_oZone = null;   //!< Current DateTimeZome
+  protected $_oUser = null;   //!< Current User
 
   /**
    * @var Current instance
@@ -36,7 +37,7 @@ class Core
     $now        = new DateTime("now", $tz);
 
     date_default_timezone_set($zone);
-    //session_start();
+    session_start();
 
     $this->_oTime = $now;
     $this->_oZone = $tz;
@@ -47,10 +48,18 @@ class Core
    * @return Core
    */
   public static function initialize() {
-    if ( !self::$__Instance ) {
-      self::$__Instance = new Core();
+    $i = null;
+    if ( self::$__Instance ) {
+      $i = (self::$__Instance);
+    } else {
+      $i = (self::$__Instance = new Core());
     }
-    return self::$__Instance;
+
+    if ( isset($_SESSION['user']) ) {
+      $i->setUser($_SESSION['user']);
+    }
+
+    return $i;
   }
 
   /**
@@ -258,14 +267,6 @@ EOCSS;
   }
 
   /**
-   * Get the current Core User
-   * @return User
-   */
-  public function getUser() {
-    return null;
-  }
-
-  /**
    * Do a GET request
    * @param  Array    $args   Argument list
    * @return Mixed
@@ -304,14 +305,13 @@ EOCSS;
         if ( $args['action'] == "boot" ) {
 
         } else if ( $args['action'] == "shutdown" ) {
-          $json['success'] = true;
-          $json['result'] = true;
-
           $settings = isset($args['settings']) ? $args['settings'] : Array();
           $session  = isset($args['session'])  ? $args['session']  : Array();
 
-          $json['result'] = true;
-          $json['success'] = true;
+          $json['result']   = true;
+          $json['success']  = true;
+
+          $_SESSION['user'] = null;
         } else if ( $args['action'] == "init" ) {
           Application::init(APPLICATION_BUILD);
 
@@ -326,19 +326,21 @@ EOCSS;
         /**
          * USER
          */
-        else if ( $args['action'] == "user" ) {
-          $uid = self::DEFAULT_UID;
+        else if ( $args['action'] == "logout" ) {
           $json['success'] = true;
-          if ( $user = User::getById($uid) ) {
-            $json['result'] = $user->getUserInfo();
+          $_SESSION['user'] = null;
+        }
+
+        else if ( $args['action'] == "user" ) {
+          if ( $user = $this->getUser() ) {
+            $json['success'] = true;
+            $json['result']  = $user->getUserInfo();
           } else {
-            $json['result'] = Array(
-              "Username"   => "Guest",
-              "Privilege"  => -1,
-              "Name"       => "Guest User"
-            );
+            $json['error'] = "You are not logged in!";
           }
-        } else if ( $args['action'] == "login" ) {
+        }
+
+        else if ( $args['action'] == "login" ) {
           $uname = "demo";
           $upass = "demo";
 
@@ -351,6 +353,7 @@ EOCSS;
             }
           }
 
+          $user = null;
           if ( $user = User::getByUsername($uname) ) {
             if ( $user->password == $upass ) {
               $json['success'] = true;
@@ -361,19 +364,17 @@ EOCSS;
           } else {
             $uid = self::DEFAULT_UID;
             $json['success'] = true;
-            if ( $user = User::getById($uid) ) {
+            if ( ($user = User::getById($uid)) || ($user = User::createDefault()) ) {
               $json['result'] = Array(
                 "user"    => $user->getUserInfo()
               );
-            } else {
-              $json['result'] = Array(
-                "user"    => Array(
-                  "Username"   => "Guest",
-                  "Privilege"  => -1,
-                  "Name"       => "Guest User"
-                )
-              );
             }
+          }
+
+          if ( $user && ($user instanceof User) ) {
+            $_SESSION['user'] = $user;
+          } else {
+            $_SESSION['user'] = null;
           }
         }
 
@@ -543,6 +544,14 @@ EOCSS;
     }
 
     return false;
+  }
+
+  protected function setUser(User $u) {
+    $this->_oUser = $u;
+  }
+
+  public final function getUser() {
+    return $this->_oUser;
   }
 
 }

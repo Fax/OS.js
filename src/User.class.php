@@ -35,6 +35,16 @@ class User extends DBObject {
     );
   }
 
+  public static function createDefault() {
+    $u = new self();
+    $u->username    = "Guest";
+    $u->password    = "";
+    $u->privilege   = 1;
+    $u->real_name   = "Guest User";
+
+    return $u;
+  }
+
   public static function getByUsername($username, DB $db = null) {
     return self::getByColumn($db, null, null, Array("username" => $username), 1);
   }
