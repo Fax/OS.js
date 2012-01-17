@@ -28,8 +28,8 @@
    * @constants Local settings
    */
   var ENABLE_CACHE           = false;               //!< Enabled caching
-  var SETTING_REVISION       = 26;                  //!< The settings revision
-  var ENABLE_LOGIN           = true;                //!< Use login
+  var SETTING_REVISION       = 27;                  //!< The settings revision
+  var ENABLE_LOGIN           = false;               //!< Use login
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
   var TOOLTIP_TIMEOUT        = 300;                 //!< Tooltip timeout in ms

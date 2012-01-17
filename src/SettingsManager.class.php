@@ -90,6 +90,15 @@ class SettingsManager
       "type"  => "filename",
       "value" => "/System/Wallpapers/go2cxpb.png"
     ),
+    "desktop.wallpaper.type" => Array(
+      "type"    => "array",
+      "options" => Array("Tiled Wallpaper", "Centered Wallpaper", "Stretched Wallpaper", "Color only"),
+      "value"   => "Tiled Wallpaper"
+    ),
+    "desktop.background.color" =>  Array(
+      "type"  => "string",
+      "value" => "#005A77"
+    ),
     "desktop.theme" => Array(
       "type"    => "array",
       "options" => Array("dark", "light"),
