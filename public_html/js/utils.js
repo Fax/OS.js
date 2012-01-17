@@ -353,9 +353,9 @@ function RGBFromHex(hex) {
  */
 function hexFromRGB(r, g, b) {
   var hex = [
-    r.toString( 16 ),
-    g.toString( 16 ),
-    b.toString( 16 )
+    (r).toString( 16 ),
+    (g).toString( 16 ),
+    (b).toString( 16 )
   ];
 
   $.each( hex, function( nr, val ) {
@@ -363,7 +363,23 @@ function hexFromRGB(r, g, b) {
       hex[ nr ] = "0" + val;
     }
   });
+
   return hex.join( "" ).toUpperCase();
+}
+
+/**
+ * Convert array from RGB (string)
+ *
+ * @author Anonymous
+ * @return String
+ */
+function IntFromRGBstr(str) {
+  var spl = str.replace(/^rgba?\(/, "").replace(/\,|\)/g, "").replace(/\s+/g, " ").split(" ");
+  return {
+    red   : parseInt(spl[0], 10),
+    green : parseInt(spl[1], 10),
+    blue  : parseInt(spl[2], 10)
+  }
 }
 
 /**

@@ -15,7 +15,12 @@ OSjs.Dialogs.ColorOperationDialog = (function($, undefined) {
     var _ColorOperationDialog = OperationDialog.extend({
       init : function(start_color, clb_finish) {
         this.clb_finish = clb_finish   || function() {};
-        this.colorObj   = RGBFromHex(start_color  || "#ffffff");
+
+        if ( start_color.match(/^rgba?/) ) {
+          this.colorObj   = IntFromRGBstr(start_color  || "rgb(255,255,255)");
+        } else {
+          this.colorObj   = RGBFromHex(start_color  || "#ffffff");
+        }
 
         this._super("Color");
         this._title    = "Choose color...";

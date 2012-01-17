@@ -28,7 +28,7 @@
    * @constants Local settings
    */
   var ENABLE_CACHE           = false;               //!< Enabled caching
-  var SETTING_REVISION       = 27;                  //!< The settings revision
+  var SETTING_REVISION       = 28;                  //!< The settings revision
   var ENABLE_LOGIN           = false;               //!< Use login
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
@@ -3537,10 +3537,12 @@
      */
     applySettings : function() {
       var map = {
-        'desktop.wallpaper.path' : 'setWallpaper',
-        'desktop.theme'          : 'setTheme',
-        'desktop.font'           : 'setFont',
-        'desktop.cursor.theme'   : 'setCursorTheme'
+        'desktop.wallpaper.path'   : 'setWallpaper',
+        'desktop.wallpaper.type'   : 'setWallpaperType',
+        'desktop.background.color' : 'setBackgroundColor',
+        'desktop.theme'            : 'setTheme',
+        'desktop.font'             : 'setFont',
+        'desktop.cursor.theme'     : 'setCursorTheme'
       };
 
       console.group("Desktop::applySettings() Applying user settings");
@@ -3578,10 +3580,62 @@
      */
     setWallpaper : function(wp) {
       if ( wp ) {
-        $("body").css("background", "url('/media" + wp + "') center center");
+        $("body").css("background-image", "url('/media" + wp + "')");
       } else {
-        $("body").css("background", "url('/img/blank.gif')");
+        $("body").css("background-image", "url('/img/blank.gif')");
       }
+    },
+
+    /**
+     * Desktop::setWallpaperType() -- Set the wallpaper type
+     * @param   String    t       Wallpaper type
+     * @return  void
+     */
+    setWallpaperType : function(t) {
+
+      switch ( t ) {
+        case "Tiled Wallpaper" :
+          $("body").css("background-repeat",    "repeat");
+          $("body").css("background-position",  "inherit");
+          $("body").css("background-size",      "auto auto");
+
+          this.setWallpaper(_Settings._get("desktop.wallpaper.path"));
+        break;
+
+        case "Centered Wallpaper" :
+          $("body").css("background-repeat",    "no-repeat");
+          $("body").css("background-position",  "center center");
+          $("body").css("background-size",      "auto auto");
+
+          this.setWallpaper(_Settings._get("desktop.wallpaper.path"));
+        break;
+
+        case "Stretched Wallpaper" :
+          $("body").css("background-repeat",    "no-repeat");
+          $("body").css("background-position",  "center center");
+          $("body").css("background-size",      "100%");
+
+          this.setWallpaper(_Settings._get("desktop.wallpaper.path"));
+        break;
+
+        case "Color only" :
+        default :
+          $("body").css("background-repeat",    "no-repeat");
+          $("body").css("background-position",  "inherit");
+          $("body").css("background-size",      "auto auto");
+
+          this.setWallpaper(null);
+        break;
+      }
+    },
+
+    /**
+     * Desktop::setBackgroundColor() -- Set the background-color
+     * @param   String    t       Wallpaper type
+     * @return  void
+     */
+    setBackgroundColor : function(c) {
+      $("body").css("background-color", c);
     },
 
     /**
