@@ -681,10 +681,10 @@ EOCSS;
   /**
    * Set the current time/timezone of session
    * @param   String    $zone       Timezone
-   * @param   bool      $update     Update the object(s)
+   * @param   bool      $update     Update the object(s) (Default = false)
    * @return  void
    */
-  protected function setTime($zone, $update = true) {
+  protected function setTime($zone, $update = false) {
     $this->_sTime = $zone;
 
     if ( $update ) {
