@@ -36,6 +36,30 @@ class Core
    */
   protected static $__Instance;
 
+  /**
+   * @var doPOST 'action' argument method mapping
+   */
+  protected static $__POSTEvents = Array(
+    "boot"      => "doBoot",
+    "shutdown"  => "doShutdown",
+    "init"      => "doInit",
+    "login"     => "doUserLogin",
+    "logout"    => "doUserLogout",
+    "user"      => "doUserInfo",
+    "load"      => "doApplicationLoad",
+    "register"  => "doApplicationRegister",
+    "flush"     => "doApplicationFlush",
+    "event"     => "doApplicationEvent",
+    "service"   => Array(
+      "method" => "doService",
+      "depend" => Array("arguments")
+    ),
+    "call"      => Array(
+      "method" => "doVFS",
+      "depend" => Array("method", "args")
+    )
+  );
+
   /////////////////////////////////////////////////////////////////////////////
   // MAGICS
   /////////////////////////////////////////////////////////////////////////////
@@ -296,74 +320,47 @@ EOCSS;
   public function doPOST(Array $args) {
     if ( sizeof($args) ) {
 
-      // API Operations
+      // Require a specific parameter to trigger this function
       if ( isset($args['ajax']) ) {
+        // Default output
         $json = Array(
           "success" => false,
           "error"   => "Unknown error",
           "result"  => null
         );
 
-        if ( !isset($args['action']) ) {
+        // Map actions to methods
+        if ( isset($args['action']) ) {
+          if ( (isset(self::$__POSTEvents[$args['action']])) && ($pev = self::$__POSTEvents[$args['action']]) ) {
+            $method   = "_";
+            $continue = true;
+
+            // Check for dependencies here, generate method name
+            if ( is_array($pev) ) {
+              $method .= $pev['method'];
+              foreach ( $pev['depend'] as $v ) {
+                if ( !isset($args[$v]) ) {
+                  $continue = false;
+                  break;
+                }
+              }
+            } else {
+              $method .= $pev;
+            }
+
+            // Run method
+            if ( $continue && method_exists($this, $method) ) {
+              self::$method($args, $json, $this);
+            }
+          } else {
+            $json['error'] = "Unknown action given!";
+          }
+        } else {
           $json['error'] = "No action given!";
-          return json_encode($json);
-        }
-
-        /**
-         * MAIN
-         */
-        if ( $args['action'] == "boot" ) {
-          self::_doBoot($args, $json);
-        } else if ( $args['action'] == "shutdown" ) {
-          self::_doShutdown($args, $json);
-        } else if ( $args['action'] == "init" ) {
-          self::_doInit($args, $json);
-        }
-
-        /**
-         * USER
-         */
-        else if ( $args['action'] == "logout" ) {
-          self::_doLogout($args, $json);
-        }
-
-        else if ( $args['action'] == "user" ) {
-          self::_doUserInfo($args, $json, $this);
-        }
-
-        else if ( $args['action'] == "login" ) {
-          self::_doLogin($args, $json, $this);
-        }
-
-        /**
-         * APPLICATIONS
-         */
-        else if ( $args['action'] == "load" ) {
-          self::_doApplicationLoad($args, $json);
-        } else if ( $args['action'] == "register" ) {
-          self::_doApplicationRegister($args, $json);
-        } else if ( $args['action'] == "flush" ) {
-          self::_doApplicationFlush($args, $json);
-        } else if ( $args['action'] == "event" ) {
-          self::_doApplicationEvent($args, $json);
-        }
-
-        /**
-         * Services
-         */
-        else if ( $args['action'] == "service" && isset($args['arguments']) ) {
-          self::_doService($args, $json);
-        }
-
-        /**
-         * VFS
-         */
-        else if ( $args['action'] == "call" && isset($args['method']) && isset($args['args']) ) {
-          self::_doVFS($args, $json);
         }
 
         // Remove error if successfull
-        if ( $json['success'] && $json['result'] ) {
+        if ( $json['success'] !== false && $json['result'] !== null ) {
           $json['error'] = null;
         }
 
@@ -423,7 +420,7 @@ EOCSS;
    * @see Core::doPost
    * @return void
    */
-  protected static final function _doLogin(Array $args, Array &$json, Core $inst = null) {
+  protected static final function _doUserLogin(Array $args, Array &$json, Core $inst = null) {
     $uname = "demo";
     $upass = "demo";
     $time  = isset($args['time']) ? $args['time'] : null;
@@ -467,7 +464,7 @@ EOCSS;
    * @see Core::doPost
    * @return void
    */
-  protected static final function _doLogout(Array $args, Array &$json, Core $inst = null) {
+  protected static final function _doUserLogout(Array $args, Array &$json, Core $inst = null) {
     $json['success']  = true;
     $_SESSION['user'] = null;
   }
