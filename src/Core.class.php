@@ -16,18 +16,29 @@
  */
 class Core
 {
+  /////////////////////////////////////////////////////////////////////////////
+  // CONSTANTS
+  /////////////////////////////////////////////////////////////////////////////
 
-  const DEFAULT_UID   = 1;
+  const DEFAULT_UID   = 1;    //!< Default User ID
 
-  protected $_oTime = null;   //!< Current DateTime
-  protected $_oZone = null;   //!< Current DateTimeZome
-  protected $_oUser = null;   //!< Current User
-  protected $_sTime = null;   //!< Current Browser time offset
+  /////////////////////////////////////////////////////////////////////////////
+  // VARIABLES
+  /////////////////////////////////////////////////////////////////////////////
+
+  protected $_oTime = null;   //!< Current session DateTime
+  protected $_oZone = null;   //!< Current session DateTimeZome
+  protected $_oUser = null;   //!< Current session User
+  protected $_sTime = null;   //!< Current session TimeZone
 
   /**
    * @var Current instance
    */
   protected static $__Instance;
+
+  /////////////////////////////////////////////////////////////////////////////
+  // MAGICS
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
    * @constructor
@@ -36,6 +47,10 @@ class Core
     $this->setTime(DEFAULT_TIMEZONE);
     session_start();
   }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // STATIC FUNCTIONS
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
    * Initialize Core (Create Instance)
@@ -260,19 +275,16 @@ EOCSS;
     return false;
   }
 
+  /////////////////////////////////////////////////////////////////////////////
+  // MEMBER FUNCTIONS
+  /////////////////////////////////////////////////////////////////////////////
+
   /**
    * Do a GET request
    * @param  Array    $args   Argument list
    * @return Mixed
    */
   public function doGET(Array $args) {
-    /*
-    // Upload "POST"
-    if ( isset($args['ajax']) && isset($args['action']) && isset($args['qqfile']) && isset($args['path']) ) {
-      return json_encode(ApplicationVFS::upload($args['path']));
-    }
-    */
-
     return false;
   }
 
@@ -301,243 +313,54 @@ EOCSS;
          * MAIN
          */
         if ( $args['action'] == "boot" ) {
-
+          self::_doBoot($args, $json);
         } else if ( $args['action'] == "shutdown" ) {
-          $settings = isset($args['settings']) ? $args['settings'] : Array();
-          $session  = isset($args['session'])  ? $args['session']  : Array();
-
-          $json['result']   = true;
-          $json['success']  = true;
-
-          $_SESSION['user'] = null;
+          self::_doShutdown($args, $json);
         } else if ( $args['action'] == "init" ) {
-          Application::init(APPLICATION_BUILD);
-
-          $json = Array("success" => true, "error" => null, "result" => Array(
-            "settings" => self::getSettings(),
-            "config"   => Array(
-              "cache" => ENABLE_CACHE
-            ),
-            "time"    => gmdate(DateTime::RFC1123)
-          ));
+          self::_doInit($args, $json);
         }
 
         /**
          * USER
          */
         else if ( $args['action'] == "logout" ) {
-          $json['success']  = true;
-          $_SESSION['user'] = null;
+          self::_doLogout($args, $json);
         }
 
         else if ( $args['action'] == "user" ) {
-          if ( $user = $this->getUser() ) {
-            $json['success'] = true;
-            $json['result']  = $user->getUserInfo();
-          } else {
-            $json['error'] = "You are not logged in!";
-          }
+          self::_doUserInfo($args, $json, $this);
         }
 
         else if ( $args['action'] == "login" ) {
-          $uname = "demo";
-          $upass = "demo";
-          $time  = isset($args['time']) ? $args['time'] : null;
-
-          if ( isset($args['form']) ) {
-            if ( isset($args['form']['username']) ) {
-              $uname = $args['form']['username'];
-            }
-            if ( isset($args['form']['password']) ) {
-              $upass = $args['form']['password'];
-            }
-          }
-
-          $user = null;
-          if ( $user = User::getByUsername($uname) ) {
-            if ( $user->password == $upass ) {
-              $json['success'] = true;
-              $json['result'] = Array(
-                "user"    => $user->getUserInfo()
-              );
-            }
-          } else {
-            $uid = self::DEFAULT_UID;
-            $json['success'] = true;
-            if ( ($user = User::getById($uid)) || ($user = User::createDefault()) ) {
-              $json['result'] = Array(
-                "user"    => $user->getUserInfo()
-              );
-            }
-          }
-
-          if ( $user && ($user instanceof User) ) {
-            $_SESSION['user'] = $user;
-          } else {
-            $_SESSION['user'] = null;
-          }
+          self::_doLogin($args, $json, $this);
         }
 
         /**
          * APPLICATIONS
          */
         else if ( $args['action'] == "load" ) {
-          if ( $app = Application::Load($args['app']) ) {
-            $json['success'] = true;
-            $json['result']  = $app;
-            $json['error']   = null;
-          } else {
-            $json['error'] = "Application '{$args['app']}' does not exist";
-          }
+          self::_doApplicationLoad($args, $json);
         } else if ( $args['action'] == "register" ) {
-          if ( Application::Register($args['uuid'], $args['instance']) ) {
-            $json['success'] = true;
-            $json['error']   = null;
-          } else {
-            $json['error'] = "Failed to flush application";
-          }
+          self::_doApplicationRegister($args, $json);
         } else if ( $args['action'] == "flush" ) {
-          if ( Application::Flush($args['uuid']) ) {
-            $json['success'] = true;
-            $json['error']   = null;
-          } else {
-            $json['error'] = "Failed to flush application";
-          }
+          self::_doApplicationFlush($args, $json);
         } else if ( $args['action'] == "event" ) {
-          if ( ($result = Application::Handle($args['uuid'], $args['action'], $args['instance'])) ) {
-            $json['success'] = ($result === true) || is_array($result);
-            $json['error']   = $json['success'] ? null : (is_string($result) ? $result : "Unknown error");
-            $json['result']  = $json['success'] ? $result : null;
-          } else {
-            $json['error'] = "Failed to handle application";
-          }
+          self::_doApplicationEvent($args, $json);
         }
 
         /**
          * Services
          */
         else if ( $args['action'] == "service" && isset($args['arguments']) ) {
-          require PATH_PROJECT_LIB . "/Services.php";
-
-          $iargs = $args['arguments'];
-          if ( isset($iargs['type']) && isset($iargs['uri']) && isset($iargs['data']) && isset($iargs['options']) && isset($iargs['timeout']) ) {
-            if ( $s = Service::createFromType($iargs['type']) ) {
-              $uri      = $iargs['uri'];
-              $data     = $iargs['data'];
-              $timeout  = $iargs['timeout'];
-              $options  = $iargs['options'];
-
-              if ( $res = $s->call($uri, $data, $timeout, $options) ) {
-                $json['success'] = true;
-                $json['error']   = null;
-                $json['result']  = $res;
-              } else {
-                $json['error']   = "Failed to call Service!";
-              }
-            } else {
-              $json['error']   = "Failed to construct Service!";
-            }
-          } else {
-            $json['error']   = "Missing some arguments!";
-          }
+          self::_doService($args, $json);
         }
 
         /**
          * VFS
          */
         else if ( $args['action'] == "call" && isset($args['method']) && isset($args['args']) ) {
-          $method = $args['method'];
-          $argv   = $args['args'];
-
-          if ( $method == "read" ) {
-            if ( is_string($argv) ) {
-              if ( ($content = ApplicationVFS::cat($argv)) !== false ) {
-                $json['result'] = $content;
-                $json['success'] = true;
-              } else {
-                $json['error'] = "Path does not exist";
-              }
-            } else {
-              $json['error'] = "Invalid argument";
-            }
-          } else if ( $method == "write" ) {
-            // TODO: Overwrite parameter
-            if ( ApplicationVFS::put($argv) ) {
-              $json['success'] = true;
-              $json['result'] = true;
-            } else {
-              $json['error'] = "Failed to save '{$argv['file']}'";
-            }
-          } else if ( $method == "readdir" ) {
-            $path    = $argv['path'];
-            $ignores = isset($argv['ignore']) ? $argv['ignore'] : null;
-            $mime    = isset($argv['mime']) ? ($argv['mime'] ? $argv['mime'] : Array()) : Array();
-
-            if ( ($items = ApplicationVFS::ls($path, $ignores, $mime)) !== false) {
-              $json['result'] = $items;
-              $json['success'] = true;
-            } else {
-              $json['error'] = "Failed to read directory '{$argv['path']}'";
-            }
-          } else if ( $method == "rename" ) {
-            list($path, $src, $dst) = $argv;
-
-            if ( ApplicationVFS::mv($path, $src, $dst) ) {
-              $json['result'] = $dst;
-              $json['success'] = true;
-            } else {
-              $json['error'] = "Failed to rename '{$src}'";
-            }
-          } else if ( $method == "delete" ) {
-            if ( ApplicationVFS::rm($argv) ) {
-              $json['result'] = $argv;
-              $json['success'] = true;
-            } else {
-              $json['error'] = "Failed to delete '{$argv}'";
-            }
-          } else if ( $method == "mkdir" ) {
-            if ( $res = ApplicationVFS::mkdir($argv) ) {
-              $json['result'] = $res;
-              $json['success'] = true;
-            } else {
-              $json['error'] = "Failed to create directory '{$argv}'";
-            }
-          } else if ( $method == "readurl" ) {
-            if ( $ret = ApplicationAPI::readurl($argv) ) {
-              $json['result'] = $ret;
-              $json['success'] = true;
-            } else {
-              $json['error'] = "Failed to read '{$argv}'";
-            }
-          } else if ( $method == "readpdf" ) {
-            $tmp  = explode(":", $argv);
-            $pdf  = $tmp[0];
-            $page = isset($tmp[1]) ? $tmp[1] : -1;
-
-            if ( $ret = ApplicationAPI::readPDF($pdf, $page) ) {
-              $json['result'] = $ret;
-              $json['success'] = true;
-            } else {
-              $json['error'] = "Failed to read '{$argv}'";
-            }
-
-          } else if ( $method == "fileinfo" ) {
-            if ( $ret = ApplicationVFS::file_info($argv) ) {
-              $json['result'] = $ret;
-              $json['success'] = true;
-            } else {
-              $json['error'] = "Failed to read '{$argv}'";
-            }
-          }
-        }/* else {
-            if ( function_exists($method) ) {
-              $json['result']  = call_user_func_array($method, $argv);
-              $json['success'] = true;
-            } else {
-              $json['error'] = "Function does not exist";
-            }
-          }
-        }*/
+          self::_doVFS($args, $json);
+        }
 
         // Remove error if successfull
         if ( $json['success'] && $json['result'] ) {
@@ -551,10 +374,319 @@ EOCSS;
     return false;
   }
 
-  protected function setUser(User $u) {
+  /////////////////////////////////////////////////////////////////////////////
+  // AJAX FUNCTIONS
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Do a 'Core Boot' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doBoot(Array $args, Array &$json, Core $inst = null) {
+  }
+
+  /**
+   * Do a 'Core Init' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doInit(Array $args, Array &$json, Core $inst = null) {
+    Application::init(APPLICATION_BUILD);
+
+    $json = Array("success" => true, "error" => null, "result" => Array(
+      "settings" => self::getSettings(),
+      "config"   => Array(
+        "cache" => ENABLE_CACHE
+      ),
+      "time"    => gmdate(DateTime::RFC1123)
+    ));
+  }
+
+  /**
+   * Do a 'Core Shutdown' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doShutdown(Array $args, Array &$json, Core $inst = null) {
+    $settings = isset($args['settings']) ? $args['settings'] : Array();
+    $session  = isset($args['session'])  ? $args['session']  : Array();
+
+    $json['result']   = true;
+    $json['success']  = true;
+
+    $_SESSION['user'] = null;
+  }
+
+  /**
+   * Do a 'User Login' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doLogin(Array $args, Array &$json, Core $inst = null) {
+    $uname = "demo";
+    $upass = "demo";
+    $time  = isset($args['time']) ? $args['time'] : null;
+
+    if ( isset($args['form']) ) {
+      if ( isset($args['form']['username']) ) {
+        $uname = $args['form']['username'];
+      }
+      if ( isset($args['form']['password']) ) {
+        $upass = $args['form']['password'];
+      }
+    }
+
+    $user = null;
+    if ( $user = User::getByUsername($uname) ) {
+      if ( $user->password == $upass ) {
+        $json['success'] = true;
+        $json['result'] = Array(
+          "user"    => $user->getUserInfo()
+        );
+      }
+    } else {
+      $uid = self::DEFAULT_UID;
+      $json['success'] = true;
+      if ( ($user = User::getById($uid)) || ($user = User::createDefault()) ) {
+        $json['result'] = Array(
+          "user"    => $user->getUserInfo()
+        );
+      }
+    }
+
+    if ( $user && ($user instanceof User) ) {
+      $_SESSION['user'] = $user;
+    } else {
+      $_SESSION['user'] = null;
+    }
+  }
+
+  /**
+   * Do a 'User Logout' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doLogout(Array $args, Array &$json, Core $inst = null) {
+    $json['success']  = true;
+    $_SESSION['user'] = null;
+  }
+
+  /**
+   * Do a 'User Information' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doUserInfo(Array $args, Array &$json, Core $inst = null) {
+    if ( $user = $inst->getUser() ) {
+      $json['success'] = true;
+      $json['result']  = $user->getUserInfo();
+    } else {
+      $json['error'] = "You are not logged in!";
+    }
+  }
+
+  /**
+   * Do a 'Application Load' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doApplicationLoad(Array $args, Array &$json, Core $inst = null) {
+    if ( $app = Application::Load($args['app']) ) {
+      $json['success'] = true;
+      $json['result']  = $app;
+      $json['error']   = null;
+    } else {
+      $json['error'] = "Application '{$args['app']}' does not exist";
+    }
+  }
+
+  /**
+   * Do a 'Application Register' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doApplicationRegister(Array $args, Array &$json, Core $inst = null) {
+    if ( Application::Register($args['uuid'], $args['instance']) ) {
+      $json['success'] = true;
+      $json['error']   = null;
+    } else {
+      $json['error'] = "Failed to flush application";
+    }
+  }
+
+  /**
+   * Do a 'Application Flush' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doApplicationFlush(Array $args, Array &$json, Core $inst = null) {
+    if ( Application::Flush($args['uuid']) ) {
+      $json['success'] = true;
+      $json['error']   = null;
+    } else {
+      $json['error'] = "Failed to flush application";
+    }
+  }
+
+  /**
+   * Do a 'Application Event' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doApplicationEvent(Array $args, Array &$json, Core $inst = null) {
+    if ( ($result = Application::Handle($args['uuid'], $args['action'], $args['instance'])) ) {
+      $json['success'] = ($result === true) || is_array($result);
+      $json['error']   = $json['success'] ? null : (is_string($result) ? $result : "Unknown error");
+      $json['result']  = $json['success'] ? $result : null;
+    } else {
+      $json['error'] = "Failed to handle application";
+    }
+  }
+
+  /**
+   * Do a 'Service' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doService(Array $args, Array &$json, Core $inst = null) {
+    if ( !class_exists("Service") ) {
+      require PATH_PROJECT_LIB . "/Services.php";
+    }
+
+    $iargs = $args['arguments'];
+    if ( isset($iargs['type']) && isset($iargs['uri']) && isset($iargs['data']) && isset($iargs['options']) && isset($iargs['timeout']) ) {
+      if ( $s = Service::createFromType($iargs['type']) ) {
+        $uri      = $iargs['uri'];
+        $data     = $iargs['data'];
+        $timeout  = $iargs['timeout'];
+        $options  = $iargs['options'];
+
+        if ( $res = $s->call($uri, $data, $timeout, $options) ) {
+          $json['success'] = true;
+          $json['error']   = null;
+          $json['result']  = $res;
+        } else {
+          $json['error']   = "Failed to call Service!";
+        }
+      } else {
+        $json['error']   = "Failed to construct Service!";
+      }
+    } else {
+      $json['error']   = "Missing some arguments!";
+    }
+  }
+
+  /**
+   * Do a 'VFS' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doVFS(Array $args, Array &$json, Core $inst = null) {
+    $method = $args['method'];
+    $argv   = $args['args'];
+
+    if ( $method == "read" ) {
+      if ( is_string($argv) ) {
+        if ( ($content = ApplicationVFS::cat($argv)) !== false ) {
+          $json['result'] = $content;
+          $json['success'] = true;
+        } else {
+          $json['error'] = "Path does not exist";
+        }
+      } else {
+        $json['error'] = "Invalid argument";
+      }
+    } else if ( $method == "write" ) {
+      // TODO: Overwrite parameter
+      if ( ApplicationVFS::put($argv) ) {
+        $json['success'] = true;
+        $json['result'] = true;
+      } else {
+        $json['error'] = "Failed to save '{$argv['file']}'";
+      }
+    } else if ( $method == "readdir" ) {
+      $path    = $argv['path'];
+      $ignores = isset($argv['ignore']) ? $argv['ignore'] : null;
+      $mime    = isset($argv['mime']) ? ($argv['mime'] ? $argv['mime'] : Array()) : Array();
+
+      if ( ($items = ApplicationVFS::ls($path, $ignores, $mime)) !== false) {
+        $json['result'] = $items;
+        $json['success'] = true;
+      } else {
+        $json['error'] = "Failed to read directory '{$argv['path']}'";
+      }
+    } else if ( $method == "rename" ) {
+      list($path, $src, $dst) = $argv;
+
+      if ( ApplicationVFS::mv($path, $src, $dst) ) {
+        $json['result'] = $dst;
+        $json['success'] = true;
+      } else {
+        $json['error'] = "Failed to rename '{$src}'";
+      }
+    } else if ( $method == "delete" ) {
+      if ( ApplicationVFS::rm($argv) ) {
+        $json['result'] = $argv;
+        $json['success'] = true;
+      } else {
+        $json['error'] = "Failed to delete '{$argv}'";
+      }
+    } else if ( $method == "mkdir" ) {
+      if ( $res = ApplicationVFS::mkdir($argv) ) {
+        $json['result'] = $res;
+        $json['success'] = true;
+      } else {
+        $json['error'] = "Failed to create directory '{$argv}'";
+      }
+    } else if ( $method == "readurl" ) {
+      if ( $ret = ApplicationAPI::readurl($argv) ) {
+        $json['result'] = $ret;
+        $json['success'] = true;
+      } else {
+        $json['error'] = "Failed to read '{$argv}'";
+      }
+    } else if ( $method == "readpdf" ) {
+      $tmp  = explode(":", $argv);
+      $pdf  = $tmp[0];
+      $page = isset($tmp[1]) ? $tmp[1] : -1;
+
+      if ( $ret = ApplicationAPI::readPDF($pdf, $page) ) {
+        $json['result'] = $ret;
+        $json['success'] = true;
+      } else {
+        $json['error'] = "Failed to read '{$argv}'";
+      }
+
+    } else if ( $method == "fileinfo" ) {
+      if ( $ret = ApplicationVFS::file_info($argv) ) {
+        $json['result'] = $ret;
+        $json['success'] = true;
+      } else {
+        $json['error'] = "Failed to read '{$argv}'";
+      }
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // SETTER FUNCTIONS
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Set the User of current session
+   * @param   User    $u      User Object (or NULL)
+   * @return  void
+   */
+  protected function setUser(User $u = null) {
     $this->_oUser = $u;
   }
 
+  /**
+   * Set the current time/timezone of session
+   * @param   String    $zone       Timezone
+   * @param   bool      $update     Update the object(s)
+   * @return  void
+   */
   protected function setTime($zone, $update = true) {
     $this->_sTime = $zone;
 
@@ -569,18 +701,38 @@ EOCSS;
     }
   }
 
+  /////////////////////////////////////////////////////////////////////////////
+  // GETTER FUNCTIONS
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Get the current session user
+   * @return User
+   */
   public final function getUser() {
     return $this->_oUser;
   }
 
+  /**
+   * Get the current session time
+   * @return String
+   */
   public final function getTime() {
     return $this->_sTime;
   }
 
+  /**
+   * Get the current session TimeDate
+   * @return DateTime
+   */
   public final function getTimeDate() {
     return $this->_oTime;
   }
 
+  /**
+   * Get the current session TimeDateZone
+   * @return DateTimeZone
+   */
   public final function getTimeZone() {
     return $this->oZone;
   }
