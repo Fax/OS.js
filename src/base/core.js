@@ -1580,6 +1580,13 @@
         if ( data.success ) {
           self.online  = true;
 
+          var stime = (new Date(Date.parse(data.result.time))).toLocaleString();
+          var ctime = (new Date()).toLocaleString();
+
+          console.log("Server time", stime, data.result.time);
+          console.log("Client time", ctime);
+          console.log("Time synced", stime == ctime);
+
           // Initialize resources
           _Resources = new ResourceManager();
 

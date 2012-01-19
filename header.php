@@ -33,7 +33,7 @@ define("PROJECT_HOST",      (php_uname('n')));
 //
 
 define("ENV_PRODUCTION",      (PROJECT_HOST != "amitop"));
-define("DEFAULT_TIMEZONE",    "Europe/Oslo");
+define("DEFAULT_TIMEZONE",    "UTC");
 define("ENABLE_CACHE",        false);
 define("ENABLE_LOGGING",      true);
 

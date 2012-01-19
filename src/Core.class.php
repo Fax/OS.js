@@ -22,6 +22,7 @@ class Core
   protected $_oTime = null;   //!< Current DateTime
   protected $_oZone = null;   //!< Current DateTimeZome
   protected $_oUser = null;   //!< Current User
+  protected $_sTime = null;   //!< Current Browser time offset
 
   /**
    * @var Current instance
@@ -32,15 +33,8 @@ class Core
    * @constructor
    */
   protected function __construct() {
-    $zone       = "Europe/Oslo";
-    $tz         = new DateTimeZone($zone);
-    $now        = new DateTime("now", $tz);
-
-    date_default_timezone_set($zone);
+    $this->setTime(DEFAULT_TIMEZONE);
     session_start();
-
-    $this->_oTime = $now;
-    $this->_oZone = $tz;
   }
 
   /**
@@ -292,7 +286,11 @@ EOCSS;
 
       // API Operations
       if ( isset($args['ajax']) ) {
-        $json = Array("success" => false, "error" => "Unknown error", "result" => null);
+        $json = Array(
+          "success" => false,
+          "error"   => "Unknown error",
+          "result"  => null
+        );
 
         if ( !isset($args['action']) ) {
           $json['error'] = "No action given!";
@@ -319,7 +317,8 @@ EOCSS;
             "settings" => self::getSettings(),
             "config"   => Array(
               "cache" => ENABLE_CACHE
-            )
+            ),
+            "time"    => gmdate(DateTime::RFC1123)
           ));
         }
 
@@ -327,7 +326,7 @@ EOCSS;
          * USER
          */
         else if ( $args['action'] == "logout" ) {
-          $json['success'] = true;
+          $json['success']  = true;
           $_SESSION['user'] = null;
         }
 
@@ -343,6 +342,7 @@ EOCSS;
         else if ( $args['action'] == "login" ) {
           $uname = "demo";
           $upass = "demo";
+          $time  = isset($args['time']) ? $args['time'] : null;
 
           if ( isset($args['form']) ) {
             if ( isset($args['form']['username']) ) {
@@ -539,6 +539,11 @@ EOCSS;
           }
         }*/
 
+        // Remove error if successfull
+        if ( $json['success'] && $json['result'] ) {
+          $json['error'] = null;
+        }
+
         return json_encode($json);
       }
     }
@@ -550,8 +555,34 @@ EOCSS;
     $this->_oUser = $u;
   }
 
+  protected function setTime($zone, $update = true) {
+    $this->_sTime = $zone;
+
+    if ( $update ) {
+      $tz         = new DateTimeZone($zone);
+      $now        = new DateTime("now", $tz);
+
+      $this->_oTime = $now;
+      $this->_oZone = $tz;
+
+      date_default_timezone_set($zone);
+    }
+  }
+
   public final function getUser() {
     return $this->_oUser;
+  }
+
+  public final function getTime() {
+    return $this->_sTime;
+  }
+
+  public final function getTimeDate() {
+    return $this->_oTime;
+  }
+
+  public final function getTimeZone() {
+    return $this->oZone;
   }
 
 }
