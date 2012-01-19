@@ -21,7 +21,7 @@ class DB
    * Running Instances
    * @var
    */
-  protected static $__INSTANCES;
+  protected static $__INSTANCES = Array();
 
   private $__connection;    //!< Current connection (PDO/Mongo)
 
