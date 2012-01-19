@@ -26,8 +26,8 @@ class Core
   // VARIABLES
   /////////////////////////////////////////////////////////////////////////////
 
-  protected $_oTime = null;   //!< Current session DateTime
-  protected $_oZone = null;   //!< Current session DateTimeZome
+  //protected $_oTime = null;   //!< Current session DateTime
+  //protected $_oZone = null;   //!< Current session DateTimeZome
   protected $_oUser = null;   //!< Current session User
   protected $_sTime = null;   //!< Current session TimeZone
 
@@ -688,11 +688,13 @@ EOCSS;
     $this->_sTime = $zone;
 
     if ( $update ) {
+      /*
       $tz         = new DateTimeZone($zone);
       $now        = new DateTime("now", $tz);
 
       $this->_oTime = $now;
       $this->_oZone = $tz;
+      */
 
       date_default_timezone_set($zone);
     }
@@ -723,7 +725,8 @@ EOCSS;
    * @return DateTime
    */
   public final function getTimeDate() {
-    return $this->_oTime;
+    return new DateTime("now", $this->getTimeZone());
+    //return $this->_oTime;
   }
 
   /**
@@ -731,7 +734,8 @@ EOCSS;
    * @return DateTimeZone
    */
   public final function getTimeZone() {
-    return $this->oZone;
+    return new DateTimeZone($this->getTime());
+    //return $this->oZone;
   }
 
 }
