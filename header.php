@@ -72,6 +72,7 @@ define("PATH_APPS",                  PATH_PROJECT         . "/src/apps");
 define("PATH_RESOURCES",             PATH_PROJECT         . "/src/resources");
 define("PATH_JSBASE",                PATH_PROJECT         . "/src/base");
 
+define("MINIMIZE_CACHE",             PATH_PROJECT_BUILD   . "/minimize.cache");
 define("APPLICATION_BUILD",          PATH_PROJECT_BUILD   . "/applications.xml");
 define("DATABASE_FILE",              PATH_PROJECT_BUILD   . "/database.sdb");
 define("MIME_MAGIC",                 PATH_PROJECT_VENDOR  . "/mime.mgc");

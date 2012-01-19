@@ -9,13 +9,25 @@
 
 require "header.php";
 
-
 $total_before = 0;
 $total_after = 0;
+
+date_default_timezone_set("Europe/Oslo");
+
+$timestamps = Array();
+if ( file_exists(MINIMIZE_CACHE) ) {
+  $timestamps = (Array)json_decode(file_get_contents(MINIMIZE_CACHE));
+}
+
+function write_changed() {
+  global $timestamps;
+  file_put_contents(MINIMIZE_CACHE, json_encode((Array)$timestamps));
+}
 
 function compress_list($itype, $files) {
   global $total_before;
   global $total_after;
+  global $timestamps;
 
   foreach ( $files as $file ) {
     // Build command
@@ -23,6 +35,22 @@ function compress_list($itype, $files) {
     $path = ($itype == 1 ? PATH_RESOURCES : ($itype === 0 ? PATH_JSBASE : PATH_APPS)) . "/{$file}";
     if ( file_exists($path) ) {
 
+      // Check timestamp
+      $fp = filemtime($path);
+      $changed = true;
+      if ( isset($timestamps[$path]) ) {
+        $changed = ($timestamps[$path] != $fp);
+      }
+      $timestamps[$path] = $fp;
+
+      if ( !$changed ) {
+        $label = "\t{$file}";
+        $spaces = str_pad("", (30 - strlen($label)));
+        print sprintf("%s%s (SKIPPED!)\n", $label, $spaces);
+        continue;
+      }
+
+      // Minimize commands
       $cmd  = PATH_PROJECT_BIN . "/yui.sh";
       $cmd  = sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_PROJECT_BIN, PATH_PROJECT_VENDOR);
 
@@ -127,9 +155,9 @@ $base_files = Array(
 print "Compressing base files...\n";
 compress_list(0, $base_files);
 print "Compressing applications...\n";
-compress_list(2, $application_files);
+//compress_list(2, $application_files);
 print "Compressing resources...\n";
-compress_list(1, $resource_files);
+//compress_list(1, $resource_files);
 
 $perc = 0;
 if ( $total_before && $total_after ) {
@@ -137,5 +165,7 @@ if ( $total_before && $total_after ) {
 }
 
 print "\nCompressed {$total_before} into {$total_after} ({$perc}% compression)\n";
+
+write_changed();
 
 ?>

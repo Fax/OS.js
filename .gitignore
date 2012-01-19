@@ -7,6 +7,7 @@ template/*.php
 doc/doxygen.log
 doc/api/*
 public_html/.htpasswd
+src/build/minimize.cache
 
 # Fixes
 src/apps/*/_min
