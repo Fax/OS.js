@@ -71,6 +71,15 @@
   var SERVICE_XML  = 4;                             //!< Service: XML (POST)
   // @endconstants
 
+  /**
+   * @constants Time and Dates (Dynamic)
+   */
+  var TIME_OFFSET            = -1;                  //!< Time Offset
+  var TIME_DST               = -1;                  //!< Time DST
+  var TIME_ZONE              = "UTC";               //!< Time Zone
+  var TIME_INIT              = "";                  //!< Time when Inited
+  // @endconstants
+
   /////////////////////////////////////////////////////////////////////////////
   // PRIVATE VARIABLES
   /////////////////////////////////////////////////////////////////////////////
@@ -851,20 +860,9 @@
       },
 
       'shutdown' : function() { // FIXME
-        var ssess = _Core.getSession();
-        var ssett = _Settings.getSession();
-
         console.info("=> API Shutdown session");
 
-        $.post(AJAX_URI, {'ajax' : true, 'action' : 'shutdown', 'session' : ssess, 'settings' : ssett}, function(data) {
-          if ( data.success ) {
-            setTimeout(function() {
-              OSjs.__Stop();
-            }, 100);
-          } else {
-            MessageBox(data.error);
-          }
-        });
+        return _Core.shutdown();
       },
 
       'applications' : function() {
@@ -1561,6 +1559,35 @@
     },
 
     /**
+     * Core::shutdown() -- Main shutdown procedure
+     * @return void
+     */
+    shutdown : function() {
+      var ssess     = _Core.getSession();
+      var ssett     = _Settings.getSession();
+      var duration  = ((new Date()).getTime()) - TIME_INIT;
+
+      console.group("Core::shutdown()");
+      console.log("Core Session", ssess);
+      console.log("Settings Session", ssett);
+      console.log("Session duration", duration);
+      console.groupEnd();
+
+      $.post(AJAX_URI, {'ajax' : true, 'action' : 'shutdown', 'session' : ssess, 'settings' : ssett, 'duration' : duration}, function(data) {
+        if ( data.success ) {
+          console.log("Core::shutdown()", "Shutting down...");
+
+          setTimeout(function() {
+            OSjs.__Stop();
+          }, 100);
+        } else {
+          MessageBox(data.error);
+        }
+
+      });
+    },
+
+    /**
      * Core::run() -- Main startup procedure
      * @return void
      */
@@ -1569,6 +1596,7 @@
 
       var load  = $("#Loading");
       var bar   = $("#LoadingBar");
+      var time  = getTimezone();
 
       console.group("Core::run()");
 
@@ -1576,16 +1604,26 @@
       bar.progressbar({value : 5});
 
       // Load initial data
-      $.post(AJAX_URI, {'ajax' : true, 'action' : 'init'}, function(data) {
+      $.post(AJAX_URI, {'ajax' : true, 'action' : 'init', 'time' : time}, function(data) {
         if ( data.success ) {
           self.online  = true;
 
+          // Handle dates and times
           var stime = (new Date(Date.parse(data.result.time))).toLocaleString();
           var ctime = (new Date()).toLocaleString();
 
-          console.log("Server time", stime, data.result.time);
-          console.log("Client time", ctime);
-          console.log("Time synced", stime == ctime);
+          TIME_OFFSET = time.offset;
+          TIME_DST    = time.dst;
+          TIME_ZONE   = data.result.zone;
+          TIME_INIT   = (new Date(Date.parse(data.result.time))).getTime();
+
+          console.log("Server time",  stime);
+          console.log("Client time",  ctime);
+          console.log("TIME_OFFSET",  TIME_OFFSET);
+          console.log("TIME_DST",     TIME_DST);
+          console.log("TIME_ZONE",    TIME_ZONE);
+          console.log("TIME_INIT",    TIME_INIT);
+          console.log("Time synced",  stime == ctime);
 
           // Initialize resources
           _Resources = new ResourceManager();

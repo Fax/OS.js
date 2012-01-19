@@ -68,7 +68,7 @@ class Core
    * @constructor
    */
   protected function __construct() {
-    $this->setTime(DEFAULT_TIMEZONE);
+    $this->setTime(DEFAULT_TIMEZONE, true);
     session_start();
   }
 
@@ -90,6 +90,9 @@ class Core
 
     if ( isset($_SESSION['user']) ) {
       $i->setUser($_SESSION['user']);
+    }
+    if ( isset($_SESSION['time_zone']) ) {
+      $i->setTime($_SESSION['time_zone'], true);
     }
 
     return $i;
@@ -331,6 +334,18 @@ EOCSS;
 
         // Map actions to methods
         if ( isset($args['action']) ) {
+
+          if ( !ENV_PRODUCTION ) {
+            if ( $args['action'] == "debug" ) {
+              return json_encode(Array(
+                "post"    => $_POST,
+                "get"     => $_GET,
+                "session" => $_SESSION,
+                "core"    => $this
+              ));
+            }
+          }
+
           if ( (isset(self::$__POSTEvents[$args['action']])) && ($pev = self::$__POSTEvents[$args['action']]) ) {
             $method   = "_";
             $continue = true;
@@ -391,13 +406,24 @@ EOCSS;
   protected static final function _doInit(Array $args, Array &$json, Core $inst = null) {
     Application::init(APPLICATION_BUILD);
 
+    $toff = ((int) $args['time']['offset']);
+    $tdst = ((int) $args['time']['dst']);
+    $zone = Helper_DateTimeZone::tzOffsetToName($toff, $tdst);
+
     $json = Array("success" => true, "error" => null, "result" => Array(
       "settings" => self::getSettings(),
       "config"   => Array(
         "cache" => ENABLE_CACHE
       ),
+      "zone"    => $zone,
       "time"    => gmdate(DateTime::RFC1123)
     ));
+
+    $_SESSION['time_offset'] = $toff;
+    $_SESSION['time_dst']    = $tdst;
+    $_SESSION['time_zone']   = $zone;
+
+    $inst->setTime($zone, true);
   }
 
   /**
@@ -412,7 +438,10 @@ EOCSS;
     $json['result']   = true;
     $json['success']  = true;
 
-    $_SESSION['user'] = null;
+    $_SESSION['user']        = null;
+    $_SESSION['time_offset'] = null;
+    $_SESSION['time_dst']    = null;
+    $_SESSION['time_zone']   = null;
   }
 
   /**
