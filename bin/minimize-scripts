@@ -155,9 +155,9 @@ $base_files = Array(
 print "Compressing base files...\n";
 compress_list(0, $base_files);
 print "Compressing applications...\n";
-//compress_list(2, $application_files);
+compress_list(2, $application_files);
 print "Compressing resources...\n";
-//compress_list(1, $resource_files);
+compress_list(1, $resource_files);
 
 $perc = 0;
 if ( $total_before && $total_after ) {
