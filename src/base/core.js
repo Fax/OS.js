@@ -1600,6 +1600,7 @@
       var time  = null;
       var lang  = null;
 
+      // Check for browser time/date locale
       (function() {
         var now = new Date();
         var d1 = new Date();
@@ -1642,6 +1643,7 @@
         };
       })();
 
+      // Check for browser locale language
       (function() {
         if ( navigator.userLanguage ) {
           lang = navigator.userLanguage;
@@ -1669,12 +1671,14 @@
           var stime = (new Date(Date.parse(data.result.time))).toLocaleString();
           var ctime = (new Date()).toLocaleString();
 
+          // Set locales
           TIME_OFFSET = time.offset;
           TIME_DST    = time.dst;
           TIME_ZONE   = data.result.zone;
           TIME_INIT   = (new Date(Date.parse(data.result.time))).getTime();
           LANGUAGES   = data.result.lang;
 
+          // Debugging
           console.log("Server time",  stime);
           console.log("Client time",  ctime);
           console.log("TIME_OFFSET",  TIME_OFFSET);
