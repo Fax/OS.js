@@ -404,14 +404,18 @@ EOCSS;
    * @return void
    */
   protected static final function _doInit(Array $args, Array &$json, Core $inst = null) {
+    // Initialize Application database
     Application::init(APPLICATION_BUILD);
 
+    // Arguments
     $toff = ((int) $args['time']['offset']);
     $tdst = ((int) $args['time']['dst']);
     $zone = Helper_DateTimeZone::tzOffsetToName($toff, $tdst);
     $lang = str_replace("-", "_", $args['lang']);
     $langs = Array();
 
+    // Get the language from Apache headers
+    // FIXME -- This does only work on apache
     if ( function_exists("apache_request_headers") ) {
       foreach ( apache_request_headers() as $key => $val ) {
         if ( $key == "Accept-Language" ) {
@@ -427,10 +431,12 @@ EOCSS;
       }
     }
 
+    // Append JS-browser lanuguage detect to array
     if ( $lang && !in_array($lang, $langs) ) {
       $langs[] = $lang;
     }
 
+    // Output
     $json = Array("success" => true, "error" => null, "result" => Array(
       "settings" => self::getSettings(),
       "config"   => Array(
@@ -441,10 +447,12 @@ EOCSS;
       "lang"    => $langs
     ));
 
+    // Session
     $_SESSION['time_offset'] = $toff;
     $_SESSION['time_dst']    = $tdst;
     $_SESSION['time_zone']   = $zone;
 
+    // Instance
     $inst->setTime($zone, true);
   }
 
