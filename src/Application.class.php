@@ -163,7 +163,7 @@ abstract class Application
 
               switch ( $pk ) {
                 case "properties" :
-                  $win_props = json_decode($pv);
+                  $win_props = JSON::decode($pv);
                   break;
                 case "content" :
                   $win_html = $pv;

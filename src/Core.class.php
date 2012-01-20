@@ -337,7 +337,7 @@ EOCSS;
 
           if ( !ENV_PRODUCTION ) {
             if ( $args['action'] == "debug" ) {
-              return json_encode(Array(
+              return JSON::encode(Array(
                 "post"    => $_POST,
                 "get"     => $_GET,
                 "session" => $_SESSION,
@@ -379,7 +379,7 @@ EOCSS;
           $json['error'] = null;
         }
 
-        return json_encode($json);
+        return JSON::encode($json);
       }
     }
 

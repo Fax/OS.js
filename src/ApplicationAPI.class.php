@@ -48,7 +48,7 @@ class ApplicationAPI
       $result = exec("exiftool -j {$pcmd}", $outval, $retval);
       if ( $retval == 0 && $result ) {
         try {
-          $json = (array) json_decode(implode("", $outval));
+          $json = (array) JSON::decode(implode("", $outval));
           $json = (array) reset($json);
         } catch ( Exception $e ) {
           $json = Array();

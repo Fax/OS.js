@@ -92,6 +92,7 @@ define("DATABASE_PASS",     "");
 
 // Internal libraries
 require "lib/Functions.php";
+require "lib/JSON.class.php";
 require "lib/UUID.class.php";
 require "lib/Logger.class.php";
 require "lib/DB.class.php";
