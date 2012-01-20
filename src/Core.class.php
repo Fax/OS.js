@@ -28,8 +28,9 @@ class Core
 
   //protected $_oTime = null;   //!< Current session DateTime
   //protected $_oZone = null;   //!< Current session DateTimeZome
-  protected $_oUser = null;   //!< Current session User
-  protected $_sTime = null;   //!< Current session TimeZone
+  protected $_oUser = null;     //!< Current session User
+  protected $_sTime = null;     //!< Current session TimeZone
+  protected $_aLang = Array();  //!< Current session Language(s)
 
   /**
    * @var Current instance
@@ -93,6 +94,9 @@ class Core
     }
     if ( isset($_SESSION['time_zone']) ) {
       $i->setTime($_SESSION['time_zone'], true);
+    }
+    if ( isset($_SESSION['lang']) ) {
+      $i->setLang($_SESSION['lang']);
     }
 
     return $i;
@@ -451,6 +455,7 @@ EOCSS;
     $_SESSION['time_offset'] = $toff;
     $_SESSION['time_dst']    = $tdst;
     $_SESSION['time_zone']   = $zone;
+    $_SESSION['lang']        = $langs;
 
     // Instance
     $inst->setTime($zone, true);
@@ -472,6 +477,7 @@ EOCSS;
     $_SESSION['time_offset'] = null;
     $_SESSION['time_dst']    = null;
     $_SESSION['time_zone']   = null;
+    $_SESSION['lang']        = Array();
   }
 
   /**
@@ -738,7 +744,7 @@ EOCSS;
   }
 
   /**
-   * Set the current time/timezone of session
+   * Set the current session time/timezone of session
    * @param   String    $zone       Timezone
    * @param   bool      $update     Update the object(s) (Default = false)
    * @return  void
@@ -757,6 +763,15 @@ EOCSS;
 
       date_default_timezone_set($zone);
     }
+  }
+
+  /**
+   * Set the current session language(s)
+   * @param   Array   $lang     Lanuage(s) Array
+   * @return  void
+   */
+  protected function setLang(Array $lang = Array()) {
+    $this->_aLang = Array();
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -795,6 +810,14 @@ EOCSS;
   public final function getTimeZone() {
     return new DateTimeZone($this->getTime());
     //return $this->oZone;
+  }
+
+  /**
+   * Get the current session Language(s)
+   * @return Array
+   */
+  public final function getLang() {
+    return $this->_aLang;
   }
 
 }
