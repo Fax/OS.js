@@ -409,6 +409,27 @@ EOCSS;
     $toff = ((int) $args['time']['offset']);
     $tdst = ((int) $args['time']['dst']);
     $zone = Helper_DateTimeZone::tzOffsetToName($toff, $tdst);
+    $lang = str_replace("-", "_", $args['lang']);
+    $langs = Array();
+
+    if ( function_exists("apache_request_headers") ) {
+      foreach ( apache_request_headers() as $key => $val ) {
+        if ( $key == "Accept-Language" ) {
+          $l = explode(",", $val);
+          foreach ( $l as $ll ) {
+            $tmp = explode(";", $ll);
+            if ( !in_array($tmp[0], $langs) ) {
+              $langs[] = str_replace("-", "_", $tmp[0]);
+            }
+          }
+          break;
+        }
+      }
+    }
+
+    if ( $lang && !in_array($lang, $langs) ) {
+      $langs[] = $lang;
+    }
 
     $json = Array("success" => true, "error" => null, "result" => Array(
       "settings" => self::getSettings(),
@@ -416,7 +437,8 @@ EOCSS;
         "cache" => ENABLE_CACHE
       ),
       "zone"    => $zone,
-      "time"    => gmdate(DateTime::RFC1123)
+      "time"    => gmdate(DateTime::RFC1123),
+      "lang"    => $langs
     ));
 
     $_SESSION['time_offset'] = $toff;

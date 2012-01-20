@@ -72,12 +72,13 @@
   // @endconstants
 
   /**
-   * @constants Time and Dates (Dynamic)
+   * @constants Time, Dates, Locale (Dynamic)
    */
   var TIME_OFFSET            = -1;                  //!< Time Offset
   var TIME_DST               = -1;                  //!< Time DST
   var TIME_ZONE              = "UTC";               //!< Time Zone
   var TIME_INIT              = "";                  //!< Time when Inited
+  var LANGUAGES              = ["en_US", "en"];
   // @endconstants
 
   /////////////////////////////////////////////////////////////////////////////
@@ -1597,6 +1598,17 @@
       var load  = $("#Loading");
       var bar   = $("#LoadingBar");
       var time  = getTimezone();
+      var lang  = null;
+
+      if ( navigator.userLanguage ) {
+        lang = navigator.userLanguage;
+      } else if ( navigator.browserLanguage ) {
+        lang = navigator.browserLanguage;
+      } else if ( navigator.systemLanguage ) {
+        lang = navigator.systemLanguage;
+      } else if ( navigator.language ) {
+        lang = navigator.language;
+      }
 
       console.group("Core::run()");
 
@@ -1604,7 +1616,7 @@
       bar.progressbar({value : 5});
 
       // Load initial data
-      $.post(AJAX_URI, {'ajax' : true, 'action' : 'init', 'time' : time}, function(data) {
+      $.post(AJAX_URI, {'ajax' : true, 'action' : 'init', 'time' : time, 'lang' : lang}, function(data) {
         if ( data.success ) {
           self.online  = true;
 
@@ -1616,6 +1628,7 @@
           TIME_DST    = time.dst;
           TIME_ZONE   = data.result.zone;
           TIME_INIT   = (new Date(Date.parse(data.result.time))).getTime();
+          LANGUAGES   = data.result.lang;
 
           console.log("Server time",  stime);
           console.log("Client time",  ctime);
@@ -1623,6 +1636,7 @@
           console.log("TIME_DST",     TIME_DST);
           console.log("TIME_ZONE",    TIME_ZONE);
           console.log("TIME_INIT",    TIME_INIT);
+          console.log("LANGUAGES",    LANGUAGES);
           console.log("Time synced",  stime == ctime);
 
           // Initialize resources
