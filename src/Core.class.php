@@ -69,8 +69,26 @@ class Core
    * @constructor
    */
   protected function __construct() {
-    $this->setTime(DEFAULT_TIMEZONE, true);
+    // Start session
     session_start();
+
+    // Set user from session
+    if ( isset($_SESSION['user']) ) {
+      $this->setUser($_SESSION['user']);
+    }
+
+    // Set timezone from session
+    if ( isset($_SESSION['time_zone']) ) {
+      $this->setTime($_SESSION['time_zone'], true);
+    } else {
+      $this->setTime(DEFAULT_TIMEZONE, true);
+    }
+
+    // Set language(s) from session
+    if ( isset($_SESSION['lang']) ) {
+      $this->setLang($_SESSION['lang']);
+    }
+
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -88,17 +106,6 @@ class Core
     } else {
       $i = (self::$__Instance = new Core());
     }
-
-    if ( isset($_SESSION['user']) ) {
-      $i->setUser($_SESSION['user']);
-    }
-    if ( isset($_SESSION['time_zone']) ) {
-      $i->setTime($_SESSION['time_zone'], true);
-    }
-    if ( isset($_SESSION['lang']) ) {
-      $i->setLang($_SESSION['lang']);
-    }
-
     return $i;
   }
 
