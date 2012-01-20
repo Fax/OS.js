@@ -1597,18 +1597,63 @@
 
       var load  = $("#Loading");
       var bar   = $("#LoadingBar");
-      var time  = getTimezone();
+      var time  = null;
       var lang  = null;
 
-      if ( navigator.userLanguage ) {
-        lang = navigator.userLanguage;
-      } else if ( navigator.browserLanguage ) {
-        lang = navigator.browserLanguage;
-      } else if ( navigator.systemLanguage ) {
-        lang = navigator.systemLanguage;
-      } else if ( navigator.language ) {
-        lang = navigator.language;
-      }
+      (function() {
+        var now = new Date();
+        var d1 = new Date();
+        var d2 = new Date();
+
+        var dst = 0, offset = (now.getTimezoneOffset());
+
+        // January 1st
+        // Guaranteed not to be in DST for northern hemisphere (If DST exists on client PC)
+        // Guaranteed to be in DST for southern hemisphere (If DST exists on client PC)
+        d1.setDate(1);
+        d1.setMonth(1);
+
+        // July 1st
+        // Guaranteed to be in DST for northern hemisphere (If DST exists on client PC)
+        // Guaranteed not to be in DST for southern hemisphere (If DST exists on client PC)
+        d2.setDate(1);
+        d2.setMonth(7);
+
+        // If time zone offsets match, no DST exists for this time zone
+        if ( parseInt(d1.getTimezoneOffset(), 10) == parseInt(d2.getTimezoneOffset(), 10) ) {
+          dst = 0;
+        } else {
+          // DST exists for this time zone – check if it is currently active
+          var hemisphere = parseInt(d1.getTimezoneOffset(), 10) - parseInt(d2.getTimezoneOffset(), 10);
+          if ( (hemisphere>0 && parseInt(d1.getTimezoneOffset(), 10) == parseInt(now.getTimezoneOffset(), 10) ) ||
+                (hemisphere<0 && parseInt(d2.getTimezoneOffset(), 10) == parseInt(now.getTimezoneOffset(), 10)) ) {
+            dst = 0;
+          }
+
+          // DST is active right now with the current date
+          else {
+            dst = 1;
+          }
+        }
+
+        time = {
+          "offset" : offset,
+          "dst"    : dst
+        };
+      })();
+
+      (function() {
+        if ( navigator.userLanguage ) {
+          lang = navigator.userLanguage;
+        } else if ( navigator.browserLanguage ) {
+          lang = navigator.browserLanguage;
+        } else if ( navigator.systemLanguage ) {
+          lang = navigator.systemLanguage;
+        } else if ( navigator.language ) {
+          lang = navigator.language;
+        }
+      })();
+
 
       console.group("Core::run()");
 
