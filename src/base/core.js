@@ -3502,7 +3502,7 @@
         var panels = _Settings._get("desktop.panels", false, true);
         var panel, items;
         for ( var x = 0; x < panels.length; x++ ) {
-          panel = new Panel(self);
+          panel = new Panel(panels[x].index, panels[x].name);
           items = panels[x].items;
 
           var el, iname, iargs, ialign;
@@ -4038,13 +4038,14 @@
    * Panel -- The Desktop Panel Class
    * Panels can be added to desktop. Contains PanelItem(s) or Widgets
    *
-   * @TODO    Remember to remove element from template.php when doing multiple panels
    * @extends Process
    * @class
    */
   var Panel = Process.extend({
 
     $element    : null,       //!< DOM Element
+    index       : -1,         //!< Panel Index
+    name        : "",         //!< Panel Name
     pos         : "",         //!< Panel Position
     items       : [],         //!< Panel Items
     running     : false,      //!< Panel running state
@@ -4053,13 +4054,15 @@
      * Panel::init() -- Constructor
      * @constructor
      */
-    init : function() {
+    init : function(index, name) {
       var self = this;
 
+      this.$element = $('<div class="DesktopPanel"><ul></ul></div>');
       this.pos      = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
-      this.$element = $("#Panel").show();
       this.items    = [];
       this.running  = false;
+      this.index    = parseInt(index, 10);
+      this.name     = name || "Panel";
 
       // Panel item dragging
       var oldPos = {'top' : 0, 'left' : 0};
@@ -4103,61 +4106,67 @@
         return false;
       });
 
+      // Add Panel item function
+      var addItem = function() {
+        if ( !_WM ) {
+          MessageBox(OSjs.Labels.WindowManagerMissing);
+          return;
+        }
+
+        var pitem = new OSjs.Dialogs.PanelItemOperationDialog(OperationDialog, API, [this, function(diag) {
+          var items = _Settings._get("system.panel.registered", true);
+          var name, li, current, selected;
+
+          for ( name in items ) {
+            if ( items.hasOwnProperty(name) ) {
+              li = $("<li><img alt=\"/img/blank.gif\" /><div class=\"Inner\"><div class=\"Title\">Title</div><div class=\"Description\">Description</div></div></li>");
+              li.find("img").attr("src", items[name].icon);
+              li.find(".Title").html(items[name].title);
+              li.find(".Description").html(items[name].description);
+
+              (function(litem, iname, iitem) {
+                litem.click(function() {
+                  if ( current && current != this ) {
+                    $(current).removeClass("Current");
+                  }
+                  $(this).addClass("Current");
+                  current = this;
+                  selected = iname;
+
+                  //diag.$element.find(".DialogButtons .Ok").removeAttr("disabled");
+                });
+              })(li, name, items[name]);
+                diag.$element.find(".DialogContent ul").append(li);
+              }
+            }
+
+            diag.$element.find(".DialogButtons .Close").show();
+            diag.$element.find(".DialogButtons .Ok").show().click(function() {
+              if ( selected ) {
+                LaunchPanelItem(self.items.length, selected, [], "left", self);
+              }
+            }).attr("disabled", "disabled");
+
+          }, function() {
+            self.reload();
+        }, "Add new panel item", $("#OperationDialogPanelItemAdd")]);
+
+        pitem.height = 300;
+        pitem._gravity = "center";
+        pitem.icon = "categories/applications-utilities.png";
+
+        _WM.addWindow(pitem);
+      };
+
+      // Context menu
       this.$element.mousedown(function(ev) {
 
         var labels = OSjs.Labels.ContextMenuPanel;
         var ret = API.application.context_menu(ev, [
           {"title" : labels.title, "disabled" : true, "attribute" : "header"},
-          {"title" : labels.add, "method" : function() {
-            if ( !_WM ) {
-              MessageBox(OSjs.Labels.WindowManagerMissing);
-              return;
-            }
-
-            var pitem = new OSjs.Dialogs.PanelItemOperationDialog(OperationDialog, API, [this, function(diag) {
-            var items = _Settings._get("system.panel.registered", true);
-
-            var name, li, current, selected;
-            for ( name in items ) {
-              if ( items.hasOwnProperty(name) ) {
-                li = $("<li><img alt=\"/img/blank.gif\" /><div class=\"Inner\"><div class=\"Title\">Title</div><div class=\"Description\">Description</div></div></li>");
-                li.find("img").attr("src", items[name].icon);
-                li.find(".Title").html(items[name].title);
-                li.find(".Description").html(items[name].description);
-
-                (function(litem, iname, iitem) {
-                  litem.click(function() {
-                    if ( current && current != this ) {
-                      $(current).removeClass("Current");
-                    }
-                    $(this).addClass("Current");
-                    current = this;
-                    selected = iname;
-
-                    //diag.$element.find(".DialogButtons .Ok").removeAttr("disabled");
-                  });
-                })(li, name, items[name]);
-                  diag.$element.find(".DialogContent ul").append(li);
-                }
-              }
-
-              diag.$element.find(".DialogButtons .Close").show();
-              diag.$element.find(".DialogButtons .Ok").show().click(function() {
-                if ( selected ) {
-                  LaunchPanelItem(self.items.length, selected, [], "left", self);
-                }
-              }).attr("disabled", "disabled");
-
-            }, function() {
-              self.reload();
-            }, "Add new panel item", $("#OperationDialogPanelItemAdd")]);
-
-            pitem.height = 300;
-            pitem._gravity = "center";
-            pitem.icon = "categories/applications-utilities.png";
-
-            _WM.addWindow(pitem);
-          }}
+          {"title" : labels.add, "method" : addItem},
+          {"title" : labels.create, "disabled" : true},
+          {"title" : labels.remove, "disabled" : true}
 
         ], $(this), 3, true);
 
@@ -4183,8 +4192,12 @@
       for ( var i = 0; i < this.items.length; i++ ) {
         this.items[i].destroy();
       }
+
       this.items = null;
+      this.index = -1;
+      this.name  = "";
       this.$element.empty().remove();
+      this.$element = null;
 
       if ( _Desktop ) {
         _Desktop.removePanel(this, true);
@@ -4200,6 +4213,9 @@
      * @return  void
      */
     run : function() {
+      $("#Panels").append(this.$element);
+
+      this.$element.show();
       this.running = true;
     },
 

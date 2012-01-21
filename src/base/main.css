@@ -93,6 +93,13 @@ input.Disabled {
 }
   */
 
+#Panels {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 0px;
+}
 #DesktopGrid {
   position : absolute;
   top : 0px;

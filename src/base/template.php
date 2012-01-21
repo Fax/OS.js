@@ -83,7 +83,7 @@
   <div id="DesktopGrid"></div>
 
   <!-- Panel -->
-  <div class="DesktopPanel AlignTop" id="Panel"><ul></ul></div>
+  <div id="Panels"></div>
 
   <!-- Notifications -->
   <div id="DesktopNotifications"></div>

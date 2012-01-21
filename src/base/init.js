@@ -112,7 +112,9 @@
     "StorageAlert"                        : "Warning! You have reached the maximum storage limit (%d of %d)",
     "ContextMenuPanel"                    : {
       "title"     : "Panel",
-      "add"       : "Add new item"
+      "add"       : "Add new item",
+      "create"    : "New panel",
+      "remove"    : "Remove panel"
     },
     "ContextMenuDesktop"                  : {
       "title"     : "Desktop",
