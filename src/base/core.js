@@ -28,7 +28,7 @@
    * @constants Local settings
    */
   var ENABLE_CACHE           = false;               //!< Enabled caching
-  var SETTING_REVISION       = 28;                  //!< The settings revision
+  var SETTING_REVISION       = 30;                  //!< The settings revision
   var ENABLE_LOGIN           = false;               //!< Use login
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
@@ -3328,7 +3328,7 @@
 
     $element       : null,          //!< Desktop DOM Element
     running        : false,         //!< Desktop running ?
-    panel          : null,          //!< Panel instance
+    panels         : [],            //!< Panel instances
     notifications  : 0,             //!< Desktop notification counter
     iconview       : null,          //!< Desktop IconView
     _rtimeout      : null,          //!< Desktop resize timeout
@@ -3341,7 +3341,7 @@
       var self = this;
 
       this.$element = $("#Desktop");
-      this.panel    = null;
+      this.panels   = [];
 
 
       /*
@@ -3408,10 +3408,13 @@
       $(window).unbind("resize");
 
       // Remove panel
-      if ( this.panel ) {
-        this.panel.destroy();
+      if ( this.panels ) {
+        for ( var i = 0; i < this.panels.length; i++ ) {
+          this.panels[i].destroy();
+          this.panels[i] = null;
+        }
       }
-      this.panel = null;
+      this.panels = null;
 
       // Remove IconView
       if ( this.iconview ) {
@@ -3438,9 +3441,12 @@
         return;
       }
 
+      console.group("Desktop::run()");
+
       //
       // Events
       //
+      console.log("Registering events...");
       $("#Desktop").mousedown(function(ev) {
         /*return */self.mousedownHandler(ev);
       });
@@ -3491,8 +3497,31 @@
       //
       // Create panel and items from localStorage
       //
-      var panel = new Panel(this);
+      console.log("Registering panels...");
+      (function() {
+        var panels = _Settings._get("desktop.panels", false, true);
+        var panel, items;
+        for ( var x = 0; x < panels.length; x++ ) {
+          panel = new Panel(self);
+          items = panels[x].items;
+
+          var el, iname, iargs, ialign;
+          for ( var y = 0; y < items.length; y++ ) {
+            el      = items[y];
+            iname   = el[0];
+            iargs   = el[1];
+            ialign  = el[2] || "left";
+
+            LaunchPanelItem(y, iname, iargs, ialign, panel);
+          }
+
+          self.addPanel(panel);
+        }
+      })();
+
+      /*
       var items = _Settings._get("desktop.panel.items", false, true);
+      var panel = new Panel(this);
       var el, iname, iargs, ialign;
       for ( var i = 0; i < items.length; i++ ) {
         el = items[i];
@@ -3503,10 +3532,12 @@
         LaunchPanelItem(i, iname, iargs, ialign, panel);
       }
       this.addPanel(panel);
+      */
 
       //
       // Now apply bindings and run desktop
       //
+      console.log("Registering internal bindings...");
       if ( _WM ) {
         _WM.bind("window_add", this.defaultHandler);
         _WM.bind("window_remove", this.defaultHandler);
@@ -3515,14 +3546,24 @@
         _WM.bind("window_updated", this.defaultHandler);
       }
 
+      console.log("Finishing up...");
       this.running = true;
-      this.panel.run();
 
-      this.updatePanelPosition(panel);
+      for ( var i in this.panels ) {
+        if ( this.panels.hasOwnProperty(i) ) {
+          this.panels[i].run();
+
+          this.updatePanelPosition(this.panels[i]);
+        }
+      }
+
+      console.log("...done...");
+      console.groupEnd();
 
       setTimeout(function() {
         self.resize();
       }, 1000);
+
     },
 
     // HANDLERS
@@ -3534,9 +3575,11 @@
      * @return  bool
      */
     defaultHandler : function(ev, eargs) {
-      if ( this.panel ) {
+      if ( this.panels.length ) {
         if ( ev.match(/^window/) ) {
-          this.panel.redraw(ev, eargs);
+          for ( var i = 0; i < this.panels.length; i++ ) {
+            this.panels[i].redraw(ev, eargs);
+          }
         }
 
         return true;
@@ -3600,10 +3643,7 @@
      */
     addPanel : function(p) {
       if ( p instanceof Panel ) {
-        if ( this.panel !== null ) {
-          this.panel.destroy();
-        }
-        this.panel = p;
+        this.panels.push(p);
       }
     },
 
@@ -3614,11 +3654,18 @@
      * @return  void
      */
     removePanel : function(p, destroyed) {
-      if ( this.panel == p ) {
-        if ( !destroyed ) {
-          this.panel.destroy();
+      for ( var i in this.panels ) {
+        if ( this.panels.hasOwnProperty(i) ) {
+          if ( this.panels[i] === p ) {
+            if ( !destroyed ) {
+              this.panels[i].destroy();
+            }
+
+            this.panels[i] = null;
+            delete this.panels[i];
+            break;
+          }
         }
-        this.panel = null;
       }
     },
 
@@ -3857,8 +3904,9 @@
      * Desktop::getPanel() -- Get Panel
      * @return Panel
      */
-    getPanel : function() {
-      return this.panel;
+    getPanel : function(index) {
+      index = index || 0;
+      return this.panels[index];
     }
 
   }); // @endclass

@@ -154,8 +154,14 @@ class Core
       "system.panel.registered" => Array(
         "options" => Panel::$Registered
       ),
-      "desktop.panel.items" => Array(
-        "items" => $panel
+      "desktop.panels" => Array(
+        "items" => Array(
+          Array(
+            "name"  => "Default",
+            "index" => 0,
+            "items" => $panel
+          )
+        )
       )
     ));
   }

@@ -12,7 +12,6 @@ FIXES:
 * TODO [HIG]: Error messages when opening invalid filetypes in apps!!!!!!
 * TODO [HIG]: Custom Exception class
 * TODO [HIG]: "Set this application as default [for this mime]"
-* TODO [MED]: Multiple panels
 * TODO [MED]: Add/Remove panel item storage
 * TODO [MED]: Panel item sorting and alignments (snapping etc)
 * TODO [MED]: Finish multiple-sessions

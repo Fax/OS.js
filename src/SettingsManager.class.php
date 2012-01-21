@@ -116,7 +116,7 @@ class SettingsManager
     ),
 
     // Desktop panel settings
-    "desktop.panel.items" => Array(
+    "desktop.panels" => Array(
       "type" => "list",
       "items" => Array() // Loaded
     ),
