@@ -3,8 +3,8 @@ SUGGESTIONS:
 * Internet Explorer IFrame browser does not work
 
 BREAKS:
-    Log output: https://pastee.org/gzkx5
-    Screenshot: http://oi39.tinypic.com/28ktues.jpg
+  Log output: https://pastee.org/gzkx5
+  Screenshot: http://oi39.tinypic.com/28ktues.jpg
 
 FIXES:
 * TODO [HIG]: Context menu must show when popping up at bottom off screen
