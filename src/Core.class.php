@@ -41,21 +41,23 @@ class Core
    * @var doPOST 'action' argument method mapping
    */
   protected static $__POSTEvents = Array(
-    "boot"      => "doBoot",
-    "shutdown"  => "doShutdown",
-    "init"      => "doInit",
-    "login"     => "doUserLogin",
-    "logout"    => "doUserLogout",
-    "user"      => "doUserInfo",
-    "load"      => "doApplicationLoad",
-    "register"  => "doApplicationRegister",
-    "flush"     => "doApplicationFlush",
-    "event"     => "doApplicationEvent",
-    "service"   => Array(
+    "boot"          => "doBoot",
+    "shutdown"      => "doShutdown",
+    "snapshotSave"  => "doSnapshotSave",
+    "snapshotLoad"  => "doSnapshotLoad",
+    "init"          => "doInit",
+    "login"         => "doUserLogin",
+    "logout"        => "doUserLogout",
+    "user"          => "doUserInfo",
+    "load"          => "doApplicationLoad",
+    "register"      => "doApplicationRegister",
+    "flush"         => "doApplicationFlush",
+    "event"         => "doApplicationEvent",
+    "service"       => Array(
       "method" => "doService",
       "depend" => Array("arguments")
     ),
-    "call"      => Array(
+    "call"          => Array(
       "method" => "doVFS",
       "depend" => Array("method", "args")
     )
@@ -500,6 +502,67 @@ EOCSS;
     $_SESSION['time_dst']    = null;
     $_SESSION['time_zone']   = null;
     $_SESSION['lang']        = Array();
+  }
+
+  /**
+   * Do a 'Save Session Snapshot' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doSnapshotSave(Array $args, Array &$json, Core $inst = null) {
+    if ( ($inst instanceof Core) && ($user = $inst->getUser()) ) {
+      $name     = "";
+      $session  = Array();
+
+      if ( isset($args['session']) ) {
+        $name     = $args['session']['name'];
+        $session  = $args['session']['data'];
+      }
+
+      if ( $name && $session ) {
+        if ( !($snapshot = $user->snapshotLoad($name)) ) {
+          if ( ($snapshot = $user->snapshotSave($name, $session)) ) {
+            $json['success'] = true;
+            $json['result']  = $snapshot;
+          } else {
+            $json['error'] = "Cannot save snapshot. Failed to save in database!";
+          }
+        } else {
+          $json['error'] = "Cannot save snapshot. Snapshot name already used!!";
+        }
+      } else {
+        $json['error'] = "Cannot save snapshot. No input data given!";
+      }
+    } else {
+      $json['error'] = "Cannot save snapshot. No running session found!";
+    }
+  }
+
+  /**
+   * Do a 'Load Session Snapshot' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doSnapshotLoad(Array $args, Array &$json, Core $inst = null) {
+    if ( ($inst instanceof Core) && ($user = $inst->getUser()) ) {
+      $name     = "";
+      if ( isset($args['session']) ) {
+        $name     = $args['session']['name'];
+      }
+
+      if ( $name ) {
+        if ( ($snapshot = $user->snapshotLoad($name)) ) {
+          $json['success'] = true;
+          $json['result']  = $snapshot;
+        } else {
+          $json['error'] = "Cannot load snapshot. Failed to load from database!";
+        }
+      } else {
+        $json['error'] = "Cannot load snapshot. No input data given!";
+      }
+    } else {
+      $json['error'] = "Cannot load snapshot. No running session found!";
+    }
   }
 
   /**

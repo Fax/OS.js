@@ -14,7 +14,6 @@ FIXES:
 * TODO [HIG]: "Set this application as default [for this mime]"
 * TODO [MED]: Add/Remove panel item storage
 * TODO [MED]: Panel item sorting and alignments (snapping etc)
-* TODO [MED]: Finish multiple-sessions
 * TODO [LOW]: Rewrite settings manager
 * TODO [LOW]: Refresh windows listing files when saving (file monitorig)
 * TODO [---]: Write custom $ library

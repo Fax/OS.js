@@ -20,6 +20,50 @@ abstract class DBObject
   protected $__columns;
 
   /**
+   * Save Object/Class
+   * @return Mixed
+   */
+  public static function save(DBObject $o, DB $db = null) {
+    $class    = get_called_class();
+
+    $db       = $db       ? $db       : DB::get();
+    $table    = $class::$Table;
+    $columns  = array_keys($class::$Columns);
+
+    if ( $db->getIsMongo() ) {
+      return false;
+    } else {
+      // Pull values, columns etc
+      $values   = Array();
+      $cols     = Array();
+      $marks    = Array();
+
+      foreach ( $columns as $c ) {
+        if ( isset($o->$c) ) {
+          $values[$c] = $o->$c;
+          $marks[]  = ":$c";
+          $cols[]   = "`$c`";
+        }
+
+      }
+
+      // Create SQL String
+      $q = sprintf("INSERT INTO `%s` (%s) VALUES(%s);", $table, implode(", ", $cols), implode(", ", $marks));
+
+      // Execute SQL
+      if ( $sth = $db->prepare($q) ) {
+        if ( $res = $sth->execute($values) ) {
+          if ( $id = $db->lastInsertId() ) {
+            return $class::getById($id, $db);
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * Get Object/Class by column(s)
    * @return Mixed
    */

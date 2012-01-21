@@ -839,29 +839,24 @@
       },
 
       'save' : function(save) {
-        save = save || false;
-        var sess = save ? _Core.getSession() : {};
-
-        console.info("=> API Session save", sess);
-
-        localStorage.setItem('session', JSON.stringify(sess));
+        var session = _Core.sessionSave(save);
+        console.info("=> API Session save", save, session);
       },
 
       'restore' : function() {
-        if ( OSjs.Compability.SUPPORT_LSTORAGE ) {
-          var item = localStorage.getItem('session');
-          if ( item ) {
-            var session = JSON.parse(item);
-
-            console.info("=> API restore session", session);
-
-            _Core.setSession(session);
-          }
-        }
-
+        var session = _Core.sessionRestore();
+        console.info("=> API restore session", session);
       },
 
-      'shutdown' : function() { // FIXME
+      'snapshot_save' : function(name, callback) {
+        _Core.sessionSnapshotSave(name, callback);
+      },
+
+      'snapshot_load' : function(name, callback) {
+        _Core.sessionSnapshotLoad(name, callback);
+      },
+
+      'shutdown' : function() {
         console.info("=> API Shutdown session");
 
         return _Core.shutdown();
@@ -1768,6 +1763,87 @@
       });
     },
 
+    //
+    // SESSIONS
+    //
+
+    /**
+     * Core::sessionSnapshotSave() -- Create a [remote] session snapshot
+     * @param   String        name        Name of the session
+     * @param   Function      callback    Callback function upon result/error
+     * @return void
+     */
+    sessionSnapshotSave : function(name, callback) {
+      var self = this;
+
+      callback = callback || function() {};
+      name     = name     || "";
+
+      if ( name ) {
+        var session = this.getSession();
+        $.post(AJAX_URI, {'ajax' : true, 'action' : 'snapshotSave', 'session' : {'data' : session, 'name' : name}}, function(data) {
+          if ( data.success ) {
+            callback(true, data.result, session);
+          } else {
+            callback(false, data.error, session);
+          }
+        });
+      }
+    },
+
+    /**
+     * Core::sessionSnapshotLoad() -- Load a [remote] session snapshot
+     * @param   String        name        Name of the session
+     * @param   Function      callback    Callback function upon result/error
+     * @param   bool          create      Create the session (Default = true)
+     * @return void
+     */
+    sessionSnapshotLoad : function(name, callback, create) {
+      var self = this;
+
+      callback = callback || function() {};
+      name     = name     || "";
+      create   = create === undefined ? true : (create ? true : false);
+
+      if ( name ) {
+        $.post(AJAX_URI, {'ajax' : true, 'action' : 'snapshotLoad', 'session' : {'name' : name}}, function(data) {
+          if ( data.success ) {
+            if ( create ) {
+              self.setSession(data.result.session, true);
+            }
+
+            callback(true, data.result);
+          } else {
+            callback(false, data.error);
+          }
+        });
+      }
+    },
+
+    /**
+     * Core::sessionSave() -- Save current [local] session (shutdown feature)
+     * @param   bool    save      Save session (Default = true, otherwise empty session)
+     * @return  JSON
+     */
+    sessionSave : function(save) {
+      var sess = (save === true) ? this.getSession() : {};
+      localStorage.setItem('session', JSON.stringify(sess)); // FIXME
+      return sess;
+    },
+
+    /**
+     * Core::sessionRestore() -- Restore last saved [local] session (boot feature)
+     * @return  JSON
+     */
+    sessionRestore : function() {
+      var item    = localStorage.getItem('session'); // FIXME
+      var session = {};
+      if ( item ) {
+        session = JSON.parse(item);
+        this.setSession(session);
+      }
+      return session;
+    },
 
     //
     // EVENTS
@@ -2006,7 +2082,10 @@
       full = full ? true : false;
 
       if ( full ) {
-        (function() {})(); // TODO: Clear current session
+        // FIXME
+        localStorage.setItem('session', JSON.stringify(session));
+        window.location.reload();
+        return;
       }
 
       var i = 0;

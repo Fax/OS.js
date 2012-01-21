@@ -7,6 +7,22 @@
  * @created 2012-01-04
  */
 
+class Session extends DBObject {
+  public static $Table = "session";
+  public static $Columns = Array(
+    "id"            => "int",
+    "user_id"       => "int",
+    "session_name"  => "str",
+    "session_data"  => "str",
+    "created_at"    => "date",
+    "modified_at"   => "date"
+  );
+
+  public static function getBySnapshot($uid, $name) {
+    return self::getByColumn(null, null, null, Array("user_id" => $uid, "session_name" => $name), 1);
+  }
+}
+
 /**
  * User -- Application User Class
  *
@@ -26,6 +42,24 @@ class User extends DBObject {
     "real_name"   => "str",
     "created_at"  => "date"
   );
+
+  public final function snapshotSave($name, $data) {
+    $sess               = new Session();
+    $sess->user_id      = $this->id;
+    $sess->session_name = $name;
+    $sess->session_data = JSON::encode($data);
+    $sess->created_at   = time();
+
+    if ( $sess = Session::save($sess) ) {
+      return $sess;
+    }
+
+    return false;
+  }
+
+  public final function snapshotLoad($name) {
+    return Session::getBySnapshot($this->id, $name);
+  }
 
   public final function getUserInfo() {
     return Array(
