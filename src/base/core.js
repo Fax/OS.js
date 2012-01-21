@@ -303,6 +303,129 @@
   } // @endfunction
 
   /**
+   * SetVFSObjectDefault() -- Set default launching application for MIME type
+   * @param   String    app       Application Name
+   * @param   String    path      Path
+   * @param   String    mime      MIME Type
+   * @function
+   */
+  function SetVFSObjectDefault(app, path, mime) {
+    var list = JSON.parse(localStorage.getItem("defaults") || "{}"); // FIXME
+    list[mime] = app;
+    localStorage.setItem("defaults", JSON.stringify(list)); // FIXME
+    console.log("SetVFSObjectDefault()", app, path, mime);
+  } // @endfunction
+
+  /**
+   * LaunchVFSObject() -- Launch an application by using a path and mime
+   * @param   String    path      Object path
+   * @param   String    mime      MIME Type
+   * @param   bool      udef      Use default defined application
+   * @function
+   */
+  function LaunchVFSObject(path, mime, udef) {
+    udef = (udef === undefined) ? true : false;
+
+    console.log("LaunchVFSObject()", app, path, udef);
+    if ( mime ) {
+      if ( mime == "ajwm/application" ) {
+        var expl = path.split("/");
+        var name = expl[expl.length - 1];
+        API.system.launch(name);
+        return;
+      }
+
+      var default_app = null;
+      var apps = _Settings._get("system.app.registered", true);
+      var found = [];
+      var list = [];
+      var inmime = mime.split("/");
+      var launched = false;
+      var i;
+
+      if ( udef ) {
+        // First, figure out default application
+        var defs = JSON.parse(localStorage.getItem("defaults") || "{}"); // FIXME
+        if ( defs[mime] !== undefined ) {
+          default_app = defs[mime];
+        }
+
+        // Then launch application if found
+        if ( default_app ) {
+          for ( i in apps ) {
+            if ( apps.hasOwnProperty(i) ) {
+              if ( i === default_app ) {
+                API.system.launch(i, {'path' : path, 'mime' : mime});
+                launched = true;
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      // If no application was launched we continue with the default dialog
+      if ( !launched ) {
+        var app, check, mtype;
+        var all_apps = [];
+        for ( i in apps ) {
+          if ( apps.hasOwnProperty(i) ) {
+            app = apps[i];
+            app.name = i; // append
+            if ( app.mimes.length ) {
+              for ( check in app.mimes ) {
+                if ( app.mimes.hasOwnProperty(check) ) {
+                  mtype = app.mimes[check].split("/");
+                  if ( mtype[1] == "*" ) {
+                    if ( mtype[0] == inmime[0] ) {
+                      found.push(i);
+                      list.push(app);
+                    }
+                  } else {
+                    if ( app.mimes[check] == mime ) {
+                      found.push(i);
+                      list.push(app);
+                    }
+                  }
+                }
+              }
+            }
+          }
+          all_apps.push(app);
+        }
+
+        function __run(mapp) {
+          API.system.launch(mapp, {'path' : path, 'mime' : mime});
+        }
+
+        var browse = [];
+        if ( found.length ) {
+          console.info("=> API found suited application(s) for", mime, ":", found);
+          if ( found.length == 1 ) {
+            __run(found[0]);
+          } else {
+            API.system.dialog_launch(list, function(mapp, set_default) {
+              __run(mapp);
+              if ( set_default ) {
+                SetVFSObjectDefault(mapp, path, mime);
+              }
+            });
+          }
+        } else {
+          //MessageBox("Found no suiting application for '" + path + "' (" + mime + ")");
+          API.system.dialog_launch(all_apps, function(mapp, set_default) {
+            __run(mapp);
+            if ( set_default ) {
+              SetVFSObjectDefault(mapp, path, mime);
+            }
+          }, true);
+        }
+      }
+    }
+
+  } // @endfunction
+
+  /**
    * TransitionEffect() -- Apply a transition effect on an element
    * @TODO
    * @function
@@ -503,74 +626,13 @@
         return _Settings.getStorageUsage();
        },
 
-      'run' : function(path, mime) {
+      'run' : function(path, mime, use_default) {
         if ( !_WM ) {
           MessageBox(OSjs.Labels.WindowManagerMissing);
           return;
         }
 
-        if ( mime ) {
-          if ( mime == "ajwm/application" ) {
-            var expl = path.split("/");
-            var name = expl[expl.length - 1];
-            API.system.launch(name);
-            return;
-          }
-
-          var apps = _Settings._get("system.app.registered", true);
-          var found = [];
-          var list = [];
-          var inmime = mime.split("/");
-
-          var app, check, mtype;
-          var all_apps = [];
-          for ( var i in apps ) {
-            if ( apps.hasOwnProperty(i) ) {
-              app = apps[i];
-              app.name = i; // append
-              if ( app.mimes.length ) {
-                for ( check in app.mimes ) {
-                  if ( app.mimes.hasOwnProperty(check) ) {
-                    mtype = app.mimes[check].split("/");
-                    if ( mtype[1] == "*" ) {
-                      if ( mtype[0] == inmime[0] ) {
-                        found.push(i);
-                        list.push(app);
-                      }
-                    } else {
-                      if ( app.mimes[check] == mime ) {
-                        found.push(i);
-                        list.push(app);
-                      }
-                    }
-                  }
-                }
-              }
-            }
-            all_apps.push(app);
-          }
-
-          function __run(mapp) {
-            API.system.launch(mapp, {'path' : path, 'mime' : mime});
-          }
-
-          var browse = [];
-          if ( found.length ) {
-            console.info("=> API found suited application(s) for", mime, ":", found);
-            if ( found.length == 1 ) {
-              __run(found[0]);
-            } else {
-              API.system.dialog_launch(list, function(mapp, set_default) {
-                __run(mapp);
-              });
-            }
-          } else {
-            //MessageBox("Found no suiting application for '" + path + "' (" + mime + ")");
-            API.system.dialog_launch(all_apps, function(mapp, set_default) {
-              __run(mapp);
-            }, true);
-          }
-        }
+        LaunchVFSObject(path, mime, use_default);
       },
 
       'launch' : function(app_name, args, windows) {
@@ -2732,8 +2794,8 @@
      * @see     API.system.dialog_launch
      * @return  void
      */
-    createLaunchDialog : function(list, callback) {
-      this._addWindow(API.system.dialog_launch(list, function(app, def) {
+    createLaunchDialog : function(list, callback, udef) {
+      this._addWindow(API.system.dialog_launch(list, function(app, def, udef) {
         callback(app, def);
       }));
     },

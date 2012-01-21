@@ -292,6 +292,13 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
                   API.system.run(item.path, item.mime);
                 }
               }},
+              {"title" : "Open With...", "method" : function() {
+                if ( item.type == "dir" ) {
+                  self.chdir(item.path);
+                } else {
+                  API.system.run(item.path, item.mime, true);
+                }
+              }},
               {"title" : "Delete", "method" : function() {
                 self.app.createMessageDialog("confirm", "Are you sure you want to delete '" + item.name + "'?", null, function() {
                   API.system.call("delete", item.path, function(result, error) {

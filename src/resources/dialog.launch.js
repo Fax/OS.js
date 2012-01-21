@@ -67,7 +67,7 @@ OSjs.Dialogs.LaunchOperationDialog = (function($, undefined) {
         this.$element.find(".DialogButtons .Ok").show().click(function() {
           var chk = self.$element.find("input[type=checkbox]");
           if ( selected ) {
-            set_default = (chk.attr("checked") || chk.val()) ? true : false;
+            set_default = (chk.is(':checked')) ? true : false;
             self.clb_finish(selected, set_default);
           }
         }).attr("disabled", "disabled");
