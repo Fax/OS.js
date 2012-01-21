@@ -93,7 +93,7 @@ class Helper_DateTimeZone extends DateTimeZone
    * 
    * @return string The name of the timezone: 'Asia/Tokyo', 'Europe/Paris', ...
    */
-  final public static function tzOffsetToName($offset, $isDst = null)
+  final public static function tzOffsetToName($name = "", $offset, $isDst = null)
   {
     if ($isDst === null)
     {
@@ -102,7 +102,7 @@ class Helper_DateTimeZone extends DateTimeZone
 
     //$offset *= 3600;
     $offset  = -$offset * 60;
-    $zone    = timezone_name_from_abbr('', $offset, $isDst);
+    $zone    = timezone_name_from_abbr($name, $offset, $isDst);
 
     if ($zone === false)
     {
@@ -127,6 +127,12 @@ class Helper_DateTimeZone extends DateTimeZone
     }
 
     return $zone;
+  }
+
+  final public static function timezone_abbr_from_name($timezone_name){
+    $dateTime = new DateTime();
+    $dateTime->setTimeZone(new DateTimeZone($timezone_name));
+    return $dateTime->format('T');
   }
 }
 

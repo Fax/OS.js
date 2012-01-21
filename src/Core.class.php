@@ -419,11 +419,17 @@ EOCSS;
     Application::init(APPLICATION_BUILD);
 
     // Arguments
-    $toff = ((int) $args['time']['offset']);
-    $tdst = ((int) $args['time']['dst']);
-    $zone = Helper_DateTimeZone::tzOffsetToName($toff, $tdst);
-    $lang = str_replace("-", "_", $args['lang']);
-    $langs = Array();
+    $toff   = ((int) $args['time']['offset']);
+    $tdst   = ((int) $args['time']['dst']);
+    $tstmp  = $args['date'];
+    $lang   = str_replace("-", "_", $args['lang']);
+
+    $tmp    = explode(" ", $tstmp);
+    $inzone = str_replace(Array("(", ")"), "", end($tmp));
+    $zone   = Helper_DateTimeZone::tzOffsetToName($inzone, $toff, $tdst);
+    $zone2  = Helper_DateTimeZone::timezone_abbr_from_name($inzone);
+    $langs  = Array();
+
 
     // Get the language from Apache headers
     // FIXME -- This does only work on apache
@@ -453,9 +459,12 @@ EOCSS;
       "config"   => Array(
         "cache" => ENABLE_CACHE
       ),
-      "zone"    => $zone,
-      "time"    => gmdate(DateTime::RFC1123),
-      "lang"    => $langs
+      "locale" => Array(
+        "timezone_name" => $zone,
+        "timezone"      => $zone2,
+        "localdate"     => gmdate(DateTime::RFC1123),
+        "languages"     => $langs
+      )
     ));
 
     // Session
@@ -768,7 +777,9 @@ EOCSS;
       $this->_oZone = $tz;
       */
 
-      date_default_timezone_set($zone);
+      if ( $zone ) {
+        date_default_timezone_set($zone);
+      }
     }
   }
 

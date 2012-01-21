@@ -77,6 +77,7 @@
   var TIME_OFFSET            = -1;                  //!< Time Offset
   var TIME_DST               = -1;                  //!< Time DST
   var TIME_ZONE              = "UTC";               //!< Time Zone
+  var TIME_ZONE_ALT          = "UTC";               //!< Time Zone Alt
   var TIME_INIT              = "";                  //!< Time when Inited
   var LANGUAGES              = ["en_US", "en"];
   // @endconstants
@@ -1599,9 +1600,15 @@
       var bar   = $("#LoadingBar");
       var time  = null;
       var lang  = null;
+      var utc   = null;
+      var date  = (new Date()).toLocaleString();
 
       // Check for browser time/date locale
       (function() {
+        var real_date = new Date();
+        real_date    -= real_date.getTimezoneOffset() * 60000;
+        real_date    /= 1000;
+
         var now = new Date();
         var d1 = new Date();
         var d2 = new Date();
@@ -1639,7 +1646,8 @@
 
         time = {
           "offset" : offset,
-          "dst"    : dst
+          "dst"    : dst,
+          "utc"    : real_date
         };
       })();
 
@@ -1663,20 +1671,21 @@
       bar.progressbar({value : 5});
 
       // Load initial data
-      $.post(AJAX_URI, {'ajax' : true, 'action' : 'init', 'time' : time, 'lang' : lang}, function(data) {
+      $.post(AJAX_URI, {'ajax' : true, 'action' : 'init', 'time' : time, 'date' : date, 'lang' : lang}, function(data) {
         if ( data.success ) {
           self.online  = true;
 
           // Handle dates and times
-          var stime = (new Date(Date.parse(data.result.time))).toLocaleString();
+          var stime = (new Date(Date.parse(data.result.locale.localdate))).toLocaleString();
           var ctime = (new Date()).toLocaleString();
 
           // Set locales
-          TIME_OFFSET = time.offset;
-          TIME_DST    = time.dst;
-          TIME_ZONE   = data.result.zone;
-          TIME_INIT   = (new Date(Date.parse(data.result.time))).getTime();
-          LANGUAGES   = data.result.lang;
+          TIME_OFFSET   = time.offset;
+          TIME_DST      = time.dst;
+          TIME_ZONE     = data.result.locale.timezone_name;
+          TIME_ZONE_ALT = data.result.locale.timezone;
+          TIME_INIT     = (new Date(Date.parse(data.result.locale.localdate))).getTime();
+          LANGUAGES     = data.result.locale.languages;
 
           // Debugging
           console.log("Server time",  stime);
@@ -1684,6 +1693,7 @@
           console.log("TIME_OFFSET",  TIME_OFFSET);
           console.log("TIME_DST",     TIME_DST);
           console.log("TIME_ZONE",    TIME_ZONE);
+          console.log("TIME_ZONE_ALT",    TIME_ZONE_ALT);
           console.log("TIME_INIT",    TIME_INIT);
           console.log("LANGUAGES",    LANGUAGES);
           console.log("Time synced",  stime == ctime);
