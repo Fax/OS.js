@@ -83,13 +83,6 @@
     'TIME_INIT'     : "",                 //!< Time when inited
     'LANGUAGES'     : ["en_US", "en"]     //!< Supported languages
   };
-
-  var TIME_OFFSET            = -1;                  
-  var TIME_DST               = -1;                  //!< Time DST
-  var TIME_ZONE              = "UTC";               //!< Time Zone
-  var TIME_ZONE_ALT          = "UTC";               //!< Time Zone Alt
-  var TIME_INIT              = "";                  //!< Time when Inited
-  var LANGUAGES              = ["en_US", "en"];
   // @endconstants
 
   /////////////////////////////////////////////////////////////////////////////
