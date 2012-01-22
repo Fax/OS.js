@@ -12,7 +12,6 @@ FIXES:
 -------------------------------------------------------------------------------
 * FIXME [MED]: replace parents() with closest()
 * FIXME [MED]: Fix ContextMenu pop-out problems
-* FIXME [LOW]: Respond with a crash dialog upon Application::Event => "Failed to handle Application"
 
 REWRITE:
 -------------------------------------------------------------------------------

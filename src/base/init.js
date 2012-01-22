@@ -134,6 +134,8 @@
     "WebWorkerError"                      : "An error occured while processing WebWorker script '%s' on line %d",
     "StorageWarning"                      : "Warning! You're running out of local storage space (%d of %d)",
     "StorageAlert"                        : "Warning! You have reached the maximum storage limit (%d of %d)",
+    "CrashEvent"                          : "An error occured while handling AJAX Event: ",
+    "CrashEventTitle"                     : "An operation in '%s' has failed!",
     "ContextMenuPanel"                    : {
       "title"     : "Panel",
       "add"       : "Add new item",

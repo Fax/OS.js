@@ -3184,9 +3184,12 @@
      * @param   String    ev          The AJAX action to perform
      * @param   Mixed     args        The AJAX action argument(s)
      * @param   Function  callback    Callback to function when done
+     * @param   bool      show_error  Show a [crash] dialog on error (Default = false)
      * @return void
      */
-    _event : function(ev, args, callback) {
+    _event : function(ev, args, callback, show_error) {
+     show_error = (show_error === undefined) ? false : (show_error ? true : false);
+
       var self = this;
       if ( this._uuid ) {
         var pargs = {
@@ -3205,6 +3208,12 @@
           console.group("Application::" + self._name + "::" + self._uuid + "::_event()");
           console.log(ev, args, data);
           console.groupEnd();
+
+          if ( data.error && show_error ) {
+            var msg = OSjs.Labels.CrashEvent + data.error;
+            var title = sprintf(OSjs.Labels.CrashEventTitle, self._name);
+            _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, [self._name, msg, JSON.stringify(pargs), undefined, title]));
+          }
 
           callback(data.result, data.error);
         });

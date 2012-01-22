@@ -246,9 +246,7 @@ OSjs.Applications.ApplicationMusicPlayer = (function($, undefined) {
 
         if ( fname ) {
           this._event("info", {"path" : fname}, function(result, error) {
-            if ( error ) {
-              self.createMessageDialog("error", sprintf("Failed to read file '%s'", fname));
-            } else {
+            if ( !error ) {
               var invalid = true;
               var type = "unknown";
               if ( result['MIMEType'] ) {
@@ -276,7 +274,7 @@ OSjs.Applications.ApplicationMusicPlayer = (function($, undefined) {
                 self.$player.get(0).play();
               }
             }
-          });
+          }, true);
         }
       },
 

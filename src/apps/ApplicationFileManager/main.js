@@ -133,7 +133,6 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
           self._destroyView();
 
           if ( error ) {
-            self.app.createMessageDialog("error", error);
             self.setTitle(self._origtitle);
 
             _defaultStatusText = "";
@@ -153,7 +152,7 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
 
             self._call("resize");
           }, 0);
-        });
+        }, undefined, true);
 
         _CurrentDir = dir;
         self.app._argv['path'] = _CurrentDir;

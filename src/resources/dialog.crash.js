@@ -48,12 +48,13 @@ OSjs.Dialogs.CrashDialog = (function($, undefined) {
        * @see Window
        * @constructor
        */
-      init : function(app, error, trace, alternative) {
-        var title = "";
-        if ( app instanceof Application ) {
-          title = sprintf(OSjs.Labels.CrashDialogTitleApplication, app._name);
-        } else {
-          title = sprintf(OSjs.Labels.CrashDialogTitleProcess, app);
+      init : function(app, error, trace, alternative, title) {
+        if ( title === undefined ) {
+          if ( app instanceof Application ) {
+            title = sprintf(OSjs.Labels.CrashDialogTitleApplication, app._name);
+          } else {
+            title = sprintf(OSjs.Labels.CrashDialogTitleProcess, app);
+          }
         }
 
         this._super("Crash", false);
