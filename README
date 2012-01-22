@@ -27,15 +27,16 @@ Features and Highlights:
 * Simple process managment (process stack, kill processes etc)
 * Desktop environment (Customizable settings, themes, fonts, cursors etc)
 * Window Managment (With standard window actions like maximize, minimize, restore, on-top and so on)
-* Session Managment (Save and restore sessions for later use)
+* Session Managment (Save/Restore local[Storage], Create snapshots on server (for backup))
 * Desktop Panels (movable)
 * Desktop Panel items (See list below)
 * Sandboxed Applications with API access and crash-handling
-* Uses WebStorage to store system/user/application settings and sessions (SQL as backup in case of deletion of browser cache)
+* Uses WebStorage to store system/user/application settings and sessions (Sessions can also be saved on server (including snapshots))
 * TCP/IP Socket connections via WebSocket wrapper (hybi-00 and hybi-10)
 * Application Compiler (Compiles Application+Glade-XML into JavaScript, CSS and PHP code, also minifies the code)
-* VFS - Virtual Filesystem support (Block devices, Network connections, Compressed files etc.)
+* VFS - Virtual Filesystem support (Block devices, Network connections, Compressed files etc. File-Alteration monitoring)
 * Application WebWorkers for faster processing of complex data
+* Server-Side libraries: Database, JSON, IMAP/SMTP, VFS-Operations, Misc helper functions/classes
 
 Compability (Client-Side):
 -------------------------------------------------------------------------------
