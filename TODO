@@ -9,6 +9,7 @@ TODO:
 
 FIXES:
 -------------------------------------------------------------------------------
+* FIXME [HIG]: Menu/Contextmenu focus/trigger bugs
 * FIXME [MED]: replace parents() with closest()
 * FIXME [MED]: Fix ContextMenu pop-out problems
 

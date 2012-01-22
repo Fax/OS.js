@@ -2831,8 +2831,10 @@
         if ( check_mime ) {
           if ( mime && mimes && mimes.length ) {
             var found = false;
+            var tspl1 = mime.split("/").shift();
             for ( var i = 0; i < mimes.length; i++ ) {
-              if ( mime == mimes[i] ) {
+              var tspl2 = mimes[i].split("/");
+              if ( mime == mimes[i] || (tspl2[1] == "*" && (tspl1 == tspl2[0])) || (tspl1 == tspl2[0]) ) {
                 found = true;
                 break;
               }
