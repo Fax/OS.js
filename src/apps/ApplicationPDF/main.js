@@ -59,12 +59,9 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
 
       EventMenuOpen : function(el, ev) {
         var self = this;
-        var my_mimes    = ["application\/pdf"];
-
-        this.app.createFileDialog(function(fname) {
+        this.app.defaultFileOpen(function(fname) {
           self.app.loadDocument(fname);
-        }, my_mimes);
-
+        }, ["application\/pdf"]);
       },
 
       EventMenuQuit : function(el, ev) {

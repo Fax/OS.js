@@ -48,31 +48,6 @@ OSjs.Applications.ApplicationWriter = (function($, undefined) {
       txt.focus();
     }
 
-    function _save(file, content, callback) {
-      callback = callback || function() {};
-
-      if ( typeof file == "string" && file ) {
-        API.system.call("write", {'file' : file, 'content' : content}, function(result, error) {
-          // SYSTEM HANDLES ERRORS
-          if ( result ) {
-            callback(file);
-          }
-        });
-      }
-    }
-
-    function _saveAs(win, callback) {
-      win.app.createFileDialog(function(file, mime) {
-        callback(file, mime);
-      }, ["text/*"], "save");
-    }
-
-    function _open(win, callback, el) {
-      win.app.createFileDialog(function(fname) {
-        callback(fname);
-      }, ["text/*"]);
-    }
-
     function _update(file, win) {
       argv['path'] = file;
 
@@ -128,27 +103,33 @@ OSjs.Applications.ApplicationWriter = (function($, undefined) {
       EventMenuOpen : function(el, ev) {
         var self = this;
 
-        _open(this, function(fname) {
+        this.app.defaultFileOpen(function(fname) {
           _read_file(self, fname);
-        }, el);
+        }, ["text/*"]);
       },
 
 
       EventMenuSave : function(el, ev) {
         var self = this;
         if ( argv && argv['path'] ) {
-          _save(argv['path'], self.$element.find(".textarea").html());
+          var path = argv['path'];
+          var data = self.$element.find(".textarea").html();
+
+          this.app.defaultFileSave(path, data, function(fname) {
+            (function() {})();
+          }, ["text/*"], undefined, false);
         }
       },
 
 
       EventMenuSaveAs : function(el, ev) {
         var self = this;
-        _saveAs(self, function(file, mime) {
-          _save(file, self.$element.find(".textarea").html(), function() {
-            _update(file, self);
-          });
-        });
+        var data = self.$element.find(".textarea").html();
+        var cur  = (argv && argv['path'] ? argv['path'] : null);
+
+        this.app.defaultFileSave(cur, data, function(fname, mime) {
+          _update(fname, self);
+        }, ["text/*"], undefined, true);
       },
 
 

@@ -2628,6 +2628,7 @@
     _compability  : [],           //!< Application compability list
     _workers      : {},           //!< Application WebWorker(s)
     _sockets      : {},           //!< Applicaiton Socket(s)
+    _bindings     : {},           //!< Application Binding(s)
 
     /**
      * Application::init() -- Constructor
@@ -2647,6 +2648,9 @@
       this._compability = [];
       this._workers     = {};
       this._sockets     = {};
+      this._bindings    = {
+        "vfs" : []
+      };
 
       console.log("Application::" + this._name + "::NULL::init()");
 
@@ -2684,6 +2688,7 @@
 
         console.log("Application::" + this._name + "::" + this._uuid + "::destroy()");
 
+        this._bindings = {};
         this._running = false;
         this._storage = null;
       }
@@ -2714,6 +2719,32 @@
         console.log("Application::" + this._name + "::" + this._uuid + "::run()");
 
         this._running = true;
+      }
+    },
+
+    /**
+     * Application::_bind() -- Bind an event
+     * @param   String    name      Binding name
+     * @param   Function  func      Function callback
+     * @return  void
+     */
+    _bind : function(name, func) {
+      if ( this._bindings[name] !== undefined ) {
+        this._bindings[name].push(func);
+      }
+    },
+
+    /**
+     * Application::_call() -- Run a bound event
+     * @param   String    name      Binding name
+     * @return  void
+     */
+    _call : function(name, args) {
+      args = args || {};
+      if ( this._bindings[name] !== undefined ) {
+        for ( var i = 0; i < this._bindings[name].length; i++ ) {
+          this._bindings[name][i](args);
+        }
       }
     },
 
@@ -2756,6 +2787,84 @@
       this._sockets = {};
     },
 
+    /**
+     * Application::defaultFileOpen() -- Perform default file-open operation (with dialog)
+     * @param   Function      callback      Callback when file is opened
+     * @param   Array         mimes         Mime filtering (not required)
+     * @param   String        dir           Current directory (not required)
+     * @param   String        file          Current file (not required)
+     * @return  void
+     */
+    defaultFileOpen : function(callback, mimes, dir, file) {
+      if ( !dir && file ) {
+        dir = dirname(file);
+      }
+
+      this.createFileDialog(function(fname, mime) {
+        callback(fname);
+      }, mimes, "open", dir);
+    },
+
+    /**
+     * Application::defaultFileSave() -- Perform default file-open operation (with dialog)
+     *
+     * Upon success this function triggers an Application binding called "vfs" to perform
+     * refreshes along all running applications. This events have to be manually bound.
+     *
+     * @param   String        file          Current file
+     * @param   Mixed         content       Current file content
+     * @param   Function      callback      Callback when file is saved
+     * @param   Array         mimes         Mime filtering (not required)
+     * @param   String        dir           Current directory (not required)
+     * @param   bool          saveas        Perform a "Save As..." operation
+     * @param   String        encoding      File encoding (not required)
+     * @return  void
+     */
+    defaultFileSave : function(file, content, callback, mimes, dir, saveas, encoding) {
+      if ( !dir && file ) {
+        dir = dirname(file);
+      }
+      if ( file && saveas ) {
+        file = null;
+      }
+
+      // VFS Update function
+      var _vfs_trigger = function(file, mime) {
+        var i = 0;
+        var l = _Processes.length;
+        for ( i; i < l; i++ ) {
+          if ( _Processes[i] instanceof Application ) {
+            _Processes[i]._call("vfs", {
+              "file" : file,
+              "mime" : mime
+            });
+          }
+        }
+      };
+
+      // Actual save function
+      var _func = function(file, mime) {
+        var aargs = {'file' : file, 'content' : content};
+        if ( encoding ) {
+          aargs['encoding'] = encoding;
+        }
+
+        API.system.call("write", aargs, function(result, error) {
+          if ( result ) {
+            callback(file, mime);
+            _vfs_trigger(file, mime);
+          }
+        });
+      };
+
+      if ( saveas ) {
+        this.createFileDialog(function(file, mime) {
+          _func(file, mime);
+        }, mimes, "save", dir);
+      } else {
+        _func(file);
+      }
+    },
 
     /**
      * Application::createService() -- Create a new Service instance

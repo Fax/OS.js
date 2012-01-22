@@ -71,54 +71,16 @@ OSjs.Applications.ApplicationMusicPlayer = (function($, undefined) {
 
       EventMenuOpen : function(el, ev) {
         var self = this;
-
-
-        var my_callback = function(fname) {
-          self.app.Play(fname);
-        }; // FIXME
-        var my_mimes    = ["audio\/*"];
-
-        this.app.createFileDialog(function(fname) {
-          my_callback(fname);
-
-          //self._argv['path'] = fname;
-        }, my_mimes);
-
       },
 
 
       EventMenuSave : function(el, ev) {
         var self = this;
-
-
-        var my_filename = ""; // FIXME
-        var my_content  = ""; // FIXME
-        var my_callback = function(fname) {}; // FIXME
-
-        API.system.call("write", {'file' : my_filename, 'content' : my_content}, function(result, error) {
-          if ( result ) {
-            my_callback(my_filename); // Core handled errors...
-
-            //self._argv['path'] = my_filename;
-          }
-        });
-
       },
 
 
       EventMenuSaveAs : function(el, ev) {
         var self = this;
-
-
-        var my_callback = function(fname, fmime) {}; // FIXME
-        var my_mimes    = ["audio\/*"];
-
-        this.app.createFileDialog(function(fname, fmime) {
-          my_callback(fname, fmime);
-
-          //self._argv['path'] = fname;
-        }, my_mimes, "save");
-
       },
 
 

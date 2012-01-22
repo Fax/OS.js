@@ -66,9 +66,6 @@ OSjs.Applications.ApplicationArchiver = (function($, undefined) {
         var self = this;
 
 
-        var my_callback = function(fname) {
-          self.app.openArchive(fname, self);
-        };
         var my_mimes    = [
           "application/zip",
           "application/x-bzip2",
@@ -77,9 +74,8 @@ OSjs.Applications.ApplicationArchiver = (function($, undefined) {
           "application/x-tar"
         ];
 
-        this.app.createFileDialog(function(fname) {
-          my_callback(fname);
-
+        this.app.defaultFileOpen(function(fname) {
+          self.app.openArchive(fname, self);
           //self._argv['path'] = fname;
         }, my_mimes);
 

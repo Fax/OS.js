@@ -242,6 +242,12 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
         }
       },
 
+      doRefresh : function(args) {
+        if ( dirname(args.file) == _CurrentDir ) {
+          this.EventRefresh();
+        }
+      },
+
       onIconViewUpdate : function(el, item, type, index) {
         el.find(".Title").html(item.name);
         if ( type === 0 ) {
@@ -362,6 +368,10 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
         var root_window = new Window_window1(self);
         this._super(root_window);
         root_window.show();
+
+        this._bind("vfs", function(args) {
+          root_window.doRefresh(args);
+        });
 
         // Do your stuff here
       }

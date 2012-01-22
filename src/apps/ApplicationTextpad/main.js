@@ -34,35 +34,6 @@ OSjs.Applications.ApplicationTextpad = (function($, undefined) {
       txt.focus();
     }
 
-    function _save(file, content, callback) {
-      callback = callback || function() {};
-
-      if ( typeof file == "string" && file ) {
-        API.system.call("write", {'file' : file, 'content' : content}, function(result, error) {
-          // SYSTEM HANDLES ERRORS
-          if ( result ) {
-            callback(file);
-          }
-        });
-      }
-    }
-
-    function _saveAs(win, callback) {
-      win.app.createFileDialog(function(file, mime) {
-        callback(file, mime);
-      }, ["text/*"], "save");
-    }
-
-    function _open(win, callback, el) {
-      win.app.createFileDialog(function(fname) {
-        callback(fname);
-
-        setTimeout(function() {
-          setSelectionRangeX($(el).find("textarea"), 0, 0);
-        }, 0);
-      }, ["text/*"]);
-    }
-
     function _update(file, win) {
       argv['path'] = file;
 
@@ -77,7 +48,6 @@ OSjs.Applications.ApplicationTextpad = (function($, undefined) {
       var text = sprintf("Row: %d, Col: %d, Lines: %d, Characters: %d", pos.y, pos.x, pos.lines, pos.length);
       $(el).find(".statusbar1").html(text);
     }
-
 
     var Window_window1 = GtkWindow.extend({
 
@@ -112,28 +82,40 @@ OSjs.Applications.ApplicationTextpad = (function($, undefined) {
 
       EventMenuOpen : function(el, ev) {
         var self = this;
+        var cur = (argv && argv['path'] ? argv['path'] : null);
 
-        _open(this, function(fname) {
+        this.app.defaultFileOpen(function(fname) {
           _read_file(self, fname);
-        }, el);
+
+          setTimeout(function() {
+            setSelectionRangeX($(el).find("textarea"), 0, 0);
+          }, 0);
+        }, ["text/*"], null, cur);
       },
 
 
       EventMenuSave : function(el, ev) {
         var self = this;
+
         if ( argv && argv['path'] ) {
-          _save(argv['path'], self.$element.find("textarea").val());
+          var path = argv['path'];
+          var data = self.$element.find("textarea").val();
+
+          this.app.defaultFileSave(path, data, function(fname) {
+            (function() {})();
+          }, ["text/*"], undefined, false);
         }
       },
 
 
       EventMenuSaveAs : function(el, ev) {
         var self = this;
-        _saveAs(self, function(file, mime) {
-          _save(file, self.$element.find("textarea").val(), function() {
-            _update(file, self);
-          });
-        });
+        var data = self.$element.find("textarea").val();
+        var cur  = (argv && argv['path'] ? argv['path'] : null);
+
+        this.app.defaultFileSave(cur, data, function(fname, mime) {
+          _update(fname, self);
+        }, ["text/*"], undefined, true);
       },
 
 

@@ -38,15 +38,9 @@ OSjs.Applications.ApplicationViewer = (function($, undefined) {
 
       EventMenuOpen : function(el, ev) {
         var self = this;
-
-        var my_callback = function(fname) {
+        this.app.defaultFileOpen(function(fname) {
           self.app.Open(fname);
-        };
-        var my_mimes    = ["image/*"];
-
-        this.app.createFileDialog(function(fname) {
-          my_callback(fname);
-        }, my_mimes);
+        }, ["image/*"]);
       },
 
 

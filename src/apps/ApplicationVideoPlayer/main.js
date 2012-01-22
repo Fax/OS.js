@@ -58,28 +58,18 @@ OSjs.Applications.ApplicationVideoPlayer = (function($, undefined) {
       EventMenuOpen : function(el, ev) {
         var self = this;
 
-
-        var my_callback = function(fname) {
+        this.app.defaultFileOpen(function(fname) {
           self.app.Play(fname);
-        };
-
-        var my_mimes    = ["video\/*"];
-
-        this.app.createFileDialog(function(fname) {
-          my_callback(fname);
 
           //self._argv['path'] = fname;
-        }, my_mimes);
+        }, ["video\/*"]);
 
       },
 
 
       EventMenuQuit : function(el, ev) {
         var self = this;
-
-
         this.$element.find(".ActionClose").click();
-
       },
 
 

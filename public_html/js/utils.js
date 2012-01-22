@@ -439,7 +439,7 @@ function dirname(dir) {
     if ( tmp.length > 1 ) {
       tmp.pop();
     }
-    return tmp.join("/");
+    return tmp.join("/") || "/";
   }
 
   return val;

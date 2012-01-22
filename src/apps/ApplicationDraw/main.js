@@ -545,29 +545,36 @@ OSjs.Applications.ApplicationDraw = (function($, undefined) {
 
       EventMenuOpen : function(el, ev) {
         var self = this;
-        self._open(function(fname) {
+        var cur = (argv && argv['path'] ? argv['path'] : null);
+
+        this.app.defaultFileOpen(function(fname) {
           DrawDocument.open("/media/" + fname);
           self._update(fname);
-        }, null);
+        }, ["image/*"], null, cur);
       },
 
 
       EventMenuSave : function(el, ev) {
         var self = this;
         if ( argv && argv['path'] ) {
-          self._save(argv['path'], DrawDocument.getImage());
-          self._update(argv['path']);
+          var path = argv['path'];
+          var data = DrawDocument.getImage();
+
+          this.app.defaultFileSave(path, data, function(fname) {
+            self._update(argv['path']);
+          }, ["image/*"], undefined, false, 'data:image/png;base64');
         }
       },
 
 
       EventMenuSaveAs : function(el, ev) {
         var self = this;
-        self._saveAs(function(file, mime) {
-          self._save(file, DrawDocument.getImage(), function() {
-            self._update(file);
-          });
-        });
+        var data = DrawDocument.getImage();
+        var cur  = (argv && argv['path'] ? argv['path'] : null);
+
+        this.app.defaultFileSave(cur, data, function(fname, mime) {
+          self._update(fname, self);
+        }, ["image/*"], undefined, true, 'data:image/png;base64');
       },
 
 
@@ -616,31 +623,6 @@ OSjs.Applications.ApplicationDraw = (function($, undefined) {
         this._argv    = argv;
 
         this.setTitle(this._origtitle + ": " + (file || " file"));
-      },
-
-      _save : function(file, content, callback) {
-        callback = callback || function() {};
-
-        if ( typeof file == "string" && file ) {
-          API.system.call("write", {'file' : file, 'content' : content, 'encoding' : 'data:image/png;base64'}, function(result, error) {
-            // SYSTEM HANDLES ERRORS
-            if ( result ) {
-              callback(file);
-            }
-          });
-        }
-      },
-
-      _saveAs : function(callback) {
-        this.app.createFileDialog(function(file, mime) {
-          callback(file, mime);
-        }, ["image/*"], "save");
-      },
-
-      _open : function(callback) {
-        this.app.createFileDialog(function(fname) {
-          callback(fname);
-        }, ["image/*"]);
       },
 
       create : function(id, mcallback) {
