@@ -231,6 +231,10 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
             self.onIconViewToggle(ev, el, item);
           });
 
+          this.iconview.on_focus = function() {
+            self.focus();
+          };
+
           this._bind("resize", function() {
             self.iconview.resize();
           });

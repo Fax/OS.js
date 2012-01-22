@@ -126,6 +126,7 @@
     on_render     : function() {},        //!< Render item callback function
     on_activate   : function() {},        //!< Activate item callback function
     on_toggle     : function() {},        //!< Toggle item callback function
+    on_focus      : function() {},        //!< On-focus event
 
     /**
      * IconView::init() -- Constructor
@@ -142,6 +143,7 @@
       this.on_render    = on_render   || function() {};
       this.on_activate  = on_activate || function() {};
       this.on_toggle    = on_toggle   || function() {};
+      this.on_focus     = function() {};
 
       if ( $(root).hasClass("GtkIconView") ) {
         this.$root = root;
@@ -209,6 +211,7 @@
       this.on_render    = null;
       this.on_activate  = null;
       this.on_toggle    = null;
+      this.on_focus     = null;
 
       this.$root      = null;
       this.$element   = null;
@@ -278,6 +281,8 @@
       }
 
       el.bind("mousedown", function(ev) {
+        self.on_focus(ev);
+
         ev.preventDefault();
         //ev.stopPropagation();
         return false;
