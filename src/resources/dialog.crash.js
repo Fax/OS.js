@@ -3,6 +3,7 @@
  *
  * @package OSjs.Dialogs
  * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
  * @class
  */
 OSjs.Dialogs.CrashDialog = (function($, undefined) {

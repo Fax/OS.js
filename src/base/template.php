@@ -16,6 +16,7 @@
 
   @package OSjs.Template
   @author  Anders Evenrud <andersevenrud@gmail.com>
+  @licence Simplified BSD License
   -->
   <title>OS.js <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)</title>
 

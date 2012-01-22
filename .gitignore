@@ -14,14 +14,6 @@ src/apps/*/_min
 src/resources/_min
 src/base/_min
 
-# Propel
-src/build/classes/*/map/*
-src/build/classes/*/om/*
-src/build/conf/*-conf.php
-src/build/conf/classmap-*-conf.php
-src/build/sql/schema.sql
-src/build/sql/sqldb.map
-
 # Touch support
 public_html/js/vendor/jquery-git.js
 public_html/js/vendor/jquery-ui.min.js

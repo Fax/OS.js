@@ -3,7 +3,7 @@
  * @file
  * User.class.php
  * @author Anders Evenrud <andersevenrud@gmail.com>
- * @license GPLv3 (see http://www.gnu.org/licenses/gpl-3.0.txt)
+ * @licence Simplified BSD License
  * @created 2012-01-04
  */
 

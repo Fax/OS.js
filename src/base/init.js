@@ -3,6 +3,7 @@
  *
  * @package OSjs.Core.Init
  * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
  */
 (function($, undefined) {
 

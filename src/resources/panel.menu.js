@@ -3,6 +3,7 @@
  *
  * @package OSjs.Panel
  * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
  * @class
  */
 OSjs.PanelItems.PanelItemMenu = (function($, undefined) {

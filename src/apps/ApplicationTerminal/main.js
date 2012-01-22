@@ -3,6 +3,7 @@
  *
  * @package OSjs.Applications
  * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
  * @class
  */
 OSjs.Applications.ApplicationTerminal = (function($, undefined) {

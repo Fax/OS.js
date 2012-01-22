@@ -5,6 +5,7 @@
  *
  * @package OSjs.Panel
  * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
  * @class
  */
 OSjs.PanelItems.PanelItemWeather = (function($, undefined) {

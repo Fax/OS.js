@@ -3,6 +3,7 @@
  *
  * @package OSjs.Applications
  * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
  * @class
  */
 OSjs.Applications.SystemAbout = (function($, undefined) {
@@ -44,7 +45,7 @@ OSjs.Applications.SystemAbout = (function($, undefined) {
         if ( el ) {
 
           // Do your stuff here
-
+          (function() {})();
         }
 
       }
