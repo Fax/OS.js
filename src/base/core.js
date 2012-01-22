@@ -73,7 +73,7 @@
   // @endconstants
 
   /**
-   * @constants Time, Dates, Locale (Dynamic)
+   * @constants Locales: Time, Dates, Locale (Dynamic)
    */
   var LOCALE = {
     'TIME_OFFSET'   : -1,                 //!< Time Offset

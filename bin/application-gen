@@ -30,7 +30,7 @@ function create_php($cname) {
  * @file
  * Contains {$cname} Class
  * @author Anders Evenrud <andersevenrud@gmail.com>
- * @license GPLv3 (see http://www.gnu.org/licenses/gpl-3.0.txt)
+ * @licence Simplified BSD License
  * @created 2011-05-23
  */
 
@@ -39,6 +39,7 @@ function create_php($cname) {
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package OSjs.Applications
+ * @licence Simplified BSD License
  * @class
  */
 class {$cname}
@@ -85,6 +86,7 @@ EOJAVASCRIPT;
  *
  * @package OSjs.Applications
  * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
  * @class
  */
 OSjs.Applications.{$cname} = (function(\$, undefined) {
@@ -365,6 +367,7 @@ function create_css($cname) {
  *
  * @package OSjs.Applications
  * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
  */
 
 .{$cname} {
