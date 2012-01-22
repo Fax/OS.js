@@ -434,8 +434,18 @@ EOCSS;
 
     $tmp    = explode(" ", $tstmp);
     $inzone = str_replace(Array("(", ")"), "", end($tmp));
-    $zone   = Helper_DateTimeZone::tzOffsetToName($inzone, $toff, $tdst);
-    $zone2  = Helper_DateTimeZone::timezone_abbr_from_name($inzone);
+    try {
+      $zone = Helper_DateTimeZone::tzOffsetToName($inzone, $toff, $tdst);
+    } catch ( Exception $e ) {
+      $zone = "UTC";
+    }
+
+    try {
+      $zone2 = Helper_DateTimeZone::timezone_abbr_from_name($inzone);
+    } catch ( Exception $e ) {
+      $zone2 = "UTC";
+    }
+
     $langs  = Array();
 
 

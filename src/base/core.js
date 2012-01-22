@@ -75,7 +75,16 @@
   /**
    * @constants Time, Dates, Locale (Dynamic)
    */
-  var TIME_OFFSET            = -1;                  //!< Time Offset
+  var LOCALE = {
+    'TIME_OFFSET'   : -1,                 //!< Time Offset
+    'TIME_DST'      : -1,                 //!< Time DST
+    'TIME_ZONE'     : "UTC",              //!< Time Zone
+    'TIME_ZONE_ALT' : "UTC",              //!< Time Zone Alt.
+    'TIME_INIT'     : "",                 //!< Time when inited
+    'LANGUAGES'     : ["en_US", "en"]     //!< Supported languages
+  };
+
+  var TIME_OFFSET            = -1;                  
   var TIME_DST               = -1;                  //!< Time DST
   var TIME_ZONE              = "UTC";               //!< Time Zone
   var TIME_ZONE_ALT          = "UTC";               //!< Time Zone Alt
@@ -1657,7 +1666,7 @@
     shutdown : function() {
       var ssess     = _Core.getSession();
       var ssett     = _Settings.getSession();
-      var duration  = ((new Date()).getTime()) - TIME_INIT;
+      var duration  = ((new Date()).getTime()) - LOCALE.TIME_INIT;
 
       console.group("Core::shutdown()");
       console.log("Core Session", ssess);
@@ -1770,22 +1779,19 @@
           var ctime = (new Date()).toLocaleString();
 
           // Set locales
-          TIME_OFFSET   = time.offset;
-          TIME_DST      = time.dst;
-          TIME_ZONE     = data.result.locale.timezone_name;
-          TIME_ZONE_ALT = data.result.locale.timezone;
-          TIME_INIT     = (new Date(Date.parse(data.result.locale.localdate))).getTime();
-          LANGUAGES     = data.result.locale.languages;
+          LOCALE = {
+            'TIME_OFFSET'   : time.offset,
+            'TIME_DST'      : time.dst,
+            'TIME_ZONE'     : data.result.locale.timezone_name,
+            'TIME_ZONE_ALT' : data.result.locale.timezone,
+            'TIME_INIT'     : (new Date(Date.parse(data.result.locale.localdate))).getTime(),
+            'LANGUAGES'     : data.result.locale.languages
+          };
 
           // Debugging
           console.log("Server time",  stime);
           console.log("Client time",  ctime);
-          console.log("TIME_OFFSET",  TIME_OFFSET);
-          console.log("TIME_DST",     TIME_DST);
-          console.log("TIME_ZONE",    TIME_ZONE);
-          console.log("TIME_ZONE_ALT",    TIME_ZONE_ALT);
-          console.log("TIME_INIT",    TIME_INIT);
-          console.log("LANGUAGES",    LANGUAGES);
+          console.log("LOCALE",       LOCALE);
           console.log("Time synced",  stime == ctime);
 
           // Initialize resources
@@ -3747,7 +3753,7 @@
       ];
 
       var iitems = [
-        { "icon"       : "/img/icons/32x32/places/user-home.png",
+        { "icon"       : "/img/icons/32x32/places/user-home.png", // FIXME: CONSTANT
           "type"       : "dir",
           "mime"       : "",
           "name"       : "Home",
@@ -5940,7 +5946,7 @@
         litem.find("span").attr("class", method);
       }
       if ( icon ) {
-        litem.find("img").attr("src", "/img/icons/16x16/" + icon);
+        litem.find("img").attr("src", sprintf(ICON_URI_16, icon));
       } else {
         litem.find("span").hide();
       }
