@@ -163,11 +163,13 @@
 
       if ( this.transparent ) {
         this.$root.bind("mousedown", function(ev) {
+          self.on_focus(ev);
           $(document).click(); // Trigger this! (deselects context-menu)
           ev.preventDefault();
         });
       } else {
         this.$root.bind("mousedown", function(ev) {
+          self.on_focus(ev);
           $(document).click(); // Trigger this! (deselects context-menu)
           ev.preventDefault();
           return false;
