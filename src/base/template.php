@@ -12,7 +12,7 @@
 <html lang="en">
 <head>
   <!--
-  JavaScript Window Manager
+  OS.js - JavaScript Operating System - Main HTML Template
 
   Copyright (c) 2011, Anders Evenrud
   All rights reserved.

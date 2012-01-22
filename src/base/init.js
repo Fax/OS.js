@@ -1,5 +1,5 @@
 /*!
- * OS.js - JavaScript Operating System - Namespace
+ * OS.js - JavaScript Operating System - Namespace and main initialization
  *
  * Copyright (c) 2011, Anders Evenrud
  * All rights reserved.

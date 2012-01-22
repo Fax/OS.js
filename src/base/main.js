@@ -1,5 +1,5 @@
 /*!
- * OS.js - JavaScript Operating System - Core File
+ * OS.js - JavaScript Operating System - Startup file
  *
  * Copyright (c) 2011, Anders Evenrud
  * All rights reserved.
