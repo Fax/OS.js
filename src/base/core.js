@@ -95,19 +95,6 @@
   var SERVICE_XML  = 4;                             //!< Service: XML (POST)
   // @endconstants
 
-  /**
-   * @constants Locales: Time, Dates, Locale (Dynamic)
-   */
-  var LOCALE = {
-    'TIME_OFFSET'   : -1,                 //!< Time Offset
-    'TIME_DST'      : -1,                 //!< Time DST
-    'TIME_ZONE'     : "UTC",              //!< Time Zone
-    'TIME_ZONE_ALT' : "UTC",              //!< Time Zone Alt.
-    'TIME_INIT'     : "",                 //!< Time when inited
-    'LANGUAGES'     : ["en_US", "en"]     //!< Supported languages
-  };
-  // @endconstants
-
   /////////////////////////////////////////////////////////////////////////////
   // PRIVATE VARIABLES
   /////////////////////////////////////////////////////////////////////////////
@@ -129,6 +116,7 @@
   var _Running         = false;                           //!< Global running state
   var _DataRX          = 0;                               //!< Global Data recieve counter
   var _DataTX          = 0;                               //!< Global Data transmit counter
+  var _StartStamp      = -1;                              //!< Starting timestamp
 
   /////////////////////////////////////////////////////////////////////////////
   // HELPERS
@@ -160,6 +148,26 @@
       _DataRX += (JSON.stringify(data)).length;
 
       callback(data);
+    });
+  } // @endfunction
+
+  /**
+   * UploadSettings() -- Upload User settings to server
+   * @return void
+   * @function
+   */
+  function UploadSettings() {
+    var settings = {
+      locale : {
+        locale_location : API.user.settings.get("system.locale.location"),
+        locale_time     : API.user.settings.get("system.locale.time-format"),
+        locale_date     : API.user.settings.get("system.locale.date-format"),
+        locale_stamp    : API.user.settings.get("system.locale.timestamp-format")
+      }
+    };
+
+    DoPost({'action' : 'settings', 'settings' : settings}, function(data) {
+      console.log("UploadSetting()", data);
     });
   } // @endfunction
 
@@ -1682,7 +1690,7 @@
     shutdown : function() {
       var ssess     = _Core.getSession();
       var ssett     = _Settings.getSession();
-      var duration  = ((new Date()).getTime()) - LOCALE.TIME_INIT;
+      var duration  = ((new Date()).getTime()) - _StartStamp;
 
       console.group("Core::shutdown()");
       console.log("Core Session", ssess);
@@ -1713,72 +1721,7 @@
 
       var load    = $("#Loading");
       var bar     = $("#LoadingBar");
-      var time    = null;
-      var lang    = null;
-      var utc     = null;
       var date    = (new Date()).toLocaleString();
-
-      // Check for browser time/date locale
-      (function() {
-        var real_date = new Date();
-        real_date    -= real_date.getTimezoneOffset() * 60000;
-        real_date    /= 1000;
-
-        var now = new Date();
-        var d1 = new Date();
-        var d2 = new Date();
-
-        var dst = 0, offset = (now.getTimezoneOffset());
-
-        // January 1st
-        // Guaranteed not to be in DST for northern hemisphere (If DST exists on client PC)
-        // Guaranteed to be in DST for southern hemisphere (If DST exists on client PC)
-        d1.setDate(1);
-        d1.setMonth(1);
-
-        // July 1st
-        // Guaranteed to be in DST for northern hemisphere (If DST exists on client PC)
-        // Guaranteed not to be in DST for southern hemisphere (If DST exists on client PC)
-        d2.setDate(1);
-        d2.setMonth(7);
-
-        // If time zone offsets match, no DST exists for this time zone
-        if ( parseInt(d1.getTimezoneOffset(), 10) == parseInt(d2.getTimezoneOffset(), 10) ) {
-          dst = 0;
-        } else {
-          // DST exists for this time zone – check if it is currently active
-          var hemisphere = parseInt(d1.getTimezoneOffset(), 10) - parseInt(d2.getTimezoneOffset(), 10);
-          if ( (hemisphere>0 && parseInt(d1.getTimezoneOffset(), 10) == parseInt(now.getTimezoneOffset(), 10) ) ||
-                (hemisphere<0 && parseInt(d2.getTimezoneOffset(), 10) == parseInt(now.getTimezoneOffset(), 10)) ) {
-            dst = 0;
-          }
-
-          // DST is active right now with the current date
-          else {
-            dst = 1;
-          }
-        }
-
-        time = {
-          "offset" : offset,
-          "dst"    : dst,
-          "utc"    : real_date
-        };
-      })();
-
-      // Check for browser locale language
-      (function() {
-        if ( navigator.userLanguage ) {
-          lang = navigator.userLanguage;
-        } else if ( navigator.browserLanguage ) {
-          lang = navigator.browserLanguage;
-        } else if ( navigator.systemLanguage ) {
-          lang = navigator.systemLanguage;
-        } else if ( navigator.language ) {
-          lang = navigator.language;
-        }
-      })();
-
 
       console.group("Core::run()");
 
@@ -1786,29 +1729,9 @@
       bar.progressbar({value : 5});
 
       // Load initial data
-      DoPost({'action' : 'init', 'time' : time, 'date' : date, 'lang' : lang}, function(data) {
+      DoPost({'action' : 'init', 'date' : date}, function(data) {
         if ( data.success ) {
           self.online  = true;
-
-          // Handle dates and times
-          var stime = (new Date(Date.parse(data.result.locale.localdate))).toLocaleString();
-          var ctime = (new Date()).toLocaleString();
-
-          // Set locales
-          LOCALE = {
-            'TIME_OFFSET'   : time.offset,
-            'TIME_DST'      : time.dst,
-            'TIME_ZONE'     : data.result.locale.timezone_name,
-            'TIME_ZONE_ALT' : data.result.locale.timezone,
-            'TIME_INIT'     : (new Date(Date.parse(data.result.locale.localdate))).getTime(),
-            'LANGUAGES'     : data.result.locale.languages
-          };
-
-          // Debugging
-          console.log("Server time",  stime);
-          console.log("Client time",  ctime);
-          console.log("LOCALE",       LOCALE);
-          console.log("Time synced",  stime == ctime);
 
           // Initialize resources
           _Resources = new ResourceManager();
@@ -1839,15 +1762,6 @@
           // Initialize settings
           _Settings = new SettingsManager(data.result.settings);
           bar.progressbar({value : 10});
-
-          /* TODO: Send these to server
-          var locales = {
-            locale_location : API.user.settings.get("system.locale.location"),
-            locale_time     : API.user.settings.get("system.locale.time-format"),
-            locale_date     : API.user.settings.get("system.locale.date-format"),
-            locale_stamp    : API.user.settings.get("system.locale.timestamp-format")
-          };
-          */
 
           // Initialize desktop etc.
           _Tooltip = new Tooltip();
@@ -2554,6 +2468,8 @@
             this._set(i, settings[i]);
           }
         }
+
+        UploadSettings();
       },
 
       /**
@@ -6180,6 +6096,7 @@
    * @function
    */
   OSjs.__Run = function() {
+    _StartStamp = ((new Date()).getTime());
     _Core = new Core();
     _Running = true;
 

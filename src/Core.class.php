@@ -26,11 +26,8 @@ class Core
   // VARIABLES
   /////////////////////////////////////////////////////////////////////////////
 
-  //protected $_oTime = null;   //!< Current session DateTime
-  //protected $_oZone = null;   //!< Current session DateTimeZome
-  protected $_oUser = null;     //!< Current session User
-  protected $_sTime = null;     //!< Current session TimeZone
-  protected $_aLang = Array();  //!< Current session Language(s)
+  protected $_oUser = null;       //!< Current session User
+  protected $_aLocale = Array();  //!< Current session Locale
 
   /**
    * @var Current instance
@@ -46,6 +43,7 @@ class Core
     "snapshotSave"  => "doSnapshotSave",
     "snapshotLoad"  => "doSnapshotLoad",
     "init"          => "doInit",
+    "settings"      => "doSettings",
     "login"         => "doUserLogin",
     "logout"        => "doUserLogout",
     "user"          => "doUserInfo",
@@ -80,17 +78,11 @@ class Core
     }
 
     // Set timezone from session
-    if ( isset($_SESSION['time_zone']) ) {
-      $this->setTime($_SESSION['time_zone'], true);
+    if ( isset($_SESSION['locale']) ) {
+      $this->setLocale($_SESSION['locale']);
     } else {
-      $this->setTime(DEFAULT_TIMEZONE, true);
+      $_SESSION['locale'] = $this->setLocale(null);
     }
-
-    // Set language(s) from session
-    if ( isset($_SESSION['lang']) ) {
-      $this->setLang($_SESSION['lang']);
-    }
-
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -431,73 +423,31 @@ EOCSS;
     // Initialize Application database
     Application::init(APPLICATION_BUILD);
 
-    // Arguments
-    $toff   = ((int) $args['time']['offset']);
-    $tdst   = ((int) $args['time']['dst']);
-    $tstmp  = $args['date'];
-    $lang   = str_replace("-", "_", $args['lang']);
-
-    $tmp    = explode(" ", $tstmp);
-    $inzone = str_replace(Array("(", ")"), "", end($tmp));
-    try {
-      $zone = Helper_DateTimeZone::tzOffsetToName($inzone, $toff, $tdst);
-    } catch ( Exception $e ) {
-      $zone = "UTC";
-    }
-
-    try {
-      $zone2 = Helper_DateTimeZone::timezone_abbr_from_name($inzone);
-    } catch ( Exception $e ) {
-      $zone2 = "UTC";
-    }
-
-    $langs  = Array();
-
-
-    // Get the language from Apache headers
-    // FIXME -- This does only work on apache
-    if ( function_exists("apache_request_headers") ) {
-      foreach ( apache_request_headers() as $key => $val ) {
-        if ( $key == "Accept-Language" ) {
-          $l = explode(",", $val);
-          foreach ( $l as $ll ) {
-            $tmp = explode(";", $ll);
-            if ( !in_array($tmp[0], $langs) ) {
-              $langs[] = str_replace("-", "_", $tmp[0]);
-            }
-          }
-          break;
-        }
-      }
-    }
-
-    // Append JS-browser lanuguage detect to array
-    if ( $lang && !in_array($lang, $langs) ) {
-      $langs[] = $lang;
-    }
-
     // Output
     $json = Array("success" => true, "error" => null, "result" => Array(
       "settings" => self::getSettings(),
       "config"   => Array(
         "cache" => ENABLE_CACHE
-      ),
-      "locale" => Array(
-        "timezone_name" => $zone,
-        "timezone"      => $zone2,
-        "localdate"     => gmdate(DateTime::RFC1123),
-        "languages"     => $langs
       )
     ));
+  }
 
-    // Session
-    $_SESSION['time_offset'] = $toff;
-    $_SESSION['time_dst']    = $tdst;
-    $_SESSION['time_zone']   = $zone;
-    $_SESSION['lang']        = $langs;
-
-    // Instance
-    $inst->setTime($zone, true);
+  /**
+   * Do a 'Core Settings' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doSettings(Array $args, Array &$json, Core $inst = null) {
+    if ( isset($args['settings']) ) {
+      if ( $inst instanceof Core ) {
+        if ( isset($args['settings']['locale']) ) {
+          $inst->setLocale($args['settings']['locale']);
+          $json['success'] = true;
+          $json['result']  = true;
+          $_SESSION['locale'] = $args['settings']['locale'];
+        }
+      }
+    }
   }
 
   /**
@@ -513,10 +463,7 @@ EOCSS;
     $json['success']  = true;
 
     $_SESSION['user']        = null;
-    $_SESSION['time_offset'] = null;
-    $_SESSION['time_dst']    = null;
-    $_SESSION['time_zone']   = null;
-    $_SESSION['lang']        = Array();
+    $_SESSION['locale']      = null;
   }
 
   /**
@@ -844,36 +791,25 @@ EOCSS;
   }
 
   /**
-   * Set the current session time/timezone of session
-   * @param   String    $zone       Timezone
-   * @param   bool      $update     Update the object(s) (Default = false)
-   * @return  void
+   * Set the current session locale
+   * @param   Array     $locale       Locale
+   * @return  Array
    */
-  protected function setTime($zone, $update = false) {
-    $this->_sTime = $zone;
-
-    if ( $update ) {
-      /*
-      $tz         = new DateTimeZone($zone);
-      $now        = new DateTime("now", $tz);
-
-      $this->_oTime = $now;
-      $this->_oZone = $tz;
-      */
-
-      if ( $zone ) {
-        date_default_timezone_set($zone);
-      }
+  protected function setLocale(Array $locale = null) {
+    if ( is_array($locale) ) {
+      $this->_aLocale = $locale;
+    } else {
+      $this->_aLocale = Array(
+        "locale_location" => SettingsManager::$Settings['system.locale.location']['value'],
+        "locale_date"     => SettingsManager::$Settings['system.locale.date-format']['value'],
+        "locale_time"     => SettingsManager::$Settings['system.locale.time-format']['value'],
+        "locale_stamp"    => SettingsManager::$Settings['system.locale.timestamp-format']['value']
+      );
     }
-  }
 
-  /**
-   * Set the current session language(s)
-   * @param   Array   $lang     Lanuage(s) Array
-   * @return  void
-   */
-  protected function setLang(Array $lang = Array()) {
-    $this->_aLang = Array();
+    date_default_timezone_set($this->_aLocale["locale_location"]);
+
+    return $this->_aLocale;
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -889,20 +825,11 @@ EOCSS;
   }
 
   /**
-   * Get the current session time
-   * @return String
-   */
-  public final function getTime() {
-    return $this->_sTime;
-  }
-
-  /**
    * Get the current session TimeDate
    * @return DateTime
    */
   public final function getTimeDate() {
     return new DateTime("now", $this->getTimeZone());
-    //return $this->_oTime;
   }
 
   /**
@@ -911,15 +838,6 @@ EOCSS;
    */
   public final function getTimeZone() {
     return new DateTimeZone($this->getTime());
-    //return $this->oZone;
-  }
-
-  /**
-   * Get the current session Language(s)
-   * @return Array
-   */
-  public final function getLang() {
-    return $this->_aLang;
   }
 
 }

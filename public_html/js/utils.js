@@ -379,7 +379,7 @@ function IntFromRGBstr(str) {
     red   : parseInt(spl[0], 10),
     green : parseInt(spl[1], 10),
     blue  : parseInt(spl[2], 10)
-  }
+  };
 }
 
 /**
@@ -633,23 +633,6 @@ var CanvasHelper = Class.extend({
   }
 
 });
-
-function sizeof(o) {
-  var x = 0;
-  if ( o instanceof Object ) {
-    for ( var i in o ) {
-      if ( o.hasOwnProperty(i) ) {
-        x++;
-      }
-    }
-  } else if ( o instanceof Array ) {
-    x = o.length;
-  } else {
-    x = -1;
-  }
-
-  return x;
-}
 
 function format_date(str, now) {
   now = (now || new Date());
