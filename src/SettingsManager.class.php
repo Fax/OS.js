@@ -145,12 +145,12 @@ class SettingsManager
     // System locale registry
     "system.locale.location" => Array(
       "type" => "array",
-      "options" => Array("UTC", "GMT", "Europe/Oslo"),
-      "value" => "GMT"
+      "options" => Array(), // Later in Core::getSettings()
+      "value" => "UTC"
     ),
     "system.locale.date-format" => Array(
       "type" => "string",
-      "value" => "%Y%d%m"
+      "value" => "%d-%m-%Y"
     ),
     "system.locale.time-format" => Array(
       "type" => "string",
@@ -158,7 +158,7 @@ class SettingsManager
     ),
     "system.locale.timestamp-format" => Array(
       "type" => "string",
-      "value" => "%Y/%m/%d %H:%i"
+      "value" => "%d-%m-%Y %H:%i"
     ),
     "user.first-run" => Array(
       "type" => "bool",

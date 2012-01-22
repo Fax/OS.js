@@ -149,7 +149,10 @@ class Core
       Array("PanelItemWeather", Array(), "right")
     );
 
-    return SettingsManager::getSettings(Array(
+    $merge = Array(
+      "system.locale.location" => Array(
+        "options" => DateTimeZone::listIdentifiers()
+      ),
       "system.app.registered" => Array(
         "options" => Application::$Registered
       ),
@@ -165,7 +168,9 @@ class Core
           )
         )
       )
-    ));
+    );
+
+    return SettingsManager::getSettings($merge);
   }
 
   /**

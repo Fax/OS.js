@@ -651,3 +651,27 @@ function sizeof(o) {
   return x;
 }
 
+function format_date(str, now) {
+  now = (now || new Date());
+  var rep = {
+    "%y" : "getYear",
+    "%Y" : "getFullYear",
+    "%m" : "getMonth",
+    "%d" : "getDate",
+    "%H" : "getHours",
+    "%i" : "getMinutes",
+    "%s" : "getSeconds"
+  };
+
+  for ( var i in rep ) {
+    if ( rep.hasOwnProperty(i) ) {
+      val = parseInt(now[rep[i]](), 10);
+      if ( rep[i] == "getMonth" ) {
+        val++;
+      }
+      str = str.replace(i, (val < 10 ? '0' + val : val));
+    }
+  }
+
+  return str;
+}

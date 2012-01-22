@@ -1711,12 +1711,12 @@
     run : function() {
       var self = this;
 
-      var load  = $("#Loading");
-      var bar   = $("#LoadingBar");
-      var time  = null;
-      var lang  = null;
-      var utc   = null;
-      var date  = (new Date()).toLocaleString();
+      var load    = $("#Loading");
+      var bar     = $("#LoadingBar");
+      var time    = null;
+      var lang    = null;
+      var utc     = null;
+      var date    = (new Date()).toLocaleString();
 
       // Check for browser time/date locale
       (function() {
@@ -1839,6 +1839,15 @@
           // Initialize settings
           _Settings = new SettingsManager(data.result.settings);
           bar.progressbar({value : 10});
+
+          /* TODO: Send these to server
+          var locales = {
+            locale_location : API.user.settings.get("system.locale.location"),
+            locale_time     : API.user.settings.get("system.locale.time-format"),
+            locale_date     : API.user.settings.get("system.locale.date-format"),
+            locale_stamp    : API.user.settings.get("system.locale.timestamp-format")
+          };
+          */
 
           // Initialize desktop etc.
           _Tooltip = new Tooltip();

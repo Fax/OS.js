@@ -13,6 +13,13 @@ FIXES:
 * FIXME [MED]: replace parents() with closest()
 * FIXME [MED]: Fix ContextMenu pop-out problems
 
+APPLICATIONS:
+-------------------------------------------------------------------------------
+* Finish: Mailing
+* Finish: Archiver
+* Finish: Writer
+* TODO: Registry editor (In user information system app)
+
 REWRITE:
 -------------------------------------------------------------------------------
 * [HIG] SettingsManager in core.js

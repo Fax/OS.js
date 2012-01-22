@@ -32,8 +32,8 @@
 OSjs.PanelItems.PanelItemClock = (function($, undefined) {
   "$:nomunge";
 
-  return function(_PanelItem, panel, api, argv) {
-    "_PanelItem:nomunge, panel:nomunge, api:nomunge, argv:nomunge";
+  return function(_PanelItem, panel, API, argv) {
+    "_PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
 
     var _PanelItemClock = _PanelItem.extend({
       init : function() {
@@ -45,13 +45,15 @@ OSjs.PanelItems.PanelItemClock = (function($, undefined) {
         var ret = this._super(pos);
         $(ret).append("<span></span>");
 
-        var d = new Date();
-        $(ret).find("span").html(sprintf("%02d/%02d/%02d %02d:%02s", d.getDate(), d.getMonth(), d.getFullYear(), d.getHours(), d.getMinutes()));
+        //var d = new Date();
+        //$(ret).find("span").html(sprintf("%02d/%02d/%02d %02d:%02s", d.getDate(), d.getMonth(), d.getFullYear(), d.getHours(), d.getMinutes()));
+        $(ret).find("span").html(format_date(API.user.settings.get("system.locale.timestamp-format")));
 
         // Start clock
         this.clock_interval = setInterval(function() {
-          var d = new Date();
-          $(ret).find("span").html(sprintf("%02d/%02d/%02d %02d:%02s", d.getDate(), d.getMonth(), d.getFullYear(), d.getHours(), d.getMinutes()));
+          //var d = new Date();
+          //$(ret).find("span").html(sprintf("%02d/%02d/%02d %02d:%02s", d.getDate(), d.getMonth(), d.getFullYear(), d.getHours(), d.getMinutes()));
+          $(ret).find("span").html(format_date(API.user.settings.get("system.locale.timestamp-format")));
         }, 500);
 
         return ret;

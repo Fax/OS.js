@@ -19,6 +19,8 @@ OSjs.Applications.SystemSettings = (function($, undefined) {
   return function(GtkWindow, Application, API, argv, windows) {
     "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
 
+    var locations = API.user.settings.options("system.locale.location");
+
     ///////////////////////////////////////////////////////////////////////////
     // WINDOWS
     ///////////////////////////////////////////////////////////////////////////
@@ -95,12 +97,70 @@ OSjs.Applications.SystemSettings = (function($, undefined) {
         var self = this;
 
         var args = {
-          "desktop.wallpaper.path"   : self.$element.find(".filechooserbutton_wallpaper input[type=hidden]").val(),
-          "desktop.theme"            : self.$element.find(".combobox_theme").val(),
-          "desktop.font"             : self.$element.find(".combobox_font").val(),
-          "desktop.wallpaper.type"   : self.$element.find(".combobox_background").val(),
-          "desktop.background.color" : self.$element.find(".colorbutton_background").css("background-color")
+          "desktop.wallpaper.path"           : self.$element.find(".filechooserbutton_wallpaper input[type=hidden]").val(),
+          "desktop.theme"                    : self.$element.find(".combobox_theme").val(),
+          "desktop.font"                     : self.$element.find(".combobox_font").val(),
+          "desktop.wallpaper.type"           : self.$element.find(".combobox_background").val(),
+          "desktop.background.color"         : self.$element.find(".colorbutton_background").css("background-color"),
+          "system.locale.location"           : self.$element.find(".entry_locale_location").val(),
+          "system.locale.time-format"        : self.$element.find(".entry_locale_time").val(),
+          "system.locale.date-format"        : self.$element.find(".entry_locale_date").val(),
+          "system.locale.timestamp-format"   : self.$element.find(".entry_locale_timestamp").val()
         };
+
+        // Reset any fields containing errors
+        for ( var x in args ) {
+          if ( args.hasOwnProperty(x) ) {
+            var deflt = API.user.settings.get(x);
+            var reset = false;
+
+            if ( !args[x] ) {
+              args[x] = deflt;
+              reset = true;
+            }
+
+            switch ( x ) {
+              case "system.locale.location" :
+                if ( !reset ) {
+                  var found = false;
+                  for ( var l = 0; l < locations.length; l++ ) {
+                    if ( locations[l] == args[x] ) {
+                      found = true;
+                      break;
+                    }
+                  }
+
+                  if ( !found ) {
+                    args[x] = deflt;
+                    API.system.alert("Invalid locale location given!");
+                  }
+                }
+
+                self.$element.find(".entry_locale_location").val(args[x]);
+              break;
+              case "system.locale.time-format" :
+                if ( !reset ) {
+                  (function() {})(); // FIXME: Validate stamp
+                }
+              break;
+              case "system.locale.date-format" :
+                if ( !reset ) {
+                  (function() {})(); // FIXME: Validate stamp
+                }
+              break;
+              case "system.locale.timestamp-format" :
+                if ( !reset ) {
+                  (function() {})(); // FIXME: Validate stamp
+                }
+              break;
+
+              default :
+              break;
+            }
+
+          }
+        }
+
         API.user.settings.save(args);
       },
 
@@ -169,10 +229,53 @@ OSjs.Applications.SystemSettings = (function($, undefined) {
           el.find(".combobox_background").val(wptype);
           el.find(".colorbutton_background").css("background-color", color);
 
-          el.find(".entry_locale_location").attr("disabled", "disabled").val(locale_location);
-          el.find(".entry_locale_time").attr("disabled", "disabled").val(locale_time);
-          el.find(".entry_locale_date").attr("disabled", "disabled").val(locale_date);
-          el.find(".entry_locale_timestamp").attr("disabled", "disabled").val(locale_stamp);
+          el.find(".entry_locale_location").val(locale_location);
+          el.find(".entry_locale_time").val(locale_time);
+          el.find(".entry_locale_date").val(locale_date);
+          el.find(".entry_locale_timestamp").val(locale_stamp);
+
+          var popup = $("<div><select size=\"10\"></select></div>");
+          var select = popup.find("select").css({
+            width : "100%"
+          });
+
+          select.click(function(ev) {
+            el.find(".entry_locale_location").val(locations[this.selectedIndex]);
+            popup.hide();
+          });
+
+          var _select = function() {
+            var cur = el.find(".entry_locale_location").val();
+            for ( var l = 0; l < locations.length; l++ ) {
+              if ( locations[l] == cur ) {
+                select.get(0).selectedIndex = l;
+                break;
+              }
+            }
+          };
+
+          for ( var l = 0; l < locations.length; l++ ) {
+            var e = $("<option value=\"" + locations[l] + "\">" + locations[l] + "</option>");
+            select.append(e);
+          }
+
+
+          this.$element.append(popup.hide());
+
+          el.find(".entry_locale_location").bind("focus", function() {
+            var iel = $(this);
+            popup.css({
+              position : "absolute",
+              zIndex   : 9999999999,
+              top      : "140px",
+              left     : "17px",
+              height   : popup.find("select").height() + "px",
+              width    : iel.width()  + "px"
+            }).show();
+
+            _select();
+          });
+
 
           el.find(".GtkTab").first().find(".box11").parents("tr").first().remove();
 
