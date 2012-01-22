@@ -6,6 +6,7 @@ TODO:
 * TODO [HIG]: Custom Exception class
 * TODO [MED]: Add/Remove panel item storage
 * TODO [MED]: Panel item sorting and alignments (snapping etc)
+* TODO [---]: Append LICENSE to all code headers
 
 FIXES:
 -------------------------------------------------------------------------------
