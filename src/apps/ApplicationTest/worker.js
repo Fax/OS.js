@@ -3,7 +3,7 @@
  * @file
  * worker.test.js
  * @author Anders Evenrud <andersevenrud@gmail.com>
- * @license GPLv3 (see http://www.gnu.org/licenses/gpl-3.0.txt)
+ * @licence Simplified BSD License
  * @created 2011-12-21
  */
 
