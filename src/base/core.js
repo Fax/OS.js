@@ -101,10 +101,41 @@
   var _TopIndex        = (ZINDEX_WINDOW + 1);             //!< OnTop z-index
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);       //!< OnTop instances index
   var _Running         = false;                           //!< Global running state
+  var _DataRX          = 0;                               //!< Global Data recieve counter
+  var _DataTX          = 0;                               //!< Global Data transmit counter
 
   /////////////////////////////////////////////////////////////////////////////
   // HELPERS
   /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * DoPost() -- Do a POST call
+   * @param   JSON        args      Arguments
+   * @param   Function    callback  Callback function
+   * @function
+   */
+  function DoPost(args, callback) {
+    args = args || {};
+    callback = callback || function() {};
+
+    var ajax_args = {
+      'ajax' : true
+    };
+
+    for ( var i in args ) {
+      if ( args.hasOwnProperty(i) ) {
+        ajax_args[i] = args[i];
+      }
+    }
+
+    _DataTX += (JSON.stringify(ajax_args)).length;
+
+    $.post(AJAX_URI, ajax_args, function(data) {
+      _DataRX += (JSON.stringify(data)).length;
+
+      callback(data);
+    });
+  } // @endfunction
 
   /**
    * MessageBox() -- Crate a message box (alert)
@@ -236,7 +267,7 @@
 
     API.ui.cursor("wait");
 
-    $.post(AJAX_URI, {'ajax' : true, 'action' : 'load', 'app' : app_name}, function(data) {
+    DoPost({'action' : 'load', 'app' : app_name}, function(data) {
       if ( data.success ) {
         _Resources.addResources(data.result.resources, app_name, function() {
 
@@ -665,7 +696,7 @@
       'call' : function(method, argv, callback, show_alert) {
         show_alert = (show_alert === undefined) ? true : (show_alert ? true : false);
 
-        $.post(AJAX_URI, {'ajax' : true, 'action' : 'call', 'method' : method, 'args' : argv}, function(data) {
+        DoPost({'action' : 'call', 'method' : method, 'args' : argv}, function(data) {
           if ( data.success ) {
             callback(data.result, null);
           } else {
@@ -677,6 +708,10 @@
         });
 
         console.info("=> API Call", method, argv);
+      },
+
+      'post' : function(args, callback) {
+        DoPost(args, callback);
       },
 
       'alert' : function(msg, type, callback) {
@@ -1084,7 +1119,6 @@
 
       if ( uri && (callback instanceof Function) ) {
         var ajax_args = {
-          'ajax'      : true,
           'action'    : 'service',
           'arguments' : {
             'type'     : this._type,
@@ -1095,10 +1129,8 @@
           }
         };
 
-        $.post(AJAX_URI, ajax_args, function(data) {
-          callback(data, false);
-        }, function(data) {
-          callback(data, true);
+        DoPost(ajax_args, function(data) {
+          callback(data);
         });
       }
     }
@@ -1608,7 +1640,7 @@
       console.group("Core::login()");
       console.log("Login data:", form);
 
-      $.post(AJAX_URI, {'ajax' : true, 'action' : 'login', 'form' : form}, function(data) {
+      DoPost({'action' : 'login', 'form' : form}, function(data) {
         console.log("Login success:", data.success);
         console.log("Login result:", data.result);
         console.groupEnd();
@@ -1632,7 +1664,7 @@
       console.log("Session duration", duration);
       console.groupEnd();
 
-      $.post(AJAX_URI, {'ajax' : true, 'action' : 'shutdown', 'session' : ssess, 'settings' : ssett, 'duration' : duration}, function(data) {
+      DoPost({'action' : 'shutdown', 'session' : ssess, 'settings' : ssett, 'duration' : duration}, function(data) {
         if ( data.success ) {
           console.log("Core::shutdown()", "Shutting down...");
 
@@ -1728,7 +1760,7 @@
       bar.progressbar({value : 5});
 
       // Load initial data
-      $.post(AJAX_URI, {'ajax' : true, 'action' : 'init', 'time' : time, 'date' : date, 'lang' : lang}, function(data) {
+      DoPost({'action' : 'init', 'time' : time, 'date' : date, 'lang' : lang}, function(data) {
         if ( data.success ) {
           self.online  = true;
 
@@ -1843,7 +1875,7 @@
 
       if ( name ) {
         var session = this.getSession();
-        $.post(AJAX_URI, {'ajax' : true, 'action' : 'snapshotSave', 'session' : {'data' : session, 'name' : name}}, function(data) {
+        DoPost({'action' : 'snapshotSave', 'session' : {'data' : session, 'name' : name}}, function(data) {
           if ( data.success ) {
             callback(true, data.result, session);
           } else {
@@ -1868,7 +1900,7 @@
       create   = create === undefined ? true : (create ? true : false);
 
       if ( name ) {
-        $.post(AJAX_URI, {'ajax' : true, 'action' : 'snapshotLoad', 'session' : {'name' : name}}, function(data) {
+        DoPost({'action' : 'snapshotLoad', 'session' : {'name' : name}}, function(data) {
           if ( data.success ) {
             if ( create ) {
               self.setSession(data.result.session, true);
@@ -2629,7 +2661,7 @@
       var self = this;
       if ( this._running ) {
         if ( this._uuid ) {
-          $.post(AJAX_URI, {'ajax' : true, 'action' : 'flush', 'uuid' : self._uuid}, function(data) {
+          DoPost({'action' : 'flush', 'uuid' : self._uuid}, function(data) {
             console.group("Application::" + self._name + "::" + self._uuid + "::destroy()");
             console.log("flushed", data);
             console.groupEnd();
@@ -3026,7 +3058,6 @@
       var self = this;
       if ( this._uuid ) {
         var pargs = {
-          'ajax'      : true,
           'action'    : 'event',
           'cname'     : self._name ,
           'uuid'      : self._uuid,
@@ -3037,7 +3068,7 @@
           }
         };
 
-        $.post(AJAX_URI, pargs, function(data) {
+        DoPost(pargs, function(data) {
 
           console.group("Application::" + self._name + "::" + self._uuid + "::_event()");
           console.log(ev, args, data);

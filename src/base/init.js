@@ -63,10 +63,10 @@
     Public       : { /* ... */ },
 
     // Dynamic namespace containers
-    Applications : { /* ... */ },
-    Dialogs      : { /* ... */ },
-    PanelItems   : { /* ... */ },
-    Classes      : { /* ... */ }
+    Applications : { /* ... */ }, // @see core.js,Application.class.php - Dynamic
+    Dialogs      : { /* ... */ }, // @see core,Dialog.class.php.js - Dynamic
+    PanelItems   : { /* ... */ }, // @see core.js,Panel.class.php - Dynamic
+    Classes      : { /* ... */ }  // @see classes.js
   };
 
   // Compability cont.

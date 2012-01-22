@@ -51,8 +51,7 @@ OSjs.Applications.SystemUser = (function($, undefined) {
           el.find(".fixed1").append(table);
           el.find(".fixed2").append("<ul></ul>");
 
-          $.post("/", {'ajax' : true, 'action' : 'user'}, function(data) {
-
+          API.system.post({"action" : "user"}, function(data) {
             if ( data.success ) {
               forEach(data.result, function(key, val) {
                 $(table).append($(sprintf("<tr><td class=\"pri\">%s</td><td class=\"sec\">%s</td></tr>", key, val)));

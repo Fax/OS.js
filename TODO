@@ -1,25 +1,36 @@
-SUGGESTIONS:
-* some sort of an application launcher. just an autocomplete search input somewhere in the header bar would be awesome.
-* Internet Explorer IFrame browser does not work
-
-BREAKS:
-  Log output: https://pastee.org/gzkx5
-  Screenshot: http://oi39.tinypic.com/28ktues.jpg
-
-FIXES:
+TODO:
+-------------------------------------------------------------------------------
 * TODO [HIG]: Context menu must show when popping up at bottom off screen
               Remove hack from PanelItemMenu
 * TODO [HIG]: Error messages when opening invalid filetypes in apps!!!!!!
 * TODO [HIG]: Custom Exception class
 * TODO [MED]: Add/Remove panel item storage
 * TODO [MED]: Panel item sorting and alignments (snapping etc)
-* TODO [LOW]: Rewrite settings manager
 * TODO [LOW]: Refresh windows listing files when saving (file monitorig)
-* TODO [---]: Write custom $ library
-* FIXME [HIG]: IE and Opera suffers the same CSS [table] bugs
+
+FIXES:
+-------------------------------------------------------------------------------
 * FIXME [MED]: replace parents() with closest()
 * FIXME [MED]: Fix ContextMenu pop-out problems
 * FIXME [LOW]: Respond with a crash dialog upon Application::Event => "Failed to handle Application"
-* NOTE: http://trac.webkit.org/export/41842/trunk/LayoutTests/scrollbars/overflow-scrollbar-combinations.html
 
-*** There are more TODO/FIXME scattered around in core.js ***
+REWRITE:
+-------------------------------------------------------------------------------
+* [HIG] SettingsManager in core.js
+* [LOW] Write custom $
+
+SUGGESTIONS:
+-------------------------------------------------------------------------------
+* some sort of an application launcher. just an autocomplete search input somewhere in the header bar would be awesome.
+* Internet Explorer IFrame browser does not work
+* http://trac.webkit.org/export/41842/trunk/LayoutTests/scrollbars/overflow-scrollbar-combinations.html
+
+BREAKS:
+-------------------------------------------------------------------------------
+  Log output: https://pastee.org/gzkx5
+  Screenshot: http://oi39.tinypic.com/28ktues.jpg
+
+BROWSER COMPABILITY:
+-------------------------------------------------------------------------------
+* Internet Explorer 9+ Table CSS
+* Opera 11+ Table CSS
