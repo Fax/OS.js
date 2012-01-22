@@ -2816,15 +2816,36 @@
      * @param   Array         mimes         Mime filtering (not required)
      * @param   String        dir           Current directory (not required)
      * @param   String        file          Current file (not required)
+     * @param   bool          check_mime    Check MIME type (Default = true)
      * @return  void
      */
-    defaultFileOpen : function(callback, mimes, dir, file) {
+    defaultFileOpen : function(callback, mimes, dir, file, check_mime) {
+      check_mime = (check_mime === undefined) ? true : (check_mime ? true : false);
+
       if ( !dir && file ) {
         dir = dirname(file);
       }
 
       this.createFileDialog(function(fname, mime) {
-        callback(fname);
+        var cont = true;
+        if ( check_mime ) {
+          if ( mime && mimes && mimes.length ) {
+            var found = false;
+            for ( var i = 0; i < mimes.length; i++ ) {
+              if ( mime == mimes[i] ) {
+                found = true;
+                break;
+              }
+            }
+            cont = found;
+          }
+        }
+
+        if ( cont ) {
+          callback(fname);
+        } else {
+          MessageBox(sprintf(OSjs.Labels.CrashApplicationOpen, basename(fname), mime));
+        }
       }, mimes, "open", dir);
     },
 
