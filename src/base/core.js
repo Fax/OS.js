@@ -2295,7 +2295,6 @@
 
   })();
 
-
   /**
    * SettingsManager -- Settings Manager
    * Uses localSettings (WebStorage) to handle session data
@@ -2303,253 +2302,263 @@
    * @extends Process
    * @class
    */
-  var SettingsManager = (function() {
+  var SettingsManager = Process.extend({
 
-    var _avail = {};
-    var _stores = [];
+    _avail      : {},       //!< Storage registry
+    _stores     : [],       //!< List of names to use when saving etc.
+    _cinterval  : null,     //!< Space checking interval
 
-    return Process.extend({
+    /**
+     * SettingsManager::init() -- Constructor
+     * @param   Object    defaults      Default settings
+     * @constructor
+     */
+    init : function(defaults) {
+      var self = this;
 
-      _cinterval : null,
+      this._avail   = defaults;
+      this._stores  = [];
 
-      /**
-       * SettingsManager::init() -- Constructor
-       * @param   Object    defaults      Default settings
-       * @constructor
-       */
-      init : function(defaults) {
-        _avail = defaults;
-
-        var self = this;
-        var rev = localStorage.getItem("SETTING_REVISION");
-        var force = false;
-        if ( parseInt(rev, 10) !== parseInt(SETTING_REVISION, 10) ) {
-          force = true;
-          localStorage.setItem("SETTING_REVISION", SETTING_REVISION);
-        }
-
-        if ( !localStorage.getItem("applications") ) {
-          localStorage.setItem("applications", JSON.stringify({}));
-        }
-
-        for ( var i in _avail ) {
-          if ( _avail.hasOwnProperty(i) ) {
-            if ( !_avail[i].hidden ) {
-              if ( force || !localStorage.getItem(i) ) {
-                if ( _avail[i].type == "array" ) {
-                  localStorage.setItem(i, (_avail[i].value === undefined) ? _avail[i].options : _avail[i].value);
-                } else if ( _avail[i].type == "list" ) {
-                  localStorage.setItem(i, JSON.stringify(_avail[i].items));
-                } else {
-                  localStorage.setItem(i, _avail[i].value);
-                }
-              }
-              _stores.push(i);
-            } else {
-              if ( force ) {
-                localStorage.removeItem(i);
-              }
-            }
-          }
-        }
-
-        var warnOpen = false;
-        var alertOpen = false;
-        this._cinterval = setInterval(function() {
-          var size = self.getStorageUsage()['localStorage'];
-          if ( size >= WARN_STORAGE_SIZE ) {
-            if ( !warnOpen ) {
-              API.system.alert(sprintf(OSjs.Labels.StorageWarning, size, WARN_STORAGE_SIZE), "warning", function() {
-                warnOpen = false;
-              });
-              warnOpen = true;
-            }
-          }
-          if ( size >= MAX_STORAGE_SIZE ) {
-            if ( !alertOpen ) {
-              API.system.alert(sprintf(OSjs.Labels.StorageAlert, size, MAX_STORAGE_SIZE), "error", function() {
-                alertOpen = false;
-              });
-              alertOpen = true;
-            }
-          }
-        }, STORAGE_SIZE_FREQ);
-
-        console.group("SettingsManager::init()");
-        console.log(_avail);
-        console.log(_stores);
-        console.log(this.getStorageUsage());
-        console.groupEnd();
-
-        this._super("(SettingsManager)", "apps/system-software-update.png", true);
-      },
-
-      /**
-       * SettingsManager::destroy() -- Destructor
-       * @destructor
-       */
-      destroy : function() {
-        _avail = null;
-
-        if ( this._cinterval ) {
-          clearInterval(this._cinterval);
-        }
-        this._cinterval = null;
-
-        this._super();
-      },
-
-      /**
-       * SettingsManager::saveApp() -- Save application data
-       * @param   String    name      Application name
-       * @param   Object    props     Application settings
-       * @return  void
-       */
-      saveApp : function(name, props) {
-        var storage = localStorage.getItem("applications");
-        if ( !storage ) {
-          storage = {};
-        } else {
-          try {
-            storage = JSON.parse(storage);
-          } catch ( e ) {
-            storage = {};
-          }
-        }
-        storage[name] = props;
-
-        localStorage.setItem("applications", JSON.stringify(storage));
-
-        console.group("SettingsManager::saveApp()");
-        console.log(name);
-        console.log(props);
-        console.groupEnd();
-
-        return props;
-      },
-
-      /**
-       * SettingsManager::loadApp() -- Load application data
-       * @param   String    name      Application name
-       * @return  JSON
-       */
-      loadApp : function(name) {
-        var storage = localStorage.getItem("applications");
-        var res;
-        if ( storage ) {
-          try {
-            res = JSON.parse(storage);
-          } catch ( e ) {}
-        }
-
-        if ( (res instanceof Object) ) {
-          if ( res[name] ) {
-
-            console.group("SettingsManager::loadApp()");
-            console.log(name);
-            console.log(res[name]);
-            console.groupEnd();
-
-            return res[name];
-          }
-        }
-
-        return false;
-      },
-
-      /**
-       * SettingsManager::_apply() -- Apply a changeset
-       * @param   Object    settings    Settings Array
-       * @return  void
-       */
-      _apply : function(settings) {
-        for ( var i in settings ) {
-          if ( settings.hasOwnProperty(i) ) {
-            this._set(i, settings[i]);
-          }
-        }
-
-        UploadSettings();
-      },
-
-      /**
-       * SettingsManager::_set() -- Set a storage item by key and value
-       * @param   String    k       Settings Key
-       * @param   Mixed     v       Settings Value
-       * @return  void
-       */
-      _set : function(k, v) {
-        if ( _avail[k] !== undefined ) {
-          localStorage.setItem(k, v);
-        }
-        //  if (e == QUOTA_EXCEEDED_ERR) { (try/catch) // TODO
-      },
-
-      /**
-       * SettingsManager::_get() -- Get a storage item by key
-       * @param   String    k       Settings Key
-       * @param   bool      keys    Return availible options
-       * @param   bool      jsn     Return as parsed JSON
-       * @return  Mixed
-       */
-      _get : function(k, keys, jsn) {
-        var ls = undefined;
-        if ( _avail[k] !== undefined ) {
-          if ( keys && _avail[k] ) {
-            ls = _avail[k].options;
-          } else {
-            if ( _avail[k].hidden ) {
-              ls = _avail[k].value;
-            } else {
-              ls = localStorage.getItem(k);
-            }
-          }
-        }
-        return jsn ? (ls ? (JSON.parse(ls)) : ls) : ls;
-      },
-
-      /**
-       * SettingsManager::getType() -- Get storage item type by key
-       * @param   String    key     Settings Key
-       * @return  String
-       */
-      getType : function(key) {
-        return (_avail[key] ? (_avail[key].type) : null);
-      },
-
-      /**
-       * SettingsManager::getSession() -- Get current Storage session data
-       * @return JSON
-       */
-      getSession : function() {
-        var exp = {};
-        for ( var i = 0; i < _stores.length; i++ ) {
-          exp[_stores[i]] = localStorage.getItem(_stores[i]);
-        }
-        return exp;
-      },
-
-      /**
-       * SettingsManager::getStorageUsage() -- Get storage usage
-       * @return Array
-       */
-      getStorageUsage : function() {
-        var ls = 0;
-
-        for ( var l in localStorage ) {
-          if ( localStorage.hasOwnProperty(l) ) {
-            ls += localStorage[l].length;
-          }
-        }
-
-        return {
-          'localStorage' : ls
-        };
+      // Check for newer versioning
+      var rev = localStorage.getItem("SETTING_REVISION");
+      var force = false;
+      if ( parseInt(rev, 10) !== parseInt(SETTING_REVISION, 10) ) {
+        force = true;
+        localStorage.setItem("SETTING_REVISION", SETTING_REVISION);
       }
 
-    }); // @endclass
+      // Make sure we have all external refs saved
+      if ( !localStorage.getItem("applications") ) {
+        localStorage.setItem("applications", JSON.stringify({}));
+      }
+      if ( !localStorage.getItem("defaults") ) {
+        localStorage.setItem("defaults", JSON.stringify({}));
+      }
+      if ( !localStorage.getItem("session") ) {
+        localStorage.setItem("session", JSON.stringify([]));
+      }
 
-  })();
+      // Now create a registry for internal use (browser storage is plain-text)
+      for ( var i in this._avail ) {
+        if ( this._avail.hasOwnProperty(i) ) {
+          if ( !this._avail[i].hidden ) {
+            if ( force || !localStorage.getItem(i) ) {
+              if ( this._avail[i].type == "array" ) {
+                localStorage.setItem(i, (this._avail[i].value === undefined) ? this._avail[i].options : this._avail[i].value);
+              } else if ( this._avail[i].type == "list" ) {
+                localStorage.setItem(i, JSON.stringify(this._avail[i].items));
+              } else {
+                localStorage.setItem(i, this._avail[i].value);
+              }
+            }
+
+            // Add this type as 'saveable'
+            this._stores.push(i);
+          } else {
+            if ( force ) {
+              localStorage.removeItem(i);
+            }
+          }
+        }
+      }
+
+      // Create space checking interval
+      var warnOpen = false;
+      var alertOpen = false;
+      this._cinterval = setInterval(function() {
+        var size = self.getStorageUsage()['localStorage'];
+        if ( size >= WARN_STORAGE_SIZE ) {
+          if ( !warnOpen ) {
+            API.system.alert(sprintf(OSjs.Labels.StorageWarning, size, WARN_STORAGE_SIZE), "warning", function() {
+              warnOpen = false;
+            });
+            warnOpen = true;
+          }
+        }
+        if ( size >= MAX_STORAGE_SIZE ) {
+          if ( !alertOpen ) {
+            API.system.alert(sprintf(OSjs.Labels.StorageAlert, size, MAX_STORAGE_SIZE), "error", function() {
+              alertOpen = false;
+            });
+            alertOpen = true;
+          }
+        }
+      }, STORAGE_SIZE_FREQ);
+
+      console.group("SettingsManager::init()");
+      console.log(this._avail);
+      console.log(this._stores);
+      console.log(this.getStorageUsage());
+      console.groupEnd();
+
+      this._super("(SettingsManager)", "apps/system-software-update.png", true);
+    },
+
+    /**
+     * SettingsManager::destroy() -- Destructor
+     * @destructor
+     */
+    destroy : function() {
+      this._avail   = {};
+      this._stores  = [];
+
+      if ( this._cinterval ) {
+        clearInterval(this._cinterval);
+      }
+      this._cinterval = null;
+
+      this._super();
+    },
+
+    /**
+     * SettingsManager::saveApp() -- Save application data
+     * @param   String    name      Application name
+     * @param   Object    props     Application settings
+     * @return  void
+     */
+    saveApp : function(name, props) {
+      var storage = localStorage.getItem("applications");
+      if ( !storage ) {
+        storage = {};
+      } else {
+        try {
+          storage = JSON.parse(storage);
+        } catch ( e ) {
+          storage = {};
+        }
+      }
+      storage[name] = props;
+
+      localStorage.setItem("applications", JSON.stringify(storage));
+
+      console.group("SettingsManager::saveApp()");
+      console.log(name);
+      console.log(props);
+      console.groupEnd();
+
+      return props;
+    },
+
+    /**
+     * SettingsManager::loadApp() -- Load application data
+     * @param   String    name      Application name
+     * @return  JSON
+     */
+    loadApp : function(name) {
+      var storage = localStorage.getItem("applications");
+      var res;
+      if ( storage ) {
+        try {
+          res = JSON.parse(storage);
+        } catch ( e ) {}
+      }
+
+      if ( (res instanceof Object) ) {
+        if ( res[name] ) {
+
+          console.group("SettingsManager::loadApp()");
+          console.log(name);
+          console.log(res[name]);
+          console.groupEnd();
+
+          return res[name];
+        }
+      }
+
+      return false;
+    },
+
+    /**
+     * SettingsManager::_apply() -- Apply a changeset
+     * @param   Object    settings    Settings Array
+     * @return  void
+     */
+    _apply : function(settings) {
+      for ( var i in settings ) {
+        if ( settings.hasOwnProperty(i) ) {
+          this._set(i, settings[i]);
+        }
+      }
+
+      UploadSettings();
+    },
+
+    /**
+     * SettingsManager::_set() -- Set a storage item by key and value
+     * @param   String    k       Settings Key
+     * @param   Mixed     v       Settings Value
+     * @return  void
+     */
+    _set : function(k, v) {
+      if ( this._avail[k] !== undefined ) {
+        localStorage.setItem(k, v);
+      }
+      //  if (e == QUOTA_EXCEEDED_ERR) { (try/catch) // TODO
+    },
+
+    /**
+     * SettingsManager::_get() -- Get a storage item by key
+     * @param   String    k       Settings Key
+     * @param   bool      keys    Return availible options
+     * @param   bool      jsn     Return as parsed JSON
+     * @return  Mixed
+     */
+    _get : function(k, keys, jsn) {
+      var ls = undefined;
+      if ( this._avail[k] !== undefined ) {
+        if ( keys && this._avail[k] ) {
+          ls = this._avail[k].options;
+        } else {
+          if ( this._avail[k].hidden ) {
+            ls = this._avail[k].value;
+          } else {
+            ls = localStorage.getItem(k);
+          }
+        }
+      }
+      return jsn ? (ls ? (JSON.parse(ls)) : ls) : ls;
+    },
+
+    /**
+     * SettingsManager::getType() -- Get storage item type by key
+     * @param   String    key     Settings Key
+     * @return  String
+     */
+    getType : function(key) {
+      return (this._avail[key] ? (this._avail[key].type) : null);
+    },
+
+    /**
+     * SettingsManager::getSession() -- Get current Storage session data
+     * @return JSON
+     */
+    getSession : function() {
+      var exp = {};
+      for ( var i = 0; i < this._stores.length; i++ ) {
+        exp[this._stores[i]] = localStorage.getItem(this._stores[i]);
+      }
+      return exp;
+    },
+
+    /**
+     * SettingsManager::getStorageUsage() -- Get storage usage
+     * @return Array
+     */
+    getStorageUsage : function() {
+      var ls = 0;
+
+      for ( var l in localStorage ) {
+        if ( localStorage.hasOwnProperty(l) ) {
+          ls += localStorage[l].length;
+        }
+      }
+
+      return {
+        'localStorage' : ls
+      };
+    }
+
+  }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
   // APPLICATION

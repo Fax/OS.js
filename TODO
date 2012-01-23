@@ -22,7 +22,6 @@ APPLICATIONS:
 
 REWRITE:
 -------------------------------------------------------------------------------
-* [HIG] SettingsManager in core.js
 * [LOW] Write custom $
 
 SUGGESTIONS:
