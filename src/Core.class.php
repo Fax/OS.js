@@ -333,10 +333,20 @@ EOCSS;
 
   /**
    * Do a POST request
-   * @param  Array    $args   Argument list
+   * @param  String    $args   Argument list (raw data)
    * @return Mixed
    */
-  public function doPOST(Array $args) {
+  public function doPOST($raw) {
+    $args = Array();
+
+    if ( $raw ) {
+      try {
+        $args = (Array)JSON::decode($raw, true);
+      } catch ( Exception $e ) {
+        error_log($raw);
+      }
+    }
+
     if ( sizeof($args) ) {
 
       // Require a specific parameter to trigger this function

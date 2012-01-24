@@ -91,7 +91,7 @@ if ( !($json = $core->doGET($_GET)) === false ) {
 }
 
 // POST operations
-if ( !($json = $core->doPOST($_POST)) === false ) {
+if ( !($json = $core->doPOST(file_get_contents('php://input'))) === false ) {
   header("Content-Type: application/json");
   die($json);
 }

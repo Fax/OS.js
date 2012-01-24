@@ -34,8 +34,8 @@
 OSjs.PanelItems.PanelItemWeather = (function($, undefined) {
   "$:nomunge";
 
-  return function(_PanelItem, panel, api, argv) {
-    "_PanelItem:nomunge, panel:nomunge, api:nomunge, argv:nomunge";
+  return function(_PanelItem, panel, API, argv) {
+    "_PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
 
     var _PanelItemWeather = _PanelItem.extend({
       init : function() {
@@ -59,71 +59,65 @@ OSjs.PanelItems.PanelItemWeather = (function($, undefined) {
         span.html("Loading...");
         img.attr("src", self.getImage("severe-alert"));
 
-        $.ajax({
-          'type' : 'post',
-          'url'  : '/',
-          'data' : {'ajax' : true, 'action' : 'call', 'method' : 'readurl', 'args' : url},
-          success : function(data) {
-            if ( data.success ) {
-              var result = null;
-              try {
-                result = JSON.parse(data.result);
-              } catch ( eee) {}
+        var args = {'action' : 'call', 'method' : 'readurl', 'args' : url};
+        API.system.post(args, function(data) {
+          if ( data.success ) {
+            var result = null;
+            try {
+              result = JSON.parse(data.result);
+            } catch ( eee) {}
 
-              if ( result && result.weatherObservation ) {
-                var icon        = "severe-alert";
+            if ( result && result.weatherObservation ) {
+              var icon        = "severe-alert";
 
-                var loc_name    = result.weatherObservation.stationName;
-                var loc_country = result.weatherObservation.countryCode;
-                var temp        = result.weatherObservation.temperature;
-                var tempu       = "C";
-                var clouds      = result.weatherObservation.clouds;
-                var condition   = result.weatherObservation.weatherCondition;
+              var loc_name    = result.weatherObservation.stationName;
+              var loc_country = result.weatherObservation.countryCode;
+              var temp        = result.weatherObservation.temperature;
+              var tempu       = "C";
+              var clouds      = result.weatherObservation.clouds;
+              var condition   = result.weatherObservation.weatherCondition;
 
-                var icons_clouds = {
-                  "clear sky"             : "clear",
-                  "clear sky"             : "clear",
-                  "few clouds"            : "few-clouds",
-                  "scattered clouds"      : "few-clouds",
-                  "broken clouds"         : "few-clouds",
-                  "overcast"              : "overcast",
-                  "vertical visibility"   : "overcast"
-                };
-                var icons_conditions = {
-                  "drizzle"      : "showers-scattered",
-                  "rain"         : "showers",
-                  "showers"      : "showers",
-                  "show"         : "snow",
-                  "snow grains"  : "snow",
-                  "mist"         : "fog",
-                  "fog"          : "fog",
-                  "thunderstorm" : "storm"
-                };
+              var icons_clouds = {
+                "clear sky"             : "clear",
+                "clear sky"             : "clear",
+                "few clouds"            : "few-clouds",
+                "scattered clouds"      : "few-clouds",
+                "broken clouds"         : "few-clouds",
+                "overcast"              : "overcast",
+                "vertical visibility"   : "overcast"
+              };
+              var icons_conditions = {
+                "drizzle"      : "showers-scattered",
+                "rain"         : "showers",
+                "showers"      : "showers",
+                "show"         : "snow",
+                "snow grains"  : "snow",
+                "mist"         : "fog",
+                "fog"          : "fog",
+                "thunderstorm" : "storm"
+              };
 
-                if ( icons_clouds[clouds] ) {
-                  icon = icons_clouds[clouds];
-                }
-                if ( icons_conditions[condition] ) {
-                  icon = icons_conditions[condition];
-                }
-
-                img.attr("src", self.getImage(icon));
-                span.attr("title", sprintf("%s, %s", loc_name, loc_country));
-                span.html(sprintf("%s &deg;%s %s", temp, tempu, clouds));
-              } else {
-                self.crash("No Weather data");
+              if ( icons_clouds[clouds] ) {
+                icon = icons_clouds[clouds];
               }
+              if ( icons_conditions[condition] ) {
+                icon = icons_conditions[condition];
+              }
+
+              img.attr("src", self.getImage(icon));
+              span.attr("title", sprintf("%s, %s", loc_name, loc_country));
+              span.html(sprintf("%s &deg;%s %s", temp, tempu, clouds));
             } else {
               self.crash("No Weather data");
             }
-
-            self.onRedraw();
-          },
-          error : function() {
+          } else {
             self.crash("No Weather data");
-
-            self.onRedraw();
           }
+
+          self.onRedraw();
+        }, function() {
+          self.crash("No Weather data");
+          self.onRedraw();
         });
       },
 

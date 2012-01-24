@@ -144,11 +144,19 @@
 
     _DataTX += (JSON.stringify(ajax_args)).length;
 
+    /*
     $.post(AJAX_URI, ajax_args, function(data) {
       _DataRX += (JSON.stringify(data)).length;
 
       callback(data);
     });
+    */
+    OSjs.Classes.AJAX(AJAX_URI, ajax_args, function(data) {
+      _DataRX += (JSON.stringify(data)).length;
+
+      callback(data);
+    });
+
   } // @endfunction
 
   /**
