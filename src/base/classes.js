@@ -622,11 +622,17 @@
      */
     init : function(type, src, controls, onload, onupdate) {
       if ( type == "audio" ) {
-        this.$element = document.createElement("audio");
+        if ( OSjs.Compability.SUPPORT_AUDIO ) {
+          this.$element = document.createElement("audio");
+        }
       } else if ( type == "video" ) {
-        this.$element = document.createElement("video");
-      } else {
-        throw ("Invalid MediaPlayer type '" + type + "'"); // FIXME
+        if ( OSjs.Compability.SUPPORT_VIDEO ) {
+          this.$element = document.createElement("video");
+        }
+      }
+
+      if ( !this.$element ) {
+        throw ("Cannot create '" + type + "'"); // FIXME
       }
 
       this.type       = type;
