@@ -600,6 +600,253 @@
   });
 
   /////////////////////////////////////////////////////////////////////////////
+  // MediaPlayer
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * OSjs::Classes::MediaPlayer -- Media Player class
+   * @class
+   */
+  OSjs.Classes.MediaPlayer = Class.extend({
+
+    $element  : null,             //!< DOM Element
+    type      : "",               //!< Player type (audio/video)
+    source    : "",               //!< Media source (path)
+    volume    : 1.0,              //!< Playback volume
+    loaded    : false,            //!< Media has been loaded
+    onload    : function() {},    //!< "loadeddata" callback
+    onupdate  : function() {},    //!< "timeupdate" callback
+
+    /**
+     * @constructor
+     */
+    init : function(type, src, controls, onload, onupdate) {
+      if ( type == "audio" ) {
+        this.$element = document.createElement("audio");
+      } else if ( type == "video" ) {
+        this.$element = document.createElement("video");
+      } else {
+        throw ("Invalid MediaPlayer type '" + type + "'"); // FIXME
+      }
+
+      this.type       = type;
+      this.volume     = 1.0;
+      this.onload     = onload || function() {};
+      this.onupdate   = onupdate || function() {};
+      this.loaded     = false;
+
+      if ( controls ) {
+        if ( controls == "invisible" ) {
+          this.$element.style.position = "absolute";
+          this.$element.style.left     = "-1000px";
+          this.$element.style.top      = "-1000px";
+        }
+      } else {
+        this.$element.controls = "controls";
+      }
+
+      var self = this;
+      this.$element.addEventListener("loadeddata", function() {
+        this.loaded = true;
+        self.onload.apply(self, arguments);
+      });
+      this.$element.addEventListener("timeupdate", function() {
+        this.loaded = true;
+        self.onupdate.apply(self, arguments);
+      });
+
+      this.setSource(src, false);
+      this.setVolume(this.volume * 100);
+    },
+
+    /**
+     * @constructor
+     */
+    destroy : function() {
+      var self = this;
+      if ( this.$element ) {
+        this.$element.removeEventListener("loadeddata", function() {
+          this.loaded = true;
+          self.onload.apply(self, arguments);
+        });
+        this.$element.removeEventListener("timeupdate", function() {
+          this.loaded = true;
+          self.onupdate.apply(self, arguments);
+        });
+
+        try {
+          this.$element.parentNode.removeChild(this.$element);
+        } catch (e) {}
+      }
+      this.$element = null;
+      this.type = null;
+      this.source = null;
+      this.volume = null;
+    },
+
+    /**
+     * MediaPlayer::play() -- Start playback
+     * @return void
+     */
+    play : function() {
+      if ( this.$element ) {
+        this.$element.play();
+      }
+    },
+
+    /**
+     * MediaPlayer::pause() -- Pause playback
+     * @return void
+     */
+    pause : function() {
+      if ( this.$element ) {
+        this.$element.pause();
+      }
+    },
+
+    /**
+     * MediaPlayer::stop() -- Stop playback
+     * @return void
+     */
+    stop : function() {
+      if ( this.$element ) {
+        this.$element.pause();
+      }
+    },
+
+    /**
+     * MediaPlayer::setSource() -- Set media source
+     * @param   String    src     Media source
+     * @param   bool      play    Start playback (Default = true)
+     * @return  void
+     */
+    setSource : function(src, play) {
+      play = (play === undefined) ? true : play;
+      this.source = src;
+
+      if ( this.$element ) {
+        this.loaded = false;
+        this.$element.src = this.source;
+        if ( play === true ) {
+          this.play();
+        }
+      }
+    },
+
+    /**
+     * MediaPlayer::setVolume() -- Set playback volume
+     * @param   int     volume      Volume (0 - 100)
+     * @return  void
+     */
+    setVolume : function(volume) {
+      volume = parseInt(volume, 10);
+      if ( volume >= 0 && volume <= 100 ) {
+        this.volume = volume / 100;
+      }
+
+      if ( this.$element ) {
+        this.$element.volume = this.volume;
+      }
+    },
+
+    /**
+     * MediaPlayer::setSeek() -- Set playback time
+     * @param   int     seconds     Seek time in seconds
+     * @return  void
+     */
+    setSeek : function(seconds) {
+      if ( this.$element ) {
+        this.$element.currentTime = parseInt(seconds, 10);
+      }
+    },
+
+    /**
+     * MediaPlayer::getStartTime() -- Get current media starting time
+     * @return int
+     */
+    getStartTime : function() {
+      if ( this.$element ) {
+        //return this.$element.seekable.start();
+        return 0;
+      }
+      return false;
+    },
+
+    /**
+     * MediaPlayer::getCurrentTime() -- Get current media playing time
+     * @return int
+     */
+    getCurrentTime : function() {
+      if ( this.$element ) {
+        return this.$element.currentTime;
+      }
+      return false;
+    },
+
+    /**
+     * MediaPlayer::getEndTime() -- Get current media ending time
+     * @return int
+     */
+    getEndTime : function() {
+      if ( this.$element ) {
+        //return this.$element.seekable.end();
+        return this.$element.duration;
+      }
+      return false;
+    },
+
+    /**
+     * MediaPlayer::getWidth() -- Get player width in pixels
+     * @return int
+     */
+    getWidth : function() {
+      if ( this.$element ) {
+        return parseInt(this.$element.offsetWidth, 10);
+      }
+      return 0;
+    },
+
+    /**
+     * MediaPlayer::getHeight() -- Get player height in pixels
+     * @return int
+     */
+    getHeight : function() {
+      if ( this.$element ) {
+        return parseInt(this.$element.offsetHeight, 10);
+      }
+      return 0;
+    },
+
+    /**
+     * MediaPlayer::getTimestamps() -- Get current timestamps
+     * FIXME: Locale
+     * @return String
+     */
+    getTimestamps : function() {
+      if ( this.$element ) {
+        var curr = this.getCurrentTime();
+        var durr = this.getEndTime();
+
+        var rem  = parseInt(durr - curr, 10),
+            mins = Math.floor(rem / 60, 10),
+            secs = rem - mins * 60;
+
+        var mrem  = durr,
+            mmins = Math.floor(mrem / 60, 10),
+            msecs = mrem - mmins * 60;
+
+        return {
+          'current' : sprintf("%s min %s sec", mins, (secs > 9 ? secs : '0' + secs)),
+          'total'   : sprintf("%s min %s sec", mmins, (msecs > 9 ? msecs : '0' + msecs))
+        };
+      }
+
+      return null;
+    }
+
+  });
+
+  /////////////////////////////////////////////////////////////////////////////
   // AJAX
   /////////////////////////////////////////////////////////////////////////////
 

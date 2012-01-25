@@ -72,6 +72,12 @@ OSjs.Applications.ApplicationMusicPlayer = (function($, undefined) {
 
       EventMenuOpen : function(el, ev) {
         var self = this;
+
+        this.app.defaultFileOpen(function(fname) {
+          self.app.Play(fname);
+
+          //self._argv['path'] = fname;
+        }, ["audio\/*"]);
       },
 
 
@@ -205,15 +211,17 @@ OSjs.Applications.ApplicationMusicPlayer = (function($, undefined) {
         this._super("ApplicationMusicPlayer", argv);
         this._compability = ["audio"];
 
-        this.$player = null;
+        this.player = null;
         this.$slider = null;
       },
 
       destroy : function() {
         this.Stop();
 
+        this.player.destroy();
+        this.player = null;
+
         try {
-          this.$player.remove();
           this.$slider.remove();
         } catch ( e ) {}
 
@@ -221,27 +229,29 @@ OSjs.Applications.ApplicationMusicPlayer = (function($, undefined) {
       },
 
       Resume : function() {
-        try {
-          this.$player.get(0).play();
-        } catch ( e ) {}
+        if ( this.player ) {
+          this.player.play();
+        }
       },
 
       Pause : function() {
-        try {
-          this.$player.get(0).pause();
-        } catch ( e ) {}
+        if ( this.player ) {
+          this.player.pause();
+        }
       },
 
       Stop : function() {
-        try {
-          this.$player.get(0).stop();
-        } catch ( e ) {
-          this.Pause();
+        if ( this.player ) {
+          this.player.stop();
         }
       },
 
       Play : function(fname) {
         var self = this;
+        if ( !this.player ) {
+          return;
+        }
+
         var el = this._root_window.$element;
 
         if ( fname ) {
@@ -270,8 +280,7 @@ OSjs.Applications.ApplicationMusicPlayer = (function($, undefined) {
 
                 el.find(".iconview1").html(fname);
 
-                self.$player.attr("src", "/media" + fname);
-                self.$player.get(0).play();
+                self.player.setSource("/media" + fname);
               }
             }
           }, true);
@@ -282,43 +291,28 @@ OSjs.Applications.ApplicationMusicPlayer = (function($, undefined) {
         var self = this;
 
         var root_window = new Window_window1(self);
-
         this._super(root_window);
-
         root_window.show();
 
         // Do your stuff here
-
-        this.$player = $("<audio>").attr("controls", "controls").css({
-          "position" : "absolute",
-          "top" : "-1000px",
-          "left" : "-1000px"
-        });
-
         this.$slider = root_window.$element.find(".scale1");
 
-        var audio = this.$player.get(0);
-        var loaded = false;
-        var manualSeek = false;
+        var label       = root_window.$element.find(".label4");
+        var src         = (argv && argv.path) ? argv.path : null;
+        var manualSeek  = false;
+        var loaded      = false;
 
-        var label = root_window.$element.find(".label4");
+        this.player = new OSjs.Classes.MediaPlayer("audio", null, "invisible", null, function() {
+          var s = this.getTimestamps();
+          var c = this.getCurrentTime();
+          var d = this.getEndTime();
 
-        this.$player.bind('timeupdate', function() {
-          var rem = parseInt(audio.duration - audio.currentTime, 10),
-              pos = (audio.currentTime / audio.duration) * 100,
-              mins = Math.floor(rem/60,10),
-              secs = rem - mins*60;
+          if ( s ) {
+            label.html(sprintf("<b>Length:</b> %s / %s", s.current, s.total));
+          }
 
-          var mrem  = parseInt(audio.duration, 10),
-              mmins = Math.floor(mrem / 60, 10),
-              msecs = mrem - mmins * 60;
-
-          var lbl1 = sprintf("%s min %s sec", mins, (secs > 9 ? secs : '0' + secs));
-          var lbl2 = sprintf("%s min %s sec", mmins, (msecs > 9 ? msecs : '0' + msecs));
-          label.html(sprintf("<b>Length:</b> %s / %s", lbl1, lbl2));
-
-          if (!manualSeek) { 
-            self.$slider.slider("value", audio.currentTime);
+          if (!manualSeek) {
+            self.$slider.slider("value", c);
           }
 
           if (!loaded) {
@@ -328,24 +322,23 @@ OSjs.Applications.ApplicationMusicPlayer = (function($, undefined) {
               step        : 0.01,
               orientation : "horizontal",
               range       : "min",
-              max         : audio.duration,
+              max         : d,
               animate     : true,
               slide       : function() {
                 manualSeek = true;
               },
               stop        : function(e,ui) {
                 manualSeek = false;
-                audio.currentTime = ui.value;
+                self.player.setSeek(ui.value);
               }
             });
           }
-
         });
 
-        root_window.$element.append(this.$player);
+        root_window.$element.append(this.player.$element);
 
-        if ( argv && argv.path ) {
-          this.Play(argv.path);
+        if ( src ) {
+          this.Play(src);
         }
       }
     });

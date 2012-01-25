@@ -73,8 +73,6 @@ OSjs.Applications.ApplicationVideoPlayer = (function($, undefined) {
         this.$element.find(".ActionClose").click();
       },
 
-
-
       create : function(id, mcallback) {
         var el = this._super(id, mcallback);
         var self = this;
@@ -113,29 +111,24 @@ OSjs.Applications.ApplicationVideoPlayer = (function($, undefined) {
         this._super("ApplicationVideoPlayer", argv);
         this._compability = ["video"];
 
-        this.$player = null;
+        this.player = null;
       },
 
       destroy : function() {
+        this.player.destroy();
+        this.player = null;
         this._super();
       },
 
       Play : function(fname) {
         var self = this;
 
-        self.$player.attr("src", "/media" + fname);
-        self.$player.get(0).play();
-
-        self._root_window.$element.find(".statusbar1").html(fname);
+        this.player.setSource("/media" + fname);
+        this._root_window.$element.find(".statusbar1").html(fname);
       },
 
       Fit : function() {
-        var w = parseInt(this.$player.width(), 10);
-        var h = parseInt(this.$player.height(), 10);
-
-        console.log(w, h);
-
-        this._root_window._resize(w + 10, h + 95);
+        this._root_window._resize(this.player.getWidth() + 10, this.player.getHeight() + 95);
       },
 
       run : function() {
@@ -148,20 +141,15 @@ OSjs.Applications.ApplicationVideoPlayer = (function($, undefined) {
         root_window.show();
 
         // Do your stuff here
-
-        this.$player = $("<video>").attr("controls", "controls").css({
-        });
-
-        root_window.$element.find(".fixed1").append(this.$player);
-
-        this.Fit();
-
-        this.$player.get(0).addEventListener("loadeddata", function() {
+        var src = (argv && argv.path) ? argv.path : null;
+        this.player = new OSjs.Classes.MediaPlayer("video", null, undefined, function() {
           self.Fit();
         });
+        root_window.$element.find(".fixed1").append(this.player.$element);
+        this.Fit();
 
-        if ( argv && argv.path ) {
-          this.Play(argv.path);
+        if ( src ) {
+          this.Play(src);
         }
       }
     });
