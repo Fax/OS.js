@@ -647,11 +647,11 @@
 
       var self = this;
       this.$element.addEventListener("loadeddata", function() {
-        this.loaded = true;
+        self.loaded = true;
         self.onload.apply(self, arguments);
       });
       this.$element.addEventListener("timeupdate", function() {
-        this.loaded = true;
+        self.loaded = true;
         self.onupdate.apply(self, arguments);
       });
 
@@ -666,11 +666,11 @@
       var self = this;
       if ( this.$element ) {
         this.$element.removeEventListener("loadeddata", function() {
-          this.loaded = true;
+          self.loaded = true;
           self.onload.apply(self, arguments);
         });
         this.$element.removeEventListener("timeupdate", function() {
-          this.loaded = true;
+          self.loaded = true;
           self.onupdate.apply(self, arguments);
         });
 
