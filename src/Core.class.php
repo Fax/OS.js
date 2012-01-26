@@ -42,6 +42,7 @@ class Core
     "shutdown"      => "doShutdown",
     "snapshotSave"  => "doSnapshotSave",
     "snapshotLoad"  => "doSnapshotLoad",
+    "updateCache"   => "doCacheUpdate",
     "init"          => "doInit",
     "settings"      => "doSettings",
     "login"         => "doUserLogin",
@@ -425,6 +426,24 @@ EOCSS;
    * @return void
    */
   protected static final function _doBoot(Array $args, Array &$json, Core $inst = null) {
+  }
+
+  /**
+   * Do a 'Core Cache Update' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doCacheUpdate(Array $args, Array &$json, Core $inst = null) {
+    // Initialize Application database
+    Application::init(APPLICATION_BUILD);
+
+    if ( $settings = self::getSettings() ) {
+      $json['success'] = true;
+      $json['result']  = Array(
+        "system.app.registered"   => $settings["system.app.registered"],
+        "system.panel.registered" => $settings["system.panel.registered"]
+      );
+    }
   }
 
   /**

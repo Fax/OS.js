@@ -114,6 +114,8 @@
   var _TopIndex        = (ZINDEX_WINDOW + 1);             //!< OnTop z-index
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);       //!< OnTop instances index
   var _Running         = false;                           //!< Global running state
+  var _AppCache        = [];
+  var _PanelCache      = [];
   var _DataRX          = 0;                               //!< Global Data recieve counter
   var _DataTX          = 0;                               //!< Global Data transmit counter
   var _StartStamp      = -1;                              //!< Starting timestamp
@@ -251,7 +253,7 @@
    */
   function LaunchPanelItem(i, iname, iargs, ialign, panel) {
     if ( InitLaunch(iname) ) {
-      var reg = _Settings._get("system.panel.registered", true);
+      var reg = _PanelCache;
       var resources =  reg[iname] ? reg[iname]['resources'] : [];
 
       _Resources.addResources(resources, null, function() {
@@ -423,7 +425,7 @@
       }
 
       var default_app = null;
-      var apps = _Settings._get("system.app.registered", true);
+      var apps = _AppCache;
       var found = [];
       var list = [];
       var inmime = mime.split("/");
@@ -1016,7 +1018,7 @@
       },
 
       'applications' : function() {
-        return  _Settings._get("system.app.registered", true);
+        return  _AppCache;
       }
     }
 
@@ -1812,6 +1814,7 @@
 
           // Initialize settings
           _Settings = new SettingsManager(data.result.settings);
+
           bar.progressbar({value : 10});
 
           // Initialize desktop etc.
@@ -2452,6 +2455,8 @@
       console.log(this.getStorageUsage());
       console.groupEnd();
 
+      this.updateCache();
+
       this._super("(SettingsManager)", "apps/system-software-update.png", true);
     },
 
@@ -2527,6 +2532,33 @@
       }
 
       return false;
+    },
+
+    /**
+     * SettingsManager::updateCache() -- Update application and panel cache
+     * @param   bool    fetch     Fetch from server
+     * @return  void
+     */
+    updateCache : function(fetch) {
+      var self = this;
+      if ( fetch ) {
+        DoPost({'action' : 'updateCache'}, function(data) {
+          if ( data.result ) {
+            if ( data.result["system.panel.registered"] ) {
+              self._set("system.panel.registered", data.result["system.panel.registered"]);
+            }
+            if ( data.result["system.app.registered"] ) {
+              self._set("system.app.registered", data.result["system.app.registered"]);
+            }
+          }
+
+          _PanelCache = self._get("system.panel.registered", true);
+          _AppCache   = self._get("system.app.registered", true);
+        });
+      } else {
+        _PanelCache = this._get("system.panel.registered", true);
+        _AppCache   = this._get("system.app.registered", true);
+      }
     },
 
     /**
@@ -4450,7 +4482,7 @@
         }
 
         var pitem = new OSjs.Dialogs.PanelItemOperationDialog(OperationDialog, API, [this, function(diag) {
-          var items = _Settings._get("system.panel.registered", true);
+          var items = _PanelCache;
           var name, li, current, selected;
 
           for ( name in items ) {
@@ -6220,4 +6252,3 @@
   }; // @endfunction
 
 })($);
-

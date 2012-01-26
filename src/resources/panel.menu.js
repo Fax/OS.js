@@ -32,8 +32,8 @@
 OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
   "$:nomunge";
 
-  return function(_PanelItem, panel, api, argv) {
-    "_PanelItem:nomunge, panel:nomunge, api:nomunge, argv:nomunge";
+  return function(_PanelItem, panel, API, argv) {
+    "_PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
 
     function CreateMenu(items, level) {
       var ul = $("<ul class=\"GtkMenu\"></ul>");
@@ -64,17 +64,32 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
 
     var _PanelItemMenu = _PanelItem.extend({
 
+      menu : null,
+      menu_el : null,
+
       init : function(title, icon, menu) {
         this._super("PanelItemMenu");
         this._named = "Launcher Menu";
 
         this.title = title || "Launch Application";
         this.icon = '/img/icons/16x16/' + (icon || 'apps/system-software-install.png');
+      },
+
+      create_menu : function(el) {
+        var self = this;
+
+        if ( this.menu ) {
+          this.menu = null;
+        }
+        if ( this.menu_el ) {
+          this.menu_el.remove();
+          this.menu_el = null;
+        }
 
         var menu_items = menu || null;
         if ( menu_items === null ) {
           var o;
-          var apps = api.session.applications();
+          var apps = API.session.applications();
           var cats = {
             "development" : ["Development", "categories/applications-development.png", []],
             "games"       : ["Games", "categories/applications-games.png", []],
@@ -94,7 +109,7 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
                 var it = {
                   "title" : o.title,
                   "method" : function() {
-                    api.system.launch(apn);
+                    API.system.launch(apn);
                   },
                   "icon" : o.icon.match(/^\/img/) ? o.icon : ("/img/icons/16x16/" + o.icon)
                 };
@@ -123,30 +138,10 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
         }
 
         this.menu = menu_items;
-      },
-
-      create : function(pos) {
-        var self = this;
-        var el = this._super(pos);
 
         var menu = CreateMenu(this.menu);
-
-        var img = $("<img src=\"" + this.icon + "\" title=\"" + this.title + "\" class=\"TT\" />");
-        $(el).addClass("GtkCustomMenu");
-        $(el).append(img);
         $(el).append(menu);
-        $(el).click(function() {
-          $(el).find(".GtkMenu:first").show();
-
-          // TODO -- REMOVE ME : GLOBAL FIX
-          var mit = $(el).find("ul.GtkMenu:first");
-          var ppos = self._panel.pos;
-          if ( ppos == "bottom" ) {
-            mit.css("margin-top", "-" + (mit.height() + 10) + "px");
-          } else {
-            mit.css("margin-top", "0px");
-          }
-        });
+        this.menu_el = menu;
 
         var last_menu = null;
         el.find(".GtkImageMenuItem").each(function() {
@@ -180,6 +175,30 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
             }
           });
         });
+      },
+
+      create : function(pos) {
+        var self = this;
+        var el = this._super(pos);
+
+        var img = $("<img src=\"" + this.icon + "\" title=\"" + this.title + "\" class=\"TT\" />");
+        $(el).addClass("GtkCustomMenu");
+        $(el).append(img);
+        $(el).click(function() {
+          self.create_menu(el);
+
+          setTimeout(function() {
+          $(el).find(".GtkMenu:first").show();
+            // TODO -- REMOVE ME : GLOBAL FIX
+            var mit = $(el).find("ul.GtkMenu:first");
+            var ppos = self._panel.pos;
+            if ( ppos == "bottom" ) {
+              mit.css("margin-top", "-" + (mit.height() + 10) + "px");
+            } else {
+              mit.css("margin-top", "0px");
+            }
+          }, 0);
+        });
 
         $(document).click(function(ev) {
           var t = $(ev.target || ev.srcElement);
@@ -188,7 +207,6 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
           }
         });
 
-
         return el;
       },
 
@@ -196,6 +214,11 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
         if ( this.menu ) {
           this.menu = null;
         }
+        if ( this.menu_el ) {
+          this.menu_el.remove();
+          this.menu_el = null;
+        }
+
         this._super();
       }
 
