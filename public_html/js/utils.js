@@ -497,6 +497,11 @@ function get_path(path) {
   return ("/" + (abs.length ? abs.join("/") : "/")).replace(/\/\//g, '/');
 }
 
+/**
+ * Format date like PHP
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @return String
+ */
 function format_date(str, now) {
   now = (now || new Date());
   var rep = {
