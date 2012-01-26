@@ -150,9 +150,11 @@ class Compiler
       }
 
       // Skip application
-      if ( !$project_enabled ) {
-        print "\tNot enabled...skipping...!\n";
-        return -1;
+      if ( ENV_PRODUCTION ) {
+        if ( !$project_enabled ) {
+          print "\tNot enabled...skipping...!\n";
+          return -1;
+        }
       }
 
       // Fallbacks
