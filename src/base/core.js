@@ -1607,8 +1607,12 @@
      * @destructor
      */
     destroy : function() {
+      console.group("Core::destroy()");
+
       // Unbind global events
       if ( this.running ) {
+        console.log("Unbinding events...");
+
         $(document).unbind("keydown",     this.global_keydown);
         $(document).unbind("mousedown",   this.global_mousedown);
         $(document).unbind("mouseup",     this.global_mouseup);
@@ -1628,24 +1632,32 @@
         }
       }
 
+      console.log("Shutting down 'Tooltip'");
       if ( _Tooltip ) {
         _Tooltip.destroy();
       }
+      console.log("Shutting down 'Menu'");
       if ( _Menu ) {
         _Menu.destroy();
       }
+      console.log("Shutting down 'Desktop'");
       if ( _Desktop ) {
         _Desktop.destroy();
       }
+      console.log("Shutting down 'WindowManager'");
       if ( _WM ) {
         _WM.destroy();
       }
+      console.log("Shutting down 'SettingsManager'");
       if ( _Settings ) {
         _Settings.destroy();
       }
+      console.log("Shutting down 'ResourceManager'");
       if ( _Resources ) {
         _Resources.destroy();
       }
+
+      console.log("Nulling instance...");
 
       _Core       = null;
       _Resources  = null;
@@ -1659,10 +1671,13 @@
       _TopIndex   = 11;
 
       // Try to remove remaining events
+      console.log("Unbinding remaining...");
       try {
         $("*").unbind();
         $("*").die();
       } catch ( eee ) { }
+
+      console.groupEnd();
 
       this._super();
     },
@@ -1710,9 +1725,7 @@
         if ( data.success ) {
           console.log("Core::shutdown()", "Shutting down...");
 
-          setTimeout(function() {
-            OSjs.__Stop();
-          }, 100);
+          OSjs.__Stop();
         } else {
           MessageBox(data.error);
         }
@@ -1727,6 +1740,10 @@
     run : function() {
       var self = this;
 
+      if ( this.running ) {
+        return;
+      }
+
       var load    = $("#Loading");
       var bar     = $("#LoadingBar");
       var date    = (new Date()).toLocaleString();
@@ -1739,6 +1756,7 @@
       // Load initial data
       DoPost({'action' : 'init', 'date' : date}, function(data) {
         if ( data.success ) {
+          self.running = true;
           self.online  = true;
 
           // Initialize resources
@@ -2285,16 +2303,18 @@
        * @return  void
        */
       addResources : function(res, app, callback) {
-        console.group("ResourceManager::addResources");
-        console.log("Adding", res);
-        console.log("Application", app);
-        console.groupEnd();
+        if ( res ) {
+          console.group("ResourceManager::addResources");
+          console.log("Adding", res);
+          console.log("Application", app);
+          console.groupEnd();
 
-        var i = 0;
-        var l = res.length;
+          var i = 0;
+          var l = res.length;
 
-        for ( i; i < l; i++ ) {
-          this.addResource(res[i], app);
+          for ( i; i < l; i++ ) {
+            this.addResource(res[i], app);
+          }
         }
 
         callback();
@@ -2629,6 +2649,7 @@
     destroy : function() {
       var self = this;
       if ( this._running ) {
+        /*
         if ( this._uuid ) {
           DoPost({'action' : 'flush', 'uuid' : self._uuid}, function(data) {
             console.group("Application::" + self._name + "::" + self._uuid + "::destroy()");
@@ -2636,6 +2657,7 @@
             console.groupEnd();
           });
         }
+        */
 
         this._saveStorage();      // Save storage settings
         this._clearWorkers();     // Clear WebWorkers
