@@ -142,7 +142,7 @@ OSjs.Applications.ApplicationVideoPlayer = (function($, undefined) {
 
         // Do your stuff here
         var src = (argv && argv.path) ? argv.path : null;
-        this.player = new OSjs.Classes.MediaPlayer("video", null, undefined, function() {
+        this.player = new OSjs.Classes.VideoPlayer(null, undefined, function() {
           self.Fit();
         });
         root_window.$element.find(".fixed1").append(this.player.$element);

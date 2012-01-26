@@ -604,10 +604,10 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * OSjs::Classes::MediaPlayer -- Media Player class
+   * MediaPlayer -- Media Player class
    * @class
    */
-  OSjs.Classes.MediaPlayer = Class.extend({
+  var MediaPlayer = Class.extend({
 
     $element  : null,             //!< DOM Element
     type      : "",               //!< Player type (audio/video)
@@ -850,6 +850,26 @@
       return null;
     }
 
+  });
+
+  /**
+   * OSjs::Classes::MusicPlayer -- Music Player class
+   * @class
+   */
+  OSjs.Classes.MusicPlayer = MediaPlayer.extend({
+    init : function(src, controls, onload, onupdate) {
+      this._super("audio", src, controls, onload, onupdate);
+    }
+  });
+
+  /**
+   * OSjs::Classes::VideoPlayer -- Video Player class
+   * @class
+   */
+  OSjs.Classes.VideoPlayer = MediaPlayer.extend({
+    init : function(src, controls, onload, onupdate) {
+      this._super("video", src, controls, onload, onupdate);
+    }
   });
 
   /////////////////////////////////////////////////////////////////////////////

@@ -302,7 +302,7 @@ OSjs.Applications.ApplicationMusicPlayer = (function($, undefined) {
         var manualSeek  = false;
         var loaded      = false;
 
-        this.player = new OSjs.Classes.MediaPlayer("audio", null, "invisible", null, function() {
+        this.player = new OSjs.Classes.MusicPlayer(null, "invisible", null, function() {
           var s = this.getTimestamps();
           var c = this.getCurrentTime();
           var d = this.getEndTime();
