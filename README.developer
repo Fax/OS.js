@@ -54,8 +54,8 @@ New Application:
 * Create Glade Interface file, place in 'src/apps/ApplicationXXX.glade'
 * Create XML build-file, place in 'src/apps/ApplicationXXX.xml'
 * Copy 'src/build/ApplicationXXX.class.php' to 'src/apps/ApplicationXXX/'
-* Copy 'src/build/apps/app.XXX.js' to 'src/apps/ApplicationXXX/main.js'
-* Copy 'src/build/apps/app.XXX.css' to 'src/apps/ApplicationXXX/main.css'
+* Copy 'src/build/apps/ApplicationXXX.js' to 'src/apps/ApplicationXXX/main.js'
+* Copy 'src/build/apps/ApplicationXXX.css' to 'src/apps/ApplicationXXX/main.css'
 * Run './bin/minimize-scripts.php' if you want minimized scripts for production servers
 
 Update:

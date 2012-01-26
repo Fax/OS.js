@@ -1,0 +1,559 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Convert Glade+XML into OSjs application
+ *
+ * TODO: ClorChooseButton as FileChoosButton
+ *
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ */
+
+require "header.php";
+require PATH_PROJECT_LIB . "/Glade.class.php";
+
+$root = PATH_APPS . "/";
+$config = APPLICATION_BUILD;
+
+$doc = new DomDocument();
+$doc->xmlVersion    = "1.0";
+$doc->formatOutput  = true;
+$doc->encoding      = 'UTF-8';
+
+$build = isset($argv[1]) && $argv[1] == "build";
+
+$root_node = $doc->createElement("applications");
+
+function create_php($cname) {
+  return <<<EOPHP
+<?php
+/*!
+ * @file
+ * Contains {$cname} Class
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
+ * @created 2011-05-23
+ */
+
+/**
+ * {$cname} Class
+ *
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @package OSjs.Applications
+ * @licence Simplified BSD License
+ * @class
+ */
+class {$cname}
+  extends Application
+{
+
+  /**
+   * Create a new instance
+   */
+  public function __construct() {
+    parent::__construct();
+  }
+}
+
+
+?>
+EOPHP;
+}
+
+function create_js_root($cname, $windows, Array $compability) {
+  $wins = implode("\n", $windows);
+  $pre_code = "";
+  $aft_code = "";
+  $root_window = "";
+
+  if ( $windows ) {
+    $keys = array_keys($windows);
+    $win = reset($keys);
+    $root_window = "root_window";
+    $pre_code = <<<EOJAVASCRIPT
+        var root_window = new Window_{$win}(self);
+EOJAVASCRIPT;
+    $aft_code = <<<EOJAVASCRIPT
+        root_window.show();
+EOJAVASCRIPT;
+  }
+
+  $compability = json_encode($compability);
+
+
+  $template = <<<EOJAVASCRIPT
+/*!
+ * Application: {$cname}
+ *
+ * @package OSjs.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
+ * @class
+ */
+OSjs.Applications.{$cname} = (function(\$, undefined) {
+  "$:nomunge";
+
+  /**
+   * @param GtkWindow     GtkWindow            GtkWindow API Reference
+   * @param Application   Application          Application API Reference
+   * @param API           API                  Public API Reference
+   * @param Object        argv                 Application arguments (like cmd)
+   * @param Array         windows              Application windows from session (restoration)
+   */
+  return function(GtkWindow, Application, API, argv, windows) {
+    "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
+
+    ///////////////////////////////////////////////////////////////////////////
+    // WINDOWS
+    ///////////////////////////////////////////////////////////////////////////
+
+%s
+
+    ///////////////////////////////////////////////////////////////////////////
+    // APPLICATION
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Main Application Class
+     * @class
+     */
+    var __{$cname} = Application.extend({
+
+      init : function() {
+        this._super("{$cname}", argv);
+        this._compability = {$compability};
+      },
+
+      destroy : function() {
+        this._super();
+      },
+
+      run : function() {
+        var self = this;
+
+%s
+
+        this._super({$root_window});
+
+%s
+
+        // Do your stuff here
+      }
+    });
+
+    return new __{$cname}();
+  };
+})(\$);
+
+EOJAVASCRIPT;
+
+  return sprintf($template, $wins, $pre_code, $aft_code);
+}
+
+function create_js($cname, $window, $content, $properties, $signals, Array $mimes) {
+  //$dialog = $properties['type'] == "dialog" ? 'true' : 'false';
+  $dialog = "false";
+  $content = addslashes(str_replace("\n", "", preg_replace("/\s+/", " ", $content)));
+  $mimes = json_encode($mimes);
+
+  $template = <<<EOJAVASCRIPT
+
+    /**
+     * GtkWindow Class
+     * @class
+     */
+    var Window_{$window} = GtkWindow.extend({
+
+      init : function(app) {
+        this._super("Window_{$window}", $dialog, app, windows);
+        this._content = $("{$content}").html();
+%s
+      },
+
+      destroy : function() {
+        this._super();
+      },
+
+%s
+
+      create : function(id, mcallback) {
+        var el = this._super(id, mcallback);
+        var self = this;
+
+        if ( el ) {
+%s
+          // Do your stuff here
+
+          return true;
+        }
+
+        return false;
+      }
+    });
+
+EOJAVASCRIPT;
+
+  $js_methods = "";
+  $js_run = "";
+  $js_init = "";
+  foreach ( $properties as $pk => $pv ) {
+    if ( in_array($pk, Array("type")) ) {
+      continue;
+    }
+
+    $pk = "_{$pk}";
+
+    if ( is_bool($pv) ) {
+      $pv = $pv ? 'true' : 'false';
+    } else {
+      if ( !$pv ) {
+        $pv = "null";
+      } else {
+        if ( !is_numeric($pv) ) {
+          $pv = "'{$pv}'";
+        }
+      }
+    }
+    $js_init .= "        this.{$pk} = $pv;\n";
+  }
+
+  foreach ( $signals as $obj => $evs ) {
+    foreach ( $evs as $ev_type => $ev_handler ) {
+      $ev_code = "";
+
+      if ( $ev_handler == "MenuOpen" ) {
+        $ev_code = <<<EOJAVASCRIPT
+
+        var my_callback = function(fname) {}; // FIXME
+        var my_mimes    = {$mimes};
+
+        this.app.createFileDialog(function(fname) {
+          my_callback(fname);
+
+          //self._argv['path'] = fname;
+        }, my_mimes);
+
+EOJAVASCRIPT;
+      } else if ( $ev_handler == "MenuSave" ) {
+        $ev_code = <<<EOJAVASCRIPT
+
+        var my_filename = ""; // FIXME
+        var my_content  = ""; // FIXME
+        var my_callback = function(fname) {}; // FIXME
+
+        API.system.call("write", {'file' : my_filename, 'content' : my_content}, function(result, error) {
+          if ( result ) {
+            my_callback(my_filename); // Core handled errors...
+
+            //self._argv['path'] = my_filename;
+          }
+        });
+
+EOJAVASCRIPT;
+      } else if ( $ev_handler == "MenuSaveAs" ) {
+        $ev_code = <<<EOJAVASCRIPT
+
+        var my_callback = function(fname, fmime) {}; // FIXME
+        var my_mimes    = {$mimes};
+
+        this.app.createFileDialog(function(fname, fmime) {
+          my_callback(fname, fmime);
+
+          //self._argv['path'] = fname;
+        }, my_mimes, "save");
+
+EOJAVASCRIPT;
+      } else if ( $ev_handler == "MenuClose" || $ev_handler == "MenuQuit" || $ev_handler == "Close" || $ev_handler == "Quit" ) {
+        $ev_code = <<<EOJAVASCRIPT
+
+        this.\$element.find(".ActionClose").click();
+
+EOJAVASCRIPT;
+      } else if ( $ev_handler == "MenuTextCopy" ) {
+        $ev_code = <<<EOJAVASCRIPT
+        var my_mimes    = {$mimes};
+        this.app._clipboard("copy");
+EOJAVASCRIPT;
+      } else if ( $ev_handler == "MenuTextPaste" ) {
+        $ev_code = <<<EOJAVASCRIPT
+        var my_mimes    = {$mimes};
+        this.app._clipboard("paste");
+EOJAVASCRIPT;
+      } else if ( $ev_handler == "MenuTextCut" ) {
+        $ev_code = <<<EOJAVASCRIPT
+        var my_mimes    = {$mimes};
+        this.app._clipboard("cut");
+EOJAVASCRIPT;
+      } else if ( $ev_handler == "MenuTextSelectAll" ) {
+        $ev_code = <<<EOJAVASCRIPT
+        var my_mimes    = {$mimes};
+        this.app._clipboard("select");
+EOJAVASCRIPT;
+      } else if ( $ev_handler == "MenuTextDelete" ) {
+        $ev_code = <<<EOJAVASCRIPT
+        var my_mimes    = {$mimes};
+        this.app._clipboard("delete");
+EOJAVASCRIPT;
+      } else {
+        if ( $ev_type == "file-set" ) {
+          $ev_code = <<<EOJAVASCRIPT
+
+        var my_mimes    = {$mimes};
+        var my_path     = self.\$element.find(".{$obj} input[type=text]").val();
+
+        this.app.createFileDialog(function(fname) {
+          self.\$element.find(".{$obj} input[type=text]").val(fname);
+          self.\$element.find(".{$obj} input[type=hidden]").val(fname);
+
+          //self._argv['path'] = fname;
+        }, my_mimes, "open", dirname(my_path));
+
+EOJAVASCRIPT;
+        }
+      }
+
+      $js_methods .= <<<EOJAVASCRIPT
+
+      Event{$ev_handler} : function(el, ev) {
+        var self = this;
+
+{$ev_code}
+      },
+
+
+EOJAVASCRIPT;
+
+      if ( $ev_type == "file-set" ) {
+            $js_run .= <<<EOJAVASCRIPT
+
+          el.find(".{$obj} button").click(function(ev) {
+            self.Event{$ev_handler}(this, ev);
+          });
+
+EOJAVASCRIPT;
+
+      } else if ( $ev_type == "input-activate" ) {
+            $js_run .= <<<EOJAVASCRIPT
+
+          el.find(".{$obj}").keypress(function(ev) {
+            var k = ev.keyCode || ev.which;
+            if ( k == 13 ) {
+              self.Event{$ev_handler}(this, ev);
+            }
+          });
+
+EOJAVASCRIPT;
+      } else {
+
+            $js_run .= <<<EOJAVASCRIPT
+
+          el.find(".{$obj}").{$ev_type}(function(ev) {
+            self.Event{$ev_handler}(this, ev);
+          });
+
+EOJAVASCRIPT;
+      }
+
+    }
+  }
+
+  return sprintf($template, $js_init, $js_methods, $js_run);
+}
+
+function create_css($cname) {
+  return <<<EOCSS
+@charset "UTF-8";
+/*!
+ * Application: {$cname}
+ *
+ * @package OSjs.Applications
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
+ */
+
+.{$cname} {
+
+}
+
+EOCSS;
+}
+
+if ( $dh  = opendir($root) ) {
+  while (false !== ($filename = readdir($dh))) {
+    if ( preg_match("/^(Application|System)(.*)$/", $filename) ) {
+      $path = $root . $filename . "/metadata.xml";
+      if ( !file_exists($path) )
+        continue;
+
+      $xml = new SimpleXmlElement(file_get_contents($path));
+
+      $gfilename = str_replace(basename($path), ((string) $xml['schema']), $path);
+      $cname = str_replace(".xml", "", $filename);
+      $class_file = (string) $xml['file'];
+
+      if ( file_exists(PATH_APPS . "/{$cname}/{$class_file}") ) {
+        require_once PATH_APPS . "/{$cname}/{$class_file}";
+      }
+
+      echo "Building {$filename} " . basename($gfilename) . "...\n";
+
+      $xml_app_title  = Application::APPLICATION_TITLE;
+      $xml_app_icon   = Application::APPLICATION_ICON;
+      $xml_app_cat    = "unknown";
+      $xml_app_system = false;
+      $xml_app_file   = (string) $xml['file'];
+
+      if ( isset($xml['category']) ) {
+        $xml_app_cat = (string) $xml['category'];
+      }
+
+      $break = false;
+      foreach ( $xml->property as $p ) {
+        $val = (string) $p;
+        switch ( (string) $p['name'] ) {
+          case "enabled" :
+            if ( $val == "false" ) {
+              $break = true;
+              break;
+            }
+            break;
+          case "title" :
+            if ( $val ) {
+              $xml_app_title = $val;
+            }
+            break;
+          case "icon" :
+            if ( $val ) {
+              $xml_app_icon = $val;
+            }
+            break;
+          case "system" :
+            if ( $val == "true" ) {
+              $xml_app_system = true;
+              $xml_app_cat = "system";
+            }
+            break;
+        }
+      }
+
+      if ( $break ) {
+        print "\tSkipped!\n";
+        continue;
+      }
+
+      $comp = Array();
+      if ( isset($xml->compability) ) {
+        foreach ( $xml->compability as $c ) {
+          $comp[] = (string) $c;
+        }
+      }
+
+      $mimes = Array();
+      if ( isset($xml->mime) ) {
+        foreach ( $xml->mime as $r ) {
+          $mimes[] = (string) $r;
+        }
+      }
+
+
+      if ( $glade = Glade::parse($gfilename) ) {
+        $windows = $glade->getWindows();
+
+        $node = $doc->createElement("application");
+        $node->setAttribute("name", $xml['name']);
+
+        $node->setAttribute("title", $xml_app_title);
+        $node->setAttribute("icon", $xml_app_icon);
+        $node->setAttribute("system", $xml_app_system ? "true" : "false");
+        $node->setAttribute("category", $xml_app_cat);
+        $node->setAttribute("class", $cname);
+        $node->setAttribute("file", $class_file);
+
+        $wins = Array();
+        $html = Array();
+
+        foreach ( $windows as $id => $window ) {
+          if ( !$window['properties']['title'] ) {
+            $window['properties']['title'] = $xml_app_title;
+            //$window['properties']['title'] = constant("{$cname}::APPLICATION_TITLE");
+          }
+          if ( !$window['properties']['icon'] ) {
+            $window['properties']['icon'] = $xml_app_icon;
+            //$window['properties']['icon'] = constant("{$cname}::APPLICATION_ICON");
+          }
+
+          $wins[$id] = create_js($cname, $id, $window['content'], $window['properties'], $window['signals'], $mimes);
+
+          $win_node = $doc->createElement("window");
+          $win_node->setAttribute("id", $id);
+
+          $prop_node = $doc->createElement("property");
+          $prop_node->setAttribute("name", "properties");
+          $prop_node->appendChild($doc->createCDATASection(json_encode($window['properties'])));
+          $win_node->appendChild($prop_node);
+
+          /*
+          $html_node = $doc->createElement("property");
+          $html_node->setAttribute("name", "content");
+          $html_node->appendChild($doc->createCDATASection($window['content']));
+          $win_node->appendChild($html_node);
+           */
+          $html[] = $window['content'];
+
+          $node->appendChild($win_node);
+        }
+
+        foreach ( $xml->resource as $r ) {
+          $r = (string) $r;
+          $res_node = $doc->createElement("resource");
+          $res_node->appendChild(new DomText($r));
+          $node->appendChild($res_node);
+        }
+
+        foreach ( $mimes as $r ) {
+          $mime_node = $doc->createElement("mime");
+          $mime_node->appendChild(new DomText($r));
+          $node->appendChild($mime_node);
+        }
+
+        $script = create_js_root($cname, $wins, $comp);
+        $style = create_css($cname);
+        $html = implode("\n", $html);
+        $php = create_php($cname);
+        /*
+        $script_node = $doc->createElement("script");
+        $script_node->appendChild($doc->createCDATASection($script));
+        $node->appendChild($script_node);
+
+        $style_node = $doc->createElement("style");
+        $style_node->appendChild($doc->createCDATASection($style));
+        $node->appendChild($style_node);
+         */
+
+        $utype = preg_match("/^System/", $cname) ? "sys" : "app";
+        $ucase = strtolower(preg_replace("/^System|Application/", "", $cname));
+
+        $css_path  = PATH_PROJECT_BUILD . "/apps/{$utype}.{$ucase}.css";
+        $js_path   = PATH_PROJECT_BUILD . "/apps/{$utype}.{$ucase}.js";
+        $html_path = PATH_PROJECT_BUILD . "/apps/{$utype}.{$ucase}.html";
+        $php_path  = PATH_PROJECT_BUILD . "/apps/{$xml_app_file}";
+
+        file_put_contents($css_path, $style);
+        file_put_contents($js_path, $script);
+        file_put_contents($html_path, $html);
+        file_put_contents($php_path, $php);
+
+        $root_node->appendChild($node);
+        echo "\tSuccess!\n";
+      } else {
+        echo "\tFailed!\n";
+      }
+
+    }
+  }
+}
+$doc->appendChild($root_node);
+
+$xml = $doc->saveXML();
+file_put_contents($config, $xml);
+
+?>
