@@ -1,11 +1,15 @@
 <?php
-  $str = '  <script type="text/javascript" src="/?resource=%s"></script>';
-  $resources = Array();
-  foreach ( Dialog::$Registered as $name => $opts ) {
-    foreach ( $opts["resources"] as $res ) {
-      $resources[] = sprintf($str, $res);
-    }
+
+require PATH_PROJECT_SRC . "/Dialog.class.php";
+
+$str = '  <script type="text/javascript" src="/?resource=%s"></script>';
+$resources = Array();
+foreach ( Dialog::$Registered as $name => $opts ) {
+  foreach ( $opts["resources"] as $res ) {
+    $resources[] = sprintf($str, $res);
   }
+}
+
 ?>
 
 <!DOCTYPE html>

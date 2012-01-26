@@ -105,10 +105,32 @@ class Core
   }
 
   /**
+   * Get Cache
+   * @return Array
+   */
+  public static function getCache() {
+    if ( !class_exists("Panel") ) {
+      require "Panel.class.php";
+    }
+
+    return Array(
+      "system.app.registered" => Array(
+        "options" => Application::$Registered
+      ),
+      "system.panel.registered" => Array(
+        "options" => Panel::$Registered
+      )
+    );
+  }
+
+  /**
    * Get the Settings Array
    * @return Array
    */
   public static function getSettings() {
+    if ( !class_exists("SettingsManager") ) {
+      require "SettingsManager.class.php";
+    }
 
     $panel = Array(
       Array("PanelItemMenu", Array(), "left"),
@@ -142,23 +164,16 @@ class Core
       Array("PanelItemWeather", Array(), "right")
     );
 
-    $merge = Array(
-      "system.locale.location" => Array(
-        "options" => DateTimeZone::listIdentifiers()
-      ),
-      "system.app.registered" => Array(
-        "options" => Application::$Registered
-      ),
-      "system.panel.registered" => Array(
-        "options" => Panel::$Registered
-      ),
-      "desktop.panels" => Array(
-        "items" => Array(
-          Array(
-            "name"  => "Default",
-            "index" => 0,
-            "items" => $panel
-          )
+    $merge = self::getCache();
+    $merge["system.locale.location"] = Array(
+      "options" => DateTimeZone::listIdentifiers()
+    );
+    $merge["desktop.panels"] = Array(
+      "items" => Array(
+        Array(
+          "name"  => "Default",
+          "index" => 0,
+          "items" => $panel
         )
       )
     );
@@ -339,6 +354,10 @@ EOCSS;
    * @return Mixed
    */
   public function doPOST($data, $is_raw = false) {
+    require "ApplicationVFS.class.php";
+    require "ApplicationAPI.class.php";
+    require "Application.class.php";
+
     $args = Array();
 
     if ( $data && $is_raw ) {
@@ -437,12 +456,9 @@ EOCSS;
     // Initialize Application database
     Application::init(APPLICATION_BUILD);
 
-    if ( $settings = self::getSettings() ) {
+    if ( $cache = self::getCache() ) {
       $json['success'] = true;
-      $json['result']  = Array(
-        "system.app.registered"   => $settings["system.app.registered"],
-        "system.panel.registered" => $settings["system.panel.registered"]
-      );
+      $json['result']  = $cache;
     }
   }
 
@@ -831,6 +847,10 @@ EOCSS;
     if ( is_array($locale) ) {
       $this->_aLocale = $locale;
     } else {
+      if ( !class_exists("SettingsManager") ) {
+        require "SettingsManager.class.php";
+      }
+
       $this->_aLocale = Array(
         "locale_location" => SettingsManager::$Settings['system.locale.location']['value'],
         "locale_date"     => SettingsManager::$Settings['system.locale.date-format']['value'],

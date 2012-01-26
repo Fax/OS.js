@@ -98,20 +98,12 @@ require "lib/Logger.class.php";
 require "lib/DB.class.php";
 require "lib/DBObject.class.php";
 
-// Main sources
+// Main sources (Rest is loaded dynamically)
 require "src/Core.class.php";
 require "src/User.class.php";
-require "src/SettingsManager.class.php";
-require "src/ApplicationVFS.class.php";
-require "src/ApplicationAPI.class.php";
-
-// Extension sources
-require "src/Panel.class.php";
-require "src/Dialog.class.php";
-require "src/Application.class.php";
 
 // Misc Initialization
-date_default_timezone_set("UTC");
+date_default_timezone_set(DEFAULT_TIMEZONE);
 
 DB::init();
 
