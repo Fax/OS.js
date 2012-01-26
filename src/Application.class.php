@@ -143,8 +143,13 @@ abstract class Application
           $app_file     = (string) $app['file'];
           $app_system   = (string) $app['system'] == "true";
           $app_category = (string) $app['category'];
+          $app_enabled  = $app['enabled'] === "true" ? true : false;
 
           if ( $classname !== null && $classname !== $app_class ) {
+            continue;
+          }
+
+          if ( !$app_enabled && ENV_PRODUCTION ) {
             continue;
           }
 
