@@ -149,10 +149,6 @@ abstract class Application
             continue;
           }
 
-          if ( !$app_enabled && ENV_PRODUCTION ) {
-            continue;
-          }
-
           $windows   = Array();
           $resources = Array();
           $mimes     = Array();
