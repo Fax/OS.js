@@ -4599,7 +4599,26 @@
      * @return  void
      */
     run : function() {
+      var id = "Panel_" + this.index;
+      var ul = this.$element.find("ul").first();
+
+      ul.attr("id", id);
+
       $("#Panels").append(this.$element);
+
+      /*
+      ul.sortable({
+        revert: true
+      });
+      ul.draggable({
+        connectToSortable: id,
+        axis : "x",
+        snap : true,
+        helper: "clone",
+        revert: "invalid"
+      });
+      this.$element.find("ul, li").disableSelection();
+      */
 
       this.$element.show();
       this.running = true;
