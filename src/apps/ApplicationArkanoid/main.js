@@ -318,7 +318,7 @@ OSjs.Applications.ApplicationArkanoid = (function($, undefined) {
         root_window.show();
 
         // Do your stuff here
-        canvas = new CanvasHelper(root_window.$element.find(".window1 div").get(0), canvasWidth, canvasHeight);
+        canvas = new OSjs.Classes.CanvasHelper(root_window.$element.find(".window1 div").get(0), canvasWidth, canvasHeight);
         if ( canvas ) {
           $(document).bind("keydown", this.keydown_handler);
           $(document).bind("keyup",   this.keyup_handler);

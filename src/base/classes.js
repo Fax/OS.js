@@ -873,6 +873,217 @@
   });
 
   /////////////////////////////////////////////////////////////////////////////
+  // CANVAS
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * OSjs.Classes.CanvasHelper -- HTML5 Canvas Helper library
+   * @class
+   */
+  OSjs.Classes.CanvasHelper = Class.extend({
+
+    $container  : null,     //!< Main container DOM Element
+    $canvas     : null,     //!< Canvas
+    $context    : null,     //!< Canvas Context
+    width       : 0,        //!< Canvas Width
+    height      : 0,        //!< Canvas Height
+
+    /**
+     * @constructor
+     */
+    init : function(container, w, h) {
+      this.$container = container;
+      this.$canvas    = document.createElement("canvas");
+      this.$context   = null;
+      this.width      = w;
+      this.height     = h;
+
+      if ( this.$container && this.$canvas ) {
+        this.$container.appendChild(this.$canvas);
+
+        this.$container.style.width  = this.width + "px";
+        this.$container.style.height = this.height + "px";
+        this.$canvas.width           = this.width;
+        this.$canvas.height          = this.height;
+
+        if ( this.$canvas.getContext ) {
+          this.$context              = this.$canvas.getContext("2d");
+          this.$context.fillStyle    = "#000000";
+          this.$context.strokeStyle  = "#ffffff";
+          this.$context.lineWidth    = 1;
+          this.$context.font         = "20px Times New Roman";
+
+          return;
+        }
+      }
+
+      throw ("Canvas is not supported in your browser");
+    },
+
+    /**
+     * @destructor
+     */
+    destroy : function() {
+    },
+
+    /**
+     * CanvasHelper::clear() -- Clear context
+     * @param   String    fill      Fill color
+     * @return  void
+     */
+    clear : function(fill) {
+      if ( this.$context ) {
+        this.$context.clearRect(0, 0, this.width, this.height);
+
+        if ( fill ) {
+          this.rect(0, 0, this.width, this.height, fill);
+        }
+      }
+    },
+
+    /**
+     * CanvasHelper::rect() -- Draw a rectangle
+     * @param   int     x           X Position
+     * @param   int     y           Y Position
+     * @param   int     w           Width
+     * @param   int     h           Height
+     * @param   String  fill        Fill color
+     * @param   String  stroke      Stroke color
+     * @return  void
+     */
+    rect : function(x, y, w, h, fill, stroke) {
+      if ( this.$context ) {
+        this._fill(fill);
+
+        this.$context.beginPath();
+        this.$context.rect(x, y, w, h);
+        this.$context.closePath();
+
+        this._apply(fill, stroke);
+      }
+    },
+
+    /**
+     * CanvasHelper::roudRect() -- Draw a rounded rectangle
+     * @param   int     x           X Position
+     * @param   int     y           Y Position
+     * @param   int     w           Width
+     * @param   int     h           Height
+     * @param   int     radius      Radius
+     * @param   String  fill        Fill color
+     * @param   String  stroke      Stroke color
+     * @return  void
+     */
+    roundRect : function(x, y, w, h, radius, fill, stroke) {
+      radius = (radius === undefined) ? 5 : radius;
+
+      if ( this.$context ) {
+        this.$context.beginPath();
+        this.$context.moveTo(x + radius, y);
+        this.$context.lineTo(x + w - radius, y);
+        this.$context.quadraticCurveTo(x + w, y, x + w, y + radius);
+        this.$context.lineTo(x + w, y + h - radius);
+        this.$context.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+        this.$context.lineTo(x + radius, y + h);
+        this.$context.quadraticCurveTo(x, y + h, x, y + h - radius);
+        this.$context.lineTo(x, y + radius);
+        this.$context.quadraticCurveTo(x, y, x + radius, y);
+        this.$context.closePath();
+
+        this._apply(fill, stroke);
+      }
+    },
+
+    /**
+     * CanvasHelper::circle() -- Draw a circle
+     * @param   int     x           X Position
+     * @param   int     y           Y Position
+     * @param   int     r           Radius
+     * @param   String  fill        Fill color
+     * @param   String  stroke      Stroke color
+     * @return  void
+     */
+    circle : function(x, y, r, fill, stroke) {
+      if ( this.$context ) {
+        this.$context.beginPath();
+        this.$context.arc(x, y, r, 0, Math.PI*2, true);
+        this.$context.closePath();
+
+        this._apply(fill, stroke);
+      }
+    },
+
+    /**
+     * CanvasHelper::text() -- Draw text string
+     * @param   String  txt         Text string
+     * @param   int     x           X Position
+     * @param   int     y           Y Position
+     * @return  void
+     */
+    text : function(txt, x, y) {
+      if ( this.$context ) {
+        this.$context.fillText(txt, x, y);
+      }
+    },
+
+    /**
+     * CanvasHelper::createLinearGradient() -- Create a linear gradient pattern
+     * @param   int     sx        Source X
+     * @param   int     sy        Source Y
+     * @param   int     dx        Destination X
+     * @param   int     dy        Destination Y
+     * @param   int     steps     Step count
+     * @return  LinearGradient
+     */
+    createLinearGradient : function(sx, sy, dx, dy, steps) {
+      var gra = null;
+      if ( this.$context ) {
+        gra = this.$context.createLinearGradient(sx, sy, dx, dy);
+        if ( steps instanceof Object ) {
+          for ( var s in steps ) {
+            if ( steps.hasOwnProperty(s) ) {
+              gra.addColorStop(s, steps[s]);
+            }
+          }
+        }
+      }
+      return gra;
+    },
+
+    /**
+     * CanvasHelper::_fill() -- Fill the canvas
+     * @param   String      fill      Color
+     * @return  void
+     */
+    _fill : function(fill) {
+      if ( fill && fill !== true ) {
+        this.$context.fillStyle = fill;
+      }
+    },
+
+    /**
+     * CanvasHelper::_apply() -- Fill the canvase
+     * @param   String      fill      Fill Color
+     * @param   String      stroke    Stroke color
+     * @return  void
+     */
+    _apply : function(fill, stroke) {
+      stroke = (stroke === undefined) ? false : stroke;
+
+      if (stroke) {
+        if ( stroke !== true ) {
+          this.$context.strokeStyle = stroke;
+        }
+        this.$context.stroke();
+      }
+      if (fill) {
+        this.$context.fill();
+      }
+    }
+
+  });
+
+  /////////////////////////////////////////////////////////////////////////////
   // AJAX
   /////////////////////////////////////////////////////////////////////////////
 
