@@ -122,7 +122,7 @@ class Compiler
       // Parse general attributes
       foreach ( $xml->property as $p ) {
         $val = ((string) $p);
-        switch ( $p ) {
+        switch ( $p['name'] ) {
           case "enabled" :
             if ( $val == "false" ) {
               $project_enabled = false;
@@ -150,7 +150,13 @@ class Compiler
 
       // Skip application
       if ( !$project_enabled ) {
+        print "\tNot enabled...skipping...!\n";
         return -1;
+      }
+
+      // Fallbacks
+      if ( !$project_category ) {
+        $project_category = "unknown";
       }
 
       $node = $this->_oDocument->createElement("application");
