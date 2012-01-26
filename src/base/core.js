@@ -1632,30 +1632,41 @@
         }
       }
 
-      console.log("Shutting down 'Tooltip'");
+      console.group("Shutting down 'Tooltip'");
       if ( _Tooltip ) {
         _Tooltip.destroy();
       }
-      console.log("Shutting down 'Menu'");
+      console.groupEnd();
+
+      console.group("Shutting down 'Menu'");
       if ( _Menu ) {
         _Menu.destroy();
       }
-      console.log("Shutting down 'Desktop'");
+      console.groupEnd();
+
+      console.group("Shutting down 'Desktop'");
       if ( _Desktop ) {
         _Desktop.destroy();
       }
-      console.log("Shutting down 'WindowManager'");
+      console.groupEnd();
+
+      console.group("Shutting down 'WindowManager'");
       if ( _WM ) {
         _WM.destroy();
       }
-      console.log("Shutting down 'SettingsManager'");
+      console.groupEnd();
+
+      console.group("Shutting down 'SettingsManager'");
       if ( _Settings ) {
         _Settings.destroy();
       }
-      console.log("Shutting down 'ResourceManager'");
+      console.groupEnd();
+
+      console.group("Shutting down 'ResourceManager'");
       if ( _Resources ) {
         _Resources.destroy();
       }
+      console.groupEnd();
 
       console.log("Nulling instance...");
 
