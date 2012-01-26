@@ -14,12 +14,13 @@ FIXES:
 * FIXME [MED]: replace parents() with closest()
 * FIXME [MED]: Fix ContextMenu pop-out problems
 
-APPLICATIONS:
+APPLICATIONS ETC:
 -------------------------------------------------------------------------------
 * Finish: Mailing
 * Finish: Archiver
 * Finish: Writer
 * TODO: Registry editor (In user information system app)
+* Rewrite: Panel item: Menu
 
 REWRITE:
 -------------------------------------------------------------------------------

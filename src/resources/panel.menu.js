@@ -27,16 +27,35 @@
  * @package OSjs.Panel
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @licence Simplified BSD License
+ * @TODO Rewrite
  * @class
  */
 OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
   "$:nomunge";
+
+  var last_menu = null;
+  var menu_obj = null;
+  var menu_el = null;
+
+  function clear_menu() {
+    if ( menu_obj ) {
+      menu_obj = null;
+    }
+    if ( menu_el ) {
+      menu_el.remove();
+      menu_el = null;
+    }
+  }
 
   return function(_PanelItem, panel, API, argv) {
     "_PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
 
     function CreateMenu(items, level) {
       var ul = $("<ul class=\"GtkMenu\"></ul>");
+      ul.click(function(ev) {
+        ev.stopPropagation();
+      });
+
       if ( items && items.length ) {
         var it, li;
         for ( var i = 0; i < items.length; i++ ) {
@@ -50,8 +69,14 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
 
           if ( it.method ) {
             (function(li, it) {
-              li.click(function() {
+              li.click(function(ev) {
                 it.method();
+
+                if ( last_menu ) {
+                  last_menu.hide();
+                }
+
+                $(document).click();
               });
             })(li, it);
           }
@@ -64,9 +89,6 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
 
     var _PanelItemMenu = _PanelItem.extend({
 
-      menu : null,
-      menu_el : null,
-
       init : function(title, icon, menu) {
         this._super("PanelItemMenu");
         this._named = "Launcher Menu";
@@ -78,15 +100,10 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
       create_menu : function(el) {
         var self = this;
 
-        if ( this.menu ) {
-          this.menu = null;
-        }
-        if ( this.menu_el ) {
-          this.menu_el.remove();
-          this.menu_el = null;
-        }
+        clear_menu();
 
         var menu_items = menu || null;
+
         if ( menu_items === null ) {
           var o;
           var apps = API.session.applications();
@@ -137,13 +154,12 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
           }
         }
 
-        this.menu = menu_items;
+        menu_obj = menu_items;
 
-        var menu = CreateMenu(this.menu);
+        var menu = CreateMenu(menu_obj);
         $(el).append(menu);
-        this.menu_el = menu;
+        menu_el = menu;
 
-        var last_menu = null;
         el.find(".GtkImageMenuItem").each(function() {
           var level = ($(this).parents(".GtkMenu").length);
 
@@ -184,11 +200,12 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
         var img = $("<img src=\"" + this.icon + "\" title=\"" + this.title + "\" class=\"TT\" />");
         $(el).addClass("GtkCustomMenu");
         $(el).append(img);
-        $(el).click(function() {
+        $(el).click(function(ev) {
           self.create_menu(el);
 
           setTimeout(function() {
-          $(el).find(".GtkMenu:first").show();
+            $(el).find(".GtkMenu:first").show();
+
             // TODO -- REMOVE ME : GLOBAL FIX
             var mit = $(el).find("ul.GtkMenu:first");
             var ppos = self._panel.pos;
@@ -211,13 +228,7 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
       },
 
       destroy : function() {
-        if ( this.menu ) {
-          this.menu = null;
-        }
-        if ( this.menu_el ) {
-          this.menu_el.remove();
-          this.menu_el = null;
-        }
+        clear_menu();
 
         this._super();
       }
