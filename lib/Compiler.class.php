@@ -74,9 +74,10 @@ class Compiler
   /**
    * Compile a project by Metadata file
    * @param   String    $metadata_path      Metadata XML file path
+   * @param   bool      $dry_run            Dry-run (Default = false)
    * @return  Mixed
    */
-  protected function compileProject($metadata_path) {
+  protected function compileProject($metadata_path, $dry_run = false) {
     if ( $xml = new SimpleXmlElement(file_get_contents($metadata_path)) ) {
       print "Compiling from '$metadata_path'\n";
 
@@ -159,8 +160,6 @@ class Compiler
         $project_category = "unknown";
       }
 
-      $node = $this->_oDocument->createElement("application");
-
       // Parse other nodes
       if ( isset($xml->compability) ) {
         foreach ( $xml->compability as $c ) {
@@ -220,6 +219,7 @@ class Compiler
       $content_html = implode("\n", $glade_html);
 
       // Generate Application XML Build-file data
+      $node = $this->_oDocument->createElement("application");
       $node->setAttribute("name",     $project_name);
       $node->setAttribute("title",    $project_title);
       $node->setAttribute("icon",     $project_icon);
@@ -252,12 +252,14 @@ class Compiler
       }
 
       // Write data
-      file_put_contents($out_php,   $content_php);
-      file_put_contents($out_css,   $content_css);
-      file_put_contents($out_js,    $content_js);
-      file_put_contents($out_html,  $content_html);
+      if ( !$dry_run ) {
+        file_put_contents($out_php,   $content_php);
+        file_put_contents($out_css,   $content_css);
+        file_put_contents($out_js,    $content_js);
+        file_put_contents($out_html,  $content_html);
 
-      $this->_oRoot->appendChild($node);
+        $this->_oRoot->appendChild($node);
+      }
 
       print sprintf("\tDONE [%s]...\n", implode(",", Array("xml", "css", "php", "js", "html")));
 
@@ -277,10 +279,11 @@ class Compiler
 
   /**
    * Compile all Applications found in folder
-   * @param   String    $root     Search folder
+   * @param   bool      $dry_run  Dry-run (Default = false)
+   * @param   String    $root     Search folder (Default = called script)
    * @return  bool
    */
-  public static function compileAll($root = null) {
+  public static function compileAll($dry_run = false, $root = null) {
     $config = APPLICATION_BUILD;
     $root   = ($root ? $root : PATH_APPS);
 
@@ -293,11 +296,11 @@ class Compiler
           if ( !file_exists($path) )
             continue;
 
-          $compiler->compileProject($path);
+          $compiler->compileProject($path, $dry_run);
         }
       }
 
-      return $compiler->saveXML($config);
+      return $dry_run ? true : $compiler->saveXML($config);
     }
 
     return false;
