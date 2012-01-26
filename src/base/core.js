@@ -63,6 +63,7 @@
   var MAX_STORAGE_SIZE       = (1024 * 5) * 1000;   //!< Max localstorage size
   var STORAGE_SIZE_FREQ      = 1000;                //!< Storage check usage frequenzy
   var ONLINECHK_FREQ         = 1000;                //!< On-line checking frequenzy
+  var CACHE_FREQ             = 60000;               //!< Cache update frequenzu
   var DEFAULT_UID            = 1;                   //!< Default User ID
   var DEFAULT_USERNAME       = "demo";              //!< Default User Username
   var DEFAULT_PASSWORD       = "demo";              //!< Default User Password
@@ -317,7 +318,7 @@
       if ( data.success ) {
         _Resources.addResources(data.result.resources, app_name, function() {
           console.group("Initing loading of '" + app_name + "'");
-          console.group(data);
+          console.log(data);
 
           var app_ref = OSjs.Applications[app_name];
           console.log("Checking for existance...");
@@ -1542,6 +1543,7 @@
     online  : false,        //!< We are online, are we ?
     running : false,        //!< If core is running
     olint   : null,         //!< On-line checker interval
+    cuint   : null,         //!< Cache update interval
 
     /**
      * Core::init() -- Constructor
@@ -1645,6 +1647,10 @@
         if ( this.olint ) {
           clearInterval(this.olint);
           this.olint = null;
+        }
+        if ( this.cuint ) {
+          clearInterval(this.cuint);
+          this.cuint = null;
         }
       }
 
@@ -1847,6 +1853,12 @@
             bar.progressbar({value : 100});
             load.fadeOut(ANIMATION_SPEED);
           },200);
+
+          //if ( ENABLE_CACHE ) {
+            self.cuint = setInterval(function() {
+              _Settings.updateCache(true);
+            }, CACHE_FREQ);
+          //}
 
           self.running = true;
         } else {
@@ -2541,6 +2553,10 @@
      */
     updateCache : function(fetch) {
       var self = this;
+      console.group("SettingsManager::updateCache()");
+      console.log("Remote update", fetch);
+      console.groupEnd();
+
       if ( fetch ) {
         DoPost({'action' : 'updateCache'}, function(data) {
           if ( data.result ) {
@@ -2550,6 +2566,8 @@
             if ( data.result["system.app.registered"] ) {
               self._set("system.app.registered", data.result["system.app.registered"]);
             }
+
+            console.log("SettingsManager::updateCache()", data.result);
           }
 
           _PanelCache = self._get("system.panel.registered", true);
