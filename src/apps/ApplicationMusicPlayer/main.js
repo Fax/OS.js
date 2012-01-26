@@ -75,8 +75,6 @@ OSjs.Applications.ApplicationMusicPlayer = (function($, undefined) {
 
         this.app.defaultFileOpen(function(fname) {
           self.app.Play(fname);
-
-          //self._argv['path'] = fname;
         }, ["audio\/*"]);
       },
 

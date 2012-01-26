@@ -144,18 +144,18 @@
 
     _DataTX += (JSON.stringify(ajax_args)).length;
 
-    /*
     $.post(AJAX_URI, ajax_args, function(data) {
       _DataRX += (JSON.stringify(data)).length;
 
       callback(data);
     });
-    */
+    /*
     OSjs.Classes.AJAX(AJAX_URI, ajax_args, function(data) {
       _DataRX += (JSON.stringify(data)).length;
 
       callback(data);
     });
+    */
 
   } // @endfunction
 
@@ -307,16 +307,24 @@
       return;
     }
 
+    console.log("LaunchApplication()", app_name);
+
     API.ui.cursor("wait");
 
     DoPost({'action' : 'load', 'app' : app_name}, function(data) {
       if ( data.success ) {
         _Resources.addResources(data.result.resources, app_name, function() {
+          console.group("Initing loading of '" + app_name + "'");
+          console.group(data);
 
           var app_ref = OSjs.Applications[app_name];
+          console.log("Checking for existance...");
+
           if ( app_ref ) {
             var crashed = false;
             var application;
+
+            console.log("Trying to create application...");
 
             try {
               application = new app_ref(GtkWindow, Application, API, args, windows);
@@ -328,6 +336,8 @@
             }
 
             if ( !crashed ) {
+              console.log("Running application");
+
               setTimeout(function() {
                 try {
                   application.run();
@@ -335,6 +345,8 @@
                   CrashApplication(app_name, application, ex);
                 }
               }, 100);
+            } else {
+              console.log("!!! FAILED !!!");
             }
           } else {
             /*
@@ -362,6 +374,8 @@
           setTimeout(function() {
             API.ui.cursor("default");
           }, 50);
+
+          console.groupEnd();
         });
       } else {
         MessageBox(data.error);
@@ -2168,6 +2182,12 @@
       var i = 0;
       var l = session.length;
       var s;
+
+      console.group("Core::setSession()");
+      console.log("Size", l);
+      console.log("Data", session);
+      console.groupEnd();
+
       for ( i; i < l; i++ ) {
         s = session[i];
         if ( s ) {
@@ -2328,7 +2348,9 @@
           }
         }
 
-        callback();
+        setTimeout(function() {
+          callback();
+        }, 0);
       }
     }); // @endclass
 
@@ -2795,6 +2817,7 @@
      * @return  void
      */
     defaultFileOpen : function(callback, mimes, dir, file, check_mime) {
+      var self = this;
       check_mime = (check_mime === undefined) ? true : (check_mime ? true : false);
 
       if ( !dir && file ) {
@@ -2820,6 +2843,8 @@
 
         if ( cont ) {
           callback(fname);
+
+          self._argv['path'] = fname;
         } else {
           MessageBox(sprintf(OSjs.Labels.CrashApplicationOpen, basename(fname), mime));
         }

@@ -333,18 +333,21 @@ EOCSS;
 
   /**
    * Do a POST request
-   * @param  String    $args   Argument list (raw data)
+   * @param  String    $args    Argument list (raw data)
+   * @param  bool      $is_raw  Format if raw data
    * @return Mixed
    */
-  public function doPOST($raw) {
+  public function doPOST($data, $is_raw = false) {
     $args = Array();
 
-    if ( $raw ) {
+    if ( $data && $is_raw ) {
       try {
-        $args = (Array)JSON::decode($raw, true);
+        $args = (Array)JSON::decode($data, true);
       } catch ( Exception $e ) {
         error_log($raw);
       }
+    } else if ( is_array($data) ) {
+      $args = $data;
     }
 
     if ( sizeof($args) ) {
