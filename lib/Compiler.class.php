@@ -10,6 +10,9 @@
 if ( !class_exists("Glade") ) {
   require "Glade.class.php";
 }
+if ( !class_exists("Application") ) {
+  require PATH_PROJECT_SRC . "/Application.class.php";
+}
 
 /**
  * Compiler -- Application Compiler main Class
