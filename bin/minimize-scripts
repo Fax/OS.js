@@ -10,6 +10,16 @@
 
 require "header.php";
 
+if ( !class_exists("Application") ) {
+  require PATH_PROJECT_SRC . "/Application.class.php";
+}
+if ( !class_exists("Panel") ) {
+  require PATH_PROJECT_SRC . "/Panel.class.php";
+}
+if ( !class_exists("Dialog") ) {
+  require PATH_PROJECT_SRC . "/Dialog.class.php";
+}
+
 $total_before = 0;
 $total_after = 0;
 
