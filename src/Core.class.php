@@ -471,11 +471,17 @@ EOCSS;
     // Initialize Application database
     Application::init(APPLICATION_BUILD);
 
+    $init_language    = isset($args['language']) ? $args['language'] : "default";
+    $browser_language = self::_getBrowserLanguage();
+
     // Output
     $json = Array("success" => true, "error" => null, "result" => Array(
       "settings" => self::getSettings(),
       "config"   => Array(
-        "cache" => ENABLE_CACHE
+        "cache"             => ENABLE_CACHE,
+        "system_language"   => DEFAULT_LANGUAGE,
+        "browser_language"  => $browser_language,
+        "init_language"     => $init_language
       )
     ));
   }
@@ -825,6 +831,28 @@ EOCSS;
     }
   }
 
+  /**
+   * Get browser language by looking at headers
+   * @return String
+   */
+  protected static final function _getBrowserLanguage() {
+    $browser_language = DEFAULT_LANGUAGE;
+
+    if ( function_exists('apache_request_headers') ) {
+      if ( $headers = apache_request_headers() ) {
+        if ( isset($headers["Accept-Language"]) ) {
+          if ( $langs = explode(",", $headers["Accept-Language"]) ) {
+            $browser_language = reset($langs);
+            $browser_language = explode(";", $browser_language);
+            $browser_language = str_replace("-", "_", end($browser_language));
+          }
+        }
+      }
+    }
+
+    return $browser_language;
+  }
+
   /////////////////////////////////////////////////////////////////////////////
   // SETTER FUNCTIONS
   /////////////////////////////////////////////////////////////////////////////
@@ -855,11 +883,34 @@ EOCSS;
         "locale_location" => SettingsManager::$Settings['system.locale.location']['value'],
         "locale_date"     => SettingsManager::$Settings['system.locale.date-format']['value'],
         "locale_time"     => SettingsManager::$Settings['system.locale.time-format']['value'],
-        "locale_stamp"    => SettingsManager::$Settings['system.locale.timestamp-format']['value']
+        "locale_stamp"    => SettingsManager::$Settings['system.locale.timestamp-format']['value'],
+        "locale_language" => SettingsManager::$Settings['system.locale.language']['value']
       );
     }
 
     date_default_timezone_set($this->_aLocale["locale_location"]);
+
+    // Figure out language
+    $lang = $this->_aLocale["locale_language"];
+    if ( $lang == "default" ) {
+      $lang = self::_getBrowserLanguage() . ".utf8";
+    } else {
+      $lang = "{$lang}.utf8";
+    }
+
+    // Bind for non-unix
+    if ( ENABLE_GETTEXT ) {
+      putenv("LANG={$lang}.UTF8");
+      putenv("LANGUAGE={$lang}.UTF8");
+      bind_textdomain_codeset(GETTEXT_DOMAIN, "UTF8");
+    }
+
+    // Bind for all
+    setlocale(LC_ALL, $lang);
+    if ( ENABLE_GETTEXT ) {
+      bindtextdomain(GETTEXT_DOMAIN, PATH_PROJECT_LOCALE);
+      textdomain(GETTEXT_DOMAIN);
+    }
 
     return $this->_aLocale;
   }

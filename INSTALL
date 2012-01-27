@@ -5,7 +5,7 @@ Requirements:
 * Apache >= 2.0
   * Modules: htaccess
 * PHP >= 5.3
-  * Modules: apache2 bcmath calendar curl curlwrappers gd inifile mysql snmp soap sockets sqlite3 sysvipc xmlreader xmlrpc xmlwriter xsl zip pdo imap mhash postgres tidy wddx mysqli intl pcntl
+  * Modules: apache2 bcmath calendar curl curlwrappers gd inifile mysql snmp soap sockets sqlite3 sysvipc xmlreader xmlrpc xmlwriter xsl zip pdo imap mhash postgres tidy wddx mysqli intl pcntl gettext
   * PHP.ini settings can be found in the top of 'header.php' file
 * MySQL >= 5.0
 

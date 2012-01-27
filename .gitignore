@@ -1,3 +1,4 @@
+# Common
 .git-old
 _work/
 *.*.sw*
@@ -7,18 +8,22 @@ template/*.php
 doc/doxygen.log
 doc/api/*
 public_html/.htpasswd
-src/build/minimize.cache
 
-# Fixes
+# Build files
+src/build/minimize.cache
+src/locale/*/LC_MESSAGES/messages.mo
+src/build/applications.xml
+
+# Minimized files
 src/apps/*/_min
 src/resources/_min
 src/base/_min
 
-# Touch support
+# DEVELOPMENT STUFF
 public_html/js/vendor/jquery-git.js
 public_html/js/vendor/jquery-ui.min.js
 public_html/js/vendor/jquery.touch.js.txt
 public_html/js/vendor/jquery.ui.touch-punch.min.js
 
-# Temp Applications
+# TODO
 #public_html/img/app.draw/icons/

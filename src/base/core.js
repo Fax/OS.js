@@ -121,6 +121,19 @@
   var _DataTX          = 0;                               //!< Global Data transmit counter
   var _StartStamp      = -1;                              //!< Starting timestamp
 
+  /**
+   * Language
+   */
+  var _CurrentLanguage  = "en_US";                        //!< Current running language
+  var _BrowserLanguage  = "en_US";                        //!< Browser default language (Set by init)
+  var _SystemLanguage   = "en_US";                        //!< System default language (Set by init)
+  var _Languages        = {                               //!< Collection of avalilable languages
+    'default'   : "System Default (%s)",
+    'auto'      : "Browser Default (%s)",
+    'en_US'     : "English (en_US)",
+    'nb_NO'     : "Norwegian Bokmål (nb_NO)"
+  };
+
   /////////////////////////////////////////////////////////////////////////////
   // HELPERS
   /////////////////////////////////////////////////////////////////////////////
@@ -173,9 +186,12 @@
         locale_location : API.user.settings.get("system.locale.location"),
         locale_time     : API.user.settings.get("system.locale.time-format"),
         locale_date     : API.user.settings.get("system.locale.date-format"),
-        locale_stamp    : API.user.settings.get("system.locale.timestamp-format")
+        locale_stamp    : API.user.settings.get("system.locale.timestamp-format"),
+        locale_language : API.user.settings.get("system.locale.language")
       }
     };
+
+    _CurrentLanguage = settings.locale.locale_date;
 
     DoPost({'action' : 'settings', 'settings' : settings}, function(data) {
       console.log("UploadSetting()", data);
@@ -715,6 +731,13 @@
       'storageUsage' : function() {
         return _Settings.getStorageUsage();
        },
+
+      'languages' : function() {
+        var l = _Languages;
+        l['default']  = sprintf(l['default'], _SystemLanguage);
+        l['auto']     = sprintf(l['auto'],    _BrowserLanguage);
+        return l;
+      },
 
       'run' : function(path, mime, use_default) {
         if ( !_WM ) {
@@ -1780,6 +1803,7 @@
       var load    = $("#Loading");
       var bar     = $("#LoadingBar");
       var date    = (new Date()).toLocaleString();
+      var lang    = localStorage.getItem("system.locale.language") || _SystemLanguage; // FIXME ?!
 
       console.group("Core::run()");
 
@@ -1787,10 +1811,14 @@
       bar.progressbar({value : 5});
 
       // Load initial data
-      DoPost({'action' : 'init', 'date' : date}, function(data) {
+      DoPost({'action' : 'init', 'date' : date, 'language' : lang}, function(data) {
         if ( data.success ) {
           self.running = true;
           self.online  = true;
+
+          // Languages
+          _BrowserLanguage = data.result.config.browser_language;
+          _SystemLanguage  = data.result.config.system_language;
 
           // Initialize resources
           _Resources = new ResourceManager();

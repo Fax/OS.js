@@ -34,8 +34,11 @@ define("PROJECT_HOST",      (php_uname('n')));
 
 define("ENV_PRODUCTION",      (PROJECT_HOST != "amitop"));
 define("DEFAULT_TIMEZONE",    "UTC");
+define("DEFAULT_LANGUAGE",    "en_US");
 define("ENABLE_CACHE",        false);
 define("ENABLE_LOGGING",      true);
+define("ENABLE_GETTEXT",      true);
+define("GETTEXT_DOMAIN",      "OSjs");
 
 define("VFS_SET_PERM",        false);
 define("VFS_USER",            "www-data"); //(PROJECT_HOST != "amitop" ? "www-data" : "apache")); // chown() user
@@ -66,6 +69,7 @@ define("PATH_PROJECT_LIB",           PATH_PROJECT         . "/lib");
 define("PATH_PROJECT_VENDOR",        PATH_PROJECT         . "/vendor");
 define("PATH_PROJECT_HTML",          PATH_PROJECT         . "/public_html");
 define("PATH_PROJECT_BUILD",         PATH_PROJECT         . "/src/build");
+define("PATH_PROJECT_LOCALE",        PATH_PROJECT         . "/src/locale");
 define("PATH_PROJECT_LOG",           PATH_PROJECT         . "/logs");
 define("PATH_PROJECT_LOG_FILE",      PATH_PROJECT         . "/logs/messages");
 define("PATH_APPS",                  PATH_PROJECT         . "/src/apps");

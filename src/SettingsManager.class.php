@@ -160,6 +160,10 @@ class SettingsManager
       "type" => "string",
       "value" => "%d-%m-%Y %H:%i"
     ),
+    "system.locale.language" => Array(
+      "type" => "string",
+      "value" => "default"
+    ),
     "user.first-run" => Array(
       "type" => "bool",
       "value" => true
