@@ -1,6 +1,5 @@
 TODO:
 -------------------------------------------------------------------------------
-* TODO [HIG]  : addResource must wait for all files to be correctly loaded (CSS etc)
 * TODO [HIG]  : Context menu must show when popping up at bottom off screen
 * TODO [HIG]  : Custom Exception class
 * TODO [MED]  : Rewrite Glade builder class
