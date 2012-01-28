@@ -78,6 +78,16 @@ if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
   header(sprintf("Content-Type: %s; charset=utf-8", $type == "js" ? "application/x-javascript" : "text/css"));
   print $content;
   exit;
+} else if ( isset($_GET['language']) ) {
+  if ( ($content = Core::getTranslation($_GET['language'], ENV_PRODUCTION)) === false ) {
+    header("HTTP/1.0 404 Not Found");
+    exit;
+  }
+
+
+  header("Content-Type: application/x-javascript; charset=utf-8");
+  print $content;
+  exit;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

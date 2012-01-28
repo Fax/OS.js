@@ -18,6 +18,7 @@ src/build/applications.xml
 src/apps/*/_min
 src/resources/_min
 src/base/_min
+src/base/locale/_min
 
 # DEVELOPMENT STUFF
 public_html/js/vendor/jquery-git.js

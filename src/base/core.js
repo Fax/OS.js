@@ -80,6 +80,7 @@
   var THEME_URI        = "/?theme=";                //!< Themes loading URI (GET)
   var FONT_URI         = "/?font=";                 //!< Font loading URI (GET)
   var CURSOR_URI       = "/?cursor=";               //!< Cursor loading URI (GET)
+  var LANGUAGE_URI     = "/?language=";             //!< Language loading URI (GET)
   var UPLOAD_URI       = "/upload.php";             //!< File upload URI (POST)
   var ICON_URI         = "/img/icons/%s/%s";        //!< Icons URI (GET)
   var ICON_URI_16      = "/img/icons/16x16/%s";     //!< Icons URI 16x16 (GET)
@@ -5996,6 +5997,7 @@
         });
 
         el.find(".GtkNotebook").each(function() {
+          // Store current selected tab for session usage
           var nbid = self._name + "_" + this.className.replace(/GtkNotebook|ui\-(.*)|\s/g, "");
           $(this).tabs({
             select : function(ev, ui) {

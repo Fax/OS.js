@@ -43,7 +43,16 @@ function compress_list($itype, $files) {
   foreach ( $files as $file ) {
     // Build command
     $type = preg_match("/\.js$/", $file) ? "js" : "css";
-    $path = ($itype == 1 ? PATH_RESOURCES : ($itype === 0 ? PATH_JSBASE : PATH_APPS)) . "/{$file}";
+    if ( $itype == 3 ) {
+      $path = PATH_JSLOCALE . "/{$file}";
+    } else if ( $itype == 2 ) {
+      $path = PATH_APPS . "/{$file}";
+    } else if ( $itype == 1 ) {
+      $path = PATH_RESOURCES . "/{$file}";
+    } else {
+      $path = PATH_JSBASE . "/{$file}";
+    }
+
     if ( file_exists($path) ) {
 
       // Check timestamp
@@ -102,7 +111,9 @@ function compress_list($itype, $files) {
       print sprintf("%s%s ($size => $comp, $perc%%)\n", $label, $spaces);
 
       // Write cached file
-      if ( $itype === 2 ) {
+      if ( $itype === 3 ) {
+        $out_path = PATH_JSLOCALE . "/" . dirname($file) . "/_min/" . basename($file) ;
+      } else if ( $itype === 2 ) {
         $out_path = PATH_APPS . "/" . dirname($file) . "/_min/" . basename($file) ;
       } else if ( $itype === 1 ) {
         $out_path = PATH_RESOURCES . "/_min/" . basename($file);
@@ -125,6 +136,7 @@ function compress_list($itype, $files) {
 $base_files         = Array();
 $resource_files     = Array();
 $application_files  = Array();
+$language_files     = Array();
 
 // Read registered panel items
 foreach ( Panel::$Registered as $n => $v ) {
@@ -163,6 +175,13 @@ $base_files = Array(
   "main.js"
 );
 
+$language_files = Array(
+  "en_US.js",
+  "nb_NO.js"
+);
+
+print "Compressing languages...\n";
+compress_list(3, $language_files);
 print "Compressing base files...\n";
 compress_list(0, $base_files);
 print "Compressing applications...\n";

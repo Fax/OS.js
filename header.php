@@ -75,6 +75,7 @@ define("PATH_PROJECT_LOG_FILE",      PATH_PROJECT         . "/logs/messages");
 define("PATH_APPS",                  PATH_PROJECT         . "/src/apps");
 define("PATH_RESOURCES",             PATH_PROJECT         . "/src/resources");
 define("PATH_JSBASE",                PATH_PROJECT         . "/src/base");
+define("PATH_JSLOCALE",              PATH_PROJECT         . "/src/base/locale");
 
 define("MINIMIZE_CACHE",             PATH_PROJECT_BUILD   . "/minimize.cache");
 define("APPLICATION_BUILD",          PATH_PROJECT_BUILD   . "/applications.xml");

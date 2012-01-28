@@ -10,8 +10,12 @@ foreach ( Dialog::$Registered as $name => $opts ) {
   }
 }
 
-?>
+$current_locale = DEFAULT_LANGUAGE;
+if ( $locale = Core::get()->getLocale() ) {
+  $current_locale = $locale['locale_language'];
+}
 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -79,6 +83,7 @@ foreach ( Dialog::$Registered as $name => $opts ) {
 
   <!-- OS.js libraries -->
   <script type="text/javascript" src="/?library=init.js"></script>
+  <script type="text/javascript" src="/?language=<?php print $current_locale; ?>" id="LanguageFile"></script>
   <script type="text/javascript" src="/?library=classes.js"></script>
   <script type="text/javascript" src="/?library=core.js"></script>
   <script type="text/javascript" src="/?library=main.js"></script>

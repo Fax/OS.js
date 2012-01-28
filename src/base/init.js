@@ -116,77 +116,8 @@
   // Misc
   OSjs.Public.ENV = ((window.location.hostname.toLowerCase() == "OSjs.local") ? "dev" : "prod");
 
-  // Labels
-  OSjs.Labels = {
-    "ApplicationCheckCompabilityMessage"  : "Your browser does not support '%s'",
-    "ApplicationCheckCompabilityStack"    : "Application::_checkCompability(): Application name: %s",
-    "CrashApplication"                    : "Application '%s' has crashed with error '%s'!",
-    "CrashApplicationResourceMessage"     : "One or more of these resources failed to load:\n%s",
-    "CrashApplicationResourceStack"       : "[LaunchApplication]API::system::launch()\n  Application: %s\n  Arguments: %s",
-    "CrashDialogTitleApplication"         : "Application '%s' crashed!",
-    "CrashApplicationOpen"                : "Cannot open '%s' with MIME '%s' in this application",
-    "CrashDialogTitleProcess"             : "Process '%s' crashed!",
-    "InitLaunchError"                     : "Cannot launch '%s'.\nMaximum allowed processes are: %d",
-    "WindowManagerMissing"                : "Cannot perform this operation because the Window Manager is not running.",
-    "WentOffline"                         : "Seems like you went offline. Please re-connect to continue using OS.js",
-    "WentOnline"                          : "You are now back on-line!",
-    "Quit"                                : "Are you sure you want to quit? To save your session use the Logout functionallity.",
-    "PanelItemRemove"                     : "Are you sure you want to remove this item?",
-    "WebWorkerError"                      : "An error occured while processing WebWorker script '%s' on line %d",
-    "StorageWarning"                      : "Warning! You're running out of local storage space (%d of %d)",
-    "StorageAlert"                        : "Warning! You have reached the maximum storage limit (%d of %d)",
-    "CrashEvent"                          : "An error occured while handling AJAX Event: ",
-    "CrashEventTitle"                     : "An operation in '%s' has failed!",
-    "ContextMenuPanel"                    : {
-      "title"     : "Panel",
-      "add"       : "Add new item",
-      "create"    : "New panel",
-      "remove"    : "Remove panel"
-    },
-    "ContextMenuDesktop"                  : {
-      "title"     : "Desktop",
-      "wallpaper" : "Change Wallpaper",
-      "sort"      : "Tile Windows"
-    },
-    "ContextMenuWindowMenu"               : {
-      "max"     : "Maximize",
-      "min"     : "Minimize",
-      "restore" : "Restore",
-      "show"    : "Show",
-      "ontop"   : "Always on top",
-      "same"    : "Same as other windows",
-      "close"   : "Close"
-    },
-    "DialogTitles"                        : {
-      "info"      : "Information",
-      "error"     : "Error",
-      "question"  : "Question",
-      "confirm"   : "Confirm",
-      "warning"   : "Warning",
-      "default"   : "Dialog"
-    }
-  };
-
-  // Application Compability error exceptions
+  // Application Compability error exceptions (see translation file)
   OSjs.Public.CompabilityErrors = {
-    "canvas"          : "<canvas> Context (2d)",
-    "webgl"           : "<canvas> WebGL Context (3d)",
-    "audio"           : "<audio> DOM Element",
-    "audio_ogg"       : "<audio> Does not support OGG/Vorbis",
-    "audio_mp3"       : "<audio> Does not support MPEG/MP3",
-    "video"           : "<video> DOM Element",
-    "video_webm"      : "<video> Does not support VP8/WebM",
-    "video_ogg"       : "<video> Does not support OGG/Vorbis",
-    "video_mpeg"      : "<video> Does not support MP4/MPEG/h264",
-    "video_mkv"       : "<video> Does not support MKV",
-    "localStorage"    : "window.localStorage()",
-    "sessionStorage"  : "window.sessionStorage()",
-    "globalStorage"   : "window.globalStorage()",
-    "databaseStorage" : "window.databaseStorage()",
-    "socket"          : "window.WebSocket()",
-    "richtext"        : "window.contentEditable (Rich Text Editing)",
-    "upload"          : "Asynchronous Uploads",
-    "worker"          : "Web Workers"
   };
 
   // Compability mapping

@@ -288,6 +288,34 @@ EOCSS;
   }
 
   /**
+   * Get a translation file
+   * @param   String    $locale     Locale name
+   * @param   boo       $compress   Enable Compression
+   * @return  String
+   */
+  public static function getTranslation($locale, $compress) {
+    $res = preg_replace("/[^a-zA-Z0-9_]/", "", $locale);
+    if ( $compress ) {
+      $filename = sprintf("%s/_min/%s.js", PATH_JSLOCALE, $res);
+    } else {
+      $filename = sprintf("%s/%s.js", PATH_JSLOCALE, $res);
+    }
+
+    if ( file_exists($filename) ) {
+      return file_get_contents($filename);
+    } else {
+      if ( $compress ) {
+        $filename = sprintf("%s/_min/%s.js", PATH_JSLOCALE, DEFAULT_LANGUAGE);
+      } else {
+        $filename = sprintf("%s/%s.js", PATH_JSLOCALE, DEFAULT_LANGUAGE);
+      }
+      return file_get_contents($filename);
+    }
+
+    return false;
+  }
+
+  /**
    * Get a resource file (CSS or JS) [with compression]
    * @param  bool     $resource     Resource file?
    * @param  String   $input        Filename
@@ -516,8 +544,8 @@ EOCSS;
     $json['result']   = true;
     $json['success']  = true;
 
-    $_SESSION['user']        = null;
-    $_SESSION['locale']      = null;
+    //$_SESSION['user']        = null;
+    //$_SESSION['locale']      = null;
   }
 
   /**
@@ -928,19 +956,21 @@ EOCSS;
   }
 
   /**
-   * Get the current session TimeDate
-   * @return DateTime
+   * Get the current session locale
+   * @return Array
    */
-  public final function getTimeDate() {
-    return new DateTime("now", $this->getTimeZone());
-  }
+  public final function getLocale() {
+    $loc  = $this->_aLocale;
+    $lang = $loc["locale_language"];
+    if ( $lang == "default" ) {
+      $lang = self::_getBrowserLanguage();
+    } else {
+      $lang = "{$lang}";
+    }
 
-  /**
-   * Get the current session TimeDateZone
-   * @return DateTimeZone
-   */
-  public final function getTimeZone() {
-    return new DateTimeZone($this->getTime());
+    $loc['locale_language'] = $lang;
+
+    return $loc;
   }
 
 }
