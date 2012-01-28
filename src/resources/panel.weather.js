@@ -37,11 +37,13 @@ OSjs.PanelItems.PanelItemWeather = (function($, undefined) {
   return function(_PanelItem, panel, API, argv) {
     "_PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
 
+    var LABELS = OSjs.Labels.PanelItemWeather;
+
     var _PanelItemWeather = _PanelItem.extend({
       init : function() {
         this._super("PanelItemWeather", "right");
 
-        this.named        = "Weather";
+        this.named        = LABELS.title;
         this.interval     = null;
       },
 
@@ -55,8 +57,8 @@ OSjs.PanelItems.PanelItemWeather = (function($, undefined) {
         var span  = this.$element.find("span");
         var img   = this.$element.find("img");
 
-        span.attr("title", "Loading...");
-        span.html("Loading...");
+        span.attr("title", LABELS.loading);
+        span.html(LABELS.loading);
         img.attr("src", self.getImage("severe-alert"));
 
         var args = {'action' : 'call', 'method' : 'readurl', 'args' : url};
@@ -108,15 +110,15 @@ OSjs.PanelItems.PanelItemWeather = (function($, undefined) {
               span.attr("title", sprintf("%s, %s", loc_name, loc_country));
               span.html(sprintf("%s &deg;%s %s", temp, tempu, clouds));
             } else {
-              self.crash("No Weather data");
+              self.crash(LABELS.no_data);
             }
           } else {
-            self.crash("No Weather data");
+            self.crash(LABELS.no_data);
           }
 
           self.onRedraw();
         }, function() {
-          self.crash("No Weather data");
+          self.crash(LABELS.no_data);
           self.onRedraw();
         });
       },
@@ -127,7 +129,7 @@ OSjs.PanelItems.PanelItemWeather = (function($, undefined) {
         navigator.geolocation.getCurrentPosition(function(position) {
           self.parse(position.coords.latitude, position.coords.longitude);
         }, function() {
-          self.crash("No Weather data");
+          self.crash(LABELS.no_data);
         });
 
       },
@@ -145,7 +147,7 @@ OSjs.PanelItems.PanelItemWeather = (function($, undefined) {
 
           this.poll();
         } else {
-          self.crash("Not supported!");
+          self.crash(LABELS.no_support);
         }
 
         return ret;
@@ -165,7 +167,7 @@ OSjs.PanelItems.PanelItemWeather = (function($, undefined) {
 
         ret.push("---");
         ret.push({
-          'title'    : 'Reload',
+          'title'    : LABELS.reload,
           'disabled' : self._crashed,
           'method'   : function() { self.poll(); }
         });

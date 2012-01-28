@@ -36,6 +36,8 @@ OSjs.Dialogs.CopyOperationDialog = (function($, undefined) {
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
+    var LABELS = OSjs.Labels.CopyOperationDialog;
+
     var _CopyOperationDialog = OperationDialog.extend({
       init : function(src, dest, clb_finish, clb_progress, clb_cancel) {
         this.src          = src          || null;
@@ -45,7 +47,7 @@ OSjs.Dialogs.CopyOperationDialog = (function($, undefined) {
         this.clb_cancel   = clb_cancel   || function() {};
 
         this._super("Copy");
-        this._title    = "Copy file";
+        this._title    = LABELS.title;
         this._content  = $("#OperationDialogCopy").html();
         this._width    = 400;
         this._height   = 170;

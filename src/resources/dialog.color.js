@@ -36,6 +36,8 @@ OSjs.Dialogs.ColorOperationDialog = (function($, undefined) {
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
+    var LABELS = OSjs.Labels.ColorOperationDialog;
+
     var _ColorOperationDialog = OperationDialog.extend({
       init : function(start_color, clb_finish) {
         this.clb_finish = clb_finish   || function() {};
@@ -47,7 +49,7 @@ OSjs.Dialogs.ColorOperationDialog = (function($, undefined) {
         }
 
         this._super("Color");
-        this._title    = "Choose color...";
+        this._title    = LABELS.title;
         this._icon     = "apps/style.png";
         this._content  = $("#OperationDialogColor").html();
         this._width    = 400;

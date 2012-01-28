@@ -36,6 +36,8 @@ OSjs.Dialogs.PanelItemOperationDialog = (function($, undefined) {
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
+    var LABELS = OSjs.Labels.PanelItemOperationDialog;
+
     var _PanelItemOperationDialog = OperationDialog.extend({
       init : function(item, clb_create, clb_finish, title, copy) {
         this.item         = item         || null;
@@ -44,7 +46,7 @@ OSjs.Dialogs.PanelItemOperationDialog = (function($, undefined) {
         this.clb_create   = clb_create   || function() {};
 
         this._super("PanelItem");
-        this._title    = title || "Configure " + this.type;
+        this._title    = title || LABELS.title + " " + this.type;
         this._content  = (copy || $("#OperationDialogPanelItem")).html();
         this._width    = 400;
         this._height   = 340;

@@ -35,10 +35,12 @@ OSjs.PanelItems.PanelItemClock = (function($, undefined) {
   return function(_PanelItem, panel, API, argv) {
     "_PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
 
+    var LABELS = OSjs.Labels.PanelItemClock;
+
     var _PanelItemClock = _PanelItem.extend({
       init : function() {
         this._super("PanelItemClock", "right");
-        this._named = "Clock";
+        this._named = LABELS.title;
       },
 
       create : function(pos) {

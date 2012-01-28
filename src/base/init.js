@@ -41,8 +41,6 @@
     window.console.groupEnd = function() { console.log(arguments); };
   }
 
-  console.group("init.js");
-
   var video_supported = !!document.createElement('video').canPlayType;
   var audio_supported = !!document.createElement('audio').canPlayType;
   var upload_supported = false;
@@ -180,17 +178,6 @@
     "bmp" : "image/bmp",
     "svg" : "image/svg"
   };
-
-  console.group("OSjs Namespace");
-    console.log(OSjs);
-    console.group("Inited settings");
-      console.log("Compability", OSjs.Compability);
-      console.log("Language", OSjs.Labels);
-      console.log("Public", OSjs.Public);
-    console.groupEnd();
-  console.groupEnd();
-
-  console.groupEnd();
 
 })($);
 

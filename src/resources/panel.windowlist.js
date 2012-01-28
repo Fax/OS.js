@@ -35,10 +35,12 @@ OSjs.PanelItems.PanelItemWindowList = (function($, undefined) {
   return function(_PanelItem, panel, api, argv) {
     "_PanelItem:nomunge, panel:nomunge, api:nomunge, argv:nomunge";
 
+    var LABELS = OSjs.Labels.PanelItemWindowList;
+
     var _PanelItemWindowList = _PanelItem.extend({
       init : function() {
         this._super("PanelItemWindowList", "left");
-        this._named = "Window List";
+        this._named = LABELS.title;
         this._expand = true;
         this._redrawable = true;
       },

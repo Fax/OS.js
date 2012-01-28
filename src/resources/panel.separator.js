@@ -35,10 +35,12 @@ OSjs.PanelItems.PanelItemSeparator = (function($, undefined) {
   return function(_PanelItem, panel, api, argv) {
     "_PanelItem:nomunge, panel:nomunge, api:nomunge, argv:nomunge";
 
+    var LABELS = OSjs.Labels.PanelItemSeparator;
+
     var _PanelItemSeparator = _PanelItem.extend({
       init : function() {
         this._super("PanelItemSeparator");
-        this._named = "Separator";
+        this._named = LABELS.title;
       },
 
       create : function(pos) {

@@ -33,6 +33,8 @@
 OSjs.Dialogs.FontOperationDialog = (function($, undefined) {
   "$:nomunge";
 
+  var LABELS = OSjs.Labels.FontOperationDialog;
+
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
@@ -53,7 +55,7 @@ OSjs.Dialogs.FontOperationDialog = (function($, undefined) {
         this.clb_finish   = clb_finish   || function() {};
 
         this._super("Font");
-        this._title    = "Font dialog";
+        this._title    = LABELS.title;
         this._content  = $("#OperationDialogFont").html();
         this._width    = 350;
         this._height   = 250;

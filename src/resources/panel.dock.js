@@ -35,10 +35,12 @@ OSjs.PanelItems.PanelItemDock = (function($, undefined) {
   return function(_PanelItem, panel, api, argv) {
     "_PanelItem:nomunge, panel:nomunge, api:nomunge, argv:nomunge";
 
+    var LABELS = OSjs.Labels.PanelItemDock;
+
     var _PanelItemDock = _PanelItem.extend({
       init : function(items) {
         this._super("PanelItemDock");
-        this._named = "Launcher Dock";
+        this._named = LABELS.title;
         this._dynamic = true;
 
         this.items = items || [];

@@ -36,6 +36,8 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
+    var LABELS = OSjs.Labels.UploadOperationDialog;
+
     var _UploadOperationDialog = OperationDialog.extend({
       init : function(uri, path, clb_finish, clb_progress, clb_cancel) {
         this.upload_uri   = uri;
@@ -46,7 +48,7 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
         this.clb_cancel   = clb_cancel   || function() {};
 
         this._super("Upload");
-        this._title    = "Upload file";
+        this._title    = LABELS.title;
         this._icon     = "actions/up.png";
         this._content  = $("#OperationDialogUpload").html();
         this._width    = 400;
@@ -84,7 +86,7 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
             self.clb_progress(fname, pr, fsize);
           }, function(response) {
             pbar.progressbar({ value : 100 });
-            sbar.html(sprintf("Finished %s (%s)", fname, fsize));
+            sbar.html(sprintf("%s %s (%s)", LABELS.finished, fname, fsize));
 
             setTimeout(function() {
               self.$element.find(".ActionClose").click();
@@ -92,15 +94,15 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
 
             self.clb_finish(fname);
           }, function(error) {
-            sbar.html(sprintf("Failed %s", fname));
+            sbar.html(sprintf("%s %s", LABELS.failed, fname));
 
-            alert(sprintf("Failed to upload %s: %s", fname, error));
+            alert(sprintf("%s %s: %s", LABELS.failed_str, fname, error));
 
             self.clb_cancel(fname, error);
           });
 
 
-          var form = sprintf("<div style=\"position:relative;margin-top:10px;\"><form action=\"%s\" method=\"post\" enctype=\"multipart/form-data\" class=\"FileForm\"><input type=\"hidden\" name=\"path\" value=\"/\" /><div class=\"file\"><input type=\"file\" name=\"upload\" /></div><div class=\"button\"><input type=\"submit\" name=\"upload\" value=\"Upload\"/></div></form></div>", this.upload_uri);
+          var form = sprintf("<div style=\"position:relative;margin-top:10px;\"><form action=\"%s\" method=\"post\" enctype=\"multipart/form-data\" class=\"FileForm\"><input type=\"hidden\" name=\"path\" value=\"/\" /><div class=\"file\"><input type=\"file\" name=\"upload\" /></div><div class=\"button\"><input type=\"submit\" name=\"upload\" value=\"%s\"/></div></form></div>", this.upload_uri, LABELS.upload);
           var doc = $(form);
           $(doc).find("div.button").css({
             "display"   : "block",
@@ -114,7 +116,7 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
             if ( fname ) {
               u.upload(self.$element.find("form"));
             } else {
-              alert("You need to choose a file first!");
+              API.system.alert(LABELS.choose_file);
             }
             return false;
           };
@@ -123,7 +125,7 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
 
           this.uploader = u;
         } catch ( eee ) {
-          alert("You cannot upload files because an error occured:\n" + eee);
+          API.system.alert(sprintf(LABELS.error, eee));
         }
       },
 

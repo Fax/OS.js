@@ -50,6 +50,8 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
   return function(_PanelItem, panel, API, argv) {
     "_PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
 
+    var LABELS = OSjs.Labels.PanelItemMenu;
+
     function CreateMenu(items, level) {
       var ul = $("<ul class=\"GtkMenu\"></ul>");
       ul.click(function(ev) {
@@ -91,9 +93,9 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
 
       init : function(title, icon, menu) {
         this._super("PanelItemMenu");
-        this._named = "Launcher Menu";
+        this._named = LABELS.title;
 
-        this.title = title || "Launch Application";
+        this.title = title || LABELS.menu_title;
         this.icon = '/img/icons/16x16/' + (icon || 'apps/system-software-install.png');
       },
 
@@ -108,15 +110,15 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
           var o;
           var apps = API.session.applications();
           var cats = {
-            "development" : ["Development", "categories/applications-development.png", []],
-            "games"       : ["Games", "categories/applications-games.png", []],
-            "graphics"    : ["Graphics", "categories/applications-graphics.png", []],
-            "office"      : ["Office", "categories/applications-office.png", []],
-            "internet"    : ["Internet", "categories/applications-internet.png", []],
-            "multimedia"  : ["Multimedia", "categories/applications-multimedia.png", []],
-            "system"      : ["System", "categories/applications-system.png", []],
-            "utilities"   : ["Utilities", "categories/applications-utilities.png", []],
-            "unknown"     : ["Unknown", "categories/gnome-other.png", []]
+            "development" : [LABELS.cat.development, "categories/applications-development.png", []],
+            "games"       : [LABELS.cat.games, "categories/applications-games.png", []],
+            "graphics"    : [LABELS.cat.gfx, "categories/applications-graphics.png", []],
+            "office"      : [LABELS.cat.office, "categories/applications-office.png", []],
+            "internet"    : [LABELS.cat.net, "categories/applications-internet.png", []],
+            "multimedia"  : [LABELS.cat.media, "categories/applications-multimedia.png", []],
+            "system"      : [LABELS.cat.sys, "categories/applications-system.png", []],
+            "utilities"   : [LABELS.cat.util, "categories/applications-utilities.png", []],
+            "unknown"     : [LABELS.cat.other, "categories/gnome-other.png", []]
           };
 
           for ( var a in apps ) {

@@ -36,6 +36,8 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
+    var LABELS = OSjs.Labels.FileOperationDialog;
+
     var _FileOperationDialog = OperationDialog.extend({
       init : function(type, argv, clb_finish, cur_dir) {
         this.aargv         = argv         || {};
@@ -45,7 +47,7 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
         this.init_dir      = cur_dir      || "/";
 
         this._super("File");
-        this._title        = type == "save" ? "Save As..." : "Open File";
+        this._title        = type == "save" ? LABELS.title_saveas : LABELS.title_open;
         this._icon         = type == "save" ? "actions/document-save.png" : "actions/document-open.png";
         this._content      = $("#OperationDialogFile").html();
         this._is_resizable = true;
@@ -147,11 +149,11 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
 
                         if ( is_save ) {
                           if ( vo['protected'] == "1" ) {
-                            alert("This file is protected!"); // FIXME
+                            API.system.alert(LABELS.protected_file);
                           } else {
-                            if ( confirm("Are you sure you want to overwrite this file?") ) { // FIXME
+                            API.system.dialog("confirm", LABELS.overwrite, null, function() {
                               _doSelect();
-                            }
+                            });
                           }
                         } else {
                           _doSelect();

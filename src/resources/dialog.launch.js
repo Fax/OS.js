@@ -36,6 +36,8 @@ OSjs.Dialogs.LaunchOperationDialog = (function($, undefined) {
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
+    var LABELS = OSjs.Labels.LaunchOperationDialog;
+
     var _LaunchOperationDialog = OperationDialog.extend({
       init : function(items, clb_finish, not_found) {
         this.list         = items        || [];
@@ -43,7 +45,7 @@ OSjs.Dialogs.LaunchOperationDialog = (function($, undefined) {
         this.not_found    = not_found === undefined ? false : not_found;
 
         this._super("Launch");
-        this._title    = "Select an application";
+        this._title    = LABELS.title;
         this._content  = $("#OperationDialogLaunch").html();
         this._width    = 400;
         this._height   = 300;
@@ -59,9 +61,9 @@ OSjs.Dialogs.LaunchOperationDialog = (function($, undefined) {
         var set_default = false;
 
         if ( this.not_found ) {
-          this.$element.find(".OperationDialogInner").prepend("<p>Found no suiting application for this MIME type. </p>");
+          this.$element.find(".OperationDialogInner").prepend("<p>" + LABELS.not_found + "</p>");
         } else {
-          this.$element.find(".OperationDialogInner").prepend("<p>Found multiple application supporting this MIME type:</p>");
+          this.$element.find(".OperationDialogInner").prepend("<p>" + LABELS.found + "</p>");
         }
 
         for ( var x = 0; x < this.list.length; x++ ) {

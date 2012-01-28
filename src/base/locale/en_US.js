@@ -24,7 +24,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @package OSjs.Core.Init
+ * @package OSjs.Core.Locale
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @licence Simplified BSD License
  */
@@ -37,9 +37,7 @@
     "CrashApplication"                    : "Application '%s' has crashed with error '%s'!",
     "CrashApplicationResourceMessage"     : "One or more of these resources failed to load:\n%s",
     "CrashApplicationResourceStack"       : "[LaunchApplication]API::system::launch()\n  Application: %s\n  Arguments: %s",
-    "CrashDialogTitleApplication"         : "Application '%s' crashed!",
     "CrashApplicationOpen"                : "Cannot open '%s' with MIME '%s' in this application",
-    "CrashDialogTitleProcess"             : "Process '%s' crashed!",
     "InitLaunchError"                     : "Cannot launch '%s'.\nMaximum allowed processes are: %d",
     "WindowManagerMissing"                : "Cannot perform this operation because the Window Manager is not running.",
     "WentOffline"                         : "Seems like you went offline. Please re-connect to continue using OS.js",
@@ -103,4 +101,116 @@
     "worker"          : "Web Workers"
   };
 
-});
+  /////////////////////////////////////////////////////////////////////////////
+  // DIALOGS
+  /////////////////////////////////////////////////////////////////////////////
+
+  OSjs.Labels.ColorOperationDialog = {
+    "title" : "Choose color..."
+  };
+
+  OSjs.Labels.CopyOperationDialog = {
+    "title" : "Copy file"
+  };
+
+  OSjs.Labels.CrashDialog = {
+    "title"       : "Application '%s' crashed!",
+    "title_proc"  : "Process '%s' crashed!"
+  };
+
+  OSjs.Labels.FileOperationDialog = {
+    "title_saveas"    : "Save As...",
+    "title_open"      : "Open File",
+    "protected_file"  : "This file is protected!",
+    "overwrite"       : "Are you sure you want to overwrite this file?"
+  };
+
+  OSjs.Labels.FontOperationDialog = {
+    "title"   : "Font dialog"
+  };
+
+  OSjs.Labels.InputOperationDialog = {
+    "title"   : "Input dialog",
+    "missing_value" : "A value is required!"
+  };
+
+  OSjs.Labels.LaunchOperationDialog = {
+    "title"     : "Select an application",
+    "not_found" : "Found no suiting application for this MIME type.",
+    "found"     : "Found multiple application supporting this MIME type:"
+  };
+
+  OSjs.Labels.PanelItemOperationDialog = {
+    "title"     : "Configure"
+  };
+
+  OSjs.Labels.FilePropertyOperationDialog = {
+    "title"     : "File properties",
+    "empty"     : "No information could be gathered."
+  };
+
+  OSjs.Labels.RenameOperationDialog = {
+    "title"     : "Rename file",
+    "empty"     : "A filename is required!"
+  };
+
+  OSjs.Labels.UploadOperationDialog = {
+    "title"       : "Upload file",
+    "finished"    : "Finished",
+    "failed"      : "Failed",
+    "failed_str"  : "Failed to upload",
+    "upload"      : "Upload",
+    "choose_file" : "You need to choose a file first!",
+    "error"       : "You cannot upload files because an error occured:\n"
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
+  // PANEL ITEMS
+  /////////////////////////////////////////////////////////////////////////////
+
+  OSjs.Labels.PanelItemClock = {
+    "title" : "Clock"
+  };
+
+  OSjs.Labels.PanelItemDock = {
+    "title" : "Launcher Dock"
+  };
+
+  OSjs.Labels.PanelItemMenu = {
+    "title"       : "Launcher Menu",
+    "menu_title"  : "Launch Application",
+    "cat"         : {
+      "development" : "Development",
+      "games"       : "Games",
+      "gfx"         : "Graphics",
+      "office"      : "Office",
+      "net"         : "Internet",
+      "media"       : "Multimedia",
+      "sys"         : "System",
+      "util"        : "Utilities",
+      "other"       : "Unknown"
+    }
+  };
+
+  OSjs.Labels.PanelItemSeparator = {
+    "title"   : "Separator"
+  };
+
+  OSjs.Labels.PanelItemWeather = {
+    "title"       : "Weather",
+    "loading"     : "Loading...",
+    "no_data"     : "No Weather data",
+    "no_support"  : "Not supported!",
+    "reload"      : "Reload"
+  };
+
+  OSjs.Labels.PanelItemWindowList = {
+    "title" : "Window List"
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
+  // APPLICATIONS
+  /////////////////////////////////////////////////////////////////////////////
+
+
+})();

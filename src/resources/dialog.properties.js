@@ -36,13 +36,15 @@ OSjs.Dialogs.FilePropertyOperationDialog = (function($, undefined) {
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
+    var LABELS = OSjs.Labels.FilePropertyOperationDialog;
+
     var _FilePropertyOperationDialog = OperationDialog.extend({
       init : function(filename, clb_finish) {
         this.filename      = filename;
         this.clb_finish    = clb_finish   || function() {};
 
         this._super("FileProperties");
-        this._title        = "File properties";
+        this._title        = LABELS.title;
         this._icon         = "actions/document-properties.png";
         this._content      = $("#OperationDialogFileProperties").html();
         this._is_resizable = true;
@@ -75,7 +77,7 @@ OSjs.Dialogs.FilePropertyOperationDialog = (function($, undefined) {
               }
               infoel.html(html);
             } else {
-              infoel.html("No information could be gathered.");
+              infoel.html(LABELS.empty);
             }
           }
         });

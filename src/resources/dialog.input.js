@@ -36,6 +36,8 @@ OSjs.Dialogs.InputOperationDialog = (function($, undefined) {
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
+    var LABELS = OSjs.Labels.InputOperationDialog;
+
     var _InputOperationDialog = OperationDialog.extend({
       init : function(value, desc, clb_finish) {
         this.value        = value        || null;
@@ -43,7 +45,7 @@ OSjs.Dialogs.InputOperationDialog = (function($, undefined) {
         this.clb_finish   = clb_finish   || function() {};
 
         this._super("Input");
-        this._title    = "Input dialog";
+        this._title    = LABELS.title;
         this._content  = $("#OperationDialogInput").html();
         this._width    = 200;
         this._height   = 100;
@@ -64,7 +66,7 @@ OSjs.Dialogs.InputOperationDialog = (function($, undefined) {
         this.$element.find(".DialogButtons .Ok").show().click(function() {
           var val = txt.val();
           if ( !val ) {
-            alert("A value is required!");
+            API.system.alert(LABELS.missing_value);
             return;
           }
           self.clb_finish(val);

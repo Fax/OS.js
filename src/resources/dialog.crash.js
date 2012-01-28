@@ -35,6 +35,8 @@ OSjs.Dialogs.CrashDialog = (function($, undefined) {
   return function(Window, Application, argv) {
     "GtkWindow:nomunge, Application:nomunge, argv:nomunge";
 
+    var LABELS = OSjs.Labels.CrashDialog;
+
     /**
      * CrashDialog -- Application Crash Dialog
      *
@@ -51,9 +53,9 @@ OSjs.Dialogs.CrashDialog = (function($, undefined) {
       init : function(app, error, trace, alternative, title) {
         if ( title === undefined ) {
           if ( app instanceof Application ) {
-            title = sprintf(OSjs.Labels.CrashDialogTitleApplication, app._name);
+            title = sprintf(LABELS.title, app._name);
           } else {
-            title = sprintf(OSjs.Labels.CrashDialogTitleProcess, app);
+            title = sprintf(LABELS.title_proc, app);
           }
         }
 
