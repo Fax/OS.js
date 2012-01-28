@@ -3010,6 +3010,8 @@
      * @return  void
      */
     defaultFileSave : function(file, content, callback, mimes, dir, saveas, encoding) {
+      var self = this;
+
       if ( !dir && file ) {
         dir = dirname(file);
       }
