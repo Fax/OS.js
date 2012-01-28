@@ -262,21 +262,24 @@
 
   /**
    * LaunchPanelItem() -- PanelItem Launch handler
-   * @param   int     i             Item index
-   * @param   String  iname         Item name
-   * @param   Mixed   iargs         Item argument(s)
-   * @param   String  ialign        Item alignment
-   * @param   Panel   panel         Panel instance reference
+   * @param   int       i             Item index
+   * @param   String    iname         Item name
+   * @param   Mixed     iargs         Item argument(s)
+   * @param   String    ialign        Item alignment
+   * @param   Panel     panel         Panel instance reference
+   * @param   Function  callback      Callback function
    * @return  void
    * @function
    */
-  function LaunchPanelItem(i, iname, iargs, ialign, panel) {
+  function LaunchPanelItem(i, iname, iargs, ialign, panel, callback) {
+    callback = callback || function() {};
+
     if ( InitLaunch(iname) ) {
       var reg = _PanelCache;
       var resources =  reg[iname] ? reg[iname]['resources'] : [];
 
       _Resources.addResources(resources, null, function(error) {
-        if ( OSjs.PanelItems[iname] && !error ) { // TODO: Error message
+        if ( OSjs.PanelItems[iname] && !error ) {
           var item = new OSjs.PanelItems[iname](_PanelItem, panel, API, iargs);
           if ( item ) {
             item._panel = panel;
@@ -285,6 +288,7 @@
           }
         }
 
+        callback(error);
       });
     }
   } // @endfunction
@@ -4101,19 +4105,37 @@
       (function() {
         var panels = _Settings._get("desktop.panels", false, true);
         var panel, items;
+
+        var additems = function(panel, items) {
+          var size = items.length;
+          var current = 0;
+
+          var additem = function(index) {
+
+            var el      = items[index];
+            var iname   = el[0];
+            var iargs   = el[1];
+            var ialign  = el[2] || "left";
+
+            LaunchPanelItem(index, iname, iargs, ialign, panel, function() {
+              current++;
+              if ( current < size ) {
+                additem(current);
+              }
+            });
+          };
+
+          if ( size > 0 ) {
+            additem(0);
+          }
+
+        };
+
         for ( var x = 0; x < panels.length; x++ ) {
           panel = new Panel(panels[x].index, panels[x].name);
           items = panels[x].items;
 
-          var el, iname, iargs, ialign;
-          for ( var y = 0; y < items.length; y++ ) {
-            el      = items[y];
-            iname   = el[0];
-            iargs   = el[1];
-            ialign  = el[2] || "left";
-
-            LaunchPanelItem(y, iname, iargs, ialign, panel);
-          }
+          additems(panel, items);
 
           self.addPanel(panel);
         }
