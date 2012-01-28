@@ -35,6 +35,8 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
   return function(Window, Application, argv) {
     "GtkWindow:nomunge, Application:nomunge, argv:nomunge";
 
+    var LABELS = OSjs.Labels.CompabilityDialog;
+
     /**
      * BrowserDialog -- Browser Compability Dialog
      * @extends Window
@@ -48,21 +50,21 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
        * @constructor
        */
       init : function() {
-        var supported = "Supported";
+        var supported = LABELS.supported;
         var color     = "black";
 
         var mob = MobileSupport();
         if ( ($.browser.msie || $.browser.opera) || (mob.iphone || mob.blackberry || mob.android) ) {
-          supported = "Partially supported";
+          supported = LABELS.partially;
           color = "#f3a433";
         } else {
-          supported = "Supported";
+          supported = LABELS.supported;
           color = "#137a26";
         }
 
         this._super("Crash", false);
         this._content = "<div style=\"padding:10px;\"><div><b>Your browser is: <span style=\"color:" + color + ";\">" + supported + "</span></b></div> <table class=\"outer\"><tr><td class=\"content\"><table class=\"chart\"></table></td><td class=\"space\">&nbsp;</td><td class=\"content\"><div class=\"notes\"></div></td></tr></table></div>";
-        this._title = "Browser compability";
+        this._title = LABELS.title;
         this._icon = 'status/software-update-available.png';
         this._is_draggable = true;
         this._is_resizable = false;
@@ -119,32 +121,32 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
         var details = [];
 
         if ( !OSjs.Compability.SUPPORT_UPLOAD ) {
-          details.push("<li>You will not be able to upload any files into the filesystem because 'Async Upload' is not supported.</li>");
+          details.push("<li>" + LABELS.no_upload + "</li>");
         }
         if ( !OSjs.Compability.SUPPORT_WEBGL ) {
-          details.push("<li>No 3D (OpenGL) content can be desplayed as WebGL is not supported. (Check your browser documentation)</li>");
+          details.push("<li>" + LABELS.no_gl + "</li>");
         }
         if ( OSjs.Compability.SUPPORT_WORKER ) {
-          details.push("<li>Some applications uses Web Workers to handle intensive operations to decrease processing times.</li>");
+          details.push("<li>" + LABELS.no_work + "</li>");
         }
 
         var notes = el.find("div.notes");
         if ( $.browser.msie || $.browser.opera ) {
-          notes.append("<p>Glade CSS style problems occurs in IE and Opera for &lt;table&gt; elements.</p>");
+          notes.append("<p>" + LABELS.browser_unsup + "</p>");
           if ( $.browser.msie ) {
-            notes.append("<p>IE is lacking some CSS effects and HTML5/W3C features.</p>");
+            notes.append("<p>" + LABELS.browser_ie + "</p>");
           }
         } else {
           var mob = MobileSupport();
           if ( mob.iphone || mob.blackberry || mob.android ) {
-            notes.append("<p>Your device is not fully supported due to lacking Touch support.</p>");
+            notes.append("<p>" + LABELS.browser_touch + "</p>");
           } else {
-            notes.append("<p>Your browser does not have any known problems.</p>");
+            notes.append("<p>" + LABELS.browser_supp + "</p>");
           }
         }
 
         if ( details.length ) {
-          notes.append($("<p><b>Please note that:</b></p>"));
+          notes.append($("<p><b>" + LABELS.notes + "</b></p>"));
           if ( details.length ) {
             notes.append($("<ul class=\"CompactList\">" + details.join("") + "</ul>"));
           }
@@ -161,7 +163,7 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
           }));
         }
 
-        notes.append($("<p><b>This message will only be showed once!</b></p>").css("textAlign", "center"));
+        notes.append($("<p><b>" + LABELS.footnote + "</b></p>").css("textAlign", "center"));
 
         $(notes).find("p").css({"padding" : "5px", "margin" : "0"});
       }

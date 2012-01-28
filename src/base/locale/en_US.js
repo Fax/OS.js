@@ -164,6 +164,21 @@
     "error"       : "You cannot upload files because an error occured:\n"
   };
 
+  OSjs.Labels.CompabilityDialog = {
+    "title"         : "Browser compability",
+    "supported"     : "Supported",
+    "partially"     : "Partially supported",
+    "no_upload"     : "You will not be able to upload any files into the filesystem because 'Async Upload' is not supported.",
+    "no_work"       : "Some applications uses Web Workers to handle intensive operations to decrease processing times.",
+    "no_gl"         : "No 3D (OpenGL) content can be desplayed as WebGL is not supported. (Check your browser documentation)",
+    "browser_unsup" : "Glade CSS style problems occurs in IE and Opera for &lt;table&gt; elements.",
+    "browser_ie"    : "IE is lacking some CSS effects and HTML5/W3C features.",
+    "browser_touch" : "Your device is not fully supported due to lacking Touch support.",
+    "browser_supp"  : "Your browser does not have any known problems.",
+    "notes"         : "Please note that:",
+    "footnote"      : "This message will only be showed once!"
+  };
+
   /////////////////////////////////////////////////////////////////////////////
   // PANEL ITEMS
   /////////////////////////////////////////////////////////////////////////////
