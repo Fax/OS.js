@@ -327,15 +327,13 @@
       return;
     }
 
-    console.log("LaunchApplication()", app_name);
-
     API.ui.cursor("wait");
 
     DoPost({'action' : 'load', 'app' : app_name}, function(data) {
       if ( data.success ) {
         _Resources.addResources(data.result.resources, app_name, function() {
-          console.group("Initing loading of '" + app_name + "'");
-          console.log(data);
+          console.group(">>> Initing loading of '" + app_name + "' <<<");
+          console.log("Response", data);
 
           var app_ref = OSjs.Applications[app_name];
           console.log("Checking for existance...");
@@ -347,9 +345,11 @@
             console.log("Trying to create application...");
 
             try {
-              application = new app_ref(GtkWindow, Application, API, args, windows);
-              application._uuid  = data.result.uuid;
+              application         = new app_ref(GtkWindow, Application, API, args, windows);
+              application._uuid   = data.result.uuid;
               application._checkCompability();
+
+              console.log("Application was created with UUID", application._uuid);
             } catch ( ex ) {
               CrashApplication(app_name, application, ex);
               crashed = true;
@@ -433,7 +433,6 @@
   function LaunchVFSObject(path, mime, udef) {
     udef = (udef === undefined) ? true : false;
 
-    console.log("LaunchVFSObject()", app, path, udef);
     if ( mime ) {
       if ( mime == "ajwm/application" ) {
         var expl = path.split("/");
@@ -507,7 +506,7 @@
 
         var browse = [];
         if ( found.length ) {
-          console.info("=> API found suited application(s) for", mime, ":", found);
+
           if ( found.length == 1 ) {
             __run(found[0]);
           } else {
@@ -746,6 +745,11 @@
           return;
         }
 
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.system.run");
+        console.log("Arguments", path, mime, use_default);
+        console.groupEnd();
+
         LaunchVFSObject(path, mime, use_default);
       },
 
@@ -765,14 +769,22 @@
         for ( var i = 0; i < wins.length; i++ ) {
           if ( wins[i].app && wins[i].app._name == app_name ) {
             if ( wins[i]._is_orphan ) {
-              console.info("=> API launch denied", "is_orphan");
+              console.group("=== API OPERATION ===");
+              console.log("Method", "API.system.launch");
+              console.log("Message", "Launch was denied (is_orphan)");
+              console.groupEnd();
+
               _WM.focusWindow(wins[i]);
               return;
             }
           }
         }
 
-        console.info("=> API launching", app_name, args);
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.system.launch");
+        console.log("Message", "Launching", app_name, args);
+        console.groupEnd();
+
         LaunchApplication(app_name, args, windows);
       },
 
@@ -790,7 +802,10 @@
           }
         });
 
-        console.info("=> API Call", method, argv);
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.system.call");
+        console.log("Arguments", method, argv);
+        console.groupEnd();
       },
 
       'post' : function(args, callback) {
@@ -810,7 +825,10 @@
         type = type || "error";
         message = message || "Unknown error";
 
-        console.info("=> API Dialog", type);
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.system.dialog");
+        console.log("Type", type);
+        console.groupEnd();
 
         return _WM.addWindow(new Dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
       },
@@ -821,7 +839,9 @@
           return null;
         }
 
-        console.info("=> API Input Dialog");
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.system.dialog_input");
+        console.groupEnd();
 
         return _WM.addWindow(new OSjs.Dialogs.InputOperationDialog(OperationDialog, API, [value, desc, clb_finish]));
       },
@@ -832,7 +852,9 @@
           return null;
         }
 
-        console.info("=> API Rename Dialog");
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.system.dialog_rename");
+        console.groupEnd();
 
         return _WM.addWindow(new OSjs.Dialogs.RenameOperationDialog(OperationDialog, API, [path, clb_finish]));
       },
@@ -843,7 +865,9 @@
           return null;
         }
 
-        console.info("=> API Upload Dialog");
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.system.dialog_upload");
+        console.groupEnd();
 
         return _WM.addWindow(new OSjs.Dialogs.UploadOperationDialog(OperationDialog, API, [UPLOAD_URI, path, clb_finish, clb_progress, clb_cancel]));
       },
@@ -858,7 +882,9 @@
         type = type || "open";
         cur_dir = cur_dir || "/";
 
-        console.info("=> API File Dialog");
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.system.dialog_file");
+        console.groupEnd();
 
         return _WM.addWindow(new OSjs.Dialogs.FileOperationDialog(OperationDialog, API, [type, mime_filter, clb_finish, cur_dir]));
       },
@@ -869,7 +895,9 @@
           return null;
         }
 
-        console.info("=> API Launch Dialog");
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.system.dialog_launch");
+        console.groupEnd();
 
         return _WM.addWindow(new OSjs.Dialogs.LaunchOperationDialog(OperationDialog, API, [list, clb_finish, not_found]));
       },
@@ -880,7 +908,9 @@
           return null;
         }
 
-        console.info("=> API Color Dialog");
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.system.dialog_color");
+        console.groupEnd();
 
         return _WM.addWindow(new OSjs.Dialogs.ColorOperationDialog(OperationDialog, API, [start_color, clb_finish]));
       },
@@ -891,7 +921,9 @@
           return null;
         }
 
-        console.info("=> API Font Dialog");
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.system.dialog_font");
+        console.groupEnd();
 
         return _WM.addWindow(new OSjs.Dialogs.FontOperationDialog(OperationDialog, API, [current_font, current_size, clb_finish]));
       },
@@ -902,7 +934,9 @@
           return null;
         }
 
-        console.info("=> API File Properties Dialog");
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.system.dialog_properties");
+        console.groupEnd();
 
         return _WM.addWindow(new OSjs.Dialogs.FilePropertyOperationDialog(OperationDialog, API, [filename, clb_finish]));
       },
@@ -1001,7 +1035,9 @@
       },
 
       'logout' : function(save) {
-        console.info("=> API logging out", save);
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.user.logout");
+        console.groupEnd();
 
         API.session.save(save);
 
@@ -1020,24 +1056,43 @@
 
       'save' : function(save) {
         var session = _Core.sessionSave(save);
-        console.info("=> API Session save", save, session);
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.session.save");
+        console.log("Save", save, session);
+        console.groupEnd();
       },
 
       'restore' : function() {
-        var session = _Core.sessionRestore();
-        console.info("=> API restore session", session);
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.session.restore");
+        console.groupEnd();
+
+        _Core.sessionRestore();
       },
 
       'snapshot_save' : function(name, callback) {
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.session.snapshot_save");
+        console.log("Save", name);
+        console.groupEnd();
+
         _Core.sessionSnapshotSave(name, callback);
       },
 
       'snapshot_load' : function(name, callback) {
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.session.snapshot_load");
+        console.log("Load", name);
+        console.groupEnd();
+
         _Core.sessionSnapshotLoad(name, callback);
       },
 
       'shutdown' : function() {
-        console.info("=> API Shutdown session");
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.session.shutdown");
+        console.log("Restore", session);
+        console.groupEnd();
 
         return _Core.shutdown();
       },
@@ -2708,6 +2763,10 @@
    * Application -- The base Application class
    * Basis for application (empty)
    *
+   * Application can store running arguments/parameters
+   * via the 'argv' object. This is stored in browser's
+   * storage and is applied upon application construction.
+   *
    * @see     Window
    * @extends Process
    * @class
@@ -2749,7 +2808,9 @@
         "vfs" : []
       };
 
-      console.log("Application::" + this._name + "::NULL::init()");
+      console.group("Application::init()");
+      console.log("Name", name);
+      console.groupEnd();
 
       this._super(name);
     },
@@ -2815,7 +2876,9 @@
           });
         }
 
-        console.log("Application::" + this._name + "::" + this._uuid + "::run()");
+        console.group("Application::run()");
+        console.log("Name", this._name, this._uuid);
+        console.groupEnd();
 
         this._running = true;
       }
@@ -3184,11 +3247,13 @@
         var self = this;
         var error;
 
+        console.group("Application::_checkCompability()");
+        console.log("Name", this._name, this._uuid);
+        console.log("Compability", this._compability);
+
         if ( key ) {
-          console.log("Application::" + this._name + "::" + this._uuid + "::_checkCompability()", key);
           error = __check(key);
         } else {
-          console.log("Application::" + this._name + "::" + this._uuid + "::_checkCompability()", this._compability);
           for ( var i = 0; i < this._compability.length; i++ ) {
             error = __check(this._compability[i]);
             if ( error ) {
@@ -3197,12 +3262,16 @@
           }
 
           if ( error ) {
+            console.groupEnd();
             throw ({
               'message' : sprintf(OSjs.Labels.ApplicationCheckCompabilityMessage, error),
               'stack'   : sprintf(OSjs.Labels.ApplicationCheckCompabilityStack, self._name)
             });
           }
         }
+
+        console.log("Error", error);
+        console.groupEnd();
 
         return error;
       };
@@ -3266,7 +3335,10 @@
         }
       }
 
-      console.log("Application::" + this._name + "::" + this._uuid + "::_restoreStorage()", this._storage);
+      console.group("Application::_restoreStorage()");
+      console.log("Name", this._name, this._uuid);
+      console.log("Result", this._storage);
+      console.groupEnd();
     },
 
     /**
@@ -3524,8 +3596,6 @@
       if ( win instanceof Window ) {
         var self = this;
 
-        console.log("WindowManager::addWindow()", win);
-
         var AddWindowCallback = function(fresh) {
           if ( fresh ) {
             if ( !win._is_minimized && !win._is_maximized ) {
@@ -3537,11 +3607,14 @@
           }
         };
 
+        console.group("WindowManager::addWindow()");
+        console.log("Window", win);
+
         win.create(("Window_" + this.stack.length), AddWindowCallback);
-
         this.stack.push(win);
-
         this.call("window_add", win);
+
+        console.groupEnd();
 
         return win;
       }

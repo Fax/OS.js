@@ -77,7 +77,6 @@ OSjs.Applications.ApplicationArchiver = (function($, undefined) {
 
         this.app.defaultFileOpen(function(fname) {
           self.app.openArchive(fname, self);
-          //self._argv['path'] = fname;
         }, my_mimes);
 
       },
