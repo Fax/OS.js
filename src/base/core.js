@@ -2173,7 +2173,7 @@
               'title'   : p._proc_name,
               'locked'  : p._locked,
               //'windows' : (p instanceof Application ? p._windows : []),
-              'subp'    : (p.getWorkerCount) ? (p.getWorkerCount()) : 0,
+              'subp'    : (p._getWorkerCount) ? (p._getWorkerCount()) : 0,
               'service' : (p instanceof ProcessService),
               'kill'    : ckill
             });
@@ -2922,7 +2922,7 @@
         if ( cont ) {
           callback(fname);
 
-          self._argv['path'] = fname;
+          self._setArgv('path', fname);
         } else {
           MessageBox(sprintf(OSjs.Labels.CrashApplicationOpen, basename(fname), mime));
         }
@@ -3322,12 +3322,31 @@
     },
 
     /**
-     * Application::getWorker() -- Get a WebWorker
+     * Application::_setArgv() -- Set stored argument
+     * @param   String    a       Argument name
+     * @param   Mixed     v       Value
+     * @return  void
+     */
+    _setArgv : function(a, v) {
+      this._argv[a] = v;
+    },
+
+    /**
+     * Application::_getArgv() -- Get stored arguments
+     * @param   String    a       Argument name (Optional)
+     * @return  Object
+     */
+    _getArgv : function(a) {
+      return this._argv ? (a ? (this._argv[a] || null) : this._argv) : null;
+    },
+
+    /**
+     * Application::_getWorker() -- Get a WebWorker
      * @param   String  name      Worker name
      * @see     WebWorker
      * @return  Worker
      */
-    getWorker : function(name) {
+    _getWorker : function(name) {
       if ( this._workers[name] ) {
         return this._workers[name];
       }
@@ -3335,10 +3354,10 @@
     },
 
     /**
-     * Application::getWorkerCount() -- Get WebWorker count
+     * Application::_getWorkerCount() -- Get WebWorker count
      * @return  int
      */
-    getWorkerCount : function() {
+    _getWorkerCount : function() {
       var c = 0;
       for ( var i in this._workers ) {
         if ( this._workers.hasOwnProperty(i) ) {
@@ -3363,7 +3382,7 @@
         if ( win !== false ) {
           return {
             "name"    : this._name,
-            "argv"    : this._argv,
+            "argv"    : this._getArgv(),
             "windows" : windows
           };
         }
@@ -5925,8 +5944,10 @@
         // Elements
         //
 
+        // Slider
         el.find(".GtkScale").slider();
 
+        // Item Groups
         el.find(".GtkToolItemGroup").click(function() {
           $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
 
@@ -5937,6 +5958,7 @@
           }
         });
 
+        // Toggle buttons
         el.find(".GtkToggleToolButton button").click(function() {
           if ( $(this).parent().hasClass("Checked") ) {
             $(this).parent().removeClass("Checked");
@@ -5945,11 +5967,12 @@
           }
         });
 
-
+        // Drawing areas (canvas)
         if ( OSjs.Compability.SUPPORT_CANVAS ) {
           el.find(".GtkDrawingArea").append("<canvas>");
         }
 
+        // Tabs
         var CreateId = function() {
           var cn = "";
           var test = "";
@@ -5972,11 +5995,27 @@
           $(old).attr("id", newn);
         });
 
-        el.find(".GtkNotebook").tabs();
+        el.find(".GtkNotebook").each(function() {
+          var nbid = self._name + "_" + this.className.replace(/GtkNotebook|ui\-(.*)|\s/g, "");
+          $(this).tabs({
+            select : function(ev, ui) {
+              if ( self.app ) {
+                self.app._setArgv(nbid, ui.index);
+              }
+            }
+          });
+
+          var cur = self.app._getArgv(nbid);
+          if ( cur !== null  ) {
+            $(this).tabs("select", cur);
+          }
+        });
 
 
+        // File-chooser
         el.find(".GtkFileChooserButton input[type=text]").attr("disabled", "disabled");
 
+        // Misc
         el.find("input").attr("autocomplete", "off");
 
         //

@@ -126,7 +126,7 @@ OSjs.Applications.ApplicationWriter = (function($, undefined) {
       EventMenuSaveAs : function(el, ev) {
         var self = this;
         var data = self.$element.find(".textarea").html();
-        var cur  = (argv && argv['path'] ? argv['path'] : null);
+        var cur  = this.app._getArgv('path');
 
         this.app.defaultFileSave(cur, data, function(fname, mime) {
           _update(fname, self);

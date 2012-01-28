@@ -546,8 +546,7 @@ OSjs.Applications.ApplicationDraw = (function($, undefined) {
 
       EventMenuOpen : function(el, ev) {
         var self = this;
-        var cur = (argv && argv['path'] ? argv['path'] : null);
-
+        var cur = this.app._getArgv('path');
         this.app.defaultFileOpen(function(fname) {
           DrawDocument.open("/media/" + fname);
           self._update(fname);
@@ -571,7 +570,7 @@ OSjs.Applications.ApplicationDraw = (function($, undefined) {
       EventMenuSaveAs : function(el, ev) {
         var self = this;
         var data = DrawDocument.getImage();
-        var cur  = (argv && argv['path'] ? argv['path'] : null);
+        var cur   = this.app._getArgv('path');
 
         this.app.defaultFileSave(cur, data, function(fname, mime) {
           self._update(fname, self);

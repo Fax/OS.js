@@ -174,7 +174,7 @@ OSjs.Applications.ApplicationTest = (function($, undefined) {
       if ( this._jobs_complete == this._canvas.height ) {
         this.Stop();
       } else if ( this._jobs.length > 0 ) {
-        var w = this._app.getWorker("ApplicationTest_" + data.jobNum);
+        var w = this._app._getWorker("ApplicationTest_" + data.jobNum);
         var j = this._jobs.pop();
         j.workerNum = data.workerNum;
         w.post(j);
@@ -226,7 +226,7 @@ OSjs.Applications.ApplicationTest = (function($, undefined) {
 
       for ( var i = 0; i < this._options.workerCount; i++ ) {
         var j = this._jobs.pop();
-        var w = this._app.getWorker("ApplicationTest_" + i);
+        var w = this._app._getWorker("ApplicationTest_" + i);
         j.workerNum = i;
         w.post(j);
       }

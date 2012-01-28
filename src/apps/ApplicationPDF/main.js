@@ -245,8 +245,6 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
 
         this.reset();
 
-        this._argv['path']  = null;
-
         this._root_window.$element.find(".fixed1").get(0).scrollTop = 0;
       },
 
