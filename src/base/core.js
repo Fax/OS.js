@@ -64,6 +64,7 @@
   var STORAGE_SIZE_FREQ      = 1000;                //!< Storage check usage frequenzy
   var ONLINECHK_FREQ         = 1000;                //!< On-line checking frequenzy
   var CACHE_FREQ             = 60000;               //!< Cache update frequenzu
+  var TIMEOUT_CSS            = (1000 * 5);          //!< CSS loading timeout
   var DEFAULT_UID            = 1;                   //!< Default User ID
   var DEFAULT_USERNAME       = "demo";              //!< Default User Username
   var DEFAULT_PASSWORD       = "demo";              //!< Default User Password
@@ -274,8 +275,8 @@
       var reg = _PanelCache;
       var resources =  reg[iname] ? reg[iname]['resources'] : [];
 
-      _Resources.addResources(resources, null, function() {
-        if ( OSjs.PanelItems[iname] ) {
+      _Resources.addResources(resources, null, function(error) {
+        if ( OSjs.PanelItems[iname] && !error ) { // TODO: Error message
           var item = new OSjs.PanelItems[iname](_PanelItem, panel, API, iargs);
           if ( item ) {
             item._panel = panel;
@@ -331,14 +332,14 @@
 
     DoPost({'action' : 'load', 'app' : app_name}, function(data) {
       if ( data.success ) {
-        _Resources.addResources(data.result.resources, app_name, function() {
+        _Resources.addResources(data.result.resources, app_name, function(error) {
           console.group(">>> Initing loading of '" + app_name + "' <<<");
           console.log("Response", data);
 
           var app_ref = OSjs.Applications[app_name];
-          console.log("Checking for existance...");
+          console.log("Checking if resources was sucessfully loaded...");
 
-          if ( app_ref ) {
+          if ( !error && app_ref ) {
             var crashed = false;
             var application;
 
@@ -369,11 +370,6 @@
               console.log("!!! FAILED !!!");
             }
           } else {
-            /*
-            var error = "Application Script not found!";
-            MessageBox(error);
-            callback_error(error);
-            */
             var errors = [];
             var eargs = [];
             for ( var x in data.result.resources ) {
@@ -2382,48 +2378,116 @@
        * ResourceManager::addResource() -- Add a resource (load)
        * @param   String      res       Resource URI
        * @param   String      app       Application Name (if any)
+       * @param   Function    callback  onload callback (if any)
        * @return  void
        */
-      addResource : function(res, app) {
+      addResource : function(res, app, callback) {
+        var self = this;
+
         app = app || "";
+        callback = callback || function() {};
 
-        if ( this.hasResource(res + (app ? (app + "/" + res) : "")) )
+        if ( this.hasResource(res + (app ? (app + "/" + res) : "")) ) {
+          callback(false);
           return;
-
-        if ( res.match(/^worker\./) )
-          return;
-
-        var extra = "";
-        var type = res.split(".");
-        type = type[type.length - 1];
-
-        if ( app ) {
-          extra = "&application=" + app;
         }
 
-        var el = null;
-        var ie = false;
+        if ( res.match(/^worker\./) ) {
+          callback(false);
+          return;
+        }
+
+        var error   = false;
+        var extra   = app ? ("&application=" + app) : "";
+        var type    = res.split(".");
+            type    = type[type.length - 1];
+
+        var onload_event = function(el) {
+          self.resources.push(res + (app ? (app + "/" + res) : ""));
+          self.links.push(el);
+
+          callback(error);
+        };
+
+        var t_callback = function(addedres, had_error) {
+          console.group("ResourceManager::addResource()");
+          console.log("Added", addedres);
+          console.groupEnd();
+
+          callback(had_error);
+        };
+
+        var head  = document.getElementsByTagName("head")[0];
         if ( type == "js" ) {
-          el = $("<script type=\"text/javascript\" src=\"" + RESOURCE_URI + res + extra + "\"></script>");
+          var triggered             = false;
+          var script                = document.createElement("script");
+          script.type               = "text/javascript";
+          script.onreadystatechange = function() {
+            if ( (this.readyState == 'complete' || this.readyState == 'complete') && !triggered) {
+              triggered = true;
+              t_callback(script, false);
+            }
+          };
+          script.onload = function() {
+            triggered = true;
+            t_callback(script, false);
+          };
+          script.onerror = function() {
+            triggered = true;
+            t_callback(script, true);
+          };
+          script.src = RESOURCE_URI + res + extra;
+          head.appendChild(script);
+          delete script;
         } else {
           if ( document.createStyleSheet ) {
-            ie = true;
-            el = document.createStyleSheet(RESOURCE_URI + res);
+            var el = document.createStyleSheet(RESOURCE_URI + res);
+
+            t_callback(el, false);
           } else {
-            el = $("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + RESOURCE_URI + res + extra + "\" />");
+            var stylesheet  = document.createElement("link");
+            stylesheet.rel  = "stylesheet";
+            stylesheet.type = "text/css";
+            stylesheet.href = RESOURCE_URI + res + extra;
+
+            var sheet = "styleSheet";
+            var cssRules = "rules";
+            if ( "sheet" in stylesheet ) {
+              sheet = "sheet";
+              cssRules = "cssRules";
+            }
+
+            var timeout_t = null;
+            var timeout_i = setInterval(function() {
+              try {
+                if ( stylesheet[sheet] && stylesheet[sheet][cssRules].length ) {
+                  clearInterval(timeout_i);
+                  if ( timeout_t ) {
+                    clearTimeout(timeout_t);
+                  }
+                  t_callback(stylesheet, false);
+                }
+              } catch( e ) {
+                (function() {})();
+              } finally {
+                (function() {})();
+              }
+            }, 10 );
+
+            timeout_t = setTimeout(function() {
+              if ( timeout_i ) {
+                clearInterval(timeout_i);
+              }
+              clearTimeout(timeout_t);
+              t_callback(stylesheet, true);
+              head.removeChild(stylesheet);
+            }, TIMEOUT_CSS);
+
+
+            head.appendChild(stylesheet);
           }
         }
 
-        if ( !ie ) {
-          $("head").append(el);
-        }
-
-        console.group("ResourceManager::addResource()");
-        console.log(ie ? el : el.get(0));
-        console.groupEnd();
-
-        this.resources.push(res + (app ? (app + "/" + res) : ""));
-        this.links.push(el);
       },
 
       /**
@@ -2434,8 +2498,10 @@
        * @return  void
        */
       addResources : function(res, app, callback) {
+        var cont = true;
+
         if ( res ) {
-          console.group("ResourceManager::addResources");
+          console.group("ResourceManager::addResources()");
           console.log("Adding", res);
           console.log("Application", app);
           console.groupEnd();
@@ -2443,14 +2509,36 @@
           var i = 0;
           var l = res.length;
 
-          for ( i; i < l; i++ ) {
-            this.addResource(res[i], app);
+          // Create a temporary callback for the queue
+          if ( l > 0 ) {
+            cont = false;
+
+            var tmp_counter  = l;
+            var has_failed   = false;
+            var tmp_callback = function(failed) {
+              tmp_counter--;
+              if ( !has_failed && failed ) {
+                has_failed = true;
+              }
+
+              if ( tmp_counter <= 0 ) {
+                setTimeout(function() {
+                  callback(has_failed);
+                }, 0);
+              }
+            };
+
+            for ( i; i < l; i++ ) {
+              this.addResource(res[i], app, tmp_callback);
+            }
           }
         }
 
-        setTimeout(function() {
-          callback();
-        }, 0);
+        if ( cont ) {
+          setTimeout(function() {
+            callback(false);
+          }, 0);
+        }
       }
     }); // @endclass
 
