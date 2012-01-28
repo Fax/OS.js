@@ -2809,7 +2809,7 @@
       };
 
       console.group("Application::init()");
-      console.log("Name", name);
+      console.log(name);
       console.groupEnd();
 
       this._super(name);
@@ -2877,7 +2877,7 @@
         }
 
         console.group("Application::run()");
-        console.log("Name", this._name, this._uuid);
+        console.log(this._name, this._uuid);
         console.groupEnd();
 
         this._running = true;
@@ -3248,7 +3248,7 @@
         var error;
 
         console.group("Application::_checkCompability()");
-        console.log("Name", this._name, this._uuid);
+        console.log(this._name, this._uuid);
         console.log("Compability", this._compability);
 
         if ( key ) {
@@ -3336,7 +3336,7 @@
       }
 
       console.group("Application::_restoreStorage()");
-      console.log("Name", this._name, this._uuid);
+      console.log(this._name, this._uuid);
       console.log("Result", this._storage);
       console.groupEnd();
     },
@@ -3379,8 +3379,9 @@
 
         DoPost(pargs, function(data) {
 
-          console.group("Application::" + self._name + "::" + self._uuid + "::_event()");
-          console.log(ev, args, data);
+          console.group("Application::_event()");
+          console.log(self._name, self._uuid);
+          console.log("Arguments", ev, args, data);
           console.groupEnd();
 
           if ( data.error && show_error ) {
