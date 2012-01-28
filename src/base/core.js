@@ -782,7 +782,8 @@
 
         console.group("=== API OPERATION ===");
         console.log("Method", "API.system.launch");
-        console.log("Message", "Launching", app_name, args);
+        console.log("Launch", app_name);
+        console.log("Argv", args);
         console.groupEnd();
 
         LaunchApplication(app_name, args, windows);
@@ -3041,6 +3042,7 @@
           if ( result ) {
             callback(file, mime);
             _vfs_trigger(file, mime);
+            self._setArgv('path', file);
           }
         });
       };
