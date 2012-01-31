@@ -9,6 +9,16 @@
 OSjs.Applications.ApplicationArchiver = (function($, undefined) {
   "$:nomunge";
 
+  var LINGUAS = {
+    'en_US' : {
+      "title" : 'mimetypes/package-x-generic.png',
+      "error_open" : "Cannot open archive '%s'. Server responded: %s",
+      "error_extract" : "Cannot extract archive '%s'. Server responded: %s",
+      "error_noarchive" : "No archive to extract",
+      "extracted" : "Archive '%s' extracted."
+    }
+  };
+
   /**
    * @param GtkWindow     GtkWindow            GtkWindow API Reference
    * @param Application   Application          Application API Reference
@@ -23,6 +33,7 @@ OSjs.Applications.ApplicationArchiver = (function($, undefined) {
     // WINDOWS
     ///////////////////////////////////////////////////////////////////////////
 
+    var LABELS = LINGUAS[API.system.language()] || LINGUAS['en_US'];
 
     /**
      * GtkWindow Class
@@ -34,7 +45,7 @@ OSjs.Applications.ApplicationArchiver = (function($, undefined) {
         this._super("Window_window1", false, app, windows);
         this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationArchiver window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem1\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem2\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <li class=\"GtkImageMenuItem imagemenuitem3\"> <img alt=\"gtk-save\" src=\"/img/icons/16x16/actions/gtk-save.png\"/> <span>Save</span> </li> <li class=\"GtkImageMenuItem imagemenuitem4\"> <img alt=\"gtk-save-as\" src=\"/img/icons/16x16/actions/gtk-save-as.png\"/> <span>Save as...</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem5\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem3\"> <span><u>A</u>ctions</span> <ul class=\"GtkMenu menu2\"> <li class=\"GtkImageMenuItem menuitem2\"> <img alt=\"gtk-add\" src=\"/img/icons/16x16/actions/gtk-add.png\"/> <span>Add</span> </li> <li class=\"GtkImageMenuItem menuitem4\"> <img alt=\"gtk-remove\" src=\"/img/icons/16x16/actions/gtk-remove.png\"/> <span>Remove</span> </li> <li class=\"GtkImageMenuItem menuitem5\"> <img alt=\"gtk-execute\" src=\"/img/icons/16x16/actions/gtk-execute.png\"/> <span>Execute</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview1\"></div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar1\"></div> </div> </td> </tr> </table> </div> </div> ").html();
         this._title = 'File Archiver (UNDER DEVELOPMENT)';
-        this._icon = 'mimetypes/package-x-generic.png';
+        this._icon = LABELS.title;
         this._is_draggable = true;
         this._is_resizable = true;
         this._is_scrollable = false;
@@ -230,7 +241,7 @@ OSjs.Applications.ApplicationArchiver = (function($, undefined) {
 
         this._event("browse", {"path" : path}, function(result, error) {
           if ( error ) {
-            self.createMessageDialog("error", "Cannot open archive '" + basename(path) + "'. Server responded: " + error);
+            self.createMessageDialog("error", sprintf(LABELS.error_open, basename(path), error));
 
             self.current_path = null;
           } else {
@@ -248,7 +259,7 @@ OSjs.Applications.ApplicationArchiver = (function($, undefined) {
 
         if ( path === undefined || path === null ) {
           if ( !this.current_path ) {
-            this.createMessageDialog("error", "No archive to extract");
+            this.createMessageDialog("error", LABELS.error_noarchive);
             return false;
           }
 
@@ -259,9 +270,9 @@ OSjs.Applications.ApplicationArchiver = (function($, undefined) {
           this._event("extract", {"path" : path, "destination" : destination}, function(result, error) {
             error = error || result.error;
             if ( error ) {
-              self.createMessageDialog("error", "Cannot extract archive '" + basename(path) + "'. Server responded: " + error);
+              self.createMessageDialog("error", sprintf(LABELS.error_extract, basename(path), error));
             } else {
-              self.createMessageDialog("info", "Archive '" + basename(path) + " extracted'.");
+              self.createMessageDialog("info", sprintf(LABELS.extracted, basename(path)));
             }
           });
         }

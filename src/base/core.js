@@ -732,6 +732,10 @@
         return _Settings.getStorageUsage();
        },
 
+      'language' : function() {
+        return localStorage.getItem("system.locale.language") || _SystemLanguage; // FIXME ?!
+      },
+
       'languages' : function() {
         var l = _Languages;
         l['default']  = sprintf(l['default'], _SystemLanguage);
@@ -1860,7 +1864,7 @@
       var load    = $("#Loading");
       var bar     = $("#LoadingBar");
       var date    = (new Date()).toLocaleString();
-      var lang    = localStorage.getItem("system.locale.language") || _SystemLanguage; // FIXME ?!
+      var lang    = API.system.language();
 
       console.group("Core::run()");
 
@@ -4141,21 +4145,6 @@
         }
       })();
 
-      /*
-      var items = _Settings._get("desktop.panel.items", false, true);
-      var panel = new Panel(this);
-      var el, iname, iargs, ialign;
-      for ( var i = 0; i < items.length; i++ ) {
-        el = items[i];
-        iname  = el[0];
-        iargs  = el[1];
-        ialign = el[2] || "left";
-
-        LaunchPanelItem(i, iname, iargs, ialign, panel);
-      }
-      this.addPanel(panel);
-      */
-
       //
       // Now apply bindings and run desktop
       //
@@ -4931,6 +4920,7 @@
     /**
      * Panel::triggerExpand() -- Trigger expanding of items
      * @FIXME   This is not finished yet
+     * @FIXME   Do not resize if size was not changed since last time
      * @param   _PanelItem    x       Item
      * @return  bool
      */

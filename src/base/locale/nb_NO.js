@@ -1,0 +1,226 @@
+/*!
+ * OS.js - JavaScript Operating System - Translation (nb_NO - UTF8)
+ *
+ * Copyright (c) 2011, Anders Evenrud
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met: 
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer. 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution. 
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @package OSjs.Core.Locale
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
+ */
+(function($, undefined) {
+
+  // Labels
+  OSjs.Labels = {
+    "ApplicationCheckCompabilityMessage"  : "Nettleseren din støtter ikke '%s'",
+    "ApplicationCheckCompabilityStack"    : "Application::_checkCompability(): Applikasjon navn: %s",
+    "CrashApplication"                    : "Applikasjon '%s' har stoppet med feilmeldingen '%s'!",
+    "CrashApplicationResourceMessage"     : "En eller flere av disse ressursjene ble ikke lastet::\n%s",
+    "CrashApplicationResourceStack"       : "[LaunchApplication]API::system::launch()\n  Applikasjon: %s\n  Argumenter: %s",
+    "CrashApplicationOpen"                : "Kan ikke åpne '%s' med MIME '%s' med denne applikasjonen",
+    "InitLaunchError"                     : "Kan ikke kjøre '%s'.\nMaks antall prosesser er: %d",
+    "WindowManagerMissing"                : "Kan ikke utføre denne operasjonen fordi Vindus-håndteren ikke kjører.",
+    "WentOffline"                         : "Du mistet tilkoblingen. Gjenoprett internett-tilkoblingen for å fortsette å bruke OS.js",
+    "WentOnline"                          : "Tilkobling er gjenopprettet!",
+    "Quit"                                : "Er du sikker på at du vil avslutte? For å lagre sessjonen din må du bruke utlogging.",
+    "PanelItemRemove"                     : "Er du sikker på at du vil fjerne denne?",
+    "WebWorkerError"                      : "En feil skjedde under håndtering av WebWorker-skript '%s' på linje %d",
+    "StorageWarning"                      : "Advarsel! Du er snart tom for 'local-storage' plass (%d av %d)",
+    "StorageAlert"                        : "Advarsel! Du har nådd 'local-storage' lagrings-grense (%d av %d)",
+    "CrashEvent"                          : "En feil oppstod under en AJAX-hendelse: ",
+    "CrashEventTitle"                     : "En operasjon i '%s' har feilet!",
+    "ContextMenuPanel"                    : {
+      "title"     : "Panel",
+      "add"       : "Legg til",
+      "create"    : "Nytt panel",
+      "remove"    : "Fern panel"
+    },
+    "ContextMenuDesktop"                  : {
+      "title"     : "Skrivebord",
+      "wallpaper" : "Endre Bakgrunn",
+      "sort"      : "Sorter vinduer"
+    },
+    "ContextMenuWindowMenu"               : {
+      "max"     : "Maksimer",
+      "min"     : "Minimer",
+      "restore" : "Gjenoprett",
+      "show"    : "Vis",
+      "ontop"   : "Alltid på topp",
+      "same"    : "Samme som andre",
+      "close"   : "Lukk"
+    },
+    "DialogTitles"                        : {
+      "info"      : "Informasjon",
+      "error"     : "Feil",
+      "question"  : "Spørsmål",
+      "confirm"   : "Bekreft",
+      "warning"   : "Advarsel",
+      "default"   : "Dialog"
+    }
+  };
+
+  // Application Compability error exceptions
+  OSjs.Public.CompabilityErrors = {
+    "canvas"          : "<canvas> Context (2d)",
+    "webgl"           : "<canvas> WebGL Context (3d)",
+    "audio"           : "<audio> DOM Element",
+    "audio_ogg"       : "<audio> Støtter ikke OGG/Vorbis",
+    "audio_mp3"       : "<audio> Støtter ikke MPEG/MP3",
+    "video"           : "<video> DOM Element",
+    "video_webm"      : "<video> Støtter ikke VP8/WebM",
+    "video_ogg"       : "<video> Støtter ikke OGG/Vorbis",
+    "video_mpeg"      : "<video> Støtter ikke MP4/MPEG/h264",
+    "video_mkv"       : "<video> Støtter ikke MKV",
+    "localStorage"    : "window.localStorage()",
+    "sessionStorage"  : "window.sessionStorage()",
+    "globalStorage"   : "window.globalStorage()",
+    "databaseStorage" : "window.databaseStorage()",
+    "socket"          : "window.WebSocket()",
+    "richtext"        : "window.contentEditable (Rich Text Editing)",
+    "upload"          : "Asynkrone Fil-opplastinger",
+    "worker"          : "Web Workers"
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
+  // DIALOGS
+  /////////////////////////////////////////////////////////////////////////////
+
+  OSjs.Labels.ColorOperationDialog = {
+    "title" : "Velg farge..."
+  };
+
+  OSjs.Labels.CopyOperationDialog = {
+    "title" : "Koper fil"
+  };
+
+  OSjs.Labels.CrashDialog = {
+    "title"       : "Applikasjon '%s' stoppet!",
+    "title_proc"  : "Prosess '%s' stoppet!"
+  };
+
+  OSjs.Labels.FileOperationDialog = {
+    "title_saveas"    : "Lagre som...",
+    "title_open"      : "Åpne fil",
+    "protected_file"  : "Denne filen er beskyttet!",
+    "overwrite"       : "Vil du overskrive denne filen?"
+  };
+
+  OSjs.Labels.FontOperationDialog = {
+    "title"   : "Skriftype dialog"
+  };
+
+  OSjs.Labels.InputOperationDialog = {
+    "title"   : "Inn-data dialog",
+    "missing_value" : "Du må fylle inn tekstfeltet!"
+  };
+
+  OSjs.Labels.LaunchOperationDialog = {
+    "title"     : "Velg en applikasjon",
+    "not_found" : "Fant ingen applikasjoner som støtter denne MIME typen.",
+    "found"     : "Fant flere applikasjoner som støtter denne MIME'n:"
+  };
+
+  OSjs.Labels.PanelItemOperationDialog = {
+    "title"     : "Konfigurer"
+  };
+
+  OSjs.Labels.FilePropertyOperationDialog = {
+    "title"     : "Fil-egenskaper",
+    "empty"     : "Ingen informasjon ble samlet."
+  };
+
+  OSjs.Labels.RenameOperationDialog = {
+    "title"     : "Gi nytt fil-navn",
+    "empty"     : "Du må angi et filnavn!"
+  };
+
+  OSjs.Labels.UploadOperationDialog = {
+    "title"       : "Fil-opplasting",
+    "finished"    : "Ferdig",
+    "failed"      : "Feilet",
+    "failed_str"  : "Opplasting feilet",
+    "upload"      : "Last opp",
+    "choose_file" : "Du må angi en fil først!",
+    "error"       : "Opplasting feliet med:\n"
+  };
+
+  OSjs.Labels.CompabilityDialog = {
+    "title"         : "Nettleser støtte",
+    "supported"     : "Støttet",
+    "partially"     : "Delvis støttet",
+    "no_upload"     : "Du vil ikke kunne laste opp filer pga. manglende 'Async Upload' støtte.",
+    "no_work"       : "Noen applikasjoner bruker 'WebWorker' for å avbelaste tunge operasjoner.",
+    "no_gl"         : "Ingen 3D (OpenGL) innhold kan vises pga manglende støtte. (Se dokumentasjon for din nettleser)",
+    "browser_unsup" : "Glade CSS problemer oppstår i IE og Opera for &lt;table&gt; elementer.",
+    "browser_ie"    : "IE mangler CSS effekter og HTML5/W3C støtte.",
+    "browser_touch" : "Din enhet er ikke helt kompatibel pga bevegelses-skjerm.",
+    "browser_supp"  : "Din nettleser har ingen kjente problemer.",
+    "notes"         : "Bemerk at:",
+    "footnote"      : "Denne meldingen vises kun én gang!"
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
+  // PANEL ITEMS
+  /////////////////////////////////////////////////////////////////////////////
+
+  OSjs.Labels.PanelItemClock = {
+    "title" : "Klokke"
+  };
+
+  OSjs.Labels.PanelItemDock = {
+    "title" : "Launcher Dock"
+  };
+
+  OSjs.Labels.PanelItemMenu = {
+    "title"       : "Launcher Meny",
+    "menu_title"  : "Kjør Applikasjon",
+    "cat"         : {
+      "development" : "Utvikling",
+      "games"       : "Spill",
+      "gfx"         : "Grafikk",
+      "office"      : "Kontor",
+      "net"         : "Internett",
+      "media"       : "Multimedia",
+      "sys"         : "System",
+      "util"        : "Verktøy",
+      "other"       : "Ukjent"
+    }
+  };
+
+  OSjs.Labels.PanelItemSeparator = {
+    "title"   : "Separator"
+  };
+
+  OSjs.Labels.PanelItemWeather = {
+    "title"       : "Vær",
+    "loading"     : "Laster...",
+    "no_data"     : "Ingen værdata",
+    "no_support"  : "Ikke støttet!",
+    "reload"      : "Oppfrisk"
+  };
+
+  OSjs.Labels.PanelItemWindowList = {
+    "title" : "Vinu-liste"
+  };
+
+})();
