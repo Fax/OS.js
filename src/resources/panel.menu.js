@@ -121,12 +121,13 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
             "unknown"     : [LABELS.cat.other, "categories/gnome-other.png", []]
           };
 
+          var clang = API.system.language();
           for ( var a in apps ) {
             if ( apps.hasOwnProperty(a) ) {
               o = apps[a];
               (function(apn) {
                 var it = {
-                  "title" : o.title,
+                  "title" : o.titles[clang] || o.title,
                   "method" : function() {
                     API.system.launch(apn);
                   },

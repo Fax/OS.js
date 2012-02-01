@@ -90,6 +90,7 @@ class Compiler
       $project_category     = ((string) $xml['category']);
       $project_enabled      = true;
       $project_title        = Application::APPLICATION_TITLE;
+      $project_titles       = Array(DEFAULT_LANGUAGE => $project_title);
       $project_icon         = Application::APPLICATION_ICON;
       $project_system       = false;
       $project_compability  = Array();
@@ -122,6 +123,7 @@ class Compiler
       $js_compability = "";
       $js_glade       = "";
       $js_root_window = "";
+      $js_linguas     = Array(DEFAULT_LANGUAGE => Array());
 
       // Parse general attributes
       foreach ( $xml->property as $p ) {
@@ -135,7 +137,16 @@ class Compiler
             break;
           case "title" :
             if ( $val ) {
-              $project_title = $val;
+              if ( isset($p['language']) && !empty($p['language']) ) {
+                $lang = ((string)$p['language']);
+                $project_titles[$lang] = $val;
+                if ( $lang == DEFAULT_LANGUAGE ) {
+                  $project_title = $val;
+                }
+              } else {
+                $project_tiles[DEFAULT_LANGUAGE] = $val;
+                $project_title = $val;
+              }
             }
             break;
           case "icon" :
@@ -198,8 +209,12 @@ class Compiler
         }
       }
 
+      // ...
+      $js_linguas[DEFAULT_LANGUAGE]["title"] = $project_title;
+
       // Generate files
       $js_compability = json_encode($project_compability);
+      $js_linguas     = json_encode($js_linguas);
       $js_glade       = implode("\n", $glade_windows);
 
       $rep_php = Array(
@@ -210,12 +225,14 @@ class Compiler
         "%CLASSNAME%"     => $class_name
       );
       $rep_js = Array(
-        "%CLASSNAME%"     => $class_name,
-        "%COMPABILITY%"   => $js_compability,
-        "%CODE_GLADE%"    => $js_glade,
-        "%CODE_PREPEND%"  => $js_prepend,
-        "%CODE_APPEND%"   => $js_append,
-        "%ROOT_WINDOW%"   => $js_root_window
+        "%CLASSNAME%"         => $class_name,
+        "%COMPABILITY%"       => $js_compability,
+        "%CODE_GLADE%"        => $js_glade,
+        "%CODE_PREPEND%"      => $js_prepend,
+        "%CODE_APPEND%"       => $js_append,
+        "%ROOT_WINDOW%"       => $js_root_window,
+        "%LINGUAS%"           => $js_linguas,
+        "%DEFAULT_LANGUAGE%"  => DEFAULT_LANGUAGE
       );
 
       $content_css  = str_replace(array_keys($rep_css), array_values($rep_css), self::$TemplateCSS);
@@ -232,6 +249,13 @@ class Compiler
       $node->setAttribute("category", $project_category);
       $node->setAttribute("class",    $class_name);
       $node->setAttribute("file",     $project_php);
+
+      foreach ( $project_titles as $tl => $tt ) {
+        $n = $this->_oDocument->createElement("title");
+        $n->setAttribute("language", $tl);
+        $n->appendChild(new DomText($tt));
+        $node->appendChild($n);
+      }
 
       foreach ( $project_resources as $r ) {
         $n = $this->_oDocument->createElement("resource");
@@ -351,20 +375,23 @@ class Compiler
             continue;
           }
 
-          $pk = "_{$pk}";
-
-          if ( is_bool($pv) ) {
-            $pv = $pv ? 'true' : 'false';
+          if ( $pk == "title" ) {
+            $pv = "LABELS.title";
           } else {
-            if ( !$pv ) {
-              $pv = "null";
+            if ( is_bool($pv) ) {
+              $pv = $pv ? 'true' : 'false';
             } else {
-              if ( !is_numeric($pv) ) {
-                $pv = "'{$pv}'";
+              if ( !$pv ) {
+                $pv = "null";
+              } else {
+                if ( !is_numeric($pv) ) {
+                  $pv = "'{$pv}'";
+                }
               }
             }
           }
-          $code_init .= "        this.{$pk} = $pv;\n";
+
+          $code_init .= "        this._{$pk} = $pv;\n";
         }
 
         foreach ( $window['signals'] as $obj => $evs ) {
@@ -623,6 +650,8 @@ Compiler::$TemplateJS = <<<EOJAVASCRIPT
 OSjs.Applications.%CLASSNAME% = (function(\$, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = %LINGUAS%;
+
   /**
    * @param GtkWindow     GtkWindow            GtkWindow API Reference
    * @param Application   Application          Application API Reference
@@ -632,6 +661,8 @@ OSjs.Applications.%CLASSNAME% = (function(\$, undefined) {
    */
   return function(GtkWindow, Application, API, argv, windows) {
     "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
+
+    var LABELS = _LINGUAS[API.system.language()] || LINGUAS["%DEFAULT_LANGUAGE%"];
 
     ///////////////////////////////////////////////////////////////////////////
     // WINDOWS

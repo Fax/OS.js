@@ -144,6 +144,7 @@ abstract class Application
           $app_system   = (string) $app['system'] == "true";
           $app_category = (string) $app['category'];
           $app_enabled  = $app['enabled'] === "true" ? true : false;
+          $app_titles   = Array();
 
           if ( $classname !== null && $classname !== $app_class ) {
             continue;
@@ -184,9 +185,16 @@ abstract class Application
             $mimes[] = (string) $mime;
           }
 
+          if ( isset($app->title) ) {
+            foreach ( $app->title as $title ) {
+              $app_titles[((string)$title['language'])] = ((string) $title);
+            }
+          }
+
           $return = Array(
             "name"      => $app_name,
             "title"     => $app_title,
+            "titles"    => $app_titles,
             "icon"      => $app_icon,
             "category"  => $app_category,
             "mimes"     => $mimes,
