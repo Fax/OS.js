@@ -9,6 +9,19 @@
 OSjs.Applications.ApplicationMail = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    'en_US' : {
+      "title"         : "Mail (UNDER DEVELOPMENT)",
+      "title_options" : "Mail Options",
+      "title_mail"    : "Mail Reader/Composer"
+    },
+    'nb_NO' : {
+      "title"         : "Epost (UNDER UTVIKLING)",
+      "title_options" : "Epost Instillinger",
+      "title_mail"    : "Epost Leser/Komposisjon"
+    }
+  };
+
   var iframeCount = 0;
   var defaultConfig = {
     "accounts" : {
@@ -35,6 +48,8 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
   return function(GtkWindow, Application, API, argv, windows) {
     "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
 
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
+
     ///////////////////////////////////////////////////////////////////////////
     // WINDOWS
     ///////////////////////////////////////////////////////////////////////////
@@ -49,7 +64,7 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
       init : function(app) {
         this._super("Window_window_mail", false, app, windows);
         this._content = $("<div class=\"window_mail\"> <div class=\"GtkWindow ApplicationMail window_mail\"> <table class=\"GtkBox Vertical box3\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar_mail\"> <li class=\"GtkMenuItem menuitem_mail\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu2\"> <li class=\"GtkImageMenuItem imagemenuitem_mail_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem2\"></div> <li class=\"GtkImageMenuItem imagemenuitem_mail_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <textarea class=\"GtkTextView GtkObject textview_mail\"></textarea> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar Vertical statusbar_mail\"></div> </div> </td> </tr> </table> </div> </div> ").html();
-        this._title = 'Mail Reader/Composer';
+        this._title = LABELS.title_mail;
         this._icon = 'status/mail-unread.png';
         this._is_draggable = true;
         this._is_resizable = true;
@@ -159,7 +174,7 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
       init : function(app) {
         this._super("Window_window_main", false, app, windows);
         this._content = $("<div class=\"window_main\"> <div class=\"GtkWindow ApplicationMail window_main\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar_main\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_main_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_main_options\"> <img alt=\"gtk-options\" src=\"/img/icons/16x16/categories/applications-system.png\"/> <span>Options</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_main_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> <li class=\"GtkMenuItem menuitem2\"> <span><u>M</u>ail</span> <ul class=\"GtkMenu menu2\"> <li class=\"GtkImageMenuItem imagemenuitem_main_fetch\"> <img alt=\"gtk-fetch\" src=\"/img/icons/16x16/status/stock_mail-replied.png\"/> <span>Fetch messages</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_main_reload\"> <img alt=\"gtk-reload\" src=\"/img/icons/16x16/status/stock_repeat.png\"/> <span>Reload messages</span> </li> </li> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <table class=\"GtkBox Horizontal box2\"> <tr> <td class=\"GtkBoxPosition Position_0\" style=\"width:200px\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview_list\"></div> </div> </td> <td class=\"GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview_mail\"></div> </div> </td> </tr> </table> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar_main\"></div> </div> </td> </tr> </table> </div> </div> ").html();
-        this._title = 'Mail (UNDER DEVELOPMENT)';
+        this._title = LABELS.title;
         this._icon = 'status/mail-unread.png';
         this._is_draggable = true;
         this._is_resizable = true;
@@ -470,7 +485,7 @@ OSjs.Applications.ApplicationMail = (function($, undefined) {
       init : function(app) {
         this._super("Window_window_options", false, app, windows);
         this._content = $("<div class=\"window_options\"> <div class=\"GtkWindow ApplicationMail window_options\"> <div class=\"OptionsContent\"></div> </div> </div> ").html();
-        this._title = 'Mail Options';
+        this._title = LABELS.title_options;
         this._icon = 'status/mail-unread.png';
         this._is_draggable = true;
         this._is_resizable = false;

@@ -9,6 +9,15 @@
 OSjs.Applications.ApplicationBrowser = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    'en_US' : {
+      "title" : "HTML Browser"
+    },
+    'nb_NO' : {
+      "title" : "HTML Leser"
+    }
+  };
+
   /**
    * @param GtkWindow     GtkWindow            GtkWindow API Reference
    * @param Application   Application          Application API Reference
@@ -18,6 +27,8 @@ OSjs.Applications.ApplicationBrowser = (function($, undefined) {
    */
   return function(GtkWindow, Application, API, argv, windows) {
     "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
+
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     ///////////////////////////////////////////////////////////////////////////
     // WINDOWS
@@ -33,7 +44,7 @@ OSjs.Applications.ApplicationBrowser = (function($, undefined) {
       init : function(app) {
         this._super("Window_window1", false, app, windows);
         this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationBrowser window1\"> <div class=\"GtkFixed fixed1\"></div> </div> </div> ").html();
-        this._title = 'HTML Browser';
+        this._title = LABELS.title;
         this._icon = 'apps/web-browser.png';
         this._is_draggable = true;
         this._is_resizable = true;

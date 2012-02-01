@@ -9,8 +9,19 @@
 OSjs.Applications.ApplicationFileManager = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    'en_US' : {
+      "title" : "File Manager"
+    },
+    'nb_NO' : {
+      "title" : "Fil Behandler"
+    }
+  };
+
   return function(GtkWindow, Application, API, argv, windows) {
     "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
+
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     if ( argv.view_type == undefined ) {
       argv.view_type = 'icon';
@@ -27,7 +38,7 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
       init : function(app) {
         this._super("ApplicationFileManager", false, app, windows);
         this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationFileManager window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_mkdir\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_close\"> <img alt=\"gtk-close\" src=\"/img/icons/16x16/actions/gtk-close.png\"/> <span>Close</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem2\"> <span><u>G</u>o</span> <ul class=\"GtkMenu menu2\"> <li class=\"GtkImageMenuItem imagemenuitem_home\"> <img alt=\"gtk-home\" src=\"/img/icons/16x16/actions/gtk-home.png\"/> <span>Home</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem3\"> <span><u>V</u>iew</span> <ul class=\"GtkMenu menu3\"> <li class=\"GtkImageMenuItem menuitem_refresh\"> <img alt=\"gtk-refresh\" src=\"/img/icons/16x16/actions/gtk-refresh.png\"/> <span>Refresh</span> </li> <li class=\"GtkRadioMenuItem menuitem_list\"> <span>List view</span> </li> <li class=\"GtkRadioMenuItem menuitem_icon\"> <span>Icon View</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview1\"></div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar1\"></div> </div> </td> </tr> </table> </div> </div> ").html();
-        this._title = 'File Manager';
+        this._title = LABELS.title;
         this._icon = 'apps/file-manager.png';
         this._is_draggable = true;
         this._is_resizable = true;

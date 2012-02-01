@@ -2,6 +2,7 @@
 <application name="Terminal" file="ApplicationTerminal.class.php" schema="schema.glade" category="utilities">
   <property name="enabled">true</property>
   <property name="title">Terminal</property>
+  <property name="title" language="nb_NO">Terminal</property>
   <property name="icon">apps/utilities-terminal.png</property>
   <property name="system">false</property>
 

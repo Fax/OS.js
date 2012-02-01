@@ -9,6 +9,17 @@
 OSjs.Applications.ApplicationIRC = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    'en_US' : {
+      "title" : "IRC",
+      "title_options" : "IRC Options"
+    },
+    'nb_NO' : {
+      "title" : "IRC",
+      "title_options" : "IRC Instillinger"
+    }
+  };
+
   /**
    * @param GtkWindow     GtkWindow            GtkWindow API Reference
    * @param Application   Application          Application API Reference
@@ -18,6 +29,8 @@ OSjs.Applications.ApplicationIRC = (function($, undefined) {
    */
   return function(GtkWindow, Application, API, argv, windows) {
     "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
+
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     /**
      * IRC Class
@@ -370,7 +383,7 @@ OSjs.Applications.ApplicationIRC = (function($, undefined) {
       init : function(app) {
         this._super("Window_dialog1", false, app, windows);
         this._content = $("<div class=\"dialog1\"> <div class=\"GtkDialog ApplicationIRC dialog1\" style=\"padding:5px\"> <table class=\"GtkBox Vertical dialog-vbox1\"> <tr> <td class=\"Expand Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <table class=\"GtkBox Vertical box2\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\" style=\"height:20px\"> <div class=\"TableCellWrap\"> <div class=\"GtkLabel label2\">Server</div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <input class=\"GtkEntry GtkObject entry_server\" type=\"text\"/> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\" style=\"height:20px\"> <div class=\"TableCellWrap\"> <div class=\"GtkLabel label3\">Port</div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_3\"> <div class=\"TableCellWrap\"> <input class=\"GtkEntry GtkObject entry_port\" type=\"text\"/> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_4\" style=\"height:20px\"> <div class=\"TableCellWrap\"> <div class=\"GtkLabel label4\">Nick</div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_5\"> <div class=\"TableCellWrap\"> <input class=\"GtkEntry GtkObject entry_nick\" type=\"text\"/> </div> </td> </tr> </table> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <ul class=\"GtkButtonBox Horizontal dialog-action_area1\" style=\"text-align:end\"> <li> <button class=\"GtkButton button_close\"><img alt=\"gtk-close\" src=\"/img/icons/16x16/actions/gtk-close.png\"/>Close</button> </li> <li> <button class=\"GtkButton button_ok\"><img alt=\"gtk-ok\" src=\"/img/icons/16x16/actions/gtk-save.png\"/>Ok</button> </li> </ul> </div> </td> </tr> </table> </div> </div> ").html();
-        this._title = 'IRC Options';
+        this._title = LABELS.title_options;
         this._icon = 'apps/system-users.png';
         this._is_draggable = true;
         this._is_resizable = false;
@@ -454,7 +467,7 @@ OSjs.Applications.ApplicationIRC = (function($, undefined) {
       init : function(app) {
         this._super("Window_window1", false, app, windows);
         this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationIRC window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_connect\"> <img alt=\"gtk-connect\" src=\"/img/icons/16x16/actions/stock_media-play.png\"/> <span>Connect</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_disconnect\"> <img alt=\"gtk-disconnect\" src=\"/img/icons/16x16/actions/gtk-stop.png\"/> <span>Disconnect</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_options\"> <img alt=\"gtk-preferences\" src=\"/img/icons/16x16/categories/gtk-preferences.png\"/> <span>Preferences</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkNotebook notebook1\"> <ul> <li class=\"GtkLabel label1\"> <div> <a href=\"#tab-2\">Status</a> </div> </li> </ul> <div class=\"GtkTab\" id=\"tab-2\"> <textarea class=\"GtkTextView GtkObject textview_status\"></textarea> </div> </div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\" style=\"height:30px\"> <div class=\"TableCellWrap\"> <input class=\"GtkEntry GtkObject entry_message\" type=\"text\"/> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_3\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar1\"></div> </div> </td> </tr> </table> </div> </div> ").html();
-        this._title = 'IRC';
+        this._title = LABELS.title;
         this._icon = 'apps/system-users.png';
         this._is_draggable = true;
         this._is_resizable = true;

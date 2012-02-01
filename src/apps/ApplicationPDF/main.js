@@ -9,6 +9,15 @@
 OSjs.Applications.ApplicationPDF = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    'en_US' : {
+      "title" : "PDF Viewer"
+    },
+    'nb_NO' : {
+      "title" : "PDF Leser"
+    }
+  };
+
   /**
    * @param GtkWindow     GtkWindow            GtkWindow API Reference
    * @param Application   Application          Application API Reference
@@ -18,6 +27,8 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
    */
   return function(GtkWindow, Application, API, argv, windows) {
     "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
+
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     ///////////////////////////////////////////////////////////////////////////
     // WINDOWS
@@ -35,7 +46,7 @@ OSjs.Applications.ApplicationPDF = (function($, undefined) {
       init : function(app) {
         this._super("Window_window1", false, app, windows);
         this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationPDF window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_open\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <table class=\"GtkBox Horizontal box2\"> <tr> <td class=\"GtkBoxPosition Position_0\" style=\"width:70px\"> <div class=\"TableCellWrap\"> <button class=\"GtkButton button_prev\"><img alt=\"gtk-media-previous\" src=\"/img/icons/16x16/actions/media-skip-backward.png\"/>Prev</button> </div> </td> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkLabel label_navigation\"></div> </div> </td> <td class=\"GtkBoxPosition Position_3\" style=\"width:70px\"> <div class=\"TableCellWrap\"> <button class=\"GtkButton button_next\"><img alt=\"gtk-media-next\" src=\"/img/icons/16x16/actions/media-skip-forward.png\"/>Next</button> </div> </td> </tr> </table> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkFixed fixed1\"></div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_3\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar1\"></div> </div> </td> </tr> </table> </div> </div> ").html();
-        this._title = 'PDF Viewer';
+        this._title = LABELS.title;
         this._icon = 'mimetypes/gnome-mime-application-pdf.png';
         this._is_draggable = true;
         this._is_resizable = true;

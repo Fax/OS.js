@@ -9,6 +9,15 @@
 OSjs.Applications.ApplicationTerminal = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    'en_US' : {
+      "title" : "Terminal"
+    },
+    'nb_NO' : {
+      "title" : "Terminal"
+    }
+  };
+
   var KEY_TAB = 9;
   var KEY_ENTER = 13;
   var KEY_BACKSPACE = 8;
@@ -19,6 +28,8 @@ OSjs.Applications.ApplicationTerminal = (function($, undefined) {
 
   return function(GtkWindow, Application, API, argv, windows) {
     "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
+
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     ///////////////////////////////////////////////////////////////////////////
     // TERMINAL EMULATION
@@ -123,7 +134,7 @@ OSjs.Applications.ApplicationTerminal = (function($, undefined) {
       init : function(app) {
         this._super("Window_window1", false, app, windows);
         this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationTerminal window1\"> <textarea class=\"GtkTextView GtkObject textview1\"></textarea> </div> </div> ").html();
-        this._title = 'Terminal';
+        this._title = LABELS.title;
         this._icon = 'apps/utilities-terminal.png';
         this._is_draggable = true;
         this._is_resizable = true;

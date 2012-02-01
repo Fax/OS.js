@@ -1,6 +1,7 @@
 <application name="Logout" file="SystemLogout.class.php" schema="schema.glade">
   <property name="enabled">true</property>
   <property name="title">Logout</property>
+  <property name="title" language="nb_NO">Utlogging</property>
   <property name="icon">actions/gnome-logout.png</property>
   <property name="system">true</property>
 

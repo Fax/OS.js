@@ -9,15 +9,26 @@
 OSjs.Applications.SystemLogout = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    'en_US' : {
+      "title" : "Logout"
+    },
+    'nb_NO' : {
+      "title" : "Utlogging"
+    }
+  };
+
   return function(GtkWindow, Application, API, argv, windows) {
     "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
+
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var Window_dialog1 = GtkWindow.extend({
 
       init : function(app) {
         this._super("Window_dialog1", false, app, windows);
         this._content = $("<div class=\"dialog1\"> <div class=\"GtkDialog SystemLogout dialog1\" style=\"padding:5px\"> <table class=\"GtkBox Vertical dialog-vbox1\"> <tr> <td class=\"Expand Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <div class=\"GtkLabel label1\">Are you sure you want to log out?</div> </div> </td> </tr> <tr> <td class=\"Expand GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkCheckButton checkbutton1\"> <input checked=\"checked\" type=\"checkbox\"> <label>Save session for future logins</label> </input> </div> </div> </td> </tr> </table> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <ul class=\"GtkButtonBox Horizontal dialog-action_area1\"> <li> <button class=\"GtkButton button1\"><img alt=\"gtk-cancel\" src=\"/img/icons/16x16/actions/gtk-cancel.png\"/>Cancel</button> </li> <li> <button class=\"GtkButton button2\"><img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/>Quit</button> </li> </ul> </div> </td> </tr> </table> </div> </div> ").html();
-        this._title = 'Logout';
+        this._title = LABELS.title;
         this._icon = 'actions/gnome-logout.png';
         this._is_draggable = true;
         this._is_resizable = false;

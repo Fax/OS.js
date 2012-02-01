@@ -317,7 +317,7 @@ if ( $locale = Core::get()->getLocale() ) {
       <ul>
       </ul>
       <div>
-        <input type="checkbox" /> <label>Use this as default application</label>
+        <input type="checkbox" /> <label class="UseDefault">Use this as default application</label>
       </div>
     </div>
   </div>

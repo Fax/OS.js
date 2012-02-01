@@ -210,6 +210,9 @@ class Compiler
       }
 
       // ...
+      foreach ( $project_titles as $tk => $tv ) {
+        $js_linguas[$tk]["title"] = $tv;
+      }
       $js_linguas[DEFAULT_LANGUAGE]["title"] = $project_title;
 
       // Generate files

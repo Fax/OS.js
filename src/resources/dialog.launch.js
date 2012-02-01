@@ -66,9 +66,12 @@ OSjs.Dialogs.LaunchOperationDialog = (function($, undefined) {
           this.$element.find(".OperationDialogInner").prepend("<p>" + LABELS.found + "</p>");
         }
 
+        this.$element.find(".UseDefault").html(LABELS.set);
+
+        var clang = API.system.language();
         for ( var x = 0; x < this.list.length; x++ ) {
           app = this.list[x];
-          var li = $("<li><img alt=\"\" src=\"/img/icons/16x16/" + app.icon + "\" /><span>" + app.title + "</span></li>");
+          var li = $("<li><img alt=\"\" src=\"/img/icons/16x16/" + app.icon + "\" /><span>" + (app.titles[clang] || app.title) + "</span></li>");
           li.addClass(x % 2 ? "odd" : "even");
           (function(litem, mapp) {
             li.click(function() {

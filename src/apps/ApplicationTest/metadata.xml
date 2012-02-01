@@ -2,6 +2,7 @@
 <application name="Test" file="ApplicationTest.class.php" schema="schema.glade" category="other">
   <property name="enabled">true</property>
   <property name="title">WebWorker Test</property>
+  <property name="title" language="nb_NO">WebWorker Test</property>
   <property name="icon">status/starred.png</property>
   <property name="system">false</property>
 

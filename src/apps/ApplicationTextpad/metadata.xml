@@ -2,6 +2,7 @@
 <application name="Textpad" file="ApplicationTextpad.class.php" schema="schema.glade" category="office">
   <property name="enabled">true</property>
   <property name="title">Textpad</property>
+  <property name="title" language="nb_NO">Skriveblokk</property>
   <property name="icon">apps/text-editor.png</property>
   <property name="system">false</property>
 

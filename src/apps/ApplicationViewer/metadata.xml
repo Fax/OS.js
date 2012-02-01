@@ -2,6 +2,7 @@
 <application name="Viewer" file="ApplicationViewer.class.php" schema="schema.glade" category="graphics">
   <property name="enabled">true</property>
   <property name="title">Image Viewer</property>
+  <property name="title" language="nb_NO">Bilde-visning</property>
   <property name="icon">mimetypes/image-x-generic.png</property>
   <property name="system">false</property>
 

@@ -9,6 +9,15 @@
 OSjs.Applications.ApplicationTest = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    'en_US' : {
+      "title" : "WebWorker Test"
+    },
+    'nb_NO' : {
+      "title" : "WebWorker Test"
+    }
+  };
+
    function makeSpectralColor(hue) {
       var section = Math.floor(hue*6);
       var fraction = hue*6 - section;
@@ -412,6 +421,8 @@ OSjs.Applications.ApplicationTest = (function($, undefined) {
   return function(GtkWindow, Application, API, argv, windows) {
     "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
 
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
+
     ///////////////////////////////////////////////////////////////////////////
     // WINDOWS
     ///////////////////////////////////////////////////////////////////////////
@@ -426,7 +437,7 @@ OSjs.Applications.ApplicationTest = (function($, undefined) {
       init : function(app) {
         this._super("Window_window1", false, app, windows);
         this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationTest window1\"> <div class=\" \"></div> </div> </div> ").html();
-        this._title = 'WebWorker Test';
+        this._title = LABELS.title;
         this._icon = 'status/starred.png';
         this._is_draggable = true;
         this._is_resizable = false;

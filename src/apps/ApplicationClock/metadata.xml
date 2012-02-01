@@ -2,6 +2,7 @@
 <application name="Clock" file="ApplicationClock.class.php" schema="schema.glade" category="utilities">
   <property name="enabled">true</property>
   <property name="title">Clock</property>
+  <property name="title" language="nb_NO">Klokke</property>
   <property name="icon">status/appointment-soon.png</property>
   <property name="system">false</property>
 

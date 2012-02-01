@@ -2,6 +2,7 @@
 <application name="PDF" file="ApplicationPDF.class.php" schema="schema.glade" category="office">
   <property name="enabled">true</property>
   <property name="title">PDF Viewer</property>
+  <property name="title" language="nb_NO">PDF Leser</property>
   <property name="icon">mimetypes/gnome-mime-application-pdf.png</property>
   <property name="system">false</property>
 

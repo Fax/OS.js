@@ -105,6 +105,13 @@
   // DIALOGS
   /////////////////////////////////////////////////////////////////////////////
 
+  OSjs.Labels.DialogButtons = {
+    "Choose" : "Choose",
+    "Ok"     : "Ok",
+    "Close"  : "Close",
+    "Cancel" : "Cancel"
+  };
+
   OSjs.Labels.ColorOperationDialog = {
     "title" : "Choose color..."
   };
@@ -137,7 +144,8 @@
   OSjs.Labels.LaunchOperationDialog = {
     "title"     : "Select an application",
     "not_found" : "Found no suiting application for this MIME type.",
-    "found"     : "Found multiple application supporting this MIME type:"
+    "found"     : "Found multiple application supporting this MIME type:",
+    "set"       : "Use this as default application"
   };
 
   OSjs.Labels.PanelItemOperationDialog = {

@@ -6430,6 +6430,16 @@
         self.$element.find(".ActionClose").click();
         self.cmd_cancel();
       });
+
+      // Translate
+      var l = OSjs.Labels.DialogButtons;
+      var c;
+      for ( c in l ) {
+        if ( l.hasOwnProperty(c) ) {
+          console.log(">>>>>>>>>>>>>>", c, l[c]);
+          this.$element.find("button ." + c).html(l[c]);
+        }
+      }
     }
 
   }); // @endclass
@@ -6444,6 +6454,7 @@
    *
    * @extends Window
    * @class
+   *
    */
   var OperationDialog = Window.extend({
 
@@ -6477,15 +6488,24 @@
       this._super(id, mcallback);
 
       var self = this;
-      self.$element.find(".DialogButtons .Close").click(function() {
+      this.$element.find(".DialogButtons .Close").click(function() {
         self.$element.find(".ActionClose").click();
       });
-      self.$element.find(".DialogButtons .Ok").click(function() {
+      this.$element.find(".DialogButtons .Ok").click(function() {
         self.$element.find(".ActionClose").click();
       });
-      self.$element.find(".DialogButtons .Cancel").click(function() {
+      this.$element.find(".DialogButtons .Cancel").click(function() {
         self.$element.find(".ActionClose").click();
       });
+
+      // Translate
+      var l = OSjs.Labels.DialogButtons;
+      var c;
+      for ( c in l ) {
+        if ( l.hasOwnProperty(c) ) {
+          this.$element.find(".DialogButtons ." + c).html(l[c]);
+        }
+      }
     }
 
   }); // @endclass

@@ -2,6 +2,7 @@
 <application name="Draw" file="ApplicationDraw.class.php" schema="schema.glade" category="graphics">
   <property name="enabled">true</property>
   <property name="title">Draw</property>
+  <property name="title" language="nb_NO">Tegne</property>
   <property name="icon">categories/gnome-graphics.png</property>
   <property name="system">false</property>
 

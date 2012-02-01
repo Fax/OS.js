@@ -9,6 +9,15 @@
 OSjs.Applications.ApplicationMusicPlayer = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    'en_US' : {
+      "title" : "Music Player"
+    },
+    'nb_NO' : {
+      "title" : "Musikkspiller"
+    }
+  };
+
   /**
    * @param GtkWindow     GtkWindow            GtkWindow API Reference
    * @param Application   Application          Application API Reference
@@ -18,6 +27,8 @@ OSjs.Applications.ApplicationMusicPlayer = (function($, undefined) {
    */
   return function(GtkWindow, Application, API, argv, windows) {
     "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
+
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     ///////////////////////////////////////////////////////////////////////////
     // WINDOWS
@@ -33,7 +44,7 @@ OSjs.Applications.ApplicationMusicPlayer = (function($, undefined) {
       init : function(app) {
         this._super("Window_window1", false, app, windows);
         this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationMusicPlayer window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_open\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_save\"> <img alt=\"gtk-save\" src=\"/img/icons/16x16/actions/gtk-save.png\"/> <span>Save</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_saveas\"> <img alt=\"gtk-save-as\" src=\"/img/icons/16x16/actions/gtk-save-as.png\"/> <span>Save as...</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <table class=\"GtkBox Vertical box2\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\" style=\"width:100px;height:80px;padding:10px\"> <div class=\"TableCellWrap\"> <table class=\"GtkBox Vertical box4\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <div class=\"GtkLabel label1\">Artist</div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkLabel label2\">Album</div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkLabel label3\">Track</div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_3\"> <div class=\"TableCellWrap\"> <div class=\"GtkLabel label4\">Length</div> </div> </td> </tr> </table> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\" style=\"padding:10px\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview1\"></div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\" style=\"padding:10px\"> <div class=\"TableCellWrap\"> <div class=\"GtkAlignment alignment1\"> <div class=\"GtkScale scale1\"></div> </div> </div> </td> </tr> </table> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <ul class=\"GtkButtonBox Horizontal buttonbox1\" style=\"text-align:center\"> <li> <button class=\"GtkButton button_prev\"><img alt=\"gtk-media-previous\" src=\"/img/icons/16x16/actions/media-skip-backward.png\"/>Prev</button> </li> <li> <button class=\"GtkButton button_stop\"><img alt=\"gtk-media-stop\" src=\"/img/icons/16x16/actions/media-playback-stop.png\"/>Stop</button> </li> <li> <button class=\"GtkButton button_play\"><img alt=\"gtk-media-play\" src=\"/img/icons/16x16/actions/media-playback-start.png\"/>Play</button> </li> <li> <button class=\"GtkButton button_pause\"><img alt=\"gtk-media-pause\" src=\"/img/icons/16x16/actions/media-playback-pause.png\"/>Pause</button> </li> <li> <button class=\"GtkButton button_next\"><img alt=\"gtk-media-next\" src=\"/img/icons/16x16/actions/media-skip-forward.png\"/>Next</button> </li> </ul> </div> </td> </tr> </table> </div> </div> ").html();
-        this._title = 'Music Player';
+        this._title = LABELS.title;
         this._icon = 'status/audio-volume-high.png';
         this._is_draggable = true;
         this._is_resizable = false;

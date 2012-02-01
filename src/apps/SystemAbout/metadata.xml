@@ -2,6 +2,7 @@
 <application name="About" file="SystemAbout.class.php" schema="schema.glade">
   <property name="enabled">true</property>
   <property name="title">About</property>
+  <property name="title" language="nb_NO">Om Forfatter</property>
   <property name="icon">actions/gtk-about.png</property>
   <property name="system">true</property>
 

@@ -12,6 +12,15 @@
 OSjs.Applications.ApplicationWriter = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    'en_US' : {
+      "title" : "Writer (UNDER DEVELOPMENT)"
+    },
+    'nb_NO' : {
+      "title" : "Skriveprogram (UNDER UTVIKLING)"
+    }
+  };
+
   var CURRENT_FONT  = "Arial";
   var CURRENT_COLOR = "#000000";
   var CURRENT_SIZE  = 12;
@@ -26,6 +35,8 @@ OSjs.Applications.ApplicationWriter = (function($, undefined) {
 
   return function(GtkWindow, Application, API, argv, windows) {
     "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
+
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     /////////////////////////////////////////////////////////////////////////////////////
     // GLOBAL FUNCTIONS
@@ -75,7 +86,7 @@ OSjs.Applications.ApplicationWriter = (function($, undefined) {
       init : function(app) {
         this._super("Window_window1", false, app, windows);
         this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationWriter window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_open\"> <img alt=\"gtk-open\" src=\"/img/icons/16x16/actions/gtk-open.png\"/> <span>Open</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_save\"> <img alt=\"gtk-save\" src=\"/img/icons/16x16/actions/gtk-save.png\"/> <span>Save</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_saveas\"> <img alt=\"gtk-save-as\" src=\"/img/icons/16x16/actions/gtk-save-as.png\"/> <span>Save as...</span> </li> <div class=\"GtkSeparatorMenuItem separatormenuitem1\"></div> <li class=\"GtkImageMenuItem imagemenuitem_quit\"> <img alt=\"gtk-quit\" src=\"/img/icons/16x16/actions/gtk-quit.png\"/> <span>Quit</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <ul class=\"GtkToolbar toolpalette1\"> <li class=\"GtktoggledToolButton toggledtoolbutton1\"> <button> <img alt=\"gtk-bold\" src=\"/img/icons/16x16/actions/gtk-bold.png\"/> <span>Bold</span> </button> </li> <li class=\"GtktoggledToolButton toggledtoolbutton2\"> <button> <img alt=\"gtk-underline\" src=\"/img/icons/16x16/actions/gtk-underline.png\"/> <span>Underline</span> </button> </li> <li class=\"GtktoggledToolButton toggledtoolbutton3\"> <button> <img alt=\"gtk-italic\" src=\"/img/icons/16x16/actions/gtk-italic.png\"/> <span>Italic</span> </button> </li> <li class=\"GtktoggledToolButton toggledtoolbutton4\"> <button> <img alt=\"gtk-strikethrough\" src=\"/img/icons/16x16/actions/gtk-strikethrough.png\"/> <span>Strikethrough</span> </button> </li> <div class=\"GtkSeparatorToolItem separatortoolitem1\"></div> <li class=\"GtktoggledToolButton toggledtoolbutton5\"> <button> <img alt=\"format-justify-left\" src=\"/img/icons/16x16/actions/format-justify-left.png\"/> <span>Align Left</span> </button> </li> <li class=\"GtktoggledToolButton toggledtoolbutton6\"> <button> <img alt=\"format-justify-center\" src=\"/img/icons/16x16/actions/format-justify-center.png\"/> <span>Align Center</span> </button> </li> <li class=\"GtktoggledToolButton toggledtoolbutton7\"> <button> <img alt=\"format-justify-right\" src=\"/img/icons/16x16/actions/format-justify-right.png\"/> <span>Align Right</span> </button> </li> <div class=\"GtkSeparatorToolItem separatortoolitem2\"></div> <li class=\"GtkToolButton toolbutton1\"> <button> <img alt=\"gtk-select-font\" src=\"/img/icons/16x16/apps/fonts.png\"/> <span>Font Selection</span> </button> </li> <li class=\"GtkToolButton toolbutton2\"> <button> <img alt=\"gtk-select-color\" src=\"/img/icons/16x16/apps/preferences-desktop-theme.png\"/> <span>Color Selection</span> </button> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <textarea class=\"GtkTextView GtkObject textview1\"></textarea> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_3\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar1\"></div> </div> </td> </tr> </table> </div> </div> ").html();
-        this._title = 'Writer (UNDER DEVELOPMENT)';
+        this._title = LABELS.title;
         this._icon = 'apps/libreoffice34-writer.png';
         this._is_draggable = true;
         this._is_resizable = true;

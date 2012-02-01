@@ -105,6 +105,13 @@
   // DIALOGS
   /////////////////////////////////////////////////////////////////////////////
 
+  OSjs.Labels.DialogButtons = {
+    "Choose" : "Velg",
+    "Ok"     : "Ok",
+    "Close"  : "Lukk",
+    "Cancel" : "Avbryt"
+  };
+
   OSjs.Labels.ColorOperationDialog = {
     "title" : "Velg farge..."
   };
@@ -137,7 +144,8 @@
   OSjs.Labels.LaunchOperationDialog = {
     "title"     : "Velg en applikasjon",
     "not_found" : "Fant ingen applikasjoner som støtter denne MIME typen.",
-    "found"     : "Fant flere applikasjoner som støtter denne MIME'n:"
+    "found"     : "Fant flere applikasjoner som støtter denne MIME'n:",
+    "set"       : "Bruk dette som standard applikasjon"
   };
 
   OSjs.Labels.PanelItemOperationDialog = {

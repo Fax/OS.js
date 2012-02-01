@@ -2,6 +2,7 @@
 <application name="Writer" file="ApplicationWriter.class.php" schema="schema.glade" category="office">
   <property name="enabled">true</property>
   <property name="title">Writer</property>
+  <property name="title" language="nb_NO">Skriveprogram</property>
   <property name="icon">apps/libreoffice34-writer.png</property>
   <property name="system">false</property>
 

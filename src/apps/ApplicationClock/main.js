@@ -9,15 +9,26 @@
 OSjs.Applications.ApplicationClock = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    'en_US' : {
+      "title" : "Clock"
+    },
+    'nb_NO' : {
+      "title" : "Klokke"
+    }
+  };
+
   return function(GtkWindow, Application, API, argv, windows) {
     "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
+
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var Window_window1 = GtkWindow.extend({
 
       init : function(app) {
         this._super("Window_window1", false, app, windows);
         this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationClock window1\"> <div class=\"Clock\"><div class=\"HourShadow\"></div><div class=\"Hour\"></div><div class=\"MinuteShadow\"></div><div class=\"Minute\"></div><div class=\"SecondShadow\"></div><div class=\"Second\"></div></div> </div> </div> ").html();
-        this._title = 'Clock';
+        this._title = LABELS.title;
         this._icon = 'status/appointment-soon.png';
         this._is_draggable = true;
         this._is_resizable = false;

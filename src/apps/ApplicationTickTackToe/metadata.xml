@@ -2,6 +2,7 @@
 <application name="Viewer" file="ApplicationTickTackToe.class.php" schema="schema.glade" category="games">
   <property name="enabled">true</property>
   <property name="title">Tick-tack-toe</property>
+  <property name="title" language="nb_NO">Bondesjakk</property>
   <property name="icon">/img/app.ticktacktoe/ttt.png</property>
   <property name="system">false</property>
 
