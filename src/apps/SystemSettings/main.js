@@ -11,10 +11,12 @@ OSjs.Applications.SystemSettings = (function($, undefined) {
 
   var _LINGUAS = {
     'en_US' : {
-      "title" : "Settings"
+      "title" : "Settings",
+      "apply" : "Are you sure you want to apply these changes? Changing language requires restart."
     },
     'nb_NO' : {
-      "title" : "Instillinger"
+      "title" : "Instillinger",
+      "apply" : "Er du sikker på at du vil endre disse instillingene? Språkendringer krever omstart."
     }
   };
 
@@ -121,6 +123,8 @@ OSjs.Applications.SystemSettings = (function($, undefined) {
         };
 
         // Reset any fields containing errors
+        var _confirm = false;
+
         for ( var x in args ) {
           if ( args.hasOwnProperty(x) ) {
             var deflt = API.user.settings.get(x);
@@ -141,7 +145,6 @@ OSjs.Applications.SystemSettings = (function($, undefined) {
                       break;
                     }
                   }
-
                   if ( !found ) {
                     args[x] = deflt;
                     API.system.alert("Invalid locale location given!");
@@ -166,6 +169,12 @@ OSjs.Applications.SystemSettings = (function($, undefined) {
                 }
               break;
 
+              case "system.locale.language" :
+                if ( args[x] != deflt ) {
+                  _confirm = true;
+                }
+              break;
+
               default :
               break;
             }
@@ -173,7 +182,13 @@ OSjs.Applications.SystemSettings = (function($, undefined) {
           }
         }
 
-        API.user.settings.save(args);
+        if ( _confirm ) {
+          API.system.dialog("confirm", LABELS.apply, null, function() {
+            API.user.settings.save(args);
+          });
+        } else {
+          API.user.settings.save(args);
+        }
       },
 
 

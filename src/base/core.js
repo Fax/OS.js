@@ -1096,7 +1096,6 @@
       'shutdown' : function() {
         console.group("=== API OPERATION ===");
         console.log("Method", "API.session.shutdown");
-        console.log("Restore", session);
         console.groupEnd();
 
         return _Core.shutdown();
