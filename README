@@ -28,6 +28,7 @@ Features and Highlights:
 * Desktop environment (Customizable settings, themes, fonts, cursors etc)
 * Window Managment (With standard window actions like maximize, minimize, restore, on-top and so on)
 * Session Managment (Save/Restore local[Storage], Create snapshots on server (for backup))
+* Locales (Manage date/time, timezones and languages).
 * Desktop Panels (movable)
 * Desktop Panel items (See list below)
 * Sandboxed Applications with API access and crash-handling
@@ -37,6 +38,10 @@ Features and Highlights:
 * VFS - Virtual Filesystem support (Block devices, Network connections, Compressed files etc. File-Alteration monitoring)
 * Application WebWorkers for faster processing of complex data
 * Server-Side libraries: Database, JSON, IMAP/SMTP, VFS-Operations, Misc helper functions/classes
+
+Translations:
+* US English (en_US) - 100%
+* Norwegian Bokmål (nb_NO) - 30% (Core, Panel and Dialogs only)
 
 Compability (Client-Side):
 -------------------------------------------------------------------------------

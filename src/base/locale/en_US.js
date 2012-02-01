@@ -223,4 +223,23 @@
     "title" : "Window List"
   };
 
+  /////////////////////////////////////////////////////////////////////////////
+  // Gtk
+  /////////////////////////////////////////////////////////////////////////////
+
+  OSjs.Labels.Gtk = {
+    "menuitem_file"     : "File",
+    "menuitem_new"      : "New",
+    "menuitem_open"     : "Open",
+    "menuitem_save"     : "Save",
+    "menuitem_saveas"   : "Save as..:",
+    "menuitem_close"    : "Close",
+    "menuitem_quit"     : "Quit",
+    "menuitem_home"     : "Home",
+    "menuitem_upload"   : "Upload",
+    "menuitem_mkdir"    : "Create directory",
+    "menuitem_listview" : "List view",
+    "menuitem_iconview" : "Icon view"
+  };
+
 })();

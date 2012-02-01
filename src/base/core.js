@@ -6199,6 +6199,19 @@
         el.find("input").attr("autocomplete", "off");
 
         //
+        // Translation
+        //
+        /*
+        var l = OSjs.Labels.Gtk;
+        var t;
+        for ( t in l ) {
+          if ( l.hasOwnProperty(t) ) {
+            el.find("." + l[t] + " span").first().html(l[t]);
+          }
+        }
+        */
+
+        //
         // Box factors (LAST!)
         //
 
