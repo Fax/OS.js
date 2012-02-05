@@ -32,10 +32,19 @@
 OSjs.PanelItems.PanelItemWindowList = (function($, undefined) {
   "$:nomunge";
 
-  return function(_PanelItem, panel, api, argv) {
-    "_PanelItem:nomunge, panel:nomunge, api:nomunge, argv:nomunge";
+  var _LINGUAS = {
+    "en_US" : {
+      "title" : "Window List"
+    },
+    "nb_NO" : {
+      "title" : "Vindu-liste"
+    }
+  };
 
-    var LABELS = OSjs.Labels.PanelItemWindowList;
+  return function(_PanelItem, panel, API, argv) {
+    "_PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
+
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _PanelItemWindowList = _PanelItem.extend({
       init : function() {

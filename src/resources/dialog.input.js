@@ -33,10 +33,21 @@
 OSjs.Dialogs.InputOperationDialog = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    "en_US" : {
+      "title"         : "Input dialog",
+      "missing_value" : "A value is required!"
+    },
+    "nb_NO" : {
+      "title"         : "Inn-data dialog",
+      "missing_value" : "Du må fylle inn tekstfeltet!"
+    }
+  };
+
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
-    var LABELS = OSjs.Labels.InputOperationDialog;
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _InputOperationDialog = OperationDialog.extend({
       init : function(value, desc, clb_finish) {

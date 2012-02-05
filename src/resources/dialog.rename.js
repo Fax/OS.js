@@ -33,10 +33,21 @@
 OSjs.Dialogs.RenameOperationDialog = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    "en_US" : {
+      "title"     : "Rename file",
+      "empty"     : "A filename is required!"
+    },
+    "nb_NO" : {
+      "title"     : "Gi nytt fil-navn",
+      "empty"     : "Du må angi et filnavn!"
+    }
+  };
+
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
-    var LABELS = OSjs.Labels.RenameOperationDialog;
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _RenameOperationDialog = OperationDialog.extend({
       init : function(src, clb_finish) {

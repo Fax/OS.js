@@ -33,10 +33,25 @@
 OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    "en_US" : {
+      "title_saveas"    : "Save As...",
+      "title_open"      : "Open File",
+      "protected_file"  : "This file is protected!",
+      "overwrite"       : "Are you sure you want to overwrite this file?"
+    },
+    "nb_NO" : {
+      "title_saveas"    : "Lagre som...",
+      "title_open"      : "Åpne fil",
+      "protected_file"  : "Denne filen er beskyttet!",
+      "overwrite"       : "Vil du overskrive denne filen?"
+    }
+  };
+
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
-    var LABELS = OSjs.Labels.FileOperationDialog;
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _FileOperationDialog = OperationDialog.extend({
       init : function(type, argv, clb_finish, cur_dir) {

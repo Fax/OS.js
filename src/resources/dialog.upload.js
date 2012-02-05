@@ -33,10 +33,31 @@
 OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    "en_US" : {
+      "title"       : "Upload file",
+      "finished"    : "Finished",
+      "failed"      : "Failed",
+      "failed_str"  : "Failed to upload",
+      "upload"      : "Upload",
+      "choose_file" : "You need to choose a file first!",
+      "error"       : "You cannot upload files because an error occured:\n"
+    },
+    "nb_NO" : {
+      "title"       : "Fil-opplasting",
+      "finished"    : "Ferdig",
+      "failed"      : "Feilet",
+      "failed_str"  : "Opplasting feilet",
+      "upload"      : "Last opp",
+      "choose_file" : "Du må angi en fil først!",
+      "error"       : "Opplasting feliet med:\n"
+    }
+  };
+
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
-    var LABELS = OSjs.Labels.UploadOperationDialog;
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _UploadOperationDialog = OperationDialog.extend({
       init : function(uri, path, clb_finish, clb_progress, clb_cancel) {

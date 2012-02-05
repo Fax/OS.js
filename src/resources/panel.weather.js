@@ -34,10 +34,27 @@
 OSjs.PanelItems.PanelItemWeather = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    "en_US" : {
+      "title"       : "Weather",
+      "loading"     : "Loading...",
+      "no_data"     : "No Weather data",
+      "no_support"  : "Not supported!",
+      "reload"      : "Reload"
+    },
+    "nb_NO" : {
+      "title"       : "Vær",
+      "loading"     : "Laster...",
+      "no_data"     : "Ingen værdata",
+      "no_support"  : "Ikke støttet!",
+      "reload"      : "Oppfrisk"
+    }
+  };
+
   return function(_PanelItem, panel, API, argv) {
     "_PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
 
-    var LABELS = OSjs.Labels.PanelItemWeather;
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _PanelItemWeather = _PanelItem.extend({
       init : function() {

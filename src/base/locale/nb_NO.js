@@ -112,123 +112,23 @@
     "Cancel" : "Avbryt"
   };
 
-  OSjs.Labels.ColorOperationDialog = {
-    "title" : "Velg farge..."
-  };
-
-  OSjs.Labels.CopyOperationDialog = {
-    "title" : "Koper fil"
-  };
-
-  OSjs.Labels.CrashDialog = {
-    "title"       : "Applikasjon '%s' stoppet!",
-    "title_proc"  : "Prosess '%s' stoppet!"
-  };
-
-  OSjs.Labels.FileOperationDialog = {
-    "title_saveas"    : "Lagre som...",
-    "title_open"      : "Åpne fil",
-    "protected_file"  : "Denne filen er beskyttet!",
-    "overwrite"       : "Vil du overskrive denne filen?"
-  };
-
-  OSjs.Labels.FontOperationDialog = {
-    "title"   : "Skriftype dialog"
-  };
-
-  OSjs.Labels.InputOperationDialog = {
-    "title"   : "Inn-data dialog",
-    "missing_value" : "Du må fylle inn tekstfeltet!"
-  };
-
-  OSjs.Labels.LaunchOperationDialog = {
-    "title"     : "Velg en applikasjon",
-    "not_found" : "Fant ingen applikasjoner som støtter denne MIME typen.",
-    "found"     : "Fant flere applikasjoner som støtter denne MIME'n:",
-    "set"       : "Bruk dette som standard applikasjon"
-  };
-
-  OSjs.Labels.PanelItemOperationDialog = {
-    "title"     : "Konfigurer"
-  };
-
-  OSjs.Labels.FilePropertyOperationDialog = {
-    "title"     : "Fil-egenskaper",
-    "empty"     : "Ingen informasjon ble samlet."
-  };
-
-  OSjs.Labels.RenameOperationDialog = {
-    "title"     : "Gi nytt fil-navn",
-    "empty"     : "Du må angi et filnavn!"
-  };
-
-  OSjs.Labels.UploadOperationDialog = {
-    "title"       : "Fil-opplasting",
-    "finished"    : "Ferdig",
-    "failed"      : "Feilet",
-    "failed_str"  : "Opplasting feilet",
-    "upload"      : "Last opp",
-    "choose_file" : "Du må angi en fil først!",
-    "error"       : "Opplasting feliet med:\n"
-  };
-
-  OSjs.Labels.CompabilityDialog = {
-    "title"         : "Nettleser støtte",
-    "supported"     : "Støttet",
-    "partially"     : "Delvis støttet",
-    "no_upload"     : "Du vil ikke kunne laste opp filer pga. manglende 'Async Upload' støtte.",
-    "no_work"       : "Noen applikasjoner bruker 'WebWorker' for å avbelaste tunge operasjoner.",
-    "no_gl"         : "Ingen 3D (OpenGL) innhold kan vises pga manglende støtte. (Se dokumentasjon for din nettleser)",
-    "browser_unsup" : "Glade CSS problemer oppstår i IE og Opera for &lt;table&gt; elementer.",
-    "browser_ie"    : "IE mangler CSS effekter og HTML5/W3C støtte.",
-    "browser_touch" : "Din enhet er ikke helt kompatibel pga bevegelses-skjerm.",
-    "browser_supp"  : "Din nettleser har ingen kjente problemer.",
-    "notes"         : "Bemerk at:",
-    "footnote"      : "Denne meldingen vises kun én gang!"
-  };
-
   /////////////////////////////////////////////////////////////////////////////
-  // PANEL ITEMS
+  // Gtk
   /////////////////////////////////////////////////////////////////////////////
 
-  OSjs.Labels.PanelItemClock = {
-    "title" : "Klokke"
-  };
-
-  OSjs.Labels.PanelItemDock = {
-    "title" : "Launcher Dock"
-  };
-
-  OSjs.Labels.PanelItemMenu = {
-    "title"       : "Launcher Meny",
-    "menu_title"  : "Kjør Applikasjon",
-    "cat"         : {
-      "development" : "Utvikling",
-      "games"       : "Spill",
-      "gfx"         : "Grafikk",
-      "office"      : "Kontor",
-      "net"         : "Internett",
-      "media"       : "Multimedia",
-      "sys"         : "System",
-      "util"        : "Verktøy",
-      "other"       : "Ukjent"
-    }
-  };
-
-  OSjs.Labels.PanelItemSeparator = {
-    "title"   : "Separator"
-  };
-
-  OSjs.Labels.PanelItemWeather = {
-    "title"       : "Vær",
-    "loading"     : "Laster...",
-    "no_data"     : "Ingen værdata",
-    "no_support"  : "Ikke støttet!",
-    "reload"      : "Oppfrisk"
-  };
-
-  OSjs.Labels.PanelItemWindowList = {
-    "title" : "Vinu-liste"
+  OSjs.Labels.Gtk = {
+    "menuitem_file"     : "File",
+    "menuitem_new"      : "New",
+    "menuitem_open"     : "Open",
+    "menuitem_save"     : "Save",
+    "menuitem_saveas"   : "Save as..:",
+    "menuitem_close"    : "Close",
+    "menuitem_quit"     : "Quit",
+    "menuitem_home"     : "Home",
+    "menuitem_upload"   : "Upload",
+    "menuitem_mkdir"    : "Create directory",
+    "menuitem_listview" : "List view",
+    "menuitem_iconview" : "Icon view"
   };
 
 })();

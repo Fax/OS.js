@@ -33,10 +33,19 @@
 OSjs.Dialogs.CopyOperationDialog = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    "en_US" : {
+      "title" : "Copy file"
+    },
+    "nb_NO" : {
+      "title" : "Koper fil"
+    }
+  };
+
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
-    var LABELS = OSjs.Labels.CopyOperationDialog;
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _CopyOperationDialog = OperationDialog.extend({
       init : function(src, dest, clb_finish, clb_progress, clb_cancel) {

@@ -32,10 +32,19 @@
 OSjs.PanelItems.PanelItemSeparator = (function($, undefined) {
   "$:nomunge";
 
-  return function(_PanelItem, panel, api, argv) {
-    "_PanelItem:nomunge, panel:nomunge, api:nomunge, argv:nomunge";
+  var _LINGUAS = {
+    "en_US" : {
+      "title"   : "Separator"
+    },
+    "nb_NO" : {
+      "title"   : "Separator"
+    }
+  };
 
-    var LABELS = OSjs.Labels.PanelItemSeparator;
+  return function(_PanelItem, panel, API, argv) {
+    "_PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
+
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _PanelItemSeparator = _PanelItem.extend({
       init : function() {

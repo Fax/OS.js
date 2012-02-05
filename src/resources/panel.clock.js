@@ -32,10 +32,19 @@
 OSjs.PanelItems.PanelItemClock = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    "en_US" : {
+      "title" : "Clock"
+    },
+    "nb_NO" : {
+      "title" : "Klokke"
+    }
+  };
+
   return function(_PanelItem, panel, API, argv) {
     "_PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
 
-    var LABELS = OSjs.Labels.PanelItemClock;
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _PanelItemClock = _PanelItem.extend({
       init : function() {

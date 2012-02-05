@@ -33,10 +33,19 @@
 OSjs.Dialogs.PanelItemOperationDialog = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    "en_US" : {
+      "title"     : "Configure"
+    },
+    "nb_NO" : {
+      "title"     : "Konfigurer"
+    }
+  };
+
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
-    var LABELS = OSjs.Labels.PanelItemOperationDialog;
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _PanelItemOperationDialog = OperationDialog.extend({
       init : function(item, clb_create, clb_finish, title, copy) {

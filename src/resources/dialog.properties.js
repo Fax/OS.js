@@ -33,10 +33,21 @@
 OSjs.Dialogs.FilePropertyOperationDialog = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    "en_US" : {
+      "title"     : "File properties",
+      "empty"     : "No information could be gathered."
+    },
+    "nb_NO" : {
+      "title"     : "Fil-egenskaper",
+      "empty"     : "Ingen informasjon ble samlet."
+    }
+  };
+
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
-    var LABELS = OSjs.Labels.FilePropertyOperationDialog;
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _FilePropertyOperationDialog = OperationDialog.extend({
       init : function(filename, clb_finish) {

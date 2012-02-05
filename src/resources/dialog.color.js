@@ -33,10 +33,19 @@
 OSjs.Dialogs.ColorOperationDialog = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    "en_US" : {
+      "title" : "Choose color..."
+    },
+    "nb_NO" : {
+      "title" : "Velg farge..."
+    }
+  };
+
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
-    var LABELS = OSjs.Labels.ColorOperationDialog;
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _ColorOperationDialog = OperationDialog.extend({
       init : function(start_color, clb_finish) {

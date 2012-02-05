@@ -32,10 +32,19 @@
 OSjs.PanelItems.PanelItemDock = (function($, undefined) {
   "$:nomunge";
 
-  return function(_PanelItem, panel, api, argv) {
-    "_PanelItem:nomunge, panel:nomunge, api:nomunge, argv:nomunge";
+  var _LINGUAS = {
+    "en_US" : {
+      "title" : "Launcher Dock"
+    },
+    "nb_NO" : {
+      "title" : "Launcher Dock"
+    }
+  };
 
-    var LABELS = OSjs.Labels.PanelItemDock;
+  return function(_PanelItem, panel, API, argv) {
+    "_PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
+
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _PanelItemDock = _PanelItem.extend({
       init : function(items) {
@@ -69,7 +78,7 @@ OSjs.PanelItems.PanelItemDock = (function($, undefined) {
               "left" : (($(document).width() / 2) - ($("#DialogAbout").width() / 2)) + "px"
             });
           } else {
-            api.system.launch(app);
+            API.system.launch(app);
           }
         });
 

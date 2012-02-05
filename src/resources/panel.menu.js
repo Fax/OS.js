@@ -33,6 +33,39 @@
 OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    "en_US" : {
+      "title"       : "Launcher Menu",
+      "menu_title"  : "Launch Application",
+      "cat"         : {
+        "development" : "Development",
+        "games"       : "Games",
+        "gfx"         : "Graphics",
+        "office"      : "Office",
+        "net"         : "Internet",
+        "media"       : "Multimedia",
+        "sys"         : "System",
+        "util"        : "Utilities",
+        "other"       : "Unknown"
+      }
+    },
+    "nb_NO" : {
+      "title"       : "Launcher Meny",
+      "menu_title"  : "Kjør Applikasjon",
+      "cat"         : {
+        "development" : "Utvikling",
+        "games"       : "Spill",
+        "gfx"         : "Grafikk",
+        "office"      : "Kontor",
+        "net"         : "Internett",
+        "media"       : "Multimedia",
+        "sys"         : "System",
+        "util"        : "Verktøy",
+        "other"       : "Ukjent"
+      }
+    }
+  };
+
   var last_menu = null;
   var menu_obj = null;
   var menu_el = null;
@@ -50,7 +83,7 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
   return function(_PanelItem, panel, API, argv) {
     "_PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
 
-    var LABELS = OSjs.Labels.PanelItemMenu;
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     function CreateMenu(items, level) {
       var ul = $("<ul class=\"GtkMenu\"></ul>");

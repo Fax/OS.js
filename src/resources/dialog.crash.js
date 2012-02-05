@@ -32,10 +32,21 @@
 OSjs.Dialogs.CrashDialog = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    "en_US" : {
+      "title"       : "Application '%s' crashed!",
+      "title_proc"  : "Process '%s' crashed!"
+    },
+    "nb_NO" : {
+      "title"       : "Applikasjon '%s' stoppet!",
+      "title_proc"  : "Prosess '%s' stoppet!"
+    }
+  };
+
   return function(Window, Application, argv) {
     "GtkWindow:nomunge, Application:nomunge, argv:nomunge";
 
-    var LABELS = OSjs.Labels.CrashDialog;
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     /**
      * CrashDialog -- Application Crash Dialog

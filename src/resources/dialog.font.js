@@ -33,10 +33,19 @@
 OSjs.Dialogs.FontOperationDialog = (function($, undefined) {
   "$:nomunge";
 
-  var LABELS = OSjs.Labels.FontOperationDialog;
+  var _LINGUAS = {
+    "en_US" : {
+      "title"   : "Font dialog"
+    },
+    "nb_NO" : {
+      "title"   : "Skriftype dialog"
+    }
+  };
 
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
+
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     function UpdatePreview(el, size, font) {
       $(el).html("The quick brown fox jumps over the lazy dog");

@@ -33,10 +33,25 @@
 OSjs.Dialogs.LaunchOperationDialog = (function($, undefined) {
   "$:nomunge";
 
+  var _LINGUAS = {
+    "en_US" : {
+      "title"     : "Select an application",
+      "not_found" : "Found no suiting application for this MIME type.",
+      "found"     : "Found multiple application supporting this MIME type:",
+      "set"       : "Use this as default application"
+    },
+    "nb_NO" : {
+      "title"     : "Velg en applikasjon",
+      "not_found" : "Fant ingen applikasjoner som støtter denne MIME typen.",
+      "found"     : "Fant flere applikasjoner som støtter denne MIME'n:",
+      "set"       : "Bruk dette som standard applikasjon"
+    }
+  };
+
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
-    var LABELS = OSjs.Labels.LaunchOperationDialog;
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _LaunchOperationDialog = OperationDialog.extend({
       init : function(items, clb_finish, not_found) {
