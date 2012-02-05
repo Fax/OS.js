@@ -43,8 +43,8 @@ OSjs.Dialogs.CrashDialog = (function($, undefined) {
     }
   };
 
-  return function(Window, Application, argv) {
-    "GtkWindow:nomunge, Application:nomunge, argv:nomunge";
+  return function(Window, Application, API, argv) {
+    "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge";
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 

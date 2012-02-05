@@ -250,7 +250,7 @@
       var trace = sprintf("InitLaunch(%s)", name);
 
       try {
-        _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, [name, msg, trace]));
+        _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [name, msg, trace]));
       } catch ( eee ) {
         MessageBox(msg);
       }
@@ -303,11 +303,13 @@
    */
   function CrashApplication(app_name, application, ex) {
     try {
-      _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, [application, ex.message, ex.stack, ex]));
+      _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [application, ex.message, ex.stack, ex]));
       try {
         application._running = true; // NOTE: Workaround
         application.kill();
-      } catch ( eee ) {}
+      } catch ( eee ) {
+        console.log(">>>>>>>>>>>>>>", eee);
+      }
     } catch ( ee ) {
       var label = OSjs.Labels.CrashApplication;
       MessageBox(sprintf(label, app_name, ex));
@@ -1491,7 +1493,7 @@
         var msg   = sprintf(OSjs.Labels.WebWorkerError, file, line);
         var trace = error;
 
-        _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, [name, msg, trace]));
+        _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [name, msg, trace]));
 
         self.destroy();
       };
@@ -3486,7 +3488,7 @@
           if ( data.error && show_error ) {
             var msg = OSjs.Labels.CrashEvent + data.error;
             var title = sprintf(OSjs.Labels.CrashEventTitle, self._name);
-            _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, [self._name, msg, JSON.stringify(pargs), undefined, title]));
+            _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [self._name, msg, JSON.stringify(pargs), undefined, title]));
           }
 
           callback(data.result, data.error);
@@ -6204,8 +6206,6 @@
         var t;
         for ( t in l ) {
           if ( l.hasOwnProperty(t) ) {
-            console.log(t, el.find(".GtkMenuBar .imagemenuitem_" + t + " span"), l[t]);
-
             el.find(".GtkMenuBar .imagemenuitem_" + t + " span").first().html(l[t]);
             el.find(".GtkMenuBar .menuitem_" + t + " span").first().html(l[t]);
           }
@@ -6436,7 +6436,6 @@
       var c;
       for ( c in l ) {
         if ( l.hasOwnProperty(c) ) {
-          console.log(">>>>>>>>>>>>>>", c, l[c]);
           this.$element.find("button ." + c).html(l[c]);
         }
       }
