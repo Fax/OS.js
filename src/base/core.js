@@ -6200,15 +6200,16 @@
         //
         // Translation
         //
-        /*
-        var l = OSjs.Labels.Gtk;
+        var l = OSjs.Labels.GtkMenu;
         var t;
         for ( t in l ) {
           if ( l.hasOwnProperty(t) ) {
-            el.find("." + l[t] + " span").first().html(l[t]);
+            console.log(t, el.find(".GtkMenuBar .imagemenuitem_" + t + " span"), l[t]);
+
+            el.find(".GtkMenuBar .imagemenuitem_" + t + " span").first().html(l[t]);
+            el.find(".GtkMenuBar .menuitem_" + t + " span").first().html(l[t]);
           }
         }
-        */
 
         //
         // Box factors (LAST!)

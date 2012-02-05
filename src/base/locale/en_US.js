@@ -116,19 +116,27 @@
   // Gtk
   /////////////////////////////////////////////////////////////////////////////
 
-  OSjs.Labels.Gtk = {
-    "menuitem_file"     : "File",
-    "menuitem_new"      : "New",
-    "menuitem_open"     : "Open",
-    "menuitem_save"     : "Save",
-    "menuitem_saveas"   : "Save as..:",
-    "menuitem_close"    : "Close",
-    "menuitem_quit"     : "Quit",
-    "menuitem_home"     : "Home",
-    "menuitem_upload"   : "Upload",
-    "menuitem_mkdir"    : "Create directory",
-    "menuitem_listview" : "List view",
-    "menuitem_iconview" : "Icon view"
+  OSjs.Labels.GtkMenu = {
+    "file"     : "<u>F</u>ile",
+    "new"      : "New",
+    "open"     : "Open",
+    "save"     : "Save",
+    "saveas"   : "Save as..:",
+    "close"    : "Close",
+    "quit"     : "Quit",
+    "home"     : "Home",
+    "upload"   : "Upload",
+    "mkdir"    : "Create directory",
+    "listview" : "List view",
+    "iconview" : "Icon view",
+    "add"      : "Add",
+    "remove"   : "Remove",
+    "execute"  : "Execute",
+    "refresh"  : "Refresh",
+    "go"       : "<u>G</u>o",
+    "view"     : "<u>V</u>iew",
+    "help"     : "<u>H</u>elp",
+    "about"    : "About"
   };
 
 })();

@@ -11,10 +11,12 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
 
   var _LINGUAS = {
     'en_US' : {
-      "title" : "File Manager"
+      "title" : "File Manager",
+      "upload" : "Upload"
     },
     'nb_NO' : {
-      "title" : "Fil Behandler"
+      "title" : "Fil Behandler",
+      "upload" : "Last opp"
     }
   };
 
@@ -37,7 +39,7 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
 
       init : function(app) {
         this._super("ApplicationFileManager", false, app, windows);
-        this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationFileManager window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem1\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_mkdir\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_close\"> <img alt=\"gtk-close\" src=\"/img/icons/16x16/actions/gtk-close.png\"/> <span>Close</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem2\"> <span><u>G</u>o</span> <ul class=\"GtkMenu menu2\"> <li class=\"GtkImageMenuItem imagemenuitem_home\"> <img alt=\"gtk-home\" src=\"/img/icons/16x16/actions/gtk-home.png\"/> <span>Home</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem3\"> <span><u>V</u>iew</span> <ul class=\"GtkMenu menu3\"> <li class=\"GtkImageMenuItem menuitem_refresh\"> <img alt=\"gtk-refresh\" src=\"/img/icons/16x16/actions/gtk-refresh.png\"/> <span>Refresh</span> </li> <li class=\"GtkRadioMenuItem menuitem_list\"> <span>List view</span> </li> <li class=\"GtkRadioMenuItem menuitem_icon\"> <span>Icon View</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview1\"></div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar1\"></div> </div> </td> </tr> </table> </div> </div> ").html();
+        this._content = $("<div class=\"window1\"> <div class=\"GtkWindow ApplicationFileManager window1\"> <table class=\"GtkBox Vertical box1\"> <tr> <td class=\"Fill GtkBoxPosition Position_0\"> <div class=\"TableCellWrap\"> <ul class=\"GtkMenuBar menubar1\"> <li class=\"GtkMenuItem menuitem_file\"> <span><u>F</u>ile</span> <ul class=\"GtkMenu menu1\"> <li class=\"GtkImageMenuItem imagemenuitem_new\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_mkdir\"> <img alt=\"gtk-new\" src=\"/img/icons/16x16/actions/gtk-new.png\"/> <span>New</span> </li> <li class=\"GtkImageMenuItem imagemenuitem_close\"> <img alt=\"gtk-close\" src=\"/img/icons/16x16/actions/gtk-close.png\"/> <span>Close</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem_go\"> <span><u>G</u>o</span> <ul class=\"GtkMenu menu2\"> <li class=\"GtkImageMenuItem imagemenuitem_home\"> <img alt=\"gtk-home\" src=\"/img/icons/16x16/actions/gtk-home.png\"/> <span>Home</span> </li> </ul> </li> <li class=\"GtkMenuItem menuitem_view\"> <span><u>V</u>iew</span> <ul class=\"GtkMenu menu3\"> <li class=\"GtkImageMenuItem menuitem_refresh\"> <img alt=\"gtk-refresh\" src=\"/img/icons/16x16/actions/gtk-refresh.png\"/> <span>Refresh</span> </li> <li class=\"GtkRadioMenuItem menuitem_listview\"> <span>List view</span> </li> <li class=\"GtkRadioMenuItem menuitem_iconview\"> <span>Icon View</span> </li> </ul> </li> </ul> </div> </td> </tr> <tr> <td class=\"Expand Fill GtkBoxPosition Position_1\"> <div class=\"TableCellWrap\"> <div class=\"GtkIconView GtkObject iconview1\"></div> </div> </td> </tr> <tr> <td class=\"Fill GtkBoxPosition Position_2\"> <div class=\"TableCellWrap\"> <div class=\"GtkStatusbar statusbar1\"></div> </div> </td> </tr> </table> </div> </div> ").html();
         this._title = LABELS.title;
         this._icon = 'apps/file-manager.png';
         this._is_draggable = true;
@@ -181,11 +183,11 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
 
       _updateMenu : function() {
         if ( this.app._argv.view_type == 'icon' ) {
-          this.$element.find(".menuitem_list").removeClass("Checked");
-          this.$element.find(".menuitem_icon").addClass("Checked");
+          this.$element.find(".menuitem_listview").removeClass("Checked");
+          this.$element.find(".menuitem_iconview").addClass("Checked");
         } else {
-          this.$element.find(".menuitem_list").addClass("Checked");
-          this.$element.find(".menuitem_icon").removeClass("Checked");
+          this.$element.find(".menuitem_listview").addClass("Checked");
+          this.$element.find(".menuitem_iconview").removeClass("Checked");
         }
       },
 
@@ -197,11 +199,11 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
 
           el.find(".imagemenuitem_new").click(function(ev) {
             self.EventMenuNew(this, ev);
-          }).find("span").html("Upload");
+          }).find("span").html(LABELS.upload);
 
           el.find(".imagemenuitem_mkdir").click(function(ev) {
             self.EventMenuMkdir(this, ev);
-          }).find("span").html("Create Directory");
+          }).find("span");
 
           el.find(".imagemenuitem_close").click(function(ev) {
             self.EventMenuClose(this, ev);
@@ -215,11 +217,11 @@ OSjs.Applications.ApplicationFileManager = (function($, undefined) {
             self.EventRefresh(this, ev);
           });
 
-          el.find(".menuitem_list").click(function(ev) {
+          el.find(".menuitem_listview").click(function(ev) {
             self.EventMenuListToggle(this, ev);
           });
 
-          el.find(".menuitem_icon").click(function(ev) {
+          el.find(".menuitem_iconview").click(function(ev) {
             self.EventMenuIconToggle(this, ev);
           });
 
