@@ -104,6 +104,7 @@ require "lib/DB.class.php";
 require "lib/DBObject.class.php";
 
 // Main sources (Rest is loaded dynamically)
+require "src/ResourceManager.class.php";
 require "src/Core.class.php";
 require "src/User.class.php";
 

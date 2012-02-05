@@ -26,12 +26,12 @@ if ( !ENABLE_CACHE ) {
 
 if ( isset($_GET['font']) && !empty($_GET['font']) ) {
   header("Content-Type: text/css; charset=utf-8");
-  print Core::getFont($_GET['font'], ENV_PRODUCTION);
+  print ResourceManager::getFont($_GET['font'], ENV_PRODUCTION);
   exit;
 }
 
 if ( isset($_GET['theme']) && !empty($_GET['theme']) ) {
-  if ( ($content = Core::getTheme($_GET['theme'], ENV_PRODUCTION)) === false ) {
+  if ( ($content = ResourceManager::getTheme($_GET['theme'], ENV_PRODUCTION)) === false ) {
     header("HTTP/1.0 404 Not Found");
     exit;
   }
@@ -42,7 +42,7 @@ if ( isset($_GET['theme']) && !empty($_GET['theme']) ) {
 }
 
 if ( isset($_GET['cursor']) && !empty($_GET['cursor']) ) {
-  if ( ($content = Core::getCursor($_GET['cursor'], ENV_PRODUCTION)) === false ) {
+  if ( ($content = ResourceManager::getCursor($_GET['cursor'], ENV_PRODUCTION)) === false ) {
     header("HTTP/1.0 404 Not Found");
     exit;
   }
@@ -59,7 +59,7 @@ if ( isset($_GET['cursor']) && !empty($_GET['cursor']) ) {
 if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
   $type = preg_match("/\.js$/", $_GET['resource']) ? "js" : "css";
   $app  = isset($_GET['application']) ? $_GET['application'] : null;
-  if ( ($content = Core::getFile(true, $_GET['resource'], $app, ENV_PRODUCTION)) === false ) {
+  if ( ($content = ResourceManager::getFile(true, $_GET['resource'], $app, ENV_PRODUCTION)) === false ) {
     header("HTTP/1.0 404 Not Found");
     exit;
   }
@@ -70,7 +70,7 @@ if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
 
 } else if ( isset($_GET['library']) ) {
   $type = preg_match("/\.js$/", $_GET['library']) ? "js" : "css";
-  if ( ($content = Core::getFile(false, $_GET['library'], null, ENV_PRODUCTION)) === false ) {
+  if ( ($content = ResourceManager::getFile(false, $_GET['library'], null, ENV_PRODUCTION)) === false ) {
     header("HTTP/1.0 404 Not Found");
     exit;
   }
@@ -79,7 +79,7 @@ if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
   print $content;
   exit;
 } else if ( isset($_GET['language']) ) {
-  if ( ($content = Core::getTranslation($_GET['language'], ENV_PRODUCTION)) === false ) {
+  if ( ($content = ResourceManager::getTranslation($_GET['language'], ENV_PRODUCTION)) === false ) {
     header("HTTP/1.0 404 Not Found");
     exit;
   }
