@@ -9,6 +9,9 @@ doc/doxygen.log
 doc/api/*
 public_html/.htpasswd
 
+# Sub-modules
+src/apps
+
 # Build files
 src/build/minimize.cache
 src/locale/*/LC_MESSAGES/messages.mo
