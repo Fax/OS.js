@@ -35,7 +35,7 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * OSjs::Classes::OSjsException -- Base Exception
+   * OSjsException -- Base Exception
    * @class
    */
   var OSjsException = Class.extend({
@@ -79,7 +79,7 @@
   });
 
   /**
-   * OSjs::Classes::AJAXException -- AJAXException Exception
+   * AJAXException -- AJAXException Exception
    * @exception
    */
   OSjs.Classes.AJAXException = OSjsException.extend({
@@ -89,7 +89,7 @@
   });
 
   /**
-   * OSjs::Classes::IOException -- IOException Exception
+   * IOException -- IOException Exception
    * @exception
    */
   OSjs.Classes.IOException = OSjsException.extend({
@@ -99,7 +99,7 @@
   });
 
   /**
-   * OSjs::Classes::ApplicationException -- ApplicationException Exception
+   * ApplicationException -- ApplicationException Exception
    * @exception
    */
   OSjs.Classes.ApplicationException = OSjsException.extend({
@@ -109,7 +109,7 @@
   });
 
   /**
-   * OSjs::Classes::CoreException -- CoreException Exception
+   * CoreException -- CoreException Exception
    * @exception
    */
   OSjs.Classes.CoreException = OSjsException.extend({
@@ -135,7 +135,7 @@
   };
 
   /**
-   * OSjs::Classes::IconView -- IconView Class
+   * IconView -- IconView Class
    * @class
    */
   OSjs.Classes.IconView = Class.extend({
@@ -853,7 +853,7 @@
   });
 
   /**
-   * OSjs::Classes::MusicPlayer -- Music Player class
+   * MusicPlayer -- Music Player class
    * @class
    */
   OSjs.Classes.MusicPlayer = MediaPlayer.extend({
@@ -863,7 +863,7 @@
   });
 
   /**
-   * OSjs::Classes::VideoPlayer -- Video Player class
+   * VideoPlayer -- Video Player class
    * @class
    */
   OSjs.Classes.VideoPlayer = MediaPlayer.extend({
@@ -1088,7 +1088,7 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * OSjs::Classes::AJAX -- AJAX class
+   * AJAX -- AJAX class
    * @class
    */
   OSjs.Classes.AJAX = (function() {
@@ -1194,7 +1194,7 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * OSjs::Classes::Uploader -- Uploader class
+   * Uploader -- Uploader class
    * @class
    */
   OSjs.Classes.Uploader = Class.extend({

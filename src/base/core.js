@@ -537,6 +537,8 @@
    * TransitionEffect() -- Apply a transition effect on an element
    * @TODO
    * @function
+   */
+  /*
   function TransitionEffect(el, t, trans, args, callback) {
     trans     = trans     || true;
     args      = args      || {};
@@ -1927,7 +1929,7 @@
           bar.progressbar({value : 70});
 
           if ( _Settings._get("user.first-run") === "true" ) {
-            _WM.addWindow(new OSjs.Dialogs.CompabilityDialog(Window, Application, []));
+            _WM.addWindow(new OSjs.Dialogs.CompabilityDialog(Window, API, []));
             _Settings._set("user.first-run", "false");
           }
 
@@ -3160,6 +3162,8 @@
      * @TODO
      * @see     Service
      * @return  Service
+     */
+    /*
     createService : function(name, type) {
       return new Service(name, type);
     },
