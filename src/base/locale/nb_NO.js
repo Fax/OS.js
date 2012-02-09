@@ -38,6 +38,7 @@
     "CrashApplicationResourceMessage"     : "En eller flere av disse ressursjene ble ikke lastet::\n%s",
     "CrashApplicationResourceStack"       : "[LaunchApplication]API::system::launch()\n  Applikasjon: %s\n  Argumenter: %s",
     "CrashApplicationOpen"                : "Kan ikke åpne '%s' med MIME '%s' med denne applikasjonen",
+    "ErrorLaunchString"                   : "Kan ikke starte '%s'. Ugyldig operasjon!",
     "InitLaunchError"                     : "Kan ikke kjøre '%s'.\nMaks antall prosesser er: %d",
     "WindowManagerMissing"                : "Kan ikke utføre denne operasjonen fordi Vindus-håndteren ikke kjører.",
     "WentOffline"                         : "Du mistet tilkoblingen. Gjenoprett internett-tilkoblingen for å fortsette å bruke OS.js",

@@ -6646,5 +6646,4 @@
     return true;
   }; // @endfunction
 
-  console.log(API);
 })($);
