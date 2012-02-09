@@ -96,6 +96,8 @@ body {
 }
 
 #DesktopGrid {
+  font-size : 90%;
+
   color : #fff;
   -moz-text-shadow: 0px 0px 2px #000;
   -webkit-text-shadow: 0px 0px 2px #000;
@@ -106,10 +108,17 @@ body {
   -moz-opacity: 0.90;       /* mozilla, netscape */
   opacity: 0.90;           /* fx, safari, opera */
 }
-#DesktopGrid .Current {
+#DesktopGrid .label {
+  color : #fff;
+  background-color : #aaa;
+
   -moz-border-radius: 10px; /* Firefox */
   -webkit-border-radius: 10px; /* Safari, Chrome */
   border-radius: 10px; /* CSS3 */
+}
+#DesktopGrid .current .label {
+  color : #000;
+  background-color : #fff;
 }
 
 .PanelItemWindow {

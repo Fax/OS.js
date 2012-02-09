@@ -52,7 +52,7 @@
    * @constants Local settings
    */
   var ENABLE_CACHE           = false;               //!< Enabled caching
-  var SETTING_REVISION       = 30;                  //!< The settings revision
+  var SETTING_REVISION       = 31;                  //!< The settings revision
   var ENABLE_LOGIN           = false;               //!< Use login
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
@@ -315,6 +315,27 @@
       MessageBox(sprintf(label, app_name, ex));
     }
   } // @endfunction
+
+  /**
+   * LaunchString() -- Launch something by string
+   * @param   String      str       The string
+   * @param   Mixed       args      Extra arguments to send
+   * @function
+   */
+  function LaunchString(str, args) {
+    args = args || [];
+
+    var operation = str.split("API::").pop().replace(/\s[^A-z0-9]/g, "");
+    switch ( operation ) {
+      case 'CompabilityDialog' :
+        _WM.addWindow(new OSjs.Dialogs.CompabilityDialog(Window, API, args));
+      break;
+
+      default :
+        MessageBox(sprintf(OSjs.Labels.ErrorLaunchString, operation));
+      break;
+    }
+  } //@endfunction
 
   /**
    * LaunchApplication() -- Application Launch handler
@@ -773,19 +794,26 @@
           return;
         }
 
-        var wins = _WM.stack;
-        for ( var i = 0; i < wins.length; i++ ) {
-          if ( wins[i].app && wins[i].app._name == app_name ) {
-            if ( wins[i]._is_orphan ) {
-              console.group("=== API OPERATION ===");
-              console.log("Method", "API.system.launch");
-              console.log("Message", "Launch was denied (is_orphan)");
-              console.groupEnd();
+        // Check if we are launching an Application
+        var launch_application = false;
+        if ( !app_name.match(/^API\:\:/) ) {
+          // If application is orphan, do not launch
+          var wins = _WM.stack;
+          for ( var i = 0; i < wins.length; i++ ) {
+            if ( wins[i].app && wins[i].app._name == app_name ) {
+              if ( wins[i]._is_orphan ) {
+                console.group("=== API OPERATION ===");
+                console.log("Method", "API.system.launch");
+                console.log("Message", "Launch was denied (is_orphan)");
+                console.groupEnd();
 
-              _WM.focusWindow(wins[i]);
-              return;
+                _WM.focusWindow(wins[i]);
+                return;
+              }
             }
           }
+
+          launch_application = true;
         }
 
         console.group("=== API OPERATION ===");
@@ -794,7 +822,11 @@
         console.log("Argv", args);
         console.groupEnd();
 
-        LaunchApplication(app_name, args, windows);
+        if ( launch_application ) {
+          LaunchApplication(app_name, args, windows);
+        } else {
+          LaunchString(app_name, args, windows);
+        }
       },
 
       'call' : function(method, argv, callback, show_alert) {
@@ -1929,7 +1961,7 @@
           bar.progressbar({value : 70});
 
           if ( _Settings._get("user.first-run") === "true" ) {
-            _WM.addWindow(new OSjs.Dialogs.CompabilityDialog(Window, API, []));
+            LaunchString("API::CompabilityDialog");
             _Settings._set("user.first-run", "false");
           }
 
@@ -2576,8 +2608,15 @@
     init : function(defaults) {
       var self = this;
 
+      console.group("SettingsManager::init()");
+
       this._avail   = defaults;
       this._stores  = [];
+
+      var updateable = ["desktop.grid", "desktop.panels"];
+
+      console.log("Settings revision", SETTING_REVISION);
+      console.log("Force update of", updateable);
 
       // Check for newer versioning
       var rev = localStorage.getItem("SETTING_REVISION");
@@ -2585,7 +2624,9 @@
       if ( parseInt(rev, 10) !== parseInt(SETTING_REVISION, 10) ) {
         force = true;
         localStorage.setItem("SETTING_REVISION", SETTING_REVISION);
+        console.log("============= FORCING UPDATE =============");
       }
+
 
       // Make sure we have all external refs saved
       if ( !localStorage.getItem("applications") ) {
@@ -2599,10 +2640,14 @@
       }
 
       // Now create a registry for internal use (browser storage is plain-text)
+      var force_update = false;
       for ( var i in this._avail ) {
         if ( this._avail.hasOwnProperty(i) ) {
-          if ( !this._avail[i].hidden ) {
-            if ( force || !localStorage.getItem(i) ) {
+          force_update = in_array(i, updateable);
+          if ( !this._avail[i].hidden || force_update ) {
+            if ( force || !localStorage.getItem(i) || force_update ) {
+              console.log("Registering", i, "of type", this._avail[i].type);
+
               if ( this._avail[i].type == "array" ) {
                 localStorage.setItem(i, (this._avail[i].value === undefined) ? this._avail[i].options : this._avail[i].value);
               } else if ( this._avail[i].type == "list" ) {
@@ -2645,10 +2690,9 @@
         }
       }, STORAGE_SIZE_FREQ);
 
-      console.group("SettingsManager::init()");
-      console.log(this._avail);
-      console.log(this._stores);
-      console.log(this.getStorageUsage());
+      console.log("Saveable settings", this._stores);
+      console.log("Stored settings", this._avail);
+      console.log("Usage", this.getStorageUsage());
       console.groupEnd();
 
       this.updateCache();
@@ -4069,43 +4113,72 @@
       //
       // Create IconView and items from localStorage
       //
-      $("#DesktopGrid").remove();
-      /*
-      var icolumns = [
-        { "className" : "Image", "style" : null, "title" : null },
-        { "className" : "Title", "style" : null, "title" : null },
-        { "className" : "Info", "style" : "display:none;", "title" : null }
-      ];
 
-      var iitems = [
-        { "icon"       : "/img/icons/32x32/places/user-home.png", // FIXME: CONSTANT
-          "type"       : "dir",
-          "mime"       : "",
-          "name"       : "Home",
-          "path"       : "/",
-          "size"       : 0,
-          "class"      : "",
-          "protected"  : true }
-      ];
+      var IconView = Class.extend({
 
-      this.iconview = new OSjs.Classes.IconView($("#DesktopGrid"), 3, iitems, icolumns, function(el, item, type, index) {
-        el.find(".Title").html(item.name);
-        el.find(".Image").html(sprintf("<img alt=\"\" src=\"%s\" width=\"32\" height=\"32\" />", item.icon));
+        list : null,
+        _sel : null,
 
-        var tmp = el.find(".Info");
-        for ( var x in item ) {
-          if ( item.hasOwnProperty(x) ) {
-            tmp.append(sprintf("<input type=\"hidden\" name=\"%s\" value=\"%s\" />", x, item[x]));
+        init : function(list) {
+          var self = this;
+
+          this.list = list || [];
+
+          $("#DesktopGrid").click(function() {
+            if ( self._sel ) {
+              $(self._sel).parent().removeClass("current");
+              self._sel = null;
+            }
+          });
+
+          this.draw();
+        },
+
+        destroy : function() {
+          $("#DesktopGrid").empty().remove();
+          this.list = null;
+        },
+
+        draw : function() {
+          var self = this;
+
+          var root = $("<ul></ul>");
+          var str, iter, e, i = 0, l = this.list.length;
+          var last = null;
+
+          for ( i; i < l; i++ ) {
+            iter = this.list[i];
+            str = sprintf("<li><div class=\"inner\"><div class=\"icon\"><img alt=\"\" src=\"%s\" /></div><div class=\"label\">%s</div></div></li>", sprintf(ICON_URI_32, iter.icon), iter.title);
+            e = $(str);
+
+            e.find(".inner").dblclick((function(app) {
+              return function() {
+                API.system.launch(app);
+                $("#DesktopGrid").click(); // Unselect
+              };
+            })(iter.launch));
+
+            e.find(".inner").click(function(ev) {
+              ev.stopPropagation();
+
+              if ( self._sel ) {
+                $(self._sel).parent().removeClass("current");
+              }
+
+              $(this).parent().addClass("current");
+              self._sel = this;
+            });
+
+            root.append(e);
           }
-        }
-      }, function(el, item) {
-        API.system.launch("ApplicationFileManager", item.path);
 
-        self.iconview.selectItem();
-      }, function() {
-        return true; // Select
-      }, true);
-      */
+          $("#DesktopGrid").html(root);
+        }
+
+      });
+
+      var grid = _Settings._get("desktop.grid", false, true);
+      this.iconview = new IconView(grid);
 
       //
       // Create panel and items from localStorage
@@ -4702,12 +4775,12 @@
           if ( pos.top <= middle ) {
             _Settings._set("desktop.panel.position", "top");
             self.$element.removeClass("Bottom");
-            self.$element.css({"top" : "0px"});
+            self.$element.css({"position" : "absolute", "top" : "0px", "bottom" : "auto"});
             self.pos = "top";
           } else {
             _Settings._set("desktop.panel.position", "bottom");
             self.$element.addClass("Bottom");
-            self.$element.css({"top" : "auto", "bottom" : "0px"});
+            self.$element.css({"position" : "absolute", "top" : "auto", "bottom" : "0px"});
             self.pos = "bottom";
           }
 
@@ -4793,8 +4866,10 @@
 
       if ( this.pos == "bottom" ) {
         this.$element.addClass("Bottom");
+        this.$element.css({"position" : "absolute", "top" : "auto", "bottom" : "0px"});
       } else {
         this.$element.removeClass("Bottom");
+        this.$element.css({"position" : "absolute", "top" : "0px", "bottom" : "auto"});
       }
 
       this._super("Panel");
@@ -6571,4 +6646,5 @@
     return true;
   }; // @endfunction
 
+  console.log(API);
 })($);

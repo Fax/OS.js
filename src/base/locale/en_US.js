@@ -38,6 +38,7 @@
     "CrashApplicationResourceMessage"     : "One or more of these resources failed to load:\n%s",
     "CrashApplicationResourceStack"       : "[LaunchApplication]API::system::launch()\n  Application: %s\n  Arguments: %s",
     "CrashApplicationOpen"                : "Cannot open '%s' with MIME '%s' in this application",
+    "ErrorLaunchString"                   : "Cannot launch '%s'. Invalid operation!",
     "InitLaunchError"                     : "Cannot launch '%s'.\nMaximum allowed processes are: %d",
     "WindowManagerMissing"                : "Cannot perform this operation because the Window Manager is not running.",
     "WentOffline"                         : "Seems like you went offline. Please re-connect to continue using OS.js",

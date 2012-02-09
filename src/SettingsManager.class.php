@@ -125,6 +125,10 @@ class SettingsManager
       "options" => Array("top", "bottom"),
       "value" => "top"
     ),
+    "desktop.grid" => Array(
+      "type" => "list",
+      "items" => Array()
+    ),
 
     //
     // System

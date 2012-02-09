@@ -177,6 +177,20 @@ class Core
         )
       )
     );
+    $merge["desktop.grid"] = Array(
+      "items" => Array(
+        Array(
+          "title"  => "Home",
+          "icon"   => "places/user-home.png",
+          "launch" => "ApplicationFileManager"
+        ),
+        Array(
+          "title"  => "Browser Compability",
+          "icon"   => "status/software-update-urgent.png",
+          "launch" => "API::CompabilityDialog"
+        )
+      )
+    );
 
     return SettingsManager::getSettings($merge);
   }

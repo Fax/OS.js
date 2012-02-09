@@ -67,3 +67,19 @@ Tips:
 * Signals named 'MenuOpen', 'MenuSave', 'MenuSaveAs', 'MenuQuit', 'MenuClose'
   automatically creates code for dialogs.
 
+Testing Core after changes:
+-------------------------------------------------------------------------------
+IMPORTANT: Test on a _FRESH_ browser (Clear cache, sessions etc)
+
+* Test initialization and compability dialog
+* Check if loaded with no errors or warnings
+
+* Check panel initialization with all items
+* Check panel items
+* Check launch application
+* Check system application: Settings
+* Check operation dialogs
+
+* Check application launch
+* Check Gtk compability in application
+* Check application crash dialog

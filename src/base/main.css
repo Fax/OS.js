@@ -123,6 +123,7 @@ input.Disabled {
   left : 0px;
   right : 0px;
   bottom : 0px;
+  z-index : 3;
 }
 #DesktopGrid {
   position : absolute;
@@ -130,8 +131,9 @@ input.Disabled {
   left : 0px;
   right : 0px;
   bottom : 0px;
+  z-index : 5;
 }
-#DesktopGrid .GtkIconView {
+/*#DesktopGrid .GtkIconView {
   background : transparent;
   position : absolute;
   top : 0px;
@@ -139,6 +141,7 @@ input.Disabled {
   right : 0px;
   bottom : 0px;
 }
+*/
 #DesktopGrid.top {
   top : 40px;
   bottom : 0px;
@@ -147,8 +150,47 @@ input.Disabled {
   top : 0px;
   bottom : 40px;
 }
-#DesktopGrid .Current {
-  background : #fff;
+#DesktopGrid ul {
+  margin : 0;
+  padding : 0;
+  list-style-type : none;
+  margin-left : 10px;
+  margin-right : 10px;
+  /*
+  position : absolute;
+  display : block;
+  top : 0px;
+  left : 10px;
+  right : 10px;
+  bottom : 0px;
+  */
+}
+#DesktopGrid li {
+  margin : 10px;
+  padding : 0;
+  text-align : center;
+  display : inline-block;
+}
+#DesktopGrid li .inner {
+  overflow : visible;
+}
+#DesktopGrid li .icon {
+}
+#DesktopGrid li .icon img {
+  width : 32px;
+  height : 32px;
+  padding : 2px;
+}
+#DesktopGrid li .label {
+  white-space : nowrap;
+  padding : 2px;
+  padding-left : 5px;
+  padding-right : 5px;
+}
+#DesktopGrid li.current {
+}
+
+#DesktopGrid li.current .label {
 }
 
 /* Panel */
