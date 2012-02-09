@@ -131,6 +131,7 @@ if ( $locale = Core::get()->getLocale() ) {
 
 <!-- Loading -->
 <div id="Loading">
+  <div id="LoadingVersion"><?php print PROJECT_VERSION; ?></div>
   <div id="LoadingBarContainer">
     <div id="LoadingBar"></div>
   </div>
