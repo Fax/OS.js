@@ -115,9 +115,6 @@ if ( $locale = Core::get()->getLocale() ) {
   <!-- IconView -->
   <div id="DesktopGrid"></div>
 
-  <!-- Panel -->
-  <div id="Panels"></div>
-
   <!-- Notifications -->
   <div id="DesktopNotifications"></div>
 

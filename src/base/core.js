@@ -4912,7 +4912,7 @@
 
       ul.attr("id", id);
 
-      $("#Panels").append(this.$element);
+      $("#Desktop").append(this.$element);
 
       /*
       ul.sortable({
