@@ -1975,7 +1975,10 @@
 
           setTimeout(function() {
             bar.progressbar({value : 100});
-            load.fadeOut(ANIMATION_SPEED);
+
+            setTimeout(function() {
+              load.fadeOut(ANIMATION_SPEED);
+            }, 200);
           },200);
 
           //if ( ENABLE_CACHE ) {

@@ -94,14 +94,27 @@ input.Disabled {
 }
 
 #Loading {
+  width : 458px;
+  height : 458px;
   position : absolute;
-  top : 10px;
-  right : 10px;
-  width : 200px;
-  height : 22px;
-  padding : 10px;
+  top : 50%;
+  left : 50%;
+  margin : 0;
+  margin-left : -219px;
+  margin-top : -219px;
+  padding : 0;
   z-index : 1000100;
+  background : #fff url('/img/loading.png') no-repeat center center;
   display : none;
+}
+#LoadingBarContainer {
+  position : absolute;
+  left : 25px;
+  right : 25px;
+  bottom : 25px;
+  height : 22px;
+  margin : 0;
+  padding : 0;
 }
 
 #LoadingBar {

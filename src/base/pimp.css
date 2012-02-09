@@ -54,6 +54,9 @@ body {
   -moz-border-radius: 10px; /* Firefox */
   -webkit-border-radius: 10px; /* Safari, Chrome */
   border-radius: 10px; /* CSS3 */
+  -moz-box-shadow: 0px 0px 10px #000;
+  -webkit-box-shadow: 0px 0px 10px #000;
+  box-shadow: 0px 0px 10px #000;
 }
 
 #Tooltip {
@@ -62,11 +65,13 @@ body {
   box-shadow: 0px 0px 10px #000;
 }
 
+/*
 #LoadingBar {
   -moz-box-shadow: 0px 0px 10px #000;
   -webkit-box-shadow: 0px 0px 10px #000;
   box-shadow: 0px 0px 10px #000;
 }
+*/
 
 #ContextRectangle {
   filter: alpha(opacity=50); /* internet explorer */

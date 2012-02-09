@@ -131,7 +131,9 @@ if ( $locale = Core::get()->getLocale() ) {
 
 <!-- Loading -->
 <div id="Loading">
-  <div id="LoadingBar"></div>
+  <div id="LoadingBarContainer">
+    <div id="LoadingBar"></div>
+  </div>
 </div>
 
 <!-- Templates -->

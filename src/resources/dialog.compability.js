@@ -39,7 +39,7 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
       "partially"     : "Partially supported",
       "no_upload"     : "You will not be able to upload any files into the filesystem because 'Async Upload' is not supported.",
       "no_work"       : "Some applications uses Web Workers to handle intensive operations to decrease processing times.",
-      "no_gl"         : "No 3D (OpenGL) content can be desplayed as WebGL is not supported. (Check your browser documentation)",
+      "no_gl"         : "No 3D (OpenGL) content can be displayed as WebGL is not supported. (Check your browser documentation)",
       "browser_unsup" : "Glade CSS style problems occurs in IE and Opera for &lt;table&gt; elements.",
       "browser_ie"    : "IE is lacking some CSS effects and HTML5/W3C features.",
       "browser_touch" : "Your device is not fully supported due to lacking Touch support.",
