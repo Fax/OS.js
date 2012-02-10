@@ -303,7 +303,12 @@
    */
   function CrashApplication(app_name, application, ex) {
     try {
-      _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [application, ex.message, ex.stack, ex]));
+      if ( ex instanceof OSjs.Classes.ApplicationException ) {
+        _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [application, ex.getMessage(), ex.getStack(), ex]));
+      } else {
+        _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [application, ex.message, ex.stack, ex]));
+      }
+
       try {
         application._running = true; // NOTE: Workaround
         application.kill();
@@ -1939,18 +1944,43 @@
           _WM      = new WindowManager();
           bar.progressbar({value : 15});
 
+          // >>> Window Manager
           bar.progressbar({value : 30});
-          _Desktop.run();
+          try {
+            _WM.run();
+          } catch ( exception ) {
+            if ( exception instanceof OSjs.Classes.ProcessException ) {
+              alert(exception.getMessage());
+              return;
+            } else {
+              throw exception;
+            }
+          }
+
+          // >>> Desktop
           bar.progressbar({value : 40});
+          try {
+            _Desktop.run();
+          } catch ( exception ) {
+            if ( exception instanceof OSjs.Classes.ProcessException ) {
+              var name  = exception.getProcessName();
+              var msg   = exception.getMessage();
+              var trace = exception.getStack();
 
-          _WM.run();
+              _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [name, msg, trace]));
+            } else {
+              throw exception;
+            }
+          }
+
+          // >>> Compability
           bar.progressbar({value : 70});
-
           if ( _Settings._get("user.first-run") === "true" ) {
             LaunchString("API::CompabilityDialog");
             _Settings._set("user.first-run", "false");
           }
 
+          // >>> Session
           setTimeout(function() {
             bar.progressbar({value : 80});
 
@@ -1959,6 +1989,7 @@
             bar.progressbar({value : 90});
           }, 0);
 
+          // Finished
           setTimeout(function() {
             bar.progressbar({value : 100});
 
@@ -3356,6 +3387,7 @@
     /**
      * Application::_checkCompability() -- Check Application compabilty list and throw errors if any
      * @see    OSjs.Compability
+     * @throws OSjs.Classes.ApplicationException
      * @return void
      */
     _checkCompability : (function() {
@@ -3401,10 +3433,10 @@
 
           if ( error ) {
             console.groupEnd();
-            throw ({
-              'message' : sprintf(OSjs.Labels.ApplicationCheckCompabilityMessage, error),
-              'stack'   : sprintf(OSjs.Labels.ApplicationCheckCompabilityStack, self._name)
-            });
+            throw new OSjs.Classes.ApplicationException(self,
+              sprintf(OSjs.Labels.ApplicationCheckCompabilityMessage, error),
+              sprintf(OSjs.Labels.ApplicationCheckCompabilityStack, self._name),
+              error );
           }
         }
 
@@ -4166,49 +4198,58 @@
 
       });
 
-      var grid = _Settings._get("desktop.grid", false, true);
-      this.iconview = new IconView(grid);
+      try {
+        var grid = _Settings._get("desktop.grid", false, true);
+        this.iconview = new IconView(grid);
+      } catch ( exception ) {
+        throw new OSjs.Classes.ProcessException(self, "An error occured while creating desktop IconView!", exception); // FIXME: Translation
+      }
 
       //
       // Create panel and items from localStorage
       //
       console.log("Registering panels...");
       (function() {
-        var panels = _Settings._get("desktop.panels", false, true);
-        var panel, items;
+        try {
+          var panels = _Settings._get("desktop.panels", false, true);
+          var panel, items;
 
-        var additems = function(panel, items) {
-          var size = items.length;
-          var current = 0;
+          var additems = function(panel, items) {
+            var size = items.length;
+            var current = 0;
 
-          var additem = function(index) {
+            var additem = function(index) {
 
-            var el      = items[index];
-            var iname   = el[0];
-            var iargs   = el[1];
-            var ialign  = el[2] || "left";
+              var el      = items[index];
+              var iname   = el[0];
+              var iargs   = el[1];
+              var ialign  = el[2] || "left";
 
-            LaunchPanelItem(index, iname, iargs, ialign, panel, function() {
-              current++;
-              if ( current < size ) {
-                additem(current);
-              }
-            });
+              LaunchPanelItem(index, iname, iargs, ialign, panel, function() {
+                current++;
+                if ( current < size ) {
+                  additem(current);
+                }
+              });
+            };
+
+            if ( size > 0 ) {
+              additem(0);
+            }
+
           };
 
-          if ( size > 0 ) {
-            additem(0);
+          for ( var x = 0; x < panels.length; x++ ) {
+            panel = new Panel(panels[x].index, panels[x].name);
+            items = panels[x].items;
+
+            additems(panel, items);
+
+            self.addPanel(panel);
           }
 
-        };
-
-        for ( var x = 0; x < panels.length; x++ ) {
-          panel = new Panel(panels[x].index, panels[x].name);
-          items = panels[x].items;
-
-          additems(panel, items);
-
-          self.addPanel(panel);
+        } catch ( exception ) {
+          throw new OSjs.Classes.ProcessException(self, "An error occured while creating panels!", exception); // FIXME: Translation
         }
       })();
 
@@ -4227,12 +4268,16 @@
       console.log("Finishing up...");
       this.running = true;
 
-      for ( var i in this.panels ) {
-        if ( this.panels.hasOwnProperty(i) ) {
-          this.panels[i].run();
+      try {
+        for ( var i in this.panels ) {
+          if ( this.panels.hasOwnProperty(i) ) {
+            this.panels[i].run();
 
-          this.updatePanelPosition(this.panels[i]);
+            this.updatePanelPosition(this.panels[i]);
+          }
         }
+      } catch ( exception ) {
+        throw new OSjs.Classes.ProcessException(self, "An error occured while starting the panels", exception); // FIXME: Translation
       }
 
       console.log("...done...");

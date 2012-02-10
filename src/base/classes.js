@@ -42,15 +42,25 @@
     _lineno   : 0,
     _filename : "",
     _message  : "",
+    _stack    : "",
 
     /**
      * OSjsException::init() -- Constructor
      * @constructor
      */
-    init : function(lineno, filename, message) {
-      this._lineno    = parseInt(lineno, 10) || 0;
-      this._filename  = filename;
+    init : function(exception, message, stack) {
       this._message   = message;
+      this._lineno    = exception.lineNumber || exception.number || -1;
+      this._filename  = exception.fileName || "unknown";
+      this._stack     = stack || (exception.stack || exception.description || "untraceable");
+    },
+
+    /**
+     * OSjsException::toString() -- Convert to string
+     * @return String
+     */
+    toString : function() {
+      return this._message;
     },
 
     /**
@@ -75,6 +85,14 @@
      */
     getMessage : function() {
       return this._message;
+    },
+
+    /**
+     * OSjsException::getStack() -- Get the Exception stack
+     * @return String
+     */
+    getStack : function() {
+      return this._stack;
     }
   });
 
@@ -83,8 +101,8 @@
    * @exception
    */
   OSjs.Classes.AJAXException = OSjsException.extend({
-    init : function(lineno, filename, message) {
-      this._super(lineno, filename, message);
+    init : function(instance, message, exception, stack) {
+      this._super(exception, message, stack);
     }
   });
 
@@ -93,8 +111,24 @@
    * @exception
    */
   OSjs.Classes.IOException = OSjsException.extend({
-    init : function(lineno, filename, message) {
-      this._super(lineno, filename, message);
+    init : function(instance, message, exception, stack) {
+      this._super(exception, message, stack);
+    }
+  });
+
+  /**
+   * ProcessException -- ProcessException Exception
+   * @exception
+   */
+  OSjs.Classes.ProcessException = OSjsException.extend({
+    init : function(instance, error, exception) {
+      var message = error + "\n" + exception;
+      this._super(exception, message);
+      this._proc_name = instance._proc_name;
+    },
+
+    getProcessName : function() {
+      return this._proc_name;
     }
   });
 
@@ -103,8 +137,8 @@
    * @exception
    */
   OSjs.Classes.ApplicationException = OSjsException.extend({
-    init : function(lineno, filename, message) {
-      this._super(lineno, filename, message);
+    init : function(instance, message, stack, exception) {
+      this._super(exception, message, stack);
     }
   });
 
@@ -113,8 +147,8 @@
    * @exception
    */
   OSjs.Classes.CoreException = OSjsException.extend({
-    init : function(lineno, filename, message) {
-      this._super(lineno, filename, message);
+    init : function(instance, message, exception, stack) {
+      this._super(exception, message, stack);
     }
   });
 
