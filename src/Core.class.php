@@ -157,11 +157,11 @@ class Core
     }
 
     $panel = Array(
-      Array("PanelItemMenu", Array(), "left"),
-      Array("PanelItemSeparator", Array(), "left"),
-      Array("PanelItemWindowList", Array(), "left"),
-      Array("PanelItemClock", Array(), "right"),
-      Array("PanelItemSeparator", Array(), "right"),
+      Array("PanelItemMenu", Array(), "left:0"),
+      Array("PanelItemSeparator", Array(), "left:38"),
+      Array("PanelItemWindowList", Array(), "left:48"),
+      Array("PanelItemClock", Array(), "right:0"),
+      Array("PanelItemSeparator", Array(), "right:115px"),
       Array("PanelItemDock", Array(Array(
         Array(
           "title"  => "About",
@@ -183,9 +183,9 @@ class Core
           "icon"   => "actions/gnome-logout.png",
           "launch" => "SystemLogout"
         )
-      )), "right"),
-      Array("PanelItemSeparator", Array(), "right"),
-      Array("PanelItemWeather", Array(), "right")
+      )), "right:120"),
+      Array("PanelItemSeparator", Array(), "right:230"),
+      Array("PanelItemWeather", Array(), "right:250")
     );
 
     $merge = self::getCache();

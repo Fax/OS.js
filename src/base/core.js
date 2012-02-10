@@ -4990,7 +4990,7 @@
       var self = this;
       if ( !this.dragging ) {
 
-        var ghost = $("<li class=\"Ghost\">|</li>");
+        var ghost = $("<li class=\"Ghost PanelItemSeparator\"></li>");
         this.dragging = {
           'item'    : item,
           'startX'  : ev.pageX,
@@ -5035,15 +5035,25 @@
     _handleItemDrag : function(ev) {
       if ( this.dragging ) {
         this.dragging.ghost.remove();
-        var cur   = $(ev.srcElement || ev.target).parents("li.PanelItem");
-        var index = cur.index(); //cur.get(0) ? parseInt(cur.attr("id").replace("PanelItem", ""), 10) : 0;
+
+        var cur    = $(ev.srcElement || ev.target).parents("li.PanelItem");
+        var index  = cur.index(); //cur.get(0) ? parseInt(cur.attr("id").replace("PanelItem", ""), 10) : 0;
+        var before = true;
         if ( index < 0 ) {
-          index = 0;
+          if ( ev.pageX < ($(document).width() - 100) ) {
+            index = 0;
+          } else {
+            index  = cur.parent().size();
+            before = false;
+          }
         }
 
         var set = this.$element.find("li:nth-child(" + (index + 1) + ")");
-        this.dragging.ghost.insertBefore(set);
-        console.log(index, cur, set);
+        if ( before ) {
+          this.dragging.ghost.insertBefore(set);
+        } else {
+          this.dragging.ghost.insertAfter(set);
+        }
       }
     },
 
@@ -5097,7 +5107,7 @@
     /**
      * Panel::addItem() -- Add a new PanelItem
      * @param   _PanelItem    i       Item
-     * @param   int           pos     Position index
+     * @param   String        pos     Position string
      * @return  Mixed
      */
     addItem : function(i, pos) {
@@ -5263,12 +5273,22 @@
 
       this.$element = $("<li></li>").attr("class", "PanelItem " + this._name);
 
+      var spl = pos.split(":");
+      var px = parseInt(spl[1], 10);
+      pos = spl[0];
+
       if ( pos ) {
         this.align = pos;
       }
+
       if ( this.align == "right" ) {
         this.$element.addClass("AlignRight");
+        this.$element.css({"left" : "auto", "right" : (px + "px")});
+      } else {
+        this.$element.removeClass("AlignRight");
+        this.$element.css({"right" : "auto", "left" : (px + "px")});
       }
+
 
       this.$element.mousedown(function(ev) {
 

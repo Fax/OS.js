@@ -65,6 +65,10 @@ body {
 .PanelItemSeparator:hover,
 .PanelItemClock:hover {
 }
+.PanelItemSeparator.Ghost {
+  border : 0 none;
+  background : #ff0000;
+}
 
 .Window {
   border : 1px solid #30353d;

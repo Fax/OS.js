@@ -3,7 +3,6 @@ CORE:
 * TODO [HIG] : Context menu focus/trigger/pop-out bugs
 * TODO [HIG] : PanelItem Add/Remove and Storage
 * TODO [HIG] : PanelItem Positioning
-* TODO [HIG] : PanelItem context menu
 * TODO [HIG] : Custom Exception class
 * TODO [MED] : Rewrite Glade builder class
 * TODO [LOW] : Implement custom scroll-bars

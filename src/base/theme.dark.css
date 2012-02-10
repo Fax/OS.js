@@ -63,6 +63,10 @@ body {
   border-left : 1px solid #363636;
   border-right : 1px solid #3f4040;
 }
+.PanelItemSeparator.Ghost {
+  border : 0 none;
+  background : #ff0000;
+}
 .PanelItemSeparator:hover,
 .PanelItemClock:hover {
 }
