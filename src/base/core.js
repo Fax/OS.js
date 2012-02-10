@@ -64,6 +64,7 @@
   var STORAGE_SIZE_FREQ      = 1000;                //!< Storage check usage frequenzy
   var ONLINECHK_FREQ         = 1000;                //!< On-line checking frequenzy
   var CACHE_FREQ             = 60000;               //!< Cache update frequenzu
+  var DRAG_TIMEOUT           = 200;
   var TIMEOUT_CSS            = (1000 * 5);          //!< CSS loading timeout
   var DEFAULT_UID            = 1;                   //!< Default User ID
   var DEFAULT_USERNAME       = "demo";              //!< Default User Username
@@ -1950,7 +1951,7 @@
             _WM.run();
           } catch ( exception ) {
             if ( exception instanceof OSjs.Classes.ProcessException ) {
-              alert(exception.getMessage());
+              alert(exception.getMessage() || exception);
               return;
             } else {
               throw exception;
@@ -4021,6 +4022,10 @@
       this.$element = $("#Desktop");
       this.panels   = [];
 
+      this.$element.mousedown(function(ev) {
+        ev.preventDefault();
+      });
+
 
       /*
       $("#Desktop").bind("dragover", function(ev) {
@@ -4196,7 +4201,7 @@
           $("#DesktopGrid").html(root);
         }
 
-      });
+      }); // @class
 
       try {
         var grid = _Settings._get("desktop.grid", false, true);
@@ -4229,6 +4234,14 @@
                 current++;
                 if ( current < size ) {
                   additem(current);
+                } else {
+
+                  try {
+                    panel.run();
+                    self.updatePanelPosition(panel);
+                  } catch ( exception ) {
+                    throw new OSjs.Classes.ProcessException(panel, OSjs.Labels.CrashPanelStart, exception);
+                  }
                 }
               });
             };
@@ -4265,20 +4278,7 @@
         _WM.bind("window_updated", this.defaultHandler);
       }
 
-      console.log("Finishing up...");
       this.running = true;
-
-      try {
-        for ( var i in this.panels ) {
-          if ( this.panels.hasOwnProperty(i) ) {
-            this.panels[i].run();
-
-            this.updatePanelPosition(this.panels[i]);
-          }
-        }
-      } catch ( exception ) {
-        throw new OSjs.Classes.ProcessException(self, OSjs.Labels.CrashPanelStart, exception);
-      }
 
       console.log("...done...");
       console.groupEnd();
@@ -4766,12 +4766,14 @@
    */
   var Panel = Process.extend({
 
-    $element    : null,       //!< DOM Element
-    index       : -1,         //!< Panel Index
-    name        : "",         //!< Panel Name
-    pos         : "",         //!< Panel Position
-    items       : [],         //!< Panel Items
-    running     : false,      //!< Panel running state
+    $element      : null,       //!< DOM Element
+    index         : -1,         //!< Panel Index
+    name          : "",         //!< Panel Name
+    pos           : "",         //!< Panel Position
+    items         : [],         //!< Panel Items
+    running       : false,      //!< Panel running state
+    dragging      : false,      //!< Current item dragging
+    drag_timeout  : null,       //!< ^^ timeout
 
     /**
      * Panel::init() -- Constructor
@@ -4789,15 +4791,26 @@
 
       // Panel item dragging
       var oldPos = {'top' : 0, 'left' : 0};
+      var dragging = false;
       this.$element.draggable({
         axis : "y",
         snap : "body",
         snapMode : "inner",
         containment : "body",
         start : function() {
+          if ( self.dragging ) {
+            return;
+          }
+
+          if ( self.drag_timeout ) {
+            clearTimeout(self.drag_timeout);
+            self.drag_timeout = null;
+          }
+
           self.$element.addClass("Blend");
           API.ui.cursor("move");
           oldPos = self.$element.offset();
+          dragging = true;
         },
         stop : function() {
           self.$element.removeClass("Blend");
@@ -4821,7 +4834,13 @@
           if ( _Desktop ) {
             _Desktop.updatePanelPosition(self);
           }
+          dragging = false;
         }
+      });
+
+      $(this.$element).bind("mousedown", function(ev) {
+        ev.preventDefault();
+        return false;
       });
 
       $(this.$element).bind("contextmenu",function(e) {
@@ -4917,6 +4936,10 @@
       for ( var i = 0; i < this.items.length; i++ ) {
         this.items[i].destroy();
       }
+      if ( this.drag_timeout ) {
+        clearTimeout(this.drag_timeout);
+        this.drag_timeout = null;
+      }
 
       this.items = null;
       this.index = -1;
@@ -4945,22 +4968,112 @@
 
       $("#Desktop").append(this.$element);
 
-      /*
-      ul.sortable({
-        revert: true
-      });
-      ul.draggable({
-        connectToSortable: id,
-        axis : "x",
-        snap : true,
-        helper: "clone",
-        revert: "invalid"
-      });
-      this.$element.find("ul, li").disableSelection();
-      */
-
       this.$element.show();
       this.running = true;
+
+      var self = this;
+      $(document).mouseup(function(ev) {
+        if ( self.dragging ) {
+          self._stopItemDrag(ev);
+        }
+      });
+
+      //this.refresh();
+    },
+
+    /**
+     * Panel::_startItemDrag() -- PanelItem Dragging
+     * @param DOMEvent    ev      DOM Event
+     * @return void
+     */
+    _startItemDrag : function(ev, item) {
+      var self = this;
+      if ( !this.dragging ) {
+
+        var ghost = $("<li class=\"Ghost\">|</li>");
+        this.dragging = {
+          'item'    : item,
+          'startX'  : ev.pageX,
+          'startY'  : ev.pageY,
+          'curX'    : ev.pageX,
+          'curY'    : ev.pageY,
+          'ghost'   : ghost
+        };
+
+        console.log("Panel::_startItemDrag()", ev, this.dragging);
+
+        $(document).bind("mousemove", function(ev) {
+          self._handleItemDrag(ev);
+        });
+      }
+    },
+
+    /**
+     * Panel::_stopItemDrag() -- PanelItem Dragging
+     * @param DOMEvent    ev      DOM Event
+     * @return void
+     */
+    _stopItemDrag : function(ev) {
+      var self = this;
+      if ( this.dragging ) {
+        console.log("Panel::_stopItemDrag()", ev, this.dragging);
+
+        $(document).unbind("mousemove", function(ev) {
+          self._handleItemDrag(ev);
+        });
+
+        this.dragging.ghost.remove();
+      }
+      this.dragging = false;
+    },
+
+    /**
+     * Panel::_handleItemDrag() -- PanelItem Dragging
+     * @param DOMEvent    ev      DOM Event
+     * @return void
+     */
+    _handleItemDrag : function(ev) {
+      if ( this.dragging ) {
+        this.dragging.ghost.remove();
+        var cur   = $(ev.srcElement || ev.target).parents("li.PanelItem");
+        var index = cur.index(); //cur.get(0) ? parseInt(cur.attr("id").replace("PanelItem", ""), 10) : 0;
+        if ( index < 0 ) {
+          index = 0;
+        }
+
+        var set = this.$element.find("li:nth-child(" + (index + 1) + ")");
+        this.dragging.ghost.insertBefore(set);
+        console.log(index, cur, set);
+      }
+    },
+
+    /**
+     * Panel::refresh() -- Refresh the panel
+     * @return void
+     */
+    refresh : function() {
+      var self = this;
+      this.$element.find("li").unbind("mousedown");
+      console.log("Panel::refresh()");
+
+      if ( this.items ) {
+        var i, pi;
+        for ( i = 0; i < this.items.length; i++ ) {
+          pi = this.items[i].$element;
+          pi.mousedown((function(item) {
+            return function(ev) {
+              if ( self.drag_timeout ) {
+                clearTimeout(self.drag_timeout);
+                self.drag_timeout = null;
+              }
+              self.drag_timeout = setTimeout(function() {
+                ev.stopPropagation();
+                self._startItemDrag(ev, item);
+              }, DRAG_TIMEOUT);
+            };
+          })(pi));
+        }
+      }
     },
 
     /**
