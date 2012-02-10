@@ -1,15 +1,14 @@
-TODO:
+CORE:
 -------------------------------------------------------------------------------
-* TODO [HIG]  : Custom Exception class
-* TODO [MED]  : Rewrite Glade builder class
-* TODO [MED]  : Add/Remove panel item storage
-* TODO [MED]  : Panel item sorting and alignments (snapping etc)
-* TODO [---]  : Implement custom scroll-bars
-                  http://css-tricks.com/custom-scrollbars-in-webkit/
-                  http://jscrollpane.kelvinluck.com/
-* FIXME [HIG] : Menu/Contextmenu focus/trigger bugs
-* FIXME [MED] : replace parents() with closest()
-* FIXME [MED] : Fix ContextMenu pop-out problems
+* TODO [HIG] : Context menu focus/trigger/pop-out bugs
+* TODO [HIG] : PanelItem Add/Remove and Storage
+* TODO [HIG] : PanelItem Positioning
+* TODO [HIG] : Custom Exception class
+* TODO [MED] : Rewrite Glade builder class
+* TODO [LOW] : Implement custom scroll-bars
+               >  http://css-tricks.com/custom-scrollbars-in-webkit/
+               >  http://jscrollpane.kelvinluck.com/
+* TODO [LOW] : Write custom $
 
 APPLICATIONS ETC:
 -------------------------------------------------------------------------------
@@ -18,10 +17,6 @@ APPLICATIONS ETC:
 * Finish: Writer
 * TODO: Registry editor (In user information system app)
 * Rewrite: Panel item: Menu
-
-REWRITE:
--------------------------------------------------------------------------------
-* [LOW] Write custom $
 
 SUGGESTIONS:
 -------------------------------------------------------------------------------
