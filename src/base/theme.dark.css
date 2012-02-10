@@ -133,3 +133,26 @@ body {
   color : #fff;
   background : #4f4f4f;
 }
+
+/* SCROLLBARS */
+
+::-webkit-scrollbar {
+  width: 10px;
+  background : #f4f4f4;
+}
+::-webkit-scrollbar-button {
+}
+::-webkit-scrollbar-track {
+  background : #f4f4f4;
+  border : 0 none;
+}
+::-webkit-scrollbar-track-piece {
+}
+::-webkit-scrollbar-thumb {
+  background : #41454d;
+  border : 0 none;
+}
+::-webkit-scrollbar-corner {
+}
+::-webkit-scrollbar-resizer {
+}

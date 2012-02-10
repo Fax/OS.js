@@ -5,9 +5,6 @@ CORE:
 * TODO [HIG] : Panel add PanelItem
 * TODO [HIG] : Custom Exception class
 * TODO [MED] : Rewrite Glade builder class
-* TODO [LOW] : Implement custom scroll-bars
-               >  http://css-tricks.com/custom-scrollbars-in-webkit/
-               >  http://jscrollpane.kelvinluck.com/
 * TODO [LOW] : Write custom $
 
 APPLICATIONS ETC:
