@@ -47,6 +47,8 @@ if ( !ENABLE_CACHE ) {
 //header("P3P: CP=\"IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA\"");
 header("P3P: CP=\"NOI DSP COR CURa ADMa OUR NOR COM STA\"");
 
+$loc = $core->getLocale();
 header("X-OSjs-Version: " . PROJECT_VERSION);
+header("X-OSjs-Locale: " . $loc["locale_language"]);
 
 ?>

@@ -38,7 +38,7 @@ define("DEFAULT_LANGUAGE",    "en_US");
 define("ENABLE_CACHE",        false);
 define("ENABLE_LOGGING",      true);
 define("ENABLE_GETTEXT",      true);
-define("GETTEXT_DOMAIN",      "OSjs");
+define("GETTEXT_DOMAIN",      "messages");
 
 define("VFS_SET_PERM",        false);
 define("VFS_USER",            "www-data"); //(PROJECT_HOST != "amitop" ? "www-data" : "apache")); // chown() user

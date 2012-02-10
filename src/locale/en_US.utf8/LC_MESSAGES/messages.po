@@ -16,4 +16,81 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 # START
+msgid "Unknown error"
+msgstr "Unknown error"
+
+msgid "Unknown action given!"
+msgstr "Unknown action given!"
+
+msgid "No action given!"
+msgstr "No action given!"
+
+msgid "Cannot save snapshot. Failed to save in database!"
+msgstr "Cannot save snapshot. Failed to save in database!"
+
+msgid "Cannot save snapshot. Snapshot name already used!"
+msgstr "Cannot save snapshot. Snapshot name already used!"
+
+msgid "Cannot save snapshot. No input data given!"
+msgstr "Cannot save snapshot. No input data given!"
+
+msgid "Cannot save snapshot. No running session found!"
+msgstr "Cannot save snapshot. No running session found!"
+
+msgid "Cannot load snapshot. Failed to load from database!"
+msgstr "Cannot load snapshot. Failed to load from database!"
+
+msgid "Cannot load snapshot. No input data given!"
+msgstr "Cannot load snapshot. No input data given!"
+
+msgid "Cannot load snapshot. No running session found!"
+msgstr "Cannot load snapshot. No running session found!"
+
+msgid "You are not logged in!"
+msgstr "You are not logged in!"
+
+msgid "Application '%s' does not exist"
+msgstr "Application '%s' does not exist"
+
+msgid "Failed to register application"
+msgstr "Failed to register application"
+
+msgid "Failed to flush application"
+msgstr "Failed to flush application"
+
+msgid "Failed to handle application"
+msgstr "Failed to handle application"
+
+msgid "Failed to call Service!"
+msgstr "Failed to call Service!"
+
+msgid "Failed to construct Service!"
+msgstr "Failed to construct Service!"
+
+msgid "Missing some arguments!"
+msgstr "Missing some arguments!"
+
+msgid "Path does not exist"
+msgstr "Path does not exist"
+
+msgid "Invalid argument"
+msgstr "Invalid argument"
+
+msgid "Failed to save '%s'"
+msgstr "Failed to save '%s'"
+
+msgid "Failed read directory '%s'"
+msgstr "Failed read directory '%s'"
+
+msgid "Failed to rename '%s'"
+msgstr "Failed to rename '%s'"
+
+msgid "Failed to delete '%s'"
+msgstr "Failed to delete '%s'"
+
+msgid "Failed to create directory '%s'"
+msgstr "Failed to create directory '%s'"
+
+msgid "Failed to read '%s'"
+msgstr "Failed to read '%s'"
 

@@ -270,7 +270,7 @@ class Core
         // Default output
         $json = Array(
           "success" => false,
-          "error"   => "Unknown error",
+          "error"   => _("Unknown error"),
           "result"  => null
         );
 
@@ -310,10 +310,10 @@ class Core
               self::$method($args, $json, $this);
             }
           } else {
-            $json['error'] = "Unknown action given!";
+            $json['error'] = _("Unknown action given!");
           }
         } else {
-          $json['error'] = "No action given!";
+          $json['error'] = _("No action given!");
         }
 
         // Remove error if successfull
@@ -434,16 +434,16 @@ class Core
             $json['success'] = true;
             $json['result']  = $snapshot;
           } else {
-            $json['error'] = "Cannot save snapshot. Failed to save in database!";
+            $json['error'] = _("Cannot save snapshot. Failed to save in database!");
           }
         } else {
-          $json['error'] = "Cannot save snapshot. Snapshot name already used!!";
+          $json['error'] = _("Cannot save snapshot. Snapshot name already used!");
         }
       } else {
-        $json['error'] = "Cannot save snapshot. No input data given!";
+        $json['error'] = _("Cannot save snapshot. No input data given!");
       }
     } else {
-      $json['error'] = "Cannot save snapshot. No running session found!";
+      $json['error'] = _("Cannot save snapshot. No running session found!");
     }
   }
 
@@ -464,13 +464,13 @@ class Core
           $json['success'] = true;
           $json['result']  = $snapshot;
         } else {
-          $json['error'] = "Cannot load snapshot. Failed to load from database!";
+          $json['error'] = _("Cannot load snapshot. Failed to load from database!");
         }
       } else {
-        $json['error'] = "Cannot load snapshot. No input data given!";
+        $json['error'] = _("Cannot load snapshot. No input data given!");
       }
     } else {
-      $json['error'] = "Cannot load snapshot. No running session found!";
+      $json['error'] = _("Cannot load snapshot. No running session found!");
     }
   }
 
@@ -538,7 +538,7 @@ class Core
       $json['success'] = true;
       $json['result']  = $user->getUserInfo();
     } else {
-      $json['error'] = "You are not logged in!";
+      $json['error'] = _("You are not logged in!");
     }
   }
 
@@ -553,7 +553,7 @@ class Core
       $json['result']  = $app;
       $json['error']   = null;
     } else {
-      $json['error'] = "Application '{$args['app']}' does not exist";
+      $json['error'] = sprintf(_("Application '%s' does not exist"), $args['app']);
     }
   }
 
@@ -567,7 +567,7 @@ class Core
       $json['success'] = true;
       $json['error']   = null;
     } else {
-      $json['error'] = "Failed to register application";
+      $json['error'] = _("Failed to register application");
     }
   }
 
@@ -581,7 +581,7 @@ class Core
       $json['success'] = true;
       $json['error']   = null;
     } else {
-      $json['error'] = "Failed to flush application";
+      $json['error'] = _("Failed to flush application");
     }
   }
 
@@ -593,10 +593,10 @@ class Core
   protected static final function _doApplicationEvent(Array $args, Array &$json, Core $inst = null) {
     if ( ($result = Application::Handle($args['uuid'], $args['action'], $args['instance'])) ) {
       $json['success'] = ($result === true) || is_array($result);
-      $json['error']   = $json['success'] ? null : (is_string($result) ? $result : "Unknown error");
+      $json['error']   = $json['success'] ? null : (is_string($result) ? $result : _("Unknown error"));
       $json['result']  = $json['success'] ? $result : null;
     } else {
-      $json['error'] = "Failed to handle application";
+      $json['error'] = _("Failed to handle application");
     }
   }
 
@@ -623,13 +623,13 @@ class Core
           $json['error']   = null;
           $json['result']  = $res;
         } else {
-          $json['error']   = "Failed to call Service!";
+          $json['error']   = _("Failed to call Service!");
         }
       } else {
-        $json['error']   = "Failed to construct Service!";
+        $json['error']   = _("Failed to construct Service!");
       }
     } else {
-      $json['error']   = "Missing some arguments!";
+      $json['error']   = _("Missing some arguments!");
     }
   }
 
@@ -648,10 +648,10 @@ class Core
           $json['result'] = $content;
           $json['success'] = true;
         } else {
-          $json['error'] = "Path does not exist";
+          $json['error'] = _("Path does not exist");
         }
       } else {
-        $json['error'] = "Invalid argument";
+        $json['error'] = _("Invalid argument");
       }
     } else if ( $method == "write" ) {
       // TODO: Overwrite parameter
@@ -659,7 +659,7 @@ class Core
         $json['success'] = true;
         $json['result'] = true;
       } else {
-        $json['error'] = "Failed to save '{$argv['file']}'";
+        $json['error'] = sprintf(_("Failed to save '%s'"), $argv['file']);
       }
     } else if ( $method == "readdir" ) {
       $path    = $argv['path'];
@@ -670,7 +670,7 @@ class Core
         $json['result'] = $items;
         $json['success'] = true;
       } else {
-        $json['error'] = "Failed to read directory '{$argv['path']}'";
+        $json['error'] = sprintf(_("Failed read directory '%s'"), $argv['path']);
       }
     } else if ( $method == "rename" ) {
       list($path, $src, $dst) = $argv;
@@ -679,28 +679,28 @@ class Core
         $json['result'] = $dst;
         $json['success'] = true;
       } else {
-        $json['error'] = "Failed to rename '{$src}'";
+        $json['error'] = sprintf(_("Failed to rename '%s'"), $argv);
       }
     } else if ( $method == "delete" ) {
       if ( ApplicationVFS::rm($argv) ) {
         $json['result'] = $argv;
         $json['success'] = true;
       } else {
-        $json['error'] = "Failed to delete '{$argv}'";
+        $json['error'] = sprintf(_("Failed to delete '%s'"), $argv);
       }
     } else if ( $method == "mkdir" ) {
       if ( $res = ApplicationVFS::mkdir($argv) ) {
         $json['result'] = $res;
         $json['success'] = true;
       } else {
-        $json['error'] = "Failed to create directory '{$argv}'";
+        $json['error'] = sprintf(_("Failed to create directory '%s'"), $argv);
       }
     } else if ( $method == "readurl" ) {
       if ( $ret = ApplicationAPI::readurl($argv) ) {
         $json['result'] = $ret;
         $json['success'] = true;
       } else {
-        $json['error'] = "Failed to read '{$argv}'";
+        $json['error'] = sprintf(_("Failed to read '%s'"), $argv);
       }
     } else if ( $method == "readpdf" ) {
       $tmp  = explode(":", $argv);
@@ -711,7 +711,7 @@ class Core
         $json['result'] = $ret;
         $json['success'] = true;
       } else {
-        $json['error'] = "Failed to read '{$argv}'";
+        $json['error'] = sprintf(_("Failed to read '%s'"), $argv);
       }
 
     } else if ( $method == "fileinfo" ) {
@@ -719,7 +719,7 @@ class Core
         $json['result'] = $ret;
         $json['success'] = true;
       } else {
-        $json['error'] = "Failed to read '{$argv}'";
+        $json['error'] = sprintf(_("Failed to read '%s'"), $argv);
       }
     }
   }
@@ -783,24 +783,34 @@ class Core
 
     date_default_timezone_set($this->_aLocale["locale_location"]);
 
-    // Figure out language
-    $lang = $this->_aLocale["locale_language"];
-    if ( $lang == "default" ) {
-      $lang = self::_getBrowserLanguage() . ".utf8";
-    } else {
-      $lang = "{$lang}.utf8";
-    }
+    //
+    // i18n
+    //
 
-    // Bind for non-unix
     if ( ENABLE_GETTEXT ) {
-      putenv("LANG={$lang}.UTF8");
-      putenv("LANGUAGE={$lang}.UTF8");
-      bind_textdomain_codeset(GETTEXT_DOMAIN, "UTF8");
-    }
+      // Figure out language
+      $lang = $this->_aLocale["locale_language"];
+      if ( $lang == "default" ) {
+        $lang = self::_getBrowserLanguage();
+      }
 
-    // Bind for all
-    setlocale(LC_ALL, $lang);
-    if ( ENABLE_GETTEXT ) {
+      $ulang = "{$lang}.utf8";
+      if ( !defined("LC_MESSAGES") ) {
+        define("LC_MESSAGES", $lang);
+      }
+
+      // Env locale
+      putenv("LANG={$ulang}");
+      putenv("LANGUAGE={$ulang}");
+      putenv("LC_ALL={$ulang}");
+
+      // System locale
+      setlocale(LC_ALL,       $ulang);
+      setlocale(LC_MESSAGES,  $ulang);
+      setlocale(LC_CTYPE,     $ulang);
+
+      // Gettext locale
+      bind_textdomain_codeset(GETTEXT_DOMAIN, "UTF-8");
       bindtextdomain(GETTEXT_DOMAIN, PATH_PROJECT_LOCALE);
       textdomain(GETTEXT_DOMAIN);
     }
