@@ -53,6 +53,7 @@
     "CrashDesktopIconView"                : "An error occured while creating desktop IconView!",
     "CrashPanelCreate"                    : "An error occured while creating panels!",
     "CrashPanelStart"                     : "An error occured while starting the panels!",
+    "CrashSessionRestore"                 : "Cannot restore your session because the initialization failed!",
     "ContextMenuPanel"                    : {
       "title"     : "Panel",
       "add"       : "Add new item",

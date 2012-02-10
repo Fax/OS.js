@@ -61,14 +61,20 @@ OSjs.PanelItems.PanelItemWindowList = (function($, undefined) {
       redraw : function(ev, eargs) {
         var self = this;
 
-        if ( eargs ) {
-          var win = eargs;
-          var id  = win.$element.attr("id") + "_Shortcut";
+        var getWindow = function() {
+          if ( eargs ) {
+            var win = eargs;
+            var id  = win.$element.attr("id") + "_Shortcut";
 
-          if ( !win || win._skip_taskbar ) {
-            return;
+            if ( !win || win._skip_taskbar ) {
+              return null;
+            }
+
+            return [id, win];
           }
-        }
+
+          return null;
+        };
 
         var getTitle = function(w) {
           if ( w ) {
@@ -83,17 +89,31 @@ OSjs.PanelItems.PanelItemWindowList = (function($, undefined) {
           return "Unknown";
         };
 
+        var addWindow = function(win) {
+          var el = $("<div class=\"PanelItem Padded PanelItemWindow\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div>");
+          el.find("img").attr("src", win.getIcon());
+          el.find("span").html(getTitle(win));
+          el.attr("id", id);
+          el.click(function() {
+            win.focus();
+          });
+
+          self.$element.append(el);
+        };
+
+        var win, id;
+        var tmp = getWindow();
+        if ( tmp ) {
+          id  = tmp[0];
+          win = tmp[1];
+        }
+
         if ( ev == "window_add" ) {
           if ( !document.getElementById(id) ) {
-            var el = $("<div class=\"PanelItem Padded PanelItemWindow\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div>");
-            el.find("img").attr("src", win.getIcon());
-            el.find("span").html(getTitle(win));
-            el.attr("id", id);
-            el.click(function() {
-              win.focus();
-            });
+            if ( win === null )
+              return;
 
-            this.$element.append(el);
+            addWindow(win);
           }
         } else if ( ev == "window_remove" ) {
           if ( document.getElementById(id) ) {
@@ -109,6 +129,9 @@ OSjs.PanelItems.PanelItemWindowList = (function($, undefined) {
             $("#" + id).removeClass("Current");
           }
         } else if ( ev == "window_updated" ) {
+          if ( win === null )
+            return;
+
           if ( document.getElementById(id) ) {
             $("#" + id).find("span").html(getTitle(win));
           }

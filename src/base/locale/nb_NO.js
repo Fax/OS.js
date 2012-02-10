@@ -53,6 +53,7 @@
     "CrashDesktopIconView"                : "En feil oppstod under oppretting av skrivebordets IconView!",
     "CrashPanelCreate"                    : "En feil oppstod under oppretting av panel(er)!",
     "CrashPanelStart"                     : "En feil oppstod under starting av panel(er)!",
+    "CrashSessionRestore"                 : "Kan ikke gjenoprette sessjonen din pga. feil under oppstart!",
     "ContextMenuPanel"                    : {
       "title"     : "Panel",
       "add"       : "Legg til",

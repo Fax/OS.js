@@ -1984,31 +1984,33 @@
             _Settings._set("user.first-run", "false");
           }
 
-          // >>> Session
           setTimeout(function() {
+            // >>> Session
             bar.progressbar({value : 80});
-
             API.session.restore();
-
             bar.progressbar({value : 90});
-          }, 0);
 
-          // Finished
-          setTimeout(function() {
-            bar.progressbar({value : 100});
-
+            // >>> Finished
             setTimeout(function() {
-              load.fadeOut(ANIMATION_SPEED);
-            }, 200);
-          },200);
+              setTimeout(function() {
+                load.fadeOut(ANIMATION_SPEED);
 
-          //if ( ENABLE_CACHE ) {
-            self.cuint = setInterval(function() {
-              _Settings.updateCache(true);
-            }, CACHE_FREQ);
-          //}
+                //if ( ENABLE_CACHE ) {
+                  self.cuint = setInterval(function() {
+                    _Settings.updateCache(true);
+                  }, CACHE_FREQ);
+                //}
 
-          self.running = true;
+                self.running = true;
+
+
+                bar.progressbar({value : 100});
+              }, 125);
+
+            }, 250); // <<< Finished
+
+          }, 500);
+
         } else {
           MessageBox(data.error);
         }
