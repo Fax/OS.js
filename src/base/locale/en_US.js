@@ -50,6 +50,9 @@
     "StorageAlert"                        : "Warning! You have reached the maximum storage limit (%d of %d)",
     "CrashEvent"                          : "An error occured while handling AJAX Event: ",
     "CrashEventTitle"                     : "An operation in '%s' has failed!",
+    "CrashDesktopIconView"                : "An error occured while creating desktop IconView!",
+    "CrashPanelCreate"                    : "An error occured while creating panels!",
+    "CrashPanelStart"                     : "An error occured while starting the panels!",
     "ContextMenuPanel"                    : {
       "title"     : "Panel",
       "add"       : "Add new item",

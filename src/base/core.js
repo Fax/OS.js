@@ -4202,7 +4202,7 @@
         var grid = _Settings._get("desktop.grid", false, true);
         this.iconview = new IconView(grid);
       } catch ( exception ) {
-        throw new OSjs.Classes.ProcessException(self, "An error occured while creating desktop IconView!", exception); // FIXME: Translation
+        throw new OSjs.Classes.ProcessException(self, OSjs.Labels.CrashDesktopIconView, exception);
       }
 
       //
@@ -4249,7 +4249,7 @@
           }
 
         } catch ( exception ) {
-          throw new OSjs.Classes.ProcessException(self, "An error occured while creating panels!", exception); // FIXME: Translation
+          throw new OSjs.Classes.ProcessException(self, OSjs.Labels.CrashPanelCreate, exception);
         }
       })();
 
@@ -4277,7 +4277,7 @@
           }
         }
       } catch ( exception ) {
-        throw new OSjs.Classes.ProcessException(self, "An error occured while starting the panels", exception); // FIXME: Translation
+        throw new OSjs.Classes.ProcessException(self, OSjs.Labels.CrashPanelStart, exception);
       }
 
       console.log("...done...");

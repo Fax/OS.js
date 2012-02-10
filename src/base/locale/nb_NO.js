@@ -50,6 +50,9 @@
     "StorageAlert"                        : "Advarsel! Du har nådd 'local-storage' lagrings-grense (%d av %d)",
     "CrashEvent"                          : "En feil oppstod under en AJAX-hendelse: ",
     "CrashEventTitle"                     : "En operasjon i '%s' har feilet!",
+    "CrashDesktopIconView"                : "En feil oppstod under oppretting av skrivebordets IconView!",
+    "CrashPanelCreate"                    : "En feil oppstod under oppretting av panel(er)!",
+    "CrashPanelStart"                     : "En feil oppstod under starting av panel(er)!",
     "ContextMenuPanel"                    : {
       "title"     : "Panel",
       "add"       : "Legg til",
