@@ -338,6 +338,10 @@ input.Disabled {
 .PanelItemWindowList {
   overflow : hidden;
 }
+.PanelItemWindowList .PanelItem {
+  position : relative;
+  float : left;
+}
 
 .PanelItemSeparator {
   width : 1px;
