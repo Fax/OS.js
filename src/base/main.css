@@ -272,13 +272,14 @@ input.Disabled {
   left : 0px;
 }
 .DesktopPanel .Ghost {
-  float : left;
   height : 20px;
   line-height : 20px;
   margin : 5px;
   padding : 0;
-  position : relative;
-  width : 1px;
+  display : block;
+  position : absolute;
+  top : 0px;
+  left : 0px;
 }
 
 .PanelItem.Padded {

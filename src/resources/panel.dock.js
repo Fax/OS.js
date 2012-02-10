@@ -92,6 +92,12 @@ OSjs.PanelItems.PanelItemDock = (function($, undefined) {
 
       destroy : function() {
         this._super();
+      },
+
+      getSession : function() {
+        var sess = this._super();
+        sess.opts = [this.items];
+        return sess;
       }
     });
 

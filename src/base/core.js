@@ -1857,15 +1857,18 @@
     shutdown : function() {
       var ssess     = _Core.getSession();
       var ssett     = _Settings.getSession();
+      var dsess     = _Desktop ? _Desktop.getSession() : {};
+
       var duration  = ((new Date()).getTime()) - _StartStamp;
 
       console.group("Core::shutdown()");
-      console.log("Core Session", ssess);
+      console.log("Core Session",     ssess);
       console.log("Settings Session", ssett);
+      console.log("Desktop session",  dsess);
       console.log("Session duration", duration);
       console.groupEnd();
 
-      DoPost({'action' : 'shutdown', 'session' : ssess, 'settings' : ssett, 'duration' : duration}, function(data) {
+      DoPost({'action' : 'shutdown', 'session' : ssess, 'settings' : ssett, 'desktop' : dsess, 'duration' : duration}, function(data) {
         if ( data.success ) {
           console.log("Core::shutdown()", "Shutting down...");
 
@@ -2634,7 +2637,8 @@
       this._avail   = defaults;
       this._stores  = [];
 
-      var updateable = ["desktop.grid", "desktop.panels"];
+      //var updateable = ["desktop.grid", "desktop.panels"];
+      var updateable = ["desktop.grid"];
 
       console.log("Settings revision", SETTING_REVISION);
       console.log("Force update of", updateable);
@@ -2792,6 +2796,54 @@
         }
       }
 
+      return false;
+    },
+
+    /**
+     * SettingsManager::savePanel() -- Save a panel session data
+     * @return bool
+     */
+    savePanel : function(p) {
+      if ( p instanceof Panel ) {
+        var sess = p.getSession();
+        var items = [];
+
+        // Panel Items
+        var i, iter, opts;
+        for ( i = 0; i < sess.items.length; i++ ) {
+          iter  = sess.items[i];
+          items.push([iter.name, iter.opts, (iter.align + ":" + iter.position)]);
+        }
+        delete i;
+        delete iter;
+        delete opts;
+
+        // Panel
+        var json = {
+          name      : sess.name,
+          index     : sess.index,
+          position  : sess.position,
+          items     : items
+        };
+
+        console.group("SettingsManager::savePanel()");
+        console.log(p, sess);
+        console.log("Result", json);
+        console.groupEnd();
+
+        var pp = 0, panels = this._get("desktop.panels", false, true);
+        for ( pp; pp < panels.length; pp++ ) {
+          if ( (panels[pp].name == json.name) && (panels[pp].index == json.index) ) {
+            panels[pp] = json;
+            console.log("Saved panel", pp, panels[pp]);
+            break;
+          }
+        }
+
+        this._set("desktop.panels", JSON.stringify(panels));
+
+        return true;
+      }
       return false;
     },
 
@@ -4228,7 +4280,7 @@
               var el      = items[index];
               var iname   = el[0];
               var iargs   = el[1];
-              var ialign  = el[2] || "left";
+              var ialign  = el[2] || "left:0";
 
               LaunchPanelItem(index, iname, iargs, ialign, panel, function() {
                 current++;
@@ -4630,6 +4682,21 @@
     getPanel : function(index) {
       index = index || 0;
       return this.panels[index];
+    },
+
+    /**
+     * Desktop::getSession() -- Get the desktop session
+     * @return Object
+     */
+    getSession : function() {
+      var panels = [];
+      for ( var i = 0; i < this.panels.length; i++ ) {
+        panels.push(this.panels[i].getSession());
+      }
+
+      return {
+        "panels" : panels
+      };
     }
 
   }); // @endclass
@@ -4978,7 +5045,7 @@
         }
       });
 
-      //this.refresh();
+      this.refresh();
     },
 
     /**
@@ -4991,12 +5058,11 @@
       if ( !this.dragging ) {
 
         var ghost = $("<li class=\"Ghost PanelItemSeparator\"></li>");
+        ghost.css("left", ev.pageX + "px");
+
         this.dragging = {
           'item'    : item,
-          'startX'  : ev.pageX,
-          'startY'  : ev.pageY,
-          'curX'    : ev.pageX,
-          'curY'    : ev.pageY,
+          'result'  : null,
           'ghost'   : ghost
         };
 
@@ -5005,6 +5071,8 @@
         $(document).bind("mousemove", function(ev) {
           self._handleItemDrag(ev);
         });
+
+        this.$element.append(this.dragging.ghost);
       }
     },
 
@@ -5022,6 +5090,8 @@
           self._handleItemDrag(ev);
         });
 
+        this.dragging.item.setPosition(this.dragging.result, true);
+
         this.dragging.ghost.remove();
       }
       this.dragging = false;
@@ -5034,26 +5104,16 @@
      */
     _handleItemDrag : function(ev) {
       if ( this.dragging ) {
-        this.dragging.ghost.remove();
 
-        var cur    = $(ev.srcElement || ev.target).parents("li.PanelItem");
-        var index  = cur.index(); //cur.get(0) ? parseInt(cur.attr("id").replace("PanelItem", ""), 10) : 0;
-        var before = true;
-        if ( index < 0 ) {
-          if ( ev.pageX < ($(document).width() - 100) ) {
-            index = 0;
-          } else {
-            index  = cur.parent().size();
-            before = false;
-          }
-        }
-
-        var set = this.$element.find("li:nth-child(" + (index + 1) + ")");
-        if ( before ) {
-          this.dragging.ghost.insertBefore(set);
+        var cur;
+        if ( this.dragging.item._align == "left" ) {
+          cur = ev.pageX;
+          this.dragging.result = {"left" : (cur + "px"), "right" : "auto"};
         } else {
-          this.dragging.ghost.insertAfter(set);
+          cur = ($(document).width() - ev.pageX);
+          this.dragging.result = {"right" : (cur + "px"), "left" : "auto"};
         }
+        this.dragging.ghost.css(this.dragging.result);
       }
     },
 
@@ -5072,16 +5132,19 @@
           pi = this.items[i].$element;
           pi.mousedown((function(item) {
             return function(ev) {
-              if ( self.drag_timeout ) {
-                clearTimeout(self.drag_timeout);
-                self.drag_timeout = null;
+              if ( (ev.which || 1) <= 1 ) {
+                if ( self.drag_timeout ) {
+                  clearTimeout(self.drag_timeout);
+                  self.drag_timeout = null;
+                }
+
+                self.drag_timeout = setTimeout(function() {
+                  ev.stopPropagation();
+                  self._startItemDrag(ev, item);
+                }, DRAG_TIMEOUT);
               }
-              self.drag_timeout = setTimeout(function() {
-                ev.stopPropagation();
-                self._startItemDrag(ev, item);
-              }, DRAG_TIMEOUT);
             };
-          })(pi));
+          })(this.items[i]));
         }
       }
     },
@@ -5186,6 +5249,7 @@
         if ( fs > 0 ) {
           for ( i = 0; i < this.items.length; i++ ) {
             if ( this.items[i]._expand ) {
+              fs -=  (this.items[i].$element.offset()['left']);
               console.log("Giving item", i, ":", fs, "space", this.items[i].$element);
               this.items[i].$element.width(fs);
               break;
@@ -5195,6 +5259,25 @@
       }
 
       console.groupEnd();
+    },
+
+    /**
+     * Panel::getSession() -- Get the panel session
+     * @return Object
+     */
+    getSession : function() {
+      var self = this;
+      var items = [];
+      for ( i = 0; i < this.items.length; i++ ) {
+        items.push(this.items[i].getSession());
+      }
+
+      return {
+        "index"     : self.index,
+        "name"      : self.name,
+        "position"  : self.pos,
+        "items"     : items
+      };
     }
 
   }); // @endclass
@@ -5216,7 +5299,7 @@
     _name         : "",               //!< Item name identifier
     _uuid         : null,             //!< Item UUID
     _named        : "",               //!< Readable name
-    _align        : "AlignLeft",      //!< Item alignment
+    _align        : "left",           //!< Item alignment
     _expand       : false,            //!< Expand item
     _dynamic      : false,            //!< Dynamic item
     _orphan       : true,             //!< Orphan ? (Only one instance allowed)
@@ -5225,6 +5308,7 @@
     _redrawable   : false,            //!< Redrawable ?
     _index        : -1,               //!< Panel item Index
     _panel        : null,             //!< Panel instance reference
+    _position     : -1,               //!< Panel item position (left/right) in px
 
     /**
      * _PanelItem::init() -- Constructor
@@ -5233,6 +5317,9 @@
      * @constructor
      */
     init : function(name, align)  {
+      if ( align == "AlignLeft" ) align = "left";
+      if ( align == "AlignRight" ) align = "right";
+
       this._name         = name;
       this._named        = name;
       this._align        = align || this._align;
@@ -5278,21 +5365,28 @@
       pos = spl[0];
 
       if ( pos ) {
-        this.align = pos;
+        this._align = pos;
       }
 
-      if ( this.align == "right" ) {
+      var cpos;
+      if ( this._align == "right" ) {
         this.$element.addClass("AlignRight");
-        this.$element.css({"left" : "auto", "right" : (px + "px")});
+        cpos = {"left" : "auto", "right" : (px + "px")};
       } else {
         this.$element.removeClass("AlignRight");
-        this.$element.css({"right" : "auto", "left" : (px + "px")});
+        cpos = {"right" : "auto", "left" : (px + "px")};
       }
 
+      console.log("PanelItem::create()", this._name, cpos, this._align);
+
+      this.setPosition(cpos);
 
       this.$element.mousedown(function(ev) {
 
         var ret = API.application.context_menu(ev, self.getMenu(), $(this));
+        if ( ret ) {
+          ev.stopPropagation();
+        }
 
         ev.preventDefault();
 
@@ -5375,6 +5469,25 @@
     },
 
     /**
+     * PanelItem::setPosition() -- Set position CSS
+     * @return void
+     */
+    setPosition : function(pos, save) {
+      if ( pos ) {
+        this.$element.css(pos);
+        if ( pos[this._align] !== undefined ) {
+          this._position = parseInt(pos[this._align].replace("px", ""), 10) || 0;
+        }
+
+        if ( save === true ) {
+          _Settings.savePanel(this._panel);
+        }
+
+        this.onRedraw();
+      }
+    },
+
+    /**
      * _PanelItem::getMenu() -- Get the ContextMenu
      * @return JSON
      */
@@ -5400,6 +5513,20 @@
       }
 
       return menu;
+    },
+
+    /**
+     * _PanelItem::getSession() -- Get the session properties
+     * @return Object
+     */
+    getSession : function() {
+      return {
+        "name"      : this._name,
+        "index"     : this._index,
+        "align"     : this._align,
+        "position"  : this._position,
+        "opts"      : []
+      };
     }
 
   }); // @endclass

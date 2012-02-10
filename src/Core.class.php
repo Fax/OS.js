@@ -161,7 +161,7 @@ class Core
       Array("PanelItemSeparator", Array(), "left:38"),
       Array("PanelItemWindowList", Array(), "left:48"),
       Array("PanelItemClock", Array(), "right:0"),
-      Array("PanelItemSeparator", Array(), "right:115px"),
+      Array("PanelItemSeparator", Array(), "right:115"),
       Array("PanelItemDock", Array(Array(
         Array(
           "title"  => "About",
@@ -197,7 +197,8 @@ class Core
         Array(
           "name"  => "Default",
           "index" => 0,
-          "items" => $panel
+          "items" => $panel,
+          "position" => "top"
         )
       )
     );

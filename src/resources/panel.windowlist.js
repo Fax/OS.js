@@ -61,11 +61,13 @@ OSjs.PanelItems.PanelItemWindowList = (function($, undefined) {
       redraw : function(ev, eargs) {
         var self = this;
 
-        var win = eargs;
-        var id  = win.$element.attr("id") + "_Shortcut";
+        if ( eargs ) {
+          var win = eargs;
+          var id  = win.$element.attr("id") + "_Shortcut";
 
-        if ( !win || win._skip_taskbar ) {
-          return;
+          if ( !win || win._skip_taskbar ) {
+            return;
+          }
         }
 
         var getTitle = function(w) {
