@@ -997,8 +997,8 @@
     'application' : {
       'context_menu' : function(ev, items, where, which, mpos, mtop) {
           which = which || 3;
-          mpos = mpos || false;
-          mtop = mtop || 20;
+          mpos  = mpos  || false;
+          mtop  = mtop  || 20;
 
           var ewhich = ev.which || 1;
           if ( ewhich === which ) {
@@ -1016,21 +1016,7 @@
               }
             });
 
-            // TODO: Check if we crash with bottom of the viewport
-            var off = mpos ? ({'left' : ev.pageX, 'top' : ev.pageY - 20}) : $(where).offset();
-            $("#ContextMenu").css(
-              {
-                "left" :off.left + "px",
-                "top" : off.top + mtop + "px"
-              }
-            ).html(_Menu.$element).show();
-
-            var h = $("#ContextMenu").height();
-            var m = $(document).height();
-
-            if ( off.top + h > m ) {
-              $("#ContextMenu").css({"top" : (m - h - 40) + "px"});
-            }
+            _Menu.show(ev, true, where, mpos, mtop);
 
             ev.stopPropagation();
             ev.preventDefault();
@@ -6351,6 +6337,9 @@
     init : function(att_window) {
       this.$element = $("<ul></ul>");
       this.$element.attr("class", "Menu");
+
+      console.group("Menu::init()");
+      console.groupEnd();
     },
 
     /**
@@ -6358,6 +6347,8 @@
      * @destructor
      */
     destroy : function() {
+      console.log("Menu::destroy()");
+
       if ( this.$element ) {
         this.$element.empty().remove();
       }
@@ -6372,6 +6363,37 @@
     clear : function() {
       if ( this.$element ) {
         this.$element.find("li").empty().remove();
+      }
+    },
+
+    /**
+     * Menu::show() -- Display the menu
+     * @param  DOMEvent   ev            Browser Event
+     * @param  bool       context       Context Menu ?
+     * @param  Mixed      where         Target Element/Object
+     * @param  bool       mpos          Use mouse position ?
+     * @param  int        mtop          Top margin in pixels
+     * @return void
+     */
+    show : function(ev, context, where, mpos, mtop) {
+      if ( context ) {
+        var off = mpos ? ({'left' : ev.pageX, 'top' : ev.pageY - 20}) : $(where).offset();
+        $("#ContextMenu").css(
+          {
+            "left" :off.left + "px",
+            "top" : off.top + mtop + "px"
+          }
+        ).html(_Menu.$element).show();
+
+        var h = $("#ContextMenu").height();
+        var m = $(document).height();
+
+        console.log("Menu::show()", ev, context, where, mpos, mtop);
+        console.log("Menu::show()", "Menu height", h, "Document height", m, "Bottom", (off.top + h));
+
+        if ( (off.top + h) > m ) {
+          $("#ContextMenu").css({"top" : ((off.top + mtop) - (h)) + "px"});
+        }
       }
     },
 
