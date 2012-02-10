@@ -52,7 +52,7 @@
    * @constants Local settings
    */
   var ENABLE_CACHE           = false;               //!< Enabled caching
-  var SETTING_REVISION       = 31;                  //!< The settings revision
+  var SETTING_REVISION       = 32;                  //!< The settings revision
   var ENABLE_LOGIN           = false;               //!< Use login
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
@@ -2650,6 +2650,7 @@
       var force = false;
       if ( parseInt(rev, 10) !== parseInt(SETTING_REVISION, 10) ) {
         force = true;
+        updateable = ["desktop.grid", "desktop.panels"];
         localStorage.setItem("SETTING_REVISION", SETTING_REVISION);
         console.log("============= FORCING UPDATE =============");
       }
