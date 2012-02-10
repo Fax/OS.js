@@ -2228,7 +2228,8 @@
     global_mousedown : function(ev) {
       var t = ev.target || ev.srcElement;
       if ( t && t.tagName ) {
-        if ( !$(t).hasClass("textarea") && !$(t).parents(".textarea") ) {
+        var tmp = $(t);
+        if ( !tmp.hasClass("GtkTextView") && !tmp.hasClass("textarea") && !tmp.parents(".textarea") ) {
           var tagName = t.tagName.toLowerCase();
           if ( tagName !== "input" && tagName !== "textarea" && tagName !== "select" && tagName != "option" ) {
             ev.preventDefault();
@@ -4098,7 +4099,8 @@
       this.panels   = [];
 
       this.$element.mousedown(function(ev) {
-        ev.preventDefault();
+        _Core.global_mousedown(ev);
+        //ev.preventDefault();
       });
 
 

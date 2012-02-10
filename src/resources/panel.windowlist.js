@@ -110,7 +110,7 @@ OSjs.PanelItems.PanelItemWindowList = (function($, undefined) {
 
         if ( ev == "window_add" ) {
           if ( !document.getElementById(id) ) {
-            if ( win === null )
+            if ( !win )
               return;
 
             addWindow(win);
@@ -129,7 +129,7 @@ OSjs.PanelItems.PanelItemWindowList = (function($, undefined) {
             $("#" + id).removeClass("Current");
           }
         } else if ( ev == "window_updated" ) {
-          if ( win === null )
+          if ( !win )
             return;
 
           if ( document.getElementById(id) ) {
