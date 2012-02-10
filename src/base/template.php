@@ -2,7 +2,7 @@
 
 require PATH_PROJECT_SRC . "/Dialog.class.php";
 
-$str = '  <script type="text/javascript" src="/?resource=%s"></script>';
+$str = '  <script type="text/javascript" src="/ajax/resource/%s"></script>';
 $resources = Array();
 foreach ( Dialog::$Registered as $name => $opts ) {
   foreach ( $opts["resources"] as $res ) {
@@ -68,25 +68,25 @@ if ( $locale = Core::get()->getLocale() ) {
   <script type="text/javascript" src="/js/utils.js"></script>
 
   <!-- OS.js stylesheets -->
-  <link rel="stylesheet" type="text/css" href="/?library=main.css" />
-  <link rel="stylesheet" type="text/css" href="/?library=glade.css" />
-  <link rel="stylesheet" type="text/css" href="/?library=pimp.css" />
+  <link rel="stylesheet" type="text/css" href="/ajax/library/main.css" />
+  <link rel="stylesheet" type="text/css" href="/ajax/library/glade.css" />
+  <link rel="stylesheet" type="text/css" href="/ajax/library/pimp.css" />
 <!--[if lt IE 9]>
 <link rel="stylesheet" type="text/css" href="/?resource=ie.css" />
 <![endif]-->
 
   <!-- OS.js defineable -->
-  <link rel="stylesheet" type="text/css" href="/?font=Sansation" id="FontFace" />
-  <link rel="stylesheet" type="text/css" href="/?theme=default" id="ThemeBase" />
-  <link rel="stylesheet" type="text/css" href="/?theme=dark" id="ThemeFace" />
-  <link rel="stylesheet" type="text/css" href="/?cursor=default" id="CursorFace" />
+  <link rel="stylesheet" type="text/css" href="/ajax/font/Sansation" id="FontFace" />
+  <link rel="stylesheet" type="text/css" href="/ajax/theme/default" id="ThemeBase" />
+  <link rel="stylesheet" type="text/css" href="/ajax/theme/dark" id="ThemeFace" />
+  <link rel="stylesheet" type="text/css" href="/ajax/cursor/default" id="CursorFace" />
 
   <!-- OS.js libraries -->
-  <script type="text/javascript" src="/?library=init.js"></script>
-  <script type="text/javascript" src="/?language=<?php print $current_locale; ?>" id="LanguageFile"></script>
-  <script type="text/javascript" src="/?library=classes.js"></script>
-  <script type="text/javascript" src="/?library=core.js"></script>
-  <script type="text/javascript" src="/?library=main.js"></script>
+  <script type="text/javascript" src="/ajax/library/init.js"></script>
+  <script type="text/javascript" src="/ajax/language/<?php print $current_locale; ?>" id="LanguageFile"></script>
+  <script type="text/javascript" src="/ajax/library/classes.js"></script>
+  <script type="text/javascript" src="/ajax/library/core.js"></script>
+  <script type="text/javascript" src="/ajax/library/main.js"></script>
 
   <!-- OS.js sources -->
 <?php print implode("\n", $resources) . "\n"; ?>

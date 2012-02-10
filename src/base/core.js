@@ -76,13 +76,13 @@
    */
   var WEBSOCKET_URI    = "localhost:8888";          //!< WebSocket URI
   var AJAX_URI         = "/";                       //!< AJAX URI (POST)
-  var RESOURCE_URI     = "/?resource=";             //!< Resource loading URI (GET)
-  var LIBRARY_URI      = "/?library=";              //!< Library URI (GET)
-  var THEME_URI        = "/?theme=";                //!< Themes loading URI (GET)
-  var FONT_URI         = "/?font=";                 //!< Font loading URI (GET)
-  var CURSOR_URI       = "/?cursor=";               //!< Cursor loading URI (GET)
-  var LANGUAGE_URI     = "/?language=";             //!< Language loading URI (GET)
-  var UPLOAD_URI       = "/upload.php";             //!< File upload URI (POST)
+  var RESOURCE_URI     = "/ajax/resource/";         //!< Resource loading URI (GET)
+  var LIBRARY_URI      = "/ajax/library/";          //!< Library URI (GET)
+  var THEME_URI        = "/ajax/theme/";            //!< Themes loading URI (GET)
+  var FONT_URI         = "/ajax/font/";             //!< Font loading URI (GET)
+  var CURSOR_URI       = "/ajax/cursor/";           //!< Cursor loading URI (GET)
+  var LANGUAGE_URI     = "/ajax/language/";         //!< Language loading URI (GET)
+  var UPLOAD_URI       = "/API/upload";             //!< File upload URI (POST)
   var ICON_URI         = "/img/icons/%s/%s";        //!< Icons URI (GET)
   var ICON_URI_16      = "/img/icons/16x16/%s";     //!< Icons URI 16x16 (GET)
   var ICON_URI_32      = "/img/icons/32x32/%s";     //!< Icons URI 32x32 (GET)
@@ -1544,12 +1544,12 @@
         self.error(ev, ev.lineno, ev.filename, ev.message);
       }, false);
 
-      var src = uri.split("/").pop().split(/^\?resource=(.*)&application=(.*)$/);
+      var src = uri.split("/").pop().split(/^resource\/(.*)\/(.*)$/);
       var title = "Unknown";
       var fname = "Unknown";
       if ( src.length == 4 ) {
-        title = src[2];
-        fname = src[1];
+        title = src[1];
+        fname = src[2];
       }
 
       this._super(sprintf("%s > WebWorker [%s]", title, fname), "actions/gtk-execute.png", true);
@@ -2444,7 +2444,7 @@
         }
 
         var error   = false;
-        var extra   = app ? ("&application=" + app) : "";
+        var extra   = app ? (app + "/") : "";
         var type    = res.split(".");
             type    = type[type.length - 1];
 
@@ -2482,7 +2482,7 @@
             triggered = true;
             t_callback(script, true);
           };
-          script.src = RESOURCE_URI + res + extra;
+          script.src = RESOURCE_URI + extra + res;
           head.appendChild(script);
           delete script;
         } else {
@@ -2494,7 +2494,7 @@
             var stylesheet  = document.createElement("link");
             stylesheet.rel  = "stylesheet";
             stylesheet.type = "text/css";
-            stylesheet.href = RESOURCE_URI + res + extra;
+            stylesheet.href = RESOURCE_URI + extra + res;
 
             var sheet = "styleSheet";
             var cssRules = "rules";
@@ -3325,7 +3325,7 @@
      */
     addWorker : function(name, resource, mcallback, ecallback) {
       if ( !this._workers[name] ) {
-        var w = new WebWorker(RESOURCE_URI + sprintf("%s&application=%s", resource, this._name), mcallback, ecallback);
+        var w = new WebWorker(RESOURCE_URI + sprintf("%s/%s", this._name, resource), mcallback, ecallback);
         this._workers[name] = w;
         return w;
       }
@@ -4151,7 +4151,7 @@
 
           for ( i; i < l; i++ ) {
             iter = this.list[i];
-            str = sprintf("<li><div class=\"inner\"><div class=\"icon\"><img alt=\"\" src=\"%s\" /></div><div class=\"label\">%s</div></div></li>", sprintf(ICON_URI_32, iter.icon), iter.title);
+            str = sprintf("<li><div class=\"inner\"><div class=\"icon\"><img alt=\"\" src=\"%s\" /></div><div class=\"label\"><span>%s</span></div></div></li>", sprintf(ICON_URI_32, iter.icon), iter.title);
             e = $(str);
 
             e.find(".inner").dblclick((function(app) {

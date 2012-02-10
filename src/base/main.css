@@ -195,9 +195,16 @@ input.Disabled {
 }
 #DesktopGrid li .label {
   white-space : nowrap;
-  padding : 2px;
+  margin : 0;
+  padding : 0;
   padding-left : 5px;
   padding-right : 5px;
+  height : 18px;
+  line-height : 18px;
+  vertical-align : middle;
+}
+#DesktopGrid li .label span {
+  vertical-align : middle;
 }
 #DesktopGrid li.current {
 }
