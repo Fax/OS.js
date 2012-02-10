@@ -4,7 +4,6 @@ TODO:
 * TODO [MED]  : Rewrite Glade builder class
 * TODO [MED]  : Add/Remove panel item storage
 * TODO [MED]  : Panel item sorting and alignments (snapping etc)
-* TODO [---]  : Append LICENSE to all code headers
 * TODO [---]  : Implement custom scroll-bars
                   http://css-tricks.com/custom-scrollbars-in-webkit/
                   http://jscrollpane.kelvinluck.com/
