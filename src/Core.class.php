@@ -567,7 +567,7 @@ class Core
       $json['success'] = true;
       $json['error']   = null;
     } else {
-      $json['error'] = "Failed to flush application";
+      $json['error'] = "Failed to register application";
     }
   }
 
