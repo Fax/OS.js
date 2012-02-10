@@ -64,7 +64,6 @@
   var STORAGE_SIZE_FREQ      = 1000;                //!< Storage check usage frequenzy
   var ONLINECHK_FREQ         = 1000;                //!< On-line checking frequenzy
   var CACHE_FREQ             = 60000;               //!< Cache update frequenzu
-  var DRAG_TIMEOUT           = 200;
   var TIMEOUT_CSS            = (1000 * 5);          //!< CSS loading timeout
   var DEFAULT_UID            = 1;                   //!< Default User ID
   var DEFAULT_USERNAME       = "demo";              //!< Default User Username
@@ -98,6 +97,13 @@
   var SERVICE_SOAP = 3;                             //!< Service: Soap
   var SERVICE_XML  = 4;                             //!< Service: XML (POST)
   // @endconstants
+
+  /**
+   * Global Keyboard-key modifiers
+   */
+  var KEY_ALT   = false;
+  var KEY_SHIFT = false;
+  var KEY_CTRL  = false;
 
   /////////////////////////////////////////////////////////////////////////////
   // PRIVATE VARIABLES
@@ -2003,6 +2009,8 @@
 
                 self.running = true;
 
+                // NOTE: Fixes global_keydown "not responding upon init" issues
+                $(document).focus();
 
                 bar.progressbar({value : 100});
               }, 125);
@@ -2139,6 +2147,18 @@
     global_keydown : function(ev) {
       var key = ev.keyCode || ev.which;
       var target = ev.target || ev.srcElement;
+
+      KEY_CTRL  = false;
+      KEY_ALT   = false;
+      KEY_SHIFT = false;
+
+      if ( key == 17 ) {
+        KEY_CTRL = true;
+      } else if ( key == 18 ) {
+        KEY_ALT = true;
+      } else if ( key == 16 ) {
+        KEY_SHIFT = true;
+      }
 
       // ESC cancels dialogs
       if ( key === 27 ) {
@@ -4843,7 +4863,6 @@
     items         : [],         //!< Panel Items
     running       : false,      //!< Panel running state
     dragging      : false,      //!< Current item dragging
-    drag_timeout  : null,       //!< ^^ timeout
 
     /**
      * Panel::init() -- Constructor
@@ -4870,11 +4889,6 @@
         start : function() {
           if ( self.dragging ) {
             return;
-          }
-
-          if ( self.drag_timeout ) {
-            clearTimeout(self.drag_timeout);
-            self.drag_timeout = null;
           }
 
           self.$element.addClass("Blend");
@@ -5006,10 +5020,6 @@
       for ( var i = 0; i < this.items.length; i++ ) {
         this.items[i].destroy();
       }
-      if ( this.drag_timeout ) {
-        clearTimeout(this.drag_timeout);
-        this.drag_timeout = null;
-      }
 
       this.items = null;
       this.index = -1;
@@ -5135,16 +5145,11 @@
           pi = this.items[i].$element;
           pi.mousedown((function(item) {
             return function(ev) {
-              if ( (ev.which || 1) <= 1 ) {
-                if ( self.drag_timeout ) {
-                  clearTimeout(self.drag_timeout);
-                  self.drag_timeout = null;
-                }
-
-                self.drag_timeout = setTimeout(function() {
+              if ( KEY_SHIFT ) {
+                if ( (ev.which || 1) <= 1 ) {
                   ev.stopPropagation();
                   self._startItemDrag(ev, item);
-                }, DRAG_TIMEOUT);
+                }
               }
             };
           })(this.items[i]));
