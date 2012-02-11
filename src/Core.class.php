@@ -129,97 +129,6 @@ class Core
   }
 
   /**
-   * Get Cache
-   * @return Array
-   */
-  public static function getCache() {
-    if ( !class_exists("Panel") ) {
-      require "Panel.class.php";
-    }
-
-    // Initialize Application database
-    Application::init(APPLICATION_BUILD);
-
-    return Array(
-      "Application" => Application::$Registered,
-      "PanelItem"   => Panel::$Registered
-    );
-  }
-
-  /**
-   * Get the Settings Array
-   * @return Array
-   */
-  public static function getSettings() {
-    if ( !class_exists("SettingsManager") ) {
-      require "SettingsManager.class.php";
-    }
-
-    $panel = Array(
-      Array("PanelItemMenu", Array(), "left:0"),
-      Array("PanelItemSeparator", Array(), "left:38"),
-      Array("PanelItemWindowList", Array(), "left:48"),
-      Array("PanelItemClock", Array(), "right:0"),
-      Array("PanelItemSeparator", Array(), "right:115"),
-      Array("PanelItemDock", Array(Array(
-        Array(
-          "title"  => "About",
-          "icon"   => "actions/gtk-about.png",
-          "launch" => "SystemAbout"
-        ),
-        Array(
-          "title"  => "System Settings",
-          "icon"   => "categories/applications-system.png",
-          "launch" => "SystemSettings"
-        ),
-        Array(
-          "title"  => "User Information",
-          "icon"   => "apps/user-info.png",
-          "launch" => "SystemUser"
-        ),
-        Array(
-          "title"  => "Save and Quit",
-          "icon"   => "actions/gnome-logout.png",
-          "launch" => "SystemLogout"
-        )
-      )), "right:120"),
-      Array("PanelItemSeparator", Array(), "right:230"),
-      Array("PanelItemWeather", Array(), "right:250")
-    );
-
-    $merge = Array();
-    $merge["system.locale.location"] = Array(
-      "options" => DateTimeZone::listIdentifiers()
-    );
-    $merge["desktop.panels"] = Array(
-      "items" => Array(
-        Array(
-          "name"  => "Default",
-          "index" => 0,
-          "items" => $panel,
-          "position" => "top"
-        )
-      )
-    );
-    $merge["desktop.grid"] = Array(
-      "items" => Array(
-        Array(
-          "title"  => "Home",
-          "icon"   => "places/user-home.png",
-          "launch" => "ApplicationFileManager"
-        ),
-        Array(
-          "title"  => "Browser Compability",
-          "icon"   => "status/software-update-urgent.png",
-          "launch" => "API::CompabilityDialog"
-        )
-      )
-    );
-
-    return SettingsManager::getSettings($merge);
-  }
-
-  /**
    * Get current Instance
    * @return Core
    */
@@ -346,9 +255,11 @@ class Core
    * @return void
    */
   protected static final function _doCacheUpdate(Array $args, Array &$json, Core $inst = null) {
-    if ( $cache = self::getCache() ) {
+    if ( $user = $inst->getUser() ) {
       $json['success'] = true;
-      $json['result']  = $cache;
+      $json['result']  = $user->getInstallations();
+    } else {
+      $json['error'] = _("You are not logged in!");
     }
   }
 
@@ -361,17 +272,20 @@ class Core
     $init_language    = isset($args['language']) ? $args['language'] : "default";
     $browser_language = self::_getBrowserLanguage();
 
-    // Output
-    $json = Array("success" => true, "error" => null, "result" => Array(
-      "settings" => self::getSettings(),
-      "cache"    => self::getCache(),
-      "config"   => Array(
-        "cache"             => ENABLE_CACHE,
-        "system_language"   => DEFAULT_LANGUAGE,
-        "browser_language"  => $browser_language,
-        "init_language"     => $init_language
-      )
-    ));
+    if ( $user = $inst->getUser() ) {
+      $json = Array("success" => true, "error" => null, "result" => Array(
+        "settings" => $user->getSettings(),
+        "cache"    => $user->getInstallations(),
+        "config"   => Array(
+          "cache"             => ENABLE_CACHE,
+          "system_language"   => DEFAULT_LANGUAGE,
+          "browser_language"  => $browser_language,
+          "init_language"     => $init_language
+        )
+      ));
+    } else {
+      $json['error'] = _("You are not logged in!");
+    }
   }
 
   /**

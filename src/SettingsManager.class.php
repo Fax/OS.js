@@ -109,7 +109,6 @@ class SettingsManager
     // Desktop
     //
 
-    // User theme settings
     "desktop.wallpaper.path" => Array(
       "type"  => "filename",
       "value" => "/System/Wallpapers/go2cxpb.png"
@@ -138,16 +137,9 @@ class SettingsManager
       "options" => Array("Default", "Experimental"),
       "value"   => "Default"
     ),
-
-    // Desktop panel settings
     "desktop.panels" => Array(
       "type" => "list",
-      "items" => Array() // Loaded
-    ),
-    "desktop.panel.position" => Array(
-      "type" => "array",
-      "options" => Array("top", "bottom"),
-      "value" => "top"
+      "items" => Array()
     ),
     "desktop.grid" => Array(
       "type" => "list",
