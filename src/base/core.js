@@ -199,6 +199,27 @@
     };
   } // @function
 
+
+  /**
+   * GetLanguage() -- Get Current language
+   * @return String
+   * @function
+   */
+  function GetLanguage() {
+    return localStorage.getItem("system.locale.language") || _SystemLanguage;
+  } // @function
+
+  /**
+   * GetLanguages() -- Get all available languages
+   * @return Object
+   */
+  function GetLanguages() {
+    var l = _Languages;
+    l['default']  = sprintf(l['default'], _SystemLanguage);
+    l['auto']     = sprintf(l['auto'],    _BrowserLanguage);
+    return l;
+  } // @function
+
   /**
    * UploadSettings() -- Upload User settings to server
    * @return void
@@ -807,14 +828,11 @@
        },
 
       'language' : function() {
-        return _Settings.getLanguage();
+        return GetLanguage();
       },
 
       'languages' : function() {
-        var l = _Languages;
-        l['default']  = sprintf(l['default'], _SystemLanguage);
-        l['auto']     = sprintf(l['auto'],    _BrowserLanguage);
-        return l;
+        return GetLanguages();
       },
 
       'run' : function(path, mime, use_default) {
@@ -2960,14 +2978,6 @@
      */
     getDefaultApplications : function() {
       return JSON.parse(localStorage.getItem("defaults") || "{}");
-    },
-
-    /**
-     * SettingsManager::getLanguage() -- Get current language
-     * @return String
-     */
-    getLanguage : function() {
-      return localStorage.getItem("system.locale.language") || _SystemLanguage;
     },
 
     /**
