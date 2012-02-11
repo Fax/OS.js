@@ -1992,7 +1992,7 @@
           }
 
           // Initialize settings
-          _Settings = new SettingsManager(data.result.settings, data.result.cache);
+          _Settings = new SettingsManager(data.result.settings, data.result.cache, data.result.config.stored_settings);
 
           bar.progressbar({value : 10});
 
@@ -2699,43 +2699,47 @@
     /**
      * SettingsManager::init() -- Constructor
      * @param   Object    defaults      Default settings
+     * @param   Object    caches        Cached settings etc.
+     * @param   Object    stored        Stored database settings (server-side, default = undefined)
      * @constructor
      */
-    init : function(defaults, caches) {
+    init : function(defaults, caches, stored) {
       console.group("SettingsManager::init()");
 
       this._tree      = defaults;
       this._saveable  = [];
-      //var updateable = ["desktop.grid", "desktop.panels"];
-      var updateable  = ["desktop.grid"];
-
-      console.log("Settings revision", SETTING_REVISION);
-      console.log("Force update of", updateable);
 
       // Check for newer versioning
-      var rev = localStorage.getItem("SETTING_REVISION");
-      var force = false;
-      if ( parseInt(rev, 10) !== parseInt(SETTING_REVISION, 10) ) {
-        console.log("============= FORCING UPDATE =============");
+      var rev         = localStorage.getItem("SETTING_REVISION");
+      var upgrade     = false;
+      var updateable  = [];
 
-        force       = true;
+      console.log("Settings revision", SETTING_REVISION);
+      console.log("Local revision", rev);
+
+      if ( parseInt(rev, 10) !== parseInt(SETTING_REVISION, 10) ) {
+        console.log("============= FORCING UPGRADE =============");
+        console.log("           Resetting entire tree           ");
+        console.log("===========================================");
+
+        upgrade     = true;
         updateable  = ["desktop.grid", "desktop.panels"];
 
         localStorage.setItem("SETTING_REVISION", SETTING_REVISION);
       }
 
       // Make sure we have all external refs saved
-      if ( force || !localStorage.getItem("applications") ) {
+      if ( upgrade || !localStorage.getItem("applications") ) {
         localStorage.setItem("applications", JSON.stringify({}));
       }
-      if ( force || !localStorage.getItem("defaults") ) {
+      if ( upgrade || !localStorage.getItem("defaults") ) {
         localStorage.setItem("defaults", JSON.stringify({}));
       }
-      if ( force || !localStorage.getItem("session") ) {
+      if ( upgrade || !localStorage.getItem("session") ) {
         localStorage.setItem("session", JSON.stringify([]));
       }
 
-      // Regressions
+      // Deprecated!
       localStorage.removeItem("system.app.registered");
       localStorage.removeItem("system.panel.registered");
       localStorage.removeItem("system.application.installed");
@@ -2744,7 +2748,7 @@
       localStorage.removeItem("desktop.panel.position");
 
       // Now create a registry for internal use (browser storage is plain-text)
-      this._initStorage(force, updateable);
+      this._initStorage(upgrade, updateable, stored);
 
       // Create space checking interval
       this._initQuota();
@@ -2752,9 +2756,9 @@
       // Update caches
       this.updateCache(false, caches);
 
-      console.log("Settings tree", this._tree);
-      console.log("Saveable settings", this._saveable);
-      console.log("Usage", this.getStorageUsage());
+      console.log("Settings tree",      this._tree);
+      console.log("Saveable settings",  this._saveable);
+      console.log("Usage",              this.getStorageUsage());
       console.groupEnd();
 
       this._super("(SettingsManager)", "apps/system-software-update.png", true);
@@ -2781,13 +2785,13 @@
      * @see SettingsManager::init()
      * @return void
      */
-    _initStorage : function(force, updateable) {
+    _initStorage : function(upgrade, updateable, stored) {
       var iter, i, force_update = false;
       for ( i in this._tree ) {
         if ( this._tree.hasOwnProperty(i) ) {
           iter         = this._tree[i];
           force_update = in_array(i, updateable);
-          if ( force || !localStorage.getItem(i) || force_update ) {
+          if ( upgrade || !localStorage.getItem(i) || force_update ) {
             console.log("Registering", i, "of type", iter.type);
 
             if ( iter.type == "array" ) {
@@ -7088,6 +7092,13 @@
       alert(OSjs.Labels.CannotStart);
       return false;
     }
+
+
+    console.log("");
+    console.log("================================ [ OS.js ] ================================");
+    console.log("=                    Copyright (c) 2012 Anders Evenrud                    =");
+    console.log("===========================================================================");
+    console.log("");
 
     _StartStamp = ((new Date()).getTime());
     _Core       = new Core();
