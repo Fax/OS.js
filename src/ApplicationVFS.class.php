@@ -195,7 +195,9 @@ class ApplicationVFS
       if ( $result = move_uploaded_file($file["tmp_name"], $res["destination"]) ) {
         self::_permissions($res["destination"]);
 
-        return Array("result" => $result, "mime" => "");
+        list($mime, $fmime) = self::GetMIME($res["destination"]);
+
+        return Array("result" => $result, "mime" => $fmime);
       }
     }
 
@@ -250,16 +252,10 @@ class ApplicationVFS
         $file = basename($res["destination"]);
         $expl = explode(".", $file);
         $ext = end($expl);
-        $fi = new finfo(FILEINFO_MIME);
-        $finfo = $fi->file($res["destination"]);
-        //$mime  = explode("; charset=", $finfo);
-        $mime  = explode(";", $finfo);
-        $mime  = trim(reset($mime));
-        $fmime = self::_fixMIME($mime, $ext);
-        unset($fi);
-
+        list($mime, $fmime) = self::GetMIME($res["destination"]);
         $fmmime = trim(strstr($fmime, "/", true));
         $info   = null;
+
         switch ( $fmmime ) {
           case "image" :
             $info = ApplicationAPI::mediaInfo($res["destination"], false);
@@ -771,6 +767,20 @@ class ApplicationVFS
     }
 
     return $mime;
+  }
+
+  /**
+   * Get file MIME
+   * @return String
+   */
+  public static function GetMIME($path) {
+    $fi = new finfo(FILEINFO_MIME);
+    $finfo = $fi->file($path);
+    //$mime  = explode("; charset=", $finfo);
+    $mime  = explode(";", $finfo);
+    $mime  = trim(reset($mime));
+    $fmime = self::_fixMIME($mime, $ext);
+    return Array($mime, $fmime);
   }
 
   /////////////////////////////////////////////////////////////////////////////
