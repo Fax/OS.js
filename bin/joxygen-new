@@ -323,6 +323,16 @@ $results   = parse_comments(PATH_JSBASE . "/{$filename}");
 $classes_html = create_document($results, $filename);
 file_put_contents("doc/javascript/classes.html", $classes_html);
 
+$filename  = "main.js";
+$results   = parse_comments(PATH_JSBASE . "/{$filename}");
+$main_html = create_document($results, $filename);
+file_put_contents("doc/javascript/main.html", $main_html);
+
+$filename  = "init.js";
+$results   = parse_comments(PATH_JSBASE . "/{$filename}");
+$init_html = create_document($results, $filename);
+file_put_contents("doc/javascript/init.html", $init_html);
+
 $index_html = <<<EOHTML
 <!DOCTYPE html>
 <html>
@@ -336,6 +346,8 @@ $index_html = <<<EOHTML
 <ul>
   <li><a href="core.html">core.js</a></li>
   <li><a href="classes.html">classes.js</a></li>
+  <li><a href="main.html">main.js</a></li>
+  <li><a href="init.html">init.js</a></li>
 </ul>
 </body>
 </html>

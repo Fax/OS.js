@@ -35,9 +35,10 @@
   //
 
   /**
-   * window::unload()
-   * @see    main.js
+   * window::unload() -- Browser event: Unload
+   * @see    core.js
    * @return bool
+   * @function
    */
   $(window).unload(function() {
     window.onbeforeunload = null;
@@ -45,9 +46,10 @@
   });
 
   /**
-   * window::ready()
-   * @see    main.js
+   * window::ready() -- Browser event: Content loaded
+   * @see    core.js
    * @return bool
+   * @function
    */
   $(window).ready(function() {
     if ( !OSjs.Compability.SUPPORT_LSTORAGE ) {
@@ -59,9 +61,10 @@
   });
 
   /**
-   * window::onbeforeunload()
-   * @see    main.js
+   * window::onbeforeunload() -- Browser event: Before close/redirect
+   * @see    core.js
    * @return bool
+   * @function
    */
   window.onbeforeunload = function(ev) {
     return OSjs.__Leave(ev);
