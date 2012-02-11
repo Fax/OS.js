@@ -153,9 +153,10 @@
    * @param   Function    callback  Callback function
    * @function
    */
-  function DoPost(args, callback) {
-    args = args || {};
-    callback = callback || function() {};
+  function DoPost(args, callback, callback_error) {
+    args            = args            || {};
+    callback        = callback        || function() {};
+    callback_error  = callback_error  || function() {};
 
     var ajax_args = {
       'ajax' : true
@@ -169,11 +170,27 @@
 
     _DataTX += (JSON.stringify(ajax_args)).length;
 
+    $.ajax({
+      type      : "POST",
+      url       : AJAX_URI,
+      data      : ajax_args,
+      success   : function(data) {
+        _DataRX += (JSON.stringify(data)).length;
+        callback(data);
+      },
+      error     : function (xhr, ajaxOptions, thrownError){
+        callback_error(xhr, ajaxOptions, thrownError);
+      }
+    });
+
+    /*
     $.post(AJAX_URI, ajax_args, function(data) {
       _DataRX += (JSON.stringify(data)).length;
 
       callback(data);
     });
+    */
+
     /*
     OSjs.Classes.AJAX(AJAX_URI, ajax_args, function(data) {
       _DataRX += (JSON.stringify(data)).length;
@@ -2079,6 +2096,9 @@
         }
 
         console.groupEnd();
+      }, function(xhr, ajaxOptions, thrownError) {
+        alert("A network error occured while initializing OS.js: " + thrownError);
+        throw("Initialization error: " + thrownError);
       });
     },
 
