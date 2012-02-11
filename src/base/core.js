@@ -2965,27 +2965,6 @@
     },
 
     /**
-     * SettingsManager::setDefaultApplication() -- Set default application MIME
-     * @param   String    app       Application Name
-     * @param   String    mime      MIME Type
-     * @param   String    path      Path (Default = undefined)
-     * @return  void
-     */
-    setDefaultApplication : function(app, mime, path) {
-      var list = JSON.parse(localStorage.getItem("defaults") || "{}");
-      list[mime] = app;
-      localStorage.setItem("defaults", JSON.stringify(list));
-    },
-
-    /**
-     * SettingsManager::getDefaultApplications() -- Get default applications for MIME
-     * @return Object
-     */
-    getDefaultApplications : function() {
-      return JSON.parse(localStorage.getItem("defaults") || "{}");
-    },
-
-    /**
      * SettingsManager::updateCache() -- Update application and panel cache
      * @param   bool    fetch     Fetch from server
      * @return  void
@@ -3066,6 +3045,27 @@
         }
       }
       return jsn ? (ls ? (JSON.parse(ls)) : ls) : ls;
+    },
+
+    /**
+     * SettingsManager::setDefaultApplication() -- Set default application MIME
+     * @param   String    app       Application Name
+     * @param   String    mime      MIME Type
+     * @param   String    path      Path (Default = undefined)
+     * @return  void
+     */
+    setDefaultApplication : function(app, mime, path) {
+      var list = JSON.parse(localStorage.getItem("defaults") || "{}");
+      list[mime] = app;
+      localStorage.setItem("defaults", JSON.stringify(list));
+    },
+
+    /**
+     * SettingsManager::getDefaultApplications() -- Get default applications for MIME
+     * @return Object
+     */
+    getDefaultApplications : function() {
+      return JSON.parse(localStorage.getItem("defaults") || "{}");
     },
 
     /**
