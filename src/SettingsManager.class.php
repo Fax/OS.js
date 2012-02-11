@@ -158,16 +158,14 @@ class SettingsManager
     // System
     //
 
-    // Application registry
-    "system.app.registered" => Array(
-      "type"    => "array",
-      "options" => Array(), // Loaded
-      "hidden"  => true
+    "system.installed.application" => Array(
+      "type"  => "list",
+      "items" => Array()
     ),
-    "system.panel.registered" => Array(
-      "type"    => "array",
-      "options" => Array(), // Loaded
-      "hidden"  => true
+
+    "system.installed.panelitem" => Array(
+      "type" => "list",
+      "items" => Array()
     ),
 
     // System locale registry

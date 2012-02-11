@@ -137,13 +137,12 @@ class Core
       require "Panel.class.php";
     }
 
+    // Initialize Application database
+    Application::init(APPLICATION_BUILD);
+
     return Array(
-      "system.app.registered" => Array(
-        "options" => Application::$Registered
-      ),
-      "system.panel.registered" => Array(
-        "options" => Panel::$Registered
-      )
+      "Application" => Application::$Registered,
+      "PanelItem"   => Panel::$Registered
     );
   }
 
@@ -188,7 +187,7 @@ class Core
       Array("PanelItemWeather", Array(), "right:250")
     );
 
-    $merge = self::getCache();
+    $merge = Array();
     $merge["system.locale.location"] = Array(
       "options" => DateTimeZone::listIdentifiers()
     );
@@ -347,9 +346,6 @@ class Core
    * @return void
    */
   protected static final function _doCacheUpdate(Array $args, Array &$json, Core $inst = null) {
-    // Initialize Application database
-    Application::init(APPLICATION_BUILD);
-
     if ( $cache = self::getCache() ) {
       $json['success'] = true;
       $json['result']  = $cache;
@@ -362,15 +358,13 @@ class Core
    * @return void
    */
   protected static final function _doInit(Array $args, Array &$json, Core $inst = null) {
-    // Initialize Application database
-    Application::init(APPLICATION_BUILD);
-
     $init_language    = isset($args['language']) ? $args['language'] : "default";
     $browser_language = self::_getBrowserLanguage();
 
     // Output
     $json = Array("success" => true, "error" => null, "result" => Array(
       "settings" => self::getSettings(),
+      "cache"    => self::getCache(),
       "config"   => Array(
         "cache"             => ENABLE_CACHE,
         "system_language"   => DEFAULT_LANGUAGE,

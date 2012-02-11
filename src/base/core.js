@@ -1975,7 +1975,7 @@
           }
 
           // Initialize settings
-          _Settings = new SettingsManager(data.result.settings);
+          _Settings = new SettingsManager(data.result.settings, data.result.cache);
 
           bar.progressbar({value : 10});
 
@@ -2674,8 +2674,8 @@
    */
   var SettingsManager = Process.extend({
 
-    _avail      : {},       //!< Storage registry
-    _stores     : [],       //!< List of names to use when saving etc.
+    _tree       : {},       //!< Storage registry
+    _saveable   : [],       //!< List of names to use when saving etc.
     _cinterval  : null,     //!< Space checking interval
 
     /**
@@ -2683,16 +2683,13 @@
      * @param   Object    defaults      Default settings
      * @constructor
      */
-    init : function(defaults) {
-      var self = this;
-
+    init : function(defaults, caches) {
       console.group("SettingsManager::init()");
 
-      this._avail   = defaults;
-      this._stores  = [];
-
+      this._tree      = defaults;
+      this._saveable  = [];
       //var updateable = ["desktop.grid", "desktop.panels"];
-      var updateable = ["desktop.grid"];
+      var updateable  = ["desktop.grid"];
 
       console.log("Settings revision", SETTING_REVISION);
       console.log("Force update of", updateable);
@@ -2707,7 +2704,6 @@
         console.log("============= FORCING UPDATE =============");
       }
 
-
       // Make sure we have all external refs saved
       if ( !localStorage.getItem("applications") ) {
         localStorage.setItem("applications", JSON.stringify({}));
@@ -2719,37 +2715,85 @@
         localStorage.setItem("session", JSON.stringify([]));
       }
 
+      // Regressions
+      localStorage.removeItem("system.app.registered");
+      localStorage.removeItem("system.panel.registered");
+      localStorage.removeItem("system.application.installed");
+      localStorage.removeItem("system.panelitem.installed");
+      localStorage.removeItem("desktop.panel.items");
+      localStorage.removeItem("desktop.panel.position");
+
       // Now create a registry for internal use (browser storage is plain-text)
-      var force_update = false;
-      for ( var i in this._avail ) {
-        if ( this._avail.hasOwnProperty(i) ) {
-          force_update = in_array(i, updateable);
-          if ( !this._avail[i].hidden || force_update ) {
-            if ( force || !localStorage.getItem(i) || force_update ) {
-              console.log("Registering", i, "of type", this._avail[i].type);
-
-              if ( this._avail[i].type == "array" ) {
-                localStorage.setItem(i, (this._avail[i].value === undefined) ? this._avail[i].options : this._avail[i].value);
-              } else if ( this._avail[i].type == "list" ) {
-                localStorage.setItem(i, JSON.stringify(this._avail[i].items));
-              } else {
-                localStorage.setItem(i, this._avail[i].value);
-              }
-            }
-
-            // Add this type as 'saveable'
-            this._stores.push(i);
-          } else {
-            if ( force ) {
-              localStorage.removeItem(i);
-            }
-          }
-        }
-      }
+      this._initStorage(force, updateable);
 
       // Create space checking interval
+      this._initQuota();
+
+      // Update caches
+      this.updateCache(false, caches);
+
+      console.log("Settings tree", this._tree);
+      console.log("Saveable settings", this._saveable);
+      console.log("Usage", this.getStorageUsage());
+      console.groupEnd();
+
+      this._super("(SettingsManager)", "apps/system-software-update.png", true);
+    },
+
+    /**
+     * SettingsManager::destroy() -- Destructor
+     * @destructor
+     */
+    destroy : function() {
+      this._tree     = {};
+      this._saveable = [];
+
+      if ( this._cinterval ) {
+        clearInterval(this._cinterval);
+      }
+      this._cinterval = null;
+
+      this._super();
+    },
+
+    /**
+     * SettingsManager::_initStorage() -- Initialize registry
+     * @see SettingsManager::init()
+     * @return void
+     */
+    _initStorage : function(force, updateable) {
+      var iter, i, force_update = false;
+      for ( i in this._tree ) {
+        if ( this._tree.hasOwnProperty(i) ) {
+          iter         = this._tree[i];
+          force_update = in_array(i, updateable);
+          if ( force || !localStorage.getItem(i) || force_update ) {
+            console.log("Registering", i, "of type", iter.type);
+
+            if ( iter.type == "array" ) {
+              localStorage.setItem(i, (iter.value === undefined) ? iter.options : iter.value);
+            } else if ( iter.type == "list" ) {
+              localStorage.setItem(i, JSON.stringify(iter.items));
+            } else {
+              localStorage.setItem(i, iter.value);
+            }
+          }
+
+          // Add this type as 'saveable'
+          this._saveable.push(i);
+        }
+      }
+    },
+
+    /**
+     * SettingsManager::_initQuota() -- Initialize quota checking
+     * @return void
+     */
+    _initQuota : function() {
+      var self = this;
       var warnOpen = false;
       var alertOpen = false;
+
       this._cinterval = setInterval(function() {
         var size = self.getStorageUsage()['localStorage'];
         if ( size >= WARN_STORAGE_SIZE ) {
@@ -2769,31 +2813,6 @@
           }
         }
       }, STORAGE_SIZE_FREQ);
-
-      console.log("Saveable settings", this._stores);
-      console.log("Stored settings", this._avail);
-      console.log("Usage", this.getStorageUsage());
-      console.groupEnd();
-
-      this.updateCache();
-
-      this._super("(SettingsManager)", "apps/system-software-update.png", true);
-    },
-
-    /**
-     * SettingsManager::destroy() -- Destructor
-     * @destructor
-     */
-    destroy : function() {
-      this._avail   = {};
-      this._stores  = [];
-
-      if ( this._cinterval ) {
-        clearInterval(this._cinterval);
-      }
-      this._cinterval = null;
-
-      this._super();
     },
 
     /**
@@ -2907,31 +2926,29 @@
      * @param   bool    fetch     Fetch from server
      * @return  void
      */
-    updateCache : function(fetch) {
+    updateCache : function(fetch, data) {
       var self = this;
       console.group("SettingsManager::updateCache()");
       console.log("Remote update", fetch);
       console.groupEnd();
 
+      var _update = function(d) {
+        if ( d instanceof Object ) {
+          _PanelCache = d.PanelItem || [];
+          _AppCache   = d.Application || [];
+        }
+      };
+
       if ( fetch ) {
         DoPost({'action' : 'updateCache'}, function(data) {
           if ( data.result ) {
-            if ( data.result["system.panel.registered"] ) {
-              self._set("system.panel.registered", data.result["system.panel.registered"]);
-            }
-            if ( data.result["system.app.registered"] ) {
-              self._set("system.app.registered", data.result["system.app.registered"]);
-            }
-
             console.log("SettingsManager::updateCache()", data.result);
+            _update(data.result);
           }
 
-          _PanelCache = self._get("system.panel.registered", true);
-          _AppCache   = self._get("system.app.registered", true);
         });
       } else {
-        _PanelCache = this._get("system.panel.registered", true);
-        _AppCache   = this._get("system.app.registered", true);
+        _update(data);
       }
     },
 
@@ -2957,7 +2974,7 @@
      * @return  void
      */
     _set : function(k, v) {
-      if ( this._avail[k] !== undefined ) {
+      if ( this._tree[k] !== undefined ) {
         localStorage.setItem(k, v);
       }
       //  if (e == QUOTA_EXCEEDED_ERR) { (try/catch) // TODO
@@ -2972,15 +2989,11 @@
      */
     _get : function(k, keys, jsn) {
       var ls = undefined;
-      if ( this._avail[k] !== undefined ) {
-        if ( keys && this._avail[k] ) {
-          ls = this._avail[k].options;
+      if ( this._tree[k] !== undefined ) {
+        if ( keys && this._tree[k] ) {
+          ls = this._tree[k].options;
         } else {
-          if ( this._avail[k].hidden ) {
-            ls = this._avail[k].value;
-          } else {
-            ls = localStorage.getItem(k);
-          }
+          ls = localStorage.getItem(k);
         }
       }
       return jsn ? (ls ? (JSON.parse(ls)) : ls) : ls;
@@ -2992,7 +3005,7 @@
      * @return  String
      */
     getType : function(key) {
-      return (this._avail[key] ? (this._avail[key].type) : null);
+      return (this._tree[key] ? (this._tree[key].type) : null);
     },
 
     /**
@@ -3001,8 +3014,8 @@
      */
     getSession : function() {
       var exp = {};
-      for ( var i = 0; i < this._stores.length; i++ ) {
-        exp[this._stores[i]] = localStorage.getItem(this._stores[i]);
+      for ( var i = 0; i < this._saveable.length; i++ ) {
+        exp[this._saveable[i]] = localStorage.getItem(this._saveable[i]);
       }
       return exp;
     },
@@ -4015,9 +4028,9 @@
      * @return  void
      */
     sortWindows : function(method) {
-      var ppos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
-      var top  = ppos == "top" ? 50 : 20;
-      var left = 20;
+      var ws = this.getWindowSpace();
+      var top  = ws.y;
+      var left = ws.x;
 
       if ( method == "tile" ) {
         var last;
@@ -4079,22 +4092,33 @@
      * @return Object
      */
     getWindowSpace : function() {
-      var ppos   = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
       var w      = parseInt($(document).width(), 10);
       var h      = parseInt($(document).height(), 10);
       var margin = 10;
-      var ph     = 30;
-
-      if ( !_Desktop || !_Desktop.getPanel() ) {
-        ph = 0;
-      }
-
-      return {
-        'y' : (ph ? (ppos == "top" ? 30 : 0) : 0) + margin,
+      var result = {
+        'y' : margin,
         'x' : margin,
         'w' : w - (margin * 2),
-        'h' : (ph ? (h - ph) : h) - (margin * 2)
+        'h' : h - (margin * 2)
       };
+
+      if ( _Desktop ) {
+        var panels = _Desktop.getPanels();
+        var i = 0, l = panels.length;
+        for ( i; i < l; i++ ) {
+          if ( panels[i].getPosition() == "top" ) {
+            result.y += 30;
+            result.h -= 30;
+          } else {
+            //result.y += 30;
+            result.h -= 30;
+          }
+        }
+      }
+
+      console.log("WindowManager::getWindowSpace()", result);
+
+      return result;
     }
 
   });
@@ -4362,7 +4386,7 @@
           };
 
           for ( var x = 0; x < panels.length; x++ ) {
-            panel = new Panel(panels[x].index, panels[x].name);
+            panel = new Panel(panels[x].index, panels[x].name, panels[x].position);
             items = panels[x].items;
 
             additems(panel, items);
@@ -4508,9 +4532,8 @@
      */
     updatePanelPosition : function(p) {
       if ( this.iconview ) {
-        var ppos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
         $("#DesktopGrid").attr("class", "");
-        $("#DesktopGrid").addClass(ppos);
+        $("#DesktopGrid").addClass(p.getPosition());
       }
     },
 
@@ -4742,6 +4765,14 @@
     },
 
     /**
+     * Desktop::getPanels() -- Get All Panels
+     * @return Panel
+     */
+    getPanels : function() {
+      return this.panels;
+    },
+
+    /**
      * Desktop::getSession() -- Get the desktop session
      * @return Object
      */
@@ -4902,11 +4933,11 @@
      * Panel::init() -- Constructor
      * @constructor
      */
-    init : function(index, name) {
+    init : function(index, name, pos) {
       var self = this;
 
       this.$element = $('<div class="DesktopPanel"><ul></ul></div>');
-      this.pos      = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
+      this.pos      = pos;
       this.items    = [];
       this.running  = false;
       this.index    = parseInt(index, 10);
@@ -4938,15 +4969,15 @@
           var pos = self.$element.offset();
 
           if ( pos.top <= middle ) {
-            _Settings._set("desktop.panel.position", "top");
             self.$element.removeClass("Bottom");
             self.$element.css({"position" : "absolute", "top" : "0px", "bottom" : "auto"});
             self.pos = "top";
+            _Settings.savePanel(self);
           } else {
-            _Settings._set("desktop.panel.position", "bottom");
             self.$element.addClass("Bottom");
             self.$element.css({"position" : "absolute", "top" : "auto", "bottom" : "0px"});
             self.pos = "bottom";
+            _Settings.savePanel(self);
           }
 
           if ( _Desktop ) {
@@ -5301,6 +5332,14 @@
       }
 
       console.groupEnd();
+    },
+
+    /**
+     * Panel::getPosition() -- Get placed position
+     * @return String
+     */
+    getPosition : function() {
+      return this.pos;
     },
 
     /**
@@ -5897,9 +5936,9 @@
           this._left = (($(document).width() / 2) - ($(el).width() / 2));
         } else {
           // Find free space for new windows
-          var ppos = _Settings._get("desktop.panel.position") == "top" ? "top" : "bottom";
-          this._top = ppos == "top" ? 50 : 20;
-          this._left = 20;
+          var _ws = _WM.getWindowSpace();
+          this._top = _ws.y;
+          this._left = _ws.x;
         }
 
         // Check if window has any saved attributes for override (session restore etc)
