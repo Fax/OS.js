@@ -52,7 +52,7 @@
    * @constants Local settings
    */
   var ENABLE_CACHE           = false;               //!< Enabled caching
-  var SETTING_REVISION       = 32;                  //!< The settings revision
+  var SETTING_REVISION       = 33;                  //!< The settings revision
   var ENABLE_LOGIN           = false;               //!< Use login
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
@@ -185,19 +185,28 @@
   } // @endfunction
 
   /**
+   * GetLocale() -- Get user locale
+   * @return Object
+   * @function
+   */
+  function GetLocale() {
+    return {
+      locale_location : API.user.settings.get("system.locale.location"),
+      locale_time     : API.user.settings.get("system.locale.time-format"),
+      locale_date     : API.user.settings.get("system.locale.date-format"),
+      locale_stamp    : API.user.settings.get("system.locale.timestamp-format"),
+      locale_language : API.user.settings.get("system.locale.language")
+    };
+  } // @function
+
+  /**
    * UploadSettings() -- Upload User settings to server
    * @return void
    * @function
    */
   function UploadSettings() {
     var settings = {
-      locale : {
-        locale_location : API.user.settings.get("system.locale.location"),
-        locale_time     : API.user.settings.get("system.locale.time-format"),
-        locale_date     : API.user.settings.get("system.locale.date-format"),
-        locale_stamp    : API.user.settings.get("system.locale.timestamp-format"),
-        locale_language : API.user.settings.get("system.locale.language")
-      }
+      locale : GetLocale()
     };
 
     _CurrentLanguage = settings.locale.locale_date;
@@ -2698,20 +2707,22 @@
       var rev = localStorage.getItem("SETTING_REVISION");
       var force = false;
       if ( parseInt(rev, 10) !== parseInt(SETTING_REVISION, 10) ) {
-        force = true;
-        updateable = ["desktop.grid", "desktop.panels"];
-        localStorage.setItem("SETTING_REVISION", SETTING_REVISION);
         console.log("============= FORCING UPDATE =============");
+
+        force       = true;
+        updateable  = ["desktop.grid", "desktop.panels"];
+
+        localStorage.setItem("SETTING_REVISION", SETTING_REVISION);
       }
 
       // Make sure we have all external refs saved
-      if ( !localStorage.getItem("applications") ) {
+      if ( force || !localStorage.getItem("applications") ) {
         localStorage.setItem("applications", JSON.stringify({}));
       }
-      if ( !localStorage.getItem("defaults") ) {
+      if ( force || !localStorage.getItem("defaults") ) {
         localStorage.setItem("defaults", JSON.stringify({}));
       }
-      if ( !localStorage.getItem("session") ) {
+      if ( force || !localStorage.getItem("session") ) {
         localStorage.setItem("session", JSON.stringify([]));
       }
 
