@@ -1135,7 +1135,7 @@
 
         API.session.save(save);
 
-        API.session.shutdown();
+        API.session.shutdown(save);
       }
     },
 
@@ -1182,12 +1182,12 @@
         _Core.sessionSnapshotLoad(name, callback);
       },
 
-      'shutdown' : function() {
+      'shutdown' : function(save) {
         console.group("=== API OPERATION ===");
         console.log("Method", "API.session.shutdown");
         console.groupEnd();
 
-        return _Core.shutdown();
+        return _Core.shutdown(save);
       },
 
       'applications' : function() {
@@ -1905,9 +1905,10 @@
 
     /**
      * Core::shutdown() -- Main shutdown procedure
+     * @param bool  save    Save session ?
      * @return void
      */
-    shutdown : function() {
+    shutdown : function(save) {
       var ssess     = _Core.getSession();
       var ssett     = _Settings.getSession();
       var dsess     = _Desktop ? _Desktop.getSession() : {};
@@ -1921,7 +1922,7 @@
       console.log("Session duration", duration);
       console.groupEnd();
 
-      DoPost({'action' : 'shutdown', 'session' : ssess, 'settings' : ssett, 'desktop' : dsess, 'duration' : duration}, function(data) {
+      DoPost({'action' : 'shutdown', 'session' : ssess, 'settings' : ssett, 'desktop' : dsess, 'duration' : duration, 'save' : save}, function(data) {
         if ( data.success ) {
           console.log("Core::shutdown()", "Shutting down...");
 

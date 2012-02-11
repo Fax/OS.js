@@ -257,7 +257,7 @@ class Core
   protected static final function _doCacheUpdate(Array $args, Array &$json, Core $inst = null) {
     if ( $user = $inst->getUser() ) {
       $json['success'] = true;
-      $json['result']  = $user->getInstallations();
+      $json['result']  = $inst->getPackages();
     } else {
       $json['error'] = _("You are not logged in!");
     }
@@ -275,7 +275,7 @@ class Core
     if ( $user = $inst->getUser() ) {
       $json = Array("success" => true, "error" => null, "result" => Array(
         "settings" => $user->getSettings(),
-        "cache"    => $user->getInstallations(),
+        "cache"    => $inst->getPackages(),
         "config"   => Array(
           "cache"             => ENABLE_CACHE,
           "system_language"   => DEFAULT_LANGUAGE,
@@ -314,8 +314,15 @@ class Core
   protected static final function _doShutdown(Array $args, Array &$json, Core $inst = null) {
     $settings = isset($args['settings']) ? $args['settings'] : Array();
     $session  = isset($args['session'])  ? $args['session']  : Array();
+    $save     = isset($args['save'])     ? ($args['save'] == "true" ? true : false)     : Array();
 
-    $json['result']   = true;
+    if ( $save === true ) {
+      if ( $user = $inst->getUser() ) {
+        //$result['saved'] = $user->saveUser($session, $settings);
+      }
+    }
+
+    $json['result']   = $result;
     $json['success']  = true;
 
     //$_SESSION['user']        = null;
@@ -737,6 +744,24 @@ class Core
    */
   public final function getUser() {
     return $this->_oUser;
+  }
+
+  /**
+   * Get installed packages
+   * @return Array
+   */
+  public final function getPackages() {
+    if ( !class_exists("Panel") ) {
+      require "Panel.class.php";
+    }
+
+    // Initialize Application configbase
+    Application::init(APPLICATION_BUILD);
+
+    return Array(
+      "Application" => Application::$Registered,
+      "PanelItem"   => Panel::$Registered
+    );
   }
 
   /**

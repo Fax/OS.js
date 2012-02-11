@@ -37,7 +37,7 @@ class Session extends DBObject {
     "id"            => "int",
     "user_id"       => "int",
     "session_name"  => "str",
-    "session_data"  => "str",
+    "session_config"  => "str",
     "created_at"    => "date",
     "modified_at"   => "date"
   );
@@ -64,14 +64,28 @@ class User extends DBObject {
     "password"    => "str",
     "privilege"   => "int",
     "real_name"   => "str",
-    "created_at"  => "date"
+    "created_at"  => "date",
+    "settings"    => "str"
   );
 
-  public final function snapshotSave($name, $data) {
+  public final function __construct() {
+  }
+
+  public final function saveUser(Array $session, Array $settings) {
+    $this->settings = JSON::encode($settings);
+    if ( User::save($this, null, "id") ) {
+      $this->settings = $settings;
+      return true;
+    }
+    $this->settings = $settings;
+    return false;
+  }
+
+  public final function snapshotSave($name, $config) {
     $sess               = new Session();
     $sess->user_id      = $this->id;
     $sess->session_name = $name;
-    $sess->session_data = JSON::encode($data);
+    $sess->session_config = JSON::encode($config);
     $sess->created_at   = time();
 
     if ( $sess = Session::save($sess) ) {
@@ -104,21 +118,13 @@ class User extends DBObject {
   }
 
   public static function getByUsername($username, DB $db = null) {
-    return self::getByColumn($db, null, null, Array("username" => $username), 1);
-  }
-
-  public function getInstallations() {
-    if ( !class_exists("Panel") ) {
-      require "Panel.class.php";
+    $obj = self::getByColumn($db, null, null, Array("username" => $username), 1);
+    if ( $obj ) {
+      if ( !$obj->settings ) {
+        $obj->settings = JSON::decode($obj->settings);
+      }
     }
-
-    // Initialize Application database
-    Application::init(APPLICATION_BUILD);
-
-    return Array(
-      "Application" => Application::$Registered,
-      "PanelItem"   => Panel::$Registered
-    );
+    return false;
   }
 
   public function getSettings() {
@@ -126,65 +132,69 @@ class User extends DBObject {
       require "SettingsManager.class.php";
     }
 
-    $panel = Array(
-      Array("PanelItemMenu", Array(), "left:0"),
-      Array("PanelItemSeparator", Array(), "left:38"),
-      Array("PanelItemWindowList", Array(), "left:48"),
-      Array("PanelItemClock", Array(), "right:0"),
-      Array("PanelItemSeparator", Array(), "right:115"),
-      Array("PanelItemDock", Array(Array(
-        Array(
-          "title"  => "About",
-          "icon"   => "actions/gtk-about.png",
-          "launch" => "SystemAbout"
-        ),
-        Array(
-          "title"  => "System Settings",
-          "icon"   => "categories/applications-system.png",
-          "launch" => "SystemSettings"
-        ),
-        Array(
-          "title"  => "User Information",
-          "icon"   => "apps/user-info.png",
-          "launch" => "SystemUser"
-        ),
-        Array(
-          "title"  => "Save and Quit",
-          "icon"   => "actions/gnome-logout.png",
-          "launch" => "SystemLogout"
-        )
-      )), "right:120"),
-      Array("PanelItemSeparator", Array(), "right:230"),
-      Array("PanelItemWeather", Array(), "right:250")
-    );
-
     $merge = Array();
+    //if ( ($this->id == Core::DEFAULT_UID) || !$this->settings ) {
+      $panel = Array(
+        Array("PanelItemMenu", Array(), "left:0"),
+        Array("PanelItemSeparator", Array(), "left:38"),
+        Array("PanelItemWindowList", Array(), "left:48"),
+        Array("PanelItemClock", Array(), "right:0"),
+        Array("PanelItemSeparator", Array(), "right:115"),
+        Array("PanelItemDock", Array(Array(
+          Array(
+            "title"  => "About",
+            "icon"   => "actions/gtk-about.png",
+            "launch" => "SystemAbout"
+          ),
+          Array(
+            "title"  => "System Settings",
+            "icon"   => "categories/applications-system.png",
+            "launch" => "SystemSettings"
+          ),
+          Array(
+            "title"  => "User Information",
+            "icon"   => "apps/user-info.png",
+            "launch" => "SystemUser"
+          ),
+          Array(
+            "title"  => "Save and Quit",
+            "icon"   => "actions/gnome-logout.png",
+            "launch" => "SystemLogout"
+          )
+        )), "right:120"),
+        Array("PanelItemSeparator", Array(), "right:230"),
+        Array("PanelItemWeather", Array(), "right:250")
+      );
+
+      $merge["desktop.panels"] = Array(
+        "items" => Array(
+          Array(
+            "name"  => "Default",
+            "index" => 0,
+            "items" => $panel,
+            "position" => "top"
+          )
+        )
+      );
+
+      $merge["desktop.grid"] = Array(
+        "items" => Array(
+          Array(
+            "title"  => "Home",
+            "icon"   => "places/user-home.png",
+            "launch" => "ApplicationFileManager"
+          ),
+          Array(
+            "title"  => "Browser Compability",
+            "icon"   => "status/software-update-urgent.png",
+            "launch" => "API::CompabilityDialog"
+          )
+        )
+      );
+    //}
+
     $merge["system.locale.location"] = Array(
       "options" => DateTimeZone::listIdentifiers()
-    );
-    $merge["desktop.panels"] = Array(
-      "items" => Array(
-        Array(
-          "name"  => "Default",
-          "index" => 0,
-          "items" => $panel,
-          "position" => "top"
-        )
-      )
-    );
-    $merge["desktop.grid"] = Array(
-      "items" => Array(
-        Array(
-          "title"  => "Home",
-          "icon"   => "places/user-home.png",
-          "launch" => "ApplicationFileManager"
-        ),
-        Array(
-          "title"  => "Browser Compability",
-          "icon"   => "status/software-update-urgent.png",
-          "launch" => "API::CompabilityDialog"
-        )
-      )
     );
 
     return SettingsManager::getSettings($merge);

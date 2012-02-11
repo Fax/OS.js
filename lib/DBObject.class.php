@@ -47,7 +47,7 @@ abstract class DBObject
    * Save Object/Class
    * @return Mixed
    */
-  public static function save(DBObject $o, DB $db = null) {
+  public static function save(DBObject &$o, DB $db = null, $where = "id", $new = null) {
     $class    = get_called_class();
 
     $db       = $db       ? $db       : DB::get();
@@ -55,34 +55,63 @@ abstract class DBObject
     $columns  = array_keys($class::$Columns);
 
     if ( $db->getIsMongo() ) {
-      return false;
+      return false; // TODO
     } else {
-      // Pull values, columns etc
-      $values   = Array();
-      $cols     = Array();
-      $marks    = Array();
+      if ( !$new && (isset($o->$where) && ($id = $o->$where) > 0) ) {
+        $sets   = Array();
+        $values = Array("updatewhat" => $id);
 
-      foreach ( $columns as $c ) {
-        if ( isset($o->$c) ) {
-          $values[$c] = $o->$c;
-          $marks[]  = ":$c";
-          $cols[]   = "`$c`";
+        foreach ( $columns as $c ) {
+          if ( isset($o->$c) ) {
+            $values[$c] = $o->$c;
+            $sets[]     = sprintf("`%s`=:%s", $c, $c);
+          }
+
         }
 
-      }
+        // Create SQL String
+        $q = sprintf("UPDATE `%s` SET %s WHERE `%s` = :updatewhat", $table, implode(", ", $sets), $where);
 
-      // Create SQL String
-      $q = sprintf("INSERT INTO `%s` (%s) VALUES(%s);", $table, implode(", ", $cols), implode(", ", $marks));
-
-      // Execute SQL
-      if ( $sth = $db->prepare($q) ) {
-        if ( $res = $sth->execute($values) ) {
-          if ( $id = $db->lastInsertId() ) {
-            return $class::getById($id, $db);
+        // Execute SQL
+        if ( $sth = $db->prepare($q) ) {
+          if ( $res = $sth->execute($values) ) {
+            $o = $class::getByColumn($db, null, null, Array($where => $id), 1);
+            return $o;
           }
         }
+      } else {
+        // Pull values, columns etc
+        $values   = Array();
+        $cols     = Array();
+        $marks    = Array();
+
+        foreach ( $columns as $c ) {
+          if ( isset($o->$c) ) {
+            $values[$c] = $o->$c;
+            $marks[]  = ":$c";
+            $cols[]   = "`$c`";
+          }
+        }
+
+
+        // Create SQL String
+        $q = sprintf("INSERT INTO `%s` (%s) VALUES(%s);", $table, implode(", ", $cols), implode(", ", $marks));
+
+        // Execute SQL
+        if ( $sth = $db->prepare($q) ) {
+          if ( $res = $sth->execute($values) ) {
+            if ( $id = $db->lastInsertId() ) {
+              $inst = $class::getById($id, $db);
+              return $inst;
+            }
+          }
+        }
+
+        error_log($q);
+        error_log(JSON::encode($db->errorInfo()));
       }
     }
+
 
     return false;
   }
