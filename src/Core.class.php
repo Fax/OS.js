@@ -257,7 +257,9 @@ class Core
   protected static final function _doCacheUpdate(Array $args, Array &$json, Core $inst = null) {
     if ( $user = $inst->getUser() ) {
       $json['success'] = true;
-      $json['result']  = $inst->getPackages();
+      $json['result']  = Array(
+        "packages" => Core::getInstalledPackages()
+      );
     } else {
       $json['error'] = _("You are not logged in!");
     }
@@ -274,13 +276,16 @@ class Core
 
     if ( $user = $inst->getUser() ) {
       $json = Array("success" => true, "error" => null, "result" => Array(
-        "settings" => $user->getSettings(),
-        "cache"    => $inst->getPackages(),
-        "config"   => Array(
+        "settings"      => User::getDefaultSettings(),
+        "cache"         => Array(
+          "packages"          => Core::getInstalledPackages()
+        ),
+        "config"        => Array(
           "cache"             => ENABLE_CACHE,
           "system_language"   => DEFAULT_LANGUAGE,
           "browser_language"  => $browser_language,
-          "init_language"     => $init_language
+          "init_language"     => $init_language,
+          "stored_settings"   => JSON::decode($user->settings)
         )
       ));
     } else {
@@ -318,7 +323,7 @@ class Core
 
     if ( $save === true ) {
       if ( $user = $inst->getUser() ) {
-        //$result['saved'] = $user->saveUser($session, $settings);
+        $result['saved'] = $user->saveUser($session, $settings);
       }
     }
 
@@ -662,6 +667,24 @@ class Core
     return $browser_language;
   }
 
+  /**
+   * Get installed packages
+   * @return Array
+   */
+  public final static function getInstalledPackages() {
+    if ( !class_exists("Panel") ) {
+      require "Panel.class.php";
+    }
+
+    // Initialize Application configbase
+    Application::init(APPLICATION_BUILD);
+
+    return Array(
+      "Application" => Application::$Registered,
+      "PanelItem"   => Panel::$Registered
+    );
+  }
+
   /////////////////////////////////////////////////////////////////////////////
   // SETTER FUNCTIONS
   /////////////////////////////////////////////////////////////////////////////
@@ -744,24 +767,6 @@ class Core
    */
   public final function getUser() {
     return $this->_oUser;
-  }
-
-  /**
-   * Get installed packages
-   * @return Array
-   */
-  public final function getPackages() {
-    if ( !class_exists("Panel") ) {
-      require "Panel.class.php";
-    }
-
-    // Initialize Application configbase
-    Application::init(APPLICATION_BUILD);
-
-    return Array(
-      "Application" => Application::$Registered,
-      "PanelItem"   => Panel::$Registered
-    );
   }
 
   /**

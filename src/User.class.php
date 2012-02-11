@@ -118,87 +118,84 @@ class User extends DBObject {
   }
 
   public static function getByUsername($username, DB $db = null) {
-    $obj = self::getByColumn($db, null, null, Array("username" => $username), 1);
-    if ( $obj ) {
-      if ( !$obj->settings ) {
-        $obj->settings = JSON::decode($obj->settings);
-      }
-    }
-    return false;
+    return self::getByColumn($db, null, null, Array("username" => $username), 1);
   }
 
-  public function getSettings() {
+  public static function getDefaultSettings() {
     if ( !class_exists("SettingsManager") ) {
       require "SettingsManager.class.php";
     }
 
     $merge = Array();
-    //if ( ($this->id == Core::DEFAULT_UID) || !$this->settings ) {
-      $panel = Array(
-        Array("PanelItemMenu", Array(), "left:0"),
-        Array("PanelItemSeparator", Array(), "left:38"),
-        Array("PanelItemWindowList", Array(), "left:48"),
-        Array("PanelItemClock", Array(), "right:0"),
-        Array("PanelItemSeparator", Array(), "right:115"),
-        Array("PanelItemDock", Array(Array(
-          Array(
-            "title"  => "About",
-            "icon"   => "actions/gtk-about.png",
-            "launch" => "SystemAbout"
-          ),
-          Array(
-            "title"  => "System Settings",
-            "icon"   => "categories/applications-system.png",
-            "launch" => "SystemSettings"
-          ),
-          Array(
-            "title"  => "User Information",
-            "icon"   => "apps/user-info.png",
-            "launch" => "SystemUser"
-          ),
-          Array(
-            "title"  => "Save and Quit",
-            "icon"   => "actions/gnome-logout.png",
-            "launch" => "SystemLogout"
-          )
-        )), "right:120"),
-        Array("PanelItemSeparator", Array(), "right:230"),
-        Array("PanelItemWeather", Array(), "right:250")
-      );
 
-      $merge["desktop.panels"] = Array(
-        "items" => Array(
-          Array(
-            "name"  => "Default",
-            "index" => 0,
-            "items" => $panel,
-            "position" => "top"
-          )
+    // Panel(s)
+    $panel = Array(
+      Array("PanelItemMenu", Array(), "left:0"),
+      Array("PanelItemSeparator", Array(), "left:38"),
+      Array("PanelItemWindowList", Array(), "left:48"),
+      Array("PanelItemClock", Array(), "right:0"),
+      Array("PanelItemSeparator", Array(), "right:115"),
+      Array("PanelItemDock", Array(Array(
+        Array(
+          "title"  => "About",
+          "icon"   => "actions/gtk-about.png",
+          "launch" => "SystemAbout"
+        ),
+        Array(
+          "title"  => "System Settings",
+          "icon"   => "categories/applications-system.png",
+          "launch" => "SystemSettings"
+        ),
+        Array(
+          "title"  => "User Information",
+          "icon"   => "apps/user-info.png",
+          "launch" => "SystemUser"
+        ),
+        Array(
+          "title"  => "Save and Quit",
+          "icon"   => "actions/gnome-logout.png",
+          "launch" => "SystemLogout"
         )
-      );
+      )), "right:120"),
+      Array("PanelItemSeparator", Array(), "right:230"),
+      Array("PanelItemWeather", Array(), "right:250")
+    );
 
-      $merge["desktop.grid"] = Array(
-        "items" => Array(
-          Array(
-            "title"  => "Home",
-            "icon"   => "places/user-home.png",
-            "launch" => "ApplicationFileManager"
-          ),
-          Array(
-            "title"  => "Browser Compability",
-            "icon"   => "status/software-update-urgent.png",
-            "launch" => "API::CompabilityDialog"
-          )
+    $merge["desktop.panels"] = Array(
+      "items" => Array(
+        Array(
+          "name"  => "Default",
+          "index" => 0,
+          "items" => $panel,
+          "position" => "top"
         )
-      );
-    //}
+      )
+    );
 
+    // Desktop Grid
+    $merge["desktop.grid"] = Array(
+      "items" => Array(
+        Array(
+          "title"  => "Home",
+          "icon"   => "places/user-home.png",
+          "launch" => "ApplicationFileManager"
+        ),
+        Array(
+          "title"  => "Browser Compability",
+          "icon"   => "status/software-update-urgent.png",
+          "launch" => "API::CompabilityDialog"
+        )
+      )
+    );
+
+    // System
     $merge["system.locale.location"] = Array(
       "options" => DateTimeZone::listIdentifiers()
     );
 
     return SettingsManager::getSettings($merge);
   }
+
 }
 
 ?>

@@ -2993,9 +2993,9 @@
       console.groupEnd();
 
       var _update = function(d) {
-        if ( d instanceof Object ) {
-          _PanelCache = d.PanelItem || [];
-          _AppCache   = d.Application || [];
+        if ( (d instanceof Object) && d.packages ) {
+          _PanelCache = d.packages.PanelItem || [];
+          _AppCache   = d.packages.Application || [];
         }
       };
 
