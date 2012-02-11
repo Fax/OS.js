@@ -461,10 +461,8 @@
    * @function
    */
   function SetVFSObjectDefault(app, path, mime) {
-    var list = JSON.parse(localStorage.getItem("defaults") || "{}"); // FIXME
-    list[mime] = app;
-    localStorage.setItem("defaults", JSON.stringify(list)); // FIXME
     console.log("SetVFSObjectDefault()", app, path, mime);
+    _Settings.setDefaultApplication(app, mime, path);
   } // @endfunction
 
   /**
@@ -495,7 +493,7 @@
 
       if ( udef ) {
         // First, figure out default application
-        var defs = JSON.parse(localStorage.getItem("defaults") || "{}"); // FIXME
+        var defs = _Settings.getDefaultApplications();
         if ( defs[mime] !== undefined ) {
           default_app = defs[mime];
         }
@@ -562,7 +560,6 @@
             });
           }
         } else {
-          //MessageBox("Found no suiting application for '" + path + "' (" + mime + ")");
           API.system.dialog_launch(all_apps, function(mapp, set_default) {
             __run(mapp);
             if ( set_default ) {
@@ -810,7 +807,7 @@
        },
 
       'language' : function() {
-        return localStorage.getItem("system.locale.language") || _SystemLanguage; // FIXME ?!
+        return _Settings.getLanguage();
       },
 
       'languages' : function() {
@@ -2017,6 +2014,7 @@
 
               _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [name, msg, trace]));
             } else {
+              console.groupEnd();
               throw exception;
             }
           }
@@ -2129,8 +2127,7 @@
      */
     sessionSave : function(save) {
       var sess = (save === true) ? this.getSession() : {};
-      localStorage.setItem('session', JSON.stringify(sess)); // FIXME
-      return sess;
+      return _Settings.saveSession(sess);
     },
 
     /**
@@ -2138,12 +2135,8 @@
      * @return  JSON
      */
     sessionRestore : function() {
-      var item    = localStorage.getItem('session'); // FIXME
-      var session = {};
-      if ( item ) {
-        session = JSON.parse(item);
-        this.setSession(session);
-      }
+      var session = _Settings.restoreSession();
+      this.setSession(session);
       return session;
     },
 
@@ -2397,8 +2390,7 @@
       full = full ? true : false;
 
       if ( full ) {
-        // FIXME
-        localStorage.setItem('session', JSON.stringify(session));
+        _Settings.saveSession(session);
         window.location.reload();
         return;
       }
@@ -2931,6 +2923,54 @@
     },
 
     /**
+     * SettingsManager::saveSession() -- Save a session
+     * @param  Object     session     Session
+     * @return Object
+     */
+    saveSession : function(session) {
+      localStorage.setItem('session', (session instanceof Object) ? session : JSON.stringify(session));
+      return session;
+    },
+
+    /**
+     * SettingsManager::restoreSession() -- Restore previous session
+     * @return Object
+     */
+    restoreSession : function() {
+      var item    = localStorage.getItem('session');
+      return (item ? JSON.parse(item): {});
+    },
+
+    /**
+     * SettingsManager::setDefaultApplication() -- Set default application MIME
+     * @param   String    app       Application Name
+     * @param   String    mime      MIME Type
+     * @param   String    path      Path (Default = undefined)
+     * @return  void
+     */
+    setDefaultApplication : function(app, mime, path) {
+      var list = JSON.parse(localStorage.getItem("defaults") || "{}");
+      list[mime] = app;
+      localStorage.setItem("defaults", JSON.stringify(list));
+    },
+
+    /**
+     * SettingsManager::getDefaultApplications() -- Get default applications for MIME
+     * @return Object
+     */
+    getDefaultApplications : function() {
+      return JSON.parse(localStorage.getItem("defaults") || "{}");
+    },
+
+    /**
+     * SettingsManager::getLanguage() -- Get current language
+     * @return String
+     */
+    getLanguage : function() {
+      return localStorage.getItem("system.locale.language") || _SystemLanguage;
+    },
+
+    /**
      * SettingsManager::updateCache() -- Update application and panel cache
      * @param   bool    fetch     Fetch from server
      * @return  void
@@ -2984,9 +3024,14 @@
      */
     _set : function(k, v) {
       if ( this._tree[k] !== undefined ) {
-        localStorage.setItem(k, v);
+        try {
+          localStorage.setItem(k, v);
+        } catch ( e ) {
+          // Caught by interval!
+          //  if ( e == QUOTA_EXCEEDED_ERR ) {
+          //    (function() {})();
+        }
       }
-      //  if (e == QUOTA_EXCEEDED_ERR) { (try/catch) // TODO
     },
 
     /**
@@ -3397,14 +3442,13 @@
 
     /**
      * Application::createUploadDialog() -- Create Dialog: Upload File
-     * @TODO    Finish up the rest of params (see classes.js)
      * @see     API.system.dialog_upload
      * @return  void
      */
-    createUploadDialog : function(dir, callback) {
+    createUploadDialog : function(dir, callback, callback_progress, callback_cancel) {
       this._addWindow(API.system.dialog_upload(dir, function(fpath, fmime, response) {
         callback(fpath, fmime, response);
-      }));
+      }, callback_progress, callback_cancel));
     },
 
     /**
@@ -3744,7 +3788,6 @@
 
     /**
      * Application::_getSessionData() -- Get current Application session data
-     * @TODO   Save other windows aswell
      * @return JSON
      */
     _getSessionData : function() {
@@ -4144,7 +4187,6 @@
    * Desktop -- Main Desktop Class
    * The desktop containing all elements
    *
-   * @TODO    Multiple panels
    * @extends Process
    * @class
    */
@@ -4945,6 +4987,7 @@
     items         : [],         //!< Panel Items
     running       : false,      //!< Panel running state
     dragging      : false,      //!< Current item dragging
+    width         : -1,         //!< Current width
 
     /**
      * Panel::init() -- Constructor
@@ -4959,6 +5002,7 @@
       this.running  = false;
       this.index    = parseInt(index, 10);
       this.name     = name || "Panel";
+      this.width    = -1;
 
       // Panel item dragging
       var oldPos = {'top' : 0, 'left' : 0};
@@ -5309,8 +5353,6 @@
 
     /**
      * Panel::triggerExpand() -- Trigger expanding of items
-     * @FIXME   This is not finished yet
-     * @FIXME   Do not resize if size was not changed since last time
      * @param   _PanelItem    x       Item
      * @return  bool
      */
@@ -5321,6 +5363,11 @@
         var fs = 0;
         var is = 0;
         var ts = this.$element.width();
+
+        if ( ts == this.width ) {
+          console.groupEnd();
+          return;
+        }
 
         for ( i = 0; i < this.items.length; i++ ) {
           if ( !this.items[i]._expand ) {
@@ -5346,6 +5393,8 @@
             }
           }
         }
+
+        this.width = ts;
       }
 
       console.groupEnd();
@@ -5504,19 +5553,18 @@
 
     /**
      * _PanelItem::reload() -- Reload PanelItem
-     * @TODO
      * @return void
      */
     reload : function() {
-
+      // Implemented in upper-class
     },
 
     /**
      * _PanelItem::redraw() -- Redraw PanelItem
-     * @TODO
      * @return void
      */
     redraw : function() {
+      // Implemented in upper-class
     },
 
     /**
@@ -6273,7 +6321,6 @@
           this._minimize();
         }
 
-        // FIXME: Roll-back values when max is reached
         if ( this._is_ontop ) {
           _OnTopIndex++;
           this._shuffle(_OnTopIndex);
