@@ -41,7 +41,6 @@
    * @function
    */
   $(window).unload(function() {
-    window.onbeforeunload = null;
     return OSjs.__Stop();
   });
 
@@ -52,11 +51,6 @@
    * @function
    */
   $(window).ready(function() {
-    if ( !OSjs.Compability.SUPPORT_LSTORAGE ) {
-      alert("Your browser does not support WebStorage. Cannot continue...");
-      return false;
-    }
-
     return OSjs.__Run();
   });
 

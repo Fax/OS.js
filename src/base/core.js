@@ -112,14 +112,14 @@
   /**
    * Local references
    */
-  var _Core            = null;                            //!< Core instance
-  var _Resources       = null;                            //!< ResourceManager instance
-  var _Settings        = null;                            //!< SettingsManager instance
-  var _WM              = null;                            //!< WindowManager instance
-  var _Desktop         = null;                            //!< Desktop instance
-  var _Window          = null;                            //!< Current Window instance
-  var _Tooltip         = null;                            //!< Current Tooltip instance
-  var _Menu            = null;                            //!< Current Menu instance
+  var _Core            = null;                            //!< Core instance [dependency]
+  var _Resources       = null;                            //!< ResourceManager instance [dependency]
+  var _Settings        = null;                            //!< SettingsManager instance [dependency]
+  var _WM              = null;                            //!< WindowManager instance [not required]
+  var _Desktop         = null;                            //!< Desktop instance [not required]
+  var _Window          = null;                            //!< Current Window instance [dynamic]
+  var _Tooltip         = null;                            //!< Current Tooltip instance [dynamic]
+  var _Menu            = null;                            //!< Current Menu instance [dynamic]
   var _Processes       = [];                              //!< Process instance list
   var _TopIndex        = (ZINDEX_WINDOW + 1);             //!< OnTop z-index
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);       //!< OnTop instances index
@@ -1233,14 +1233,6 @@
         _Processes[this._pid] = undefined;
       }
 
-      // Destroy global references
-      // FIXME: Create a param in init for this!
-      if ( this._proc_name == "(Desktop)" ) {
-        _Desktop = null;
-      } else if ( this._proc_name == "(WindowManager)" ) {
-        _WM = null;
-      }
-
       this._started = null;
     },
 
@@ -1999,12 +1991,16 @@
           try {
             _WM.run();
           } catch ( exception ) {
-            if ( exception instanceof OSjs.Classes.ProcessException ) {
+            _WM.destroy(); // DESTROY IF FAILED
+
+            /*if ( exception instanceof OSjs.Classes.ProcessException ) {
               alert(exception.getMessage() || exception);
               return;
             } else {
               throw exception;
             }
+            */
+            alert(sprintf(OSjs.Labels.CrashCoreRunService, "WindowManager", exception));
           }
 
           // >>> Desktop
@@ -2012,6 +2008,8 @@
           try {
             _Desktop.run();
           } catch ( exception ) {
+            _Desktop.destroy(); // DESTROY IF FAILED
+
             if ( exception instanceof OSjs.Classes.ProcessException ) {
               var name  = exception.getProcessName();
               var msg   = exception.getMessage();
@@ -3829,6 +3827,10 @@
       this.running = false;
 
       this._super();
+
+      // >>> REMOVE GLOBAL <<<
+      if ( _WM )
+        _WM = null;
     },
 
     /**
@@ -4256,6 +4258,10 @@
       this._rtimeout = null;
 
       this._super();
+
+      // >>> REMOVE GLOBAL <<<
+      if ( _Desktop )
+        _Desktop = null;
     },
 
     /**
@@ -7020,9 +7026,18 @@
    * @function
    */
   OSjs.__Run = function() {
+    if ( !OSjs.Compability.SUPPORT_LSTORAGE ) {
+      alert(OSjs.Labels.CannotStart);
+      return false;
+    }
+
     _StartStamp = ((new Date()).getTime());
-    _Core = new Core();
-    _Running = true;
+    _Core       = new Core();
+    _Running    = true;
+
+    try {
+      delete OSjs.__Run;
+    } catch (e) {}
 
     return true;
   }; // @endfunction
@@ -7035,8 +7050,16 @@
   OSjs.__Stop = function() {
     if ( _Running && _Core ) {
       _Core.destroy();
-      _Core = null;
-      _Running = false;
+      _Core     = null;
+      _Running  = false;
+
+      try {
+        delete OSjs.__Stop;
+      } catch (e) {}
+
+      try {
+        delete OSjs;
+      } catch (e) {}
 
       window.onbeforeunload = null; // NOTE: Required!
     }
@@ -7062,6 +7085,11 @@
 
       var msg = OSjs.Labels.Quit;
       ev.returnValue = msg;
+
+      try {
+        delete OSjs.__Leave;
+      } catch (e) {}
+
       return msg;
     }
 

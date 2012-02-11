@@ -32,6 +32,7 @@
 
   // Labels
   OSjs.Labels = {
+    "CannotStart"                         : "Din nettleser støtter ikke WebStorage. Kan ikke fortsette uten...",
     "ApplicationCheckCompabilityMessage"  : "Nettleseren din støtter ikke '%s'",
     "ApplicationCheckCompabilityStack"    : "Application::_checkCompability(): Applikasjon navn: %s",
     "CrashApplication"                    : "Applikasjon '%s' har stoppet med feilmeldingen '%s'!",
@@ -54,6 +55,7 @@
     "CrashPanelCreate"                    : "En feil oppstod under oppretting av panel(er)!",
     "CrashPanelStart"                     : "En feil oppstod under starting av panel(er)!",
     "CrashSessionRestore"                 : "Kan ikke gjenoprette sessjonen din pga. feil under oppstart!",
+    "CrashCoreRunService"                 : "Kan ikke starte '%s' fordi en feil hendte under oppstart: %s",
     "ContextMenuPanel"                    : {
       "title"     : "Panel",
       "add"       : "Legg til",

@@ -32,6 +32,7 @@
 
   // Labels
   OSjs.Labels = {
+    "CannotStart"                         : "Your browser does not support WebStorage. Cannot continue...",
     "ApplicationCheckCompabilityMessage"  : "Your browser does not support '%s'",
     "ApplicationCheckCompabilityStack"    : "Application::_checkCompability(): Application name: %s",
     "CrashApplication"                    : "Application '%s' has crashed with error '%s'!",
@@ -54,6 +55,7 @@
     "CrashPanelCreate"                    : "An error occured while creating panels!",
     "CrashPanelStart"                     : "An error occured while starting the panels!",
     "CrashSessionRestore"                 : "Cannot restore your session because the initialization failed!",
+    "CrashCoreRunService"                 : "Cannot start '%s' because of an error during startup: %s",
     "ContextMenuPanel"                    : {
       "title"     : "Panel",
       "add"       : "Add new item",
