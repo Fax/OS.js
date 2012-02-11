@@ -106,6 +106,8 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
 
             self.clb_progress(fname, pr, fsize);
           }, function(response) {
+            var fpath = self.upload_path + "/" + fname;
+
             pbar.progressbar({ value : 100 });
             sbar.html(sprintf("%s %s (%s)", LABELS.finished, fname, fsize));
 
@@ -113,7 +115,7 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
               self.$element.find(".ActionClose").click();
             }, 100);
 
-            self.clb_finish(fname);
+            self.clb_finish(fpath, ftype, response);
           }, function(error) {
             sbar.html(sprintf("%s %s", LABELS.failed, fname));
 

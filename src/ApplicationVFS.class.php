@@ -195,7 +195,7 @@ class ApplicationVFS
       if ( $result = move_uploaded_file($file["tmp_name"], $res["destination"]) ) {
         self::_permissions($res["destination"]);
 
-        return $result;
+        return Array("result" => $result, "mime" => "");
       }
     }
 

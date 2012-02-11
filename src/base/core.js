@@ -567,6 +567,37 @@
   } // @endfunction
 
   /**
+   * VFSEvent() -- Trigger VFS Event
+   * @param   String      ev              Event name
+   * @param   Object      params          Event parameters
+   * @param   Process     instance        Called from this instance
+   * @return  void
+   * @function
+   */
+  function VFSEvent(ev, params, instance) {
+    console.group("VFSEvent()", ev, params);
+
+    if ( ev == "update" && (params.file/* && params.mime*/) ) {
+      var i = 0;
+      var l = _Processes.length;
+      var iter;
+      for ( i; i < l; i++ ) {
+        iter = _Processes[i];
+        if ( (iter instanceof Application) && (iter !== instance) ) {
+          console.log("Triggering", ev, "for", iter);
+
+          iter._call("vfs", {
+            "file" : params.file,
+            "mime" : params.mime
+          });
+        }
+      }
+    }
+
+    console.groupEnd();
+  } // @endfunction
+
+  /**
    * TransitionEffect() -- Apply a transition effect on an element
    * @TODO
    * @function
@@ -3191,6 +3222,21 @@
     },
 
     /**
+     * Application::defaultFileUpload() -- Perform default file-upload (with dialog)
+     * @param   String    dir       Upload directory
+     * @param   Function  callback  Callback function
+     * @return  void
+     */
+    defaultFileUpload : function(dir, callback) {
+      var self = this;
+
+      this.createUploadDialog(dir, function(dir, fmime, response) {
+        VFSEvent("update", {'file' : dir, 'mime' : fmime}, self);
+        callback(dir, fmime, response);
+      });
+    },
+
+    /**
      * Application::defaultFileOpen() -- Perform default file-open operation (with dialog)
      * @param   Function      callback      Callback when file is opened
      * @param   Array         mimes         Mime filtering (not required)
@@ -3259,20 +3305,6 @@
         file = null;
       }
 
-      // VFS Update function
-      var _vfs_trigger = function(file, mime) {
-        var i = 0;
-        var l = _Processes.length;
-        for ( i; i < l; i++ ) {
-          if ( _Processes[i] instanceof Application ) {
-            _Processes[i]._call("vfs", {
-              "file" : file,
-              "mime" : mime
-            });
-          }
-        }
-      };
-
       // Actual save function
       var _func = function(file, mime) {
         var aargs = {'file' : file, 'content' : content};
@@ -3282,8 +3314,8 @@
 
         API.system.call("write", aargs, function(result, error) {
           if ( result ) {
+            VFSEvent("update", {'file' : file, 'mime' : mime}, self);
             callback(file, mime);
-            _vfs_trigger(file, mime);
             self._setArgv('path', file);
           }
         });
@@ -3348,8 +3380,8 @@
      * @return  void
      */
     createUploadDialog : function(dir, callback) {
-      this._addWindow(API.system.dialog_upload(dir, function(fname) {
-        callback(dir, fname);
+      this._addWindow(API.system.dialog_upload(dir, function(fpath, fmime, response) {
+        callback(fpath, fmime, response);
       }));
     },
 
