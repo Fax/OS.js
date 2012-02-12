@@ -5094,10 +5094,10 @@
       // Stop bubbling
       $(this.$element).bind("mousedown", function(ev) {
         ev.preventDefault();
-        ev.stopPropagation();
-        return false;
+        /*ev.stopPropagation();
+        return false;*/
       });
-      $(this.$element).bind("dblclick", function(ev) {
+      /*$(this.$element).bind("dblclick", function(ev) {
         ev.preventDefault();
         ev.stopPropagation();
         return false;
@@ -5108,7 +5108,7 @@
 
         $(document).click(); // Trigger this! (deselects context-menu)
         return false;
-      });
+      });*/
 
       // Context menu
       this.$element.bind("contextmenu", function(ev) {
@@ -5594,10 +5594,10 @@
       });
       this.$element.bind("mousedown", function(ev) {
         ev.preventDefault();
-        ev.stopPropagation();
-        return false;
+        /*ev.stopPropagation();
+        return false;*/
       });
-      this.$element.bind("mouseup", function(ev) {
+      /*this.$element.bind("mouseup", function(ev) {
         ev.preventDefault();
         ev.stopPropagation();
         return false;
@@ -5606,7 +5606,7 @@
         ev.preventDefault();
         ev.stopPropagation();
         return false;
-      });
+      });*/
 
       this.setPosition(cpos);
 
