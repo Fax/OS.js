@@ -5,6 +5,8 @@ CORE:
 * TODO [HIG] : Panel add PanelItem
 * TODO [HIG] : Custom Exception class
 * TODO [MED] : Rewrite Glade builder class
+* TODO [MED] : Write custom GtkTab class
+* TODO [MED] : Write custom GtkLoadingBar class
 * TODO [LOW] : Write custom $
 
 APPLICATIONS ETC:
