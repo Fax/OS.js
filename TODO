@@ -1,6 +1,5 @@
 CORE:
 -------------------------------------------------------------------------------
-* TODO [HIG] : Context menu focus/trigger/pop-out bugs
 * TODO [HIG] : PanelItem context menu alignment
 * TODO [HIG] : Panel add PanelItem
 * TODO [HIG] : Custom Exception class

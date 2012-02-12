@@ -185,6 +185,7 @@
     on_activate   : function() {},        //!< Activate item callback function
     on_toggle     : function() {},        //!< Toggle item callback function
     on_focus      : function() {},        //!< On-focus event
+    on_context    : function() {},        //!< On context-menu show
 
     /**
      * IconView::init() -- Constructor
@@ -202,6 +203,7 @@
       this.on_activate  = on_activate || function() {};
       this.on_toggle    = on_toggle   || function() {};
       this.on_focus     = function() {};
+      this.on_context   = function() {};
 
       if ( $(root).hasClass("GtkIconView") ) {
         this.$root = root;
@@ -426,6 +428,12 @@
             };
           })(item));
 
+          el.find(".Inner").bind("contextmenu", function(ev) {
+            ev.preventDefault();
+            self.on_context(ev, $(this), item);
+            return false;
+          });
+
         } else {
           el = $("<tr>" + i + "</tr>");
 
@@ -462,6 +470,12 @@
               self._activateItem(ev, $(this), it);
             };
           })(item));
+
+          el.bind("contextmenu", function(ev) {
+            ev.preventDefault();
+            self.on_context(ev, $(this), item);
+            return false;
+          });
         }
 
         b.append(el);

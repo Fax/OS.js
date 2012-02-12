@@ -62,6 +62,10 @@
       "create"    : "New panel",
       "remove"    : "Remove panel"
     },
+    "ContextMenuPanelItem"                : {
+      "move"      : "Move",
+      "remove"    : "Remove"
+    },
     "ContextMenuDesktop"                  : {
       "title"     : "Desktop",
       "wallpaper" : "Change Wallpaper",

@@ -2971,7 +2971,7 @@
      * @return Object
      */
     saveSession : function(session) {
-      localStorage.setItem('session', (session instanceof Object) ? session : JSON.stringify(session));
+      localStorage.setItem('session', (session instanceof Object) ? JSON.stringify(session) : session);
       return session;
     },
 
@@ -4305,7 +4305,7 @@
     destroy : function() {
       var self = this;
 
-      $("#Desktop").unbind("mousedown");
+      $("#Desktop").unbind("contextmenu");
 
       if ( this._rtimeout ) {
         clearTimeout(this._rtimeout);
@@ -4357,8 +4357,10 @@
       // Events
       //
       console.log("Registering events...");
-      $("#Desktop").mousedown(function(ev) {
-        /*return */self.mousedownHandler(ev);
+      $("#Desktop").bind("contextmenu", function(ev) {
+        ev.preventDefault();
+        /*return */self.showContextMenu(ev);
+        return false;
       });
 
       this.applySettings();
@@ -4539,11 +4541,11 @@
     },
 
     /**
-     * Desktop::mousedownHandler() -- Desktop mousedown handler
+     * Desktop::showContextMenu() -- Show context menu
      * @param   DOMEvent  ev          Event
      * @return  bool
      */
-    mousedownHandler : function(ev) {
+    showContextMenu : function(ev) {
       var self = this;
 
       var t = ev.target || ev.srcElement;
@@ -5146,7 +5148,8 @@
       };
 
       // Context menu
-      this.$element.mousedown(function(ev) {
+      this.$element.bind("contextmenu", function(ev) {
+        ev.preventDefault();
 
         var labels = OSjs.Labels.ContextMenuPanel;
         var ret = API.application.context_menu(ev, [
@@ -5157,9 +5160,7 @@
 
         ], $(this), 3, true);
 
-        ev.preventDefault();
-
-        return ret;
+        return false;
       });
 
       if ( this.pos == "bottom" ) {
@@ -5185,7 +5186,10 @@
       this.items = null;
       this.index = -1;
       this.name  = "";
-      this.$element.empty().remove();
+      if ( this.$element ) {
+        this.$element.unbind("contextmenu");
+        this.$element.empty().remove();
+      }
       this.$element = null;
 
       if ( _Desktop ) {
@@ -5525,6 +5529,7 @@
      */
     destroy : function() {
       if ( this.$element ) {
+        this.$element.unbind("contextmenu");
         this.$element.empty();
         this.$element.remove();
       }
@@ -5563,16 +5568,10 @@
 
       this.setPosition(cpos);
 
-      this.$element.mousedown(function(ev) {
-
-        var ret = API.application.context_menu(ev, self.getMenu(), $(this));
-        if ( ret ) {
-          ev.stopPropagation();
-        }
-
+      this.$element.bind("contextmenu", function(ev) {
         ev.preventDefault();
-
-        return ret;
+        API.application.context_menu(ev, self.getMenu(), $(this));
+        return false;
       });
 
       return this.$element;
@@ -5674,10 +5673,11 @@
      */
     getMenu : function() {
       var self = this;
+      var labels = OSjs.Labels.ContextMenuPanelItem;
       var menu = [
         {"title" : self._named, "disabled" : true, "attribute" : "header"},
-        {"title" : "Move", "method" : function() {}, "disabled" : true},
-        {"title" : "Remove", "method" : function() {
+        {"title" : labels.move, "method" : function() {}, "disabled" : true},
+        {"title" : labels.remove, "method" : function() {
           API.system.dialog("confirm", OSjs.Labels.PanelItemRemove, null, function() {
             self._panel.removeItem(self);
           });
@@ -5983,6 +5983,10 @@
         //
         // Events
         //
+        el.bind('contextmenu', function(ev) {
+          ev.stopPropagation();
+        });
+
         el.bind('mousedown', function(ev) {
           self.focus();
           if ( ev.which > 1 ) { // Menu only NOTE

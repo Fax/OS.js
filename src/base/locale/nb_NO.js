@@ -62,6 +62,10 @@
       "create"    : "Nytt panel",
       "remove"    : "Fern panel"
     },
+    "ContextMenuPanelItem"                : {
+      "move"      : "Flytt",
+      "remove"    : "Fjern"
+    },
     "ContextMenuDesktop"                  : {
       "title"     : "Skrivebord",
       "wallpaper" : "Endre Bakgrunn",
