@@ -1232,7 +1232,6 @@
               });
             }
           }
-          console.log("<<<<<<<<<<<<<<<<<<<", activated, _AppCache, _PanelCache, result);
 
           return result;
         }

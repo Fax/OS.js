@@ -1,5 +1,6 @@
 CORE:
 -------------------------------------------------------------------------------
+* TODO [HIG] : Solve PanelItemWindowList not beeing filled upon restore
 * TODO [HIG] : Add/Remove Panel
 * TODO [HIG] : Custom Exception class
 * TODO [MED] : Rewrite Glade builder class
