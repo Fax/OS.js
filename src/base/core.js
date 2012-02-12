@@ -321,11 +321,12 @@
    * @param   Mixed     iargs         Item argument(s)
    * @param   String    ialign        Item alignment
    * @param   Panel     panel         Panel instance reference
-   * @param   Function  callback      Callback function
+   * @param   Function  callback      Callback function (Default = undefined)
+   * @param   bool      save          Save panel after launch (Default = undefined)
    * @return  void
    * @function
    */
-  function LaunchPanelItem(i, iname, iargs, ialign, panel, callback) {
+  function LaunchPanelItem(i, iname, iargs, ialign, panel, callback, save) {
     callback = callback || function() {};
 
     if ( InitLaunch(iname) ) {
@@ -338,7 +339,7 @@
           if ( item ) {
             item._panel = panel;
             item._index = i;
-            panel.addItem(item, ialign);
+            panel.addItem(item, ialign, save);
           }
         }
 
@@ -5104,6 +5105,8 @@
       $(this.$element).bind("click", function(ev) {
         ev.preventDefault();
         ev.stopPropagation();
+
+        $(document).click(); // Trigger this! (deselects context-menu)
         return false;
       });
 
@@ -5115,7 +5118,9 @@
         var labels = OSjs.Labels.ContextMenuPanel;
         var ret = API.application.context_menu(ev, [
           {"title" : labels.title, "disabled" : true, "attribute" : "header"},
-          {"title" : labels.add, "method" : addItem},
+          {"title" : labels.add, "method" : function() {
+            addItem(ev);
+          }},
           {"title" : labels.create, "disabled" : true},
           {"title" : labels.remove, "disabled" : true}
 
@@ -5125,7 +5130,7 @@
       });
 
       // Add Panel item function
-      var addItem = function() {
+      var addItem = function(pos_ev) {
         if ( !_WM ) {
           MessageBox(OSjs.Labels.WindowManagerMissing);
           return;
@@ -5151,7 +5156,11 @@
                   current = this;
                   selected = iname;
 
-                  //diag.$element.find(".DialogButtons .Ok").removeAttr("disabled");
+                  diag.$element.find(".DialogButtons .Ok").removeAttr("disabled");
+                });
+
+                litem.dblclick(function() {
+                  diag.$element.find(".DialogButtons .Ok").click();
                 });
               })(li, name, items[name]);
                 diag.$element.find(".DialogContent ul").append(li);
@@ -5161,7 +5170,8 @@
             diag.$element.find(".DialogButtons .Close").show();
             diag.$element.find(".DialogButtons .Ok").show().click(function() {
               if ( selected ) {
-                LaunchPanelItem(self.items.length, selected, [], "left", self);
+                var pos = pos_ev.pageX;
+                LaunchPanelItem(self.items.length, selected, [], "left:" + pos, self, undefined, true);
               }
             }).attr("disabled", "disabled");
 
@@ -5333,11 +5343,12 @@
 
     /**
      * Panel::addItem() -- Add a new PanelItem
-     * @param   PanelItem    i       Item
-     * @param   String        pos     Position string
+     * @param   PanelItem   i       Item
+     * @param   String      pos     Position string
+     * @param   bool        save    Save panel (Default = undefined)
      * @return  Mixed
      */
-    addItem : function(i, pos) {
+    addItem : function(i, pos, save) {
       if ( i instanceof PanelItem ) {
 
         console.group("Panel::addItem()");
@@ -5353,6 +5364,10 @@
 
           this.items.push(i);
 
+          if ( save === true ) {
+            _Settings.savePanel(this);
+          }
+
           return i;
         }
       }
@@ -5362,10 +5377,11 @@
 
     /**
      * Panel::removeItem() -- Remove a PanelItem
-     * @param   PanelItem    x       Item
+     * @param   PanelItem     x       Item
+     * @param   bool          save    Save panel (Default = undefined)
      * @return  bool
      */
-    removeItem : function(x) {
+    removeItem : function(x, save) {
       for ( var i = 0; i < this.items.length; i++ ) {
         if ( this.items[i] === x ) {
           x.destroy();
@@ -5375,6 +5391,11 @@
           console.groupEnd();
 
           this.items.splice(i, 1);
+
+          if ( save === true ) {
+            _Settings.savePanel(this);
+          }
+
           return true;
         }
       }
@@ -5567,6 +5588,8 @@
       this.$element.bind("click", function(ev) {
         ev.preventDefault();
         ev.stopPropagation();
+
+        $(document).click(); // Trigger this! (deselects context-menu)
         return false;
       });
       this.$element.bind("mousedown", function(ev) {
@@ -5732,7 +5755,7 @@
         }},
         {"title" : labels.remove, "method" : function() {
           API.system.dialog("confirm", OSjs.Labels.PanelItemRemove, null, function() {
-            self._panel.removeItem(self);
+            self._panel.removeItem(self, true);
           });
         }}
       ];
