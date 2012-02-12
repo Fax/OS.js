@@ -80,8 +80,8 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
     }
   }
 
-  return function(_PanelItem, panel, API, argv) {
-    "_PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
+  return function(PanelItem, panel, API, argv) {
+    "PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
@@ -122,7 +122,7 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
       return ul;
     }
 
-    var _PanelItemMenu = _PanelItem.extend({
+    var _PanelItemMenu = PanelItem.extend({
 
       init : function(title, icon, menu) {
         this._super("PanelItemMenu");

@@ -41,12 +41,12 @@ OSjs.PanelItems.PanelItemSeparator = (function($, undefined) {
     }
   };
 
-  return function(_PanelItem, panel, API, argv) {
-    "_PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
+  return function(PanelItem, panel, API, argv) {
+    "PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
-    var _PanelItemSeparator = _PanelItem.extend({
+    var _PanelItemSeparator = PanelItem.extend({
       init : function() {
         this._super("PanelItemSeparator");
         this._named = LABELS.title;

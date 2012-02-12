@@ -41,12 +41,12 @@ OSjs.PanelItems.PanelItemClock = (function($, undefined) {
     }
   };
 
-  return function(_PanelItem, panel, API, argv) {
-    "_PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
+  return function(PanelItem, panel, API, argv) {
+    "PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
-    var _PanelItemClock = _PanelItem.extend({
+    var _PanelItemClock = PanelItem.extend({
       init : function() {
         this._super("PanelItemClock", "right");
         this._named = LABELS.title;

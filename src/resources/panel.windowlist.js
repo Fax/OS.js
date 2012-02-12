@@ -41,12 +41,12 @@ OSjs.PanelItems.PanelItemWindowList = (function($, undefined) {
     }
   };
 
-  return function(_PanelItem, panel, API, argv) {
-    "_PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
+  return function(PanelItem, panel, API, argv) {
+    "PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
-    var _PanelItemWindowList = _PanelItem.extend({
+    var _PanelItemWindowList = PanelItem.extend({
       init : function() {
         this._super("PanelItemWindowList", "left");
         this._named = LABELS.title;

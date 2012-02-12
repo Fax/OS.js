@@ -334,7 +334,7 @@
 
       _Resources.addResources(resources, null, function(error) {
         if ( OSjs.PanelItems[iname] && !error ) {
-          var item = new OSjs.PanelItems[iname](_PanelItem, panel, API, iargs);
+          var item = new OSjs.PanelItems[iname](PanelItem, panel, API, iargs);
           if ( item ) {
             item._panel = panel;
             item._index = i;
@@ -5355,12 +5355,12 @@
 
     /**
      * Panel::addItem() -- Add a new PanelItem
-     * @param   _PanelItem    i       Item
+     * @param   PanelItem    i       Item
      * @param   String        pos     Position string
      * @return  Mixed
      */
     addItem : function(i, pos) {
-      if ( i instanceof _PanelItem ) {
+      if ( i instanceof PanelItem ) {
 
         console.group("Panel::addItem()");
         console.log(i._name, i);
@@ -5384,7 +5384,7 @@
 
     /**
      * Panel::removeItem() -- Remove a PanelItem
-     * @param   _PanelItem    x       Item
+     * @param   PanelItem    x       Item
      * @return  bool
      */
     removeItem : function(x) {
@@ -5405,7 +5405,7 @@
 
     /**
      * Panel::triggerExpand() -- Trigger expanding of items
-     * @param   _PanelItem    x       Item
+     * @param   PanelItem    x       Item
      * @return  bool
      */
     triggerExpand : function() {
@@ -5486,13 +5486,13 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * _PanelItem -- The Panel Item Class
+   * PanelItem -- The Panel Item Class
    * Basis for a PanelItem
    *
    * @extends Process
    * @class
    */
-  var _PanelItem = Process.extend({
+  var PanelItem = Process.extend({
 
     $element      : null,             //!< DOM Elemeent
     _name         : "",               //!< Item name identifier
@@ -5510,7 +5510,7 @@
     _position     : -1,               //!< Panel item position (left/right) in px
 
     /**
-     * _PanelItem::init() -- Constructor
+     * PanelItem::init() -- Constructor
      * @param   String    name    Panel Item name
      * @param   String    align   Panel Item alignment
      * @constructor
@@ -5537,7 +5537,7 @@
     },
 
     /**
-     * _PanelItem::destroy() -- Destructor
+     * PanelItem::destroy() -- Destructor
      * @destructor
      */
     destroy : function() {
@@ -5550,7 +5550,7 @@
     },
 
     /**
-     * _PanelItem::create() -- Create DOM elements etc.
+     * PanelItem::create() -- Create DOM elements etc.
      * @param   String    pos     Item Alignment
      * @return  $
      */
@@ -5613,7 +5613,7 @@
     },
 
     /**
-     * _PanelItem::run() -- Run PanelItem
+     * PanelItem::run() -- Run PanelItem
      * @return void
      */
     run : function() {
@@ -5621,7 +5621,7 @@
     },
 
     /**
-     * _PanelItem::reload() -- Reload PanelItem
+     * PanelItem::reload() -- Reload PanelItem
      * @return void
      */
     reload : function() {
@@ -5629,7 +5629,7 @@
     },
 
     /**
-     * _PanelItem::redraw() -- Redraw PanelItem
+     * PanelItem::redraw() -- Redraw PanelItem
      * @return void
      */
     redraw : function() {
@@ -5637,7 +5637,7 @@
     },
 
     /**
-     * _PanelItem::expand() -- Expand item to max size
+     * PanelItem::expand() -- Expand item to max size
      * @return void
      */
     expand : function() {
@@ -5647,7 +5647,7 @@
     },
 
     /**
-     * _PanelItem::onRedraw() -- Bubble a redraw event down to panel
+     * PanelItem::onRedraw() -- Bubble a redraw event down to panel
      * This function is called in a panel item when chaning content
      * @return void
      */
@@ -5658,7 +5658,7 @@
     },
 
     /**
-     * _PanelItem::crash() -- Make PanelItem Crash
+     * PanelItem::crash() -- Make PanelItem Crash
      * @param   String      error     Error message
      * @return  void
      */
@@ -5671,7 +5671,7 @@
     },
 
     /**
-     * _PanelItem::configure() -- Open Configuration Dialog
+     * PanelItem::configure() -- Open Configuration Dialog
      * @return void
      */
     configure : function() {
@@ -5703,7 +5703,7 @@
     },
 
     /**
-     * _PanelItem::getMenu() -- Get the ContextMenu
+     * PanelItem::getMenu() -- Get the ContextMenu
      * @return JSON
      */
     getMenu : function() {
@@ -5732,7 +5732,7 @@
     },
 
     /**
-     * _PanelItem::getSession() -- Get the session properties
+     * PanelItem::getSession() -- Get the session properties
      * @return Object
      */
     getSession : function() {
