@@ -17,6 +17,7 @@ vendor/apps
 src/build/minimize.cache
 src/locale/*/LC_MESSAGES/messages.mo
 src/build/applications.xml
+src/build/database.sdb
 
 # Minimized files
 src/apps/*/_min

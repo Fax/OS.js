@@ -2269,7 +2269,6 @@
       if ( _Menu ) {
         if ( _Menu instanceof Menu ) {
           var t = $(ev.target || ev.srcElement);
-
           if ( !t.filter(function(){ return $(this).parents(".Menu").length; }).length ) {
             _Menu.destroy();
             _Menu = null;
@@ -4359,6 +4358,8 @@
       console.log("Registering events...");
       $("#Desktop").bind("contextmenu", function(ev) {
         ev.preventDefault();
+        ev.stopPropagation();
+
         /*return */self.showContextMenu(ev);
         return false;
       });
@@ -4384,6 +4385,8 @@
               $(self._sel).parent().removeClass("current");
               self._sel = null;
             }
+
+            $(document).click(); // Trigger this! (deselects context-menu)
           });
 
           this.draw();
@@ -4422,6 +4425,8 @@
 
               $(this).parent().addClass("current");
               self._sel = this;
+
+              $(document).click(); // Trigger this! (deselects context-menu)
             });
 
             root.append(e);
@@ -5085,13 +5090,37 @@
         }
       });
 
+      // Stop bubbling
       $(this.$element).bind("mousedown", function(ev) {
         ev.preventDefault();
+        ev.stopPropagation();
+        return false;
+      });
+      $(this.$element).bind("dblclick", function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        return false;
+      });
+      $(this.$element).bind("click", function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
         return false;
       });
 
-      $(this.$element).bind("contextmenu",function(e) {
-        e.preventDefault();
+      // Context menu
+      this.$element.bind("contextmenu", function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        var labels = OSjs.Labels.ContextMenuPanel;
+        var ret = API.application.context_menu(ev, [
+          {"title" : labels.title, "disabled" : true, "attribute" : "header"},
+          {"title" : labels.add, "method" : addItem},
+          {"title" : labels.create, "disabled" : true},
+          {"title" : labels.remove, "disabled" : true}
+
+        ], $(this), 3, true);
+
         return false;
       });
 
@@ -5146,22 +5175,6 @@
 
         _WM.addWindow(pitem);
       };
-
-      // Context menu
-      this.$element.bind("contextmenu", function(ev) {
-        ev.preventDefault();
-
-        var labels = OSjs.Labels.ContextMenuPanel;
-        var ret = API.application.context_menu(ev, [
-          {"title" : labels.title, "disabled" : true, "attribute" : "header"},
-          {"title" : labels.add, "method" : addItem},
-          {"title" : labels.create, "disabled" : true},
-          {"title" : labels.remove, "disabled" : true}
-
-        ], $(this), 3, true);
-
-        return false;
-      });
 
       if ( this.pos == "bottom" ) {
         this.$element.addClass("Bottom");
@@ -5529,7 +5542,6 @@
      */
     destroy : function() {
       if ( this.$element ) {
-        this.$element.unbind("contextmenu");
         this.$element.empty();
         this.$element.remove();
       }
@@ -5545,8 +5557,6 @@
     create : function(pos) {
       var self = this;
 
-      this.$element = $("<li></li>").attr("class", "PanelItem " + this._name);
-
       var spl = pos.split(":");
       var px = parseInt(spl[1], 10);
       pos = spl[0];
@@ -5554,6 +5564,9 @@
       if ( pos ) {
         this._align = pos;
       }
+
+      this.$element = $("<li></li>");
+      this.$element.addClass("PanelItem " + this._name);
 
       var cpos;
       if ( this._align == "right" ) {
@@ -5566,13 +5579,35 @@
 
       console.log("PanelItem::create()", this._name, cpos, this._align);
 
-      this.setPosition(cpos);
-
       this.$element.bind("contextmenu", function(ev) {
         ev.preventDefault();
-        API.application.context_menu(ev, self.getMenu(), $(this));
+        ev.stopPropagation();
+
+        API.application.context_menu(ev, self.getMenu(), $(this), undefined, true);
         return false;
       });
+      this.$element.bind("click", function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        return false;
+      });
+      this.$element.bind("mousedown", function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        return false;
+      });
+      this.$element.bind("mouseup", function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        return false;
+      });
+      this.$element.bind("dblclick", function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        return false;
+      });
+
+      this.setPosition(cpos);
 
       return this.$element;
     },
