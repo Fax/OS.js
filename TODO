@@ -1,6 +1,5 @@
 CORE:
 -------------------------------------------------------------------------------
-* TODO [HIG] : PanelItem context menu alignment
 * TODO [HIG] : Panel add PanelItem
 * TODO [HIG] : Custom Exception class
 * TODO [MED] : Rewrite Glade builder class

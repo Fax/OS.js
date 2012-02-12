@@ -5235,8 +5235,6 @@
           self._stopItemDrag(ev);
         }
       });
-
-      this.refresh();
     },
 
     /**
@@ -5247,14 +5245,22 @@
     _startItemDrag : function(ev, item) {
       var self = this;
       if ( !this.dragging ) {
-
+        var dw = $(document).width();
+        var off = item.$element.offset();
         var ghost = $("<li class=\"Ghost PanelItemSeparator\"></li>");
         ghost.css("left", ev.pageX + "px");
+        ghost.css({
+          "left"   : off['left'] + "px",
+          "width"  : item.$element.width() + "px",
+          "height" : item.$element.height() + "px"
+        });
 
         this.dragging = {
+          'start'   : item._align == "right" ? (dw - (off['left'] + item.$element.width())) : off['left'],
           'item'    : item,
           'result'  : null,
-          'ghost'   : ghost
+          'ghost'   : ghost,
+          'startX'  : ev.pageX
         };
 
         console.log("Panel::_startItemDrag()", ev, this.dragging);
@@ -5295,43 +5301,15 @@
      */
     _handleItemDrag : function(ev) {
       if ( this.dragging ) {
-
-        var cur;
+        var cur, diff = this.dragging.startX - ev.pageX;
         if ( this.dragging.item._align == "left" ) {
-          cur = ev.pageX;
+          cur = this.dragging.start - diff;
           this.dragging.result = {"left" : (cur + "px"), "right" : "auto"};
         } else {
-          cur = ($(document).width() - ev.pageX);
+          cur = this.dragging.start + diff;
           this.dragging.result = {"right" : (cur + "px"), "left" : "auto"};
         }
         this.dragging.ghost.css(this.dragging.result);
-      }
-    },
-
-    /**
-     * Panel::refresh() -- Refresh the panel
-     * @return void
-     */
-    refresh : function() {
-      var self = this;
-      this.$element.find("li").unbind("mousedown");
-      console.log("Panel::refresh()");
-
-      if ( this.items ) {
-        var i, pi;
-        for ( i = 0; i < this.items.length; i++ ) {
-          pi = this.items[i].$element;
-          pi.mousedown((function(item) {
-            return function(ev) {
-              if ( KEY_SHIFT ) {
-                if ( (ev.which || 1) <= 1 ) {
-                  ev.stopPropagation();
-                  self._startItemDrag(ev, item);
-                }
-              }
-            };
-          })(this.items[i]));
-        }
       }
     },
 
@@ -5689,10 +5667,24 @@
      */
     setPosition : function(pos, save) {
       if ( pos ) {
-        this.$element.css(pos);
         if ( pos[this._align] !== undefined ) {
           this._position = parseInt(pos[this._align].replace("px", ""), 10) || 0;
+
+          if ( this._align == "right" ) {
+            var tw = $(document).width();
+            if ( this._position > tw ) {
+              this._position = tw;
+              pos[this._align] = tw + "px";
+            }
+          } else {
+            if ( this._position < 0 ) {
+              this._position = 0;
+              pos[this._align] = 0 + "px";
+            }
+          }
         }
+
+        this.$element.css(pos);
 
         if ( save === true ) {
           _Settings.savePanel(this._panel);
@@ -5703,15 +5695,41 @@
     },
 
     /**
+     * PanelItem::setAlignment() -- Set new alignment
+     * @return void
+     */
+    setAlignment : function(align) {
+      this._align = align;
+      var pos;
+
+      if ( this._align == "left" ) {
+        pos = {"left" : this._position + "px", "right" : "auto"};
+      } else {
+        pos = {"left" : "auto", "right" : this._position + "px"};
+      }
+
+      this.setPosition(pos, true);
+    },
+
+    /**
      * PanelItem::getMenu() -- Get the ContextMenu
-     * @return JSON
+     * @return  JSON
      */
     getMenu : function() {
       var self = this;
       var labels = OSjs.Labels.ContextMenuPanelItem;
+      var newpos = self._align == "left" ? "right" : "left";
+
       var menu = [
         {"title" : self._named, "disabled" : true, "attribute" : "header"},
-        {"title" : labels.move, "method" : function() {}, "disabled" : true},
+        {"title" : labels.move, "method" : function(ev) {
+          if ( self._panel ) {
+            self._panel._startItemDrag(ev, self);
+          }
+        }},
+        {"title" : labels.alignment[newpos], "method" : function() {
+          self.setAlignment(newpos);
+        }},
         {"title" : labels.remove, "method" : function() {
           API.system.dialog("confirm", OSjs.Labels.PanelItemRemove, null, function() {
             self._panel.removeItem(self);

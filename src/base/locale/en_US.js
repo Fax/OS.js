@@ -64,6 +64,10 @@
     },
     "ContextMenuPanelItem"                : {
       "move"      : "Move",
+      "alignment" : {
+        "left"  : "Align to left",
+        "right" : "Align to right"
+      },
       "remove"    : "Remove"
     },
     "ContextMenuDesktop"                  : {

@@ -64,6 +64,10 @@
     },
     "ContextMenuPanelItem"                : {
       "move"      : "Flytt",
+      "alignment" : {
+        "left"  : "Still til venstre",
+        "right" : "Still til høyre"
+      },
       "remove"    : "Fjern"
     },
     "ContextMenuDesktop"                  : {
