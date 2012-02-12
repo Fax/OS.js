@@ -813,3 +813,16 @@ input.Disabled {
   margin : 0;
   padding : 0;
 }
+
+
+.GUICheckList {
+}
+.GUICheckList ul {
+  list-style-type : none;
+  margin : 0;
+  padding : 0;
+}
+.GUICheckList li {
+  margin : 0;
+  padding : 5px;
+}

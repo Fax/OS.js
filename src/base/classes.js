@@ -153,6 +153,94 @@
   });
 
   /////////////////////////////////////////////////////////////////////////////
+  // CHECKLIST
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * CheckList -- GUI Check List
+   * @class
+   */
+  OSjs.Classes.CheckList = Class.extend({
+
+    $element : null,
+
+    /**
+     * CheckList::init() -- Create a new instance
+     * @constructor
+     */
+    init : function(list, onchange, inner_function) {
+      this.$element = $("<div class=\"GUICheckList\"><ul></ul></div>");
+
+      if ( list ) {
+        this.draw(list, onchange, inner_function);
+      }
+    },
+
+    /**
+     * CheckList::destroy() -- Destroy instance
+     * @destructor
+     */
+    destroy : function() {
+      if ( this.$element ) {
+        this.$element.remove();
+      }
+      this.$element = null;
+    },
+
+    /**
+     * CheckList::draw() -- Draw list
+     * @param   Object      list              List to render
+     * @param   Function    onchange          onchange function
+     * @param   Function    inner_function    inner element create call
+     * @return void
+     */
+    draw : function(list, onchange, inner_function) {
+      onchange = onchange || function() {};
+      inner_function = inner_function || function() {};
+
+      var current = null;
+      var create = function(i, iter, el) {
+        var name = iter.name;
+        var label = iter.label;
+        el.addClass(i % 2 ? "odd" : "even");
+        el.append(sprintf("<input type=\"checkbox\" name=\"%s\" /> <label>%s</label>", name, label));
+        el.find("input[type=checkbox]").prop("checked", iter.active);
+
+        el.click(function() {
+          if ( current ) {
+            $(current).removeClass("selected");
+          }
+
+          $(this).addClass("selected");
+          current = this;
+        });
+
+        el.dblclick(function() {
+          el.find("input[type=checkbox]").prop("checked", !iter.active);
+        });
+
+        el.find("input[type=checkbox]").change(function() {
+          iter.active = $(this).is(":checked");
+
+          onchange(iter);
+        });
+
+        inner_function(el, iter);
+        return el;
+      };
+
+      var root = this.$element.find("ul");
+      var i = 0, l = list.length, iter, el;
+      for ( i; i < l; i++ ) {
+        iter  = list[i];
+        el    = $("<li></li>");
+        root.append(create(i, iter, el));
+      }
+    }
+
+  });
+
+  /////////////////////////////////////////////////////////////////////////////
   // ICON VIEW
   /////////////////////////////////////////////////////////////////////////////
 

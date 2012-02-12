@@ -76,6 +76,7 @@ class Core
     "register"      => "doApplicationRegister",
     "flush"         => "doApplicationFlush",
     "event"         => "doApplicationEvent",
+    "package"       => "doPackageOperation",
     "service"       => Array(
       "method" => "doService",
       "depend" => Array("arguments")
@@ -247,6 +248,20 @@ class Core
    * @return void
    */
   protected static final function _doBoot(Array $args, Array &$json, Core $inst = null) {
+  }
+
+  /**
+   * Do a 'Package Operation' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doPackageOperation(Array $args, Array &$json, Core $inst = null) {
+    if ( $user = $inst->getUser() ) {
+      $json['success'] = true;
+      $json['result']  = $args;
+    } else {
+      $json['error'] = _("You are not logged in!");
+    }
   }
 
   /**

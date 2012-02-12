@@ -266,3 +266,10 @@ textarea {
   color : #fff;
   border : 1px solid #222;
 }
+
+.GUICheckList li.even {
+  background : #fff;
+}
+.GUICheckList li.odd {
+  background : #e6e6e6;
+}

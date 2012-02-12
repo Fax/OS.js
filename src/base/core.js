@@ -1143,6 +1143,98 @@
             return _Settings._get(k, true);
           }
           return false;
+        },
+
+        'package_activate' : function(p, callback) {
+          callback = callback || function() {};
+
+          console.group("=== API OPERATION ===");
+          console.log("Method", "API.user.settings.package_activate");
+          console.log("Arguments", p);
+          console.groupEnd();
+
+          DoPost({'action' : 'package', 'operation' : 'activate', 'data' : p}, function(res) {
+            callback(res);
+          });
+        },
+        'package_deactivate' : function(p, callback) {
+          callback = callback || function() {};
+
+          console.group("=== API OPERATION ===");
+          console.log("Method", "API.user.settings.package_deactivate");
+          console.log("Arguments", p);
+          console.groupEnd();
+
+          DoPost({'action' : 'package', 'operation' : 'deactivate', 'data' : p}, function(res) {
+            callback(res);
+          });
+        },
+        'package_uninstall' : function(p, callback) {
+          callback = callback || function() {};
+
+          console.group("=== API OPERATION ===");
+          console.log("Method", "API.user.settings.package_uninstall");
+          console.log("Arguments", p, callback);
+          console.groupEnd();
+
+          DoPost({'action' : 'package', 'operation' : 'uninstall', 'data' : p}, function(res) {
+            callback(res);
+          });
+        },
+        'package_install' : function(p, callback) {
+          callback = callback || function() {};
+
+          console.group("=== API OPERATION ===");
+          console.log("Method", "API.user.settings.package_install");
+          console.log("Arguments", p, callback);
+          console.groupEnd();
+
+          DoPost({'action' : 'package', 'operation' : 'install', 'data' : p}, function(res) {
+            callback(res);
+          });
+        },
+
+        'packages' : function() {
+          var activated = {
+            'applications' : _Settings._get("system.installed.application", false, true),
+            'panelitems'   : _Settings._get("system.installed.panelitem", false, true)
+          };
+          var result = {
+            'applications' : [],
+            'panelitems'   : []
+          };
+
+          var ia, ip, t, iter;
+          for ( ia in _AppCache ) {
+            if ( _AppCache.hasOwnProperty(ia) ) {
+              iter = _AppCache[ia];
+              result.applications.push({
+                name    : ia,
+                label   : /*_AppCache[ia].titles[_CurrentLanguage] ||*/ iter.title, // FIXME: Locale
+                active  : in_array(ia, activated.applications),
+                type    : 'Application',
+                locked  : iter.category == "system",
+                icon    : iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_32, iter.icon)
+              });
+            }
+          }
+
+          for ( ip in _PanelCache ) {
+            if ( _PanelCache.hasOwnProperty(ip) ) {
+              iter = _PanelCache[ip];
+              result.panelitems.push({
+                name    : ip,
+                label   : iter.title, // FIXME: Locale
+                active  : in_array(ip, activated.panelitems),
+                type    : 'PanelItem',
+                locked  : true,
+                icon    : iter.icon //sprintf(ICON_URI_32, _PanelCache[ip].icon)
+              });
+            }
+          }
+          console.log("<<<<<<<<<<<<<<<<<<<", activated, _AppCache, _PanelCache, result);
+
+          return result;
         }
       },
 
