@@ -229,7 +229,7 @@
         return el;
       };
 
-      var root = this.$element.find("ul");
+      var root = this.$element.find("ul").empty();
       var i = 0, l = list.length, iter, el;
       for ( i; i < l; i++ ) {
         iter  = list[i];

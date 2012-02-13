@@ -1153,9 +1153,20 @@
           console.log("Arguments", p);
           console.groupEnd();
 
-          DoPost({'action' : 'package', 'operation' : 'activate', 'data' : p}, function(res) {
-            callback(res);
-          });
+          if ( (p instanceof Object) && sizeof(p) ) {
+            DoPost({'action' : 'package', 'operation' : 'activate', 'data' : p}, function(res) {
+              var results = {};
+              for ( var i in p ) {
+                if ( p.hasOwnProperty(i) ) {
+                  results[i] = _Settings.modifyPackage("activate", i, p[i]);
+                }
+              }
+
+              callback(res, results);
+            });
+          } else {
+            console.group("===    ABORTED    ===");
+          }
         },
         'package_deactivate' : function(p, callback) {
           callback = callback || function() {};
@@ -1165,9 +1176,20 @@
           console.log("Arguments", p);
           console.groupEnd();
 
-          DoPost({'action' : 'package', 'operation' : 'deactivate', 'data' : p}, function(res) {
-            callback(res);
-          });
+          if ( (p instanceof Object) && sizeof(p) ) {
+            DoPost({'action' : 'package', 'operation' : 'deactivate', 'data' : p}, function(res) {
+              var results = {};
+              for ( var i in p ) {
+                if ( p.hasOwnProperty(i) ) {
+                  results[i] = _Settings.modifyPackage("deactivate", i, p[i]);
+                }
+              }
+
+              callback(res, results);
+            });
+          } else {
+            console.group("===    ABORTED    ===");
+          }
         },
         'package_uninstall' : function(p, callback) {
           callback = callback || function() {};
@@ -1177,9 +1199,20 @@
           console.log("Arguments", p, callback);
           console.groupEnd();
 
-          DoPost({'action' : 'package', 'operation' : 'uninstall', 'data' : p}, function(res) {
-            callback(res);
-          });
+          if ( (p instanceof Object) && sizeof(p) ) {
+            DoPost({'action' : 'package', 'operation' : 'uninstall', 'data' : p}, function(res) {
+              var results = {};
+              for ( var i in p ) {
+                if ( p.hasOwnProperty(i) ) {
+                  results[i] = _Settings.modifyPackage("uninstall", i, p[i]);
+                }
+              }
+
+              callback(res, results);
+            });
+          } else {
+            console.group("===    ABORTED    ===");
+          }
         },
         'package_install' : function(p, callback) {
           callback = callback || function() {};
@@ -1190,7 +1223,8 @@
           console.groupEnd();
 
           DoPost({'action' : 'package', 'operation' : 'install', 'data' : p}, function(res) {
-            callback(res);
+            var inst = _Settings.modifyPackage("install", p);
+            callback(res, inst);
           });
         },
 
@@ -3104,6 +3138,77 @@
       } else {
         _update(data);
       }
+    },
+
+    modifyPackage : function(action, p, args) {
+      var result;
+      var activated = {
+        'applications' : _Settings._get("system.installed.application", false, true),
+        'panelitems'   : _Settings._get("system.installed.panelitem", false, true)
+      };
+
+      console.group("SettingsManager::modifyPackage()");
+      console.log("Doing", action, "using", p, "and", args);
+      console.log("Current", activated);
+
+      // Manipulate storage
+      switch ( action ) {
+        case "activate"   :
+          if ( args.type == "Application" ) {
+            activated['applications'].push(p);
+            result = true;
+          } else if ( args.type == "PanelItem" ) {
+            activated['panelitems'].push(p);
+            result = true;
+          }
+        break;
+        case "deactivate" :
+          var i;
+          if ( args.type == "Application" ) {
+            for ( i = 0; i < activated.applications.length; i++ ) {
+              if ( activated.applications[i] == p ) {
+                activated.applications.splice(i, 1);
+                result = true;
+                break;
+              }
+            }
+          } else if ( args.type == "PanelItem" ) {
+            for ( i = 0; i < activated.panelitems.length; i++ ) {
+              if ( activated.panelitems[i] == p ) {
+                activated.panelitems.splice(i, 1);
+                result = true;
+                break;
+              }
+            }
+          }
+        break;
+        case "uninstall"  :
+          result = false;
+        break;
+        case "install" :
+          result = false;
+        break;
+        default :
+          result = false;
+        break;
+      }
+
+      // Now save
+      if ( result === true ) {
+        _Settings._set("system.installed.application", JSON.stringify(activated.applications));
+        _Settings._set("system.installed.panelitem", JSON.stringify(activated.panelitems));
+      }
+
+      console.log("Resulted", result, activated);
+      activated = {
+        'applications' : _Settings._get("system.installed.application", false, true),
+        'panelitems'   : _Settings._get("system.installed.panelitem", false, true)
+      };
+      console.log("Real", activated);
+
+      console.groupEnd();
+
+      return result;
     },
 
     /**
