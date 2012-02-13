@@ -160,6 +160,7 @@ class Core
     require "ApplicationVFS.class.php";
     require "ApplicationAPI.class.php";
     require "Application.class.php";
+    require "Panel.class.php";
 
     $args = Array();
 
@@ -257,6 +258,9 @@ class Core
    */
   protected static final function _doPackageOperation(Array $args, Array &$json, Core $inst = null) {
     if ( $user = $inst->getUser() ) {
+      // Initialize Application configbase
+      Application::init(APPLICATION_BUILD);
+
       $json['success'] = true;
       $json['result']  = $args;
     } else {
@@ -271,6 +275,9 @@ class Core
    */
   protected static final function _doCacheUpdate(Array $args, Array &$json, Core $inst = null) {
     if ( $user = $inst->getUser() ) {
+      // Initialize Application configbase
+      Application::init(APPLICATION_BUILD);
+
       $json['success'] = true;
       $json['result']  = Array(
         "packages" => Core::getInstalledPackages()
@@ -289,11 +296,16 @@ class Core
     $init_language    = isset($args['language']) ? $args['language'] : "default";
     $browser_language = self::_getBrowserLanguage();
 
+    // Initialize Application configbase
+    Application::init(APPLICATION_BUILD);
+
     if ( $user = $inst->getUser() ) {
+      $installed_packages = Core::getInstalledPackages();
+
       $json = Array("success" => true, "error" => null, "result" => Array(
-        "settings"      => User::getDefaultSettings(),
+        "settings"      => User::getDefaultSettings($installed_packages),
         "cache"         => Array(
-          "packages"          => Core::getInstalledPackages()
+          "packages"          => $installed_packages
         ),
         "config"        => Array(
           "cache"             => ENABLE_CACHE,
@@ -687,13 +699,6 @@ class Core
    * @return Array
    */
   public final static function getInstalledPackages() {
-    if ( !class_exists("Panel") ) {
-      require "Panel.class.php";
-    }
-
-    // Initialize Application configbase
-    Application::init(APPLICATION_BUILD);
-
     return Array(
       "Application" => Application::$Registered,
       "PanelItem"   => Panel::$Registered
