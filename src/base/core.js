@@ -1145,20 +1145,20 @@
           return false;
         },
 
-        'package_activate' : function(p, callback) {
+        'package_enable' : function(p, callback) {
           callback = callback || function() {};
 
           console.group("=== API OPERATION ===");
-          console.log("Method", "API.user.settings.package_activate");
+          console.log("Method", "API.user.settings.package_enable");
           console.log("Arguments", p);
           console.groupEnd();
 
           if ( (p instanceof Object) && sizeof(p) ) {
-            DoPost({'action' : 'package', 'operation' : 'activate', 'data' : p}, function(res) {
+            DoPost({'action' : 'package', 'operation' : 'enable', 'data' : p}, function(res) {
               var results = {};
               for ( var i in p ) {
                 if ( p.hasOwnProperty(i) ) {
-                  results[i] = _Settings.modifyPackage("activate", i, p[i]);
+                  results[i] = _Settings.modifyPackage("enable", i, p[i]);
                 }
               }
 
@@ -1168,20 +1168,20 @@
             console.group("===    ABORTED    ===");
           }
         },
-        'package_deactivate' : function(p, callback) {
+        'package_disable' : function(p, callback) {
           callback = callback || function() {};
 
           console.group("=== API OPERATION ===");
-          console.log("Method", "API.user.settings.package_deactivate");
+          console.log("Method", "API.user.settings.package_disable");
           console.log("Arguments", p);
           console.groupEnd();
 
           if ( (p instanceof Object) && sizeof(p) ) {
-            DoPost({'action' : 'package', 'operation' : 'deactivate', 'data' : p}, function(res) {
+            DoPost({'action' : 'package', 'operation' : 'disable', 'data' : p}, function(res) {
               var results = {};
               for ( var i in p ) {
                 if ( p.hasOwnProperty(i) ) {
-                  results[i] = _Settings.modifyPackage("deactivate", i, p[i]);
+                  results[i] = _Settings.modifyPackage("disable", i, p[i]);
                 }
               }
 
@@ -1229,23 +1229,17 @@
         },
 
         'packages' : function() {
-          var activated = {
-            'applications' : _Settings._get("system.installed.application", false, true),
-            'panelitems'   : _Settings._get("system.installed.panelitem", false, true)
-          };
-          var result = {
-            'applications' : [],
-            'panelitems'   : []
-          };
+          var activated = _Settings._get("system.installed.packages", false, true);
+          var result = [];
 
           var ia, ip, t, iter;
           for ( ia in _AppCache ) {
             if ( _AppCache.hasOwnProperty(ia) ) {
               iter = _AppCache[ia];
-              result.applications.push({
+              result.push({
                 name    : ia,
                 label   : /*_AppCache[ia].titles[_CurrentLanguage] ||*/ iter.title, // FIXME: Locale
-                active  : in_array(ia, activated.applications),
+                active  : in_array(ia, activated),
                 type    : 'Application',
                 locked  : iter.category == "system",
                 icon    : iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_32, iter.icon)
@@ -1256,10 +1250,10 @@
           for ( ip in _PanelCache ) {
             if ( _PanelCache.hasOwnProperty(ip) ) {
               iter = _PanelCache[ip];
-              result.panelitems.push({
+              result.push({
                 name    : ip,
                 label   : iter.title, // FIXME: Locale
-                active  : in_array(ip, activated.panelitems),
+                active  : in_array(ip, activated),
                 type    : 'PanelItem',
                 locked  : true,
                 icon    : iter.icon //sprintf(ICON_URI_32, _PanelCache[ip].icon)
@@ -2863,12 +2857,12 @@
       console.log("Local revision", rev);
 
       if ( parseInt(rev, 10) !== parseInt(SETTING_REVISION, 10) ) {
-        console.log("============= FORCING UPGRADE =============");
-        console.log("           Resetting entire tree           ");
-        console.log("===========================================");
+        console.log("======================= FORCING UPGRADE =======================");
+        console.log("                     Resetting entire tree                     ");
+        console.log("===============================================================");
 
         upgrade     = true;
-        updateable  = ["desktop.grid", "desktop.panels"];
+        updateable  = ["desktop.grid", "desktop.panels", "system.installed.packages"];
 
         localStorage.setItem("SETTING_REVISION", SETTING_REVISION);
       }
@@ -2889,6 +2883,8 @@
       localStorage.removeItem("system.panel.registered");
       localStorage.removeItem("system.application.installed");
       localStorage.removeItem("system.panelitem.installed");
+      localStorage.removeItem("system.installed.application");
+      localStorage.removeItem("system.installed.panelitem");
       localStorage.removeItem("desktop.panel.items");
       localStorage.removeItem("desktop.panel.position");
 
@@ -2901,10 +2897,15 @@
       // Update caches
       this.updateCache(false, caches);
 
+      if ( upgrade ) {
+        console.log("===============================================================");
+      }
+
       console.log("Settings tree",      this._tree);
       console.log("Saveable settings",  this._saveable);
       console.log("Usage",              this.getStorageUsage());
       console.groupEnd();
+
 
       this._super("(SettingsManager)", "apps/system-software-update.png", true);
     },
@@ -3142,10 +3143,7 @@
 
     modifyPackage : function(action, p, args) {
       var result;
-      var activated = {
-        'applications' : _Settings._get("system.installed.application", false, true),
-        'panelitems'   : _Settings._get("system.installed.panelitem", false, true)
-      };
+      var activated = _Settings._get("system.installed.packages", false, true);
 
       console.group("SettingsManager::modifyPackage()");
       console.log("Doing", action, "using", p, "and", args);
@@ -3153,32 +3151,25 @@
 
       // Manipulate storage
       switch ( action ) {
-        case "activate"   :
+        case "enable"   :
           if ( args.type == "Application" ) {
-            activated['applications'].push(p);
-            result = true;
-          } else if ( args.type == "PanelItem" ) {
-            activated['panelitems'].push(p);
-            result = true;
-          }
-        break;
-        case "deactivate" :
-          var i;
-          if ( args.type == "Application" ) {
-            for ( i = 0; i < activated.applications.length; i++ ) {
-              if ( activated.applications[i] == p ) {
-                activated.applications.splice(i, 1);
-                result = true;
-                break;
-              }
+            if ( !in_array(p, activated) ) {
+              activated.push(p);
+              result = true;
             }
           } else if ( args.type == "PanelItem" ) {
-            for ( i = 0; i < activated.panelitems.length; i++ ) {
-              if ( activated.panelitems[i] == p ) {
-                activated.panelitems.splice(i, 1);
-                result = true;
-                break;
-              }
+            if ( !in_array(p, activated) ) {
+              activated.push(p);
+              result = true;
+            }
+          }
+        break;
+        case "disable" :
+          for ( var i = 0; i < activated.length; i++ ) {
+            if ( activated[i] == p ) {
+              activated.splice(i, 1);
+              result = true;
+              break;
             }
           }
         break;
@@ -3195,17 +3186,10 @@
 
       // Now save
       if ( result === true ) {
-        _Settings._set("system.installed.application", JSON.stringify(activated.applications));
-        _Settings._set("system.installed.panelitem", JSON.stringify(activated.panelitems));
+        _Settings._set("system.installed.packages", JSON.stringify(activated));
       }
 
       console.log("Resulted", result, activated);
-      activated = {
-        'applications' : _Settings._get("system.installed.application", false, true),
-        'panelitems'   : _Settings._get("system.installed.panelitem", false, true)
-      };
-      console.log("Real", activated);
-
       console.groupEnd();
 
       return result;

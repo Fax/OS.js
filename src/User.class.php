@@ -194,21 +194,16 @@ class User extends DBObject {
     );
 
     if ( $packages ) {
-      $applications = Array();
-      $panelitems   = Array();
-
+      $results = Array();
       foreach ( $packages['Application'] as $pkg_name => $pkg_opts ) {
-        $applications[] = $pkg_name;
+        $results[] = $pkg_name;
       }
       foreach ( $packages['PanelItem'] as $pkg_name => $pkg_opts ) {
-        $panelitems[] = $pkg_name;
+        $results[] = $pkg_name;
       }
 
-      $merge["system.installed.application"] = Array(
-        "items" => $applications
-      );
-      $merge["system.installed.panelitem"] = Array(
-        "items" => $panelitems
+      $merge["system.installed.packages"] = Array(
+        "items" => $results
       );
     }
 

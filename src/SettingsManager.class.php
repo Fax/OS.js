@@ -150,13 +150,8 @@ class SettingsManager
     // System
     //
 
-    "system.installed.application" => Array(
+    "system.installed.packages" => Array(
       "type"  => "list",
-      "items" => Array()
-    ),
-
-    "system.installed.panelitem" => Array(
-      "type" => "list",
       "items" => Array()
     ),
 
