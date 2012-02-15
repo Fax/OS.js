@@ -150,11 +150,6 @@ class SettingsManager
     // System
     //
 
-    "system.installed.packages" => Array(
-      "type"  => "list",
-      "items" => Array()
-    ),
-
     // System locale registry
     "system.locale.location" => Array(
       "type" => "array",
@@ -177,6 +172,16 @@ class SettingsManager
       "type" => "string",
       "value" => "default"
     ),
+
+    //
+    // USER
+    //
+
+    "user.installed.packages" => Array(
+      "type"  => "list",
+      "items" => Array()
+    ),
+
     "user.first-run" => Array(
       "type" => "bool",
       "value" => true

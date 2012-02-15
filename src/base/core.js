@@ -1346,7 +1346,7 @@
         },
 
         'packages' : function(icons) {
-          var activated = _Settings._get("system.installed.packages", false, true);
+          var activated = _Settings._get("user.installed.packages", false, true);
           var result = [];
 
           console.log(_AppCache);
@@ -2990,7 +2990,7 @@
         console.log("===============================================================");
 
         upgrade     = true;
-        updateable  = ["desktop.grid", "desktop.panels", "system.installed.packages"];
+        updateable  = ["desktop.grid", "desktop.panels", "user.installed.packages"];
 
         localStorage.setItem("SETTING_REVISION", SETTING_REVISION);
       }
@@ -3013,6 +3013,7 @@
       localStorage.removeItem("system.panelitem.installed");
       localStorage.removeItem("system.installed.application");
       localStorage.removeItem("system.installed.panelitem");
+      localStorage.removeItem("system.installed.packages");
       localStorage.removeItem("desktop.panel.items");
       localStorage.removeItem("desktop.panel.position");
 
@@ -3280,7 +3281,7 @@
 
     modifyPackage : function(action, p, args) {
       var result;
-      var activated = _Settings._get("system.installed.packages", false, true);
+      var activated = _Settings._get("user.installed.packages", false, true);
 
       console.group("SettingsManager::modifyPackage()");
       console.log("Doing", action, "using", p, "and", args);
@@ -3325,7 +3326,7 @@
 
       // Now save
       if ( result === true ) {
-        _Settings._set("system.installed.packages", JSON.stringify(activated));
+        _Settings._set("user.installed.packages", JSON.stringify(activated));
       }
 
       console.log("Resulted", result, activated);

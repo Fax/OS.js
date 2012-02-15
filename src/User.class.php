@@ -202,7 +202,7 @@ class User extends DBObject {
         $results[] = $pkg_name;
       }
 
-      $merge["system.installed.packages"] = Array(
+      $merge["user.installed.packages"] = Array(
         "items" => $results
       );
     }
