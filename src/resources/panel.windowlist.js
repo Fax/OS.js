@@ -114,7 +114,7 @@ OSjs.PanelItems.PanelItemWindowList = (function($, undefined) {
         this.$element.append(el);
       },
 
-      _removeRef : function() {
+      _removeRef : function(id) {
         this.$element.find(".Ref_" + id).remove();
       },
 
