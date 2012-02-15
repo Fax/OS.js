@@ -63,7 +63,6 @@
   var MAX_STORAGE_SIZE       = (1024 * 5) * 1000;   //!< Max localstorage size
   var STORAGE_SIZE_FREQ      = 1000;                //!< Storage check usage frequenzy
   var ONLINECHK_FREQ         = 1000;                //!< On-line checking frequenzy
-  var CACHE_FREQ             = (60 * (1000 * 60));  //!< Cache update frequenzu
   var TIMEOUT_CSS            = (1000 * 5);          //!< CSS loading timeout
   var DEFAULT_UID            = 1;                   //!< Default User ID
   var DEFAULT_USERNAME       = "demo";              //!< Default User Username
@@ -2319,12 +2318,6 @@
               setTimeout(function() {
                 load.fadeOut(ANIMATION_SPEED);
 
-                //if ( ENABLE_CACHE ) {
-                  self.cuint = setInterval(function() {
-                    _Settings.updateCache(true);
-                  }, CACHE_FREQ);
-                //}
-
                 self.running = true;
 
                 // NOTE: Fixes global_keydown "not responding upon init" issues
@@ -2964,6 +2957,7 @@
     _tree       : {},       //!< Storage registry
     _saveable   : [],       //!< List of names to use when saving etc.
     _cinterval  : null,     //!< Space checking interval
+    _tmpcheck   : null,
 
     /**
      * SettingsManager::init() -- Constructor
@@ -3247,6 +3241,10 @@
      */
     updateCache : function(fetch, data) {
       var self = this;
+
+      if ( this._tmpcheck )
+        return;
+
       console.group("SettingsManager::updateCache()");
       console.log("Remote update", fetch);
       console.groupEnd();
@@ -3259,12 +3257,17 @@
       };
 
       if ( fetch ) {
+        this._tmpcheck = true;
+
         DoPost({'action' : 'updateCache'}, function(data) {
           if ( data.result ) {
             console.log("SettingsManager::updateCache()", data.result);
             _update(data.result);
           }
 
+          self._tmpcheck = false;
+        }, function() {
+          self._tmpcheck = false;
         });
       } else {
         _update(data);
@@ -3304,9 +3307,11 @@
           }
         break;
         case "uninstall"  :
+          //this.updateCache(true);
           result = false;
         break;
         case "install" :
+          //this.updateCache(true);
           result = false;
         break;
         default :
@@ -7379,6 +7384,8 @@
     _createItem : function(ev, iter) {
       var self = this;
 
+      console.log("MenuNew::_createItem()", iter);
+
       var li = $("<li class=\"GUIMenuItem\"></li>");
 
       if ( iter.icon ) {
@@ -7439,8 +7446,6 @@
       var i   = 0, l = menu.length;
       for ( i; i < l; i++ ) {
         iter = menu[i];
-        console.log("MenuNew::_createMenu()", iter);
-
         ul.append(this._createItem(ev, menu[i]));
       }
 
