@@ -1448,6 +1448,10 @@
         return _Core.shutdown(save);
       },
 
+      'stack' : function() {
+        return _WM ? _WM.getStack() : [];
+      },
+
       'applications' : function() {
         return  _AppCache;
       }
@@ -4525,6 +4529,27 @@
       console.log("WindowManager::getWindowSpace()", result);
 
       return result;
+    },
+
+    /**
+     * WindowManager::getStack() -- Get stack of Windows
+     * @return Array
+     */
+    getStack : function() {
+      var stack = [];
+      for ( var i = 0; i < this.stack.length; i++ ) {
+        stack.push({
+          id    : this.stack[i].getWindowId(),
+          title : this.stack[i].getTitle(),
+          icon  : this.stack[i].getIcon(),
+          focus : (function(w) {
+            return function() {
+              w.focus();
+            };
+          })(this.stack[i])
+        });
+      }
+      return stack;
     }
 
   });
@@ -4848,14 +4873,21 @@
      * @return  bool
      */
     defaultHandler : function(ev, eargs) {
-      if ( this.panels.length ) {
-        if ( ev.match(/^window/) ) {
-          for ( var i = 0; i < this.panels.length; i++ ) {
-            this.panels[i].redraw(ev, eargs);
+      var self = this;
+
+      var redrawPanels = function(panels, e, ee) {
+        if ( panels.length ) {
+          for ( var i = 0; i < panels.length; i++ ) {
+            panels[i].redraw(e, ee);
           }
+          return true;
         }
 
-        return true;
+        return false;
+      };
+
+      if ( ev.match(/^window/) ) {
+        return redrawPanels(this.panels, ev, eargs);
       }
 
       return false;
@@ -6944,6 +6976,14 @@
       } else {
         el.css("width", (this._width) + "px");
       }
+    },
+
+    /**
+     * Window::getWindowId() -- Get Window Id
+     * @return String
+     */
+    getWindowId : function() {
+      return this.$element.attr("id");
     },
 
     /**

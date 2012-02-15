@@ -58,82 +58,97 @@ OSjs.PanelItems.PanelItemWindowList = (function($, undefined) {
         return this._super(pos);
       },
 
-      redraw : function(ev, eargs) {
+      run : function() {
         var self = this;
+        this._super();
 
-        var getWindow = function() {
-          if ( eargs ) {
-            var win = eargs;
-            var id  = win.$element.attr("id") + "_Shortcut";
+        var stack = API.session.stack();
+        for ( var i = 0; i < stack.length; i++ ) {
+          this._insert(self.__insert(stack[i]));
+        }
+      },
 
-            if ( !win || win._skip_taskbar ) {
-              return null;
-            }
-
-            return [id, win];
+      __insert : function(iter) {
+        return {
+          getWindowId : function() {
+            return iter.id;
+          },
+          getTitle    : function() {
+            return iter.title;
+          },
+          getIcon     : function() {
+            return iter.icon;
+          },
+          focus       : function() {
+            return iter.focus();
           }
-
-          return null;
         };
+      },
 
-        var getTitle = function(w) {
-          if ( w ) {
-            w = w.getTitle();
-            if ( w ) {
-              if ( w.length > 20 ) {
-                w = w.substr(0, 20) + "...";
-              }
-              return w;
-            }
-          }
-          return "Unknown";
-        };
+      _insert : function(win) {
+        var id      = win.getWindowId();
+        var title   = win.getTitle();
+        var icon    = win.getIcon();
 
-        var addWindow = function(win) {
-          var el = $("<div class=\"PanelItem Padded PanelItemWindow\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div>");
-          el.find("img").attr("src", win.getIcon());
-          el.find("span").html(getTitle(win));
-          el.attr("id", id);
-          el.click(function() {
-            win.focus();
-          });
-
-          self.$element.append(el);
-        };
-
-        var win, id;
-        var tmp = getWindow();
-        if ( tmp ) {
-          id  = tmp[0];
-          win = tmp[1];
+        if ( title.length > 20 ) {
+          title = title.substr(0, 20) + "...";
         }
 
-        if ( ev == "window_add" ) {
-          if ( !document.getElementById(id) ) {
-            if ( !win )
-              return;
+        this._createRef(id, title, icon, function() {
+          win.focus();
+        });
+      },
 
-            addWindow(win);
-          }
-        } else if ( ev == "window_remove" ) {
-          if ( document.getElementById(id) ) {
-            $("#" + id).empty().remove();
-          }
-        } else if ( ev == "window_focus" ) {
-          this.$element.find("PanelItemWindow").removeClass("Current");
-          if ( document.getElementById(id) ) {
-            $("#" + id).addClass("Current");
-          }
-        } else if ( ev == "window_blur" ) {
-          if ( document.getElementById(id) ) {
-            $("#" + id).removeClass("Current");
-          }
-        } else if ( ev == "window_updated" ) {
-          if ( !win )
-            return;
+      _createRef : function(id, title, icon, callback) {
+        if ( this.$element.find(".Ref_" + id).get(0) )
+          return;
 
-          if ( document.getElementById(id) ) {
-            $("#" + id).find("span").html(getTitle(win));
+        var el = $("<div class=\"PanelItem Padded PanelItemWindow\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div>");
+        el.find("img").attr("src", icon);
+        el.find("span").html(title);
+        el.addClass("Ref_" + id);
+        el.click(function() {
+          callback();
+        });
+
+        this.$element.append(el);
+      },
+
+      _removeRef : function() {
+        this.$element.find(".Ref_" + id).remove();
+      },
+
+      _focusRef : function(id) {
+        this.$element.find(".PanelItemWindow").removeClass("Current");
+        this.$element.find(".Ref_" + id).addClass("Current");
+      },
+
+      _blurRef : function(id) {
+        this.$element.find(".Ref_" + id).removeClass("Current");
+      },
+
+      _updateRef : function(id, title) {
+        if ( title.length > 20 ) {
+          title = title.substr(0, 20) + "...";
+        }
+
+        this.$element.find(".Ref_" + id + " span").html(title);
+      },
+
+      redraw : function(ev, win) {
+        var self = this;
+
+        if ( win ) {
+          if ( ev == "window_add" ) {
+            this._insert(win);
+          } else if ( ev == "window_remove" ) {
+            this._removeRef(win.getWindowId());
+          } else if ( ev == "window_focus" ) {
+            this._focusRef(win.getWindowId());
+          } else if ( ev == "window_blur" ) {
+            this._blurRef(win.getWindowId());
+          } else if ( ev == "window_updated" ) {
+            this._updateRef(win.getWindowId(), win.getTitle());
           }
         }
       },
