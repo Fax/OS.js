@@ -726,7 +726,7 @@
     for ( i in apps ) {
       if ( apps.hasOwnProperty(i) ) {
         iter = apps[i];
-        if ( iter.type == "Application" ) {
+        if ( (iter.type == "Application") && iter.active ) {
           cat = cats[iter.category] ? iter.category : "unknown";
           cats[cat].items.push({
             "title"   : iter.label,
