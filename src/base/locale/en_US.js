@@ -41,6 +41,7 @@
     "CrashApplicationOpen"                : "Cannot open '%s' with MIME '%s' in this application",
     "ErrorLaunchString"                   : "Cannot launch '%s'. Invalid operation!",
     "InitLaunchError"                     : "Cannot launch '%s'.\nMaximum allowed processes are: %d",
+    "InitLaunchNotFound"                  : "Cannot launch '%s'.\nThe package is not installer or enabled",
     "WindowManagerMissing"                : "Cannot perform this operation because the Window Manager is not running.",
     "WentOffline"                         : "Seems like you went offline. Please re-connect to continue using OS.js",
     "WentOnline"                          : "You are now back on-line!",

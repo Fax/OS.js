@@ -287,10 +287,36 @@
    * @function
    */
   function InitLaunch(name) {
+    var i, msg, trace;
+
+    // First check if avail
+    var plist = API.user.settings.packages();
+    var found = false;
+    for ( i = 0; i < plist.length; i++ ) {
+      if ( (plist[i].name == name) && (plist[i].active) ) {
+        found = true;
+        break;
+      }
+    }
+
+    if ( !found ) {
+      msg   = sprintf(OSjs.Labels.InitLaunchNotFound, name);
+      trace = sprintf("InitLaunch(%s)", name);
+
+      try {
+        _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [name, msg, trace]));
+      } catch ( eee ) {
+        MessageBox(msg);
+      }
+
+      return false;
+    }
+
+    // Then check process count
     var list  = API.session.processes();
     var count = 0;
 
-    for ( var i = 0; i < list.length; i++ ) {
+    for ( i = 0; i < list.length; i++ ) {
       if ( !list[i].service ) {
         count++;
       }
@@ -300,8 +326,8 @@
 
     // Check if we exceed the process conut limit
     if ( count >= MAX_PROCESSES ) {
-      var msg   = sprintf(OSjs.Labels.InitLaunchError, name, MAX_PROCESSES);
-      var trace = sprintf("InitLaunch(%s)", name);
+      msg   = sprintf(OSjs.Labels.InitLaunchError, name, MAX_PROCESSES);
+      trace = sprintf("InitLaunch(%s)", name);
 
       try {
         _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [name, msg, trace]));
@@ -721,7 +747,7 @@
       }
     }
     */
-    var apps  = API.user.settings.packages();
+    var apps  = API.user.settings.packages(false, true, false);
     var i, iter, cat;
     for ( i in apps ) {
       if ( apps.hasOwnProperty(i) ) {
@@ -1345,40 +1371,47 @@
           });
         },
 
-        'packages' : function(icons) {
+        'packages' : function(icons, apps, pitems) {
           var activated = _Settings._get("user.installed.packages", false, true);
           var result = [];
+
+          apps = (apps === undefined) ? true : apps;
+          pitems = (pitems === undefined) ? true : pitems;
 
           console.log(_AppCache);
 
           var ia, ip, t, iter;
-          for ( ia in _AppCache ) {
-            if ( _AppCache.hasOwnProperty(ia) ) {
-              iter = _AppCache[ia];
-              result.push({
-                name      : ia,
-                label     : _AppCache[ia].titles[_CurrentLanguage] || iter.title,
-                active    : in_array(ia, activated),
-                type      : 'Application',
-                locked    : iter.category == "system",
-                icon      : iter.icon,
-                icon      : (icons ? (iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_32, iter.icon)) : iter.icon),
-                category  : iter.category
-              });
+          if ( apps ) {
+            for ( ia in _AppCache ) {
+              if ( _AppCache.hasOwnProperty(ia) ) {
+                iter = _AppCache[ia];
+                result.push({
+                  name      : ia,
+                  label     : _AppCache[ia].titles[_CurrentLanguage] || iter.title,
+                  active    : in_array(ia, activated),
+                  type      : 'Application',
+                  locked    : iter.category == "system",
+                  icon      : iter.icon,
+                  icon      : (icons ? (iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_32, iter.icon)) : iter.icon),
+                  category  : iter.category
+                });
+              }
             }
           }
 
-          for ( ip in _PanelCache ) {
-            if ( _PanelCache.hasOwnProperty(ip) ) {
-              iter = _PanelCache[ip];
-              result.push({
-                name    : ip,
-                label   : iter.title,
-                active  : in_array(ip, activated),
-                type    : 'PanelItem',
-                locked  : true,
-                icon    : iter.icon //sprintf(ICON_URI_32, _PanelCache[ip].icon)
-              });
+          if ( pitems ) {
+            for ( ip in _PanelCache ) {
+              if ( _PanelCache.hasOwnProperty(ip) ) {
+                iter = _PanelCache[ip];
+                result.push({
+                  name    : ip,
+                  label   : iter.title,
+                  active  : in_array(ip, activated),
+                  type    : 'PanelItem',
+                  locked  : true,
+                  icon    : iter.icon //sprintf(ICON_URI_32, _PanelCache[ip].icon)
+                });
+              }
             }
           }
 
