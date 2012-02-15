@@ -133,7 +133,6 @@
   /**
    * Language
    */
-  var _CurrentLanguage  = "en_US";                        //!< Current running language
   var _BrowserLanguage  = "en_US";                        //!< Browser default language (Set by init)
   var _SystemLanguage   = "en_US";                        //!< System default language (Set by init)
   var _Languages        = {                               //!< Collection of avalilable languages
@@ -246,8 +245,6 @@
     var settings = {
       locale : GetLocale()
     };
-
-    _CurrentLanguage = settings.locale.locale_date;
 
     DoPost({'action' : 'settings', 'settings' : settings}, function(data) {
       console.log("UploadSetting()", data);
@@ -1378,8 +1375,6 @@
           apps = (apps === undefined) ? true : apps;
           pitems = (pitems === undefined) ? true : pitems;
 
-          console.log(_AppCache);
-
           var ia, ip, t, iter;
           if ( apps ) {
             for ( ia in _AppCache ) {
@@ -1387,7 +1382,7 @@
                 iter = _AppCache[ia];
                 result.push({
                   name      : ia,
-                  label     : _AppCache[ia].titles[_CurrentLanguage] || iter.title,
+                  label     : _AppCache[ia].titles[GetLanguage()] || iter.title,
                   active    : in_array(ia, activated),
                   type      : 'Application',
                   locked    : iter.category == "system",
