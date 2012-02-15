@@ -56,6 +56,17 @@
     "CrashPanelStart"                     : "An error occured while starting the panels!",
     "CrashSessionRestore"                 : "Cannot restore your session because the initialization failed!",
     "CrashCoreRunService"                 : "Cannot start '%s' because of an error during startup: %s",
+    "ApplicationCategories"               : {
+      "development" : "Development",
+      "games"       : "Games",
+      "gfx"         : "Graphics",
+      "office"      : "Office",
+      "net"         : "Internet",
+      "media"       : "Multimedia",
+      "sys"         : "System",
+      "util"        : "Utilities",
+      "other"       : "Unknown"
+    },
     "ContextMenuPanel"                    : {
       "title"     : "Panel",
       "add"       : "Add new item",

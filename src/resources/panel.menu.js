@@ -36,91 +36,18 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
   var _LINGUAS = {
     "en_US" : {
       "title"       : "Launcher Menu",
-      "menu_title"  : "Launch Application",
-      "cat"         : {
-        "development" : "Development",
-        "games"       : "Games",
-        "gfx"         : "Graphics",
-        "office"      : "Office",
-        "net"         : "Internet",
-        "media"       : "Multimedia",
-        "sys"         : "System",
-        "util"        : "Utilities",
-        "other"       : "Unknown"
-      }
+      "menu_title"  : "Launch Application"
     },
     "nb_NO" : {
       "title"       : "Launcher Meny",
-      "menu_title"  : "Kjør Applikasjon",
-      "cat"         : {
-        "development" : "Utvikling",
-        "games"       : "Spill",
-        "gfx"         : "Grafikk",
-        "office"      : "Kontor",
-        "net"         : "Internett",
-        "media"       : "Multimedia",
-        "sys"         : "System",
-        "util"        : "Verktøy",
-        "other"       : "Ukjent"
-      }
+      "menu_title"  : "Kjør Applikasjon"
     }
   };
-
-  var last_menu = null;
-  var menu_obj = null;
-  var menu_el = null;
-
-  function clear_menu() {
-    if ( menu_obj ) {
-      menu_obj = null;
-    }
-    if ( menu_el ) {
-      menu_el.remove();
-      menu_el = null;
-    }
-  }
 
   return function(PanelItem, panel, API, argv) {
     "PanelItem:nomunge, panel:nomunge, API:nomunge, argv:nomunge";
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
-
-    function CreateMenu(items, level) {
-      var ul = $("<ul class=\"GtkMenu\"></ul>");
-      ul.click(function(ev) {
-        ev.stopPropagation();
-      });
-
-      if ( items && items.length ) {
-        var it, li;
-        for ( var i = 0; i < items.length; i++ ) {
-          it = items[i];
-          li = $("<li class=\"GtkImageMenuItem\"></li>");
-          li.append(sprintf("<img alt=\"\" src=\"%s\" /><span>%s</span>", it.icon, it.title));
-          if ( it.items && it.items.length ) {
-            li.addClass("Subbed");
-            li.append(CreateMenu(it.items));
-          }
-
-          if ( it.method ) {
-            (function(li, it) {
-              li.click(function(ev) {
-                it.method();
-
-                if ( last_menu ) {
-                  last_menu.hide();
-                }
-
-                $(document).click();
-              });
-            })(li, it);
-          }
-
-          ul.append(li);
-        }
-      }
-      return ul;
-    }
 
     var _PanelItemMenu = PanelItem.extend({
 
@@ -128,105 +55,9 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
         this._super("PanelItemMenu");
         this._named = LABELS.title;
 
-        this.title = title || LABELS.menu_title;
-        this.icon = '/img/icons/16x16/' + (icon || 'apps/system-software-install.png');
-      },
-
-      create_menu : function(el) {
-        var self = this;
-
-        clear_menu();
-
-        var menu_items = menu || null;
-
-        if ( menu_items === null ) {
-          var o;
-          var apps = API.session.applications();
-          var cats = {
-            "development" : [LABELS.cat.development, "categories/applications-development.png", []],
-            "games"       : [LABELS.cat.games, "categories/applications-games.png", []],
-            "graphics"    : [LABELS.cat.gfx, "categories/applications-graphics.png", []],
-            "office"      : [LABELS.cat.office, "categories/applications-office.png", []],
-            "internet"    : [LABELS.cat.net, "categories/applications-internet.png", []],
-            "multimedia"  : [LABELS.cat.media, "categories/applications-multimedia.png", []],
-            "system"      : [LABELS.cat.sys, "categories/applications-system.png", []],
-            "utilities"   : [LABELS.cat.util, "categories/applications-utilities.png", []],
-            "unknown"     : [LABELS.cat.other, "categories/gnome-other.png", []]
-          };
-
-          var clang = API.system.language();
-          for ( var a in apps ) {
-            if ( apps.hasOwnProperty(a) ) {
-              o = apps[a];
-              (function(apn) {
-                var it = {
-                  "title" : o.titles[clang] || o.title,
-                  "method" : function() {
-                    API.system.launch(apn);
-                  },
-                  "icon" : o.icon.match(/^\/img/) ? o.icon : ("/img/icons/16x16/" + o.icon)
-                };
-
-                if ( cats[o.category] !== undefined ) {
-                  cats[o.category][2].push(it);
-                } else {
-                  cats["unknown"][2].push(it);
-                }
-              })(a);
-            }
-          }
-        }
-
-        menu_items = [];
-        for ( var cat in cats ) {
-          if ( cats.hasOwnProperty(cat) ) {
-            if ( cats[cat][2].length ) {
-              menu_items.push({
-                "title" : cats[cat][0],
-                "items" : cats[cat][2],
-                "icon"  : "/img/icons/16x16/" + cats[cat][1]
-              });
-            }
-          }
-        }
-
-        menu_obj = menu_items;
-
-        var menu = CreateMenu(menu_obj);
-        $(el).append(menu);
-        menu_el = menu;
-
-        el.find(".GtkImageMenuItem").each(function() {
-          var level = ($(this).parents(".GtkMenu").length);
-
-          $(this).hover(function() {
-            $(this).addClass("Hover").find("span:first").addClass("Hover");
-          }, function() {
-            $(this).removeClass("Hover").find("span:first").removeClass("Hover");
-          });
-
-          $(this).addClass("Level_" + level);
-          if ( level > 0 ) {
-            $(this).addClass("SubItem");
-          }
-
-          $(this).hover(function(ev) {
-            var c = $(this).find(".GtkMenu").first();
-            if ( last_menu !== c ) {
-              if ( $(this).hasClass("Level_1") ) {
-                $(this).parent().find(".GtkMenu").hide();
-              }
-            }
-            last_menu = c.show().css({
-              'top'  : '0px',
-              'left' : $(this).parent().width() + 'px'
-            });
-          }, function() {
-            if ( last_menu ) {
-              last_menu.hide();
-            }
-          });
-        });
+        this.title  = title || LABELS.menu_title;
+        this.icon   = '/img/icons/16x16/' + (icon || 'apps/system-software-install.png');
+        this.menu   = menu;
       },
 
       create : function(pos) {
@@ -237,35 +68,13 @@ OSjs.PanelItems.PanelItemMenu = (function($, undefined) {
         $(el).addClass("GtkCustomMenu");
         $(el).append(img);
         $(el).click(function(ev) {
-          self.create_menu(el);
-
-          setTimeout(function() {
-            $(el).find(".GtkMenu:first").show();
-
-            // TODO -- REMOVE ME : GLOBAL FIX
-            var mit = $(el).find("ul.GtkMenu:first");
-            var ppos = self._panel.pos;
-            if ( ppos == "bottom" ) {
-              mit.css("margin-top", "-" + (mit.height() + 10) + "px");
-            } else {
-              mit.css("margin-top", "0px");
-            }
-          }, 0);
-        });
-
-        $(document).click(function(ev) {
-          var t = $(ev.target || ev.srcElement);
-          if ( !$(t).closest(".GtkCustomMenu").get(0) || $(t).closest("li").hasClass("Level_2") ) {
-            el.find(".GtkMenu").hide();
-          }
+          return API.system.default_application_menu(ev, this);
         });
 
         return el;
       },
 
       destroy : function() {
-        clear_menu();
-
         this._super();
       }
 

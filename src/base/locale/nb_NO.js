@@ -56,6 +56,17 @@
     "CrashPanelStart"                     : "En feil oppstod under starting av panel(er)!",
     "CrashSessionRestore"                 : "Kan ikke gjenoprette sessjonen din pga. feil under oppstart!",
     "CrashCoreRunService"                 : "Kan ikke starte '%s' fordi en feil hendte under oppstart: %s",
+    "ApplicationCategories"               : {
+      "development" : "Utvikling",
+      "games"       : "Spill",
+      "gfx"         : "Grafikk",
+      "office"      : "Kontor",
+      "net"         : "Internett",
+      "media"       : "Multimedia",
+      "sys"         : "System",
+      "util"        : "Verktøy",
+      "other"       : "Ukjent"
+    },
     "ContextMenuPanel"                    : {
       "title"     : "Panel",
       "add"       : "Legg til",

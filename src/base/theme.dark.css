@@ -123,13 +123,14 @@ body {
 }
 
 .Menu,
-.GtkWindow .GtkMenuBar .GtkMenuItem ul {
+.GtkWindow .GtkMenuBar .GtkMenuItem ul, .GUIMenu {
   border : 1px solid #30353d;
   background : #eeeeee;
   color : #222;
 }
 
-.Menu li.Default:hover {
+.Menu li.Default:hover,
+.GUIMenu li:hover {
   color : #fff;
   background : #4f4f4f;
 }

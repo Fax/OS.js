@@ -63,7 +63,7 @@
   var MAX_STORAGE_SIZE       = (1024 * 5) * 1000;   //!< Max localstorage size
   var STORAGE_SIZE_FREQ      = 1000;                //!< Storage check usage frequenzy
   var ONLINECHK_FREQ         = 1000;                //!< On-line checking frequenzy
-  var CACHE_FREQ             = 60000;               //!< Cache update frequenzu
+  var CACHE_FREQ             = (60 * (1000 * 60));  //!< Cache update frequenzu
   var TIMEOUT_CSS            = (1000 * 5);          //!< CSS loading timeout
   var DEFAULT_UID            = 1;                   //!< Default User ID
   var DEFAULT_USERNAME       = "demo";              //!< Default User Username
@@ -120,6 +120,7 @@
   var _Window          = null;                            //!< Current Window instance [dynamic]
   var _Tooltip         = null;                            //!< Current Tooltip instance [dynamic]
   var _Menu            = null;                            //!< Current Menu instance [dynamic]
+  var _MenuNew         = null;
   var _Processes       = [];                              //!< Process instance list
   var _TopIndex        = (ZINDEX_WINDOW + 1);             //!< OnTop z-index
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);       //!< OnTop instances index
@@ -643,6 +644,116 @@
   } // @endfunction
 
   /**
+   * CreateDefaultApplicationMenu() -- Create default application menu
+   * @param   DOMEevent     ev      DOM Event ref.
+   * @param   DOMElement    el      DOM Element ref.
+   * @return  void
+   * @function
+   */
+  function CreateDefaultApplicationMenu(ev, el) {
+    var clang = API.system.language();
+    var lbls  = OSjs.Labels.ApplicationCategories;
+    var menu  = [];
+
+    var cats = {
+      "development" : {
+        "title" : lbls.development,
+        "icon"  : "categories/applications-development.png",
+        "items" : []
+      },
+      "games" : {
+        "title" : lbls.games,
+        "icon"  : "categories/applications-games.png",
+        "items" : []
+      },
+      "graphics" : {
+        "title" : lbls.gfx,
+        "icon"  : "categories/applications-graphics.png",
+        "items" : []
+      },
+      "office" : {
+        "title" : lbls.office,
+        "icon"  : "categories/applications-office.png",
+        "items" : []
+      },
+      "internet" : {
+        "title" : lbls.net,
+        "icon"  : "categories/applications-internet.png",
+        "items" : []
+      },
+      "multimedia" : {
+        "title" : lbls.media,
+        "icon"  : "categories/applications-multimedia.png",
+        "items" : []
+      },
+      "system" : {
+        "title" : lbls.sys,
+        "icon"  : "categories/applications-system.png",
+        "items" : []
+      },
+      "utilities" : {
+        "title" : lbls.util,
+        "icon"  : "categories/applications-utilities.png",
+        "items" : []
+      },
+      "unknown" : {
+        "title" : lbls.other,
+        "icon"  : "categories/gnome-other.png",
+        "items" : []
+      }
+    };
+
+    /*
+    var apps  = API.session.applications();
+    var i, iter, cat;
+    for ( i in apps ) {
+      if ( apps.hasOwnProperty(i) ) {
+        iter = apps[i];
+        cat = cats[iter.category] ? iter.category : "unknown";
+        cats[cat].items.push({
+          "title"   : iter.title,
+          "icon"    : iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_16, iter.icon),
+          "method"  : (function(app) {
+            return function() {
+              API.system.launch(app);
+            };
+          })(i)
+        });
+      }
+    }
+    */
+    var apps  = API.user.settings.packages();
+    var i, iter, cat;
+    for ( i in apps ) {
+      if ( apps.hasOwnProperty(i) ) {
+        iter = apps[i];
+        if ( iter.type == "Application" ) {
+          cat = cats[iter.category] ? iter.category : "unknown";
+          cats[cat].items.push({
+            "title"   : iter.label,
+            "icon"    : iter.icon,
+            "method"  : (function(app) {
+              return function() {
+                API.system.launch(app);
+              };
+            })(iter.name)
+          });
+        }
+      }
+    }
+
+    for ( i in cats ) {
+      if ( cats.hasOwnProperty(i) ) {
+        if ( cats[i].items.length ) {
+          menu.push(cats[i]);
+        }
+      }
+    }
+
+    return ((new MenuNew(el)).create(ev, menu, true));
+  } // @endfunction
+
+  /**
    * TransitionEffect() -- Apply a transition effect on an element
    * @TODO
    * @function
@@ -1067,6 +1178,10 @@
         return _WM.addWindow(new OSjs.Dialogs.FilePropertyOperationDialog(OperationDialog, API, [filename, clb_finish]));
       },
 
+      'default_application_menu' : function(ev, el) {
+        return CreateDefaultApplicationMenu(ev, el);
+      },
+
       'notification' : function(title, message, icon) {
         if ( _Desktop ) {
           _Desktop.createNotification(title, message, icon);
@@ -1091,13 +1206,16 @@
               _Menu.destroy();
               _Menu = null;
             }
+            if ( _MenuNew ) {
+              _MenuNew.destroy();
+            }
 
             _Menu = new Menu(where);
             forEach(items, function(i, it) {
               if ( it == "---" ) {
                 _Menu.create_separator();
               } else {
-                _Menu.create_item(it. title, it.icon, it.method, it.disabled, it.attribute);
+                _Menu.create_item(it. title, it.icon, it.method, it.disabled, it.attribute, it.items, ev);
               }
             });
 
@@ -1232,17 +1350,20 @@
           var activated = _Settings._get("system.installed.packages", false, true);
           var result = [];
 
+          console.log(_AppCache);
+
           var ia, ip, t, iter;
           for ( ia in _AppCache ) {
             if ( _AppCache.hasOwnProperty(ia) ) {
               iter = _AppCache[ia];
               result.push({
-                name    : ia,
-                label   : /*_AppCache[ia].titles[_CurrentLanguage] ||*/ iter.title, // FIXME: Locale
-                active  : in_array(ia, activated),
-                type    : 'Application',
-                locked  : iter.category == "system",
-                icon    : iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_32, iter.icon)
+                name      : ia,
+                label     : _AppCache[ia].titles[_CurrentLanguage] || iter.title,
+                active    : in_array(ia, activated),
+                type      : 'Application',
+                locked    : iter.category == "system",
+                icon      : iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_32, iter.icon),
+                category  : iter.category
               });
             }
           }
@@ -1252,7 +1373,7 @@
               iter = _PanelCache[ip];
               result.push({
                 name    : ip,
-                label   : iter.title, // FIXME: Locale
+                label   : iter.title,
                 active  : in_array(ip, activated),
                 type    : 'PanelItem',
                 locked  : true,
@@ -1965,6 +2086,9 @@
       if ( _Menu ) {
         _Menu.destroy();
       }
+      if ( _MenuNew ) {
+        _MenuNew.destroy();
+      }
       console.groupEnd();
 
       console.group("Shutting down 'Desktop'");
@@ -2001,6 +2125,7 @@
       _Window     = null;
       _Tooltip    = null;
       _Menu       = null;
+      _MenuNew    = null;
       _Processes  = [];
       _TopIndex   = 11;
 
@@ -2395,6 +2520,10 @@
           }
         //} else { TODO
         }
+      }
+
+      if ( _MenuNew ) {
+        _MenuNew.handleGlobalClick(ev);
       }
 
       _Tooltip.hide();
@@ -7121,6 +7250,9 @@
      * @return void
      */
     show : function(ev, context, where, mpos, mtop) {
+      mtop = (mtop === undefined) ? 0 : parseInt(mtop, 10);
+
+      var self = this;
       if ( context ) {
         var off = mpos ? ({'left' : ev.pageX, 'top' : ev.pageY - 20}) : $(where).offset();
         $("#ContextMenu").css(
@@ -7128,7 +7260,7 @@
             "left" :off.left + "px",
             "top" : off.top + mtop + "px"
           }
-        ).html(_Menu.$element).show();
+        ).html(self.$element).show();
 
         var h = $("#ContextMenu").height();
         var m = $(document).height();
@@ -7136,9 +7268,12 @@
         console.log("Menu::show()", ev, context, where, mpos, mtop);
         console.log("Menu::show()", "Menu height", h, "Document height", m, "Bottom", (off.top + h));
 
-        if ( (off.top + h) > m ) {
+        if ( ((off.top + h) > m) && (h < m) ) {
           $("#ContextMenu").css({"top" : ((off.top + mtop) - (h)) + "px"});
+        } else if ( (off.top) < 0 ) {
+          $("#ContextMenu").css({"top" : (mtop) + "px"});
         }
+
       }
     },
 
@@ -7159,20 +7294,22 @@
      * @param   Function    method    The callback function onClick
      * @param   bool        disabled  Enabled state
      * @param   String      aclass    Add this className to menu item
+     * @param   Array       subitems  Sub-items
      * @return  void
      */
-    create_item : function(title, icon, method, disabled, aclass) {
+    create_item : function(title, icon, method, disabled, aclass, subitems) {
       var self = this;
       var litem = $("<li><span><img alt=\"\" src=\"/img/blank.gif\" /></span></li>");
       if ( typeof method == "function" ) {
         if ( !disabled ) {
           litem.click(method);
         }
-      } else {
+      } else if ( method ) {
         litem.find("span").attr("class", method);
       }
+
       if ( icon ) {
-        litem.find("img").attr("src", sprintf(ICON_URI_16, icon));
+        litem.find("img").attr("src", icon.match(/^\//) ? icon : sprintf(ICON_URI_16, icon));
       } else {
         litem.find("span").hide();
       }
@@ -7186,14 +7323,188 @@
         $(litem).addClass("Default");
       }
 
+
       $(litem).click(function() {
         $(this).parents("ul.Menu").hide();
       });
 
+      console.group("Menu::create_item()");
+      console.log(title, icon, method, disabled, aclass, subitems);
+      console.groupEnd();
+
       this.$element.append(litem);
+
+      return litem;
     }
 
   }); // @endclass
+
+  var MenuNew = Class.extend({
+
+    $element : null,
+    $focuser : null,
+
+    init : function(clicked) {
+      this.$element = null;
+
+      console.group("MenuNew::init()");
+      console.groupEnd();
+
+      _MenuNew = this;
+    },
+
+    destroy : function() {
+      console.group("MenuNew::destroy()");
+
+      if ( this.$element ) {
+        this.$element.remove();
+        this.$element = null;
+      }
+      if ( this.$focuser ) {
+        this.$focuser.remove();
+        this.$focuser = null;
+      }
+
+      if ( _MenuNew ) {
+        if ( _MenuNew !== this ) {
+          _MenuNew.destroy();
+        }
+        _MenuNew = null;
+      }
+
+      console.groupEnd();
+    },
+
+    _createItem : function(ev, iter) {
+      var self = this;
+
+      var li = $("<li class=\"GUIMenuItem\"></li>");
+
+      if ( iter.icon ) {
+        var src = iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_16, iter.icon);
+        li.append($(sprintf("<img alt=\"%s\" src=\"%s\" />", iter.title, src)));
+      }
+
+      if ( iter.title ) {
+        li.append($(sprintf("<span>%s</span>", iter.title)));
+      }
+
+      if ( typeof iter.method == "function" ) {
+        li.click(function(ev) {
+          iter.method();
+
+          self.destroy();
+          //self.$focuser.blur();
+        });
+      } else {
+        li.click(function(ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          return false;
+        });
+      }
+
+      li.mousedown(function(ev) {
+        ev.preventDefault();
+      });
+
+      if ( iter.items instanceof Array ) {
+        var smenu = this._createMenu(ev, iter.items);
+
+        li.append(smenu);
+        li.hover(function() {
+          smenu.css({
+            "left"  : (li.width()) + "px",
+            "top"   : (0 /*li.get(0).offsetTop*/) + "px"
+          });
+
+          smenu.show();
+        }, function() {
+          smenu.hide();
+        });
+      }
+
+      return li;
+    },
+
+    _createSeparator : function() {},
+
+    _createMenu : function(ev, menu) {
+      var self = this;
+
+      var div = $("<div class=\"GUIMenu\"></div>");
+      var ul  = $("<ul class=\"GUIMenuList\"></ul>");
+
+      var i   = 0, l = menu.length;
+      for ( i; i < l; i++ ) {
+        iter = menu[i];
+        console.log("MenuNew::_createMenu()", iter);
+
+        ul.append(this._createItem(ev, menu[i]));
+      }
+
+      div.append(ul);
+
+      return div;
+    },
+
+    create : function(ev, menu, show) {
+      console.group("MenuNew::create()");
+
+      var div = this._createMenu(ev, menu);
+      //var f   = $("<input type=\"text\" value=\"\" />");
+
+      /*
+      var self = this;
+      f.focus(function() {
+      });
+      f.blur(function(ev) {
+        self.destroy();
+      });
+      */
+      //div.append(f);
+
+      this.$element = div;
+      //this.$focuser = f;
+
+      if ( show === true ) {
+        this.show(ev, this.$element);
+      }
+
+      //f.focus();
+
+
+      console.groupEnd();
+
+      return this.$element;
+    },
+
+    show : function(ev, el) {
+      var css = {
+        "top"   : ev.pageX + "px",
+        "left"  : ev.pageY + "px"
+      };
+
+      console.group("MenuNew::show()");
+      console.log("CSS", css);
+      console.log("El", el);
+      console.groupEnd();
+
+      el.css(css).show();
+      $("body").append(el);
+    },
+
+    handleGlobalClick : function(ev) {
+      var t = ev.target || ev.srcElement;
+      if ( t ) {
+        t = $(t);
+        if ( !t.hasClass(".GUIMenu") && !t.parents(".GUIMenu").size() ) {
+          this.destroy();
+        }
+      }
+    }
+
+  });
 
   /////////////////////////////////////////////////////////////////////////////
   // DIALOG

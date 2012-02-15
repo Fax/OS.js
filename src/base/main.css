@@ -826,3 +826,54 @@ input.Disabled {
   margin : 0;
   padding : 5px;
 }
+
+.GUIMenu {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  z-index : 100000000;
+  overflow : visible;
+}
+.GUIMenu ul {
+  margin : 0 none;
+  margin : 0;
+  padding : 0;
+  list-style-type : none;
+}
+.GUIMenu li {
+  margin : 0;
+  padding : 7px;
+  position : relative;
+}
+.GUIMenu li img {
+  width : 16px;
+  height : 16px;
+  vertical-align : middle;
+  position : absolute;
+}
+.GUIMenu li span {
+  white-space : nowrap;
+  padding-left : 21px;
+}
+/*
+.GUIMenu input {
+  display : block;
+  / *visibility : hidden;* /
+  background : transparent;
+  border : 0 none;
+  margin : 0;
+  padding : 0;
+  width : 1px;
+  height : 1px;
+
+  position : absolute;
+  top  : -10000000px;
+  left : -10000000px;
+}
+*/
+.GUIMenu .GUIMenu {
+  display : none;
+  position : absolute;
+  top : 0px;
+  left : 0px;
+}

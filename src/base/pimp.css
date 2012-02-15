@@ -196,6 +196,7 @@ body {
 }
 
 .Menu,
+.GUIMenu,
 .GtkWindow .GtkMenuBar .GtkMenuItem ul,
 .GtkCustomMenu ul {
   -moz-box-shadow: 0px 0px 10px #000;
