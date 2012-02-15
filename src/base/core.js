@@ -731,7 +731,7 @@
           cat = cats[iter.category] ? iter.category : "unknown";
           cats[cat].items.push({
             "title"   : iter.label,
-            "icon"    : iter.icon,
+            "icon"    : iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_16, iter.icon),
             "method"  : (function(app) {
               return function() {
                 API.system.launch(app);
@@ -1346,7 +1346,7 @@
           });
         },
 
-        'packages' : function() {
+        'packages' : function(icons) {
           var activated = _Settings._get("system.installed.packages", false, true);
           var result = [];
 
@@ -1362,7 +1362,8 @@
                 active    : in_array(ia, activated),
                 type      : 'Application',
                 locked    : iter.category == "system",
-                icon      : iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_32, iter.icon),
+                icon      : iter.icon,
+                icon      : (icons ? (iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_32, iter.icon)) : iter.icon),
                 category  : iter.category
               });
             }
