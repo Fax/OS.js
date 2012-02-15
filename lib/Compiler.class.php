@@ -114,7 +114,7 @@ class Compiler
       $project_category     = ((string) $xml['category']);
       $project_enabled      = true;
       $project_title        = Application::APPLICATION_TITLE;
-      $project_titles       = Array(DEFAULT_LANGUAGE => $project_title);
+      $project_titles       = Array();
       $project_icon         = Application::APPLICATION_ICON;
       $project_system       = false;
       $project_compability  = Array();
@@ -185,6 +185,10 @@ class Compiler
             }
             break;
         }
+      }
+
+      if ( !isset($project_titles[DEFAULT_LANGUAGE]) ) {
+        $project_titles[DEFAULT_LANGUAGE] = $project_title;
       }
 
       // Skip application
