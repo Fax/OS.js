@@ -282,5 +282,5 @@ $doc = <<<EOHTML
 </html>
 EOHTML;
 
-file_put_contents(sprintf("%s/javascript/%s", PATH_PROJECT_DOC, "index.html"), $doc);
+file_put_contents(sprintf("%s/javascript/%s", PATH_DOC, "index.html"), $doc);
 ?>

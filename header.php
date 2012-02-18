@@ -72,13 +72,13 @@ define("PATH_BUILD",         PATH . "/src/build");
 define("PATH_LOCALE",        PATH . "/src/locale");
 define("PATH_LOG",           PATH . "/logs");
 define("PATH_LOG_FILE",      PATH . "/logs/messages");
-define("PATH_APPS",          PATH . "/src/apps");
+define("PATH_PACKAGES",      PATH . "/src/packages");
 define("PATH_RESOURCES",     PATH . "/src/resources");
 define("PATH_JSBASE",        PATH . "/src/base");
 define("PATH_JSLOCALE",      PATH . "/src/base/locale");
 
 define("MINIMIZE_CACHE",     PATH_BUILD   . "/minimize.cache");
-define("APPLICATION_BUILD",  PATH_BUILD   . "/applications.xml");
+define("PACKAGE_BUILD",      PATH_BUILD   . "/packages.xml");
 define("DATABASE_FILE",      PATH_BUILD   . "/database.sdb");
 define("MIME_MAGIC",         PATH_VENDOR  . "/mime.mgc");
 

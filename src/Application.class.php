@@ -106,7 +106,7 @@ abstract class Application
         $aargs    = isset($instance['args']) ? $instance['args'] : Array();
         $action   = $instance['action'];
 
-        Application::init(APPLICATION_BUILD, $cname);
+        Package::Load(Package::TYPE_APPLICATION, $cname);
 
         if ( class_exists($cname) ) {
           return $cname::Event($uuid, $action, $aargs);
@@ -198,7 +198,7 @@ abstract class Application
             "system"    => $app_system*/
           );
 
-          require_once PATH_APPS . "/{$app_class}/{$app_file}";
+          require_once PATH_PACKAGES . "/{$app_class}/{$app_file}";
         }
       }
     }

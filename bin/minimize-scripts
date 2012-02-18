@@ -11,13 +11,13 @@
 require "header.php";
 
 if ( !class_exists("Application") ) {
-  require PATH_PROJECT_SRC . "/Application.class.php";
+  require PATH_SRC . "/Application.class.php";
 }
 if ( !class_exists("Panel") ) {
-  require PATH_PROJECT_SRC . "/Panel.class.php";
+  require PATH_SRC . "/Panel.class.php";
 }
 if ( !class_exists("Dialog") ) {
-  require PATH_PROJECT_SRC . "/Dialog.class.php";
+  require PATH_SRC . "/Dialog.class.php";
 }
 
 $total_before = 0;
@@ -46,7 +46,7 @@ function compress_list($itype, $files) {
     if ( $itype == 3 ) {
       $path = PATH_JSLOCALE . "/{$file}";
     } else if ( $itype == 2 ) {
-      $path = PATH_APPS . "/{$file}";
+      $path = PATH_PACKAGES . "/{$file}";
     } else if ( $itype == 1 ) {
       $path = PATH_RESOURCES . "/{$file}";
     } else {
@@ -71,8 +71,8 @@ function compress_list($itype, $files) {
       }
 
       // Minimize commands
-      $cmd  = PATH_PROJECT_BIN . "/yui.sh";
-      $cmd  = sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_PROJECT_BIN, PATH_PROJECT_VENDOR);
+      $cmd  = PATH_BIN . "/yui.sh";
+      $cmd  = sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_BIN, PATH_VENDOR);
 
       $tmp_path = "/tmp/OSjs-minimize";
       $content = file_get_contents($path);
@@ -114,7 +114,7 @@ function compress_list($itype, $files) {
       if ( $itype === 3 ) {
         $out_path = PATH_JSLOCALE . "/" . dirname($file) . "/_min/" . basename($file) ;
       } else if ( $itype === 2 ) {
-        $out_path = PATH_APPS . "/" . dirname($file) . "/_min/" . basename($file) ;
+        $out_path = PATH_PACKAGES . "/" . dirname($file) . "/_min/" . basename($file) ;
       } else if ( $itype === 1 ) {
         $out_path = PATH_RESOURCES . "/_min/" . basename($file);
       } else {
@@ -149,7 +149,7 @@ foreach ( Dialog::$Registered as $n => $v ) {
 }
 
 // Read registered applications
-if ( $xml = file_get_contents(APPLICATION_BUILD) ) {
+if ( $xml = file_get_contents(PACKAGE_BUILD) ) {
   if ( $xml = new SimpleXmlElement($xml) ) {
     foreach ( $xml->application as $app ) {
       $app_name     = (string) $app['class'];

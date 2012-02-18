@@ -185,7 +185,7 @@ EOCSS;
     if ( $compress ) {
       if ( $resource ) {
         if ( $app ) {
-          $path = sprintf("%s/%s/_min/%s", PATH_APPS, $application, $res);
+          $path = sprintf("%s/%s/_min/%s", PATH_PACKAGES, $application, $res);
         } else {
           $path = sprintf("%s/_min/%s", PATH_RESOURCES, $res);
         }
@@ -195,7 +195,7 @@ EOCSS;
     } else {
       if ( $resource ) {
         if ( $app ) {
-          $path = sprintf("%s/%s/%s", PATH_APPS, $application, $res);
+          $path = sprintf("%s/%s/%s", PATH_PACKAGES, $application, $res);
         } else {
           $path = sprintf("%s/%s", PATH_RESOURCES, $res);
         }

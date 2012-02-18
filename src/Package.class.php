@@ -78,7 +78,7 @@ abstract class Package
     switch ( (int) $type ) {
       case self::TYPE_APPLICATION :
         if ( !isset(self::$PackageRegister[$type][$name]) ) {
-          if ( $p = Application::init(APPLICATION_BUILD, $name) ) {
+          if ( $p = Application::init(PACKAGE_BUILD, $name) ) {
             self::$PackageRegister[$type][$name] = $p[$name];
           } else {
             throw new Exception("Cannot Load '{$name}'!");
@@ -100,7 +100,7 @@ abstract class Package
     switch ( (int) $type ) {
       case self::TYPE_APPLICATION :
         if ( !self::$_LoadedApplications ) {
-          if ( $p = Application::init(APPLICATION_BUILD) ) {
+          if ( $p = Application::init(PACKAGE_BUILD) ) {
             foreach ( $p as $k => $v ) {
               self::$PackageRegister[$type][$k] = $v;
             }

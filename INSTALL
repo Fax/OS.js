@@ -11,7 +11,7 @@ Requirements:
 
 Install Vendor Stuff:
 -------------------------------------------------------------------------------
-* Clone applications into src/apps/
+* Clone packages into src/packages/
 * Copy a X11's icon theme 16x16 and 32x32 folders into 'public_html/img/icons/'
 * 'exiftool' is required for some API stuff
 * 'pdf2svg' is required to read PDF files

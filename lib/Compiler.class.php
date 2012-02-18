@@ -31,12 +31,7 @@
  * @created 2012-01-26
  */
 
-if ( !class_exists("Glade") ) {
-  require "Glade.class.php";
-}
-if ( !class_exists("Application") ) {
-  require PATH_SRC . "/Application.class.php";
-}
+require_once "Glade.class.php";
 
 /**
  * Compiler -- Application Compiler main Class
@@ -344,8 +339,8 @@ class Compiler
    * @return  bool
    */
   public static function compileAll($dry_run = false, $root = null) {
-    $config = APPLICATION_BUILD;
-    $root   = ($root ? $root : PATH_APPS);
+    $config = PACKAGE_BUILD;
+    $root   = ($root ? $root : PATH_PACKAGES);
 
     if ( $dh  = opendir($root) ) {
       $compiler = new self();

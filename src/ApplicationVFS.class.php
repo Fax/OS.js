@@ -475,8 +475,8 @@ class ApplicationVFS
           "protected"  => 1
       );
 
-      Application::init(APPLICATION_BUILD);
-      foreach ( Application::$Registered as $c => $opts ) {
+      Package::LoadAll(Package::TYPE_APPLICATION);
+      foreach ( Package::$PackageRegister[Package::TYPE_APPLICATION] as $c => $opts ) {
         $items["{$opts['title']} ($c)"] = Array(
           "path"       => "{$path}/{$c}",
           "size"       => 0,
