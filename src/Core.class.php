@@ -157,12 +157,6 @@ class Core
    * @return Mixed
    */
   public function doPOST($data, $is_raw = false) {
-    require "ApplicationVFS.class.php";
-    require "ApplicationAPI.class.php";
-    require "Application.class.php";
-    require "Panel.class.php";
-    require "Dialog.class.php";
-
     $args = Array();
 
     if ( $data && $is_raw ) {
@@ -736,10 +730,6 @@ class Core
     if ( is_array($locale) ) {
       $this->_aLocale = $locale;
     } else {
-      if ( !class_exists("SettingsManager") ) {
-        require "SettingsManager.class.php";
-      }
-
       $this->_aLocale = Array(
         "locale_location" => SettingsManager::$Settings['system.locale.location']['value'],
         "locale_date"     => SettingsManager::$Settings['system.locale.date-format']['value'],
