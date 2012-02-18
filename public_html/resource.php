@@ -70,8 +70,8 @@ if ( isset($_GET['cursor']) && !empty($_GET['cursor']) ) {
 
 if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
   $type = preg_match("/\.js$/", $_GET['resource']) ? "js" : "css";
-  $app  = isset($_GET['application']) ? $_GET['application'] : null;
-  if ( ($content = ResourceManager::getFile(true, $_GET['resource'], $app, ENV_PRODUCTION)) === false ) {
+  $pkg  = isset($_GET['package']) ? $_GET['package'] : null;
+  if ( ($content = ResourceManager::getFile(true, $_GET['resource'], $pkg, ENV_PRODUCTION)) === false ) {
     header("HTTP/1.0 404 Not Found");
     exit;
   }

@@ -171,21 +171,21 @@ EOCSS;
    * Get a resource file (CSS or JS) [with compression]
    * @param  bool     $resource     Resource file?
    * @param  String   $input        Filename
-   * @param  String   $application  Application name (If any)
+   * @param  String   $package      Package name (If any)
    * @param  bool     $compress     Enable Compression
    * @return Mixed
    */
-  public static function getFile($resource, $input, $application, $compress) {
+  public static function getFile($resource, $input, $package, $compress) {
     $content = "";
 
     $res   = preg_replace("/\.+/", ".", preg_replace("/[^a-zA-Z0-9\.]/", "", $input));
-    $app   = $application ? preg_replace("/[^a-zA-Z0-9]/", "", $application) : null;
+    $pkg   = $package ? preg_replace("/[^a-zA-Z0-9]/", "", $package) : null;
     $type  = preg_match("/\.js$/", $res) ? "js" : "css";
 
     if ( $compress ) {
       if ( $resource ) {
-        if ( $app ) {
-          $path = sprintf("%s/%s/_min/%s", PATH_PACKAGES, $application, $res);
+        if ( $pkg ) {
+          $path = sprintf("%s/%s/_min/%s", PATH_PACKAGES, $package, $res);
         } else {
           $path = sprintf("%s/_min/%s", PATH_RESOURCES, $res);
         }
@@ -194,8 +194,8 @@ EOCSS;
       }
     } else {
       if ( $resource ) {
-        if ( $app ) {
-          $path = sprintf("%s/%s/%s", PATH_PACKAGES, $application, $res);
+        if ( $pkg ) {
+          $path = sprintf("%s/%s/%s", PATH_PACKAGES, $package, $res);
         } else {
           $path = sprintf("%s/%s", PATH_RESOURCES, $res);
         }

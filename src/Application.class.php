@@ -106,7 +106,7 @@ abstract class Application
         $aargs    = isset($instance['args']) ? $instance['args'] : Array();
         $action   = $instance['action'];
 
-        Package::Load(Package::TYPE_APPLICATION, $cname);
+        Package::Load($cname, Package::TYPE_APPLICATION);
 
         if ( class_exists($cname) ) {
           return $cname::Event($uuid, $action, $aargs);
