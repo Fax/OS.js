@@ -103,14 +103,18 @@ require "lib/Logger.class.php";
 require "lib/DB.class.php";
 require "lib/DBObject.class.php";
 
-// Misc Initialization
-date_default_timezone_set(DEFAULT_TIMEZONE);
-
 // Autoloading
 spl_autoload_register(function($cn) {
   if ( !class_exists($cn) )
     require PATH_SRC . "/{$cn}.class.php";
 });
+
+//
+// Default initialization
+//
+
+// Misc Initialization
+date_default_timezone_set(DEFAULT_TIMEZONE);
 
 DB::init();
 

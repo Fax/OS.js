@@ -254,7 +254,7 @@ class Core
   protected static final function _doPackageOperation(Array $args, Array &$json, Core $inst = null) {
     if ( $user = $inst->getUser() ) {
       // Initialize Application configbase
-      Application::init(APPLICATION_BUILD);
+      Package::LoadAll(Package::TYPE_APPLICATION, $user);
 
       $json['success'] = true;
       $json['result']  = $args;
@@ -271,7 +271,7 @@ class Core
   protected static final function _doCacheUpdate(Array $args, Array &$json, Core $inst = null) {
     if ( $user = $inst->getUser() ) {
       // Initialize Application configbase
-      Application::init(APPLICATION_BUILD);
+      Package::LoadAll(Package::TYPE_APPLICATION, $user);
 
       $json['success'] = true;
       $json['result']  = Array(
@@ -292,7 +292,7 @@ class Core
     $browser_language = self::_getBrowserLanguage();
 
     // Initialize Application configbase
-    Application::init(APPLICATION_BUILD);
+    Package::LoadAll(Package::TYPE_APPLICATION);
 
     if ( $user = $inst->getUser() ) {
       $installed_packages = Core::getInstalledPackages();
@@ -499,10 +499,14 @@ class Core
    * @return void
    */
   protected static final function _doApplicationLoad(Array $args, Array &$json, Core $inst = null) {
-    if ( $app = Application::Load($args['app']) ) {
-      $json['success'] = true;
-      $json['result']  = $app;
-      $json['error']   = null;
+    if ( $app = Package::Load($args['app'], Package::TYPE_APPLICATION) ) {
+      try {
+        $json['success'] = true;
+        $json['result']  = $app->getJSON();
+        $json['error']   = null;
+      } catch ( Exception $e ) {
+        $json['error'] = $e->getMessage();
+      }
     } else {
       $json['error'] = sprintf(_("Application '%s' does not exist"), $args['app']);
     }
@@ -703,8 +707,8 @@ class Core
    */
   public final static function getInstalledPackages() {
     return Array(
-      "Application" => Application::$Registered,
-      "PanelItem"   => Panel::$Registered
+      "Application" => Package::$PackageRegister[Package::TYPE_APPLICATION],
+      "PanelItem"   => Panel::$Registered // FIXME
     );
   }
 

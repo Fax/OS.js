@@ -39,6 +39,7 @@
  * @class
  */
 abstract class Application
+  extends      Package
 {
   const APPLICATION_TITLE   = __CLASS__;
   const APPLICATION_ICON    = "emblems/emblem-unreadable.png";
@@ -49,11 +50,6 @@ abstract class Application
 
   private $_sUUID = "";                   //!< Application's UUUID
 
-  /**
-   * @var Registered Applications
-   */
-  public static $Registered = Array();
-
   /////////////////////////////////////////////////////////////////////////////
   // MAGICS
   /////////////////////////////////////////////////////////////////////////////
@@ -63,37 +59,13 @@ abstract class Application
    */
   public function __construct() {
     $this->_sUUID = UUID::v4();
+
+    parent::__construct(Package::TYPE_APPLICATION);
   }
 
   /////////////////////////////////////////////////////////////////////////////
   // CLASS METHODS
   /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Event performed by AJAX
-   * @param  String     $uuid         Application UUID
-   * @param  String     $action       Application Action
-   * @param  Array      $args         Action Arguments
-   * @return Mixed
-   */
-  public static function Event($uuid, $action, Array $args) {
-    return Array();
-  }
-
-  /**
-   * Load an application
-   * @param  String     $classname      Class-name to use
-   * @return Mixed
-   */
-  public static function Load($classname) {
-    Application::init(APPLICATION_BUILD, $classname);
-    if ( class_exists($classname) ) {
-      $instance = new $classname();
-      return $instance->getJSON();
-    }
-
-    return false;
-  }
 
   /**
    * Register an application
@@ -103,7 +75,6 @@ abstract class Application
    */
   public static function Register($uuid, $instance) {
     if ( $uuid ) {
-      //$_SESSION[$uuid] = $instance;
       return true;
     }
     return false;
@@ -116,7 +87,6 @@ abstract class Application
    */
   public static function Flush($uuid) {
     if ( $uuid ) {
-      //unset($_SESSION[$uuid]);
       return true;
     }
     return false;
@@ -154,7 +124,7 @@ abstract class Application
    * @return void
    */
   public static function init($config, $classname = null) {
-    $return = null;
+    $return = Array();
 
     // Parse application data
     if ( $xml = file_get_contents($config) ) {
@@ -215,7 +185,7 @@ abstract class Application
             }
           }
 
-          $return = Array(
+          $return[$app_class] = Array(
             "name"      => $app_name,
             "title"     => $app_title,
             "titles"    => $app_titles,
@@ -228,15 +198,9 @@ abstract class Application
             "system"    => $app_system*/
           );
 
-          Application::$Registered[$app_class] = $return;
-
           require_once PATH_APPS . "/{$app_class}/{$app_file}";
         }
       }
-
-      ksort(Application::$Registered);
-    } else {
-      die("Failed to read application build-data!");
     }
 
     return $return;
@@ -247,14 +211,10 @@ abstract class Application
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Get Application JSON data
-   * @return Array
+   * @see Package::getJSON()
    */
   public function getJSON() {
-    $cname = get_class($this);
-    $reg   = self::$Registered[$cname];
-
-    return array_merge(Array("uuid" => $this->_sUUID), $reg);
+    return array_merge(Array("uuid" => $this->_sUUID), parent::getJSON());
   }
 
 }
