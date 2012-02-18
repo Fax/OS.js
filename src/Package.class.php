@@ -50,6 +50,9 @@ abstract class Package
     self::TYPE_PANELITEM    => Array()
   );
 
+  protected static $_LoadedApplications = false;
+  protected static $_LoadedPanelItems = false;
+
   /////////////////////////////////////////////////////////////////////////////
   // MAGICS
   /////////////////////////////////////////////////////////////////////////////
@@ -74,10 +77,12 @@ abstract class Package
   public static function Load($name, $type = -1, User $u = null) {
     switch ( (int) $type ) {
       case self::TYPE_APPLICATION :
-        if ( $p = Application::init(APPLICATION_BUILD, $name) ) {
-          self::$PackageRegister[$type][$name] = $p[$name];
-        } else {
-          throw new Exception("Cannot Load '{$name}'!");
+        if ( !isset(self::$PackageRegister[$type][$name]) ) {
+          if ( $p = Application::init(APPLICATION_BUILD, $name) ) {
+            self::$PackageRegister[$type][$name] = $p[$name];
+          } else {
+            throw new Exception("Cannot Load '{$name}'!");
+          }
         }
 
         return new $name();
@@ -94,10 +99,13 @@ abstract class Package
   public static function LoadAll($type = -1, User $u = null) {
     switch ( (int) $type ) {
       case self::TYPE_APPLICATION :
-        if ( $p = Application::init(APPLICATION_BUILD) ) {
-          foreach ( $p as $k => $v ) {
-            self::$PackageRegister[$type][$k] = $v;
+        if ( !self::$_LoadedApplications ) {
+          if ( $p = Application::init(APPLICATION_BUILD) ) {
+            foreach ( $p as $k => $v ) {
+              self::$PackageRegister[$type][$k] = $v;
+            }
           }
+          self::$_LoadedApplications = true;
         }
         break;
 
