@@ -105,7 +105,7 @@ class ApplicationAPI
    */
   public static function readPDF($fname, $page = -1) {
     if ( $path = ApplicationVFS::exists($fname, true) ) {
-      require PATH_PROJECT_LIB . "/PDF.class.php";
+      require PATH_LIB . "/PDF.class.php";
       if ( $ret = PDF::PDFtoSVG($path, $page) ) {
         return Array(
           "info" => PDF::PDFInfo($path),

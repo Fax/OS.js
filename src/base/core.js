@@ -2229,7 +2229,7 @@
     },
 
     /**
-     * Core::run() -- Main startup procedure
+     * Core::run() -- Main startup procedure wrapper
      * @return void
      */
     run : function() {
@@ -2239,129 +2239,26 @@
         return;
       }
 
-      var load    = $("#Loading");
-      var bar     = $("#LoadingBar");
+      console.group("Core::run()");
+      $("#Loading").show();
+
+      // Load initial data
       var date    = (new Date()).toLocaleString();
       var lang    = API.system.language();
 
-      console.group("Core::run()");
-
-      load.show();
-      bar.progressbar({value : 5});
-
-      // Load initial data
       DoPost({'action' : 'init', 'date' : date, 'language' : lang}, function(data) {
         if ( data.success ) {
-          self.running = true;
-          self.online  = true;
-
-          // Languages
-          _BrowserLanguage = data.result.config.browser_language;
-          _SystemLanguage  = data.result.config.system_language;
 
           // Initialize resources
           _Resources = new ResourceManager();
 
-          // Bind global events
-          $(document).bind("keydown",     self.global_keydown);
-          $(document).bind("mousedown",   self.global_mousedown);
-          $(document).bind("mouseup",     self.global_mouseup);
-          $(document).bind("mousemove",   self.global_mousemove);
-          $(document).bind("click",       self.global_click);
-          $(document).bind("dblclick",    self.global_dblclick);
-          $(document).bind("contextmenu", self.global_contextmenu);
-          $(document).bind('touchmove',   self.global_touchmove, false);
-
-          /*window.addEventListener('offline', function(ev) {
-            self.global_offline(ev, !(navigator.onLine === false));
-          }, true);*/
-
-          this.olint = setInterval(function(ev) {
-            self.global_offline(ev, !(navigator.onLine === false));
-          }, ONLINECHK_FREQ);
-
-          // Set some global variables
-          if ( data.result.config ) {
-            ENABLE_CACHE = data.result.config.cache;
+          if ( data.result.cache.resources ) {
+            _Resources.addResources(data.result.cache.resources, null, function() {
+              self._run(data);
+            });
+          } else {
+            self._run(data);
           }
-
-          // Initialize settings
-          _Settings = new SettingsManager(data.result.settings, data.result.cache, data.result.config.stored_settings);
-
-          bar.progressbar({value : 10});
-
-          // Initialize desktop etc.
-          _Tooltip = new Tooltip();
-          _Desktop = new Desktop();
-          _WM      = new WindowManager();
-          bar.progressbar({value : 15});
-
-          // >>> Window Manager
-          bar.progressbar({value : 30});
-          try {
-            _WM.run();
-          } catch ( exception ) {
-            _WM.destroy(); // DESTROY IF FAILED
-
-            /*if ( exception instanceof OSjs.Classes.ProcessException ) {
-              alert(exception.getMessage() || exception);
-              return;
-            } else {
-              throw exception;
-            }
-            */
-            alert(sprintf(OSjs.Labels.CrashCoreRunService, "WindowManager", exception));
-          }
-
-          // >>> Desktop
-          bar.progressbar({value : 40});
-          try {
-            _Desktop.run();
-          } catch ( exception ) {
-            _Desktop.destroy(); // DESTROY IF FAILED
-
-            if ( exception instanceof OSjs.Classes.ProcessException ) {
-              var name  = exception.getProcessName();
-              var msg   = exception.getMessage();
-              var trace = exception.getStack();
-
-              _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [name, msg, trace]));
-            } else {
-              console.groupEnd();
-              throw exception;
-            }
-          }
-
-          // >>> Compability
-          bar.progressbar({value : 70});
-          if ( _Settings._get("user.first-run") === "true" ) {
-            LaunchString("API::CompabilityDialog");
-            _Settings._set("user.first-run", "false");
-          }
-
-          setTimeout(function() {
-            // >>> Session
-            bar.progressbar({value : 80});
-            API.session.restore();
-            bar.progressbar({value : 90});
-
-            // >>> Finished
-            setTimeout(function() {
-              setTimeout(function() {
-                load.fadeOut(ANIMATION_SPEED);
-
-                self.running = true;
-
-                // NOTE: Fixes global_keydown "not responding upon init" issues
-                $(document).focus();
-
-                bar.progressbar({value : 100});
-              }, 125);
-
-            }, 250); // <<< Finished
-
-          }, 500);
-
         } else {
           MessageBox(data.error);
         }
@@ -2371,6 +2268,129 @@
         alert("A network error occured while initializing OS.js: " + thrownError);
         throw("Initialization error: " + thrownError);
       });
+
+      this.online = true;
+    },
+
+    /**
+     * Core::_run() -- Main startup
+     * @return void
+     */
+    _run : function(data) {
+      var self = this;
+
+      if ( this.running ) {
+        return;
+      }
+
+      var load    = $("#Loading");
+      var bar     = $("#LoadingBar");
+
+      bar.progressbar({value : 5});
+
+      // Languages
+      _BrowserLanguage = data.result.config.browser_language;
+      _SystemLanguage  = data.result.config.system_language;
+
+      // Bind global events
+      $(document).bind("keydown",     this.global_keydown);
+      $(document).bind("mousedown",   this.global_mousedown);
+      $(document).bind("mouseup",     this.global_mouseup);
+      $(document).bind("mousemove",   this.global_mousemove);
+      $(document).bind("click",       this.global_click);
+      $(document).bind("dblclick",    this.global_dblclick);
+      $(document).bind("contextmenu", this.global_contextmenu);
+      $(document).bind('touchmove',   this.global_touchmove, false);
+
+      /*window.addEventListener('offline', function(ev) {
+        self.global_offline(ev, !(navigator.onLine === false));
+      }, true);*/
+
+      this.olint = setInterval(function(ev) {
+        self.global_offline(ev, !(navigator.onLine === false));
+      }, ONLINECHK_FREQ);
+
+      // Set some global variables
+      if ( data.result.config ) {
+        ENABLE_CACHE = data.result.config.cache;
+      }
+
+      // Initialize settings
+      _Settings = new SettingsManager(data.result.settings, data.result.cache, data.result.config.stored_settings);
+
+      bar.progressbar({value : 10});
+
+      // Initialize desktop etc.
+      _Tooltip = new Tooltip();
+      _Desktop = new Desktop();
+      _WM      = new WindowManager();
+      bar.progressbar({value : 15});
+
+      // >>> Window Manager
+      bar.progressbar({value : 30});
+      try {
+        _WM.run();
+      } catch ( exception ) {
+        _WM.destroy(); // DESTROY IF FAILED
+
+        /*if ( exception instanceof OSjs.Classes.ProcessException ) {
+          alert(exception.getMessage() || exception);
+          return;
+        } else {
+          throw exception;
+        }
+        */
+        alert(sprintf(OSjs.Labels.CrashCoreRunService, "WindowManager", exception));
+      }
+
+      // >>> Desktop
+      bar.progressbar({value : 40});
+      try {
+        _Desktop.run();
+      } catch ( exception ) {
+        _Desktop.destroy(); // DESTROY IF FAILED
+
+        if ( exception instanceof OSjs.Classes.ProcessException ) {
+          var name  = exception.getProcessName();
+          var msg   = exception.getMessage();
+          var trace = exception.getStack();
+
+          _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [name, msg, trace]));
+        } else {
+          console.groupEnd();
+          throw exception;
+        }
+      }
+
+      // >>> Compability
+      bar.progressbar({value : 70});
+      if ( _Settings._get("user.first-run") === "true" ) {
+        LaunchString("API::CompabilityDialog");
+        _Settings._set("user.first-run", "false");
+      }
+
+      setTimeout(function() {
+        // >>> Session
+        bar.progressbar({value : 80});
+        API.session.restore();
+        bar.progressbar({value : 90});
+
+        // >>> Finished
+        setTimeout(function() {
+          setTimeout(function() {
+            load.fadeOut(ANIMATION_SPEED);
+
+            // NOTE: Fixes global_keydown "not responding upon init" issues
+            $(document).focus();
+
+            bar.progressbar({value : 100});
+
+            self.running = true;
+          }, 125);
+
+        }, 250); // <<< Finished
+
+      }, 500);
     },
 
     //
@@ -2820,7 +2840,8 @@
         app = app || "";
         callback = callback || function() {};
 
-        if ( this.hasResource(res + (app ? (app + "/" + res) : "")) ) {
+        var _name = (app ? (app + "/" + res) : (res));
+        if ( this.hasResource(_name) ) {
           callback(false);
           return;
         }
@@ -2836,7 +2857,7 @@
             type    = type[type.length - 1];
 
         var onload_event = function(el) {
-          self.resources.push(res + (app ? (app + "/" + res) : ""));
+          self.resources.push(_name);
           self.links.push(el);
 
           callback(error);

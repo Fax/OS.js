@@ -161,6 +161,7 @@ class Core
     require "ApplicationAPI.class.php";
     require "Application.class.php";
     require "Panel.class.php";
+    require "Dialog.class.php";
 
     $args = Array();
 
@@ -302,9 +303,17 @@ class Core
     if ( $user = $inst->getUser() ) {
       $installed_packages = Core::getInstalledPackages();
 
+      $resources = Array();
+      foreach ( Dialog::$Registered as $name => $opts ) {
+        foreach ( $opts["resources"] as $res ) {
+          $resources[] = $res;
+        }
+      }
+
       $json = Array("success" => true, "error" => null, "result" => Array(
         "settings"      => User::getDefaultSettings($installed_packages),
         "cache"         => Array(
+          "resources"         => $resources,
           "packages"          => $installed_packages
         ),
         "config"        => Array(
@@ -555,7 +564,7 @@ class Core
    */
   protected static final function _doService(Array $args, Array &$json, Core $inst = null) {
     if ( !class_exists("Service") ) {
-      require PATH_PROJECT_LIB . "/Services.php";
+      require PATH_LIB . "/Services.php";
     }
 
     $iargs = $args['arguments'];
@@ -770,7 +779,7 @@ class Core
 
       // Gettext locale
       bind_textdomain_codeset(GETTEXT_DOMAIN, "UTF-8");
-      bindtextdomain(GETTEXT_DOMAIN, PATH_PROJECT_LOCALE);
+      bindtextdomain(GETTEXT_DOMAIN, PATH_LOCALE);
       textdomain(GETTEXT_DOMAIN);
     }
 

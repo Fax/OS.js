@@ -1,15 +1,5 @@
 <?php
 
-require PATH_PROJECT_SRC . "/Dialog.class.php";
-
-$str = '  <script type="text/javascript" src="/ajax/resource/%s"></script>';
-$resources = Array();
-foreach ( Dialog::$Registered as $name => $opts ) {
-  foreach ( $opts["resources"] as $res ) {
-    $resources[] = sprintf($str, $res);
-  }
-}
-
 $current_locale = DEFAULT_LANGUAGE;
 if ( $locale = Core::get()->getLocale() ) {
   $current_locale = $locale['locale_language'];
@@ -87,9 +77,6 @@ if ( $locale = Core::get()->getLocale() ) {
   <script type="text/javascript" src="/ajax/library/classes.js"></script>
   <script type="text/javascript" src="/ajax/library/core.js"></script>
   <script type="text/javascript" src="/ajax/library/main.js"></script>
-
-  <!-- OS.js sources -->
-<?php print implode("\n", $resources) . "\n"; ?>
 
   <!-- Google Analytics -->
 <?php if ( ENV_PRODUCTION ) { ?>

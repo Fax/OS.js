@@ -113,7 +113,7 @@ class ApplicationVFS
    * @return Array
    */
   protected static function _secure($filename, $path = null, $exists = true, $write = true) {
-    $base           = sprintf("%s/media", PATH_PROJECT_HTML);
+    $base           = sprintf("%s/media", PATH_HTML);
     $special_charsa = array("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
     $special_charsb = array("?", "[", "]", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
 
@@ -246,7 +246,7 @@ class ApplicationVFS
   public static function file_info($argv) {
     if ( $res = self::_secure($argv, null, true) ) {
       if ( file_exists($res["destination"]) ) {
-        $base = sprintf("%s/media", PATH_PROJECT_HTML);
+        $base = sprintf("%s/media", PATH_HTML);
 
         // Read MIME info
         $file = basename($res["destination"]);
@@ -371,7 +371,7 @@ class ApplicationVFS
   public static function extract_archive($arch, $dest) {
     if ( $res_a = self::_secure($arch, null, true) ) {
       if ( $res_d = self::_secure("foo", $dest, false) ) {
-        require PATH_PROJECT_LIB . "/Archive.php";
+        require PATH_LIB . "/Archive.php";
         if ( $a = Archive::open($res_a["destination"]) ) {
           return $a->extract(dirname($res_d["destination"]));
         }
@@ -387,7 +387,7 @@ class ApplicationVFS
    * @return Array
    */
   public static function ls_archive($arch, $path = "/") {
-    require PATH_PROJECT_LIB . "/Archive.php";
+    require PATH_LIB . "/Archive.php";
 
     $result = Array("dir" => Array(), "file" => Array());
 
@@ -446,7 +446,7 @@ class ApplicationVFS
       $ignores = Array(".", "..", ".gitignore", ".git", ".cvs");
     }
 
-    $base     = PATH_PROJECT_HTML . "/media";
+    $base     = PATH_HTML . "/media";
     $absolute = "{$base}{$path}";
 
     $apps = false;

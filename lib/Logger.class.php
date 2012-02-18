@@ -82,7 +82,7 @@ class Logger
    */
   public final static function get() {
     if ( !self::$__Instance ) {
-      self::$__Instance = new self(PATH_PROJECT_LOG_FILE);
+      self::$__Instance = new self(PATH_LOG_FILE);
     }
     return self::$__Instance;
   }

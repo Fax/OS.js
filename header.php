@@ -61,26 +61,26 @@ define("SERVER_NONBLOCK", false); // TODO
 // Paths
 //
 
-define("PATH_PROJECT",               dirname(__FILE__));
-define("PATH_PROJECT_DOC",           PATH_PROJECT         . "/doc");
-define("PATH_PROJECT_BIN",           PATH_PROJECT         . "/bin");
-define("PATH_PROJECT_SRC",           PATH_PROJECT         . "/src");
-define("PATH_PROJECT_LIB",           PATH_PROJECT         . "/lib");
-define("PATH_PROJECT_VENDOR",        PATH_PROJECT         . "/vendor");
-define("PATH_PROJECT_HTML",          PATH_PROJECT         . "/public_html");
-define("PATH_PROJECT_BUILD",         PATH_PROJECT         . "/src/build");
-define("PATH_PROJECT_LOCALE",        PATH_PROJECT         . "/src/locale");
-define("PATH_PROJECT_LOG",           PATH_PROJECT         . "/logs");
-define("PATH_PROJECT_LOG_FILE",      PATH_PROJECT         . "/logs/messages");
-define("PATH_APPS",                  PATH_PROJECT         . "/src/apps");
-define("PATH_RESOURCES",             PATH_PROJECT         . "/src/resources");
-define("PATH_JSBASE",                PATH_PROJECT         . "/src/base");
-define("PATH_JSLOCALE",              PATH_PROJECT         . "/src/base/locale");
+define("PATH",               dirname(__FILE__));
+define("PATH_DOC",           PATH . "/doc");
+define("PATH_BIN",           PATH . "/bin");
+define("PATH_SRC",           PATH . "/src");
+define("PATH_LIB",           PATH . "/lib");
+define("PATH_VENDOR",        PATH . "/vendor");
+define("PATH_HTML",          PATH . "/public_html");
+define("PATH_BUILD",         PATH . "/src/build");
+define("PATH_LOCALE",        PATH . "/src/locale");
+define("PATH_LOG",           PATH . "/logs");
+define("PATH_LOG_FILE",      PATH . "/logs/messages");
+define("PATH_APPS",          PATH . "/src/apps");
+define("PATH_RESOURCES",     PATH . "/src/resources");
+define("PATH_JSBASE",        PATH . "/src/base");
+define("PATH_JSLOCALE",      PATH . "/src/base/locale");
 
-define("MINIMIZE_CACHE",             PATH_PROJECT_BUILD   . "/minimize.cache");
-define("APPLICATION_BUILD",          PATH_PROJECT_BUILD   . "/applications.xml");
-define("DATABASE_FILE",              PATH_PROJECT_BUILD   . "/database.sdb");
-define("MIME_MAGIC",                 PATH_PROJECT_VENDOR  . "/mime.mgc");
+define("MINIMIZE_CACHE",     PATH_BUILD   . "/minimize.cache");
+define("APPLICATION_BUILD",  PATH_BUILD   . "/applications.xml");
+define("DATABASE_FILE",      PATH_BUILD   . "/database.sdb");
+define("MIME_MAGIC",         PATH_VENDOR  . "/mime.mgc");
 
 //
 // Database

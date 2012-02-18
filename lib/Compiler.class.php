@@ -35,7 +35,7 @@ if ( !class_exists("Glade") ) {
   require "Glade.class.php";
 }
 if ( !class_exists("Application") ) {
-  require PATH_PROJECT_SRC . "/Application.class.php";
+  require PATH_SRC . "/Application.class.php";
 }
 
 /**
@@ -124,10 +124,10 @@ class Compiler
       $class_name           = str_replace(".class.php", "", $project_php);
 
       // Paths
-      $out_css      = PATH_PROJECT_BUILD . "/apps/{$class_name}.css";
-      $out_php      = PATH_PROJECT_BUILD . "/apps/{$class_name}.class.php";
-      $out_js       = PATH_PROJECT_BUILD . "/apps/{$class_name}.js";
-      $out_html     = PATH_PROJECT_BUILD . "/apps/{$class_name}.html";
+      $out_css      = PATH_BUILD . "/apps/{$class_name}.css";
+      $out_php      = PATH_BUILD . "/apps/{$class_name}.class.php";
+      $out_js       = PATH_BUILD . "/apps/{$class_name}.js";
+      $out_html     = PATH_BUILD . "/apps/{$class_name}.html";
       $php_path     = str_replace("metadata.xml", $project_php, $metadata_path);
       $schema_path  = null;
 
