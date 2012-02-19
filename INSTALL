@@ -19,6 +19,7 @@ Install Vendor Stuff:
 First run:
 -------------------------------------------------------------------------------
 * chown the 'public_html/media' directory to Apache user/group (recursive)
+* remove all ".gitignore" files in 'public_html/media' (recursive)
 * chown the 'logs' directory to Apache user/group
 
 Update to latest revision:
