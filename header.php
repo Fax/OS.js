@@ -73,8 +73,8 @@ define("PATH_LOCALE",        PATH . "/src/locale");
 define("PATH_LOG",           PATH . "/logs");
 define("PATH_LOG_FILE",      PATH . "/logs/messages");
 define("PATH_PACKAGES",      PATH . "/src/packages");
-define("PATH_JSBASE",        PATH . "/src/base");
-define("PATH_JSLOCALE",      PATH . "/src/base/locale");
+define("PATH_JSBASE",        PATH . "/src/javascript");
+define("PATH_JSLOCALE",      PATH . "/src/javascript/locale");
 
 define("MINIMIZE_CACHE",     PATH_BUILD   . "/minimize.cache");
 define("PACKAGE_BUILD",      PATH_BUILD   . "/packages.xml");
