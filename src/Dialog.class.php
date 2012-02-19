@@ -39,6 +39,7 @@
  * @class
  */
 abstract class Dialog
+  extends CoreObject
 {
 
   /**

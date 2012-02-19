@@ -38,7 +38,8 @@
  * @package OSjs.Sources.Core
  * @class
  */
-class ApplicationAPI
+abstract class ApplicationAPI
+  extends CoreObject
 {
 
   /**

@@ -123,7 +123,6 @@ require "lib/Functions.php";
 require "lib/JSON.class.php";
 require "lib/Logger.class.php";
 require "lib/DB.class.php";
-require "lib/DBObject.class.php";
 
 // Autoloading
 spl_autoload_register(function($cn) {
@@ -134,6 +133,8 @@ spl_autoload_register(function($cn) {
 //
 // Default initialization
 //
+
+abstract class CoreObject {}
 
 // Misc Initialization
 date_default_timezone_set(DEFAULT_TIMEZONE);

@@ -38,7 +38,8 @@
  * @package OSjs.Sources.Core
  * @class
  */
-class SettingsManager
+abstract class SettingsManager
+  extends CoreObject
 {
   /**
    * @var Default Settings

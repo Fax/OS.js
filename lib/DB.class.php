@@ -71,6 +71,124 @@ class DB
     return call_user_func_array(Array($this->__connection, $func), $args);
   }
 
+  public final static function Insert($table, Array $args, $dsn = null) {
+    if ( $inst = self::get($dsn) ) {
+      if ( $db = $inst->getConnection() ) {
+        $query_columns = Array();
+        $query_values  = Array();
+        $values = Array();
+
+        foreach ( $args as $k => $v ) {
+          $query_columns[] = "`$k`";
+          $query_values[]  = ":$k";
+          $values[$k] = $v;
+        }
+
+        $query  = sprintf("INSERT INTO `%s` (%s) VALUES(%s);", $table, implode(", ", $query_columns), implode(", ", $query_values));
+        if ( $sth = $db->prepare($query) ) {
+          if ( $res = $sth->execute($values) ) {
+            if ( $id = $db->lastInsertId() ) {
+              return $id;
+            }
+
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
+  public final static function Update($table, Array $args, Array $where, $dsn = null) {
+    if ( $inst = self::get($dsn) ) {
+      if ( $db = $inst->getConnection() ) {
+        $query_set    = Array();
+        $query_where  = Array();
+        $values = Array();
+
+        foreach ( $args as $k => $v ) {
+          $query_set[] = "`$k` = :$k";
+          $values[$k] = $v;
+        }
+        foreach ( $where as $k => $v ) {
+          $query_where[] = "`$k` = :$k";
+          $values[$k] = $v;
+        }
+
+        $query  = sprintf("UPDATE `%s` SET %s WHERE %s;", implode(", ", $query_set), implode(" AND ", $query_where));
+        if ( $sth = $db->prepare($query) ) {
+          if ( $res = $sth->execute($values) ) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
+  public final static function Select($table, $what, Array $where, $limit = null, $dsn = null) {
+    $results = Array();
+
+    if ( $inst = self::get($dsn) ) {
+      if ( $db = $inst->getConnection() ) {
+        $query_select = Array();
+        $query_where  = Array();
+        $query_limit  = ($limit === null) ? "" : "LIMIT {$limit}";
+        $values = Array();
+
+        if ( $what === "*" ) {
+          $query_select[] = "*";
+        } else if ( is_array($what) ) {
+          foreach ( $what as $k ) {
+            $query_select[] = "`$k`";
+          }
+        }
+
+        foreach ( $where as $k => $v ) {
+          $query_where[] = "`$k` = :$k";
+          $values[$k] = $v;
+        }
+
+        $query  = sprintf("SELECT %s FROM `%s` WHERE %s %s;", implode(", ", $query_select), $table, implode(" AND ", $query_where), $query_limit);
+        if ( $sth = $db->prepare($query) ) {
+          if ( $res = $sth->execute($values) ) {
+            if ( $sqlr = $sth->fetchAll(PDO::FETCH_ASSOC) ) {
+              $results = (Array) $sqlr;
+            }
+          }
+        }
+      }
+    }
+
+    return $results ? ($limit === 1 ? reset($results) : $results) : false;
+  }
+
+  public final static function Delete($table, Array $where, $limit = null, $dsn = null) {
+    if ( $inst = self::get($dsn) ) {
+      if ( $db = $inst->getConnection() ) {
+        $query_where  = Array();
+        $query_limit  = ($limit === null) ? "" : "LIMIT {$limit}";
+        $values = Array();
+
+        foreach ( $where as $k => $v ) {
+          $query_where[] = "`$k` = :$k";
+          $values[$k] = $v;
+        }
+
+        $query  = sprintf("DELETE FROM `%s` WHERE %s %s;", $table, implode(" AND ", $query_where), $query_limit);
+        if ( $sth = $db->prepare($query) ) {
+          if ( $res = $sth->execute($values) ) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
   /**
    * Create a new DB connection
    * @param   String    $dsn        Database connection string (PDO/Mongo syntax)

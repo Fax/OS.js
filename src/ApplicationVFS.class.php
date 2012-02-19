@@ -38,7 +38,8 @@
  * @package OSjs.Sources.Core
  * @class
  */
-class ApplicationVFS
+abstract class ApplicationVFS
+  extends CoreObject
 {
 
   /////////////////////////////////////////////////////////////////////////////

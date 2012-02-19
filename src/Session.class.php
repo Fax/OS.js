@@ -26,6 +26,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
  * @created 2012-02-19
  */
 
@@ -37,19 +39,56 @@
  * @see     DBObject
  * @class
  */
-class Session extends DBObject {
-  public static $Table = "session";
-  public static $Columns = Array(
-    "id"            => "int",
-    "user_id"       => "int",
-    "session_name"  => "str",
-    "session_config"  => "str",
-    "created_at"    => "date",
-    "modified_at"   => "date"
-  );
+class Session
+  extends CoreObject {
+
+  /////////////////////////////////////////////////////////////////////////////
+  // VARIABLES
+  /////////////////////////////////////////////////////////////////////////////
+
+  public $id              = -1;
+  public $user_id         = -1;
+  public $session_name    = "Undefined";
+  public $session_config  = "{}";
+  public $created_at      = null;
+
+  /////////////////////////////////////////////////////////////////////////////
+  // MAGICS
+  /////////////////////////////////////////////////////////////////////////////
+
+  public final function __construct(Array $data) {
+    foreach ( $data as $k => $v ) {
+      $this->$k = $v;
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // STATIC METHODS
+  /////////////////////////////////////////////////////////////////////////////
+
+  public static function save(Session $instance) {
+    $values = Array();
+    foreach ( $instance as $k => $v ) {
+      $values[$k] = $v;
+    }
+
+    if ( isset($instance->id) && $instance->id ) {
+      if ( DB::Update("session", $values, Array("id" => $instance->id)) ) {
+        return $instance;
+      }
+    } else {
+      if ( $id = DB::Insert("session", $values) ) {
+        $instance->id = $id;
+        return $instance;
+      }
+    }
+    return false;
+  }
 
   public static function getBySnapshot($uid, $name) {
-    return self::getByColumn(null, null, null, Array("user_id" => $uid, "session_name" => $name), 1);
+    if ( $res = DB::Select("session", "*", Array("user_id" => $uid, "session_name" => $name), 1) ) {
+      return new Session($res);
+    }
   }
 }
 

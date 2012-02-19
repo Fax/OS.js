@@ -39,7 +39,8 @@
  * @see     DBObject
  * @class
  */
-class User extends DBObject {
+class User
+  extends CoreObject {
 
   const GROUP_NONE        = 0;
   const GROUP_GUEST       = 1;
@@ -50,22 +51,21 @@ class User extends DBObject {
   // VARIABLES
   /////////////////////////////////////////////////////////////////////////////
 
-  public static $Table = "user";
-  public static $Columns = Array(
-    "id"          => "int",
-    "username"    => "str",
-    "password"    => "str",
-    "privilege"   => "int",
-    "real_name"   => "str",
-    "created_at"  => "date",
-    "settings"    => "str"
-  );
+  public $id          = -1;
+  public $username    = "Undfined";
+  public $password    = "";
+  public $privilege   = self::GROUP_NONE;
+  public $real_name   = "Undefined";
+  public $settings    = "{}";
 
   /////////////////////////////////////////////////////////////////////////////
   // MAGICS
   /////////////////////////////////////////////////////////////////////////////
 
-  public final function __construct() {
+  public final function __construct(Array $data) {
+    foreach ( $data as $k => $v ) {
+      $this->$k = $v;
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -84,7 +84,7 @@ class User extends DBObject {
 
   public final function saveUser(Array $session, Array $settings) {
     $this->settings = JSON::encode($settings);
-    if ( User::save($this, null, "id") ) {
+    if ( User::save($this) ) {
       $this->settings = $settings;
       return true;
     }
@@ -93,11 +93,12 @@ class User extends DBObject {
   }
 
   public final function snapshotSave($name, $config) {
-    $sess               = new Session();
-    $sess->user_id      = $this->id;
-    $sess->session_name = $name;
-    $sess->session_config = JSON::encode($config);
-    $sess->created_at   = time();
+    $sess               = new Session(Array(
+      "user_id"         => $this->id,
+      "session_name"    => $name,
+      "session_config"  => JSON::encode($config),
+      "created_at"      => time()
+    ));
 
     if ( $sess = Session::save($sess) ) {
       return $sess;
@@ -127,17 +128,43 @@ class User extends DBObject {
   /////////////////////////////////////////////////////////////////////////////
 
   public static function createDefault() {
-    $u = new self();
-    $u->username    = "Guest";
-    $u->password    = "";
-    $u->privilege   = 1;
-    $u->real_name   = "Guest User";
-
-    return $u;
+    return new self(Array(
+      "username"    => "Guest",
+      "password"    => "",
+      "privilege"   => 1,
+      "real_name"   => "Guest User"
+    ));
   }
 
-  public static function getByUsername($username, DB $db = null) {
-    return self::getByColumn($db, null, null, Array("username" => $username), 1);
+  public static function save(User $instance) {
+    $values = Array();
+    foreach ( $instance as $k => $v ) {
+      $values[$k] = $v;
+    }
+
+    if ( isset($user->id) && $user->id ) {
+      if ( DB::Update("user", $values, Array("id" => $user->id)) ) {
+        return $instance;
+      }
+    } else {
+      if ( $id = DB::Insert("user", $values) ) {
+        $instance->id = $id;
+        return $instance;
+      }
+    }
+    return false;
+  }
+
+  public static function getById($id) {
+    if ( $res = DB::Select("user", "*", Array("id" => $id), 1) ) {
+      return new User($res);
+    }
+  }
+
+  public static function getByUsername($username) {
+    if ( $res = DB::Select("user", "*", Array("username" => $username), 1) ) {
+      return new User($res);
+    }
   }
 
   public static function getDefaultSettings($packages) {

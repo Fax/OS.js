@@ -39,6 +39,7 @@
  * @class
  */
 abstract class Package
+  extends CoreObject
 {
   const TYPE_APPLICATION  = 1;
   const TYPE_PANELITEM    = 2;
