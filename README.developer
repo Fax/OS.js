@@ -21,7 +21,7 @@ public_html/             Apache Public directory
   [index.php]               Main PHP script
   [help.php]                Help file (Reads the README file)
 src/                    Main sources
-  apps/                   Application build files (XML, Glade and PHP)
+  packages/               Packages build files (XML, Glade and PHP)
   base/                   Core JavaScript, CSS and Templates
     [init.js]               OS.js Namespace init
     [core.js]               OS.js Core
@@ -30,10 +30,11 @@ src/                    Main sources
     [theme.*.js]            Theme stylesheet(s)
     [cursor.*.js]           Cursor stylesheet(s)
     [template.php]          HTML Template
+    locale/               Core Locales
   build/                  Compiled files
     apps/                   Application compiler output files
-    [applications.xml]      Compiled application XML metadata
-  resources/              Application resource files (CSS, JavaScript)
+    [packages.xml]          Compiled package XML metadata
+  resources/              Core resource files (CSS, JavaScript)
 vendor/                 Vendor libraries
   [yuicompressor-*.jar]   Yahoo Script Compressor
 [header.php]            PHP Bootstrap, configurations
@@ -50,12 +51,12 @@ Building applications:
 Look at the example files to see how this is done.
 
 New Application:
-* Create Application directory in 'src/apps/ApplicationXXX/'
-* Create Glade Interface file, place in 'src/apps/ApplicationXXX.glade'
-* Create XML build-file, place in 'src/apps/ApplicationXXX.xml'
-* Copy 'src/build/ApplicationXXX.class.php' to 'src/apps/ApplicationXXX/'
-* Copy 'src/build/apps/ApplicationXXX.js' to 'src/apps/ApplicationXXX/main.js'
-* Copy 'src/build/apps/ApplicationXXX.css' to 'src/apps/ApplicationXXX/main.css'
+* Create Application directory in 'src/packages/ApplicationXXX/'
+* Create Glade Interface file, place in 'src/packages/ApplicationXXX.glade'
+* Create XML build-file, place in 'src/packages/ApplicationXXX.xml'
+* Copy 'src/build/ApplicationXXX.class.php' to 'src/packages/ApplicationXXX/'
+* Copy 'src/build/packages/ApplicationXXX.js' to 'src/packages/ApplicationXXX/main.js'
+* Copy 'src/build/packages/ApplicationXXX.css' to 'src/packages/ApplicationXXX/main.css'
 * Run './bin/minimize-scripts.php' if you want minimized scripts for production servers
 
 Update:

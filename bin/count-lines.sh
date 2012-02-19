@@ -14,16 +14,16 @@ echo -n "  PHP Misc:      "; cat header.php public_html/index.php | wc -l
 
 echo ""
 
-echo "Applications:"
-echo -n "  PHP:           "; cat src/apps/*/*.php | wc -l
-echo -n "  JS:            "; cat src/apps/*/*.js | wc -l
-echo -n "  CSS:           "; cat src/apps/*/*.css | wc -l
-echo -n "  XML:           "; cat src/apps/*/*.xml | wc -l
-echo -n "  Glade:         "; cat src/apps/*/*.glade | wc -l
+echo "Packages:"
+echo -n "  PHP:           "; cat src/packages/*/*.php | wc -l
+echo -n "  JS:            "; cat src/packages/*/*.js | wc -l
+echo -n "  CSS:           "; cat src/packages/*/*.css | wc -l
+echo -n "  XML:           "; cat src/packages/*/*.xml | wc -l
+echo -n "  Glade:         "; cat src/packages/*/*.glade | wc -l
 
 echo ""
 
-TOTAL=`cat src/base/*.js src/base/*.css src/resources/*.js src/*.php lib/*.php src/apps/*/*.php src/apps/*/*.js src/apps/*/*.css header.php public_html/index.php public_html/js/utils.js | wc -l`
+TOTAL=`cat src/base/*.js src/base/*.css src/resources/*.js src/*.php lib/*.php src/packages/*/*.php src/packages/*/*.js src/packages/*/*.css header.php public_html/index.php public_html/js/utils.js | wc -l`
 echo "Total: $TOTAL (Excluding XML/Glade files)"
 
 # vi: 
