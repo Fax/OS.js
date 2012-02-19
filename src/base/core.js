@@ -76,7 +76,6 @@
   var WEBSOCKET_URI    = "localhost:8888";          //!< WebSocket URI
   var AJAX_URI         = "/";                       //!< AJAX URI (POST)
   var RESOURCE_URI     = "/ajax/resource/";         //!< Resource loading URI (GET)
-  var LIBRARY_URI      = "/ajax/library/";          //!< Library URI (GET)
   var THEME_URI        = "/ajax/theme/";            //!< Themes loading URI (GET)
   var FONT_URI         = "/ajax/font/";             //!< Font loading URI (GET)
   var CURSOR_URI       = "/ajax/cursor/";           //!< Cursor loading URI (GET)

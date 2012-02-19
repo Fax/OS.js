@@ -58,9 +58,9 @@ if ( $locale = Core::get()->getLocale() ) {
   <script type="text/javascript" src="/js/utils.js"></script>
 
   <!-- OS.js stylesheets -->
-  <link rel="stylesheet" type="text/css" href="/ajax/library/main.css" />
-  <link rel="stylesheet" type="text/css" href="/ajax/library/glade.css" />
-  <link rel="stylesheet" type="text/css" href="/ajax/library/pimp.css" />
+  <link rel="stylesheet" type="text/css" href="/ajax/resource/main.css" />
+  <link rel="stylesheet" type="text/css" href="/ajax/resource/glade.css" />
+  <link rel="stylesheet" type="text/css" href="/ajax/resource/pimp.css" />
 <!--[if lt IE 9]>
 <link rel="stylesheet" type="text/css" href="/?resource=ie.css" />
 <![endif]-->
@@ -72,11 +72,11 @@ if ( $locale = Core::get()->getLocale() ) {
   <link rel="stylesheet" type="text/css" href="/ajax/cursor/default" id="CursorFace" />
 
   <!-- OS.js libraries -->
-  <script type="text/javascript" src="/ajax/library/init.js"></script>
+  <script type="text/javascript" src="/ajax/resource/init.js"></script>
   <script type="text/javascript" src="/ajax/language/<?php print $current_locale; ?>" id="LanguageFile"></script>
-  <script type="text/javascript" src="/ajax/library/classes.js"></script>
-  <script type="text/javascript" src="/ajax/library/core.js"></script>
-  <script type="text/javascript" src="/ajax/library/main.js"></script>
+  <script type="text/javascript" src="/ajax/resource/classes.js"></script>
+  <script type="text/javascript" src="/ajax/resource/core.js"></script>
+  <script type="text/javascript" src="/ajax/resource/main.js"></script>
 
   <!-- Google Analytics -->
 <?php if ( ENV_PRODUCTION ) { ?>

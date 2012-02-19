@@ -29,7 +29,6 @@ AddEncoding audio/ogg .ogg
 RewriteEngine on
 RewriteRule ^ajax/resource/(.*)/(.*) /resource.php?resource=$2&package=$1 [NC]
 RewriteRule ^ajax/resource\/(.*) /resource.php?resource=$1 [NC]
-RewriteRule ^ajax/library/(.*) /resource.php?library=$1 [NC]
 RewriteRule ^ajax/font\/(.*) /resource.php?font=$1 [NC]
 RewriteRule ^ajax/theme\/(.*) /resource.php?theme=$1 [NC]
 RewriteRule ^ajax/cursor\/(.*) /resource.php?cursor=$1 [NC]

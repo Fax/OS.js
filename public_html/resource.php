@@ -71,18 +71,7 @@ if ( isset($_GET['cursor']) && !empty($_GET['cursor']) ) {
 if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
   $type = preg_match("/\.js$/", $_GET['resource']) ? "js" : "css";
   $pkg  = isset($_GET['package']) ? $_GET['package'] : null;
-  if ( ($content = ResourceManager::getFile(true, $_GET['resource'], $pkg, ENV_PRODUCTION)) === false ) {
-    header("HTTP/1.0 404 Not Found");
-    exit;
-  }
-
-  header(sprintf("Content-Type: %s; charset=utf-8", $type == "js" ? "application/x-javascript" : "text/css"));
-  print $content;
-  exit;
-
-} else if ( isset($_GET['library']) ) {
-  $type = preg_match("/\.js$/", $_GET['library']) ? "js" : "css";
-  if ( ($content = ResourceManager::getFile(false, $_GET['library'], null, ENV_PRODUCTION)) === false ) {
+  if ( ($content = ResourceManager::getFile($_GET['resource'], $pkg, ENV_PRODUCTION)) === false ) {
     header("HTTP/1.0 404 Not Found");
     exit;
   }
@@ -95,7 +84,6 @@ if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
     header("HTTP/1.0 404 Not Found");
     exit;
   }
-
 
   header("Content-Type: application/x-javascript; charset=utf-8");
   print $content;

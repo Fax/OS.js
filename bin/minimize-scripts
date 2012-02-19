@@ -37,8 +37,6 @@ function compress_list($itype, $files) {
       $path = PATH_JSLOCALE . "/{$file}";
     } else if ( $itype == 2 ) {
       $path = PATH_PACKAGES . "/{$file}";
-    } else if ( $itype == 1 ) {
-      $path = PATH_RESOURCES . "/{$file}";
     } else {
       $path = PATH_JSBASE . "/{$file}";
     }
@@ -105,8 +103,6 @@ function compress_list($itype, $files) {
         $out_path = PATH_JSLOCALE . "/" . dirname($file) . "/_min/" . basename($file) ;
       } else if ( $itype === 2 ) {
         $out_path = PATH_PACKAGES . "/" . dirname($file) . "/_min/" . basename($file) ;
-      } else if ( $itype === 1 ) {
-        $out_path = PATH_RESOURCES . "/_min/" . basename($file);
       } else {
         $out_path = PATH_JSBASE . "/_min/" . basename($file);
       }
@@ -124,14 +120,8 @@ function compress_list($itype, $files) {
 //
 
 $base_files         = Array();
-$resource_files     = Array();
 $application_files  = Array();
 $language_files     = Array();
-
-// Read registered dialogs
-foreach ( Dialog::$Registered as $n => $v ) {
-  $resource_files = array_merge($resource_files, $v['resources']);
-}
 
 // Read registered applications
 if ( $xml = file_get_contents(PACKAGE_BUILD) ) {
@@ -166,6 +156,13 @@ $base_files = Array(
   "main.js"
 );
 
+// Read registered dialogs
+foreach ( Dialog::$Registered as $n => $v ) {
+  foreach ( $v['resources'] as $r ) {
+    $base_files[] = $r;
+  }
+}
+
 $language_files = Array(
   "en_US.js",
   "nb_NO.js"
@@ -177,8 +174,6 @@ print "Compressing base files...\n";
 compress_list(0, $base_files);
 print "Compressing packages...\n";
 compress_list(2, $application_files);
-print "Compressing resources...\n";
-compress_list(1, $resource_files);
 
 $perc = 0;
 if ( $total_before && $total_after ) {
