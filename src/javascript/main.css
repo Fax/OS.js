@@ -360,6 +360,37 @@ input.Disabled {
   margin-right : 5px;
 }
 
+.DialogContent.PanelItemDock {
+  color : inherit;
+}
+.DialogContent.PanelItemDock .Wrap {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  height : 260px;
+  overflow : auto;
+}
+.DialogContent.PanelItemDock ul,
+.DialogContent.PanelItemDock li {
+  margin : 0;
+  padding : 0;
+  list-style-type : none;
+}
+.DialogContent.PanelItemDock li {
+  margin : 5px;
+}
+.DialogContent.PanelItemDock .Edit {
+  clear : both;
+}
+.DialogContent.PanelItemDock .Edit .label {
+  float : left;
+  width : 100px;
+}
+.DialogContent.PanelItemDock .Edit input {
+  width : 240px;
+}
+
 /* Menus */
 
 .Menu {

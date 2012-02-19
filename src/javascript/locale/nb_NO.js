@@ -80,7 +80,8 @@
         "left"  : "Still til venstre",
         "right" : "Still til høyre"
       },
-      "remove"    : "Fjern"
+      "remove"    : "Fjern",
+      "configure" : "Konfigurer"
     },
     "ContextMenuDesktop"                  : {
       "title"     : "Skrivebord",

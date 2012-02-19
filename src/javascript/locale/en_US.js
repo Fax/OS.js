@@ -80,7 +80,8 @@
         "left"  : "Align to left",
         "right" : "Align to right"
       },
-      "remove"    : "Remove"
+      "remove"    : "Remove",
+      "configure" : "Configure"
     },
     "ContextMenuDesktop"                  : {
       "title"     : "Desktop",

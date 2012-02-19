@@ -6042,11 +6042,20 @@
      * PanelItem::configure() -- Open Configuration Dialog
      * @return void
      */
-    configure : function() {
+    configure : function(callback, callback_ok) {
       var self = this;
-      if ( self.configurable ) {
-        _WM.addWindow(new OSjs.Dialogs.PanelItemOperationDialog(OperationDialog, API, [this, function() {
-          self.reload();
+      callback = callback || function() {};
+      callback_ok = callback_ok || function() {};
+
+      if ( this._configurable ) {
+        _WM.addWindow(new OSjs.Dialogs.PanelItemOperationDialog(OperationDialog, API, [this, function(diag) {
+          callback(diag);
+
+          diag.$element.find(".DialogButtons .Close").show();
+          diag.$element.find(".DialogButtons .Ok").show().click(function() {
+            callback_ok(diag);
+            self.reload();
+          });
         }]));
       }
     },
@@ -6127,9 +6136,9 @@
         }}
       ];
 
-      if ( this.configurable ) {
+      if ( this._configurable ) {
         menu.push({
-          'title' : "Configure",
+          'title' : labels.configure,
           'method' : function() {
             self.configure();
           }
