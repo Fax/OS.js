@@ -10,6 +10,7 @@ CORE:
 * TODO [MED] : Rewrite Glade builder class
 * TODO [MED] : Write custom GtkTab class
 * TODO [MED] : Write custom GtkLoadingBar class
+* TODO [MED] : Clean up CSS
 * TODO [LOW] : Write custom $
 * TODO [???] : Somehow re-loading desktop.grid fixes the arv overwrites
 
