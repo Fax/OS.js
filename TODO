@@ -1,6 +1,5 @@
 CORE:
 -------------------------------------------------------------------------------
-* TODO [CRI] : Check and fix ALL CrashApplication() s
 * TODO [CRI] : Add correct docuheaders to packages
 * TODO [HIG] : Implement MenuNew in GtkMenu
 * TODO [^^^] : >> Remove old Menu and rewrite handling

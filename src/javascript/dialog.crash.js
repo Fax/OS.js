@@ -34,11 +34,9 @@ OSjs.Dialogs.CrashDialog = (function($, undefined) {
 
   var _LINGUAS = {
     "en_US" : {
-      "title"       : "Application '%s' crashed!",
       "title_proc"  : "Process '%s' crashed!"
     },
     "nb_NO" : {
-      "title"       : "Applikasjon '%s' stoppet!",
       "title_proc"  : "Prosess '%s' stoppet!"
     }
   };
@@ -61,14 +59,8 @@ OSjs.Dialogs.CrashDialog = (function($, undefined) {
        * @see Window
        * @constructor
        */
-      init : function(app, error, trace, alternative, title) {
-        if ( title === undefined ) {
-          if ( app instanceof Application ) {
-            title = sprintf(LABELS.title, app._name);
-          } else {
-            title = sprintf(LABELS.title_proc, app);
-          }
-        }
+      init : function(title, error, trace, alternative) {
+        title = sprintf(LABELS.title_proc, title);
 
         this._super("Crash", false);
         this._content = "<div class=\"Crash\"><span>" + title + "</span><div class=\"error\"><div><b>Error</b></div><textarea></textarea></div><div class=\"trace\"><div><b>Trace</b></div><textarea></textarea></div></div>";

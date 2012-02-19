@@ -346,16 +346,16 @@
   function CrashApplication(app_name, application, ex) {
     try {
       if ( ex instanceof OSjs.Classes.ApplicationException ) {
-        _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [application, ex.getMessage(), ex.getStack(), ex]));
+        _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [app_name, ex.getMessage(), ex.getStack(), ex]));
       } else {
-        _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [application, ex.message, ex.stack, ex]));
+        _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [app_name, ex.message, ex.stack, ex]));
       }
 
       try {
         application._running = true; // NOTE: Workaround
         application.kill();
       } catch ( eee ) {
-        console.log(">>>>>>>>>>>>>>", eee);
+        console.error(">>>>>>>>>>", "ooopsie", app_name, application);
       }
     } catch ( ee ) {
       var label = OSjs.Labels.CrashProcess;
@@ -368,10 +368,10 @@
    * @return void
    * @function
    */
-  function CrashCustom(name, message, description, extra, title) {
+  function CrashCustom(title, message, description, extra) {
     extra = extra || [];
     try {
-      _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [name, message, description, extra, title]));
+      _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [title, message, description, extra]));
     } catch ( eee ) {
       var label = OSjs.Labels.CrashProcess;
       MessageBox(sprintf(label, name, extra));
@@ -502,6 +502,9 @@
 
         console.group(">>> Initing loading of '" + iname + "' <<<");
 
+        var crashed = false;
+        var error_msg = null;
+
         if ( !error && OSjs.PanelItems[iname] ) {
           var item = new OSjs.PanelItems[iname](PanelItem, panel, API, iargs);
           if ( item ) {
@@ -510,27 +513,27 @@
             try {
               panel.addItem(item, ialign, save);
             } catch ( exception ) {
-              callback(iname + ": " + exception);
+              crashed = true;
+              error_msg = iname + ": " + exception;
             }
           }
         } else {
           var errors = [];
-          var eargs = [];
+          var eargs = iargs;
           for ( var x in resources ) {
             errors.push("* " + resources[x]);
-          }
-          for ( var a in app_args ) {
-            eargs.push(app_args[a]);
           }
 
           CrashCustom(iname, 
             sprintf(OSjs.Labels.CrashLaunchResourceMessage, errors.join("\n")),
-            sprintf(OSjs.Labels.CrashLaunchResourceStack, "LaunchPanelItem", app_name, eargs.join(",")) );
+            sprintf(OSjs.Labels.CrashLaunchResourceStack, "LaunchPanelItem", iname, eargs.join(",")) );
+
+          crashed = true;
         }
 
         console.groupEnd();
 
-        callback(error);
+        callback(crashed, error_msg);
       });
     }
   } // @endfunction
@@ -4098,7 +4101,7 @@
         if ( data.error && show_error ) {
           var msg = OSjs.Labels.CrashEvent + data.error;
           var title = sprintf(OSjs.Labels.CrashEventTitle, self._name);
-          CrashCustom(self._name, msg, JSON.stringify(pargs), undefined, title);
+          CrashCustom(title, msg, JSON.stringify(pargs));
         }
 
         callback(data.result, data.error);
@@ -4815,23 +4818,21 @@
             var iargs   = el[1];
             var ialign  = el[2] || "left:0";
 
-            LaunchPanelItem(index, iname, iargs, ialign, panel, function(error) {
+            LaunchPanelItem(index, iname, iargs, ialign, panel, function(crashed, error_msg) {
               current++;
 
-              if ( error ) {
-                callback_error(error);
-                return;
+              if ( crashed && error_msg ) {
+                callback_error(error_msg, panel);
               }
 
               if ( current < size ) {
                 additem(current);
               } else {
-
                 try {
                   panel.run();
                   self.updatePanelPosition(panel);
                 } catch ( exception ) {
-                  callback_error(new OSjs.Classes.ProcessException(panel, OSjs.Labels.CrashPanelStart, exception));
+                  callback_error(exception, panel);
                 }
               }
             });
@@ -4847,10 +4848,8 @@
           panel = new Panel(panels[x].index, panels[x].name, panels[x].position);
           items = panels[x].items;
 
-          additems(panel, items, function(error) {
-            if ( error ) {
-              CrashCustom("PanelItem", error, "Desktop::run(){[LaunchPanelitem()>{callback(error)}]}\nPanelItem::create(), ResourceManager::addResources() ?");
-            }
+          additems(panel, items, function(error, p) {
+            CrashCustom("Panel", error, "Desktop::run(){[LaunchPanelitem()>{callback(error)}]}\nPanelItem::create(), ResourceManager::addResources() ?");
           });
 
           self.addPanel(panel);
@@ -5595,6 +5594,9 @@
      * @return  void
      */
     run : function() {
+      if ( this.running )
+        return;
+
       var id = "Panel_" + this.index;
       var ul = this.$element.find("ul").first();
 
