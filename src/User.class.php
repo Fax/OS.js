@@ -36,7 +36,6 @@
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package OSjs.Sources.Core
- * @see     DBObject
  * @class
  */
 class User
