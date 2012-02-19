@@ -390,6 +390,9 @@ input.Disabled {
 .DialogContent.PanelItemDock .Edit input {
   width : 240px;
 }
+.DialogContent.PanelItemDock .Edit .buttons {
+  padding-left : 98px;
+}
 
 /* Menus */
 
