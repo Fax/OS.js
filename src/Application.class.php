@@ -48,18 +48,14 @@ abstract class Application
   // VARIABLES
   /////////////////////////////////////////////////////////////////////////////
 
-  private $_sUUID = "";                   //!< Application's UUUID
-
   /////////////////////////////////////////////////////////////////////////////
   // MAGICS
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Create a new instance
+   * @constructor
    */
   public function __construct() {
-    $this->_sUUID = UUID::v4();
-
     parent::__construct(Package::TYPE_APPLICATION);
   }
 
@@ -68,36 +64,29 @@ abstract class Application
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Register an application
-   * @param  String       $uuid         Application UUID
-   * @param  Application  $instance     Application Instance
-   * @return bool
+   * @see Package::Event()
+   */
+  public static function Event($uuid, $action, Array $args) {
+    return parent::Event($uuid, $action, $args);
+  }
+
+  /**
+   * @see Package::Flush()
    */
   public static function Register($uuid, $instance) {
-    if ( $uuid ) {
-      return true;
-    }
-    return false;
+    return parent::Flush($uuid, $instance);
   }
 
   /**
-   * Flush an application
-   * @param  String       $uuid         Application UUID
-   * @return bool
+   * @see Package::Flush()
    */
   public static function Flush($uuid) {
-    if ( $uuid ) {
-      return true;
-    }
-    return false;
+    return parent::Flush($uuid);
   }
 
+
   /**
-   * Handle an application event
-   * @param  String       $uuid         Application UUID
-   * @param  String       $action       Application Action
-   * @param  Application  $instance     Application Instance
-   * @return Mixed
+   * @see Package::Handle()
    */
   public static function Handle($uuid, $action, $instance) {
     if ( $uuid && $action && $instance ) {
@@ -118,103 +107,93 @@ abstract class Application
   }
 
   /**
-   * Initialize application(s)
-   * @param  String   $config       Configuration path
-   * @param  String   $filename     Lock on class-name
-   * @return void
+   * @see Package::LoadPackage()
    */
-  public static function init($config, $classname = null) {
+  public static final function LoadPackage($name = null) {
     $return = Array();
 
-    // Parse application data
-    if ( $xml = file_get_contents($config) ) {
-      if ( $xml = new SimpleXmlElement($xml) ) {
-        foreach ( $xml->application as $app ) {
-          $app_name     = (string) $app['name'];
-          $app_title    = (string) $app['title'];
-          $app_icon     = (string) $app['icon'];
-          $app_class    = (string) $app['class'];
-          $app_file     = (string) $app['file'];
-          $app_system   = (string) $app['system'] == "true";
-          $app_category = (string) $app['category'];
-          $app_enabled  = $app['enabled'] === "true" ? true : false;
-          $app_titles   = Array();
+    if ( $xml = Package::LoadPackage(Package::TYPE_APPLICATION) ) {
+      foreach ( $xml as $app ) {
+        $app_name     = (string) $app['name'];
+        $app_title    = (string) $app['title'];
+        $app_icon     = (string) $app['icon'];
+        $app_class    = (string) $app['class'];
+        $app_file     = (string) $app['file'];
+        $app_system   = (string) $app['system'] == "true";
+        $app_category = (string) $app['category'];
+        $app_enabled  = $app['enabled'] === "true" ? true : false;
+        $app_titles   = Array();
 
-          if ( $classname !== null && $classname !== $app_class ) {
-            continue;
-          }
-
-          $windows   = Array();
-          $resources = Array();
-          $mimes     = Array();
-
-          foreach ( $app->window as $win ) {
-            $win_id    = (string) $win['id'];
-            $win_props = Array();
-            $win_html  = "";
-
-            foreach ( $win->property as $p ) {
-              $pk = (string) $p['name'];
-              $pv = (string) $p;
-
-              switch ( $pk ) {
-                case "properties" :
-                  $win_props = JSON::decode($pv);
-                  break;
-                case "content" :
-                  $win_html = $pv;
-                  break;
-              }
-            }
-            $windows[$win_id] = Array(
-              "properties" => $win_props
-            );
-          }
-
-          foreach ( $app->resource as $res ) {
-            $resources[] = (string) $res;
-          }
-
-          foreach ( $app->mime as $mime ) {
-            $mimes[] = (string) $mime;
-          }
-
-          if ( isset($app->title) ) {
-            foreach ( $app->title as $title ) {
-              $app_titles[((string)$title['language'])] = ((string) $title);
-            }
-          }
-
-          $return[$app_class] = Array(
-            "name"      => $app_name,
-            "title"     => $app_title,
-            "titles"    => $app_titles,
-            "icon"      => $app_icon,
-            "category"  => $app_category,
-            "mimes"     => $mimes,
-            "resources" => $resources/*,
-            "class"     => $app_class,
-            "windows"   => $windows,
-            "system"    => $app_system*/
-          );
-
-          require_once PATH_PACKAGES . "/{$app_class}/{$app_file}";
+        if ( $name !== null && $name !== $app_class ) {
+          continue;
         }
+
+        $windows   = Array();
+        $resources = Array();
+        $mimes     = Array();
+
+        foreach ( $app->window as $win ) {
+          $win_id    = (string) $win['id'];
+          $win_props = Array();
+          $win_html  = "";
+
+          foreach ( $win->property as $p ) {
+            $pk = (string) $p['name'];
+            $pv = (string) $p;
+
+            switch ( $pk ) {
+              case "properties" :
+                $win_props = JSON::decode($pv);
+                break;
+              case "content" :
+                $win_html = $pv;
+                break;
+            }
+          }
+          $windows[$win_id] = Array(
+            "properties" => $win_props
+          );
+        }
+
+        foreach ( $app->resource as $res ) {
+          $resources[] = (string) $res;
+        }
+
+        foreach ( $app->mime as $mime ) {
+          $mimes[] = (string) $mime;
+        }
+
+        if ( isset($app->title) ) {
+          foreach ( $app->title as $title ) {
+            $app_titles[((string)$title['language'])] = ((string) $title);
+          }
+        }
+
+        $return[$app_class] = Array(
+          "name"      => $app_name,
+          "title"     => $app_title,
+          "titles"    => $app_titles,
+          "icon"      => $app_icon,
+          "category"  => $app_category,
+          "mimes"     => $mimes,
+          "resources" => $resources/*,
+          "class"     => $app_class,
+          "windows"   => $windows,
+          "system"    => $app_system*/
+        );
+
+        require_once PATH_PACKAGES . "/{$app_class}/{$app_file}";
       }
     }
 
     return $return;
   }
 
-  /////////////////////////////////////////////////////////////////////////////
-  // SET / GET
-  /////////////////////////////////////////////////////////////////////////////
-
   /**
    * @see Package::getJSON()
    */
   public function getJSON() {
-    return array_merge(Array("uuid" => $this->_sUUID), parent::getJSON());
+    return parent::getJSON();
   }
 
 }

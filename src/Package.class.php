@@ -41,6 +41,7 @@ abstract class Package
   /////////////////////////////////////////////////////////////////////////////
 
   private $_iType = -1;               //!< Package Type Identifier
+  private $_sUUID = "";               //!< Package Instance UUUID
 
   /**
    * @var Package Registry
@@ -62,6 +63,7 @@ abstract class Package
    */
   protected function __construct($type) {
     $this->_iType = (int) $type;
+    $this->_sUUID = UUID::v4();
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -78,10 +80,22 @@ abstract class Package
     switch ( (int) $type ) {
       case self::TYPE_APPLICATION :
         if ( !isset(self::$PackageRegister[$type][$name]) ) {
-          if ( $p = Application::init(PACKAGE_BUILD, $name) ) {
+          if ( $p = Application::LoadPackage($name) ) {
             self::$PackageRegister[$type][$name] = $p[$name];
           } else {
-            throw new Exception("Cannot Load '{$name}'!");
+            throw new Exception("Cannot Load Application '{$name}'!");
+          }
+        }
+
+        return new $name();
+        break;
+
+      case self::TYPE_PANELITEM :
+        if ( !isset(self::$PackageRegister[$type][$name]) ) {
+          if ( $p = PanelItem::LoadPackage($name) ) {
+            self::$PackageRegister[$type][$name] = $p[$name];
+          } else {
+            throw new Exception("Cannot Load PanelItem '{$name}'!");
           }
         }
 
@@ -100,7 +114,7 @@ abstract class Package
     switch ( (int) $type ) {
       case self::TYPE_APPLICATION :
         if ( !self::$_LoadedApplications ) {
-          if ( $p = Application::init(PACKAGE_BUILD) ) {
+          if ( $p = Application::LoadPackage() ) {
             foreach ( $p as $k => $v ) {
               self::$PackageRegister[$type][$k] = $v;
             }
@@ -109,10 +123,86 @@ abstract class Package
         }
         break;
 
+      case self::TYPE_APPLICATION :
+        if ( !self::$_LoadedPanelItems ) {
+          if ( $p = PanelItem::LoadPackage() ) {
+            foreach ( $p as $k => $v ) {
+              self::$PackageRegister[$type][$k] = $v;
+            }
+          }
+          self::$_LoadedPanelItems = true;
+        }
+        break;
+
       default :
         throw new Exception("Cannot LoadAll type '{$type}'");
         break;
     }
+  }
+
+  public static function LoadPackage($name = null) {
+    $config = PACKAGE_BUILD;
+
+    if ( $xml = file_get_contents($config) ) {
+      if ( $xml = new SimpleXmlElement($xml) ) {
+        if ( $name === self::TYPE_APPLICATION ) {
+          return $xml->application;
+        } else if ( $name == self::TYPE_PANELITEM ) {
+          return $xml->panelitem;
+        }
+        return $xml;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Event performed by AJAX
+   * @param  String     $uuid         Package UUID
+   * @param  String     $action       Package Action
+   * @param  Array      $args         Action Arguments
+   * @see    Package::Handle
+   * @return Mixed
+   */
+  public static function Event($uuid, $action, Array $args) {
+    return Array();
+  }
+
+  /**
+   * Handle an Package event
+   * @param  String       $uuid         Package UUID
+   * @param  String       $action       Package Action
+   * @param  Package      $instance     Package Instance
+   * @return Mixed
+   */
+  public static function Handle($uuid, $action, $instance) {
+    return false;
+  }
+
+  /**
+   * Register an package
+   * @param  String       $uuid         Package UUID
+   * @param  Package      $instance     Package Instance
+   * @return bool
+   */
+  public static function Register($uuid, $instance) {
+    if ( $uuid ) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Flush an package
+   * @param  String       $uuid         Package UUID
+   * @return bool
+   */
+  public static function Flush($uuid) {
+    if ( $uuid ) {
+      return true;
+    }
+    return false;
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -128,11 +218,11 @@ abstract class Package
   }
 
   /**
-   * Get Application JSON data
+   * Get Package JSON data
    * @return Array
    */
   public function getJSON() {
-    return self::$PackageRegister[$this->getPackageType()][get_class($this)];
+    return array_merge(Array("uuid" => $this->_sUUID), self::$PackageRegister[$this->getPackageType()][get_class($this)]);
   }
 }
 

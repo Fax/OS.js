@@ -353,6 +353,13 @@
     callback = callback || function() {};
 
     if ( InitLaunch(iname) ) {
+      /*
+      DoPost({'action' : 'load', 'panelitem' : iname}, function(data) {
+        if ( data.success ) {
+        }
+      });
+      */
+
       var reg = _PanelCache;
       var resources =  reg[iname] ? reg[iname]['resources'] : [];
 

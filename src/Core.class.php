@@ -72,7 +72,7 @@ class Core
     "login"         => "doUserLogin",
     "logout"        => "doUserLogout",
     "user"          => "doUserInfo",
-    "load"          => "doApplicationLoad",
+    "load"          => "doPackageLoad",
     "register"      => "doApplicationRegister",
     "flush"         => "doApplicationFlush",
     "event"         => "doApplicationEvent",
@@ -494,15 +494,18 @@ class Core
   }
 
   /**
-   * Do a 'Application Load' AJAX Call
+   * Do a 'Package Load' AJAX Call
    * @see Core::doPost
    * @return void
    */
-  protected static final function _doApplicationLoad(Array $args, Array &$json, Core $inst = null) {
-    if ( $app = Package::Load($args['app'], Package::TYPE_APPLICATION) ) {
+  protected static final function _doPackageLoad(Array $args, Array &$json, Core $inst = null) {
+    $name = isset($args['app']) ? $args['app'] : $args['panelitem'];
+    $type = isset($args['app']) ? Package::TYPE_APPLICATION : Package::TYPE_PANELITEM;
+
+    if ( $pkg = Package::Load($name, $type) ) {
       try {
         $json['success'] = true;
-        $json['result']  = $app->getJSON();
+        $json['result']  = $pkg->getJSON();
         $json['error']   = null;
       } catch ( Exception $e ) {
         $json['error'] = $e->getMessage();

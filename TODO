@@ -1,5 +1,6 @@
 CORE:
 -------------------------------------------------------------------------------
+* TODO [CRI] : Rewrite _AppCache! Contains to much metadata for JS
 * TODO [HIG] : Implement MenuNew in GtkMenu
 * TODO [HIG] : Implement MenuNew in ContextMenu
 * TODO [^^^] : >> Remove old Menu and rewrite handling
