@@ -44,14 +44,6 @@ abstract class Application
   const APPLICATION_TITLE   = __CLASS__;
   const APPLICATION_ICON    = "emblems/emblem-unreadable.png";
 
-  /////////////////////////////////////////////////////////////////////////////
-  // VARIABLES
-  /////////////////////////////////////////////////////////////////////////////
-
-  /////////////////////////////////////////////////////////////////////////////
-  // MAGICS
-  /////////////////////////////////////////////////////////////////////////////
-
   /**
    * @constructor
    */
@@ -59,37 +51,11 @@ abstract class Application
     parent::__construct(Package::TYPE_APPLICATION);
   }
 
-  /////////////////////////////////////////////////////////////////////////////
-  // CLASS METHODS
-  /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * @see Package::Event()
-   */
-  public static function Event($uuid, $action, Array $args) {
-    return parent::Event($uuid, $action, $args);
-  }
-
-  /**
-   * @see Package::Flush()
-   */
-  public static function Register($uuid, $instance) {
-    return parent::Flush($uuid, $instance);
-  }
-
-  /**
-   * @see Package::Flush()
-   */
-  public static function Flush($uuid) {
-    return parent::Flush($uuid);
-  }
-
-
   /**
    * @see Package::Handle()
    */
-  public static function Handle($uuid, $action, $instance) {
-    if ( $uuid && $action && $instance ) {
+  public static function Handle($action, $instance) {
+    if ( $action && $instance ) {
       if ( isset($instance['name']) && isset($instance['action']) ) {
         $cname    = $instance['name'];
         $aargs    = isset($instance['args']) ? $instance['args'] : Array();
@@ -98,7 +64,7 @@ abstract class Application
         Package::Load($cname, Package::TYPE_APPLICATION);
 
         if ( class_exists($cname) ) {
-          return $cname::Event($uuid, $action, $aargs);
+          return $cname::Event($action, $aargs);
         }
       }
     }
@@ -119,52 +85,24 @@ abstract class Application
         $app_icon     = (string) $app['icon'];
         $app_class    = (string) $app['class'];
         $app_file     = (string) $app['file'];
-        //$app_system   = (string) $app['system'] == "true";
         $app_category = (string) $app['category'];
         $app_enabled  = $app['enabled'] === "true" ? true : false;
-        $app_titles   = Array();
 
         if ( $name !== null && $name !== $app_class ) {
           continue;
         }
 
-        //$windows   = Array();
         $resources = Array();
-        $mimes     = Array();
-
-        /*
-        foreach ( $app->window as $win ) {
-          $win_id    = (string) $win['id'];
-          $win_props = Array();
-          $win_html  = "";
-
-          foreach ( $win->property as $p ) {
-            $pk = (string) $p['name'];
-            $pv = (string) $p;
-
-            switch ( $pk ) {
-              case "properties" :
-                $win_props = JSON::decode($pv);
-                break;
-              case "content" :
-                $win_html = $pv;
-                break;
-            }
-          }
-          $windows[$win_id] = Array(
-            "properties" => $win_props
-          );
-        }
-         */
-
         foreach ( $app->resource as $res ) {
           $resources[] = (string) $res;
         }
 
+        $mimes     = Array();
         foreach ( $app->mime as $mime ) {
           $mimes[] = (string) $mime;
         }
 
+        $app_titles   = Array();
         if ( isset($app->title) ) {
           foreach ( $app->title as $title ) {
             $app_titles[((string)$title['language'])] = ((string) $title);
@@ -178,10 +116,7 @@ abstract class Application
           "icon"      => $app_icon,
           "category"  => $app_category,
           "mimes"     => $mimes,
-          "resources" => $resources/*,
-          "class"     => $app_class,
-          "windows"   => $windows,
-          "system"    => $app_system*/
+          "resources" => $resources
         );
 
         require_once PATH_PACKAGES . "/{$app_class}/{$app_file}";
@@ -189,13 +124,6 @@ abstract class Application
     }
 
     return $return;
-  }
-
-  /**
-   * @see Package::getJSON()
-   */
-  public function getJSON() {
-    return parent::getJSON();
   }
 
 }

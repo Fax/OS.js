@@ -48,7 +48,6 @@ abstract class Package
   /////////////////////////////////////////////////////////////////////////////
 
   private $_iType = -1;               //!< Package Type Identifier
-  private $_sUUID = "";               //!< Package Instance UUUID
 
   /**
    * @var Package Registry
@@ -58,8 +57,8 @@ abstract class Package
     self::TYPE_PANELITEM    => Array()
   );
 
-  protected static $_LoadedApplications = false;
-  protected static $_LoadedPanelItems = false;
+  protected static $_LoadedApplications = false;    //!< Loading lock
+  protected static $_LoadedPanelItems   = false;    //!< Loading lock
 
   /////////////////////////////////////////////////////////////////////////////
   // MAGICS
@@ -70,7 +69,6 @@ abstract class Package
    */
   protected function __construct($type) {
     $this->_iType = (int) $type;
-    $this->_sUUID = UUID::v4();
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -207,49 +205,22 @@ abstract class Package
 
   /**
    * Event performed by AJAX
-   * @param  String     $uuid         Package UUID
    * @param  String     $action       Package Action
    * @param  Array      $args         Action Arguments
    * @see    Package::Handle
    * @return Mixed
    */
-  public static function Event($uuid, $action, Array $args) {
+  public static function Event($action, Array $args) {
     return Array();
   }
 
   /**
    * Handle an Package event
-   * @param  String       $uuid         Package UUID
    * @param  String       $action       Package Action
    * @param  Package      $instance     Package Instance
    * @return Mixed
    */
-  public static function Handle($uuid, $action, $instance) {
-    return false;
-  }
-
-  /**
-   * Register an package
-   * @param  String       $uuid         Package UUID
-   * @param  Package      $instance     Package Instance
-   * @return bool
-   */
-  public static function Register($uuid, $instance) {
-    if ( $uuid ) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Flush an package
-   * @param  String       $uuid         Package UUID
-   * @return bool
-   */
-  public static function Flush($uuid) {
-    if ( $uuid ) {
-      return true;
-    }
+  public static function Handle($action, $instance) {
     return false;
   }
 
@@ -270,7 +241,7 @@ abstract class Package
    * @return Array
    */
   public function getJSON() {
-    return array_merge(Array("uuid" => $this->_sUUID), self::$PackageRegister[$this->getPackageType()][get_class($this)]);
+    return self::$PackageRegister[$this->getPackageType()][get_class($this)];
   }
 }
 

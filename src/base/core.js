@@ -462,11 +462,10 @@
             console.log("Trying to create application...");
 
             try {
-              application         = new app_ref(GtkWindow, Application, API, args, windows);
-              application._uuid   = data.result.uuid;
+              application = new app_ref(GtkWindow, Application, API, args, windows);
               application._checkCompability();
 
-              console.log("Application was created with UUID", application._uuid);
+              console.log("<<< CREATED >>>");
             } catch ( ex ) {
               CrashApplication(app_name, application, ex);
               crashed = true;
@@ -2680,7 +2679,6 @@
             procs.push({
               'pid'     : p._pid,
               'name'    : p._name,
-              'uuid'    : p._uuid,
               'time'    : (now - p._started.getTime()),
               'icon'    : p._proc_icon,
               'title'   : p._proc_name,
@@ -3524,7 +3522,6 @@
 
     _argv         : {},           //!< Application staring arguments (argv)
     _name         : "",           //!< Application name
-    _uuid         : null,         //!< Application unique-id (used for messsagin/comm.)
     _running      : false,        //!< Application running state
     _root_window  : null,         //!< Application root Window
     _windows      : [],           //!< Application Window list
@@ -3544,7 +3541,6 @@
     init : function(name, argv) {
       this._argv        = argv || {};
       this._name        = name;
-      this._uuid        = null;
       this._running     = false;
       this._root_window = null;
       this._windows     = [];
@@ -3571,16 +3567,6 @@
     destroy : function() {
       var self = this;
       if ( this._running ) {
-        /*
-        if ( this._uuid ) {
-          DoPost({'action' : 'flush', 'uuid' : self._uuid}, function(data) {
-            console.group("Application::" + self._name + "::" + self._uuid + "::destroy()");
-            console.log("flushed", data);
-            console.groupEnd();
-          });
-        }
-        */
-
         this._saveStorage();      // Save storage settings
         this._clearWorkers();     // Clear WebWorkers
         this._clearSockets();     // Clear Sockets
@@ -3595,7 +3581,7 @@
           }, 0);
         }
 
-        console.log("Application::" + this._name + "::" + this._uuid + "::destroy()");
+        console.log("Application::" + this._name + "::destroy()");
 
         this._bindings = {};
         this._running = false;
@@ -3626,7 +3612,7 @@
         }
 
         console.group("Application::run()");
-        console.log(this._name, this._uuid);
+        console.log(this._name);
         console.groupEnd();
 
         this._running = true;
@@ -4003,7 +3989,7 @@
         var error;
 
         console.group("Application::_checkCompability()");
-        console.log(this._name, this._uuid);
+        console.log(this._name);
         console.log("Compability", this._compability);
 
         if ( key ) {
@@ -4060,7 +4046,7 @@
      */
     _stop : function() {
       if ( this._running ) {
-        console.log("Application::" + this._name + "::" + this._uuid + "::_stop()");
+        console.log("Application::" + this._name + "::_stop()");
 
         this.destroy();
       }
@@ -4075,7 +4061,7 @@
         this._storage = _Settings.saveApp(this._name, this._storage);
       }
 
-      console.log("Application::" + this._name + "::" + this._uuid + "::_saveStorage()", this._storage);
+      console.log("Application::" + this._name + "::_saveStorage()", this._storage);
     },
 
     /**
@@ -4091,7 +4077,7 @@
       }
 
       console.group("Application::_restoreStorage()");
-      console.log(this._name, this._uuid);
+      console.log(this._name);
       console.log("Result", this._storage);
       console.groupEnd();
     },
@@ -4105,7 +4091,7 @@
         this._storage = _Settings.saveApp(this._name, {});
       }
 
-      console.log("Application::" + this._name + "::" + this._uuid + "::_flushStorage()", this._storage);
+      console.log("Application::" + this._name + "::_flushStorage()", this._storage);
     },
 
     /**
@@ -4120,34 +4106,31 @@
      show_error = (show_error === undefined) ? false : (show_error ? true : false);
 
       var self = this;
-      if ( this._uuid ) {
-        var pargs = {
-          'action'    : 'event',
-          'cname'     : self._name ,
-          'uuid'      : self._uuid,
-          'instance'  : {
-            'name'      : self._name,
-            'action'    : ev,
-            'args'      : args || {}
-          }
-        };
+      var pargs = {
+        'action'    : 'event',
+        'cname'     : self._name ,
+        'instance'  : {
+          'name'      : self._name,
+          'action'    : ev,
+          'args'      : args || {}
+        }
+      };
 
-        DoPost(pargs, function(data) {
+      DoPost(pargs, function(data) {
 
-          console.group("Application::_event()");
-          console.log(self._name, self._uuid);
-          console.log("Arguments", ev, args, data);
-          console.groupEnd();
+        console.group("Application::_event()");
+        console.log(self._name);
+        console.log("Arguments", ev, args, data);
+        console.groupEnd();
 
-          if ( data.error && show_error ) {
-            var msg = OSjs.Labels.CrashEvent + data.error;
-            var title = sprintf(OSjs.Labels.CrashEventTitle, self._name);
-            _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [self._name, msg, JSON.stringify(pargs), undefined, title]));
-          }
+        if ( data.error && show_error ) {
+          var msg = OSjs.Labels.CrashEvent + data.error;
+          var title = sprintf(OSjs.Labels.CrashEventTitle, self._name);
+          _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [self._name, msg, JSON.stringify(pargs), undefined, title]));
+        }
 
-          callback(data.result, data.error);
-        });
-      }
+        callback(data.result, data.error);
+      });
     },
 
     /**
@@ -5898,7 +5881,6 @@
 
     $element      : null,             //!< DOM Elemeent
     _name         : "",               //!< Item name identifier
-    _uuid         : null,             //!< Item UUID
     _named        : "",               //!< Readable name
     _align        : "left",           //!< Item alignment
     _expand       : false,            //!< Expand item
@@ -5924,7 +5906,6 @@
       this._name         = name;
       this._named        = name;
       this._align        = align || this._align;
-      this._uuid         = null;
       this._expand       = false;
       this._dynamic      = false;
       this._orphan       = true;

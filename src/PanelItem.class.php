@@ -65,7 +65,6 @@ class       PanelItem
         $pi_class         = (string) $pi['class'];
         $pi_file          = (string) $pi['file'];
         $pi_description   = (string) $pi['description'];
-        $pi_descriptions  = Array();
         $pi_icon          = (string) $pi['icon'];
         $pi_class         = (string) $pi['class'];
 
@@ -73,6 +72,7 @@ class       PanelItem
           continue;
         }
 
+        $resources = Array();
         foreach ( $pi->resource as $res ) {
           $resources[] = (string) $res;
         }
@@ -83,6 +83,7 @@ class       PanelItem
           }
         }
 
+        $pi_descriptions  = Array();
         if ( isset($pi->description) ) {
           foreach ( $pi->description as $description ) {
             $pi_descriptions[((string)$description['language'])] = ((string) $description);
@@ -107,17 +108,10 @@ class       PanelItem
   }
 
   /**
-   * @see Package::Event()
-   */
-  public static function Event($uuid, $action, Array $args) {
-    return parent::Event($uuid, $action, $args);
-  }
-
-  /**
    * @see Package::Handle()
    */
-  public static function Handle($uuid, $action, $instance) {
-    if ( /*$uuid &&*/ $action && $instance ) {
+  public static function Handle($action, $instance) {
+    if ( $action && $instance ) {
       if ( isset($instance['name']) && isset($instance['action']) ) {
         $cname    = $instance['name'];
         $aargs    = isset($instance['args']) ? $instance['args'] : Array();
@@ -126,33 +120,12 @@ class       PanelItem
         Package::Load($cname, Package::TYPE_PANELITEM);
 
         if ( class_exists($cname) ) {
-          return $cname::Event($uuid, $action, $aargs);
+          return $cname::Event($action, $aargs);
         }
       }
     }
 
     return false;
-  }
-
-  /**
-   * @see Package::Flush()
-   */
-  public static function Register($uuid, $instance) {
-    return parent::Flush($uuid, $instance);
-  }
-
-  /**
-   * @see Package::Flush()
-   */
-  public static function Flush($uuid) {
-    return parent::Flush($uuid);
-  }
-
-  /**
-   * @see Package::getJSON()
-   */
-  public function getJSON() {
-    return parent::getJSON();
   }
 
 }

@@ -73,8 +73,6 @@ class Core
     "logout"        => "doUserLogout",
     "user"          => "doUserInfo",
     "load"          => "doPackageLoad",
-    "register"      => "doApplicationRegister",
-    "flush"         => "doApplicationFlush",
     "event"         => "doApplicationEvent",
     "package"       => "doPackageOperation",
     "service"       => Array(
@@ -516,40 +514,12 @@ class Core
   }
 
   /**
-   * Do a 'Application Register' AJAX Call
-   * @see Core::doPost
-   * @return void
-   */
-  protected static final function _doApplicationRegister(Array $args, Array &$json, Core $inst = null) {
-    if ( Application::Register($args['uuid'], $args['instance']) ) {
-      $json['success'] = true;
-      $json['error']   = null;
-    } else {
-      $json['error'] = _("Failed to register application");
-    }
-  }
-
-  /**
-   * Do a 'Application Flush' AJAX Call
-   * @see Core::doPost
-   * @return void
-   */
-  protected static final function _doApplicationFlush(Array $args, Array &$json, Core $inst = null) {
-    if ( Application::Flush($args['uuid']) ) {
-      $json['success'] = true;
-      $json['error']   = null;
-    } else {
-      $json['error'] = _("Failed to flush application");
-    }
-  }
-
-  /**
    * Do a 'Application Event' AJAX Call
    * @see Core::doPost
    * @return void
    */
   protected static final function _doApplicationEvent(Array $args, Array &$json, Core $inst = null) {
-    if ( ($result = Application::Handle($args['uuid'], $args['action'], $args['instance'])) ) {
+    if ( ($result = Application::Handle($args['action'], $args['instance'])) ) {
       $json['success'] = ($result === true) || is_array($result);
       $json['error']   = $json['success'] ? null : (is_string($result) ? $result : _("Unknown error"));
       $json['result']  = $json['success'] ? $result : null;
