@@ -250,8 +250,10 @@ textarea {
 }
 
 #Version {
-  color : #000;
+  color : #fff;
   font-size : 10px;
+  font-family : Arial;
+  font-weight : bold;
 }
 
 /* Glade */

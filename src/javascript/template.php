@@ -337,15 +337,8 @@ if ( $locale = Core::get()->getLocale() ) {
 
 <!-- Version Stamp -->
 <div id="Version">
-  OS.js Version <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)
-  -
-  <?php print PROJECT_AUTHOR; ?>
-
-  &lt;<?php print PROJECT_CONTACT; ?>&gt;
-
-  |
-
-  <a href="/help.php" target="_blank">help</a>
+  OS.js <?php print PROJECT_VERSION; ?> Build <?php echo PROJECT_BUILD; ?> (<?php print PROJECT_CODENAME; ?>)<br />
+  &copy; <?php print PROJECT_AUTHOR; ?> &lt;<?php print PROJECT_CONTACT; ?>&gt;
 </div>
 
 <!-- Google -->
