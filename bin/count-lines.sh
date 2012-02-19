@@ -4,13 +4,17 @@
 # @Revision:    0.0
 
 echo "Core:"
-echo -n "  JS Base:       "; cat src/base/*.js | wc -l
 echo -n "  JS Misc:       "; cat public_html/js/utils.js | wc -l
-echo -n "  JS Resources:  "; cat src/resources/*.js | wc -l
-echo -n "  CSS Base:      "; cat src/base/*.css | wc -l
+echo -n "  JS Base:       "; cat src/javascript/*.js | wc -l
+echo -n "  CSS Base:      "; cat src/javascript/*.css | wc -l
 echo -n "  PHP Sources:   "; cat src/*.php | wc -l
 echo -n "  PHP Libs:      "; cat lib/*.php | wc -l
-echo -n "  PHP Misc:      "; cat header.php public_html/index.php | wc -l
+echo -n "  PHP Public:    "; cat header.php public_html/*.php | wc -l
+
+echo ""
+
+TOTAL=`cat src/javascript/*.js src/javascript/*.css src/*.php lib/*.php header.php public_html/*.php public_html/js/utils.js | wc -l`
+echo "Total: $TOTAL (Excluding Vendor files)"
 
 echo ""
 
@@ -23,7 +27,7 @@ echo -n "  Glade:         "; cat src/packages/*/*.glade | wc -l
 
 echo ""
 
-TOTAL=`cat src/base/*.js src/base/*.css src/resources/*.js src/*.php lib/*.php src/packages/*/*.php src/packages/*/*.js src/packages/*/*.css header.php public_html/index.php public_html/js/utils.js | wc -l`
+TOTAL=`cat src/packages/*/*.php src/packages/*/*.js src/packages/*/*.css | wc -l`
 echo "Total: $TOTAL (Excluding XML/Glade files)"
 
 # vi: 
