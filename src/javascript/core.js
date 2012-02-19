@@ -299,7 +299,7 @@
       trace = sprintf("InitLaunch(%s)", name);
 
       try {
-        _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [name, msg, trace]));
+        CrashCustom(name, msg, trace);
       } catch ( eee ) {
         MessageBox(msg);
       }
@@ -325,7 +325,7 @@
       trace = sprintf("InitLaunch(%s)", name);
 
       try {
-        _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [name, msg, trace]));
+        CrashCustom(name, msg, trace);
       } catch ( eee ) {
         MessageBox(msg);
       }
@@ -333,43 +333,6 @@
     }
 
     return true;
-  } // @endfunction
-
-  /**
-   * LaunchPanelItem() -- PanelItem Launch handler
-   * @param   int       i             Item index
-   * @param   String    iname         Item name
-   * @param   Mixed     iargs         Item argument(s)
-   * @param   String    ialign        Item alignment
-   * @param   Panel     panel         Panel instance reference
-   * @param   Function  callback      Callback function (Default = undefined)
-   * @param   bool      save          Save panel after launch (Default = undefined)
-   * @return  void
-   * @function
-   */
-  function LaunchPanelItem(i, iname, iargs, ialign, panel, callback, save) {
-    callback = callback || function() {};
-
-    if ( InitLaunch(iname) && _PanelCache[iname] ) {
-      var resources = _PanelCache[iname].resources;
-      _Resources.addResources(resources, iname, function(error) {
-
-        console.group(">>> Initing loading of '" + iname + "' <<<");
-
-        if ( !error && OSjs.PanelItems[iname] ) {
-          var item = new OSjs.PanelItems[iname](PanelItem, panel, API, iargs);
-          if ( item ) {
-            item._panel = panel;
-            item._index = i;
-            panel.addItem(item, ialign, save);
-          }
-        }
-
-        console.groupEnd();
-
-        callback(error);
-      });
-    }
   } // @endfunction
 
   /**
@@ -395,8 +358,23 @@
         console.log(">>>>>>>>>>>>>>", eee);
       }
     } catch ( ee ) {
-      var label = OSjs.Labels.CrashApplication;
+      var label = OSjs.Labels.CrashProcess;
       MessageBox(sprintf(label, app_name, ex));
+    }
+  } // @endfunction
+
+  /**
+   * CrashCustom() -- Show a 'Custom' crash dialog
+   * @return void
+   * @function
+   */
+  function CrashCustom(name, message, description, extra, title) {
+    extra = extra || [];
+    try {
+      _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [name, message, description, extra, title]));
+    } catch ( eee ) {
+      var label = OSjs.Labels.CrashProcess;
+      MessageBox(sprintf(label, name, extra));
     }
   } // @endfunction
 
@@ -487,8 +465,8 @@
           CrashApplication(app_name, {
             _name : app_name
           }, {
-            message : sprintf(OSjs.Labels.CrashApplicationResourceMessage, errors.join("\n")),
-            stack   : sprintf(OSjs.Labels.CrashApplicationResourceStack, app_name, eargs.join(","))
+            message : sprintf(OSjs.Labels.CrashLaunchResourceMessage, errors.join("\n")),
+            stack   : sprintf(OSjs.Labels.CrashLaunchResourceStack, "LaunchApplication", app_name, eargs.join(","))
           });
 
           callback_error("AddResource() error");
@@ -499,6 +477,60 @@
         }, 50);
 
         console.groupEnd();
+      });
+    }
+  } // @endfunction
+
+  /**
+   * LaunchPanelItem() -- PanelItem Launch handler
+   * @param   int       i             Item index
+   * @param   String    iname         Item name
+   * @param   Mixed     iargs         Item argument(s)
+   * @param   String    ialign        Item alignment
+   * @param   Panel     panel         Panel instance reference
+   * @param   Function  callback      Callback function (Default = undefined)
+   * @param   bool      save          Save panel after launch (Default = undefined)
+   * @return  void
+   * @function
+   */
+  function LaunchPanelItem(i, iname, iargs, ialign, panel, callback, save) {
+    callback = callback || function() {};
+
+    if ( InitLaunch(iname) && _PanelCache[iname] ) {
+      var resources = _PanelCache[iname].resources;
+      _Resources.addResources(resources, iname, function(error) {
+
+        console.group(">>> Initing loading of '" + iname + "' <<<");
+
+        if ( !error && OSjs.PanelItems[iname] ) {
+          var item = new OSjs.PanelItems[iname](PanelItem, panel, API, iargs);
+          if ( item ) {
+            item._panel = panel;
+            item._index = i;
+            try {
+              panel.addItem(item, ialign, save);
+            } catch ( exception ) {
+              callback(iname + ": " + exception);
+            }
+          }
+        } else {
+          var errors = [];
+          var eargs = [];
+          for ( var x in resources ) {
+            errors.push("* " + resources[x]);
+          }
+          for ( var a in app_args ) {
+            eargs.push(app_args[a]);
+          }
+
+          CrashCustom(iname, 
+            sprintf(OSjs.Labels.CrashLaunchResourceMessage, errors.join("\n")),
+            sprintf(OSjs.Labels.CrashLaunchResourceStack, "LaunchPanelItem", app_name, eargs.join(",")) );
+        }
+
+        console.groupEnd();
+
+        callback(error);
       });
     }
   } // @endfunction
@@ -1822,7 +1854,7 @@
         var msg   = sprintf(OSjs.Labels.WebWorkerError, file, line);
         var trace = error;
 
-        _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [name, msg, trace]));
+        CrashCustom(name, msg, trace);
 
         self.destroy();
       };
@@ -2311,7 +2343,7 @@
           var msg   = exception.getMessage();
           var trace = exception.getStack();
 
-          _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [name, msg, trace]));
+          CrashCustom(name, msg, trace);
         } else {
           console.groupEnd();
           throw exception;
@@ -4066,7 +4098,7 @@
         if ( data.error && show_error ) {
           var msg = OSjs.Labels.CrashEvent + data.error;
           var title = sprintf(OSjs.Labels.CrashEventTitle, self._name);
-          _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [self._name, msg, JSON.stringify(pargs), undefined, title]));
+          CrashCustom(self._name, msg, JSON.stringify(pargs), undefined, title);
         }
 
         callback(data.result, data.error);
@@ -4758,69 +4790,75 @@
 
       }); // @class
 
-      (function() {
-        try {
-          self.iconview = new IconView();
-        } catch ( exception ) {
-          throw new OSjs.Classes.ProcessException(self, OSjs.Labels.CrashDesktopIconView, exception);
-        }
-      })();
+      try {
+        self.iconview = new IconView();
+      } catch ( exception ) {
+        throw new OSjs.Classes.ProcessException(self, OSjs.Labels.CrashDesktopIconView, exception);
+      }
 
       //
       // Create panel and items from localStorage
       //
       console.log("Registering panels...");
-      (function() {
-        try {
-          var panels = _Settings._get("desktop.panels", false, true);
-          var panel, items;
+      try {
+        var panels = _Settings._get("desktop.panels", false, true);
+        var panel, items;
 
-          var additems = function(panel, items) {
-            var size = items.length;
-            var current = 0;
+        var additems = function(panel, items, callback_error) {
+          var size = items.length;
+          var current = 0;
 
-            var additem = function(index) {
+          var additem = function(index) {
 
-              var el      = items[index];
-              var iname   = el[0];
-              var iargs   = el[1];
-              var ialign  = el[2] || "left:0";
+            var el      = items[index];
+            var iname   = el[0];
+            var iargs   = el[1];
+            var ialign  = el[2] || "left:0";
 
-              LaunchPanelItem(index, iname, iargs, ialign, panel, function() {
-                current++;
-                if ( current < size ) {
-                  additem(current);
-                } else {
+            LaunchPanelItem(index, iname, iargs, ialign, panel, function(error) {
+              current++;
 
-                  try {
-                    panel.run();
-                    self.updatePanelPosition(panel);
-                  } catch ( exception ) {
-                    throw new OSjs.Classes.ProcessException(panel, OSjs.Labels.CrashPanelStart, exception);
-                  }
+              if ( error ) {
+                callback_error(error);
+                return;
+              }
+
+              if ( current < size ) {
+                additem(current);
+              } else {
+
+                try {
+                  panel.run();
+                  self.updatePanelPosition(panel);
+                } catch ( exception ) {
+                  callback_error(new OSjs.Classes.ProcessException(panel, OSjs.Labels.CrashPanelStart, exception));
                 }
-              });
-            };
-
-            if ( size > 0 ) {
-              additem(0);
-            }
-
+              }
+            });
           };
 
-          for ( var x = 0; x < panels.length; x++ ) {
-            panel = new Panel(panels[x].index, panels[x].name, panels[x].position);
-            items = panels[x].items;
-
-            additems(panel, items);
-
-            self.addPanel(panel);
+          if ( size > 0 ) {
+            additem(0);
           }
 
-        } catch ( exception ) {
-          throw new OSjs.Classes.ProcessException(self, OSjs.Labels.CrashPanelCreate, exception);
+        };
+
+        for ( var x = 0; x < panels.length; x++ ) {
+          panel = new Panel(panels[x].index, panels[x].name, panels[x].position);
+          items = panels[x].items;
+
+          additems(panel, items, function(error) {
+            if ( error ) {
+              CrashCustom("PanelItem", error, "Desktop::run(){[LaunchPanelitem()>{callback(error)}]}\nPanelItem::create(), ResourceManager::addResources() ?");
+            }
+          });
+
+          self.addPanel(panel);
         }
-      })();
+
+      } catch ( exception ) {
+        throw new OSjs.Classes.ProcessException(self, OSjs.Labels.CrashPanelCreate, exception);
+      }
 
       //
       // Now apply bindings and run desktop
