@@ -75,15 +75,15 @@ abstract class ApplicationVFS
       "attr" => "r",
       "icon" => "places/folder-templates.png"
     ),
+    "/User/Packages" => Array(
+      "type" => "user",
+      "attr" => "rs",
+      "icon" => "places/folder-download.png"
+    ),
     "/User" => Array(
       "type" => "user",
       "attr" => "rw",
       "icon" => "places/folder_home.png"
-    ),
-    "/Cloud" => Array(
-      "type" => "remote",
-      "attr" => "rw",
-      "icon" => "places/folder-publicshare.png"
     )
   );
 
@@ -146,10 +146,14 @@ abstract class ApplicationVFS
     // Check if the destination is not secured
     if ( $path !== null ) {
       if ( $write ) {
-        foreach ( self::$VirtualDirs as $k => $v ) {
-          if ( startsWith($path, $k) ) {
-            if ( $v['attr'] != "rw" ) {
-              return false;
+        if ( $path == "/" ) {
+          return false;
+        } else {
+          foreach ( self::$VirtualDirs as $k => $v ) {
+            if ( startsWith($path, $k) ) {
+              if ( $v['attr'] != "rw" ) {
+                return false;
+              }
             }
           }
         }
@@ -591,13 +595,21 @@ abstract class ApplicationVFS
             }
           }
 
-          $fpath = str_replace("//", "/", $rel_path);
+          $fpath = $rel_path;
         }
 
-        foreach ( self::$VirtualDirs as $k => $v ) {
-          if ( startsWith($fpath, $k) ) {
-            $protected = true;
-            break;
+        $fpath = preg_replace("/\/+/", "/", $fpath);
+
+        if ( dirname($fpath) == "/" ) {
+          $protected = true;
+        } else {
+          foreach ( self::$VirtualDirs as $k => $v ) {
+            if ( startsWith($fpath, $k) ) {
+              if ( $v["attr"] != "rw" ) {
+                $protected = true;
+              }
+              break;
+            }
           }
         }
 
@@ -790,6 +802,9 @@ abstract class ApplicationVFS
    * @return String
    */
   public static function GetMIME($path) {
+    $expl = explode(".", $path);
+    $ext = end($expl);
+
     $fi = new finfo(FILEINFO_MIME);
     $finfo = $fi->file($path);
     //$mime  = explode("; charset=", $finfo);
