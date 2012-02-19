@@ -7,12 +7,14 @@ vim.session
 template/*.php
 doc/doxygen.log
 doc/api/*
+doc/*
 public_html/.htpasswd
 
 # Sub-modules
 src/apps
 src/packages
 vendor/apps
+vendor/packages
 
 # Build files
 src/build/minimize.cache
@@ -20,6 +22,7 @@ src/locale/*/LC_MESSAGES/messages.mo
 src/build/packages.xml
 src/build/applications.xml
 src/build/database.sdb
+src/build/filesystem.sdb
 
 # Minimized files
 src/apps/*/_min
