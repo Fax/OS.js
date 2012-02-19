@@ -10,16 +10,6 @@
 
 require "header.php";
 
-if ( !class_exists("Application") ) {
-  require PATH_SRC . "/Application.class.php";
-}
-if ( !class_exists("Panel") ) {
-  require PATH_SRC . "/Panel.class.php";
-}
-if ( !class_exists("Dialog") ) {
-  require PATH_SRC . "/Dialog.class.php";
-}
-
 $total_before = 0;
 $total_after = 0;
 
@@ -138,11 +128,6 @@ $resource_files     = Array();
 $application_files  = Array();
 $language_files     = Array();
 
-// Read registered panel items
-foreach ( Panel::$Registered as $n => $v ) {
-  $resource_files = array_merge($resource_files, $v['resources']);
-}
-
 // Read registered dialogs
 foreach ( Dialog::$Registered as $n => $v ) {
   $resource_files = array_merge($resource_files, $v['resources']);
@@ -152,6 +137,12 @@ foreach ( Dialog::$Registered as $n => $v ) {
 if ( $xml = file_get_contents(PACKAGE_BUILD) ) {
   if ( $xml = new SimpleXmlElement($xml) ) {
     foreach ( $xml->application as $app ) {
+      $app_name     = (string) $app['class'];
+      foreach ( $app->resource as $res ) {
+        $application_files[] = "{$app_name}/" . ((string) $res);
+      }
+    }
+    foreach ( $xml->panelitem as $app ) {
       $app_name     = (string) $app['class'];
       foreach ( $app->resource as $res ) {
         $application_files[] = "{$app_name}/" . ((string) $res);
@@ -184,7 +175,7 @@ print "Compressing languages...\n";
 compress_list(3, $language_files);
 print "Compressing base files...\n";
 compress_list(0, $base_files);
-print "Compressing applications...\n";
+print "Compressing packages...\n";
 compress_list(2, $application_files);
 print "Compressing resources...\n";
 compress_list(1, $resource_files);
