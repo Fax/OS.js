@@ -139,6 +139,7 @@ abstract class Package
             self::$PackageRegister[self::TYPE_APPLICATION][$k] = $v;
           }
         }
+        ksort(self::$PackageRegister[self::TYPE_APPLICATION]);
         self::$_LoadedApplications = true;
       }
     }
@@ -150,6 +151,7 @@ abstract class Package
             self::$PackageRegister[self::TYPE_PANELITEM][$k] = $v;
           }
         }
+        ksort(self::$PackageRegister[self::TYPE_PANELITEM]);
         self::$_LoadedPanelItems = true;
       }
     }
