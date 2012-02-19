@@ -9,6 +9,7 @@ doc/doxygen.log
 doc/api/*
 doc/*
 public_html/.htpasswd
+public_html/media
 
 # Sub-modules
 src/apps
