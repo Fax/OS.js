@@ -5772,6 +5772,18 @@
     },
 
     /**
+     * PanelItem::modifyItem() -- A panel item has been modified
+     * @param  PanelItem      item        Panel Item instance
+     * @param  bool           save        Save the operation
+     * @return void
+     */
+    modifyItem : function(item, save) {
+      if ( save === true ) {
+        _Settings.savePanel(this);
+      }
+    },
+
+    /**
      * Panel::triggerExpand() -- Trigger expanding of items
      * @param   PanelItem    x       Item
      * @return  bool
@@ -6055,6 +6067,10 @@
           diag.$element.find(".DialogButtons .Ok").show().click(function() {
             callback_ok(diag);
             self.reload();
+
+            if ( self._panel ) {
+              self._panel.modifyItem(self, true);
+            }
           });
         }]));
       }
