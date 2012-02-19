@@ -52,7 +52,7 @@
    * @constants Local settings
    */
   var ENABLE_CACHE           = false;               //!< Enabled caching
-  var SETTING_REVISION       = 34;                  //!< The settings revision
+  var SETTING_REVISION       = 35;                  //!< The settings revision
   var ENABLE_LOGIN           = false;               //!< Use login
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
@@ -425,14 +425,14 @@
   /**
    * LaunchApplication() -- Application Launch handler
    * @param   String    app_name              Application name
-   * @param   Mixed     args                  Application starting arguments (argv)
+   * @param   Mixed     app_args              Application starting arguments (argv)
    * @param   Array     windows               Window list (used for restoration)
    * @param   Function  callback              Callback on success
    * @param   Function  callback_error        Callback on error
    * @return  void
    * @function
    */
-  function LaunchApplication(app_name, args, windows, callback, callback_error) {
+  function LaunchApplication(app_name, app_args, windows, callback, callback_error) {
     callback = callback || function() {};
     callback_error = callback_error || function() {};
 
@@ -453,7 +453,7 @@
           console.log("Trying to create application...");
 
           try {
-            application = new app_ref(GtkWindow, Application, API, args, windows);
+            application = new app_ref(GtkWindow, Application, API, app_args, windows);
             application._checkCompability();
 
             console.log("<<< CREATED >>>");
@@ -481,8 +481,8 @@
           for ( var x in resources ) {
             errors.push("* " + resources[x]);
           }
-          for ( var a in args ) {
-            eargs.push(args[a]);
+          for ( var a in app_args ) {
+            eargs.push(app_args[a]);
           }
 
           CrashApplication(app_name, {
@@ -981,10 +981,10 @@
         LaunchVFSObject(path, mime, use_default);
       },
 
-      'launch' : function(app_name, args, windows) {
-        args = args || {};
-        if ( args.length !== undefined && !args.length ) {
-          args = {};
+      'launch' : function(app_name, app_args, windows) {
+        app_args = app_args || {};
+        if ( !(app_args instanceof Object) ) {
+          app_args = {};
         }
         windows = windows || {};
 
@@ -1018,13 +1018,13 @@
         console.group("=== API OPERATION ===");
         console.log("Method", "API.system.launch");
         console.log("Launch", app_name);
-        console.log("Argv", args);
+        console.log("Argv", app_args);
         console.groupEnd();
 
         if ( launch_application ) {
-          LaunchApplication(app_name, args, windows);
+          LaunchApplication(app_name, app_args, windows);
         } else {
-          LaunchString(app_name, args, windows);
+          LaunchString(app_name, app_args, windows);
         }
       },
 
@@ -4725,13 +4725,10 @@
 
       var IconView = Class.extend({
 
-        list : null,
         _sel : null,
 
-        init : function(list) {
+        init : function() {
           var self = this;
-
-          this.list = list || [];
 
           $("#DesktopGrid").click(function() {
             if ( self._sel ) {
@@ -4742,32 +4739,17 @@
             $(document).click(); // Trigger this! (deselects context-menu)
           });
 
-          this.draw();
-        },
-
-        destroy : function() {
-          $("#DesktopGrid").empty().remove();
-          this.list = null;
-        },
-
-        draw : function() {
-          var self = this;
-
+          var ivlist = _Settings._get("desktop.grid", false, true);
           var root = $("<ul></ul>");
-          var str, iter, e, i = 0, l = this.list.length;
+          var str, giter, e, i = 0, l = ivlist.length;
           var last = null;
 
           for ( i; i < l; i++ ) {
-            iter = this.list[i];
-            str = sprintf("<li><div class=\"inner\"><div class=\"icon\"><img alt=\"\" src=\"%s\" /></div><div class=\"label\"><span>%s</span></div></div></li>", sprintf(ICON_URI_32, iter.icon), iter.title);
+            giter = ivlist[i];
+            str = sprintf("<li><div class=\"inner\"><div class=\"icon\"><img alt=\"\" src=\"%s\" /></div><div class=\"label\"><span>%s</span></div></div></li>", sprintf(ICON_URI_32, giter.icon), giter.title);
             e = $(str);
 
-            e.find(".inner").dblclick((function(app) {
-              return function() {
-                API.system.launch(app);
-                $("#DesktopGrid").click(); // Unselect
-              };
-            })(iter.launch));
+            self._createClick(e, i);
 
             e.find(".inner").click(function(ev) {
               ev.stopPropagation();
@@ -4786,16 +4768,36 @@
           }
 
           $("#DesktopGrid").html(root);
+        },
+
+        destroy : function() {
+          $("#DesktopGrid").empty(); //.remove();
+        },
+
+        _createClick : function(e, index) {
+          e.find(".inner").dblclick(function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+
+            var iter = _Settings._get("desktop.grid", false, true)[index]; // NOTE: This was the solution ?! WTF
+            if ( iter ) {
+              API.system.launch(iter.launch, iter['arguments']);
+            }
+            $("#DesktopGrid").click(); // Unselect
+
+            return false;
+          });
         }
 
       }); // @class
 
-      try {
-        var grid = _Settings._get("desktop.grid", false, true);
-        this.iconview = new IconView(grid);
-      } catch ( exception ) {
-        throw new OSjs.Classes.ProcessException(self, OSjs.Labels.CrashDesktopIconView, exception);
-      }
+      (function() {
+        try {
+          self.iconview = new IconView();
+        } catch ( exception ) {
+          throw new OSjs.Classes.ProcessException(self, OSjs.Labels.CrashDesktopIconView, exception);
+        }
+      })();
 
       //
       // Create panel and items from localStorage

@@ -227,14 +227,16 @@ class User
     $merge["desktop.grid"] = Array(
       "items" => Array(
         Array(
-          "title"  => "Home",
-          "icon"   => "places/user-home.png",
-          "launch" => "ApplicationFileManager"
+          "title"      => "Home",
+          "icon"       => "places/user-home.png",
+          "launch"     => "ApplicationFileManager",
+          "arguments"  => Array("path" => "/User")
         ),
         Array(
-          "title"  => "Browser Compability",
-          "icon"   => "status/software-update-urgent.png",
-          "launch" => "API::CompabilityDialog"
+          "title"     => "Browser Compability",
+          "icon"      => "status/software-update-urgent.png",
+          "launch"    => "API::CompabilityDialog",
+          "arguments" => null
         )
       )
     );

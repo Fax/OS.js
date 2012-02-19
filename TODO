@@ -1,5 +1,6 @@
 CORE:
 -------------------------------------------------------------------------------
+* TODO [CRI] : Check and fix ALL CrashApplication() s
 * TODO [CRI] : Add correct docuheaders to packages
 * TODO [HIG] : Implement MenuNew in GtkMenu
 * TODO [HIG] : Implement MenuNew in ContextMenu
@@ -11,6 +12,7 @@ CORE:
 * TODO [MED] : Write custom GtkTab class
 * TODO [MED] : Write custom GtkLoadingBar class
 * TODO [LOW] : Write custom $
+* TODO [???] : Somehow re-loading desktop.grid fixes the arv overwrites
 
 APPLICATIONS ETC:
 -------------------------------------------------------------------------------

@@ -71,6 +71,13 @@ class DB
     return call_user_func_array(Array($this->__connection, $func), $args);
   }
 
+  /**
+   * Database INSERT
+   * @param   String    $table        Table name
+   * @param   Array     $args         Keys/Values
+   * @param   String    $dsn          DSN Name (Default = none)
+   * @return Mixed
+   */
   public final static function Insert($table, Array $args, $dsn = null) {
     if ( $inst = self::get($dsn) ) {
       if ( $db = $inst->getConnection() ) {
@@ -105,6 +112,14 @@ class DB
     return false;
   }
 
+  /**
+   * Database UPDATE
+   * @param   String    $table        Table name
+   * @param   Array     $args         UPDATE arguments
+   * @param   Array     $where        WHERE arguments
+   * @param   String    $dsn          DSN Name (Default = none)
+   * @return Mixed
+   */
   public final static function Update($table, Array $args, Array $where, $dsn = null) {
     if ( $inst = self::get($dsn) ) {
       if ( $db = $inst->getConnection() ) {
@@ -143,7 +158,16 @@ class DB
     return false;
   }
 
-  public final static function Select($table, $what, Array $where, $limit = null, $dsn = null) {
+  /**
+   * Database SELECT
+   * @param   String    $table        Table name
+   * @param   Mixed     $what         SELECT argument(s) (Array or String)
+   * @param   Array     $where        WHERE arguments
+   * @param   Mixed     $limit        LIMIT argument
+   * @param   String    $dsn          DSN Name (Default = none)
+   * @return Mixed
+   */
+  public final static function Select($table, $what = "*", Array $where, $limit = null, $dsn = null) {
     $results = Array();
 
     if ( $inst = self::get($dsn) ) {
@@ -185,6 +209,14 @@ class DB
     return $results ? ($limit === 1 ? reset($results) : $results) : false;
   }
 
+  /**
+   * Database DELETE
+   * @param   String    $table        Table name
+   * @param   Array     $where        WHERE arguments
+   * @param   Mixed     $limit        LIMIT argument
+   * @param   String    $dsn          DSN Name (Default = none)
+   * @return Mixed
+   */
   public final static function Delete($table, Array $where, $limit = null, $dsn = null) {
     if ( $inst = self::get($dsn) ) {
       if ( $db = $inst->getConnection() ) {
