@@ -55,7 +55,8 @@ class User
   public $password    = "";
   public $privilege   = self::GROUP_NONE;
   public $real_name   = "Undefined";
-  public $settings    = "{}";
+  public $created_at  = null;
+  public $settings    = Array();
 
   /////////////////////////////////////////////////////////////////////////////
   // MAGICS
@@ -63,6 +64,13 @@ class User
 
   public final function __construct(Array $data) {
     foreach ( $data as $k => $v ) {
+      try {
+        if ( $k == "settings" )
+          $v = JSON::decode($v);
+        elseif ( $k == "created_at" && $v )
+          $v = new DateTime($v);
+      } catch ( Exception $e ) {}
+
       $this->$k = $v;
     }
   }
@@ -82,12 +90,10 @@ class User
   }
 
   public final function saveUser(Array $session, Array $settings) {
-    $this->settings = JSON::encode($settings);
+    $this->settings = $settings;
     if ( User::save($this) ) {
-      $this->settings = $settings;
       return true;
     }
-    $this->settings = $settings;
     return false;
   }
 
@@ -95,8 +101,8 @@ class User
     $sess               = new Session(Array(
       "user_id"         => $this->id,
       "session_name"    => $name,
-      "session_config"  => JSON::encode($config),
-      "created_at"      => time()
+      "session_data"    => $config,
+      "created_at"      => new DateTime()
     ));
 
     if ( $sess = Session::save($sess) ) {
@@ -141,8 +147,8 @@ class User
       $values[$k] = $v;
     }
 
-    if ( isset($user->id) && $user->id ) {
-      if ( DB::Update("user", $values, Array("id" => $user->id)) ) {
+    if ( isset($instance->id) && $instance->id ) {
+      if ( DB::Update("user", $values, Array("id" => $instance->id)) ) {
         return $instance;
       }
     } else {

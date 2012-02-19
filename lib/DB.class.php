@@ -81,6 +81,11 @@ class DB
         foreach ( $args as $k => $v ) {
           $query_columns[] = "`$k`";
           $query_values[]  = ":$k";
+          if ( is_object($v) && ($v instanceof DateTime) ) {
+            $v = $v->format("c");
+          } else if ( is_object($v) || is_array($v) ) {
+            $v = JSON::encode($v);
+          }
           $values[$k] = $v;
         }
 
@@ -109,14 +114,24 @@ class DB
 
         foreach ( $args as $k => $v ) {
           $query_set[] = "`$k` = :$k";
+          if ( is_object($v) && ($v instanceof DateTime) ) {
+            $v = $v->format("c");
+          } else if ( is_object($v) || is_array($v) ) {
+            $v = JSON::encode($v);
+          }
           $values[$k] = $v;
         }
         foreach ( $where as $k => $v ) {
           $query_where[] = "`$k` = :$k";
+          if ( is_object($v) && ($v instanceof DateTime) ) {
+            $v = $v->format("c");
+          } else if ( is_object($v) || is_array($v) ) {
+            $v = JSON::encode($v);
+          }
           $values[$k] = $v;
         }
 
-        $query  = sprintf("UPDATE `%s` SET %s WHERE %s;", implode(", ", $query_set), implode(" AND ", $query_where));
+        $query  = sprintf("UPDATE `%s` SET %s WHERE %s;", $table, implode(", ", $query_set), implode(" AND ", $query_where));
         if ( $sth = $db->prepare($query) ) {
           if ( $res = $sth->execute($values) ) {
             return true;
@@ -148,6 +163,11 @@ class DB
 
         foreach ( $where as $k => $v ) {
           $query_where[] = "`$k` = :$k";
+          if ( is_object($v) && ($v instanceof DateTime) ) {
+            $v = $v->format("c");
+          } else if ( is_object($v) || is_array($v) ) {
+            $v = JSON::encode($v);
+          }
           $values[$k] = $v;
         }
 
@@ -174,6 +194,11 @@ class DB
 
         foreach ( $where as $k => $v ) {
           $query_where[] = "`$k` = :$k";
+          if ( is_object($v) && ($v instanceof DateTime) ) {
+            $v = $v->format("c");
+          } else if ( is_object($v) || is_array($v) ) {
+            $v = JSON::encode($v);
+          }
           $values[$k] = $v;
         }
 

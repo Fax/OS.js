@@ -305,7 +305,7 @@ class Core
           "system_language"   => DEFAULT_LANGUAGE,
           "browser_language"  => $browser_language,
           "init_language"     => $init_language,
-          "stored_settings"   => JSON::decode($user->settings)
+          "stored_settings"   => $user->settings
         )
       ));
     } else {

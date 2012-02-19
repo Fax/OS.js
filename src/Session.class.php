@@ -48,8 +48,9 @@ class Session
   public $id              = -1;
   public $user_id         = -1;
   public $session_name    = "Undefined";
-  public $session_config  = "{}";
+  public $session_data    = Array();
   public $created_at      = null;
+  public $modified_at     = null;
 
   /////////////////////////////////////////////////////////////////////////////
   // MAGICS
@@ -57,6 +58,15 @@ class Session
 
   public final function __construct(Array $data) {
     foreach ( $data as $k => $v ) {
+      try {
+        if ( $k == "session_data" )
+          $v = JSON::decode($v);
+        elseif ( $k == "created_at" && $v )
+          $v = new DateTime($v);
+        elseif ( $k == "modified_at" && $v )
+          $v = new DateTime($v);
+      } catch ( Exception $e ) {}
+
       $this->$k = $v;
     }
   }
