@@ -710,8 +710,8 @@ class Core
    */
   public final static function getInstalledPackages() {
     return Array(
-      "Application" => Package::$PackageRegister[Package::TYPE_APPLICATION],
-      "PanelItem"   => Panel::$Registered // FIXME
+      "Application" => Package::GetPackageMeta(Package::TYPE_APPLICATION),
+      "PanelItem"   => Package::GetPackageMeta(Package::TYPE_PANELITEM)
     );
   }
 
