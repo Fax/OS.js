@@ -119,7 +119,7 @@ abstract class Application
         $app_icon     = (string) $app['icon'];
         $app_class    = (string) $app['class'];
         $app_file     = (string) $app['file'];
-        $app_system   = (string) $app['system'] == "true";
+        //$app_system   = (string) $app['system'] == "true";
         $app_category = (string) $app['category'];
         $app_enabled  = $app['enabled'] === "true" ? true : false;
         $app_titles   = Array();
@@ -128,10 +128,11 @@ abstract class Application
           continue;
         }
 
-        $windows   = Array();
+        //$windows   = Array();
         $resources = Array();
         $mimes     = Array();
 
+        /*
         foreach ( $app->window as $win ) {
           $win_id    = (string) $win['id'];
           $win_props = Array();
@@ -154,6 +155,7 @@ abstract class Application
             "properties" => $win_props
           );
         }
+         */
 
         foreach ( $app->resource as $res ) {
           $resources[] = (string) $res;
