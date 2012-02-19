@@ -95,11 +95,12 @@ class Compiler
 
   /**
    * Compile a Panelitem by Metadata file
+   * @param   String    $class_name         Class name
    * @param   String    $metadata_path      Metadata XML file path
    * @param   bool      $dry_run            Dry-run (Default = false)
    * @return Mixed
    */
-  protected function compilePanelItem($metadata_path, $dry_run = false) {
+  protected function compilePanelItem($class_name, $metadata_path, $dry_run = false) {
     if ( $xml = new SimpleXmlElement(file_get_contents($metadata_path)) ) {
       print "Compiling from '$metadata_path'\n";
 
@@ -178,11 +179,10 @@ class Compiler
 
       $node = $this->_oDocument->createElement("panelitem");
       $node->setAttribute("name",         $project_name);
+      $node->setAttribute("class",        $class_name);
       $node->setAttribute("title",        $project_title);
       $node->setAttribute("description",  $project_description);
       $node->setAttribute("icon",         $project_icon);
-      $node->setAttribute("class",        "PanelItem{$project_name}");
-      $node->setAttribute("file",         "PanelItem{$project_name}.class.php");
 
       foreach ( $project_titles as $tl => $tt ) {
         $n = $this->_oDocument->createElement("title");
@@ -217,17 +217,17 @@ class Compiler
 
   /**
    * Compile a project by Metadata file
+   * @param   String    $class_name         Class name
    * @param   String    $metadata_path      Metadata XML file path
    * @param   bool      $dry_run            Dry-run (Default = false)
    * @return  Mixed
    */
-  protected function compileProject($metadata_path, $dry_run = false) {
+  protected function compileProject($class_name, $metadata_path, $dry_run = false) {
     if ( $xml = new SimpleXmlElement(file_get_contents($metadata_path)) ) {
       print "Compiling from '$metadata_path'\n";
 
       // Generic variables
       $project_name         = ((string) $xml['name']);
-      $project_php          = ((string) $xml['file']);
       $project_category     = ((string) $xml['category']);
       $project_enabled      = true;
       $project_title        = Application::APPLICATION_TITLE;
@@ -238,14 +238,12 @@ class Compiler
       $project_mimes        = Array();
       $project_resources    = Array();
       $timestamp            = strftime("%F");
-      $class_name           = str_replace(".class.php", "", $project_php);
 
       // Paths
       $out_css      = PATH_BUILD . "/apps/{$class_name}.css";
       $out_php      = PATH_BUILD . "/apps/{$class_name}.class.php";
       $out_js       = PATH_BUILD . "/apps/{$class_name}.js";
       $out_html     = PATH_BUILD . "/apps/{$class_name}.html";
-      $php_path     = str_replace("metadata.xml", $project_php, $metadata_path);
       $schema_path  = null;
 
       if ( ($schema = ((string) $xml['schema'])) ) {
@@ -391,12 +389,11 @@ class Compiler
       // Generate Application XML Build-file data
       $node = $this->_oDocument->createElement("application");
       $node->setAttribute("name",     $project_name);
+      $node->setAttribute("class",    $class_name);
       $node->setAttribute("title",    $project_title);
       $node->setAttribute("icon",     $project_icon);
       $node->setAttribute("system",   $project_system ? "true" : "false");
       $node->setAttribute("category", $project_category);
-      $node->setAttribute("class",    $class_name);
-      $node->setAttribute("file",     $project_php);
 
       foreach ( $project_titles as $tl => $tt ) {
         $n = $this->_oDocument->createElement("title");
@@ -416,6 +413,7 @@ class Compiler
         $node->appendChild($n);
       }
 
+      /*
       foreach ( $temp_windows as $wid => $wprop ) {
         $prop_node  = $this->_oDocument->createElement("property");
         $prop_node->setAttribute("name", "properties");
@@ -427,6 +425,7 @@ class Compiler
 
         $node->appendChild($win_node);
       }
+       */
 
       // Write data
       if ( !$dry_run ) {
@@ -473,13 +472,13 @@ class Compiler
           if ( !file_exists($path) )
             continue;
 
-          $compiler->compileProject($path, $dry_run);
+          $compiler->compileProject($filename, $path, $dry_run);
         } else if ( preg_match("/^PanelItem(.*)$/", $filename) ) {
           $path = "{$root}/{$filename}/metadata.xml";
           if ( !file_exists($path) )
             continue;
 
-          $compiler->compilePanelItem($path, $dry_run);
+          $compiler->compilePanelItem($filename, $path, $dry_run);
         }
       }
 

@@ -420,7 +420,7 @@
         MessageBox(sprintf(OSjs.Labels.ErrorLaunchString, operation));
       break;
     }
-  } //@endfunction
+  } // @endfunction
 
   /**
    * LaunchApplication() -- Application Launch handler
@@ -491,6 +491,8 @@
             message : sprintf(OSjs.Labels.CrashApplicationResourceMessage, errors.join("\n")),
             stack   : sprintf(OSjs.Labels.CrashApplicationResourceStack, app_name, eargs.join(","))
           });
+
+          callback_error("AddResource() error");
         }
 
         setTimeout(function() {
@@ -533,15 +535,16 @@
       }
 
       var default_app = null;
-      var apps = {};
-      var found = [];
-      var list = [];
-      var inmime = mime.split("/");
-      var launched = false;
+      var apps        = {};
+      var found       = [];
+      var list        = [];
+      var inmime      = mime.split("/");
+      var launched      = false;
+
       var i;
 
       // Figure out what apps to display
-      var activated = _Settings._get("user.installed.packages", false, true);
+      var activated = _Settings._get("user.installed.packages", false, true); // FIXME
       for ( i in _AppCache ) {
         if ( _AppCache.hasOwnProperty(i) ) {
           if ( in_array(i, activated) ) {
@@ -1347,7 +1350,7 @@
         },
 
         'packages' : function(icons, apps, pitems) {
-          var activated = _Settings._get("user.installed.packages", false, true);
+          var activated = _Settings._get("user.installed.packages", false, true); // FIXME
           var result = [];
 
           apps = (apps === undefined) ? true : apps;

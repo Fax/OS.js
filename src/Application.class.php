@@ -84,7 +84,6 @@ abstract class Application
         $app_title    = (string) $app['title'];
         $app_icon     = (string) $app['icon'];
         $app_class    = (string) $app['class'];
-        $app_file     = (string) $app['file'];
         $app_category = (string) $app['category'];
         $app_enabled  = $app['enabled'] === "true" ? true : false;
 
@@ -119,7 +118,7 @@ abstract class Application
           "resources" => $resources
         );
 
-        require_once PATH_PACKAGES . "/{$app_class}/{$app_file}";
+        require_once PATH_PACKAGES . "/{$app_class}/{$app_class}.class.php";
       }
     }
 

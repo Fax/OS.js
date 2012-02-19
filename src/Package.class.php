@@ -76,9 +76,18 @@ abstract class Package
   /////////////////////////////////////////////////////////////////////////////
 
   public static function Install(Package $p, User $u) {
+    /*
+    $class = get_class($p);
+    $path  = sprintf("%s/%s/metadata.xml", PATH_PACKAGES, $p);
+    if ( file_exists($path) ) {
+      return true;
+    }
+     */
+    return false;
   }
 
   public static function Uninstall(Package $p, User $u) {
+    return false;
   }
 
   /**

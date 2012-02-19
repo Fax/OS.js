@@ -63,7 +63,6 @@ class       PanelItem
         $pi_name          = (string) $pi['name'];
         $pi_title         = (string) $pi['title'];
         $pi_class         = (string) $pi['class'];
-        $pi_file          = (string) $pi['file'];
         $pi_description   = (string) $pi['description'];
         $pi_icon          = (string) $pi['icon'];
         $pi_class         = (string) $pi['class'];
@@ -100,7 +99,7 @@ class       PanelItem
           "resources"     => $resources
         );
 
-        require_once PATH_PACKAGES . "/{$pi_class}/{$pi_file}";
+        require_once PATH_PACKAGES . "/{$pi_class}/{$pi_class}.class.php";
       }
     }
 
