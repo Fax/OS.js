@@ -73,6 +73,9 @@ msgstr "Missing some arguments!"
 msgid "Path does not exist"
 msgstr "Path does not exist"
 
+msgid "The file could not be read"
+msgstr "The file could not be read"
+
 msgid "Invalid argument"
 msgstr "Invalid argument"
 

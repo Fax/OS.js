@@ -546,7 +546,7 @@ class Core
           $json['result'] = $content;
           $json['success'] = true;
         } else {
-          $json['error'] = _("Path does not exist");
+          $json['error'] = _("The file could not be read");
         }
       } else {
         $json['error'] = _("Invalid argument");

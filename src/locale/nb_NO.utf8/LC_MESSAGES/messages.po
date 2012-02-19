@@ -73,6 +73,9 @@ msgstr "Argumenter mangler!"
 msgid "Path does not exist"
 msgstr "Stien finnes ikke"
 
+msgid "The file could not be read"
+msgstr "Filen kunne ikke leses"
+
 msgid "Invalid argument"
 msgstr "Ugyldig argument"
 
