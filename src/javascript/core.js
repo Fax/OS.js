@@ -7467,18 +7467,37 @@
      * @return void
      */
     show : function(ev, el) {
-      var css = {
-        "top"   : ev.pageY + "px",
-        "left"  : ev.pageX + "px"
-      };
-
-      console.group("Menu::show()");
-      console.log("CSS", css);
-      console.log("El", el);
-      console.groupEnd();
-
-      el.css(css).show();
       $("body").append(el);
+
+      el.css({
+        "top" : "-10000px",
+        "left" : "-10000px"
+      }).show();
+
+      setTimeout(function() {
+        console.group("Menu::show()");
+
+        var y = ev.pageY;
+        var x = ev.pageX;
+        var w = el.width();
+        var h = el.height();
+
+        if ( (w + x) > $(document).width() ) {
+          x -= (w + 10);
+        }
+        if ( (h + y) > $(document).height() ) {
+          y -= (h + 10);
+        }
+
+        el.css({
+          "top"   : y + "px",
+          "left"  : x + "px"
+        });
+
+        console.log("Pos", x, "x", y);
+        console.log("El", el);
+        console.groupEnd();
+      });
     },
 
     /**

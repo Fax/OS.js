@@ -2,7 +2,6 @@ CORE:
 -------------------------------------------------------------------------------
 * TODO [CRI] : Add correct docuheaders to packages
 * TODO [HIG] : Implement MenuNew in GtkMenu
-* TODO [^^^] : >> Remove old Menu and rewrite handling
 * TODO [HIG] : Find more appropriate names for settings tree items
 * TODO [HIG] : Add/Remove Panel
 * TODO [HIG] : Custom Exception class
