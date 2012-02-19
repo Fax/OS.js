@@ -67,7 +67,7 @@ class Compiler
     $doc->formatOutput  = true;
     $doc->encoding      = 'UTF-8';
 
-    $root_node = $doc->createElement("applications");
+    $root_node = $doc->createElement("packages");
     $doc->appendChild($root_node);
 
     $this->_oDocument = $doc;
@@ -90,6 +90,43 @@ class Compiler
         return true;
       }
     }
+    return false;
+  }
+
+  /**
+   * Compile a Panelitem by Metadata file
+   * @param   String    $metadata_path      Metadata XML file path
+   * @param   bool      $dry_run            Dry-run (Default = false)
+   * @return Mixed
+   */
+  protected function compilePanelItem($metadata_path, $dry_run = false) {
+    if ( $xml = new SimpleXmlElement(file_get_contents($metadata_path)) ) {
+      print "Compiling from '$metadata_path'\n";
+
+      // Skip application
+      if ( ENV_PRODUCTION ) {
+        if ( !$project_enabled ) {
+          print "\tNot enabled...skipping...!\n";
+          return -1;
+        }
+      }
+
+      /*
+      $node = $this->_oDocument->createElement("panelitem");
+      $node->setAttribute("name",     $project_name);
+      $node->setAttribute("title",    $project_title);
+      $node->setAttribute("icon",     $project_icon);
+      $node->setAttribute("system",   $project_system ? "true" : "false");
+      $node->setAttribute("category", $project_category);
+      $node->setAttribute("class",    $class_name);
+      $node->setAttribute("file",     $project_php);
+       */
+
+      print "\tDONE!\n";
+
+      return true;
+    }
+
     return false;
   }
 
@@ -352,6 +389,12 @@ class Compiler
             continue;
 
           $compiler->compileProject($path, $dry_run);
+        } else if ( preg_match("/^PanelItem(.*)$/", $filename) ) {
+          $path = "{$root}/{$filename}/metadata.xml";
+          if ( !file_exists($path) )
+            continue;
+
+          $compiler->compilePanelItem($path, $dry_run);
         }
       }
 
