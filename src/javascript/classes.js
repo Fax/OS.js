@@ -476,7 +476,7 @@
         var hb = this.$element.find(".TableHead tbody").empty();
         for ( i = 0; i < cl; i++ ) {
           cel = columns[i];
-          el = $(sprintf("<td class=\"%s\" style=\"%s\">%s</td>", cel.className || "", cel.style || "", cel.title || ""));
+          el = $(sprintf("<td class=\"%s\" style=\"%s\"><span>%s</span></td>", cel.className || "", cel.style || "", cel.title || ""));
           hb.append(el);
         }
       }

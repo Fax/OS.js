@@ -180,6 +180,9 @@
   .GtkIconView table {
     border-collapse : collapse;
   }
+  .GtkIconView table td {
+    vertical-align : middle;
+  }
 
   .GtkIconView .Even {
     background : #fff;
@@ -238,11 +241,13 @@
 
 
   .GtkIconView table.TableHead {
-    height : 20px;
-    padding-top :5px;
-    padding-bottom : 5px;
     overflow : hidden;
     display : block;
+  }
+  .GtkIconView table.TableHead span {
+    display : block;
+    margin-top :5px;
+    margin-bottom : 5px;
   }
   .GtkIconView table.TableBody {
     background : #fff;
