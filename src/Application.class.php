@@ -32,7 +32,7 @@
  */
 
 /**
- * Application -- Base OS.js Application Class
+ * Application -- Application Package Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package OSjs.Sources.Core

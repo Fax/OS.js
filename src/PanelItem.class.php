@@ -31,9 +31,19 @@
  * @created 2012-02-19
  */
 
+/**
+ * PanelItem -- Panel Item Package Class
+ *
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @package OSjs.Sources
+ * @class
+ */
 class       PanelItem
   extends   Package
 {
+  const PANELITEM_TITLE   = __CLASS__;
+  const PANELITEM_ICON    = "emblems/emblem-unreadable.png";
+  const PANELITEM_DESC    = __CLASS__;
 
   /**
    * @constructor

@@ -31,6 +31,13 @@
  * @created 2012-02-18
  */
 
+/**
+ * Package -- Package Class
+ *
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @package OSjs.Sources
+ * @class
+ */
 abstract class Package
 {
   const TYPE_APPLICATION  = 0;
@@ -76,6 +83,13 @@ abstract class Package
   public static function Uninstall(Package $p, User $u) {
   }
 
+  /**
+   * Load A Package by name and type
+   * @param  String   $name       Package name
+   * @param  int      $type       Package type
+   * @param  User     $u          User instance
+   * @return void
+   */
   public static function Load($name, $type = -1, User $u = null) {
     switch ( (int) $type ) {
       case self::TYPE_APPLICATION :
@@ -110,6 +124,12 @@ abstract class Package
     return null;
   }
 
+  /**
+   * Load All Packages by type
+   * @param  int      $type       Package type
+   * @param  User     $u          User instance
+   * @return void
+   */
   public static function LoadAll($type = -1, User $u = null) {
     switch ( (int) $type ) {
       case self::TYPE_APPLICATION :
@@ -140,6 +160,11 @@ abstract class Package
     }
   }
 
+  /**
+   * Load (a) Package(s)
+   * @param  String     $name     Package name (if any)
+   * @return Mixed
+   */
   public static function LoadPackage($name = null) {
     $config = PACKAGE_BUILD;
 
@@ -157,6 +182,11 @@ abstract class Package
     return false;
   }
 
+  /**
+   * Get Package Metadata
+   * @param   int     $type     Package Type
+   * @return Array
+   */
   public static function GetPackageMeta($type) {
     $result = Array();
     if ( isset(Package::$PackageRegister[$type]) ) {

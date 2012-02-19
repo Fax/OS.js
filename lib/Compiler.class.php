@@ -105,11 +105,11 @@ class Compiler
 
       $project_name         = ((string) $xml['name']);
       $project_enabled      = true;
-      $project_title        = "unset";
+      $project_title        = PanelItem::PANELITEM_ICON;
       $project_titles       = Array();
-      $project_description  = "unset";
+      $project_description  = PanelItem::PANELITEM_DESC;
       $project_descriptions = Array();
-      $project_icon         = "unset";
+      $project_icon         = PanelItem::PANELITEM_ICON;
       $project_resources    = Array();
 
       // Parse general attributes
