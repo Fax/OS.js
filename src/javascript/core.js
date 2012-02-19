@@ -3024,8 +3024,8 @@
       }
 
       // Make sure we have all external refs saved
-      if ( upgrade || !localStorage.getItem("applications") ) {
-        localStorage.setItem("applications", JSON.stringify({}));
+      if ( upgrade || !localStorage.getItem("settings") ) {
+        localStorage.setItem("settings", JSON.stringify({}));
       }
       if ( upgrade || !localStorage.getItem("defaults") ) {
         localStorage.setItem("defaults", JSON.stringify({}));
@@ -3044,6 +3044,7 @@
       localStorage.removeItem("system.installed.packages");
       localStorage.removeItem("desktop.panel.items");
       localStorage.removeItem("desktop.panel.position");
+      localStorage.removeItem("applications");
 
       // Now create a registry for internal use (browser storage is plain-text)
       this._initStorage(upgrade, updateable, stored);
@@ -3143,13 +3144,13 @@
     },
 
     /**
-     * SettingsManager::saveApp() -- Save application data
+     * SettingsManager::savePackageStorage() -- Save package data
      * @param   String    name      Application name
      * @param   Object    props     Application settings
      * @return  void
      */
-    saveApp : function(name, props) {
-      var storage = localStorage.getItem("applications");
+    savePackageStorage : function(name, props) {
+      var storage = localStorage.getItem("settings");
       if ( !storage ) {
         storage = {};
       } else {
@@ -3161,9 +3162,9 @@
       }
       storage[name] = props;
 
-      localStorage.setItem("applications", JSON.stringify(storage));
+      localStorage.setItem("settings", JSON.stringify(storage));
 
-      console.group("SettingsManager::saveApp()");
+      console.group("SettingsManager::savePackageStorage()");
       console.log(name);
       console.log(props);
       console.groupEnd();
@@ -3172,12 +3173,12 @@
     },
 
     /**
-     * SettingsManager::loadApp() -- Load application data
+     * SettingsManager::loadPackageStorage() -- Load package data
      * @param   String    name      Application name
      * @return  JSON
      */
-    loadApp : function(name) {
-      var storage = localStorage.getItem("applications");
+    loadPackageStorage : function(name) {
+      var storage = localStorage.getItem("settings");
       var res;
       if ( storage ) {
         try {
@@ -3188,7 +3189,7 @@
       if ( (res instanceof Object) ) {
         if ( res[name] ) {
 
-          console.group("SettingsManager::loadApp()");
+          console.group("SettingsManager::loadPackageStorage()");
           console.log(name);
           console.log(res[name]);
           console.groupEnd();
@@ -4033,7 +4034,7 @@
      */
     _saveStorage : function() {
       if ( this._name && this._storage_on ) {
-        this._storage = _Settings.saveApp(this._name, this._storage);
+        this._storage = _Settings.savePackageStorage(this._name, this._storage);
       }
 
       console.log("Application::" + this._name + "::_saveStorage()", this._storage);
@@ -4045,7 +4046,7 @@
      */
     _restoreStorage : function() {
       if ( this._name && this._storage_on ) {
-        var s = _Settings.loadApp(this._name);
+        var s = _Settings.loadPackageStorage(this._name);
         if ( s !== false ) {
           this._storage = s;
         }
@@ -4063,7 +4064,7 @@
      */
     _flushStorage : function() {
       if ( this._name && this._storage_on ) {
-        this._storage = _Settings.saveApp(this._name, {});
+        this._storage = _Settings.savePackageStorage(this._name, {});
       }
 
       console.log("Application::" + this._name + "::_flushStorage()", this._storage);
