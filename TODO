@@ -1,15 +1,14 @@
 CORE:
 -------------------------------------------------------------------------------
-* TODO [CRI] : Add correct docuheaders to packages
-* TODO [HIG] : Implement MenuNew in GtkMenu
 * TODO [HIG] : Find more appropriate names for settings tree items
 * TODO [HIG] : Add/Remove Panel
 * TODO [HIG] : Custom Exception class
+* TODO [MED] : Implement MenuNew in GtkMenu
 * TODO [MED] : Rewrite Glade builder class
-* TODO [MED] : Write custom GtkTab class
-* TODO [MED] : Write custom GtkLoadingBar class
-* TODO [MED] : Clean up CSS
-* TODO [LOW] : Write custom $
+* TODO [LOW] : Write custom GtkTab class
+* TODO [LOW] : Write custom GtkLoadingBar class
+* TODO [LOW] : Clean up CSS
+* TODO [---] : Write custom $
 * TODO [???] : Somehow re-loading desktop.grid fixes the arv overwrites
 
 APPLICATIONS ETC:
