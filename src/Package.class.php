@@ -99,7 +99,7 @@ abstract class Package
           }
         }
 
-        return new $name();
+        return self::$PackageRegister[$type][$name];
         break;
 
       case self::TYPE_PANELITEM :
@@ -111,7 +111,7 @@ abstract class Package
           }
         }
 
-        return new $name();
+        return self::$PackageRegister[$type][$name];
         break;
 
       default :
@@ -191,17 +191,7 @@ abstract class Package
   public static function GetPackageMeta($type) {
     $result = Array();
     if ( isset(Package::$PackageRegister[$type]) ) {
-      foreach ( Package::$PackageRegister[$type] as $k => $v ) {
-        if ( $type == Package::TYPE_APPLICATION ) {
-          unset($v['resources']);
-
-          $result[$k] = $v;
-        } else {
-          unset($v['resources']);
-
-          $result[$k] = $v;
-        }
-      }
+      $result = Package::$PackageRegister[$type];
     }
     return $result;
   }
@@ -239,13 +229,6 @@ abstract class Package
     return $this->_iType;
   }
 
-  /**
-   * Get Package JSON data
-   * @return Array
-   */
-  public function getJSON() {
-    return self::$PackageRegister[$this->getPackageType()][get_class($this)];
-  }
 }
 
 ?>

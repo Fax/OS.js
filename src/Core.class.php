@@ -72,7 +72,6 @@ class Core
     "login"         => "doUserLogin",
     "logout"        => "doUserLogout",
     "user"          => "doUserInfo",
-    "load"          => "doPackageLoad",
     "event"         => "doApplicationEvent",
     "package"       => "doPackageOperation",
     "service"       => Array(
@@ -267,8 +266,6 @@ class Core
    */
   protected static final function _doCacheUpdate(Array $args, Array &$json, Core $inst = null) {
     if ( $user = $inst->getUser() ) {
-      Package::LoadAll(Package::TYPE_APPLICATION | Package::TYPE_PANELITEM, $user);
-
       $json['success'] = true;
       $json['result']  = Array(
         "packages" => Core::getInstalledPackages()
@@ -288,8 +285,6 @@ class Core
     $browser_language = self::_getBrowserLanguage();
 
     if ( $user = $inst->getUser() ) {
-      Package::LoadAll(Package::TYPE_APPLICATION | Package::TYPE_PANELITEM, $user);
-
       $installed_packages = Core::getInstalledPackages();
 
       $resources = Array();
@@ -489,28 +484,6 @@ class Core
   }
 
   /**
-   * Do a 'Package Load' AJAX Call
-   * @see Core::doPost
-   * @return void
-   */
-  protected static final function _doPackageLoad(Array $args, Array &$json, Core $inst = null) {
-    $name = isset($args['app']) ? $args['app'] : $args['panelitem'];
-    $type = isset($args['app']) ? Package::TYPE_APPLICATION : Package::TYPE_PANELITEM;
-
-    if ( $pkg = Package::Load($name, $type) ) {
-      try {
-        $json['success'] = true;
-        $json['result']  = $pkg->getJSON();
-        $json['error']   = null;
-      } catch ( Exception $e ) {
-        $json['error'] = $e->getMessage();
-      }
-    } else {
-      $json['error'] = sprintf(_("Application '%s' does not exist"), $args['app']);
-    }
-  }
-
-  /**
    * Do a 'Application Event' AJAX Call
    * @see Core::doPost
    * @return void
@@ -676,6 +649,8 @@ class Core
    * @return Array
    */
   public final static function getInstalledPackages() {
+    Package::LoadAll(Package::TYPE_APPLICATION | Package::TYPE_PANELITEM, $user);
+
     return Array(
       "Application" => Package::GetPackageMeta(Package::TYPE_APPLICATION),
       "PanelItem"   => Package::GetPackageMeta(Package::TYPE_PANELITEM)

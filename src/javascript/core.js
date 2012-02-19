@@ -351,27 +351,24 @@
   function LaunchPanelItem(i, iname, iargs, ialign, panel, callback, save) {
     callback = callback || function() {};
 
-    if ( InitLaunch(iname) ) {
-      DoPost({'action' : 'load', 'panelitem' : iname}, function(data) {
-        if ( data.success ) {
-          _Resources.addResources(data.result.resources, iname, function(error) {
+    if ( InitLaunch(iname) && _PanelCache[iname] ) {
+      var resources = _PanelCache[iname].resources;
+      _Resources.addResources(resources, iname, function(error) {
 
-            console.group(">>> Initing loading of '" + iname + "' <<<");
+        console.group(">>> Initing loading of '" + iname + "' <<<");
 
-            if ( !error && OSjs.PanelItems[iname] ) {
-              var item = new OSjs.PanelItems[iname](PanelItem, panel, API, iargs);
-              if ( item ) {
-                item._panel = panel;
-                item._index = i;
-                panel.addItem(item, ialign, save);
-              }
-            }
-
-            console.groupEnd();
-
-            callback(error);
-          });
+        if ( !error && OSjs.PanelItems[iname] ) {
+          var item = new OSjs.PanelItems[iname](PanelItem, panel, API, iargs);
+          if ( item ) {
+            item._panel = panel;
+            item._index = i;
+            panel.addItem(item, ialign, save);
+          }
         }
+
+        console.groupEnd();
+
+        callback(error);
       });
     }
   } // @endfunction
@@ -439,84 +436,70 @@
     callback = callback || function() {};
     callback_error = callback_error || function() {};
 
-    if ( !InitLaunch(app_name) ) {
-      return;
-    }
+    if ( InitLaunch(app_name) && _AppCache[app_name] ) {
+      API.ui.cursor("wait");
 
-    API.ui.cursor("wait");
+      var resources = _AppCache[app_name].resources;
+      _Resources.addResources(resources, app_name, function(error) {
+        console.group(">>> Initing loading of '" + app_name + "' <<<");
 
-    DoPost({'action' : 'load', 'app' : app_name}, function(data) {
-      if ( data.success ) {
-        _Resources.addResources(data.result.resources, app_name, function(error) {
-          console.group(">>> Initing loading of '" + app_name + "' <<<");
-          console.log("Response", data);
+        var app_ref = OSjs.Applications[app_name];
+        console.log("Checking if resources was sucessfully loaded...");
 
-          var app_ref = OSjs.Applications[app_name];
-          console.log("Checking if resources was sucessfully loaded...");
+        if ( !error && app_ref ) {
+          var crashed = false;
+          var application;
 
-          if ( !error && app_ref ) {
-            var crashed = false;
-            var application;
+          console.log("Trying to create application...");
 
-            console.log("Trying to create application...");
+          try {
+            application = new app_ref(GtkWindow, Application, API, args, windows);
+            application._checkCompability();
 
-            try {
-              application = new app_ref(GtkWindow, Application, API, args, windows);
-              application._checkCompability();
-
-              console.log("<<< CREATED >>>");
-            } catch ( ex ) {
-              CrashApplication(app_name, application, ex);
-              crashed = true;
-            }
-
-            if ( !crashed ) {
-              console.log("Running application");
-
-              setTimeout(function() {
-                try {
-                  application.run();
-                } catch ( ex ) {
-                  CrashApplication(app_name, application, ex);
-                }
-              }, 100);
-            } else {
-              console.log("!!! FAILED !!!");
-            }
-          } else {
-            var errors = [];
-            var eargs = [];
-            for ( var x in data.result.resources ) {
-              errors.push("* " + data.result.resources[x]);
-            }
-            for ( var a in args ) {
-              eargs.push(args[a]);
-            }
-
-            CrashApplication(app_name, {
-              _name : app_name
-            }, {
-              message : sprintf(OSjs.Labels.CrashApplicationResourceMessage, errors.join("\n")),
-              stack   : sprintf(OSjs.Labels.CrashApplicationResourceStack, app_name, eargs.join(","))
-            });
+            console.log("<<< CREATED >>>");
+          } catch ( ex ) {
+            CrashApplication(app_name, application, ex);
+            crashed = true;
           }
 
-          setTimeout(function() {
-            API.ui.cursor("default");
-          }, 50);
+          if ( !crashed ) {
+            console.log("Running application");
 
-          console.groupEnd();
-        });
-      } else {
-        MessageBox(data.error);
+            setTimeout(function() {
+              try {
+                application.run();
+              } catch ( ex ) {
+                CrashApplication(app_name, application, ex);
+              }
+            }, 100);
+          } else {
+            console.log("!!! FAILED !!!");
+          }
+        } else {
+          var errors = [];
+          var eargs = [];
+          for ( var x in resources ) {
+            errors.push("* " + resources[x]);
+          }
+          for ( var a in args ) {
+            eargs.push(args[a]);
+          }
 
-        callback_error(data.error);
+          CrashApplication(app_name, {
+            _name : app_name
+          }, {
+            message : sprintf(OSjs.Labels.CrashApplicationResourceMessage, errors.join("\n")),
+            stack   : sprintf(OSjs.Labels.CrashApplicationResourceStack, app_name, eargs.join(","))
+          });
+        }
 
         setTimeout(function() {
           API.ui.cursor("default");
         }, 50);
-      }
-    });
+
+        console.groupEnd();
+      });
+    }
   } // @endfunction
 
   /**
@@ -729,25 +712,6 @@
       }
     };
 
-    /*
-    var apps  = API.session.applications();
-    var i, iter, cat;
-    for ( i in apps ) {
-      if ( apps.hasOwnProperty(i) ) {
-        iter = apps[i];
-        cat = cats[iter.category] ? iter.category : "unknown";
-        cats[cat].items.push({
-          "title"   : iter.title,
-          "icon"    : iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_16, iter.icon),
-          "method"  : (function(app) {
-            return function() {
-              API.system.launch(app);
-            };
-          })(i)
-        });
-      }
-    }
-    */
     var apps  = API.user.settings.packages(false, true, false);
     var i, iter, cat;
     for ( i in apps ) {
@@ -1482,11 +1446,8 @@
 
       'stack' : function() {
         return _WM ? _WM.getStack() : [];
-      },
-
-      'applications' : function() {
-        return  _AppCache;
       }
+
     }
 
   };
