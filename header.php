@@ -53,9 +53,6 @@ define("PROJECT_CODENAME",  "DiscoFox"); // Next: ???
 define("PROJECT_HOST",      (php_uname('n')));
 define("PROJECT_BUILD",     "c0641a3");
 
-
-
-
 //
 // Environment
 //

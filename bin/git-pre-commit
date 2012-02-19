@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+
+$str      = 'define("PROJECT_BUILD",     "%s");';
+$version  = isset($argv[1]) ? substr($argv[1], 0, 7) : null;
+
+if ( $version ) {
+  if ( $content = file_get_contents("header.php") ) {
+    $content = preg_replace("/define\(\"PROJECT_BUILD\",\s+\"(.*)\"\);/", sprintf($str, $version), $content);
+    if ( file_put_contents("header.php", $content) ) {
+      print "Updated 'PROJECT_BUILD' = '$version'\n";
+    }
+  }
+}
+
+?>
