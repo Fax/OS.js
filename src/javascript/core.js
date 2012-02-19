@@ -533,12 +533,22 @@
       }
 
       var default_app = null;
-      var apps = _AppCache;
+      var apps = {};
       var found = [];
       var list = [];
       var inmime = mime.split("/");
       var launched = false;
       var i;
+
+      // Figure out what apps to display
+      var activated = _Settings._get("user.installed.packages", false, true);
+      for ( i in _AppCache ) {
+        if ( _AppCache.hasOwnProperty(i) ) {
+          if ( in_array(i, activated) ) {
+            apps[i] = _AppCache[i];
+          }
+        }
+      }
 
       if ( udef ) {
         // First, figure out default application
