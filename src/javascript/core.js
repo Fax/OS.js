@@ -1198,6 +1198,27 @@
     //
 
     'application' : {
+
+      'context_menu_new' : function(ev, el, items, position) {
+        var ewhich = ev.which || 1;
+        if ( ewhich > 1 ) {
+          if ( _Menu ) {
+            _Menu.destroy();
+            _Menu = null;
+          }
+          if ( _MenuNew ) {
+            _MenuNew.destroy();
+          }
+
+          ((new MenuNew(el)).create(ev, items, true));
+
+          return false;
+        }
+
+        return true;
+      },
+
+
       'context_menu' : function(ev, items, where, which, mpos, mtop) {
           which = which || 3;
           mpos  = mpos  || false;
@@ -7439,14 +7460,15 @@
       console.log("MenuNew::_createItem()", iter);
 
       var li = $("<li class=\"GUIMenuItem\"></li>");
+      var src;
 
       if ( iter.icon ) {
-        var src = iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_16, iter.icon);
+        src = iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_16, iter.icon);
         li.append($(sprintf("<img alt=\"%s\" src=\"%s\" />", iter.title, src)));
       }
 
       if ( iter.title ) {
-        li.append($(sprintf("<span>%s</span>", iter.title)));
+        li.append($(sprintf("<span class=\"%s\">%s</span>", (src ? "margin" : "") ,iter.title)));
       }
 
       if ( typeof iter.method == "function" ) {
@@ -7469,6 +7491,7 @@
       });
 
       if ( iter.items instanceof Array ) {
+        li.addClass("HasChildren");
         var smenu = this._createMenu(ev, iter.items);
 
         li.append(smenu);
@@ -7539,8 +7562,8 @@
 
     show : function(ev, el) {
       var css = {
-        "top"   : ev.pageX + "px",
-        "left"  : ev.pageY + "px"
+        "top"   : ev.pageY + "px",
+        "left"  : ev.pageX + "px"
       };
 
       console.group("MenuNew::show()");

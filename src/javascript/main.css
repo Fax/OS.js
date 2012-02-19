@@ -853,6 +853,8 @@ input.Disabled {
 }
 .GUIMenu li span {
   white-space : nowrap;
+}
+.GUIMenu li span.margin {
   padding-left : 21px;
 }
 /*
@@ -876,4 +878,7 @@ input.Disabled {
   position : absolute;
   top : 0px;
   left : 0px;
+}
+.GUIMenu .HasChildren span {
+  padding-right : 16px;
 }

@@ -538,4 +538,9 @@
     width : 100%;
   }
 
-
+.GUIMenu .HasChildren {
+  background : url('/img/theme.default/menu_expand.png') no-repeat right;
+}
+.GUIMenu .HasChildren:hover {
+  background : #4f4f4f url('/img/theme.default/menu_expand_hover.png') no-repeat right;
+}
