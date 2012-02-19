@@ -253,8 +253,8 @@ class Core
    */
   protected static final function _doPackageOperation(Array $args, Array &$json, Core $inst = null) {
     if ( $user = $inst->getUser() ) {
-      // Initialize Application configbase
       Package::LoadAll(Package::TYPE_APPLICATION, $user);
+      Package::LoadAll(Package::TYPE_PANELITEM, $user);
 
       $json['success'] = true;
       $json['result']  = $args;
@@ -270,8 +270,8 @@ class Core
    */
   protected static final function _doCacheUpdate(Array $args, Array &$json, Core $inst = null) {
     if ( $user = $inst->getUser() ) {
-      // Initialize Application configbase
       Package::LoadAll(Package::TYPE_APPLICATION, $user);
+      Package::LoadAll(Package::TYPE_PANELITEM, $user);
 
       $json['success'] = true;
       $json['result']  = Array(
@@ -291,10 +291,10 @@ class Core
     $init_language    = isset($args['language']) ? $args['language'] : "default";
     $browser_language = self::_getBrowserLanguage();
 
-    // Initialize Application configbase
-    Package::LoadAll(Package::TYPE_APPLICATION);
-
     if ( $user = $inst->getUser() ) {
+      Package::LoadAll(Package::TYPE_APPLICATION, $user);
+      Package::LoadAll(Package::TYPE_PANELITEM, $user);
+
       $installed_packages = Core::getInstalledPackages();
 
       $resources = Array();

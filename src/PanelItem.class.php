@@ -49,7 +49,47 @@ class       PanelItem
     $return = Array();
 
     if ( $xml = Package::LoadPackage(Package::TYPE_PANELITEM) ) {
-      foreach ( $xml as $pitem ) {
+      foreach ( $xml as $pi ) {
+        $pi_name          = (string) $pi['name'];
+        $pi_title         = (string) $pi['title'];
+        $pi_class         = (string) $pi['class'];
+        $pi_file          = (string) $pi['file'];
+        $pi_description   = (string) $pi['description'];
+        $pi_descriptions  = Array();
+        $pi_icon          = (string) $pi['icon'];
+        $pi_class         = (string) $pi['class'];
+
+        if ( $name !== null && $name !== $pi_class ) {
+          continue;
+        }
+
+        foreach ( $pi->resource as $res ) {
+          $resources[] = (string) $res;
+        }
+
+        if ( isset($pi->title) ) {
+          foreach ( $pi->title as $title ) {
+            $pi_titles[((string)$title['language'])] = ((string) $title);
+          }
+        }
+
+        if ( isset($pi->description) ) {
+          foreach ( $pi->description as $description ) {
+            $pi_descriptions[((string)$description['language'])] = ((string) $description);
+          }
+        }
+
+        $return[$pi_class] = Array(
+          "name"          => $pi_name,
+          "title"         => $pi_title,
+          "titles"        => $pi_titles,
+          "description"   => $pi_description,
+          "descriptions"  => $pi_descriptions,
+          "icon"          => $pi_icon,
+          "resources"     => $resources
+        );
+
+        require_once PATH_PACKAGES . "/{$pi_class}/{$pi_file}";
       }
     }
 

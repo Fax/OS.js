@@ -103,6 +103,65 @@ class Compiler
     if ( $xml = new SimpleXmlElement(file_get_contents($metadata_path)) ) {
       print "Compiling from '$metadata_path'\n";
 
+      $project_name         = ((string) $xml['name']);
+      $project_enabled      = true;
+      $project_title        = "unset";
+      $project_titles       = Array();
+      $project_description  = "unset";
+      $project_descriptions = Array();
+      $project_icon         = "unset";
+      $project_resources    = Array();
+
+      // Parse general attributes
+      foreach ( $xml->property as $p ) {
+        $val = ((string) $p);
+        switch ( $p['name'] ) {
+          case "enabled" :
+            if ( $val == "false" ) {
+              $project_enabled = false;
+              break;
+            }
+            break;
+          case "description" :
+            if ( $val ) {
+              if ( isset($p['language']) && !empty($p['language']) ) {
+                $lang = ((string)$p['language']);
+                $project_descriptions[$lang] = $val;
+                if ( $lang == DEFAULT_LANGUAGE ) {
+                  $project_description = $val;
+                }
+              } else {
+                $project_tiles[DEFAULT_LANGUAGE] = $val;
+                $project_description = $val;
+              }
+            }
+            break;
+          case "title" :
+            if ( $val ) {
+              if ( isset($p['language']) && !empty($p['language']) ) {
+                $lang = ((string)$p['language']);
+                $project_titles[$lang] = $val;
+                if ( $lang == DEFAULT_LANGUAGE ) {
+                  $project_title = $val;
+                }
+              } else {
+                $project_tiles[DEFAULT_LANGUAGE] = $val;
+                $project_title = $val;
+              }
+            }
+            break;
+          case "icon" :
+            if ( $val ) {
+              $project_icon = "/img/icons/32x32/$val";
+            }
+            break;
+        }
+      }
+
+      if ( !isset($project_titles[DEFAULT_LANGUAGE]) ) {
+        $project_titles[DEFAULT_LANGUAGE] = $project_title;
+      }
+
       // Skip application
       if ( ENV_PRODUCTION ) {
         if ( !$project_enabled ) {
@@ -111,16 +170,42 @@ class Compiler
         }
       }
 
-      /*
+      if ( isset($xml->resource) ) {
+        foreach ( $xml->resource as $r ) {
+          $project_resources[] = (string) $r;
+        }
+      }
+
       $node = $this->_oDocument->createElement("panelitem");
-      $node->setAttribute("name",     $project_name);
-      $node->setAttribute("title",    $project_title);
-      $node->setAttribute("icon",     $project_icon);
-      $node->setAttribute("system",   $project_system ? "true" : "false");
-      $node->setAttribute("category", $project_category);
-      $node->setAttribute("class",    $class_name);
-      $node->setAttribute("file",     $project_php);
-       */
+      $node->setAttribute("name",         $project_name);
+      $node->setAttribute("title",        $project_title);
+      $node->setAttribute("description",  $project_description);
+      $node->setAttribute("icon",         $project_icon);
+      $node->setAttribute("class",        "PanelItem{$project_name}");
+      $node->setAttribute("file",         "PanelItem{$project_name}.class.php");
+
+      foreach ( $project_titles as $tl => $tt ) {
+        $n = $this->_oDocument->createElement("title");
+        $n->setAttribute("language", $tl);
+        $n->appendChild(new DomText($tt));
+        $node->appendChild($n);
+      }
+      foreach ( $project_descriptions as $tl => $tt ) {
+        $n = $this->_oDocument->createElement("description");
+        $n->setAttribute("language", $tl);
+        $n->appendChild(new DomText($tt));
+        $node->appendChild($n);
+      }
+
+      foreach ( $project_resources as $r ) {
+        $n = $this->_oDocument->createElement("resource");
+        $n->appendChild(new DomText($r));
+        $node->appendChild($n);
+      }
+
+      if ( !$dry_run ) {
+        $this->_oRoot->appendChild($node);
+      }
 
       print "\tDONE!\n";
 

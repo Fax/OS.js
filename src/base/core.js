@@ -353,27 +353,26 @@
     callback = callback || function() {};
 
     if ( InitLaunch(iname) ) {
-      /*
       DoPost({'action' : 'load', 'panelitem' : iname}, function(data) {
         if ( data.success ) {
+          _Resources.addResources(data.result.resources, iname, function(error) {
+
+            console.group(">>> Initing loading of '" + iname + "' <<<");
+
+            if ( !error && OSjs.PanelItems[iname] ) {
+              var item = new OSjs.PanelItems[iname](PanelItem, panel, API, iargs);
+              if ( item ) {
+                item._panel = panel;
+                item._index = i;
+                panel.addItem(item, ialign, save);
+              }
+            }
+
+            console.groupEnd();
+
+            callback(error);
+          });
         }
-      });
-      */
-
-      var reg = _PanelCache;
-      var resources =  reg[iname] ? reg[iname]['resources'] : [];
-
-      _Resources.addResources(resources, null, function(error) {
-        if ( OSjs.PanelItems[iname] && !error ) {
-          var item = new OSjs.PanelItems[iname](PanelItem, panel, API, iargs);
-          if ( item ) {
-            item._panel = panel;
-            item._index = i;
-            panel.addItem(item, ialign, save);
-          }
-        }
-
-        callback(error);
       });
     }
   } // @endfunction
