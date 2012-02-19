@@ -117,8 +117,7 @@
   var _Desktop         = null;                            //!< Desktop instance [not required]
   var _Window          = null;                            //!< Current Window instance [dynamic]
   var _Tooltip         = null;                            //!< Current Tooltip instance [dynamic]
-  var _Menu            = null;                            //!< Current Menu instance [dynamic]
-  var _MenuNew         = null;
+  var _Menu            = null;
   var _Processes       = [];                              //!< Process instance list
   var _TopIndex        = (ZINDEX_WINDOW + 1);             //!< OnTop z-index
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);       //!< OnTop instances index
@@ -753,7 +752,7 @@
       }
     }
 
-    return ((new MenuNew(el)).create(ev, menu, true));
+    return ((new Menu(el)).create(ev, menu, true));
   } // @endfunction
 
   /**
@@ -1199,59 +1198,21 @@
 
     'application' : {
 
-      'context_menu_new' : function(ev, el, items, position) {
+      'context_menu' : function(ev, el, items, position, button) {
+        button = button === undefined ? -1 : button;
+
         var ewhich = ev.which || 1;
-        if ( ewhich > 1 ) {
+        if ( button == -1 ? (ewhich > 1) : (button == ewhich) ) {
           if ( _Menu ) {
             _Menu.destroy();
-            _Menu = null;
-          }
-          if ( _MenuNew ) {
-            _MenuNew.destroy();
           }
 
-          ((new MenuNew(el)).create(ev, items, true));
+          ((new Menu(el)).create(ev, items, true));
 
           return false;
         }
 
         return true;
-      },
-
-
-      'context_menu' : function(ev, items, where, which, mpos, mtop) {
-          which = which || 3;
-          mpos  = mpos  || false;
-          mtop  = mtop  || 20;
-
-          var ewhich = ev.which || 1;
-          if ( ewhich === which ) {
-            if ( _Menu ) {
-              _Menu.destroy();
-              _Menu = null;
-            }
-            if ( _MenuNew ) {
-              _MenuNew.destroy();
-            }
-
-            _Menu = new Menu(where);
-            forEach(items, function(i, it) {
-              if ( it == "---" ) {
-                _Menu.create_separator();
-              } else {
-                _Menu.create_item(it. title, it.icon, it.method, it.disabled, it.attribute, it.items, ev);
-              }
-            });
-
-            _Menu.show(ev, true, where, mpos, mtop);
-
-            ev.stopPropagation();
-            ev.preventDefault();
-
-            return false;
-          }
-
-          return true;
       }
     },
 
@@ -2117,9 +2078,6 @@
       if ( _Menu ) {
         _Menu.destroy();
       }
-      if ( _MenuNew ) {
-        _MenuNew.destroy();
-      }
       console.groupEnd();
 
       console.group("Shutting down 'Desktop'");
@@ -2155,8 +2113,7 @@
       _WM         = null;
       _Window     = null;
       _Tooltip    = null;
-      _Menu       = null;
-      _MenuNew    = null;
+      _Menu    = null;
       _Processes  = [];
       _TopIndex   = 11;
 
@@ -2557,18 +2514,7 @@
       //ev.preventDefault(); FIXME???
 
       if ( _Menu ) {
-        if ( _Menu instanceof Menu ) {
-          var t = $(ev.target || ev.srcElement);
-          if ( !t.filter(function(){ return $(this).parents(".Menu").length; }).length ) {
-            _Menu.destroy();
-            _Menu = null;
-          }
-        //} else { TODO
-        }
-      }
-
-      if ( _MenuNew ) {
-        _MenuNew.handleGlobalClick(ev);
+        _Menu.handleGlobalClick(ev);
       }
 
       _Tooltip.hide();
@@ -4943,7 +4889,7 @@
       }
 
       var labels = OSjs.Labels.ContextMenuDesktop;
-      var ret = API.application.context_menu(ev, [
+      var ret = API.application.context_menu(ev, $(this), [
         {"title" : labels.title, "disabled" : true, "attribute" : "header"},
         {"title" : labels.wallpaper, "method" : function() {
           var dir = _Settings._get("desktop.wallpaper.path");
@@ -4967,7 +4913,7 @@
         API.ui.windows.tile();
       }}
 
-      ], $(this), 3, true);
+      ], true);
 
       /*if ( ev.which > 1 ) {
       ev.preventDefault();
@@ -5498,7 +5444,7 @@
         ev.stopPropagation();
 
         var labels = OSjs.Labels.ContextMenuPanel;
-        var ret = API.application.context_menu(ev, [
+        var ret = API.application.context_menu(ev, $(this), [
           {"title" : labels.title, "disabled" : true, "attribute" : "header"},
           {"title" : labels.add, "method" : function() {
             addItem(ev);
@@ -5506,7 +5452,7 @@
           {"title" : labels.create, "disabled" : true},
           {"title" : labels.remove, "disabled" : true}
 
-        ], $(this), 3, true);
+        ], true);
 
         return false;
       });
@@ -5962,7 +5908,7 @@
         ev.preventDefault();
         ev.stopPropagation();
 
-        API.application.context_menu(ev, self.getMenu(), $(this), undefined, true);
+        API.application.context_menu(ev, $(this), self.getMenu(), true);
         return false;
       });
       this.$element.bind("click", function(ev) {
@@ -6407,7 +6353,7 @@
 
           el.find(".WindowTopInner img").click(function(ev) {
             var labels = OSjs.Labels.ContextMenuWindowMenu;
-            API.application.context_menu(ev, [
+            API.application.context_menu(ev, $(this), [
               {"title" : (self._is_maximized ? labels.restore : labels.max), "icon" : "actions/window_fullscreen.png", "disabled" : !self._is_maximizable, "method" : function() {
                 if ( self._is_maximizable ) {
                   el.find(".ActionMaximize").click();
@@ -6427,7 +6373,7 @@
                 }
               }}
 
-            ], $(this), 1);
+            ], true, 1);
 
             ev.stopPropagation();
             ev.preventDefault();
@@ -7281,18 +7227,20 @@
    */
   var Menu = Class.extend({
 
-    $element : null,      //!< Menu DOM Element
+    $element : null,  //!< Menu DOM Element
+    $focuser : null,
 
     /**
      * Menu::init() -- Constructor
      * @constructor
      */
-    init : function(att_window) {
-      this.$element = $("<ul></ul>");
-      this.$element.attr("class", "Menu");
+    init : function(clicked) {
+      this.$element = null;
 
       console.group("Menu::init()");
       console.groupEnd();
+
+      _Menu = this;
     },
 
     /**
@@ -7300,140 +7248,7 @@
      * @destructor
      */
     destroy : function() {
-      console.log("Menu::destroy()");
-
-      if ( this.$element ) {
-        this.$element.empty().remove();
-      }
-
-      this.$element = null;
-    },
-
-    /**
-     * Menu::clear() -- Empty root
-     * @return void
-     */
-    clear : function() {
-      if ( this.$element ) {
-        this.$element.find("li").empty().remove();
-      }
-    },
-
-    /**
-     * Menu::show() -- Display the menu
-     * @param  DOMEvent   ev            Browser Event
-     * @param  bool       context       Context Menu ?
-     * @param  Mixed      where         Target Element/Object
-     * @param  bool       mpos          Use mouse position ?
-     * @param  int        mtop          Top margin in pixels
-     * @return void
-     */
-    show : function(ev, context, where, mpos, mtop) {
-      mtop = (mtop === undefined) ? 0 : parseInt(mtop, 10);
-
-      var self = this;
-      if ( context ) {
-        var off = mpos ? ({'left' : ev.pageX, 'top' : ev.pageY - 20}) : $(where).offset();
-        $("#ContextMenu").css(
-          {
-            "left" :off.left + "px",
-            "top" : off.top + mtop + "px"
-          }
-        ).html(self.$element).show();
-
-        var h = $("#ContextMenu").height();
-        var m = $(document).height();
-
-        console.log("Menu::show()", ev, context, where, mpos, mtop);
-        console.log("Menu::show()", "Menu height", h, "Document height", m, "Bottom", (off.top + h));
-
-        if ( ((off.top + h) > m) && (h < m) ) {
-          $("#ContextMenu").css({"top" : ((off.top + mtop) - (h)) + "px"});
-        } else if ( (off.top) < 0 ) {
-          $("#ContextMenu").css({"top" : (mtop) + "px"});
-        }
-
-      }
-    },
-
-    /**
-     * Menu::create_separator() -- Create/Add a separator to list
-     * @return void
-     */
-    create_separator : function() {
-      var litem = $("<li><hr /></li>");
-        litem.addClass("separator");
-      this.$element.append(litem);
-    },
-
-    /**
-     * Menu::create_item() -- Create/Add item to list
-     * @param   String      title     The label
-     * @param   String      icon      Icon name
-     * @param   Function    method    The callback function onClick
-     * @param   bool        disabled  Enabled state
-     * @param   String      aclass    Add this className to menu item
-     * @param   Array       subitems  Sub-items
-     * @return  void
-     */
-    create_item : function(title, icon, method, disabled, aclass, subitems) {
-      var self = this;
-      var litem = $("<li><span><img alt=\"\" src=\"/img/blank.gif\" /></span></li>");
-      if ( typeof method == "function" ) {
-        if ( !disabled ) {
-          litem.click(method);
-        }
-      } else if ( method ) {
-        litem.find("span").attr("class", method);
-      }
-
-      if ( icon ) {
-        litem.find("img").attr("src", icon.match(/^\//) ? icon : sprintf(ICON_URI_16, icon));
-      } else {
-        litem.find("span").hide();
-      }
-      litem.append(title);
-      if ( disabled ) {
-        $(litem).addClass("Disabled");
-      }
-      if ( aclass ) {
-        $(litem).addClass(aclass);
-      } else {
-        $(litem).addClass("Default");
-      }
-
-
-      $(litem).click(function() {
-        $(this).parents("ul.Menu").hide();
-      });
-
-      console.group("Menu::create_item()");
-      console.log(title, icon, method, disabled, aclass, subitems);
-      console.groupEnd();
-
-      this.$element.append(litem);
-
-      return litem;
-    }
-
-  }); // @endclass
-
-  var MenuNew = Class.extend({
-
-    $element : null,
-    $focuser : null,
-
-    init : function(clicked) {
-      this.$element = null;
-
-      console.group("MenuNew::init()");
-      console.groupEnd();
-
-      _MenuNew = this;
-    },
-
-    destroy : function() {
-      console.group("MenuNew::destroy()");
+      console.group("Menu::destroy()");
 
       if ( this.$element ) {
         this.$element.remove();
@@ -7444,23 +7259,30 @@
         this.$focuser = null;
       }
 
-      if ( _MenuNew ) {
-        if ( _MenuNew !== this ) {
-          _MenuNew.destroy();
+      if ( _Menu ) {
+        if ( _Menu !== this ) {
+          _Menu.destroy();
         }
-        _MenuNew = null;
+        _Menu = null;
       }
 
       console.groupEnd();
     },
 
+    /**
+     * Menu::_createItem() -- Create a new Menu Item
+     * @param  DOMEvent   ev      DOM Event
+     * @param  Object     iter    Menu Item Iter
+     * @return DOMElement
+     */
     _createItem : function(ev, iter) {
       var self = this;
 
-      console.log("MenuNew::_createItem()", iter);
+      //console.log("Menu::_createItem()", iter);
 
       var li = $("<li class=\"GUIMenuItem\"></li>");
       var src;
+      var disabled = false;
 
       if ( iter.icon ) {
         src = iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_16, iter.icon);
@@ -7471,9 +7293,20 @@
         li.append($(sprintf("<span class=\"%s\">%s</span>", (src ? "margin" : "") ,iter.title)));
       }
 
+      if ( iter.disabled ) {
+        li.addClass("Disabled");
+        disabled = true;
+      }
+
+      if ( iter.attribute && iter.attribute == "header" ) {
+        li.addClass("Header");
+      }
+
       if ( typeof iter.method == "function" ) {
         li.click(function(ev) {
-          iter.method();
+          if ( !disabled ) {
+            iter.method();
+          }
 
           self.destroy();
           //self.$focuser.blur();
@@ -7510,8 +7343,24 @@
       return li;
     },
 
-    _createSeparator : function() {},
+    /**
+     * Menu::_createSeparator() -- Create a new Menu Separator Item
+     * @param  DOMEvent   ev      DOM Event
+     * @param  Object     iter    Menu Item Iter
+     * @return DOMElement
+     */
+    _createSeparator : function() {
+      var li = $("<li class=\"GUIMenuItem\"></li>");
+      li.append("<hr />");
+      return li;
+   },
 
+    /**
+     * Menu::_createMenu() -- Create a new Menu
+     * @param  DOMEvent   ev      DOM Event
+     * @param  Array      menu    Menu
+     * @return DOMElement
+     */
     _createMenu : function(ev, menu) {
       var self = this;
 
@@ -7521,7 +7370,11 @@
       var i   = 0, l = menu.length;
       for ( i; i < l; i++ ) {
         iter = menu[i];
-        ul.append(this._createItem(ev, menu[i]));
+        if ( menu[i] == "---" ) {
+          ul.append(this._createSeparator(ev));
+        } else {
+          ul.append(this._createItem(ev, menu[i]));
+        }
       }
 
       div.append(ul);
@@ -7529,8 +7382,15 @@
       return div;
     },
 
+    /**
+     * Menu::create() -- Create a new Menu
+     * @param  DOMEvent     ev    DOM Event
+     * @param  Array        menu  Menu
+     * @param  bool         show  Show on create
+     * @return DOMElement
+     */
     create : function(ev, menu, show) {
-      console.group("MenuNew::create()");
+      console.group("Menu::create()");
 
       var div = this._createMenu(ev, menu);
       //var f   = $("<input type=\"text\" value=\"\" />");
@@ -7560,13 +7420,19 @@
       return this.$element;
     },
 
+    /**
+     * Menu::show() -- Display the menu
+     * @param  DOMEvent   ev    DOM Event
+     * @param  DOMElement el    DOM Element
+     * @return void
+     */
     show : function(ev, el) {
       var css = {
         "top"   : ev.pageY + "px",
         "left"  : ev.pageX + "px"
       };
 
-      console.group("MenuNew::show()");
+      console.group("Menu::show()");
       console.log("CSS", css);
       console.log("El", el);
       console.groupEnd();
@@ -7575,6 +7441,11 @@
       $("body").append(el);
     },
 
+    /**
+     * Menu::handleGlobalClick() -- Handle Global Click event
+     * @param  DOMEvent   ev      DOM Event
+     * @return void
+     */
     handleGlobalClick : function(ev) {
       var t = ev.target || ev.srcElement;
       if ( t ) {
@@ -7585,7 +7456,7 @@
       }
     }
 
-  });
+  }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
   // DIALOG

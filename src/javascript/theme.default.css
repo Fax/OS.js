@@ -278,3 +278,12 @@ textarea {
 .GUIMenu {
   background : #e6e6e6;
 }
+.GUIMenu .Header,
+.GUIMenu .Header:hover {
+  font-weight : bold;
+  text-align : center;
+  background : #222;
+}
+.GUIMenu .Disabled {
+  color : #fff;
+}
