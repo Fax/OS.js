@@ -230,7 +230,7 @@ class User
           "title"      => "Home",
           "icon"       => "places/user-home.png",
           "launch"     => "ApplicationFileManager",
-          "arguments"  => Array("path" => "/User")
+          "arguments"  => Array("path" => "/User/Documents")
         ),
         Array(
           "title"     => "Browser Compability",

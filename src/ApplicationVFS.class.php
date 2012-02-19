@@ -80,6 +80,11 @@ abstract class ApplicationVFS
       "attr" => "rs",
       "icon" => "places/folder-download.png"
     ),
+    "/User/Documents" => Array(
+      "type" => "user",
+      "attr" => "rw",
+      "icon" => "places/folder-documents.png"
+    ),
     "/User" => Array(
       "type" => "user",
       "attr" => "rw",
