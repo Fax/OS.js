@@ -2,9 +2,7 @@ Directory structure:
 -------------------------------------------------------------------------------
 bin/                    Utilities and misc scripts
   [application-gen]         Application compiler
-  [count-lines]             Count code lines
-  [update_revision]         Update to latest revision
-  [yui.sh]                  Yahoo YUI Compressor launcher wrapper
+  [minimize-scripts]        Script minimizer
 lib/                     Main PHP libraries
 logs/                    Apache Log files
 public_html/             Apache Public directory
@@ -18,23 +16,25 @@ public_html/             Apache Public directory
       [sprintf-*.js]            sprintf() function
     [utils.js]                Public OS.js utilities
   media/                    Public media directory (VFS)
-  [index.php]               Main PHP script
+  [_header.php]             Main PHP Script
+  [index.php]               Frontend script
+  [resource.php]            Resource loading script
   [help.php]                Help file (Reads the README file)
 src/                    Main sources
   packages/               Packages build files (XML, Glade and PHP)
-  base/                   Core JavaScript, CSS and Templates
+  javascript/             Core JavaScript, CSS and Templates
     [init.js]               OS.js Namespace init
     [core.js]               OS.js Core
     [main.js]               OS.js main initialization
     [classes.js]            OS.js Public classes
     [theme.*.js]            Theme stylesheet(s)
     [cursor.*.js]           Cursor stylesheet(s)
+    [dialog.*.js]           GUI Dialog(s)
     [template.php]          HTML Template
     locale/               Core Locales
   build/                  Compiled files
     apps/                   Application compiler output files
     [packages.xml]          Compiled package XML metadata
-  resources/              Core resource files (CSS, JavaScript)
 vendor/                 Vendor libraries
   [yuicompressor-*.jar]   Yahoo Script Compressor
 [header.php]            PHP Bootstrap, configurations
