@@ -11,11 +11,13 @@ public_html/.htpasswd
 
 # Sub-modules
 src/apps
+src/packages
 vendor/apps
 
 # Build files
 src/build/minimize.cache
 src/locale/*/LC_MESSAGES/messages.mo
+src/build/packages.xml
 src/build/applications.xml
 src/build/database.sdb
 
@@ -24,6 +26,8 @@ src/apps/*/_min
 src/resources/_min
 src/base/_min
 src/base/locale/_min
+src/javascript/_min
+src/javascript/locale/_min
 
 # DEVELOPMENT STUFF
 public_html/js/vendor/jquery-git.js

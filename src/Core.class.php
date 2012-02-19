@@ -268,7 +268,7 @@ class Core
     if ( $user = $inst->getUser() ) {
       $json['success'] = true;
       $json['result']  = Array(
-        "packages" => Core::getInstalledPackages($user)
+        "packages" => Package::GetInstalledPackages($user)
       );
     } else {
       $json['error'] = _("You are not logged in!");
@@ -285,7 +285,7 @@ class Core
     $browser_language = self::_getBrowserLanguage();
 
     if ( $user = $inst->getUser() ) {
-      $installed_packages = Core::getInstalledPackages($user);
+      $installed_packages = Package::GetInstalledPackages($user);
 
       $resources = Array();
       foreach ( Dialog::$Registered as $name => $opts ) {
@@ -642,20 +642,6 @@ class Core
     }
 
     return $browser_language;
-  }
-
-  /**
-   * Get installed packages
-   * @param  User     $user     User Reference
-   * @return Array
-   */
-  public final static function getInstalledPackages(User $user) {
-    Package::LoadAll(Package::TYPE_APPLICATION | Package::TYPE_PANELITEM, $user);
-
-    return Array(
-      "Application" => Package::GetPackageMeta(Package::TYPE_APPLICATION),
-      "PanelItem"   => Package::GetPackageMeta(Package::TYPE_PANELITEM)
-    );
   }
 
   /////////////////////////////////////////////////////////////////////////////

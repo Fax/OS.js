@@ -31,22 +31,6 @@
  * @created 2012-01-04
  */
 
-class Session extends DBObject {
-  public static $Table = "session";
-  public static $Columns = Array(
-    "id"            => "int",
-    "user_id"       => "int",
-    "session_name"  => "str",
-    "session_config"  => "str",
-    "created_at"    => "date",
-    "modified_at"   => "date"
-  );
-
-  public static function getBySnapshot($uid, $name) {
-    return self::getByColumn(null, null, null, Array("user_id" => $uid, "session_name" => $name), 1);
-  }
-}
-
 /**
  * User -- Application User Class
  *
@@ -56,6 +40,15 @@ class Session extends DBObject {
  * @class
  */
 class User extends DBObject {
+
+  const GROUP_NONE        = 0;
+  const GROUP_GUEST       = 1;
+  const GROUP_USER        = 2;
+  const GROUP_PACKAGES    = 128;
+
+  /////////////////////////////////////////////////////////////////////////////
+  // VARIABLES
+  /////////////////////////////////////////////////////////////////////////////
 
   public static $Table = "user";
   public static $Columns = Array(
@@ -68,7 +61,25 @@ class User extends DBObject {
     "settings"    => "str"
   );
 
+  /////////////////////////////////////////////////////////////////////////////
+  // MAGICS
+  /////////////////////////////////////////////////////////////////////////////
+
   public final function __construct() {
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // METHODS
+  /////////////////////////////////////////////////////////////////////////////
+
+  public final function isGuest() {
+    return $this->privilege & self::GROUP_GUEST;
+  }
+  public final function isUser() {
+    return $this->privilege & self::GROUP_USER;
+  }
+  public final function isInGroup($group) {
+    return $this->privilege & $group;
   }
 
   public final function saveUser(Array $session, Array $settings) {
@@ -99,6 +110,10 @@ class User extends DBObject {
     return Session::getBySnapshot($this->id, $name);
   }
 
+  /////////////////////////////////////////////////////////////////////////////
+  // GETTERS
+  /////////////////////////////////////////////////////////////////////////////
+
   public final function getUserInfo() {
     return Array(
       "Username"   => $this->username,
@@ -106,6 +121,10 @@ class User extends DBObject {
       "Name"       => $this->real_name
     );
   }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // STATIC FUNCTIONS
+  /////////////////////////////////////////////////////////////////////////////
 
   public static function createDefault() {
     $u = new self();

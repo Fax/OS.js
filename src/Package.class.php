@@ -76,17 +76,21 @@ abstract class Package
   /////////////////////////////////////////////////////////////////////////////
 
   public static function Install(Package $p, User $u) {
-    /*
-    $class = get_class($p);
-    $path  = sprintf("%s/%s/metadata.xml", PATH_PACKAGES, $p);
-    if ( file_exists($path) ) {
-      return true;
+    if ( $u->isInGroup(User::GROUP_PACKAGES) ) {
+      /*
+      $class = get_class($p);
+      $path  = sprintf("%s/%s/metadata.xml", PATH_PACKAGES, $p);
+      if ( file_exists($path) ) {
+        return true;
+      }
+       */
+    } else if ( $u->isUser() ) {
     }
-     */
+
     return false;
   }
 
-  public static function Uninstall(Package $p, User $u) {
+  public static function Uninstall(Package $p, User $u = null) {
     return false;
   }
 
@@ -190,6 +194,20 @@ abstract class Package
     }
 
     return false;
+  }
+
+  /**
+   * Get installed packages
+   * @param  User     $user     User Reference
+   * @return Array
+   */
+  public final static function GetInstalledPackages(User $user) {
+    Package::LoadAll(Package::TYPE_APPLICATION | Package::TYPE_PANELITEM, $user);
+
+    return Array(
+      "Application" => Package::GetPackageMeta(Package::TYPE_APPLICATION),
+      "PanelItem"   => Package::GetPackageMeta(Package::TYPE_PANELITEM)
+    );
   }
 
   /**
