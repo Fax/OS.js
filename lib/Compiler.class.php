@@ -152,7 +152,7 @@ class Compiler
             break;
           case "icon" :
             if ( $val ) {
-              $project_icon = "/img/icons/32x32/$val";
+              $project_icon = $val;
             }
             break;
         }

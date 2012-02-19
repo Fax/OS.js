@@ -40,8 +40,8 @@
  */
 abstract class Package
 {
-  const TYPE_APPLICATION  = 0;
-  const TYPE_PANELITEM    = 1;
+  const TYPE_APPLICATION  = 1;
+  const TYPE_PANELITEM    = 2;
 
   /////////////////////////////////////////////////////////////////////////////
   // VARIABLES
@@ -129,32 +129,33 @@ abstract class Package
    * @return void
    */
   public static function LoadAll($type = -1, User $u = null) {
-    switch ( (int) $type ) {
-      case self::TYPE_APPLICATION :
-        if ( !self::$_LoadedApplications ) {
-          if ( $p = Application::LoadPackage() ) {
-            foreach ( $p as $k => $v ) {
-              self::$PackageRegister[$type][$k] = $v;
-            }
-          }
-          self::$_LoadedApplications = true;
-        }
-        break;
+    $loaded = false;
 
-      case self::TYPE_PANELITEM :
-        if ( !self::$_LoadedPanelItems ) {
-          if ( $p = PanelItem::LoadPackage() ) {
-            foreach ( $p as $k => $v ) {
-              self::$PackageRegister[$type][$k] = $v;
-            }
+    if ( ($type & self::TYPE_APPLICATION) ) {
+      $loaded = true;
+      if ( !self::$_LoadedApplications ) {
+        if ( $p = Application::LoadPackage() ) {
+          foreach ( $p as $k => $v ) {
+            self::$PackageRegister[self::TYPE_APPLICATION][$k] = $v;
           }
-          self::$_LoadedPanelItems = true;
         }
-        break;
+        self::$_LoadedApplications = true;
+      }
+    }
+    if ( ($type & self::TYPE_PANELITEM) ) {
+      $loaded = true;
+      if ( !self::$_LoadedPanelItems ) {
+        if ( $p = PanelItem::LoadPackage() ) {
+          foreach ( $p as $k => $v ) {
+            self::$PackageRegister[self::TYPE_PANELITEM][$k] = $v;
+          }
+        }
+        self::$_LoadedPanelItems = true;
+      }
+    }
 
-      default :
-        throw new Exception("Cannot LoadAll type '{$type}'");
-        break;
+    if ( !$loaded ) {
+      throw new Exception("Cannot LoadAll type '{$type}'");
     }
   }
 

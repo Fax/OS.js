@@ -49,8 +49,8 @@ class ApplicationVFS
    * @var Virtual Directories
    */
   protected static $VirtualDirs = Array(
-    "/System/Applications" => Array(
-      "type" => "applications",
+    "/System/Packages" => Array(
+      "type" => "packages",
       "attr" => "r",
       "icon" => "places/user-bookmarks.png"
     ),
@@ -452,7 +452,7 @@ class ApplicationVFS
     $apps = false;
     foreach ( self::$VirtualDirs as $k => $v ) {
       if ( startsWith($path, $k) ) {
-        if ( $v['type'] == "applications" ) {
+        if ( $v['type'] == "packages" ) {
           $apps = true;
         }
         break;
@@ -475,12 +475,22 @@ class ApplicationVFS
           "protected"  => 1
       );
 
-      Package::LoadAll(Package::TYPE_APPLICATION);
+      Package::LoadAll(Package::TYPE_APPLICATION | Package::TYPE_PANELITEM);
       foreach ( Package::$PackageRegister[Package::TYPE_APPLICATION] as $c => $opts ) {
         $items["{$opts['title']} ($c)"] = Array(
           "path"       => "{$path}/{$c}",
           "size"       => 0,
-          "mime"       => "ajwm/application",
+          "mime"       => "OSjs/Application",
+          "icon"       => $opts['icon'],
+          "type"       => "file",
+          "protected"  => 1,
+        );
+      }
+      foreach ( Package::$PackageRegister[Package::TYPE_PANELITEM] as $c => $opts ) {
+        $items["{$opts['title']} ($c)"] = Array(
+          "path"       => "{$path}/{$c}",
+          "size"       => 0,
+          "mime"       => "OSjs/PanelItem",
           "icon"       => $opts['icon'],
           "type"       => "file",
           "protected"  => 1,

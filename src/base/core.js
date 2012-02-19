@@ -543,7 +543,7 @@
     udef = (udef === undefined) ? true : false;
 
     if ( mime ) {
-      if ( mime == "ajwm/application" ) {
+      if ( mime == "OSjs/Application" ) {
         var expl = path.split("/");
         var name = expl[expl.length - 1];
         API.system.launch(name);
@@ -1409,7 +1409,7 @@
                   active  : in_array(ip, activated),
                   type    : 'PanelItem',
                   locked  : true,
-                  icon    : iter.icon //sprintf(ICON_URI_32, _PanelCache[ip].icon)
+                  icon    : sprintf(ICON_URI_32, _PanelCache[ip].icon)
                 });
               }
             }
@@ -5529,7 +5529,7 @@
           for ( name in items ) {
             if ( items.hasOwnProperty(name) ) {
               li = $("<li><img alt=\"/img/blank.gif\" /><div class=\"Inner\"><div class=\"Title\">Title</div><div class=\"Description\">Description</div></div></li>");
-              li.find("img").attr("src", items[name].icon);
+              li.find("img").attr("src", sprintf(ICON_URI_32, items[name].icon));
               li.find(".Title").html(items[name].title);
               li.find(".Description").html(items[name].description);
 
