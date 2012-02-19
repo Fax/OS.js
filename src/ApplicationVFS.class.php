@@ -75,6 +75,11 @@ abstract class ApplicationVFS
       "attr" => "r",
       "icon" => "places/folder-templates.png"
     ),
+    "/User" => Array(
+      "type" => "user",
+      "attr" => "rw",
+      "icon" => "places/folder_home.png"
+    ),
     "/Cloud" => Array(
       "type" => "remote",
       "attr" => "rw",

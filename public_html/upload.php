@@ -31,7 +31,6 @@
  */
 
 require "../header.php";
-require PATH_PROJECT_SRC . "/ApplicationVFS.class.php";
 
 // AJAX File uploading
 $return = 'null';
