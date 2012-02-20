@@ -551,6 +551,13 @@ class Core
       } else {
         $json['error'] = _("Invalid argument");
       }
+    } else if ( $method == "touch" ) {
+      if ( VFS::touch($argv) ) {
+        $json['success'] = true;
+        $json['result'] = true;
+      } else {
+        $json['error'] = sprintf(_("Failed to save '%s'"), $argv['file']);
+      }
     } else if ( $method == "write" ) {
       // TODO: Overwrite parameter
       if ( VFS::put($argv) ) {

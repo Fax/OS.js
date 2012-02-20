@@ -339,6 +339,21 @@ abstract class VFS
   }
 
   /**
+   * Touch a file (touch)
+   * @param   String    $argv     Path
+   * @return  bool
+   */
+  public static function touch($argv) {
+    if ( $res = self::_secure($argv, null, false) ) {
+      if ( touch($res["destination"]) ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * Delete a file (rm)
    * @param  String   $path     Path
    * @return bool
