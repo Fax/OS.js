@@ -51,7 +51,7 @@ define("PROJECT_CONTACT",   "andersevenrud@gmail.com");
 define("PROJECT_VERSION",   "0.6-alpha4"); // Next: 0.7
 define("PROJECT_CODENAME",  "DiscoFox"); // Next: ???
 define("PROJECT_HOST",      (php_uname('n')));
-define("PROJECT_BUILD",     "9932a9a");
+define("PROJECT_BUILD",     "7c2c125");
 
 //
 // Environment
@@ -143,6 +143,7 @@ class ExceptionVFS
   const DOES_NOT_EXIST    = 1;
   const ALREADY_EXISTS    = 2;
   const PERMISSION_DENIED = 3;
+  const UNKNOWN           = 255;
 
   public function __construct($type, Array $args) {
     $message = _("Unknown VFS Error occured");
@@ -156,6 +157,9 @@ class ExceptionVFS
       break;
       case self::PERMISSION_DENIED :
         $message = vsprintf(_("You do not have permission to '%s'!"), $args);
+      break;
+      case self::UNKNOWN :
+        $message = vsprintf(_("Cannot read/write '%s'!"), $args);
       break;
     }
 

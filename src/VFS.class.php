@@ -92,6 +92,10 @@ abstract class VFS
     )
   );
 
+  /////////////////////////////////////////////////////////////////////////////
+  // INTERNAL METHODS
+  /////////////////////////////////////////////////////////////////////////////
+
   /**
    * Set permissions
    * @return void
@@ -199,6 +203,77 @@ abstract class VFS
       "destination" => $destination
     );
   }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // WRAPPER METHODS
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * @see VFS::cat()
+   * @see Core::_doVFS()
+   */
+  public static function read($argv) {
+    return self::cat($argv);
+  }
+
+  /**
+   * @see VFS::put()
+   * @see Core::_doVFS()
+   */
+  public static function write($argv) {
+    return self::put($argv);
+  }
+
+  /**
+   * @see VFS::ls()
+   * @see Core::_doVFS()
+   */
+  public static function readdir($argv) {
+    $path    = $argv['path'];
+    $ignores = isset($argv['ignore']) ? $argv['ignore'] : null;
+    $mime    = isset($argv['mime']) ? ($argv['mime'] ? $argv['mime'] : Array()) : Array();
+    return self::ls($path, $ignores, $mime);
+  }
+
+  /**
+   * @see VFS::mv()
+   * @see Core::_doVFS()
+   */
+  public static function rename($argv) {
+    list($path, $src, $dst) = $argv;
+    return self::mv($path, $src, $dst);
+  }
+
+  /**
+   * @see VFS::rm()
+   * @see Core::_doVFS()
+   */
+  public static function delete($argv) {
+    return self::rm($argv);
+  }
+
+  /**
+   * @see VFS::readPDFPage()
+   * @see Core::_doVFS()
+   */
+  public static function readpdf($argv) {
+    $tmp  = explode(":", $argv);
+    $pdf  = $tmp[0];
+    $page = isset($tmp[1]) ? $tmp[1] : -1;
+    return self::readPDFPage($pdf, $page);
+  }
+
+  /**
+   * @see VFS::file_info()
+   * @see Core::_doVFS()
+   */
+  public static function fileinfo($argv) {
+    return self::file_info($argv);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // PUBLIC METHODS
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
    * Upload a file
@@ -902,7 +977,7 @@ abstract class VFS
    * @see     PDF
    * @return  Mixed
    */
-  public static function readPDF($fname, $page = -1) {
+  public static function readPDFPage($fname, $page = -1) {
     if ( $path = VFS::exists($fname, true) ) {
       require PATH_LIB . "/PDF.class.php";
       if ( $ret = PDF::PDFtoSVG($path, $page) ) {
@@ -915,18 +990,6 @@ abstract class VFS
 
     return false;
   }
-
-  /////////////////////////////////////////////////////////////////////////////
-  // CLASS METHODS
-  /////////////////////////////////////////////////////////////////////////////
-
-  /////////////////////////////////////////////////////////////////////////////
-  // SET
-  /////////////////////////////////////////////////////////////////////////////
-
-  /////////////////////////////////////////////////////////////////////////////
-  // GET
-  /////////////////////////////////////////////////////////////////////////////
 
 }
 

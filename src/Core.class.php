@@ -537,95 +537,18 @@ class Core
     $method = $args['method'];
     $argv   = $args['args'];
 
-    try {
-      if ( $method == "read" ) {
-        if ( is_string($argv) ) {
-          if ( ($content = VFS::cat($argv)) !== false ) {
-            $json['result'] = $content;
-            $json['success'] = true;
-          } else {
-            $json['error'] = _("The file could not be read");
-          }
-        } else {
-          $json['error'] = _("Invalid argument");
-        }
-      } else if ( $method == "touch" ) {
-        if ( VFS::touch($argv) ) {
-          $json['success'] = true;
-          $json['result'] = true;
-        } else {
-          $json['error'] = sprintf(_("Failed to save '%s'"), $argv);
-        }
-      } else if ( $method == "write" ) {
-        if ( VFS::put($argv) ) {
-          $json['success'] = true;
-          $json['result'] = true;
-        } else {
-          $json['error'] = sprintf(_("Failed to save '%s'"), $argv);
-        }
-      } else if ( $method == "readdir" ) {
-        $path    = $argv['path'];
-        $ignores = isset($argv['ignore']) ? $argv['ignore'] : null;
-        $mime    = isset($argv['mime']) ? ($argv['mime'] ? $argv['mime'] : Array()) : Array();
-
-        if ( ($items = VFS::ls($path, $ignores, $mime)) !== false) {
-          $json['result'] = $items;
+    if ( method_exists("VFS", $method) ) {
+      try {
+        $json['result']  = call_user_func_array(Array("VFS", $method), Array($argv));
+        if ( $json['result'] ) {
           $json['success'] = true;
         } else {
-          $json['error'] = sprintf(_("Failed read directory '%s'"), $argv['path']);
+          throw new ExceptionVFS(ExceptionVFS::UNKNOWN, Array($argv));
         }
-      } else if ( $method == "rename" ) {
-        list($path, $src, $dst) = $argv;
-
-        if ( VFS::mv($path, $src, $dst) ) {
-          $json['result'] = $dst;
-          $json['success'] = true;
-        } else {
-          $json['error'] = sprintf(_("Failed to rename '%s'"), $argv);
-        }
-      } else if ( $method == "delete" ) {
-        if ( VFS::rm($argv) ) {
-          $json['result'] = $argv;
-          $json['success'] = true;
-        } else {
-          $json['error'] = sprintf(_("Failed to delete '%s'"), $argv);
-        }
-      } else if ( $method == "mkdir" ) {
-        if ( $res = VFS::mkdir($argv) ) {
-          $json['result'] = $res;
-          $json['success'] = true;
-        } else {
-          $json['error'] = sprintf(_("Failed to create directory '%s'"), $argv);
-        }
-      } else if ( $method == "readurl" ) {
-        if ( $ret = VFS::readurl($argv) ) {
-          $json['result'] = $ret;
-          $json['success'] = true;
-        } else {
-          $json['error'] = sprintf(_("Failed to read '%s'"), $argv);
-        }
-      } else if ( $method == "readpdf" ) {
-        $tmp  = explode(":", $argv);
-        $pdf  = $tmp[0];
-        $page = isset($tmp[1]) ? $tmp[1] : -1;
-
-        if ( $ret = VFS::readPDF($pdf, $page) ) {
-          $json['result'] = $ret;
-          $json['success'] = true;
-        } else {
-          $json['error'] = sprintf(_("Failed to read '%s'"), $argv);
-        }
-
-      } else if ( $method == "fileinfo" ) {
-        if ( $ret = VFS::file_info($argv) ) {
-          $json['result'] = $ret;
-          $json['success'] = true;
-        } else {
-          $json['error'] = sprintf(_("Failed to read '%s'"), $argv);
-        }
+      } catch ( ExceptionVFS $e ) {
+        $json['success'] = false;
+        $json['error'] = $e->getMessage();
       }
-    } catch ( ExceptionVFS $e ) {
-      $json['error'] = $e->getMessage();
     }
   }
 

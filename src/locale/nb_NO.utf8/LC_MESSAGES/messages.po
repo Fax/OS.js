@@ -105,3 +105,6 @@ msgstr "Filen '%s' finnes allerede!"
 
 msgid "You do not have permission to '%s'!"
 msgstr "Du har ikke tilgang til '%s'!"
+
+msgid "Cannot read/write '%s'!"
+msgstr "Kan ikke lese/skrive '%s'!"

@@ -105,3 +105,7 @@ msgstr "The file '%s' already exists!"
 
 msgid "You do not have permission to '%s'!"
 msgstr "You do not have permission to '%s'!"
+
+msgid "Cannot read/write '%s'!"
+msgstr "Cannot read/write '%s'!"
+
