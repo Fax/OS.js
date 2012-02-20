@@ -250,22 +250,87 @@ abstract class Package
     return false;
   }
 
-  public static function Install(Package $p, User $u) {
-    if ( $u->isInGroup(User::GROUP_PACKAGES) ) {
-      /*
-      $class = get_class($p);
-      $path  = sprintf("%s/%s/metadata.xml", PATH_PACKAGES, $p);
-      if ( file_exists($path) ) {
-        return true;
+  protected static function _PackageOperationSave($mixed, User $user, $system = false) {
+    return file_put_contents(PACKAGE_BUILD, $mixed) ? true : false;
+  }
+
+  protected static function _PackageOperationLoad($mixed, User $user, $system = false) {
+    $base   = sprintf("%s/%s", PATH_PACKAGES, $mixed);
+    $class  = get_called_class();
+
+    $config = PACKAGE_BUILD;
+    $doc    = new DomDocument();
+    $cfg    = file_get_contents($config);
+    if ( $doc->loadXML($cfg) 
+        && ($xml = new SimpleXMLElement(file_get_contents("{$base}/metadata.xml"))) ) {
+      return Array($doc, $xml);
+    }
+    return false;
+  }
+
+
+  /**
+   * Uninstall Package
+   * @see Package::_PackageOperationLoad()
+   * @see Package::_PackageOperationSave()
+   * @return Mixed
+   */
+  public static function Uninstall($package, User $user, $system = true) {
+    $nodeName = (get_called_class() == "Application" ? "application" : "panelitem");
+    if ( $result = self::_PackageOperationLoad($package, $user, $system) ) {
+      list($doc, $xml) = $result;
+
+      $removed = false;
+      $anode = $doc->getElementsByTagName($nodeName);
+      for ( $i = 0; $i < $anode->length; $i++ ) {
+        $item = $anode->item($i);
+        foreach ( $item->attributes as $aname => $aanode ) {
+          if ( $aname == "class" && ($aanode->nodeValue == $package) ) {
+            $item->parentNode->removeChild($item);
+            $removed = true;
+            break;
+          }
+        }
       }
-       */
-    } else if ( $u->isUser() ) {
+
+      if ( $removed ) {
+        if ( $data = $doc->saveXML() ) {
+          return self::_PackageOperationSave($data, $user, $system);
+        }
+      }
     }
 
     return false;
   }
 
-  public static function Uninstall(Package $p, User $u = null) {
+  /**
+   * Install Package
+   * @see Package::_PackageOperationLoad()
+   * @see Package::_PackageOperationSave()
+   * @return Mixed
+   */
+  public static function Install($package, User $user, $system = true) {
+    $nodeName = (get_called_class() == "Application" ? "application" : "panelitem");
+    if ( $result = self::_PackageOperationLoad($package, $user, $system) ) {
+      list($doc, $xml) = $result;
+
+      $found = false;
+      $anode = $doc->getElementsByTagName($nodeName);
+      for ( $i = 0; $i < $anode->length; $i++ ) {
+        $item = $anode->item($i);
+        foreach ( $item->attributes as $aname => $aanode ) {
+          if ( $aname == "class" && ($aanode->nodeValue == $package) ) {
+            $found = true;
+            break;
+          }
+        }
+      }
+
+      if ( !$found ) {
+        return $result;
+      }
+    }
+
     return false;
   }
 

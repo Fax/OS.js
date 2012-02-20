@@ -62,36 +62,11 @@ class Compiler
    * @constructor
    */
   protected function __construct() {
-    $doc = new DomDocument();
-    $doc->xmlVersion    = "1.0";
-    $doc->formatOutput  = true;
-    $doc->encoding      = 'UTF-8';
-
-    $root_node = $doc->createElement("packages");
-    $doc->appendChild($root_node);
-
-    $this->_oDocument = $doc;
-    $this->_oRoot = $root_node;
   }
 
   /////////////////////////////////////////////////////////////////////////////
   // METHODS
   /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Save XML Data
-   * @param   String    $dest_xml     Destination XML file path
-   * @return  bool
-   */
-  protected function saveXML($dest_xml) {
-    if ( $this->_oDocument ) {
-      if ( $xml = $this->_oDocument->saveXML() ) {
-        file_put_contents($dest_xml, $xml);
-        return true;
-      }
-    }
-    return false;
-  }
 
   /**
    * Compile a Panelitem by Metadata file
@@ -103,110 +78,6 @@ class Compiler
   protected function compilePanelItem($class_name, $metadata_path, $dry_run = false) {
     if ( $xml = new SimpleXmlElement(file_get_contents($metadata_path)) ) {
       print "Compiling from '$metadata_path'\n";
-
-      $project_name         = ((string) $xml['name']);
-      $project_enabled      = true;
-      $project_title        = PanelItem::PANELITEM_ICON;
-      $project_titles       = Array();
-      $project_description  = PanelItem::PANELITEM_DESC;
-      $project_descriptions = Array();
-      $project_icon         = PanelItem::PANELITEM_ICON;
-      $project_resources    = Array();
-
-      // Parse general attributes
-      foreach ( $xml->property as $p ) {
-        $val = ((string) $p);
-        switch ( $p['name'] ) {
-          case "enabled" :
-            if ( $val == "false" ) {
-              $project_enabled = false;
-              break;
-            }
-            break;
-          case "description" :
-            if ( $val ) {
-              if ( isset($p['language']) && !empty($p['language']) ) {
-                $lang = ((string)$p['language']);
-                $project_descriptions[$lang] = $val;
-                if ( $lang == DEFAULT_LANGUAGE ) {
-                  $project_description = $val;
-                }
-              } else {
-                $project_tiles[DEFAULT_LANGUAGE] = $val;
-                $project_description = $val;
-              }
-            }
-            break;
-          case "title" :
-            if ( $val ) {
-              if ( isset($p['language']) && !empty($p['language']) ) {
-                $lang = ((string)$p['language']);
-                $project_titles[$lang] = $val;
-                if ( $lang == DEFAULT_LANGUAGE ) {
-                  $project_title = $val;
-                }
-              } else {
-                $project_tiles[DEFAULT_LANGUAGE] = $val;
-                $project_title = $val;
-              }
-            }
-            break;
-          case "icon" :
-            if ( $val ) {
-              $project_icon = $val;
-            }
-            break;
-        }
-      }
-
-      if ( !isset($project_titles[DEFAULT_LANGUAGE]) ) {
-        $project_titles[DEFAULT_LANGUAGE] = $project_title;
-      }
-
-      // Skip application
-      if ( ENV_PRODUCTION ) {
-        if ( !$project_enabled ) {
-          print "\tNot enabled...skipping...!\n";
-          return -1;
-        }
-      }
-
-      if ( isset($xml->resource) ) {
-        foreach ( $xml->resource as $r ) {
-          $project_resources[] = (string) $r;
-        }
-      }
-
-      $node = $this->_oDocument->createElement("panelitem");
-      $node->setAttribute("name",         $project_name);
-      $node->setAttribute("class",        $class_name);
-      $node->setAttribute("title",        $project_title);
-      $node->setAttribute("description",  $project_description);
-      $node->setAttribute("icon",         $project_icon);
-
-      foreach ( $project_titles as $tl => $tt ) {
-        $n = $this->_oDocument->createElement("title");
-        $n->setAttribute("language", $tl);
-        $n->appendChild(new DomText($tt));
-        $node->appendChild($n);
-      }
-      foreach ( $project_descriptions as $tl => $tt ) {
-        $n = $this->_oDocument->createElement("description");
-        $n->setAttribute("language", $tl);
-        $n->appendChild(new DomText($tt));
-        $node->appendChild($n);
-      }
-
-      foreach ( $project_resources as $r ) {
-        $n = $this->_oDocument->createElement("resource");
-        $n->appendChild(new DomText($r));
-        $node->appendChild($n);
-      }
-
-      if ( !$dry_run ) {
-        $this->_oRoot->appendChild($node);
-      }
-
       print "\tDONE!\n";
 
       return true;
@@ -228,15 +99,12 @@ class Compiler
 
       // Generic variables
       $project_name         = ((string) $xml['name']);
-      $project_category     = ((string) $xml['category']);
       $project_enabled      = true;
       $project_title        = Application::APPLICATION_TITLE;
       $project_titles       = Array();
       $project_icon         = Application::APPLICATION_ICON;
-      $project_system       = false;
       $project_compability  = Array();
       $project_mimes        = Array();
-      $project_resources    = Array();
       $timestamp            = strftime("%F");
 
       // Paths
@@ -293,12 +161,6 @@ class Compiler
               $project_icon = $val;
             }
             break;
-          case "system" :
-            if ( $val == "true" ) {
-              $project_system = true;
-              $project_category = "system";
-            }
-            break;
         }
       }
 
@@ -314,11 +176,6 @@ class Compiler
         }
       }
 
-      // Fallbacks
-      if ( !$project_category ) {
-        $project_category = "unknown";
-      }
-
       // Parse other nodes
       if ( isset($xml->compability) ) {
         foreach ( $xml->compability as $c ) {
@@ -329,12 +186,6 @@ class Compiler
       if ( isset($xml->mime) ) {
         foreach ( $xml->mime as $m ) {
           $project_mimes[] = (string) $m;
-        }
-      }
-
-      if ( isset($xml->resource) ) {
-        foreach ( $xml->resource as $r ) {
-          $project_resources[] = (string) $r;
         }
       }
 
@@ -386,58 +237,15 @@ class Compiler
       $content_js   = str_replace(array_keys($rep_js), array_values($rep_js), self::$TemplateJS);
       $content_html = implode("\n", $glade_html);
 
-      // Generate Application XML Build-file data
-      $node = $this->_oDocument->createElement("application");
-      $node->setAttribute("name",     $project_name);
-      $node->setAttribute("class",    $class_name);
-      $node->setAttribute("title",    $project_title);
-      $node->setAttribute("icon",     $project_icon);
-      $node->setAttribute("system",   $project_system ? "true" : "false");
-      $node->setAttribute("category", $project_category);
-
-      foreach ( $project_titles as $tl => $tt ) {
-        $n = $this->_oDocument->createElement("title");
-        $n->setAttribute("language", $tl);
-        $n->appendChild(new DomText($tt));
-        $node->appendChild($n);
-      }
-
-      foreach ( $project_resources as $r ) {
-        $n = $this->_oDocument->createElement("resource");
-        $n->appendChild(new DomText($r));
-        $node->appendChild($n);
-      }
-      foreach ( $project_mimes as $c ) {
-        $n = $this->_oDocument->createElement("mime");
-        $n->appendChild(new DomText($c));
-        $node->appendChild($n);
-      }
-
-      /*
-      foreach ( $temp_windows as $wid => $wprop ) {
-        $prop_node  = $this->_oDocument->createElement("property");
-        $prop_node->setAttribute("name", "properties");
-        $prop_node->appendChild($this->_oDocument->createCDATASection(json_encode($wprop)));
-
-        $win_node   = $this->_oDocument->createElement("window");
-        $win_node->setAttribute("id", $wid);
-        $win_node->appendChild($prop_node);
-
-        $node->appendChild($win_node);
-      }
-       */
-
       // Write data
       if ( !$dry_run ) {
         file_put_contents($out_php,   $content_php);
         file_put_contents($out_css,   $content_css);
         file_put_contents($out_js,    $content_js);
         file_put_contents($out_html,  $content_html);
-
-        $this->_oRoot->appendChild($node);
       }
 
-      print sprintf("\tDONE [%s]...\n", implode(",", Array("xml", "css", "php", "js", "html")));
+      print sprintf("\tDONE [%s]...\n", implode(",", Array("css", "php", "js", "html")));
 
       return true;
     }
@@ -482,7 +290,7 @@ class Compiler
         }
       }
 
-      return $dry_run ? true : $compiler->saveXML($config);
+      return true;
     }
 
     return false;
