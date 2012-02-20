@@ -51,7 +51,7 @@ define("PROJECT_CONTACT",   "andersevenrud@gmail.com");
 define("PROJECT_VERSION",   "0.6-alpha4"); // Next: 0.7
 define("PROJECT_CODENAME",  "DiscoFox"); // Next: ???
 define("PROJECT_HOST",      (php_uname('n')));
-define("PROJECT_BUILD",     "380b648");
+define("PROJECT_BUILD",     "b6670be");
 
 //
 // Environment
@@ -135,6 +135,15 @@ spl_autoload_register(function($cn) {
 // Default initialization
 //
 
+// Misc Initialization
+date_default_timezone_set(DEFAULT_TIMEZONE);
+
+DB::init();
+
+//
+// MOVE ME!
+//
+
 abstract class CoreObject {}
 
 class ExceptionVFS
@@ -145,7 +154,7 @@ class ExceptionVFS
   const PERMISSION_DENIED = 3;
   const UNKNOWN           = 255;
 
-  public function __construct($type, Array $args) {
+  public function __construct($type, Array $args = Array()) {
     $message = _("Unknown VFS Error occured");
 
     switch ( $type ) {
@@ -167,9 +176,58 @@ class ExceptionVFS
   }
 }
 
-// Misc Initialization
-date_default_timezone_set(DEFAULT_TIMEZONE);
+class ExceptionPackage
+  extends Exception
+{
+  const PACKAGE_NOT_EXISTS    = 0;
+  const PACKAGE_EXISTS        = 0;
+  const MISSING_METADATA      = 1;
+  const INVALID_METADATA      = 2;
+  const MISSING_FILE          = 3;
+  const FAILED_CREATE         = 4;
+  const FAILED_OPEN           = 5;
+  const INVALID_DESTINATION   = 6;
+  const FAILED_CREATE_DEST    = 7;
 
-DB::init();
+  const INVALID               = 255;
 
+  public function __construct($type, Array $args = Array()) {
+    $message = _("Unknown Package Error occured");
+
+    switch ( $type ) {
+      case self::PACKAGE_NOT_EXISTS :
+        $message = vsprintf(_("The package archive '%s' does not exist!"), $args);
+      break;
+      case self::PACKAGE_EXISTS :
+        $message = vsprintf(_("The package already exists in '%s'!"), $args);
+      break;
+      case self::MISSING_METADATA :
+        $message = vsprintf(_("'%s' is missing metadata.xml!"), $args);
+      break;
+      case self::INVALID_METADATA :
+        $message = vsprintf(_("'%s' has invalid metadata.xml!"), $args);
+      break;
+      case self::MISSING_FILE :
+        $message = vsprintf(_("'%s' is missing the file '%s'!"), $args);
+      break;
+      case self::FAILED_CREATE :
+        $message = vsprintf(_("Failed to create archive for project '%s' in '%s' (%d)!"), $args);
+      break;
+      case self::FAILED_OPEN :
+        $message = vsprintf(_("Failed to open archive for project '%s' in '%s' (%d)!"), $args);
+      break;
+      case self::INVALID_DESTINATION :
+        $message = vsprintf(_("The destination '%s' is invalid!"), $args);
+      break;
+      case self::FAILED_CREATE_DEST :
+        $message = vsprintf(_("The destination '%s' cannot be created!"), $args);
+      break;
+      case self::INVALID :
+        $message = vsprintf(_("The package archive '%s' is invalid!"), $args);
+      break;
+    }
+
+    parent::__construct($message);
+  }
+}
 ?>
