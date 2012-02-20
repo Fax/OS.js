@@ -516,11 +516,14 @@
             };
           })(item));
 
-          el.find(".Inner").bind("contextmenu", function(ev) {
-            ev.preventDefault();
-            self.on_context(ev, $(this), item);
-            return false;
-          });
+          el.find(".Inner").bind("contextmenu", (function(it) {
+            return function(ev) {
+              ev.preventDefault();
+              console.log(item);
+              self.on_context(ev, $(this), it);
+              return false;
+            };
+          })(item));
 
         } else {
           el = $("<tr>" + i + "</tr>");
