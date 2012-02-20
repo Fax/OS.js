@@ -76,6 +76,180 @@ abstract class Package
   // STATIC METHODS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Create a new Zipped Package from Project path
+   * @param  String     $project      Project absolute path
+   * @param  String     $dst_path     Absolute destination path (Default = use internal)
+   * @throws ExceptionPackage
+   * @return bool
+   */
+  public static function CreatePackage($project, $dst_path) {
+    $name = basename($project);
+    $dest = sprintf("%s/%s.zip", $dst_path, $name);
+
+    // Read all files from project directory
+    $items = Array();
+    if ( is_dir($project) && $handle = opendir($project)) {
+      while (false !== ($file = readdir($handle))) {
+        if ( substr($file, 0, 1) !== "." ) {
+          if ( !is_dir("{$project}/{$file}") ) {
+            $items[] = $file;
+          }
+        }
+      }
+    }
+
+    if ( in_array("metadata.xml", $items) ) {
+      $metadata  = sprintf("%s/%s", $project, "metadata.xml");
+      $resources = Array("metadata.xml", "{$name}.class.php");
+
+      if ( file_exists($metadata) && ($xml = file_get_contents($metadata)) ) {
+        if ( $xml = new SimpleXmlElement($xml) ) {
+          // Parse resources from Metadata
+          if ( isset($xml['schema']) ) {
+            $resources[] = (string) $xml['schema'];
+          }
+          if ( isset($xml->resource) ) {
+            foreach ( $xml->resource as $r ) {
+              $resources[] = (string) $r;
+            }
+          }
+
+          // Select files to store in package
+          $store = Array();
+          foreach ( $resources as $r ) {
+            if ( !in_array($r, $items) ) {
+              throw new ExceptionPackage(ExceptionPackage::MISSING_FILE, Array($name, $r));
+            }
+            $store[$r] = file_get_contents(sprintf("%s/%s", $project, $r));
+          }
+
+          // Clean up
+          unset($items);
+          unset($resources);
+
+          // Create a package
+          $zip = new ZipArchive();
+          if ( ($ret = $zip->open($dest, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE)) === true ) {
+            foreach ( $store as $file => $content ) {
+              $zip->addFromString($file, $content);
+            }
+            if  ( $zip->close() ) {
+              return true;
+            }
+          } else {
+            throw new ExceptionPackage(ExceptionPackage::FAILED_CREATE, Array($name, $dest, $ret));
+          }
+        } else {
+          throw new ExceptionPackage(ExceptionPackage::INVALID_METADATA, Array($name));
+        }
+      } else {
+        throw new ExceptionPackage(ExceptionPackage::INVALID_METADATA, Array($name));
+      }
+    } else {
+      throw new ExceptionPackage(ExceptionPackage::MISSING_METADATA, Array($name));
+    }
+
+    return false;
+  }
+
+  /**
+   * Extract a Zipped Package to project directory
+   * @param  String   $package      Absolute package path (zip-file)
+   * @param  String   $dst_path     Absolute destination path
+   * @throws ExceptionPackage
+   * @return bool
+   */
+  public static function ExtractPackage($package, $dst_path) {
+    $name = str_replace(".zip", "", basename($package));
+    $dest = sprintf("%s/%s", $dst_path, $name);
+
+    // Check if source exists
+    if ( !file_exists($package) ) {
+      throw new ExceptionPackage(ExceptionPackage::PACKAGE_NOT_EXISTS, Array($package));
+    }
+
+    // Check if target exists
+    if ( !is_dir($dst_path) && !is_dir($dest) ) {
+      throw new ExceptionPackage(ExceptionPackage::INVALID_DESTINATION, Array($dest));
+    }
+
+    $zip = new ZipArchive();
+    if ( ($ret = $zip->open($package)) === true ) {
+      $resources  = Array("{$name}.class.php");
+      $packaged   = Array();
+      $invalid    = false;
+
+      // Read archived file-names
+      for ( $i = 0; $i < $zip->numFiles; $i++ ) {
+        $packaged[] = $zip->getNameIndex($i);
+      }
+
+      // Read metadata resources
+      if ( !in_array("metadata.xml", $packaged) ) {
+        throw new ExceptionPackage(ExceptionPackage::MISSING_METADATA, Array($package));
+      }
+
+      $mread = false;
+      if ( $stream = $zip->getStream("metadata.xml") ) {
+        $data = "";
+        while ( !feof($stream) ) {
+          $data .= fread($stream, 2);
+        }
+        fclose($stream);
+
+        if ( $data && ($xml = new SimpleXmlElement($data)) ) {
+          // Parse resources from Metadata
+          if ( isset($xml['schema']) ) {
+            $resources[] = (string) $xml['schema'];
+          }
+          if ( isset($xml->resource) ) {
+            foreach ( $xml->resource as $r ) {
+              $resources[] = (string) $r;
+            }
+          }
+
+          $mread = true;
+        }
+      }
+
+      // Make sure metadata was read
+      if ( !$mread ) {
+        throw new ExceptionPackage(ExceptionPackage::INVALID_METADATA, Array($package));
+      }
+
+      // Check that all files are in the archive
+      foreach ( $resources as $r ) {
+        if ( !in_array($r, $packaged) ) {
+          throw new ExceptionPackage(ExceptionPackage::MISSING_FILE, Array($name, $r));
+          break;
+        }
+      }
+
+      unset($resources);
+      unset($packaged);
+
+      // Create destination
+      if ( !mkdir($dest) ) {
+        throw new ExceptionPackage(ExceptionPackage::FAILED_CREATE_DEST, Array($dest));
+      }
+
+      // Extract
+      $result = false;
+      if ( $zip->extractTo($dest) ) {
+        $result = true;
+      }
+
+      $zip->close();
+
+      return $result;
+    } else {
+      throw new ExceptionPackage(ExceptionPackage::FAILED_OPEN, Array($name, $package, $ret));
+    }
+
+    return false;
+  }
+
   public static function Install(Package $p, User $u) {
     if ( $u->isInGroup(User::GROUP_PACKAGES) ) {
       /*
