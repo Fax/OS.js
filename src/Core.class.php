@@ -594,7 +594,7 @@ class Core
         $json['error'] = sprintf(_("Failed to create directory '%s'"), $argv);
       }
     } else if ( $method == "readurl" ) {
-      if ( $ret = ApplicationAPI::readurl($argv) ) {
+      if ( $ret = VFS::readurl($argv) ) {
         $json['result'] = $ret;
         $json['success'] = true;
       } else {
@@ -605,7 +605,7 @@ class Core
       $pdf  = $tmp[0];
       $page = isset($tmp[1]) ? $tmp[1] : -1;
 
-      if ( $ret = ApplicationAPI::readPDF($pdf, $page) ) {
+      if ( $ret = VFS::readPDF($pdf, $page) ) {
         $json['result'] = $ret;
         $json['success'] = true;
       } else {

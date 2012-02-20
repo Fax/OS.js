@@ -273,13 +273,13 @@ abstract class VFS
 
         switch ( $fmmime ) {
           case "image" :
-            $info = ApplicationAPI::mediaInfo($res["destination"], false);
+            $info = VFS::mediaInfo($res["destination"], false);
           break;
           case "audio" :
-            $info = ApplicationAPI::mediaInfo($res["destination"], false);
+            $info = VFS::mediaInfo($res["destination"], false);
           break;
           case "video" :
-            $info = ApplicationAPI::mediaInfo($res["destination"], false);
+            $info = VFS::mediaInfo($res["destination"], false);
           break;
         }
 
@@ -817,6 +817,82 @@ abstract class VFS
     $mime  = trim(reset($mime));
     $fmime = self::_fixMIME($mime, $ext);
     return Array($mime, $fmime);
+  }
+
+  /**
+   * Read an URL
+   * @param  String   $url        URL to read
+   * @param  int      $timeout    Read timeout (default 30s)
+   * @return String
+   */
+  public static function readurl($url, $timeout = 30) {
+    $ch = curl_init();
+    curl_setopt($ch,CURLOPT_URL,$url);
+    curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+    curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
+    $data = curl_exec($ch);
+    curl_close($ch);
+    return $data;
+  }
+
+  /**
+   * Get Media-file information
+   * @param  String   $fname      Audio-file path
+   * @return Mixed
+   */
+  public static function mediaInfo($fname, $exists = true) {
+    if ( !$exists || $path = VFS::exists($fname, true) ) {
+      if ( !$exists ) {
+        $path = $fname;
+      }
+
+      $pcmd   = escapeshellarg($path);
+      $result = exec("exiftool -j {$pcmd}", $outval, $retval);
+      if ( $retval == 0 && $result ) {
+        try {
+          $json = (array) JSON::decode(implode("", $outval));
+          $json = (array) reset($json);
+        } catch ( Exception $e ) {
+          $json = Array();
+        }
+      }
+
+      if ( isset($json["SourceFile"]) ) {
+        unset($json["SourceFile"]);
+      }
+      if ( isset($json["ExifToolVersion"]) ) {
+        unset($json["ExifToolVersion"]);
+      }
+      if ( isset($json["Directory"]) ) {
+        unset($json["Directory"]);
+      }
+
+      if ( $json ) {
+        return $json;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Read PDF File
+   * @param   String      $fname      Relative file name
+   * @see     PDF
+   * @return  Mixed
+   */
+  public static function readPDF($fname, $page = -1) {
+    if ( $path = VFS::exists($fname, true) ) {
+      require PATH_LIB . "/PDF.class.php";
+      if ( $ret = PDF::PDFtoSVG($path, $page) ) {
+        return Array(
+          "info" => PDF::PDFInfo($path),
+          "document" => $ret
+        );
+      }
+    }
+
+    return false;
   }
 
   /////////////////////////////////////////////////////////////////////////////
