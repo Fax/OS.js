@@ -37,7 +37,7 @@ $return = 'null';
 if ( sizeof($_POST) ) {
   if ( isset($_POST['upload']) ) {
     if ( isset($_FILES['upload']) ) {
-      $return = json_encode(ApplicationVFS::upload($_FILES['upload'], $_POST['path']));
+      $return = json_encode(VFS::upload($_FILES['upload'], $_POST['path']));
     }
   }
 }
