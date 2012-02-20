@@ -50,18 +50,21 @@ class User
   // VARIABLES
   /////////////////////////////////////////////////////////////////////////////
 
-  public $id          = -1;
-  public $username    = "Undfined";
-  public $password    = "";
-  public $privilege   = self::GROUP_NONE;
-  public $real_name   = "Undefined";
-  public $created_at  = null;
-  public $settings    = Array();
+  public $id          = -1;                   // User ID
+  public $username    = "Undfined";           // User login name
+  public $password    = "";                   // User Password
+  public $privilege   = self::GROUP_NONE;     // User Group(s)
+  public $real_name   = "Undefined";          // User's Real Name
+  public $created_at  = null;                 // User Created Timestamp
+  public $settings    = Array();              // User Settings Tree
 
   /////////////////////////////////////////////////////////////////////////////
   // MAGICS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * @constructor
+   */
   public final function __construct(Array $data) {
     foreach ( $data as $k => $v ) {
       try {
@@ -79,16 +82,36 @@ class User
   // METHODS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Check if User is in group Guest
+   * @return bool
+   */
   public final function isGuest() {
     return $this->privilege & self::GROUP_GUEST;
   }
+
+  /**
+   * Check if User is in group User
+   * @return bool
+   */
   public final function isUser() {
     return $this->privilege & self::GROUP_USER;
   }
+
+  /**
+   * Check if User is in group Admin
+   * @return bool
+   */
   public final function isInGroup($group) {
     return $this->privilege & $group;
   }
 
+  /**
+   * Save instance with these new settings
+   * @param  Array    $session      Session JSON
+   * @param  Array    $settings     Settings JSON
+   * @return bool
+   */
   public final function saveUser(Array $session, Array $settings) {
     $this->settings = $settings;
     if ( User::save($this) ) {
@@ -97,29 +120,14 @@ class User
     return false;
   }
 
-  public final function snapshotSave($name, $config) {
-    $sess               = new Session(Array(
-      "user_id"         => $this->id,
-      "session_name"    => $name,
-      "session_data"    => $config,
-      "created_at"      => new DateTime()
-    ));
-
-    if ( $sess = Session::save($sess) ) {
-      return $sess;
-    }
-
-    return false;
-  }
-
-  public final function snapshotLoad($name) {
-    return Session::getBySnapshot($this->id, $name);
-  }
-
   /////////////////////////////////////////////////////////////////////////////
   // GETTERS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Get user information JSON
+   * @return Array
+   */
   public final function getUserInfo() {
     return Array(
       "Username"   => $this->username,
@@ -129,9 +137,13 @@ class User
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  // STATIC FUNCTIONS
+  // STATIC INSTANCE FUNCTIONS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Create a new default instance
+   * @return User
+   */
   public static function createDefault() {
     return new self(Array(
       "username"    => "Guest",
@@ -141,6 +153,11 @@ class User
     ));
   }
 
+  /**
+   * Save this User instance
+   * @param  User     $instance     User instance
+   * @return Mixed
+   */
   public static function save(User $instance) {
     $values = Array();
     foreach ( $instance as $k => $v ) {
@@ -160,18 +177,39 @@ class User
     return false;
   }
 
+  /**
+   * Get User by ID
+   * @param  int      $id     User ID
+   * @return Mixed
+   */
   public static function getById($id) {
     if ( $res = DB::Select("user", "*", Array("id" => $id), 1) ) {
       return new User($res);
     }
+    return null;
   }
 
+  /**
+   * Get User by Username
+   * @param  String   $username   Username
+   * @return Mixed
+   */
   public static function getByUsername($username) {
     if ( $res = DB::Select("user", "*", Array("username" => $username), 1) ) {
       return new User($res);
     }
+    return null;
   }
 
+  /////////////////////////////////////////////////////////////////////////////
+  // STATIC CORE FUNCTIONS
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Get the Users default settings
+   * @see Core::_doInit
+   * @return Array
+   */
   public static function getDefaultSettings($packages) {
     if ( !class_exists("SettingsManager") ) {
       require "SettingsManager.class.php";

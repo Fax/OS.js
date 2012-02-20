@@ -5,6 +5,7 @@ CORE:
 * TODO [HIG] : Custom Exception class
 * TODO [MED] : Implement MenuNew in GtkMenu
 * TODO [MED] : Rewrite Glade builder class
+* TODO [LOW] : VFS - Overwriting, fix parameters etc.
 * TODO [LOW] : Write custom GtkTab class
 * TODO [LOW] : Write custom GtkLoadingBar class
 * TODO [LOW] : Clean up CSS

@@ -93,18 +93,18 @@ class Core
    */
   protected function __construct() {
     // Start session
-    session_start();
+    Session::initSession();
 
     // Set user from session
-    if ( isset($_SESSION['user']) ) {
-      $this->setUser($_SESSION['user']);
+    if ( $u = Session::getUser() ) {
+      $this->setUser($u);
     }
 
     // Set timezone from session
-    if ( isset($_SESSION['locale']) ) {
-      $this->setLocale($_SESSION['locale']);
+    if ( $l = Session::getLocale() ) {
+      $this->setLocale($l);
     } else {
-      $_SESSION['locale'] = $this->setLocale(null);
+      Session::setLocale($this->setLocale(null));
     }
   }
 
@@ -185,7 +185,7 @@ class Core
               return JSON::encode(Array(
                 "post"    => $_POST,
                 "get"     => $_GET,
-                "session" => $_SESSION,
+                "session" => Session::getSession(),
                 "core"    => $this
               ));
             }
@@ -325,7 +325,8 @@ class Core
           $inst->setLocale($args['settings']['locale']);
           $json['success'] = true;
           $json['result']  = true;
-          $_SESSION['locale'] = $args['settings']['locale'];
+
+          Session::setLocale($args['settings']['locale']);
         }
       }
     }
@@ -350,8 +351,7 @@ class Core
     $json['result']   = $result;
     $json['success']  = true;
 
-    //$_SESSION['user']        = null;
-    //$_SESSION['locale']      = null;
+    Session::clearSession();
   }
 
   /**
@@ -370,8 +370,8 @@ class Core
       }
 
       if ( $name && $session ) {
-        if ( !($snapshot = $user->snapshotLoad($name)) ) {
-          if ( ($snapshot = $user->snapshotSave($name, $session)) ) {
+        if ( !($snapshot = Session::snapshotLoad($user, $name)) ) {
+          if ( ($snapshot = Session::snapshotSave($user, $name, $session)) ) {
             $json['success'] = true;
             $json['result']  = $snapshot;
           } else {
@@ -401,7 +401,7 @@ class Core
       }
 
       if ( $name ) {
-        if ( ($snapshot = $user->snapshotLoad($name)) ) {
+        if ( ($snapshot = Session::snapshotLoad($user, $name)) ) {
           $json['success'] = true;
           $json['result']  = $snapshot;
         } else {
@@ -452,11 +452,7 @@ class Core
       }
     }
 
-    if ( $user && ($user instanceof User) ) {
-      $_SESSION['user'] = $user;
-    } else {
-      $_SESSION['user'] = null;
-    }
+    Session::setUser(($user && ($user instanceof User)) ? $user : null);
   }
 
   /**
@@ -466,7 +462,8 @@ class Core
    */
   protected static final function _doUserLogout(Array $args, Array &$json, Core $inst = null) {
     $json['success']  = true;
-    $_SESSION['user'] = null;
+
+    Session::setUser(null);
   }
 
   /**
@@ -559,7 +556,6 @@ class Core
         $json['error'] = sprintf(_("Failed to save '%s'"), $argv['file']);
       }
     } else if ( $method == "write" ) {
-      // TODO: Overwrite parameter
       if ( VFS::put($argv) ) {
         $json['success'] = true;
         $json['result'] = true;
