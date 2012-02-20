@@ -75,8 +75,13 @@ abstract class VFS
       "attr" => "r",
       "icon" => "places/folder-templates.png"
     ),
-    "/User/Packages" => Array(
+    "/User/Temp" => Array(
       "type" => "user",
+      "attr" => "rw",
+      "icon" => "places/folder-templates.png"
+    ),
+    "/User/Packages" => Array(
+      "type" => "packages",
       "attr" => "rs",
       "icon" => "places/folder-download.png"
     ),
