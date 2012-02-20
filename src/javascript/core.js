@@ -2573,7 +2573,7 @@
       var t = ev.target || ev.srcElement;
       if ( t && t.tagName ) {
         var tmp = $(t);
-        if ( !tmp.hasClass("GtkTextView") && !tmp.hasClass("textarea") && !tmp.parents(".textarea") ) {
+        if ( !tmp.hasClass("GtkTextView") && !tmp.hasClass("textarea") && !tmp.parents(".textarea").length ) {
           var tagName = t.tagName.toLowerCase();
           if ( tagName !== "input" && tagName !== "textarea" && tagName !== "select" && tagName != "option" ) {
             ev.preventDefault();
