@@ -542,7 +542,7 @@ class Core
 
     if ( $method == "read" ) {
       if ( is_string($argv) ) {
-        if ( ($content = ApplicationVFS::cat($argv)) !== false ) {
+        if ( ($content = VFS::cat($argv)) !== false ) {
           $json['result'] = $content;
           $json['success'] = true;
         } else {
@@ -553,7 +553,7 @@ class Core
       }
     } else if ( $method == "write" ) {
       // TODO: Overwrite parameter
-      if ( ApplicationVFS::put($argv) ) {
+      if ( VFS::put($argv) ) {
         $json['success'] = true;
         $json['result'] = true;
       } else {
@@ -564,7 +564,7 @@ class Core
       $ignores = isset($argv['ignore']) ? $argv['ignore'] : null;
       $mime    = isset($argv['mime']) ? ($argv['mime'] ? $argv['mime'] : Array()) : Array();
 
-      if ( ($items = ApplicationVFS::ls($path, $ignores, $mime)) !== false) {
+      if ( ($items = VFS::ls($path, $ignores, $mime)) !== false) {
         $json['result'] = $items;
         $json['success'] = true;
       } else {
@@ -573,21 +573,21 @@ class Core
     } else if ( $method == "rename" ) {
       list($path, $src, $dst) = $argv;
 
-      if ( ApplicationVFS::mv($path, $src, $dst) ) {
+      if ( VFS::mv($path, $src, $dst) ) {
         $json['result'] = $dst;
         $json['success'] = true;
       } else {
         $json['error'] = sprintf(_("Failed to rename '%s'"), $argv);
       }
     } else if ( $method == "delete" ) {
-      if ( ApplicationVFS::rm($argv) ) {
+      if ( VFS::rm($argv) ) {
         $json['result'] = $argv;
         $json['success'] = true;
       } else {
         $json['error'] = sprintf(_("Failed to delete '%s'"), $argv);
       }
     } else if ( $method == "mkdir" ) {
-      if ( $res = ApplicationVFS::mkdir($argv) ) {
+      if ( $res = VFS::mkdir($argv) ) {
         $json['result'] = $res;
         $json['success'] = true;
       } else {
@@ -613,7 +613,7 @@ class Core
       }
 
     } else if ( $method == "fileinfo" ) {
-      if ( $ret = ApplicationVFS::file_info($argv) ) {
+      if ( $ret = VFS::file_info($argv) ) {
         $json['result'] = $ret;
         $json['success'] = true;
       } else {

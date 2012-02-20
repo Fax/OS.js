@@ -1,7 +1,7 @@
 <?php
 /*!
  * @file
- * OS.js - JavaScript Operating System - Contains ApplicationVFS Class
+ * OS.js - JavaScript Operating System - Contains VFS Class
  *
  * Copyright (c) 2011, Anders Evenrud
  * All rights reserved.
@@ -32,13 +32,13 @@
  */
 
 /**
- * ApplicationVFS -- Application VFS (Virtual Filesystem) Class
+ * VFS -- Application VFS (Virtual Filesystem) Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package OSjs.Sources.Core
  * @class
  */
-abstract class ApplicationVFS
+abstract class VFS
   extends CoreObject
 {
 
@@ -718,7 +718,7 @@ abstract class ApplicationVFS
 
   /**
    * Get file icon only from extension
-   * @see ApplicationVFS::getFileIcon
+   * @see VFS::getFileIcon
    * @return String
    */
   protected final static function _getFileIcon($ext) {

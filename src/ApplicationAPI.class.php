@@ -64,7 +64,7 @@ abstract class ApplicationAPI
    * @return Mixed
    */
   public static function mediaInfo($fname, $exists = true) {
-    if ( !$exists || $path = ApplicationVFS::exists($fname, true) ) {
+    if ( !$exists || $path = VFS::exists($fname, true) ) {
       if ( !$exists ) {
         $path = $fname;
       }
@@ -105,7 +105,7 @@ abstract class ApplicationAPI
    * @return  Mixed
    */
   public static function readPDF($fname, $page = -1) {
-    if ( $path = ApplicationVFS::exists($fname, true) ) {
+    if ( $path = VFS::exists($fname, true) ) {
       require PATH_LIB . "/PDF.class.php";
       if ( $ret = PDF::PDFtoSVG($path, $page) ) {
         return Array(
