@@ -51,7 +51,7 @@ define("PROJECT_CONTACT",   "andersevenrud@gmail.com");
 define("PROJECT_VERSION",   "0.6-alpha4"); // Next: 0.7
 define("PROJECT_CODENAME",  "DiscoFox"); // Next: ???
 define("PROJECT_HOST",      (php_uname('n')));
-define("PROJECT_BUILD",     "dd3141a");
+define("PROJECT_BUILD",     "9932a9a");
 
 //
 // Environment
@@ -136,6 +136,32 @@ spl_autoload_register(function($cn) {
 //
 
 abstract class CoreObject {}
+
+class ExceptionVFS
+  extends Exception
+{
+  const DOES_NOT_EXIST    = 1;
+  const ALREADY_EXISTS    = 2;
+  const PERMISSION_DENIED = 3;
+
+  public function __construct($type, Array $args) {
+    $message = _("Unknown VFS Error occured");
+
+    switch ( $type ) {
+      case self::DOES_NOT_EXIST :
+        $message = vsprintf(_("The file '%s' does not exist!"), $args);
+      break;
+      case self::ALREADY_EXISTS :
+        $message = vsprintf(_("The file '%s' already exists!"), $args);
+      break;
+      case self::PERMISSION_DENIED :
+        $message = vsprintf(_("You do not have permission to '%s'!"), $args);
+      break;
+    }
+
+    parent::__construct($message);
+  }
+}
 
 // Misc Initialization
 date_default_timezone_set(DEFAULT_TIMEZONE);

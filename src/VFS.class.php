@@ -332,6 +332,8 @@ abstract class VFS
         if ( file_put_contents($res["destination"], $content) ) {
           return true;
         }
+      } else {
+        throw new ExceptionVFS(ExceptionVFS::ALREADY_EXISTS, Array($argv['file']));
       }
     }
 
@@ -345,9 +347,13 @@ abstract class VFS
    */
   public static function touch($argv) {
     if ( $res = self::_secure($argv, null, false) ) {
-      if ( touch($res["destination"]) ) {
-        return true;
+      if ( !file_exists($res["destination"]) ) {
+        if ( touch($res["destination"]) ) {
+          return true;
+        }
       }
+
+      throw new ExceptionVFS(ExceptionVFS::ALREADY_EXISTS, Array($argv));
     }
 
     return false;

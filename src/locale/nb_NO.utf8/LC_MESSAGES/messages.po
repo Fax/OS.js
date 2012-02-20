@@ -97,3 +97,11 @@ msgstr "Klarte ikke å opprette sti '%s'"
 msgid "Failed to read '%s'"
 msgstr "Klarte ikke å lese '%s'"
 
+msgid "The file '%s' does not exist!"
+msgstr "Filen '%s' finnes ikke!"
+
+msgid "The file '%s' already exists!"
+msgstr "Filen '%s' finnes allerede!"
+
+msgid "You do not have permission to '%s'!"
+msgstr "Du har ikke tilgang til '%s'!"

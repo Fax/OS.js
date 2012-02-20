@@ -97,3 +97,11 @@ msgstr "Failed to create directory '%s'"
 msgid "Failed to read '%s'"
 msgstr "Failed to read '%s'"
 
+msgid "The file '%s' does not exist!"
+msgstr "The file '%s' does not exist!"
+
+msgid "The file '%s' already exists!"
+msgstr "The file '%s' already exists!"
+
+msgid "You do not have permission to '%s'!"
+msgstr "You do not have permission to '%s'!"
