@@ -64,123 +64,7 @@ abstract class Application
    * @see Package::Install()
    */
   public static function Install($package, User $user, $system = true) {
-    if ( $result = parent::Install($package, $user, $system) ) {
-      list($doc, $xml) = $result;
-
-      $project_name         = ((string) $xml['name']);
-      $project_category     = ((string) $xml['category']);
-      $project_enabled      = true;
-      $project_title        = Application::APPLICATION_TITLE;
-      $project_titles       = Array();
-      $project_icon         = Application::APPLICATION_ICON;
-      $project_system       = false;
-      $project_compability  = Array();
-      $project_mimes        = Array();
-      $project_resources    = Array();
-
-      // Parse general attributes
-      foreach ( $xml->property as $p ) {
-        $val = ((string) $p);
-        switch ( $p['name'] ) {
-          case "enabled" :
-            if ( $val == "false" ) {
-              $project_enabled = false;
-              break;
-            }
-            break;
-          case "title" :
-            if ( $val ) {
-              if ( isset($p['language']) && !empty($p['language']) ) {
-                $lang = ((string)$p['language']);
-                $project_titles[$lang] = $val;
-                if ( $lang == DEFAULT_LANGUAGE ) {
-                  $project_title = $val;
-                }
-              } else {
-                $project_tiles[DEFAULT_LANGUAGE] = $val;
-                $project_title = $val;
-              }
-            }
-            break;
-          case "icon" :
-            if ( $val ) {
-              $project_icon = $val;
-            }
-            break;
-          case "system" :
-            if ( $val == "true" ) {
-              $project_system = true;
-              $project_category = "system";
-            }
-            break;
-        }
-      }
-
-      if ( ENV_PRODUCTION ) {
-        if ( !$project_enabled ) {
-          return false;
-        }
-      }
-
-      if ( !isset($project_titles[DEFAULT_LANGUAGE]) ) {
-        $project_titles[DEFAULT_LANGUAGE] = $project_title;
-      }
-
-      // Fallbacks
-      if ( !$project_category ) {
-        $project_category = "unknown";
-      }
-
-      // Parse other nodes
-      if ( isset($xml->compability) ) {
-        foreach ( $xml->compability as $c ) {
-          $project_compability[] = (string) $c;
-        }
-      }
-
-      if ( isset($xml->mime) ) {
-        foreach ( $xml->mime as $m ) {
-          $project_mimes[] = (string) $m;
-        }
-      }
-
-      if ( isset($xml->resource) ) {
-        foreach ( $xml->resource as $r ) {
-          $project_resources[] = (string) $r;
-        }
-      }
-
-      $node = $doc->createElement("application");
-      $node->setAttribute("name",     $project_name);
-      $node->setAttribute("class",    $package);
-      $node->setAttribute("title",    $project_title);
-      $node->setAttribute("icon",     $project_icon);
-      $node->setAttribute("system",   $project_system ? "true" : "false");
-      $node->setAttribute("category", $project_category);
-
-      foreach ( $project_titles as $tl => $tt ) {
-        $n = $doc->createElement("title");
-        $n->setAttribute("language", $tl);
-        $n->appendChild(new DomText($tt));
-        $node->appendChild($n);
-      }
-      foreach ( $project_resources as $r ) {
-        $n = $doc->createElement("resource");
-        $n->appendChild(new DomText($r));
-        $node->appendChild($n);
-      }
-      foreach ( $project_mimes as $c ) {
-        $n = $doc->createElement("mime");
-        $n->appendChild(new DomText($c));
-        $node->appendChild($n);
-      }
-
-      $doc->documentElement->appendChild($node);
-      if ( $data = $doc->saveXML() ) {
-        return self::_PackageOperationSave($data, $user, $system);
-      }
-    }
-    return false;
+    return parent::Install($package, $user, $system);
   }
 
   /**
@@ -213,14 +97,41 @@ abstract class Application
     if ( $xml = Package::LoadPackage(Package::TYPE_APPLICATION) ) {
       foreach ( $xml as $app ) {
         $app_name     = (string) $app['name'];
-        $app_title    = (string) $app['title'];
-        $app_icon     = (string) $app['icon'];
+        $app_title    = Application::APPLICATION_TITLE; //""; //(string) $app['title'];
+        $app_icon     = Application::APPLICATION_ICON; //""; //(string) $app['icon'];
+        $app_titles   = Array();
         $app_class    = (string) $app['class'];
         $app_category = (string) $app['category'];
-        $app_enabled  = $app['enabled'] === "true" ? true : false;
 
         if ( $name !== null && $name !== $app_class ) {
           continue;
+        }
+
+        foreach ( $app->property as $prop ) {
+          switch ( (string) $prop['name'] ) {
+            case "title" :
+              if ( isset($prop['language']) ) {
+                $app_titles[((string)$prop['language'])] = ((string) $prop);
+              } else {
+                $app_title = (string) $prop;
+              }
+            break;
+            case "icon" :
+              $app_icon = (string) $prop;
+            break;
+            case "system" :
+              if ( ((string) $prop) == "true" ) {
+                $app_category = "system";
+              }
+            break;
+          }
+        }
+
+        if ( !$app_title && isset($app_titles[DEFAULT_LANGUAGE]) ) {
+          $app_title = $app_titles[DEFAULT_LANGUAGE];
+        }
+        if ( !$app_category ) {
+          $app_category = "unknown";
         }
 
         $resources = Array();
@@ -231,13 +142,6 @@ abstract class Application
         $mimes     = Array();
         foreach ( $app->mime as $mime ) {
           $mimes[] = (string) $mime;
-        }
-
-        $app_titles   = Array();
-        if ( isset($app->title) ) {
-          foreach ( $app->title as $title ) {
-            $app_titles[((string)$title['language'])] = ((string) $title);
-          }
         }
 
         $return[$app_class] = Array(

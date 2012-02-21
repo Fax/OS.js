@@ -65,113 +65,7 @@ class       PanelItem
    * @see Package::Install()
    */
   public static function Install($package, User $user, $system = true) {
-    if ( $result = parent::Install($package, $user, $system) ) {
-      list($doc, $xml) = $result;
-
-      $project_name         = ((string) $xml['name']);
-      $project_enabled      = true;
-      $project_title        = PanelItem::PANELITEM_ICON;
-      $project_titles       = Array();
-      $project_description  = PanelItem::PANELITEM_DESC;
-      $project_descriptions = Array();
-      $project_icon         = PanelItem::PANELITEM_ICON;
-      $project_resources    = Array();
-
-      // Parse general attributes
-      foreach ( $xml->property as $p ) {
-        $val = ((string) $p);
-        switch ( $p['name'] ) {
-          case "enabled" :
-            if ( $val == "false" ) {
-              $project_enabled = false;
-              break;
-            }
-            break;
-          case "description" :
-            if ( $val ) {
-              if ( isset($p['language']) && !empty($p['language']) ) {
-                $lang = ((string)$p['language']);
-                $project_descriptions[$lang] = $val;
-                if ( $lang == DEFAULT_LANGUAGE ) {
-                  $project_description = $val;
-                }
-              } else {
-                $project_tiles[DEFAULT_LANGUAGE] = $val;
-                $project_description = $val;
-              }
-            }
-            break;
-          case "title" :
-            if ( $val ) {
-              if ( isset($p['language']) && !empty($p['language']) ) {
-                $lang = ((string)$p['language']);
-                $project_titles[$lang] = $val;
-                if ( $lang == DEFAULT_LANGUAGE ) {
-                  $project_title = $val;
-                }
-              } else {
-                $project_tiles[DEFAULT_LANGUAGE] = $val;
-                $project_title = $val;
-              }
-            }
-            break;
-          case "icon" :
-            if ( $val ) {
-              $project_icon = $val;
-            }
-            break;
-        }
-      }
-
-      if ( ENV_PRODUCTION ) {
-        if ( !$project_enabled ) {
-          return false;
-        }
-      }
-
-      if ( !isset($project_titles[DEFAULT_LANGUAGE]) ) {
-        $project_titles[DEFAULT_LANGUAGE] = $project_title;
-      }
-
-      if ( isset($xml->resource) ) {
-        foreach ( $xml->resource as $r ) {
-          $project_resources[] = (string) $r;
-        }
-      }
-
-      $node = $doc->createElement("panelitem");
-      $node->setAttribute("name",         $project_name);
-      $node->setAttribute("class",        $class_name);
-      $node->setAttribute("title",        $project_title);
-      $node->setAttribute("description",  $project_description);
-      $node->setAttribute("icon",         $project_icon);
-
-      foreach ( $project_titles as $tl => $tt ) {
-        $n = $this->_oDocument->createElement("title");
-        $n->setAttribute("language", $tl);
-        $n->appendChild(new DomText($tt));
-        $node->appendChild($n);
-      }
-      foreach ( $project_descriptions as $tl => $tt ) {
-        $n = $this->_oDocument->createElement("description");
-        $n->setAttribute("language", $tl);
-        $n->appendChild(new DomText($tt));
-        $node->appendChild($n);
-      }
-
-      foreach ( $project_resources as $r ) {
-        $n = $this->_oDocument->createElement("resource");
-        $n->appendChild(new DomText($r));
-        $node->appendChild($n);
-      }
-
-      $doc->documentElement->appendChild($node);
-      if ( $data = $doc->saveXML() ) {
-        return self::_PackageOperationSave($data, $user, $system);
-      }
-    }
-
-    return false;
+    return parent::Install($package, $user, $system);
   }
 
   /**
@@ -183,32 +77,49 @@ class       PanelItem
     if ( $xml = Package::LoadPackage(Package::TYPE_PANELITEM) ) {
       foreach ( $xml as $pi ) {
         $pi_name          = (string) $pi['name'];
-        $pi_title         = (string) $pi['title'];
+        $pi_title         = PanelItem::PANELITEM_TITLE; //(string) $pi['title'];
         $pi_class         = (string) $pi['class'];
-        $pi_description   = (string) $pi['description'];
-        $pi_icon          = (string) $pi['icon'];
+        $pi_description   = PanelItem::PANELITEM_DESC; //(string) $pi['description'];
+        $pi_descriptions  = Array();
+        $pi_icon          = PanelItem::PANELITEM_ICON; //(string) $pi['icon'];
         $pi_class         = (string) $pi['class'];
 
         if ( $name !== null && $name !== $pi_class ) {
           continue;
         }
 
+        foreach ( $pi->property as $prop ) {
+          switch ( (string) $prop['name'] ) {
+            case "title" :
+              if ( isset($prop['language']) ) {
+                $pi_titles[((string)$prop['language'])] = ((string) $prop);
+              } else {
+                $pi_title = (string) $prop;
+              }
+            break;
+            case "description" :
+              if ( isset($prop['language']) ) {
+                $pi_descriptions[((string)$prop['language'])] = ((string) $prop);
+              } else {
+                $pi_description = (string) $prop;
+              }
+            break;
+            case "icon" :
+              $pi_icon = (string) $prop;
+            break;
+          }
+        }
+
+        if ( !$pi_title && isset($pi_titles[DEFAULT_LANGUAGE]) ) {
+          $pi_title = $pi_titles[DEFAULT_LANGUAGE];
+        }
+        if ( !$pi_description && isset($pi_descriptions[DEFAULT_LANGUAGE]) ) {
+          $pi_description = $pi_descriptions[DEFAULT_LANGUAGE];
+        }
+
         $resources = Array();
         foreach ( $pi->resource as $res ) {
           $resources[] = (string) $res;
-        }
-
-        if ( isset($pi->title) ) {
-          foreach ( $pi->title as $title ) {
-            $pi_titles[((string)$title['language'])] = ((string) $title);
-          }
-        }
-
-        $pi_descriptions  = Array();
-        if ( isset($pi->description) ) {
-          foreach ( $pi->description as $description ) {
-            $pi_descriptions[((string)$description['language'])] = ((string) $description);
-          }
         }
 
         $return[$pi_class] = Array(

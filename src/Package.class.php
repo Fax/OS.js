@@ -73,7 +73,7 @@ abstract class Package
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  // STATIC METHODS
+  // MANAGMENT - STATIC METHODS
   /////////////////////////////////////////////////////////////////////////////
 
   /**
@@ -250,10 +250,10 @@ abstract class Package
     return false;
   }
 
-  protected static function _PackageOperationSave($mixed, User $user, $system = false) {
-    return file_put_contents(PACKAGE_BUILD, $mixed) ? true : false;
-  }
-
+  /**
+   * Loading Operation for Installing/Uninstalling a package
+   * @return Mixed
+   */
   protected static function _PackageOperationLoad($mixed, User $user, $system = false) {
     $base   = sprintf("%s/%s", PATH_PACKAGES, $mixed);
     $class  = get_called_class();
@@ -276,28 +276,26 @@ abstract class Package
    * @return Mixed
    */
   public static function Uninstall($package, User $user, $system = true) {
-    $nodeName = (get_called_class() == "Application" ? "application" : "panelitem");
-    if ( $result = self::_PackageOperationLoad($package, $user, $system) ) {
-      list($doc, $xml) = $result;
+    $buildfile  = PACKAGE_BUILD;
+    $class      = get_called_class();
+    $base       = sprintf("%s/%s", PATH_PACKAGES, $package);
+    $nodeName   = ($class == "Application" ? "application" : "panelitem");
 
-      $removed = false;
-      $anode = $doc->getElementsByTagName($nodeName);
-      for ( $i = 0; $i < $anode->length; $i++ ) {
-        $item = $anode->item($i);
-        foreach ( $item->attributes as $aname => $aanode ) {
-          if ( $aname == "class" && ($aanode->nodeValue == $package) ) {
-            $item->parentNode->removeChild($item);
-            $removed = true;
-            break;
-          }
-        }
-      }
+    $met_xml = simplexml_load_file("{$base}/metadata.xml");
+    $res_xml = simplexml_load_file($buildfile);
 
-      if ( $removed ) {
-        if ( $data = $doc->saveXML() ) {
-          return self::_PackageOperationSave($data, $user, $system);
-        }
+    $removed = false;
+    foreach ( $res_xml as $n ) {
+      if ( ((string) $n['class']) == $package ) {
+        $dom = dom_import_simplexml($n);
+        $dom->parentNode->removeChild($dom);
+        $removed = true;
+        break;
       }
+    }
+
+    if ( $removed ) {
+      return file_put_contents($buildfile, $res_xml->asXml()) ? true : false;
     }
 
     return false;
@@ -310,29 +308,37 @@ abstract class Package
    * @return Mixed
    */
   public static function Install($package, User $user, $system = true) {
-    $nodeName = (get_called_class() == "Application" ? "application" : "panelitem");
-    if ( $result = self::_PackageOperationLoad($package, $user, $system) ) {
-      list($doc, $xml) = $result;
+    $buildfile  = PACKAGE_BUILD;
+    $class    = get_called_class();
+    $base     = sprintf("%s/%s", PATH_PACKAGES, $package);
+    $nodeName = ($class == "Application" ? "application" : "panelitem");
 
-      $found = false;
-      $anode = $doc->getElementsByTagName($nodeName);
-      for ( $i = 0; $i < $anode->length; $i++ ) {
-        $item = $anode->item($i);
-        foreach ( $item->attributes as $aname => $aanode ) {
-          if ( $aname == "class" && ($aanode->nodeValue == $package) ) {
-            $found = true;
-            break;
-          }
-        }
-      }
+    $met_xml = simplexml_load_file("{$base}/metadata.xml");
+    $res_xml = simplexml_load_file($buildfile);
 
-      if ( !$found ) {
-        return $result;
+    foreach ( $res_xml->$nodeName as $n ) {
+      if ( $n['class'] == $package ) {
+        return false;
       }
     }
 
-    return false;
+    $tmp = new DomDocument("1.0");
+    $sxe = $tmp->importNode(dom_import_simplexml($met_xml), true);
+    $sxe = $tmp->appendChild($sxe);
+    $node = $tmp->documentElement;
+    $node->setAttribute("class", $package);
+
+    $dom = new DomDocument("1.0");
+    $sxe = $dom->importNode(dom_import_simplexml($res_xml), true);
+    $sxe = $dom->appendChild($sxe);
+    $dom->documentElement->appendChild($dom->importNode($node, true));
+
+    return file_put_contents($buildfile, $dom->saveXML()) ? true : false;
   }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // INSTANCES - STATIC METHODS
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
    * Load A Package by name and type
@@ -462,6 +468,10 @@ abstract class Package
     }
     return $result;
   }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // EVENTS - STATIC METHODS
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
    * Event performed by AJAX
