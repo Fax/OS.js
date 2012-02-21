@@ -10,139 +10,33 @@
 
 require "header.php";
 
-$total_before = 0;
-$total_after = 0;
-
-date_default_timezone_set("Europe/Oslo");
-
+//
+// Cache
+//
 $timestamps = Array();
 if ( file_exists(MINIMIZE_CACHE) ) {
   $timestamps = (Array)json_decode(file_get_contents(MINIMIZE_CACHE));
 }
 
-function write_changed() {
-  global $timestamps;
-  file_put_contents(MINIMIZE_CACHE, json_encode((Array)$timestamps));
-}
-
-function compress_list($itype, $files) {
-  global $total_before;
-  global $total_after;
+function check($path) {
   global $timestamps;
 
-  foreach ( $files as $file ) {
-    // Build command
-    $type = preg_match("/\.js$/", $file) ? "js" : "css";
-    if ( $itype == 3 ) {
-      $path = PATH_JSLOCALE . "/{$file}";
-    } else if ( $itype == 2 ) {
-      $path = PATH_PACKAGES . "/{$file}";
-    } else {
-      $path = PATH_JSBASE . "/{$file}";
-    }
-
-    if ( file_exists($path) ) {
-
-      // Check timestamp
-      $fp = filemtime($path);
-      $changed = true;
-      if ( isset($timestamps[$path]) ) {
-        $changed = ($timestamps[$path] != $fp);
-      }
-      $timestamps[$path] = $fp;
-
-      if ( !$changed ) {
-        $label = "\t{$file}";
-        $spaces = str_pad("", (30 - strlen($label)));
-        print sprintf("%s%s (SKIPPED!)\n", $label, $spaces);
-        continue;
-      }
-
-      // Minimize commands
-      $cmd  = PATH_BIN . "/yui.sh";
-      $cmd  = sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_BIN, PATH_VENDOR);
-
-      $tmp_path = "/tmp/OSjs-minimize";
-      $content = file_get_contents($path);
-      $content = preg_replace("/(console)\.(log|info|error|warning|group|groupEnd)\((.*)\);/", "", $content);
-
-      file_put_contents($tmp_path, $content);
-
-      $args = "--preserve-semi ";
-      if ( $type == "js" ) {
-        $args .= sprintf("--type js --charset UTF-8 %s", escapeshellarg($tmp_path));
-      } else {
-        $args .= sprintf("--type css --charset UTF-8 %s", escapeshellarg($tmp_path));
-      }
-
-      // Run command
-      $exec = sprintf("%s %s 2>&1", $cmd, $args);
-      $size = 0;
-      $comp = 0;
-      $perc = 0;
-      if ( !($content = shell_exec($exec)) ) {
-        $content = "/* FAILED TO GET CONTENTS */";
-      } else {
-        $size    = filesize($path);
-        $comp    = strlen($content);
-
-        if ( $size && $comp ) {
-          $perc = 100 - round(($comp / $size) * 100);
-        }
-
-        $total_before += $size;
-        $total_after  += $comp;
-      }
-
-      $label = "\t{$file}";
-      $spaces = str_pad("", (30 - strlen($label)));
-      print sprintf("%s%s ($size => $comp, $perc%%)\n", $label, $spaces);
-
-      // Write cached file
-      if ( $itype === 3 ) {
-        $out_path = PATH_JSLOCALE . "/" . dirname($file) . "/_min/" . basename($file) ;
-      } else if ( $itype === 2 ) {
-        $out_path = PATH_PACKAGES . "/" . dirname($file) . "/_min/" . basename($file) ;
-      } else {
-        $out_path = PATH_JSBASE . "/_min/" . basename($file);
-      }
-
-      if ( !is_dir(dirname($out_path)) ) {
-        mkdir(dirname($out_path));
-      }
-      file_put_contents($out_path, $content);
-    }
+  $fp = filemtime($path);
+  $changed = true;
+  if ( isset($timestamps[$path]) ) {
+    $changed = ($timestamps[$path] != $fp);
   }
+  $timestamps[$path] = $fp;
+
+  return $changed;
 }
 
 //
-// MAIN
+// Collect resources
 //
 
-$base_files         = Array();
-$application_files  = Array();
-$language_files     = Array();
-
-// Read registered applications
-if ( $xml = file_get_contents(PACKAGE_BUILD) ) {
-  if ( $xml = new SimpleXmlElement($xml) ) {
-    foreach ( $xml->application as $app ) {
-      $app_name     = (string) $app['class'];
-      foreach ( $app->resource as $res ) {
-        $application_files[] = "{$app_name}/" . ((string) $res);
-      }
-    }
-    foreach ( $xml->panelitem as $app ) {
-      $app_name     = (string) $app['class'];
-      foreach ( $app->resource as $res ) {
-        $application_files[] = "{$app_name}/" . ((string) $res);
-      }
-    }
-  }
-}
-
-// Read base files
-$base_files = Array(
+$packages  = Array();
+$resources = Array(
   "theme.default.css",
   "theme.dark.css",
   "theme.light.css",
@@ -155,33 +49,85 @@ $base_files = Array(
   "core.js",
   "main.js"
 );
-
-// Read registered dialogs
-foreach ( Dialog::$Registered as $n => $v ) {
-  foreach ( $v['resources'] as $r ) {
-    $base_files[] = $r;
-  }
-}
-
-$language_files = Array(
+$locales   = Array(
   "en_US.js",
   "nb_NO.js"
 );
 
-print "Compressing languages...\n";
-compress_list(3, $language_files);
-print "Compressing base files...\n";
-compress_list(0, $base_files);
-print "Compressing packages...\n";
-compress_list(2, $application_files);
-
-$perc = 0;
-if ( $total_before && $total_after ) {
-  $perc = 100 - round(($total_after / $total_before) * 100);
+if ( $xml = file_get_contents(PACKAGE_BUILD) ) {
+  if ( $xml = new SimpleXmlElement($xml) ) {
+    foreach ( $xml->application as $app ) {
+      if ( isset($app->resource) ) {
+        foreach ( $app->resource as $r ) {
+          $packages[] = "/" . (string) $app['class'] . "/" . (string) $r;
+        }
+      }
+    }
+    foreach ( $xml->panelitem as $app ) {
+      if ( isset($app->resource) ) {
+        foreach ( $app->resource as $r ) {
+          $packages[] = "/" . (string) $app['class'] . "/" . (string) $r;
+        }
+      }
+    }
+  }
 }
 
-print "\nCompressed {$total_before} into {$total_after} ({$perc}% compression)\n";
+//
+// Minimize
+//
+$size_before = 0;
+$size_after  = 0;
+$size_result = 0;
 
-write_changed();
+print "Compressing Resources:\n";
+foreach ( $resources as $res ) {
+  if ( check(sprintf("%s/%s", PATH_JSBASE, $res)) ) {
+    if ( $r = ResourceManager::MinimizeFile(PATH_JSBASE, $res) ) {
+      print "  * {$r['filename']}\n";
+      $size_before += $r['before'];
+      $size_after  += $r['after'];
+    }
+  } else {
+    print "  * {$res} [SKIPPED]\n";
+  }
+}
 
+print "Compressing Locales:\n";
+foreach ( $locales as $loc ) {
+  if ( check(sprintf("%s/%s", PATH_JSLOCALE, $loc)) ) {
+    if ( $r = ResourceManager::MinimizeFile(PATH_JSLOCALE, $loc) ) {
+      print "  * {$r['filename']}\n";
+      $size_before += $r['before'];
+      $size_after  += $r['after'];
+    }
+  } else {
+    print "  * {$loc} [SKIPPED]\n";
+  }
+}
+
+print "Compressing Packages:\n";
+foreach ( $packages as $pkg ) {
+  $dir = dirname($pkg);
+  $fna = basename($pkg);
+  $base = sprintf("%s/%s", PATH_PACKAGES, $dir);
+
+  if ( check(sprintf("%s/%s", $base, $fna)) ) {
+    if ( $r = ResourceManager::MinimizeFile($base, $fna) ) {
+      print "  * {$pkg}\n";
+      $size_before += $r['before'];
+      $size_after  += $r['after'];
+    }
+  } else {
+    print "  * {$pkg} [SKIPPED]\n";
+  }
+}
+
+if ( $size_before > 0 && $size_after > 0 ) {
+  $size_result = ((int) ((($size_before - $size_after) / $size_before) * 100));
+}
+
+file_put_contents(MINIMIZE_CACHE, json_encode((Array)$timestamps));
+
+print "\nCompleted! Before: {$size_before}, After: {$size_after}, {$size_result}%\n";
 ?>
