@@ -529,25 +529,23 @@ function format_date(str, now) {
   return str;
 }
 
-function MergeRecursive(obj1, obj2) {
-
-  for (var p in obj2) {
+/**
+ * Recursivly merge an Object
+ * @author  Sorry...
+ * @return  Object
+ */
+function MergeRecursive(o1, o2) {
+  for ( var p in o2 ) {
     try {
-      // Property in destination object set; update its value.
-      if ( obj2[p].constructor==Object ) {
-        obj1[p] = MergeRecursive(obj1[p], obj2[p]);
-
+      if ( o2[p].constructor == Object ) {
+        o1[p] = MergeRecursive(o1[p], o2[p]);
       } else {
-        obj1[p] = obj2[p];
-
+        o1[p] = o2[p];
       }
-
     } catch(e) {
-      // Property in destination object not set; create it and set its value.
-      obj1[p] = obj2[p];
-
+      o1[p] = o2[p];
     }
   }
 
-  return obj1;
+  return o1;
 }
