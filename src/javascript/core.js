@@ -7371,7 +7371,7 @@
       if ( typeof iter.method == "function" ) {
         li.click(function(ev) {
           if ( !disabled ) {
-            iter.method();
+            iter.method(ev);
           }
 
           self.destroy();

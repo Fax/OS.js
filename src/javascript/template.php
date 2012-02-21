@@ -50,7 +50,7 @@ if ( $locale = Core::get()->getLocale() ) {
   <meta name="keywords" content="OS.js, JavaScript Operating System, Web Desktop" />
   <meta name="description" content="OS.js - JavaScript Web Desktop" />
   <meta name="author" content="<?php print PROJECT_AUTHOR; ?> <?php print PROJECT_CONTACT; ?>" />
-  <meta name="copyright" content="Copyright (c) 2011-2012 Anders Evenrud">
+  <meta name="copyright" content="Copyright (c) 2011-2012 Anders Evenrud" />
 
 
   <!-- Vendor libraries -->
