@@ -355,11 +355,11 @@ abstract class Package
    * @param  User     $u          User instance
    * @return void
    */
-  public static function Load($name, $type = -1, User $u = null) {
+  public static function Load($name, $type = -1, User $user = null) {
     switch ( (int) $type ) {
       case self::TYPE_APPLICATION :
         if ( !isset(self::$PackageRegister[$type][$name]) ) {
-          if ( $p = Application::LoadPackage($name) ) {
+          if ( $p = Application::LoadPackage($name, $user) ) {
             self::$PackageRegister[$type][$name] = $p[$name];
           } else {
             throw new Exception("Cannot Load Application '{$name}'!");
@@ -371,7 +371,7 @@ abstract class Package
 
       case self::TYPE_PANELITEM :
         if ( !isset(self::$PackageRegister[$type][$name]) ) {
-          if ( $p = PanelItem::LoadPackage($name) ) {
+          if ( $p = PanelItem::LoadPackage($name, $user) ) {
             self::$PackageRegister[$type][$name] = $p[$name];
           } else {
             throw new Exception("Cannot Load PanelItem '{$name}'!");
@@ -392,16 +392,16 @@ abstract class Package
   /**
    * Load All Packages by type
    * @param  int      $type       Package type
-   * @param  User     $u          User instance
+   * @param  User     $user       User instance
    * @return void
    */
-  public static function LoadAll($type = -1, User $u = null) {
+  public static function LoadAll($type = -1, User $user = null) {
     $loaded = false;
 
     if ( ($type & self::TYPE_APPLICATION) ) {
       $loaded = true;
       if ( !self::$_LoadedApplications ) {
-        if ( $p = Application::LoadPackage() ) {
+        if ( $p = Application::LoadPackage(null, $user) ) {
           foreach ( $p as $k => $v ) {
             self::$PackageRegister[self::TYPE_APPLICATION][$k] = $v;
           }
@@ -413,7 +413,7 @@ abstract class Package
     if ( ($type & self::TYPE_PANELITEM) ) {
       $loaded = true;
       if ( !self::$_LoadedPanelItems ) {
-        if ( $p = PanelItem::LoadPackage() ) {
+        if ( $p = PanelItem::LoadPackage(null, $user) ) {
           foreach ( $p as $k => $v ) {
             self::$PackageRegister[self::TYPE_PANELITEM][$k] = $v;
           }
@@ -430,10 +430,11 @@ abstract class Package
 
   /**
    * Load (a) Package(s)
-   * @param  String     $name     Package name (if any)
+   * @param  String   $name     Package name (if any)
+   * @param  User     $user     User Reference
    * @return Mixed
    */
-  public static function LoadPackage($name = null) {
+  public static function LoadPackage($name = null, User $user = null) {
     $config = PACKAGE_BUILD;
 
     if ( $xml = file_get_contents($config) ) {
@@ -455,7 +456,7 @@ abstract class Package
    * @param  User     $user     User Reference
    * @return Array
    */
-  public final static function GetInstalledPackages(User $user) {
+  public final static function GetInstalledPackages(User $user = null) {
     Package::LoadAll(Package::TYPE_APPLICATION | Package::TYPE_PANELITEM, $user);
 
     return Array(

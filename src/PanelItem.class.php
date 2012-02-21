@@ -56,7 +56,7 @@ class       PanelItem
    * Uninstall PanelItem
    * @see Package::Uninstall()
    */
-  public static function Uninstall($package, User $user, $system = true) {
+  public static function Uninstall($package, User $user = null, $system = true) {
     return parent::Uninstall($package, $user, $system);
   }
 
@@ -64,14 +64,14 @@ class       PanelItem
    * Install PanelItem
    * @see Package::Install()
    */
-  public static function Install($package, User $user, $system = true) {
+  public static function Install($package, User $user = null, $system = true) {
     return parent::Install($package, $user, $system);
   }
 
   /**
    * @see Package::LoadPackage()
    */
-  public static final function LoadPackage($name = null) {
+  public static final function LoadPackage($name = null, User $user = null) {
     $return = Array();
 
     if ( $xml = Package::LoadPackage(Package::TYPE_PANELITEM) ) {
