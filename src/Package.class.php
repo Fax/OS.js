@@ -251,6 +251,84 @@ abstract class Package
   }
 
   /**
+   * Minimize Package
+   * @param  String     $package      Package Name
+   * @param  User       $user         User Instance
+   * @param  bool       $system       System Application (default = true)
+   * @return Mixed
+   */
+  public static function Minimize($package, User $user = null, $system = true) {
+    $base     = sprintf("%s/%s", PATH_PACKAGES, $package);
+    $metadata = sprintf("%s/%s", $base, "metadata.xml");
+    $mindir   = sprintf("%s/_min", $base);
+    $cmd      = sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_BIN, PATH_VENDOR);
+    $result   = false;
+
+    if ( is_dir($base) && is_file($metadata) ) {
+      if ( $xml = new SimpleXMLElement(file_get_contents($metadata)) ) {
+        $result = Array();
+
+        // Create the '_min' directory
+        if ( !is_dir($mindir) ) {
+          mkdir($mindir);
+        }
+
+        // Loop over resources and minimize them
+        if ( isset($xml->resource) ) {
+          foreach ( $xml->resource as $r ) {
+            $filename     = (string) $r;
+            $type         = preg_match("/\.js$/", $filename) ? "js" : "css";
+            $path         = sprintf("%s/%s", $base, $filename);
+            $destination  = sprintf("%s/%s", $mindir, $filename);
+            $args         = "--preserve-semi ";
+            $tmp_path     = tempnam("/tmp", "OSjsMin");
+
+            if ( file_exists($path) )
+            {
+              // Remove debugging etc.
+              $content     = file_get_contents($path);
+              $size_before = strlen($content);
+              $content     = preg_replace("/(console)\.(log|info|error|warning|group|groupEnd)\((.*)\);/", "", $content);
+              file_put_contents($tmp_path, $content);
+              unset($content);
+
+              // Create and execute command
+              if ( strtolower($type) == "js" ) {
+                $args .= sprintf("--type js --charset UTF-8 %s", escapeshellarg($tmp_path));
+              } else {
+                $args .= sprintf("--type css --charset UTF-8 %s", escapeshellarg($tmp_path));
+              }
+
+              $exec = sprintf("%s %s 2>&1", $cmd, $args);
+
+              if ( !($content = shell_exec($exec)) ) {
+                $content = "/* FAILED TO GET CONTENTS */";
+              }
+              $size_after = strlen($content);
+
+              // Remove temporary file
+              unlink($tmp_path);
+
+              // Save minimized file
+              if ( file_put_contents($destination, $content) ) {
+                $result[] = Array(
+                  "filename" => $filename,
+                  "before"   => $size_before,
+                  "after"    => $size_after,
+                  "diff"     => (($size_before - $size_after) / $size_before) * 100
+                );
+              }
+            }
+
+          } // foreach
+        }
+      }
+    }
+
+    return $result;
+  }
+
+  /**
    * Uninstall Package
    * @param  String     $package      Package Name
    * @param  User       $user         User Instance
