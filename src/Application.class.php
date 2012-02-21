@@ -68,33 +68,12 @@ abstract class Application
   }
 
   /**
-   * @see Package::Handle()
-   */
-  public static function Handle($action, $instance) {
-    if ( $action && $instance ) {
-      if ( isset($instance['name']) && isset($instance['action']) ) {
-        $cname    = $instance['name'];
-        $aargs    = isset($instance['args']) ? $instance['args'] : Array();
-        $action   = $instance['action'];
-
-        Package::Load($cname, Package::TYPE_APPLICATION);
-
-        if ( class_exists($cname) ) {
-          return $cname::Event($action, $aargs);
-        }
-      }
-    }
-
-    return false;
-  }
-
-  /**
    * @see Package::LoadPackage()
    */
-  public static final function LoadPackage($name = null, User $user = null) {
+  public static final function LoadPackage($name = null, User $user = null, $system = true) {
     $return = Array();
 
-    if ( $xml = Package::LoadPackage(Package::TYPE_APPLICATION, $user) ) {
+    if ( $xml = Package::LoadPackage(Package::TYPE_APPLICATION, $user, $system) ) {
       foreach ( $xml as $app ) {
         $app_name     = (string) $app['name'];
         $app_title    = Application::APPLICATION_TITLE;
@@ -154,11 +133,33 @@ abstract class Application
           "resources" => $resources
         );
 
-        require_once PATH_PACKAGES . "/{$app_class}/{$app_class}.class.php";
       }
     }
 
     return $return;
+  }
+
+  /**
+   * @see Package::Handle()
+   */
+  public static function Handle($action, $instance) {
+    if ( $action && $instance ) {
+      if ( isset($instance['name']) && isset($instance['action']) ) {
+        $cname    = $instance['name'];
+        $aargs    = isset($instance['args']) ? $instance['args'] : Array();
+        $action   = $instance['action'];
+
+        if ( Package::Load($cname, Package::TYPE_APPLICATION) ) {
+          require_once PATH_PACKAGES . "/{$cname}/{$cname}.class.php";
+        }
+
+        if ( class_exists($cname) ) {
+          return $cname::Event($action, $aargs);
+        }
+      }
+    }
+
+    return false;
   }
 
 }

@@ -258,7 +258,8 @@ abstract class Package
    * @return Mixed
    */
   public static function Minimize($package, User $user = null, $system = true) {
-    $base     = sprintf("%s/%s", PATH_PACKAGES, $package);
+    $path     = self::_GetPackagePath($user, $system);
+    $base     = sprintf("%s/%s", $path, $package);
     $metadata = sprintf("%s/%s", $base, "metadata.xml");
     $result   = false;
 
@@ -286,9 +287,10 @@ abstract class Package
    * @return Mixed
    */
   public static function Uninstall($package, User $user = null, $system = true) {
-    $buildfile  = PACKAGE_BUILD;
+    $buildfile  = self::_GetPackageBuild($user, $system);
+    $path       = self::_GetPackagePath($user, $system);
     $class      = get_called_class();
-    $base       = sprintf("%s/%s", PATH_PACKAGES, $package);
+    $base       = sprintf("%s/%s", $path, $package);
     $nodeName   = ($class == "Application" ? "application" : "panelitem");
 
     $met_xml = simplexml_load_file("{$base}/metadata.xml");
@@ -325,10 +327,11 @@ abstract class Package
    * @return Mixed
    */
   public static function Install($package, User $user = null, $system = true) {
-    $buildfile  = PACKAGE_BUILD;
-    $class    = get_called_class();
-    $base     = sprintf("%s/%s", PATH_PACKAGES, $package);
-    $nodeName = ($class == "Application" ? "application" : "panelitem");
+    $buildfile  = self::_GetPackageBuild($user, $system, $system);
+    $path       = self::_GetPackagePath($user, $system);
+    $class      = get_called_class();
+    $base       = sprintf("%s/%s", $path, $package);
+    $nodeName   = ($class == "Application" ? "application" : "panelitem");
 
     $met_xml = simplexml_load_file("{$base}/metadata.xml");
     $res_xml = simplexml_load_file($buildfile);
@@ -361,16 +364,17 @@ abstract class Package
 
   /**
    * Load A Package by name and type
-   * @param  String   $name       Package name
-   * @param  int      $type       Package type
-   * @param  User     $u          User instance
+   * @param  String     $name         Package name
+   * @param  int        $type         Package type
+   * @param  User       $u            User instance
+   * @param  bool       $system       System Application (default = true)
    * @return void
    */
-  public static function Load($name, $type = -1, User $user = null) {
+  public static function Load($name, $type = -1, User $user = null, $system = true) {
     switch ( (int) $type ) {
       case self::TYPE_APPLICATION :
         if ( !isset(self::$PackageRegister[$type][$name]) ) {
-          if ( $p = Application::LoadPackage($name, $user) ) {
+          if ( $p = Application::LoadPackage($name, $user, $system) ) {
             self::$PackageRegister[$type][$name] = $p[$name];
           } else {
             throw new Exception("Cannot Load Application '{$name}'!");
@@ -382,7 +386,7 @@ abstract class Package
 
       case self::TYPE_PANELITEM :
         if ( !isset(self::$PackageRegister[$type][$name]) ) {
-          if ( $p = PanelItem::LoadPackage($name, $user) ) {
+          if ( $p = PanelItem::LoadPackage($name, $user, $system) ) {
             self::$PackageRegister[$type][$name] = $p[$name];
           } else {
             throw new Exception("Cannot Load PanelItem '{$name}'!");
@@ -402,17 +406,18 @@ abstract class Package
 
   /**
    * Load All Packages by type
-   * @param  int      $type       Package type
-   * @param  User     $user       User instance
+   * @param  int        $type         Package type
+   * @param  User       $user         User instance
+   * @param  bool       $system       System Application (default = true)
    * @return void
    */
-  public static function LoadAll($type = -1, User $user = null) {
+  public static function LoadAll($type = -1, User $user = null, $system = true) {
     $loaded = false;
 
     if ( ($type & self::TYPE_APPLICATION) ) {
       $loaded = true;
       if ( !self::$_LoadedApplications ) {
-        if ( $p = Application::LoadPackage(null, $user) ) {
+        if ( $p = Application::LoadPackage(null, $user, $system) ) {
           foreach ( $p as $k => $v ) {
             self::$PackageRegister[self::TYPE_APPLICATION][$k] = $v;
           }
@@ -424,7 +429,7 @@ abstract class Package
     if ( ($type & self::TYPE_PANELITEM) ) {
       $loaded = true;
       if ( !self::$_LoadedPanelItems ) {
-        if ( $p = PanelItem::LoadPackage(null, $user) ) {
+        if ( $p = PanelItem::LoadPackage(null, $user, $system) ) {
           foreach ( $p as $k => $v ) {
             self::$PackageRegister[self::TYPE_PANELITEM][$k] = $v;
           }
@@ -441,12 +446,13 @@ abstract class Package
 
   /**
    * Load (a) Package(s)
-   * @param  String   $name     Package name (if any)
-   * @param  User     $user     User Reference
+   * @param  String     $name         Package name (if any)
+   * @param  User       $user         User Reference
+   * @param  bool       $system       System Application (default = true)
    * @return Mixed
    */
-  public static function LoadPackage($name = null, User $user = null) {
-    $config = PACKAGE_BUILD;
+  public static function LoadPackage($name = null, User $user = null, $system = true) {
+    $config = self::_GetPackageBuild($user, $system);
 
     if ( $xml = file_get_contents($config) ) {
       if ( $xml = new SimpleXmlElement($xml) ) {
@@ -487,6 +493,36 @@ abstract class Package
       $result = Package::$PackageRegister[$type];
     }
     return $result;
+  }
+
+  /**
+   * Get Package Path
+   * @param  User       $user         User Reference
+   * @param  bool       $system       System Application (default = true)
+   * @return String
+   */
+  protected static function _GetPackagePath(User $user = null, $system = true) {
+    /*
+    if ( ($user instanceof User) && ($system === false) ) {
+      return PATH_HTTP . "/media/User/Packages";
+    }
+     */
+    return PATH_PACKAGES;
+  }
+
+  /**
+   * Get Package Build File
+   * @param  User       $user         User Reference
+   * @param  bool       $system       System Application (default = true)
+   * @return String
+   */
+  protected static function _GetPackageBuild(User $user = null, $system = true) {
+    /*
+    if ( ($user instanceof User) && ($system === false) ) {
+      return PATH_HTTP . "/media/User/packages.xml";
+    }
+     */
+    return PACKAGE_BUILD;
   }
 
   /////////////////////////////////////////////////////////////////////////////

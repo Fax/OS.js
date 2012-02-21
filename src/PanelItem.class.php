@@ -71,10 +71,10 @@ class       PanelItem
   /**
    * @see Package::LoadPackage()
    */
-  public static final function LoadPackage($name = null, User $user = null) {
+  public static final function LoadPackage($name = null, User $user = null, $system = true) {
     $return = Array();
 
-    if ( $xml = Package::LoadPackage(Package::TYPE_PANELITEM, $user) ) {
+    if ( $xml = Package::LoadPackage(Package::TYPE_PANELITEM, $user, $system) ) {
       foreach ( $xml as $pi ) {
         $pi_name          = (string) $pi['name'];
         $pi_title         = PanelItem::PANELITEM_TITLE;
@@ -132,7 +132,6 @@ class       PanelItem
           "resources"     => $resources
         );
 
-        require_once PATH_PACKAGES . "/{$pi_class}/{$pi_class}.class.php";
       }
     }
 
@@ -149,7 +148,9 @@ class       PanelItem
         $aargs    = isset($instance['args']) ? $instance['args'] : Array();
         $action   = $instance['action'];
 
-        Package::Load($cname, Package::TYPE_PANELITEM);
+        if ( Package::Load($cname, Package::TYPE_PANELITEM) ) {
+          require_once PATH_PACKAGES . "/{$cname}/{$cname}.class.php";
+        }
 
         if ( class_exists($cname) ) {
           return $cname::Event($action, $aargs);
