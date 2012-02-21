@@ -74,14 +74,14 @@ class       PanelItem
   public static final function LoadPackage($name = null, User $user = null) {
     $return = Array();
 
-    if ( $xml = Package::LoadPackage(Package::TYPE_PANELITEM) ) {
+    if ( $xml = Package::LoadPackage(Package::TYPE_PANELITEM, $user) ) {
       foreach ( $xml as $pi ) {
         $pi_name          = (string) $pi['name'];
-        $pi_title         = PanelItem::PANELITEM_TITLE; //(string) $pi['title'];
+        $pi_title         = PanelItem::PANELITEM_TITLE;
         $pi_class         = (string) $pi['class'];
-        $pi_description   = PanelItem::PANELITEM_DESC; //(string) $pi['description'];
+        $pi_description   = PanelItem::PANELITEM_DESC;
         $pi_descriptions  = Array();
-        $pi_icon          = PanelItem::PANELITEM_ICON; //(string) $pi['icon'];
+        $pi_icon          = PanelItem::PANELITEM_ICON;
         $pi_class         = (string) $pi['class'];
 
         if ( $name !== null && $name !== $pi_class ) {

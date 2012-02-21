@@ -94,11 +94,11 @@ abstract class Application
   public static final function LoadPackage($name = null, User $user = null) {
     $return = Array();
 
-    if ( $xml = Package::LoadPackage(Package::TYPE_APPLICATION) ) {
+    if ( $xml = Package::LoadPackage(Package::TYPE_APPLICATION, $user) ) {
       foreach ( $xml as $app ) {
         $app_name     = (string) $app['name'];
-        $app_title    = Application::APPLICATION_TITLE; //""; //(string) $app['title'];
-        $app_icon     = Application::APPLICATION_ICON; //""; //(string) $app['icon'];
+        $app_title    = Application::APPLICATION_TITLE;
+        $app_icon     = Application::APPLICATION_ICON;
         $app_titles   = Array();
         $app_class    = (string) $app['class'];
         $app_category = (string) $app['category'];

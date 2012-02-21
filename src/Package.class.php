@@ -251,31 +251,13 @@ abstract class Package
   }
 
   /**
-   * Loading Operation for Installing/Uninstalling a package
-   * @return Mixed
-   */
-  protected static function _PackageOperationLoad($mixed, User $user, $system = false) {
-    $base   = sprintf("%s/%s", PATH_PACKAGES, $mixed);
-    $class  = get_called_class();
-
-    $config = PACKAGE_BUILD;
-    $doc    = new DomDocument();
-    $cfg    = file_get_contents($config);
-    if ( $doc->loadXML($cfg) 
-        && ($xml = new SimpleXMLElement(file_get_contents("{$base}/metadata.xml"))) ) {
-      return Array($doc, $xml);
-    }
-    return false;
-  }
-
-
-  /**
    * Uninstall Package
-   * @see Package::_PackageOperationLoad()
-   * @see Package::_PackageOperationSave()
+   * @param  String     $package      Package Name
+   * @param  User       $user         User Instance
+   * @param  bool       $system       System Application (default = true)
    * @return Mixed
    */
-  public static function Uninstall($package, User $user, $system = true) {
+  public static function Uninstall($package, User $user = null, $system = true) {
     $buildfile  = PACKAGE_BUILD;
     $class      = get_called_class();
     $base       = sprintf("%s/%s", PATH_PACKAGES, $package);
@@ -309,11 +291,12 @@ abstract class Package
 
   /**
    * Install Package
-   * @see Package::_PackageOperationLoad()
-   * @see Package::_PackageOperationSave()
+   * @param  String     $package      Package Name
+   * @param  User       $user         User Instance
+   * @param  bool       $system       System Application (default = true)
    * @return Mixed
    */
-  public static function Install($package, User $user, $system = true) {
+  public static function Install($package, User $user = null, $system = true) {
     $buildfile  = PACKAGE_BUILD;
     $class    = get_called_class();
     $base     = sprintf("%s/%s", PATH_PACKAGES, $package);
