@@ -44,6 +44,7 @@ class User
   const GROUP_NONE        = 0;
   const GROUP_GUEST       = 1;
   const GROUP_USER        = 2;
+  const GROUP_ADMIN       = 4;
   const GROUP_PACKAGES    = 128;
 
   /////////////////////////////////////////////////////////////////////////////
@@ -57,6 +58,13 @@ class User
   public $real_name   = "Undefined";          // User's Real Name
   public $created_at  = null;                 // User Created Timestamp
   public $settings    = Array();              // User Settings Tree
+
+  public static $Groups = Array(
+    self::GROUP_NONE        => "None",
+    self::GROUP_GUEST       => "Guest",
+    self::GROUP_USER        => "User",
+    self::GROUP_PACKAGES    => "Packages"
+  );
 
   /////////////////////////////////////////////////////////////////////////////
   // MAGICS
@@ -125,14 +133,31 @@ class User
   /////////////////////////////////////////////////////////////////////////////
 
   /**
+   * Get user Groups
+   * @return Array
+   */
+  public final function getGroups() {
+    $groups = Array();
+    $group  = $this->privilege;
+    foreach ( self::$Groups as $gid => $gname ) {
+      if ( $group & $gid ) {
+        $groups[$gid] = $gname;
+      }
+    }
+    return $groups;
+  }
+
+  /**
    * Get user information JSON
    * @return Array
    */
   public final function getUserInfo() {
     return Array(
+      "User ID"    => $this->id,
       "Username"   => $this->username,
-      "Privilege"  => $this->privilege,
-      "Name"       => $this->real_name
+      "Name"       => $this->real_name,
+      "Groups"     => $this->getGroups(),
+      "Registered" => ($this->created_at ? $this->created_at->format("c") : "Unknown")
     );
   }
 
@@ -148,7 +173,7 @@ class User
     return new self(Array(
       "username"    => "Guest",
       "password"    => "",
-      "privilege"   => 1,
+      "privilege"   => self::GROUP_GUEST,
       "real_name"   => "Guest User"
     ));
   }

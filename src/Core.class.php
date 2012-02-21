@@ -44,8 +44,6 @@ class Core
   // CONSTANTS
   /////////////////////////////////////////////////////////////////////////////
 
-  const DEFAULT_UID   = 1;    //!< Default User ID
-
   /////////////////////////////////////////////////////////////////////////////
   // VARIABLES
   /////////////////////////////////////////////////////////////////////////////
@@ -438,14 +436,6 @@ class Core
     if ( $user = User::getByUsername($uname) ) {
       if ( $user->password == $upass ) {
         $json['success'] = true;
-        $json['result'] = Array(
-          "user"    => $user->getUserInfo()
-        );
-      }
-    } else {
-      $uid = self::DEFAULT_UID;
-      $json['success'] = true;
-      if ( ($user = User::getById($uid)) || ($user = User::createDefault()) ) {
         $json['result'] = Array(
           "user"    => $user->getUserInfo()
         );

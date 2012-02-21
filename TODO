@@ -1,5 +1,9 @@
 CORE:
 -------------------------------------------------------------------------------
+* TODO [HIG] : Maxmimum call-stack size exceed exceptions does not include trace
+* TODO [HIG] : Store phpsessionid upon login and check for every post call
+* TODO [HIG] : Finish up Package Meta for loading from user
+* TODO [HIG] : When user clear browser cache, user looses login, check it out!
 * TODO [HIG] : Find more appropriate names for settings tree items
 * TODO [HIG] : Add/Remove Panel
 * TODO [HIG] : Custom Exception class
