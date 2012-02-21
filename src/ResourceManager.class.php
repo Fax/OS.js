@@ -43,6 +43,66 @@ abstract class ResourceManager
 {
 
   /**
+   * Minimize a File
+   * @param  String   $base       Base absolute directory
+   * @param  String   $filename   The file in directory to compress
+   * @return Mixed
+   */
+  public static function MinimizeFile($base, $filename) {
+    $mindir       = sprintf("%s/_min", $base);
+    $cmd          = sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_BIN, PATH_VENDOR);
+    $type         = preg_match("/\.js$/", $filename) ? "js" : "css";
+    $path         = sprintf("%s/%s", $base, $filename);
+    $destination  = sprintf("%s/%s", $mindir, $filename);
+    $tmp_path     = tempnam("/tmp", "OSjsMin");
+    $result       = false;
+
+    if ( file_exists($path) )
+    {
+      // Remove debugging etc.
+      $content     = file_get_contents($path);
+      $size_before = strlen($content);
+      $content     = preg_replace("/(console)\.(log|info|error|warning|group|groupEnd)\((.*)\);/", "", $content);
+      file_put_contents($tmp_path, $content);
+      unset($content);
+
+      // Create and execute command
+      if ( strtolower($type) == "js" ) {
+        $args = sprintf("--preserve-semi --type js --charset UTF-8 %s", escapeshellarg($tmp_path));
+      } else {
+        $args = sprintf("--preserve-semi --type css --charset UTF-8 %s", escapeshellarg($tmp_path));
+      }
+
+      $exec = sprintf("%s %s 2>&1", $cmd, $args);
+
+      if ( !($content = shell_exec($exec)) ) {
+        $content = "/* FAILED TO GET CONTENTS */";
+      }
+      $size_after = strlen($content);
+
+      // Create the '_min' directory
+      if ( !is_dir($mindir) ) {
+        mkdir($mindir);
+      }
+
+      // Save minimized file
+      if ( file_put_contents($destination, $content) ) {
+        $result = Array(
+          "filename" => $filename,
+          "before"   => $size_before,
+          "after"    => $size_after,
+          "diff"     => (($size_before - $size_after) / $size_before) * 100
+        );
+      }
+    }
+
+    // Remove temporary file
+    unlink($tmp_path);
+
+    return $result;
+  }
+
+  /**
    * Get Cursor StyleSheet
    * @param  String   $theme        Theme name
    * @param  bool     $compress     Enable Compression
