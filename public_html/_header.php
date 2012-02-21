@@ -51,4 +51,7 @@ $loc = $core->getLocale();
 header("X-OSjs-Version: " . PROJECT_VERSION);
 header("X-OSjs-Locale: " . $loc["locale_language"]);
 
+$use_gzip = substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+if ( !$use_gzip || !ob_start("ob_gzhandler") )
+  ob_start();
 ?>
