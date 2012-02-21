@@ -1,5 +1,6 @@
 CORE:
 -------------------------------------------------------------------------------
+* TODO [HIG] : Move PanelItem css to packages dirs
 * TODO [HIG] : Maxmimum call-stack size exceed exceptions does not include trace
 * TODO [HIG] : Store phpsessionid upon login and check for every post call
 * TODO [HIG] : Finish up Package Meta for loading from user
