@@ -46,6 +46,13 @@ if ( $locale = Core::get()->getLocale() ) {
   <!--<meta http-equiv="X-UA-Compatible" content="IE=9" />
   <meta http-equiv="Content-Style-Type" content="text/css; charset=utf-8" />-->
 
+  <!-- SEO -->
+  <meta name="keywords" content="OS.js, JavaScript Operating System, Web Desktop" />
+  <meta name="description" content="OS.js - JavaScript Web Desktop" />
+  <meta name="author" content="<?php print PROJECT_AUTHOR; ?> <?php print PROJECT_CONTACT; ?>" />
+  <meta name="copyright" content="Copyright (c) 2011-2012 Anders Evenrud">
+
+
   <!-- Vendor libraries -->
   <link rel="stylesheet" type="text/css" href="/css/vendor/ui-lightness/jquery-ui-1.8.13.custom.css" />
   <script type="text/javascript" src="/js/vendor/json2.js"></script>
