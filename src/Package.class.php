@@ -295,7 +295,13 @@ abstract class Package
     }
 
     if ( $removed ) {
-      return file_put_contents($buildfile, $res_xml->asXml()) ? true : false;
+      $doc = new DomDocument("1.0");
+      $doc->preserveWhiteSpace = false;
+      $doc->formatOutput = true;
+      $sxe = $doc->importNode(dom_import_simplexml($res_xml), true);
+      $sxe = $doc->appendChild($sxe);
+
+      return file_put_contents($buildfile, $doc->saveXML()) ? true : false;
     }
 
     return false;
@@ -329,6 +335,8 @@ abstract class Package
     $node->setAttribute("class", $package);
 
     $dom = new DomDocument("1.0");
+    $dom->preserveWhiteSpace = false;
+    $dom->formatOutput = true;
     $sxe = $dom->importNode(dom_import_simplexml($res_xml), true);
     $sxe = $dom->appendChild($sxe);
     $dom->documentElement->appendChild($dom->importNode($node, true));

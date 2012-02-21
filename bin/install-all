@@ -1,0 +1,25 @@
+#!/usr/bin/env php
+<?php
+require "header.php";
+
+$base = <<<EOXML
+<?xml version="1.0"?>
+<packages>
+</packages>
+EOXML;
+file_put_contents(PACKAGE_BUILD, $base);
+
+$user = User::getById(1);
+$root = PATH_PACKAGES;
+if ( $dh  = opendir($root) ) {
+  while (false !== ($filename = readdir($dh))) {
+    if ( preg_match("/^(Application|System)(.*)$/", $filename) ) {
+      Application::Uninstall($filename, $user);
+      Application::Install($filename, $user);
+    } else if ( preg_match("/^PanelItem(.*)$/", $filename) ) {
+      PanelItem::Uninstall($filename, $user);
+      PanelItem::Install($filename, $user);
+    }
+  }
+}
+?>
