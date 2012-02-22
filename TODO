@@ -1,5 +1,10 @@
 CORE:
 -------------------------------------------------------------------------------
+* TODO [HIG] : Remove the global resize event and make a poll ?!
+               This would increase the performance of panel redraws etc.
+* TODO [HIG] : On compability dialog add depend() and warn() types
+               Also use the Browser class to determine support!
+* TODO [HIG] : Add a profile picture to user and show in SystemUser
 * TODO [HIG] : Implement a byte conversion method and implement in FileManager
 * TODO [HIG] : Hove Template HTML for dialogs into dialog.js
 * TODO [HIG] : Background lazy-loading of commonly used images
@@ -24,6 +29,7 @@ CORE:
 
 APPLICATIONS ETC:
 -------------------------------------------------------------------------------
+* New: Control Panel
 * FIX: Draw on FF
 * Finish: Mailing
 * Finish: Archiver

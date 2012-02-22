@@ -4938,7 +4938,7 @@
             }
             dir = tmp.join("/");
           } else {
-            dir = "/";
+            dir = "/System/Wallpapers";
           }
           API.system.dialog_file(function(fname) {
             API.user.settings.save({

@@ -533,7 +533,7 @@ class Core
         if ( $json['result'] ) {
           $json['success'] = true;
         } else {
-          throw new ExceptionVFS(ExceptionVFS::UNKNOWN, Array($argv));
+          throw new ExceptionVFS(ExceptionVFS::GENERIC, Array($argv));
         }
       } catch ( ExceptionVFS $e ) {
         $json['success'] = false;

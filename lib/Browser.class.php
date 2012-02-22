@@ -88,7 +88,7 @@ abstract class Browser
    * Get Browser and Agent information
    * @return Array
    */
-  public final function getInfo() {
+  public final static function getInfo() {
     if ( $ret = self::$__LastResult ) {
       return $ret;
     }

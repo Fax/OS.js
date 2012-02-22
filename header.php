@@ -51,7 +51,7 @@ define("PROJECT_CONTACT",   "andersevenrud@gmail.com");
 define("PROJECT_VERSION",   "0.6-alpha5"); // Next: 0.7
 define("PROJECT_CODENAME",  "DiscoFox"); // Next: ???
 define("PROJECT_HOST",      (php_uname('n')));
-define("PROJECT_BUILD",     "bf7f716");
+define("PROJECT_BUILD",     "cd6d9c6");
 
 //
 // Environment
@@ -153,7 +153,7 @@ class ExceptionVFS
   const DOES_NOT_EXIST    = 1;
   const ALREADY_EXISTS    = 2;
   const PERMISSION_DENIED = 3;
-  const UNKNOWN           = 255;
+  const GENERIC           = 254;
 
   public function __construct($type, Array $args = Array()) {
     $message = _("Unknown VFS Error occured");
@@ -168,8 +168,12 @@ class ExceptionVFS
       case self::PERMISSION_DENIED :
         $message = vsprintf(_("You do not have permission to '%s'!"), $args);
       break;
-      case self::UNKNOWN :
-        $message = vsprintf(_("Cannot read/write '%s'!"), $args);
+      case self::GENERIC :
+        $tmp = reset($args);
+        if ( $tmp && is_array($tmp) ) {
+          $args = Array(isset($tmp['file']) ? $tmp['file'] : (isset($tmp['path']) ? $tmp['path'] : current($tmp)));
+        }
+        $message = vsprintf(_("Failed to handle '%s'. Make sure you have permissions in this directory!"), $args);
       break;
     }
 
