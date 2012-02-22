@@ -10,7 +10,6 @@ CORE:
 * TODO [HIG] : Background lazy-loading of commonly used images
                Make a script that pulls all icon files and store them in a JSON
                then pass them on to doInit (doBoot, finally?)
-* TODO [HIG] : Move PanelItem css to packages dirs
 * TODO [HIG] : Maxmimum call-stack size exceed exceptions does not include trace
 * TODO [HIG] : Store phpsessionid upon login and check for every post call
 * TODO [HIG] : Finish up Package Meta for loading from user
