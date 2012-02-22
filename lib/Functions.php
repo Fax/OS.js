@@ -98,66 +98,14 @@ function array_merge_deep($arr) {
 }
 
 /**
- * Helps with timezones.
- * @link http://us.php.net/manual/en/class.datetimezone.php
- *
- * @package  Date
+ * Get size in human readable size
+ * @author http://php.net/manual/en/function.disk-total-space.php
+ * @return String
  */
-class Helper_DateTimeZone extends DateTimeZone
-{
-  /**
-   * Converts a timezone hourly offset to its timezone's name.
-   * @example $offset = -5, $isDst = 0 <=> return value = 'America/New_York'
-   * 
-   * @param float $offset The timezone's offset in hours.
-   *                      Lowest value: -12 (Pacific/Kwajalein)
-   *                      Highest value: 14 (Pacific/Kiritimati)
-   * @param bool  $isDst  Is the offset for the timezone when it's in daylight
-   *                      savings time?
-   * 
-   * @return string The name of the timezone: 'Asia/Tokyo', 'Europe/Paris', ...
-   */
-  final public static function tzOffsetToName($name = "", $offset, $isDst = null)
-  {
-    if ($isDst === null)
-    {
-      $isDst = date('I');
-    }
-
-    //$offset *= 3600;
-    $offset  = -$offset * 60;
-    $zone    = timezone_name_from_abbr($name, $offset, $isDst);
-
-    if ($zone === false)
-    {
-      foreach (timezone_abbreviations_list() as $abbr)
-      {
-        foreach ($abbr as $city)
-        {
-          if ((bool)$city['dst'] === (bool)$isDst &&
-            strlen($city['timezone_id']) > 0    &&
-            $city['offset'] == $offset)
-          {
-            $zone = $city['timezone_id'];
-            break;
-          }
-        }
-
-        if ($zone !== false)
-        {
-          break;
-        }
-      }
-    }
-
-    return $zone;
-  }
-
-  final public static function timezone_abbr_from_name($timezone_name){
-    $dateTime = new DateTime();
-    $dateTime->setTimeZone(new DateTimeZone($timezone_name));
-    return $dateTime->format('T');
-  }
+function getHumanSize($bytes) {
+  $symbols = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB');
+  $exp = floor(log($bytes)/log(1024));
+  return sprintf('%.2f '.$symbols[$exp], ($bytes/pow(1024, floor($exp))));
 }
 
 ?>
