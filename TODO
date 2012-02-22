@@ -9,9 +9,6 @@ NOTES:
                This would increase the performance of panel redraws etc.
   TODO [HIG] : On compability dialog add depend() and warn() types
                Also use the Browser class to determine support!
-  TODO [HIG] : Background lazy-loading of commonly used images
-               Make a script that pulls all icon files and store them in a JSON
-               then pass them on to doInit (doBoot, finally?)
   TODO [HIG] : Finish up Package Meta for loading from user
   TODO [HIG] : On doPOST check last_session_id against session_id() and "crash" frontend
   TODO [HIG] : When user clear browser cache, user looses login, check it out!

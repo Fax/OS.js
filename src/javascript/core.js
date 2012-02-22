@@ -814,7 +814,7 @@
     };
 
     // Main
-    return function(list, callback) {
+    return function(sprf, list, callback) {
       var i     = 0;
       var l     = list.length;
 
@@ -828,7 +828,7 @@
         var loaded = 0;
         var failed = 0;
         for ( i; i < l; i++ ) {
-          __load(i, list[i], function(success, index, src, img) {
+          __load(i, sprintf(sprf, list[i]), function(success, index, src, img) {
             if ( !success ) {
               failed++;
             } else {
@@ -2302,7 +2302,7 @@
         if ( data.success ) {
 
           // Initialize resources
-          _Resources = new ResourceManager(data.result.preload);
+          _Resources = new ResourceManager(data.result.cache.preload);
 
           if ( data.result.cache.resources ) {
             _Resources.addResources(data.result.cache.resources, null, function() {
@@ -2815,14 +2815,11 @@
       this.resources = [];
       this.links = [];
 
-      // Background pre-loading of images
-      PreloadDefaultImages(preload.images, function(loaded, failed, total) {
-        console.log("Preloaded", loaded, "of total", total, "(" + failed + ") failed");
-
-        console.groupEnd();
-      });
+      console.groupEnd();
 
       this._super("(ResourceManager)", "apps/system-software-install.png", true);
+
+      this._preload(preload);
     },
 
 
@@ -2839,6 +2836,23 @@
       this.links = null;
 
       this._super();
+    },
+
+    /**
+     * ResourceManager::_preload() -- Preaload a list of images
+     * @param  Array    preload     List
+     * @return void
+     */
+    _preload : function(preload) {
+      if ( preload ) {
+        console.group("ResourceManager::_preload()");
+        console.log("Preloading", preload.images);
+        console.groupEnd();
+
+        PreloadDefaultImages(ICON_URI_16, preload.images, function(loaded, failed, total) {
+          console.log("ResourceManager::_preload()", loaded, "of", total, "(" + failed + " failures)");
+        });
+      }
     },
 
     /**
