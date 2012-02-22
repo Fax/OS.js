@@ -1,10 +1,10 @@
 CORE:
 -------------------------------------------------------------------------------
+* TODO [HIG] : /VFS/, /VFS/User etc. for VFS :D
 * TODO [HIG] : Remove the global resize event and make a poll ?!
                This would increase the performance of panel redraws etc.
 * TODO [HIG] : On compability dialog add depend() and warn() types
                Also use the Browser class to determine support!
-* TODO [HIG] : Add a profile picture to user and show in SystemUser
 * TODO [HIG] : Background lazy-loading of commonly used images
                Make a script that pulls all icon files and store them in a JSON
                then pass them on to doInit (doBoot, finally?)
