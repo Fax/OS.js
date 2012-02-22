@@ -162,13 +162,14 @@ textarea {
 .Menu li.checked {
   font-weight : bold;
 }
-.Menu li.header,
-.Menu li.header:hover {
+.Menu li.header span,
+.Menu li.header:hover span {
   font-weight : bold;
   text-align : center;
   background : #222;
 }
-.Menu li.header.Disabled {
+.Menu li.header.Disabled span,
+.Menu li.header.Disabled:hover span {
   color : #fff;
 }
 .Menu li.header span {
@@ -285,6 +286,7 @@ textarea {
   font-weight : bold;
   text-align : center;
   background : #222;
+  color : #fff;
 }
 .GUIMenu .Disabled {
   color : #aaa;

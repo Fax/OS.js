@@ -4994,7 +4994,7 @@
 
       var labels = OSjs.Labels.ContextMenuDesktop;
       var ret = API.application.context_menu(ev, $(this), [
-        {"title" : labels.title, "disabled" : true, "attribute" : "header"},
+        {"title" : labels.title, "attribute" : "header"},
         {"title" : labels.wallpaper, "method" : function() {
           var dir = _Settings._get("desktop.wallpaper.path");
           if ( dir ) {
@@ -5549,7 +5549,7 @@
 
         var labels = OSjs.Labels.ContextMenuPanel;
         var ret = API.application.context_menu(ev, $(this), [
-          {"title" : labels.title, "disabled" : true, "attribute" : "header"},
+          {"title" : labels.title, "attribute" : "header"},
           {"title" : labels.add, "method" : function() {
             addItem(ev);
           }},
@@ -6202,7 +6202,7 @@
       var newpos = self._align == "left" ? "right" : "left";
 
       var menu = [
-        {"title" : self._named, "disabled" : true, "attribute" : "header"},
+        {"title" : self._named, "attribute" : "header"},
         {"title" : labels.move, "method" : function(ev) {
           if ( self._panel ) {
             self._panel._startItemDrag(ev, self);

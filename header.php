@@ -51,7 +51,7 @@ define("PROJECT_CONTACT",   "andersevenrud@gmail.com");
 define("PROJECT_VERSION",   "0.6-alpha5"); // Next: 0.7
 define("PROJECT_CODENAME",  "DiscoFox"); // Next: ???
 define("PROJECT_HOST",      (php_uname('n')));
-define("PROJECT_BUILD",     "35d5017");
+define("PROJECT_BUILD",     "d12d2a6");
 
 //
 // Environment
