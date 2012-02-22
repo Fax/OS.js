@@ -4,6 +4,7 @@ NOTES:
   TODO [???] : Somehow re-loading desktop.grid fixes the arv overwrites
 
 0.6:
+  TODO [HIG] : Touch file in /System fails with WARNING
   TODO [HIG] : /VFS/, /VFS/User etc. for VFS :D
   TODO [HIG] : Remove the global resize event and make a poll ?!
                This would increase the performance of panel redraws etc.

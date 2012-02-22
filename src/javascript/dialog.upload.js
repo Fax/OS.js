@@ -119,7 +119,7 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
           }, function(error) {
             sbar.html(sprintf("%s %s", LABELS.failed, fname));
 
-            alert(sprintf("%s %s: %s", LABELS.failed_str, fname, error));
+            API.system.alert(sprintf("%s %s: %s", LABELS.failed_str, fname, error));
 
             self.clb_cancel(fname, error);
           });
