@@ -52,7 +52,7 @@
    * @constants Local settings
    */
   var ENABLE_CACHE           = false;               //!< Enabled caching
-  var SETTING_REVISION       = 35;                  //!< The settings revision
+  var SETTING_REVISION       = 37;                  //!< The settings revision
   var ENABLE_LOGIN           = false;               //!< Use login
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
@@ -1442,7 +1442,7 @@
                 result.push({
                   name      : ia,
                   label     : _AppCache[ia].titles[GetLanguage()] || iter.title,
-                  active    : in_array(ia, activated),
+                  active    : iter.category == "system" || in_array(ia, activated), // FIXME: HACKISH
                   type      : 'Application',
                   locked    : iter.category == "system",
                   icon      : iter.icon,

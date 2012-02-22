@@ -260,14 +260,9 @@ class User
           "launch" => "SystemAbout"
         ),
         Array(
-          "title"  => "System Settings",
-          "icon"   => "categories/applications-system.png",
-          "launch" => "SystemSettings"
-        ),
-        Array(
-          "title"  => "User Information",
-          "icon"   => "apps/user-info.png",
-          "launch" => "SystemUser"
+          "title"  => "Control Panel",
+          "icon"   => "categories/preferences-system.png",
+          "launch" => "SystemControlPanel"
         ),
         Array(
           "title"  => "Save and Quit",
@@ -275,8 +270,8 @@ class User
           "launch" => "SystemLogout"
         )
       )), "right:120"),
-      Array("PanelItemSeparator", Array(), "right:230"),
-      Array("PanelItemWeather", Array(), "right:250")
+      Array("PanelItemSeparator", Array(), "right:205"),
+      Array("PanelItemWeather", Array(), "right:215")
     );
 
     $merge["desktop.panels"] = Array(

@@ -28,12 +28,12 @@ NOTES:
 
 APPLICATIONS ETC:
 -------------------------------------------------------------------------------
-* New: Control Panel
 * FIX: Draw on FF
 * Finish: Mailing
 * Finish: Archiver
 * Finish: Writer
-* TODO: Registry editor (In user information system app)
+* Finish: Control Panel
+* Finish: Control Panel > System Registry
 
 SUGGESTIONS:
 -------------------------------------------------------------------------------
