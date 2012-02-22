@@ -51,13 +51,15 @@ class User
   // VARIABLES
   /////////////////////////////////////////////////////////////////////////////
 
-  public $id          = -1;                   // User ID
-  public $username    = "Undfined";           // User login name
-  public $password    = "";                   // User Password
-  public $privilege   = self::GROUP_NONE;     // User Group(s)
-  public $real_name   = "Undefined";          // User's Real Name
-  public $created_at  = null;                 // User Created Timestamp
-  public $settings    = Array();              // User Settings Tree
+  public $id                = -1;                   // User ID
+  public $username          = "Undfined";           // User login name
+  public $password          = "";                   // User Password
+  public $privilege         = self::GROUP_NONE;     // User Group(s)
+  public $real_name         = "Undefined";          // User's Real Name
+  public $created_at        = null;                 // User Created Timestamp
+  public $settings          = Array();              // User Settings Tree
+  public $last_login        = null;                 // User Last login
+  public $last_session_id   = null;                 // User Last Session ID
 
   public static $Groups = Array(
     self::GROUP_NONE        => "None",
@@ -78,7 +80,7 @@ class User
       try {
         if ( $k == "settings" )
           $v = JSON::decode($v);
-        elseif ( $k == "created_at" && $v )
+        elseif ( ($k == "created_at" || $k == "last_login") && $v )
           $v = new DateTime($v);
       } catch ( Exception $e ) {}
 

@@ -791,6 +791,67 @@
   } // @endfunction
 
   /**
+   * Preload a list of default defined images
+   * @return Mixed
+   * @function
+   */
+  var PreloadDefaultImages = (function() {
+    // Create a image
+    var __load = function(index, src, callback) {
+      try {
+        var img =  new Image();
+        img.onload = function() {
+          callback(true, index, src, img);
+        };
+        img.onerror = function() {
+          callback(false, index, src, img);
+        };
+        img.alt = src;
+        img.src = src;
+      } catch ( eee ) {
+        callback(false, index, src, null);
+      }
+    };
+
+    // Main
+    return function(list, callback) {
+      var i     = 0;
+      var l     = list.length;
+
+      function __callback(loaded, failed, total) {
+        console.groupEnd();
+        callback(loaded, failed, total);
+      }
+
+      if ( l ) {
+        var total = (l - 1);
+        var loaded = 0;
+        var failed = 0;
+        for ( i; i < l; i++ ) {
+          __load(i, list[i], function(success, index, src, img) {
+            if ( !success ) {
+              failed++;
+            } else {
+              loaded++;
+            }
+
+            if ( total <= 0 ) {
+              __callback(loaded, failed, l);
+            }
+            total--;
+
+            img.onload = null;
+            img.onerror = null;
+            delete img;
+          });
+        }
+      } else {
+        __callback(0, 0, 0);
+      }
+    };
+  })(); // @endfunction
+
+  /**
    * TransitionEffect() -- Apply a transition effect on an element
    * @TODO
    * @function
@@ -2241,7 +2302,7 @@
         if ( data.success ) {
 
           // Initialize resources
-          _Resources = new ResourceManager();
+          _Resources = new ResourceManager(data.result.preload);
 
           if ( data.result.cache.resources ) {
             _Resources.addResources(data.result.cache.resources, null, function() {
@@ -2737,245 +2798,250 @@
    * @extends Process
    * @class
    */
-  var ResourceManager = (function() {
+  var ResourceManager = Process.extend({
 
-    var _aResources = [];
+    resources : [],       //!< Resources array
+    links     : [],       //!< Resource link array
 
-    return Process.extend({
+    /**
+     * ResourceManager::init() -- Constructor
+     * @constructor
+     */
+    init : function(preload) {
+      preload = preload || {images : []};
 
-      resources : [],       //!< Resources array
-      links     : [],       //!< Resource link array
+      console.group("ResourceManager::init()");
 
-      /**
-       * ResourceManager::init() -- Constructor
-       * @constructor
-       */
-      init : function() {
-        this.resources = [];
-        this.links = [];
+      this.resources = [];
+      this.links = [];
 
-        this._super("(ResourceManager)", "apps/system-software-install.png", true);
-      },
+      // Background pre-loading of images
+      PreloadDefaultImages(preload.images, function(loaded, failed, total) {
+        console.log("Preloaded", loaded, "of total", total, "(" + failed + ") failed");
+
+        console.groupEnd();
+      });
+
+      this._super("(ResourceManager)", "apps/system-software-install.png", true);
+    },
 
 
-      /**
-       * ResourceManager::destroy() -- Destructor
-       * @destructor
-       */
-      destroy : function() {
-        forEach(this.links, function(i, el) {
-          $(el).remove();
-        });
+    /**
+     * ResourceManager::destroy() -- Destructor
+     * @destructor
+     */
+    destroy : function() {
+      forEach(this.links, function(i, el) {
+        $(el).remove();
+      });
 
-        this.resources = null;
-        this.links = null;
+      this.resources = null;
+      this.links = null;
 
-        this._super();
-      },
+      this._super();
+    },
 
-      /**
-       * ResourceManager::updateManifest() -- Force MANIFEST update
-       * @return void
-       */
-      updateManifest : function() {
-        var cache = window.applicationCache;
+    /**
+     * ResourceManager::updateManifest() -- Force MANIFEST update
+     * @return void
+     */
+    updateManifest : function() {
+      var cache = window.applicationCache;
 
-        var updateCache = function() {
-          cache.swapCache();
-          setTimeout(function() {
-            cache.removeEventListener('updateready', updateCache, false);
-          }, 0);
-        };
+      var updateCache = function() {
+        cache.swapCache();
+        setTimeout(function() {
+          cache.removeEventListener('updateready', updateCache, false);
+        }, 0);
+      };
 
-        // Swap cache with updated data
-        cache.addEventListener('updateready', updateCache, false);
+      // Swap cache with updated data
+      cache.addEventListener('updateready', updateCache, false);
 
-        // Update cached data and call updateready listener after
-        if ( cache.status == cache.UPDATEREADY ) {
-          cache.update();
-        }
+      // Update cached data and call updateready listener after
+      if ( cache.status == cache.UPDATEREADY ) {
+        cache.update();
+      }
 
-      },
+    },
 
-      /**
-       * ResourceManager::hasResource() -- Check if given resource is already loaded
-       * @param   String      res       Resource URI
-       * @return  bool
-       */
-      hasResource : function(res) {
-        return in_array(res, this.resources);
-      },
+    /**
+     * ResourceManager::hasResource() -- Check if given resource is already loaded
+     * @param   String      res       Resource URI
+     * @return  bool
+     */
+    hasResource : function(res) {
+      return in_array(res, this.resources);
+    },
 
-      /**
-       * ResourceManager::addResource() -- Add a resource (load)
-       * @param   String      res       Resource URI
-       * @param   String      app       Application Name (if any)
-       * @param   Function    callback  onload callback (if any)
-       * @return  void
-       */
-      addResource : function(res, app, callback) {
-        var self = this;
+    /**
+     * ResourceManager::addResource() -- Add a resource (load)
+     * @param   String      res       Resource URI
+     * @param   String      app       Application Name (if any)
+     * @param   Function    callback  onload callback (if any)
+     * @return  void
+     */
+    addResource : function(res, app, callback) {
+      var self = this;
 
-        app = app || "";
-        callback = callback || function() {};
+      app = app || "";
+      callback = callback || function() {};
 
-        var _name = (app ? (app + "/" + res) : (res));
-        if ( this.hasResource(_name) ) {
-          callback(false);
-          return;
-        }
+      var _name = (app ? (app + "/" + res) : (res));
+      if ( this.hasResource(_name) ) {
+        callback(false);
+        return;
+      }
 
-        if ( res.match(/^worker\./) ) {
-          callback(false);
-          return;
-        }
+      if ( res.match(/^worker\./) ) {
+        callback(false);
+        return;
+      }
 
-        var error   = false;
-        var extra   = app ? (app + "/") : "";
-        var type    = res.split(".");
-            type    = type[type.length - 1];
+      var error   = false;
+      var extra   = app ? (app + "/") : "";
+      var type    = res.split(".");
+          type    = type[type.length - 1];
 
-        var onload_event = function(el) {
-          self.resources.push(_name);
-          self.links.push(el);
+      var onload_event = function(el) {
+        self.resources.push(_name);
+        self.links.push(el);
 
-          callback(error);
-        };
+        callback(error);
+      };
 
-        var t_callback = function(addedres, had_error) {
-          console.group("ResourceManager::addResource()");
-          console.log("Added", addedres);
-          console.groupEnd();
+      var t_callback = function(addedres, had_error) {
+        console.group("ResourceManager::addResource()");
+        console.log("Added", addedres);
+        console.groupEnd();
 
-          callback(had_error);
-        };
+        callback(had_error);
+      };
 
-        var head  = document.getElementsByTagName("head")[0];
-        if ( type == "js" ) {
-          var triggered             = false;
-          var script                = document.createElement("script");
-          script.type               = "text/javascript";
-          script.onreadystatechange = function() {
-            if ( (this.readyState == 'complete' || this.readyState == 'complete') && !triggered) {
-              triggered = true;
-              t_callback(script, false);
-            }
-          };
-          script.onload = function() {
+      var head  = document.getElementsByTagName("head")[0];
+      if ( type == "js" ) {
+        var triggered             = false;
+        var script                = document.createElement("script");
+        script.type               = "text/javascript";
+        script.onreadystatechange = function() {
+          if ( (this.readyState == 'complete' || this.readyState == 'complete') && !triggered) {
             triggered = true;
             t_callback(script, false);
-          };
-          script.onerror = function() {
-            triggered = true;
-            t_callback(script, true);
-          };
-          script.src = RESOURCE_URI + extra + res;
-          head.appendChild(script);
-          delete script;
+          }
+        };
+        script.onload = function() {
+          triggered = true;
+          t_callback(script, false);
+        };
+        script.onerror = function() {
+          triggered = true;
+          t_callback(script, true);
+        };
+        script.src = RESOURCE_URI + extra + res;
+        head.appendChild(script);
+        delete script;
+      } else {
+        if ( document.createStyleSheet ) {
+          var el = document.createStyleSheet(RESOURCE_URI + res);
+
+          t_callback(el, false);
         } else {
-          if ( document.createStyleSheet ) {
-            var el = document.createStyleSheet(RESOURCE_URI + res);
+          var stylesheet  = document.createElement("link");
+          stylesheet.rel  = "stylesheet";
+          stylesheet.type = "text/css";
+          stylesheet.href = RESOURCE_URI + extra + res;
 
-            t_callback(el, false);
-          } else {
-            var stylesheet  = document.createElement("link");
-            stylesheet.rel  = "stylesheet";
-            stylesheet.type = "text/css";
-            stylesheet.href = RESOURCE_URI + extra + res;
+          var sheet = "styleSheet";
+          var cssRules = "rules";
+          if ( "sheet" in stylesheet ) {
+            sheet = "sheet";
+            cssRules = "cssRules";
+          }
 
-            var sheet = "styleSheet";
-            var cssRules = "rules";
-            if ( "sheet" in stylesheet ) {
-              sheet = "sheet";
-              cssRules = "cssRules";
-            }
-
-            var timeout_t = null;
-            var timeout_i = setInterval(function() {
-              try {
-                if ( stylesheet[sheet] && stylesheet[sheet][cssRules].length ) {
-                  clearInterval(timeout_i);
-                  if ( timeout_t ) {
-                    clearTimeout(timeout_t);
-                  }
-                  t_callback(stylesheet, false);
-                }
-              } catch( e ) {
-                (function() {})();
-              } finally {
-                (function() {})();
-              }
-            }, 10 );
-
-            timeout_t = setTimeout(function() {
-              if ( timeout_i ) {
+          var timeout_t = null;
+          var timeout_i = setInterval(function() {
+            try {
+              if ( stylesheet[sheet] && stylesheet[sheet][cssRules].length ) {
                 clearInterval(timeout_i);
+                if ( timeout_t ) {
+                  clearTimeout(timeout_t);
+                }
+                t_callback(stylesheet, false);
               }
-              clearTimeout(timeout_t);
-              t_callback(stylesheet, true);
-              head.removeChild(stylesheet);
-            }, TIMEOUT_CSS);
-
-
-            head.appendChild(stylesheet);
-          }
-        }
-
-      },
-
-      /**
-       * ResourceManager::addResources() -- Add an array with resources and call-back
-       * @param   Array     res         Resource URI array
-       * @param   String    app         Application Name (if any)
-       * @param   Function  callback    Call when done adding
-       * @return  void
-       */
-      addResources : function(res, app, callback) {
-        var cont = true;
-
-        if ( res ) {
-          console.group("ResourceManager::addResources()");
-          console.log("Adding", res);
-          console.log("Application", app);
-          console.groupEnd();
-
-          var i = 0;
-          var l = res.length;
-
-          // Create a temporary callback for the queue
-          if ( l > 0 ) {
-            cont = false;
-
-            var tmp_counter  = l;
-            var has_failed   = false;
-            var tmp_callback = function(failed) {
-              tmp_counter--;
-              if ( !has_failed && failed ) {
-                has_failed = true;
-              }
-
-              if ( tmp_counter <= 0 ) {
-                setTimeout(function() {
-                  callback(has_failed);
-                }, 0);
-              }
-            };
-
-            for ( i; i < l; i++ ) {
-              this.addResource(res[i], app, tmp_callback);
+            } catch( e ) {
+              (function() {})();
+            } finally {
+              (function() {})();
             }
-          }
-        }
+          }, 10 );
 
-        if ( cont ) {
-          setTimeout(function() {
-            callback(false);
-          }, 0);
+          timeout_t = setTimeout(function() {
+            if ( timeout_i ) {
+              clearInterval(timeout_i);
+            }
+            clearTimeout(timeout_t);
+            t_callback(stylesheet, true);
+            head.removeChild(stylesheet);
+          }, TIMEOUT_CSS);
+
+
+          head.appendChild(stylesheet);
         }
       }
-    }); // @endclass
 
-  })();
+    },
+
+    /**
+     * ResourceManager::addResources() -- Add an array with resources and call-back
+     * @param   Array     res         Resource URI array
+     * @param   String    app         Application Name (if any)
+     * @param   Function  callback    Call when done adding
+     * @return  void
+     */
+    addResources : function(res, app, callback) {
+      var cont = true;
+
+      if ( res ) {
+        console.group("ResourceManager::addResources()");
+        console.log("Adding", res);
+        console.log("Application", app);
+        console.groupEnd();
+
+        var i = 0;
+        var l = res.length;
+
+        // Create a temporary callback for the queue
+        if ( l > 0 ) {
+          cont = false;
+
+          var tmp_counter  = l;
+          var has_failed   = false;
+          var tmp_callback = function(failed) {
+            tmp_counter--;
+            if ( !has_failed && failed ) {
+              has_failed = true;
+            }
+
+            if ( tmp_counter <= 0 ) {
+              setTimeout(function() {
+                callback(has_failed);
+              }, 0);
+            }
+          };
+
+          for ( i; i < l; i++ ) {
+            this.addResource(res[i], app, tmp_callback);
+          }
+        }
+      }
+
+      if ( cont ) {
+        setTimeout(function() {
+          callback(false);
+        }, 0);
+      }
+    }
+  }); // @endclass
 
   /**
    * SettingsManager -- Settings Manager
@@ -7722,11 +7788,9 @@
     }
 
 
-    console.log("");
     console.log("================================ [ OS.js ] ================================");
     console.log("=                    Copyright (c) 2012 Anders Evenrud                    =");
     console.log("===========================================================================");
-    console.log("");
 
     _StartStamp = ((new Date()).getTime());
     _Core       = new Core();

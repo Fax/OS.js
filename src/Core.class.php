@@ -292,11 +292,14 @@ class Core
         }
       }
 
+      $preload_images = Array();
+
       $json = Array("success" => true, "error" => null, "result" => Array(
         "settings"      => User::getDefaultSettings($installed_packages),
         "cache"         => Array(
           "resources"         => $resources,
-          "packages"          => $installed_packages
+          "packages"          => $installed_packages,
+          "preload"           => $preload_images
         ),
         "config"        => Array(
           "cache"             => ENABLE_CACHE,
@@ -435,6 +438,10 @@ class Core
     $user = null;
     if ( $user = User::getByUsername($uname) ) {
       if ( $user->password == $upass ) {
+        $user->last_login       = new DateTime();
+        $user->last_session_id  = session_id();
+        User::save($user);
+
         $json['success'] = true;
         $json['result'] = Array(
           "user"    => $user->getUserInfo()

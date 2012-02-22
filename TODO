@@ -1,29 +1,33 @@
 CORE:
 -------------------------------------------------------------------------------
-* TODO [HIG] : /VFS/, /VFS/User etc. for VFS :D
-* TODO [HIG] : Remove the global resize event and make a poll ?!
+NOTES:
+  TODO [???] : Somehow re-loading desktop.grid fixes the arv overwrites
+
+0.6:
+  TODO [HIG] : /VFS/, /VFS/User etc. for VFS :D
+  TODO [HIG] : Remove the global resize event and make a poll ?!
                This would increase the performance of panel redraws etc.
-* TODO [HIG] : On compability dialog add depend() and warn() types
+  TODO [HIG] : On compability dialog add depend() and warn() types
                Also use the Browser class to determine support!
-* TODO [HIG] : Background lazy-loading of commonly used images
+  TODO [HIG] : Background lazy-loading of commonly used images
                Make a script that pulls all icon files and store them in a JSON
                then pass them on to doInit (doBoot, finally?)
-* TODO [HIG] : Maxmimum call-stack size exceed exceptions does not include trace [JS]
-* TODO [HIG] : Store phpsessionid upon login and check for every post call
-* TODO [HIG] : Finish up Package Meta for loading from user
-* TODO [HIG] : When user clear browser cache, user looses login, check it out!
-* TODO [HIG] : Find more appropriate names for settings tree items
-* TODO [HIG] : Add/Remove Panel
-* TODO [HIG] : Custom Exception class
-* TODO [MED] : Implement MenuNew in GtkMenu
-* TODO [MED] : Rewrite Glade builder class
-* TODO [LOW] : Hove Template HTML for dialogs into dialog.js
-* TODO [LOW] : VFS - Overwriting, fix parameters etc.
-* TODO [LOW] : Write custom GtkTab class
-* TODO [LOW] : Write custom GtkLoadingBar class
-* TODO [LOW] : Clean up CSS
-* TODO [---] : Write custom $
-* TODO [???] : Somehow re-loading desktop.grid fixes the arv overwrites
+  TODO [HIG] : Finish up Package Meta for loading from user
+  TODO [HIG] : On doPOST check last_session_id against session_id() and "crash" frontend
+  TODO [HIG] : When user clear browser cache, user looses login, check it out!
+  TODO [HIG] : Add/Remove Panel
+  TODO [HIG] : Custom Exception class
+  TODO [MED] : Implement MenuNew in GtkMenu
+  TODO [LOW] : Maxmimum call-stack size exceed exceptions does not include trace [JS]
+  TODO [LOW] : Hove Template HTML for dialogs into dialog.js
+  TODO [LOW] : VFS - Overwriting, fix parameters etc.
+  TODO [LOW] : Clean up CSS
+
+0.7:
+  TODO [MED] : Rewrite Glade builder class
+  TODO [LOW] : Write custom GtkTab class
+  TODO [LOW] : Write custom GtkLoadingBar class
+  TODO [---] : Write custom $
 
 APPLICATIONS ETC:
 -------------------------------------------------------------------------------
