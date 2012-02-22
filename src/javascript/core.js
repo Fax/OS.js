@@ -52,7 +52,7 @@
    * @constants Local settings
    */
   var ENABLE_CACHE           = false;               //!< Enabled caching
-  var SETTING_REVISION       = 37;                  //!< The settings revision
+  var SETTING_REVISION       = 38;                  //!< The settings revision
   var ENABLE_LOGIN           = false;               //!< Use login
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
@@ -2148,7 +2148,6 @@
         $(document).unbind("click",       this.global_click);
         $(document).unbind("dblclick",    this.global_dblclick);
         $(document).unbind("contextmenu", this.global_contextmenu);
-        $(document).unbind('touchmove',   this.global_touchmove, false);
 
         /*window.removeEventListener('offline', function(ev) {
           self.global_offline(ev, !(navigator.onLine === false));
@@ -2352,7 +2351,6 @@
       $(document).bind("click",       this.global_click);
       $(document).bind("dblclick",    this.global_dblclick);
       $(document).bind("contextmenu", this.global_contextmenu);
-      $(document).bind('touchmove',   this.global_touchmove, false);
 
       /*window.addEventListener('offline', function(ev) {
         self.global_offline(ev, !(navigator.onLine === false));
@@ -2661,15 +2659,6 @@
      */
     global_mousemove : function(ev) {
       API.ui.rectangle.update(ev);
-    },
-
-    /**
-     * Core::global_touchmove() -- Global Event Handler: touchmove
-     * @param   DOMEvent    ev      DOM Event
-     * @return  void
-     */
-    global_touchmove : function(ev) {
-      ev.preventDefault();
     },
 
     /**
@@ -6686,14 +6675,6 @@
               self._left = self.$element.offset()['left'];
               self._top = self.$element.offset()['top'];
             }
-          }).touch({
-            animate: false,
-            sticky: false,
-            dragx: true,
-            dragy: true,
-            rotate: false,
-            resort: true,
-            scale: false
           });
         }
 

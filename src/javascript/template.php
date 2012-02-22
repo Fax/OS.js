@@ -59,7 +59,6 @@ if ( $locale = Core::get()->getLocale() ) {
   <script type="text/javascript" src="/js/vendor/sprintf-0.7-beta1.js"></script>
   <script type="text/javascript" src="/js/vendor/jquery-1.7.1.min.js"></script>
   <script type="text/javascript" src="/js/vendor/jquery-ui-1.8.17.custom.min.js"></script>
-  <script type="text/javascript" src="/js/vendor/jquery.touch.compact.js"></script>
 
   <!-- Utiltiy libraries -->
   <script type="text/javascript" src="/js/utils.js"></script>
