@@ -35,7 +35,7 @@
  * PanelItem -- Panel Item Package Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Sources
+ * @package OSjs.Sources.Desktop
  * @class
  */
 class       PanelItem

@@ -35,7 +35,7 @@
  * Package -- Package Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Sources
+ * @package OSjs.Sources.Core
  * @class
  */
 abstract class Package

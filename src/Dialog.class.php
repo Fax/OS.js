@@ -35,7 +35,7 @@
  * Panel -- OS.js Dialog Window Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Sources.WindowManager
+ * @package OSjs.Sources.Desktop
  * @class
  */
 abstract class Dialog

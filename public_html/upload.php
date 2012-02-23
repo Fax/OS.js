@@ -25,8 +25,12 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @package OSjs.Frontend
+ * upload.php: Handles file uploads
+ *
  * @author Anders Evenrud <andersevenrud@gmail.com>
- * @license GPLv3 (see http://www.gnu.org/licenses/gpl-3.0.txt)
+ * @licence Simplified BSD License
  * @created 2011-11-13
  */
 

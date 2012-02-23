@@ -98,8 +98,9 @@ function array_merge_deep($arr) {
 }
 
 /**
- * Get size in human readable size
+ * getHumanSize() - Get size in human readable size
  * @author http://php.net/manual/en/function.disk-total-space.php
+ * @package OSjs.Functions
  * @return String
  */
 function getHumanSize($bytes) {

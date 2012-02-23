@@ -35,7 +35,7 @@
  * Panel -- Panel Class
  *
  * @author Anders Evenrud <andersevenrud@gmail.com>
- * @licence Simplified BSD License
+ * @package OSjs.Sources.Desktop
  * @class
  */
 abstract class Panel

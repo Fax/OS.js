@@ -1,24 +1,17 @@
 About OS.js:
 -------------------------------------------------------------------------------
-JavaScript Oprating System. For more information go to:
-
-Private Blog: http://anderse.wordpress.com/
-Project site: http://anderse.wordpress.com/os-js/
-Google+ Page: https://plus.google.com/b/113399210633478618934/113399210633478618934/
-Facebook Page: https://www.facebook.com/pages/OSjs/226644300734574
+JavaScript Desktop Environment. For more information please visit the homepage.
 
 For requirements, installation etc. see the INSTALL file.
 For developer information, see the README.developer file
 For HTML version of this document, see the README.markup file.
 
-Vendor libraries used:
+Applications etc.
 -------------------------------------------------------------------------------
-* jQuery
-* JSON2 by Douglas Crockford
-* Sprintf by Alexandru Marasteanu
-* Yahoo YUI Compressor
+All Packages come separately. See the INSTALL files on how to obtain and install
+the default set.
 
-Features and Highlights:
+Features and Highlights (OUTDATED):
 -------------------------------------------------------------------------------
 * Follows strict coding standards, fully documented
 * Uses HTML5 and CSS2+ features (Supported features are detected on first run.)
@@ -38,53 +31,33 @@ Features and Highlights:
 * VFS - Virtual Filesystem support (Block devices, Network connections, Compressed files etc. File-Alteration monitoring)
 * Application WebWorkers for faster processing of complex data
 * Server-Side libraries: Database, JSON, IMAP/SMTP, VFS-Operations, Misc helper functions/classes
+* Common interactive dialogs:
+  * Dialog: Font and Color Picker
+  * Dialog: File Open, Save, Copy, Upload (HTML5)
+  * Dialog: Lauch Application
+  * Dialog: Modify Panel/PanelItem
+  * Dialog: Confirm, Input and Message Boxes
 
 Translations:
-* US English (en_US) - 100%
-* Norwegian Bokmål (nb_NO) - 30% (Core, Panel and Dialogs only)
+* US English (en_US)
+* Norwegian Bokmål (nb_NO)
 
-Compability (Client-Side):
+Compability:
 -------------------------------------------------------------------------------
-Tested on Linux and Windows platforms
+You can find this list on the official homepage.
 
-* Working: Linux with WebKit/Safari/Chrome, Gecko/Mozilla/Firefox (Safari has some [very] minor CSS issues with font styles, depends upon browser version.)
-* Wokring: Google Android (Tested  devices: Samsung I9000 with Froyo/Honeycomb/ICS)
-* Wokring: Apple iOS (Tested devices: iPad iOS4)
-* Probably working: Windows with WebKit/Safari/Chrome, Gecko/Mozilla/Firefox (Should behave as in Linux)
-* Partially working: Opera 10+: Problem with Glade/GTK CSS
-* Partially working: Internet Explorer 8: Problem with Glade/GTK CSS, Missing WebSocket and Canvas
-* Partially working: Internet Explorer 9: Problem with Glade/GTK CSS, Missing WebSocket and Canvas
-
-Built-In Applications, Dialogs and Panel Items:
+Vendor libraries used:
 -------------------------------------------------------------------------------
-* Application: Clock (HTML5-SVG, CSS2)
-* Application: Draw (HTML5-Canvas)
-* Application: Movie Player (HTML5-Video)
-* Application: Music Player (HTML5-Audio)
-* Application: File Manager
-* Application: Terminal
-* Application: Textpad
-* Application: Image Viewer
-* Application: Tick-tack-toe game
-* Application: Arkanoid game (HTML5-Canvas)
-* Application: HTML Viewer / Browser
-* Application: PDF Viewer (SVG)
-* Application: File Archiver (FVS File Archives)
-* Application: Writer (HTML5 Text Editor)
-* Application: Mail (IMAP)
-* System: About
-* System: User Information
-* System: Settings
-* System: Logout
-* System: Process Information
-* Panel Item: Menu
-* Panel Item: Separator
-* Panel Item: Window List
-* Panel Item: Weather Information (HTML5-Geolocation)
-* Panel Item: Launcher Dock
-* Panel Item: Clock
-* Dialog: Font and Color Picker
-* Dialog: File Open, Save, Copy, Upload (HTML5)
-* Dialog: Lauch Application
-* Dialog: Modify Panel/PanelItem
-* Dialog: Confirm, Input and Message Boxes
+* jQuery
+* JSON2 by Douglas Crockford
+* Sprintf by Alexandru Marasteanu
+* Yahoo YUI Compressor
+
+Links:
+-------------------------------------------------------------------------------
+Homepage: http://home.OSjs.0o.no
+Demo Site: http://OSjs.0o.no
+Project Blog: http://anderse.wordpress.com/os-js/
+Google+ Page: https://plus.google.com/b/113399210633478618934/113399210633478618934/
+Facebook Page: https://www.facebook.com/pages/OSjs/226644300734574
+Private Blog: http://anderse.wordpress.com/

@@ -35,7 +35,7 @@
  * ResourceManager -- Main OS.js resource Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Sources
+ * @package OSjs.Sources.Core
  * @class
  */
 abstract class ResourceManager
@@ -142,7 +142,6 @@ abstract class ResourceManager
    * Get Font StyleSheet
    * @param  String   $font         Font name
    * @param  bool     $compress     Enable Compression
-   * @package OSjs.Sources
    * @return String
    */
   public static function getFont($font, $compress) {
@@ -151,12 +150,14 @@ abstract class ResourceManager
     $bos    = $font == "Sansation" ? "/*" : "";
     $boe    = $font == "Sansation" ? "*/" : "";
 
+    $doc_package = " * @package OSjs.Fonts"; // Fix for doxygen
+
     $header = <<<EOCSS
 @charset "UTF-8";
 /*!
  * Font Stylesheet
  *
- * @package OSjs.Fonts
+{$doc_package}
  * @author Anders Evenrud <andersevenrud@gmail.com>
  */
 
