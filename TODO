@@ -1,7 +1,13 @@
 CORE:
 -------------------------------------------------------------------------------
 NOTES:
+  TODO [xxx] : Cacheable ajax within lets say 1 sec
+  TODO [xxx] : Automatic installer for vendor libraries + install for OS.js
   TODO [???] : Somehow re-loading desktop.grid fixes the arv overwrites
+  TODO [???] : Satify more YSlow results
+               * Expiration dates on production
+               * ETags for production
+               * Cookie free domains ?!
 
 0.6:
   TODO [HIG] : Touch file in /System fails with WARNING
