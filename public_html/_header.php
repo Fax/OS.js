@@ -50,8 +50,9 @@ if ( !$use_gzip || !ob_start("ob_gzhandler") ) {
 }
 
 if ( ENV_PRODUCTION || ENABLE_CACHE) {
-#  header("Expires: Fri, 01 Jan 2010 05:00:00 GMT");
-#  header("Cache-Control: maxage=1, no-cache");
+  $now = gmdate( 'D, d M Y H:i:s' , (time() + (60)));
+  header("Expires: $now GMT");
+  header("Cache-Control: maxage=3600, public");
 } else {
   $now = gmdate( 'D, d M Y H:i:s' );
   header("Expires: Fri, 01 Jan 2010 05:00:00 GMT");

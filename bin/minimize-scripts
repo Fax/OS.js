@@ -47,7 +47,8 @@ $resources = Array(
   "init.js",
   "classes.js",
   "core.js",
-  "main.js"
+  "main.js",
+  "utils.js"
 );
 $locales   = Array(
   "en_US.js",

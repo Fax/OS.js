@@ -84,3 +84,21 @@ IMPORTANT: Test on a _FRESH_ browser (Clear cache, sessions etc)
 * Check application launch
 * Check Gtk compability in application
 * Check application crash dialog
+
+
+# http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
+# http://www.w3.org/Protocols/HTTP/HTRQ_Headers.html#pragma
+
+# ETags : http://www.askapache.com/htaccess/apache-speed-etags.html
+# Directory options : http://httpd.apache.org/docs/2.0/mod/core.html#directory
+
+# http://www.xpertdeveloper.com/2011/03/last-modified-header-vs-expire-header-vs-etag/
+# http://msdn.microsoft.com/en-us/library/ms533020%28v=vs.85%29.aspx
+# http://stackoverflow.com/questions/4807573/apache-filesmatch-directive-help-want-to-include-the-path-to-file-but-not-wor
+# http://stackoverflow.com/questions/6197963/remove-etag-from-favicon-ico
+# http://stackoverflow.com/questions/1036941/setup-http-expires-headers-using-php-and-apache
+# http://stackoverflow.com/questions/499966/etag-vs-header-expires
+# http://stackoverflow.com/questions/44937/how-do-you-make-an-etag-that-matches-apache
+# http://www.askapache.com/htaccess/apache-speed-etags.html
+# http://developer.yahoo.com/performance/rules.html#etags
+
