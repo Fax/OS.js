@@ -43,13 +43,20 @@ if ( !($core = Core::initialize()) ) {
 $use_gzip = substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
 if ( !$use_gzip || !ob_start("ob_gzhandler") ) {
   flush();
+  while (ob_get_level()) {
+    ob_end_flush();
+  }
   ob_start();
 }
 
-if ( !ENABLE_CACHE ) {
+if ( ENV_PRODUCTION || ENABLE_CACHE) {
+#  header("Expires: Fri, 01 Jan 2010 05:00:00 GMT");
+#  header("Cache-Control: maxage=1, no-cache");
+} else {
+  $now = gmdate( 'D, d M Y H:i:s' );
   header("Expires: Fri, 01 Jan 2010 05:00:00 GMT");
-  header("Cache-Control: maxage=1");
-  header("Cache-Control: no-cache");
+  header("Last-Modified: $now GMT");
+  header("Cache-Control: maxage=1, no-cache, no-store, must-revalidate, post-check=0, pre-check=0");
   header("Pragma: no-cache");
 }
 
@@ -60,4 +67,5 @@ header("P3P: CP=\"NOI DSP COR CURa ADMa OUR NOR COM STA\"");
 $loc = $core->getLocale();
 header("X-OSjs-Version: " . PROJECT_VERSION);
 header("X-OSjs-Locale: " . $loc["locale_language"]);
+header("X-Powered-By: Magic");
 ?>
