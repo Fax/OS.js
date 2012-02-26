@@ -40,6 +40,12 @@ if ( !($core = Core::initialize()) ) {
   die("Failed to initialize OS.js Core");
 }
 
+$use_gzip = substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+if ( !$use_gzip || !ob_start("ob_gzhandler") ) {
+  flush();
+  ob_start();
+}
+
 if ( !ENABLE_CACHE ) {
   header("Expires: Fri, 01 Jan 2010 05:00:00 GMT");
   header("Cache-Control: maxage=1");
@@ -54,8 +60,4 @@ header("P3P: CP=\"NOI DSP COR CURa ADMa OUR NOR COM STA\"");
 $loc = $core->getLocale();
 header("X-OSjs-Version: " . PROJECT_VERSION);
 header("X-OSjs-Locale: " . $loc["locale_language"]);
-
-$use_gzip = substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-if ( !$use_gzip || !ob_start("ob_gzhandler") )
-  ob_start();
 ?>
