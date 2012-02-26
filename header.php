@@ -40,8 +40,8 @@ define("PROJECT_CONTACT",   "andersevenrud@gmail.com");
 define("PROJECT_VERSION",   "0.6-alpha6"); // Next: 0.7
 define("PROJECT_CODENAME",  "DiscoFox"); // Next: ???
 define("PROJECT_HOST",      (php_uname('n')));
-define("PROJECT_BUILD",     "6216a1a");
-define("PROJECT_MODIFIED",  "1330270430");
+define("PROJECT_BUILD",     "bb36dc3");
+define("PROJECT_MODIFIED",  "1330270669");
 
 //
 // Environment
