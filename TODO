@@ -1,6 +1,7 @@
 CORE:
 -------------------------------------------------------------------------------
 NOTES:
+  NOTE       : Check out pngcrush
   TODO [xxx] : Cacheable ajax within lets say 1 sec
   TODO [xxx] : Automatic installer for vendor libraries + install for OS.js
   TODO [???] : Somehow re-loading desktop.grid fixes the arv overwrites
@@ -10,6 +11,7 @@ NOTES:
                * Cookie free domains ?!
 
 0.6:
+  TODO [HIG] : Move package resources (img/app.xxx etc) to the actual package and make proxy
   TODO [HIG] : _doShutdown was missing $result !??!?!!?
   TODO [HIG] : Touch file in /System fails with WARNING
   TODO [HIG] : /VFS/, /VFS/User etc. for VFS :D
