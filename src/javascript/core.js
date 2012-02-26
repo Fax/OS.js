@@ -63,7 +63,7 @@
   var MAX_STORAGE_SIZE       = (1024 * 5) * 1000;   //!< Max localstorage size
   var STORAGE_SIZE_FREQ      = 1000;                //!< Storage check usage frequenzy
   var ONLINECHK_FREQ         = 1000;                //!< On-line checking frequenzy
-  var TIMEOUT_CSS            = (1000 * 5);          //!< CSS loading timeout
+  var TIMEOUT_CSS            = (1000 * 10);         //!< CSS loading timeout
   var DEFAULT_UID            = 1;                   //!< Default User ID
   var DEFAULT_USERNAME       = "demo";              //!< Default User Username
   var DEFAULT_PASSWORD       = "demo";              //!< Default User Password
