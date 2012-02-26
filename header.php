@@ -32,17 +32,6 @@
  */
 
 //
-// PHP internals
-//
-
-error_reporting(E_ALL | E_STRICT);
-
-ini_set("session.upload_progress.enabled",  true);
-ini_set("post_max_size",                    "256M");
-ini_set("upload_max_filesize",              "256M");
-//ini_set("session.upload-progress.name",     "OSjs");
-
-//
 // Project
 //
 
@@ -51,7 +40,8 @@ define("PROJECT_CONTACT",   "andersevenrud@gmail.com");
 define("PROJECT_VERSION",   "0.6-alpha6"); // Next: 0.7
 define("PROJECT_CODENAME",  "DiscoFox"); // Next: ???
 define("PROJECT_HOST",      (php_uname('n')));
-define("PROJECT_BUILD",     "326ce0b");
+define("PROJECT_BUILD",     "975c044");
+define("PROJECT_MODIFIED",  "1330269797");
 
 //
 // Environment
@@ -114,6 +104,16 @@ define("DATABASE_DSN",      "sqlite:" . DATABASE_FILE);
 define("DATABASE_HOST",     "localhost");
 define("DATABASE_USER",     "");
 define("DATABASE_PASS",     "");
+
+//
+// PHP INI
+//
+ini_set("session.upload_progress.enabled",  true);
+ini_set("post_max_size",                    "256M");
+ini_set("upload_max_filesize",              "256M");
+ini_set("expose_php",                       "off");
+ini_set("display_errors",                   "off");
+//ini_set("session.upload-progress.name",     "OSjs");
 
 //
 // Includes
