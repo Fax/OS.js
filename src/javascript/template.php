@@ -94,9 +94,6 @@ if ( $locale = Core::get()->getLocale() ) {
   <script type="text/javascript" src="/js/vendor/jquery-1.7.1.min.js"></script>
   <script type="text/javascript" src="/js/vendor/jquery-ui-1.8.17.custom.min.js"></script>
 
-  <!-- Utiltiy libraries -->
-  <script type="text/javascript" src="/js/utils.js"></script>
-
   <!-- OS.js stylesheets -->
   <link rel="stylesheet" type="text/css" href="/ajax/resource/main.css" />
   <link rel="stylesheet" type="text/css" href="/ajax/resource/glade.css" />
@@ -112,6 +109,9 @@ if ( $locale = Core::get()->getLocale() ) {
   <link rel="stylesheet" type="text/css" href="/ajax/cursor/default" id="CursorFace" />
 
   <!-- OS.js libraries -->
+
+  <!-- Utiltiy libraries -->
+  <script type="text/javascript" src="/ajax/resource/utils.js"></script>
   <script type="text/javascript" src="/ajax/resource/init.js"></script>
   <script type="text/javascript" src="/ajax/language/<?php print $current_locale; ?>" id="LanguageFile"></script>
   <script type="text/javascript" src="/ajax/resource/classes.js"></script>
