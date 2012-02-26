@@ -351,6 +351,7 @@ class Core
     $session  = isset($args['session'])  ? $args['session']  : Array();
     $save     = isset($args['save'])     ? ($args['save'] == "true" ? true : false)     : Array();
 
+    $result = Array();
     if ( $save === true ) {
       if ( $user = $inst->getUser() ) {
         $result['saved'] = $user->saveUser($session, $settings);
