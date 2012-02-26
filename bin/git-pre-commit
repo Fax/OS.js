@@ -3,6 +3,8 @@
 
 date_default_timezone_set("GMT");
 
+$header_file = "header.php";
+
 $str1      = 'define("PROJECT_BUILD",     "%s");';
 $str2      = 'define("PROJECT_MODIFIED",  "%s");';
 
@@ -10,12 +12,12 @@ $version  = isset($argv[1]) ? substr($argv[1], 0, 7) : null;
 $time     = time();
 
 if ( $version ) {
-  if ( $content = file_get_contents("header.php") ) {
+  if ( $content = file_get_contents($header_file) ) {
     $content = preg_replace("/define\(\"PROJECT_BUILD\",\s+\"(.*)\"\);/", sprintf($str1, $version), $content);
     $content = preg_replace("/define\(\"PROJECT_MODIFIED\",\s+\"(.*)\"\);/", sprintf($str2, $time), $content);
-    if ( file_put_contents("header.php", $content) ) {
-      print "     * PROJECT_BUILD    = '$version'\n";
-      print "     * PROJECT_MODIFIED = '$time'\n";
+    if ( file_put_contents($header_file, $content) ) {
+      print "  * PROJECT_BUILD    = '$version'\n";
+      print "  * PROJECT_MODIFIED = '$time'\n";
     }
   }
 }
