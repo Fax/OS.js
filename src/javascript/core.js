@@ -52,7 +52,7 @@
    * @constants Local settings
    */
   var ENABLE_CACHE           = false;               //!< Enabled caching
-  var SETTING_REVISION       = 38;                  //!< The settings revision
+  var SETTING_REVISION       = 39;                  //!< The settings revision
   var ENABLE_LOGIN           = false;               //!< Use login
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
@@ -642,9 +642,7 @@
           API.system.launch(mapp, {'path' : path, 'mime' : mime});
         }
 
-        var browse = [];
         if ( found.length ) {
-
           if ( found.length == 1 ) {
             __run(found[0]);
           } else {
@@ -707,7 +705,6 @@
    * @function
    */
   function CreateDefaultApplicationMenu(ev, el) {
-    var clang = API.system.language();
     var lbls  = OSjs.Labels.ApplicationCategories;
     var menu  = [];
 
@@ -964,7 +961,6 @@
 
       'cursor' : (function() {
         var ccursor = "default";
-        var celement = null;
 
         return function(c) {
           if ( c !== ccursor ) {
@@ -1434,7 +1430,7 @@
           apps = (apps === undefined) ? true : apps;
           pitems = (pitems === undefined) ? true : pitems;
 
-          var ia, ip, t, iter;
+          var ia, ip, iter;
           if ( apps ) {
             for ( ia in _AppCache ) {
               if ( _AppCache.hasOwnProperty(ia) ) {
@@ -1735,10 +1731,10 @@
       this._running = true;
 
       // Overrides
-      this.on_open    = function(ev) {};
-      this.on_message = function(ev, js, data, err) {};
-      this.on_close   = function(ev) {};
-      this.on_error   = function(ev) {};
+      this.on_open    = function(/*ev*/) {};
+      this.on_message = function(/*ev, js, data, err*/) {};
+      this.on_close   = function(/*ev*/) {};
+      this.on_error   = function(/*ev*/) {};
 
       console.group("Socket::init()");
       console.log("Name", this._name);
@@ -2093,9 +2089,9 @@
 
 
       if ( ENABLE_LOGIN ) {
-        var lw = $("#LoginWindow").show();
+        //var lw = $("#LoginWindow").show();
         var lf = $("#LoginForm");
-        var lb = $("#LoginButton").focus();
+        //var lb = $("#LoginButton").focus();
         var un = $("#LoginUsername").val(DEFAULT_USERNAME);
         var up = $("#LoginPassword").val(DEFAULT_PASSWORD);
         var ls = $("#LoginWindowStatus span").html(DEFAULT_LOGIN_TIMEOUT);
@@ -2230,7 +2226,6 @@
      * @return void
      */
     login : function(username, password, callback) {
-      var self = this;
       var form = {
         "username" : username,
         "password" : password
@@ -2454,8 +2449,6 @@
      * @return void
      */
     sessionSnapshotSave : function(name, callback) {
-      var self = this;
-
       callback = callback || function() {};
       name     = name     || "";
 
@@ -2689,7 +2682,7 @@
 
       var i = 0;
       var l = _Processes.length;
-      var p, icon, title;
+      var p;
       if ( l ) {
         for ( i; i < l; i++ ) {
           p = _Processes[i];
@@ -2885,8 +2878,6 @@
      * @return  void
      */
     addResource : function(res, app, callback) {
-      var self = this;
-
       app = app || "";
       callback = callback || function() {};
 
@@ -2906,12 +2897,14 @@
       var type    = res.split(".");
           type    = type[type.length - 1];
 
+      /* NOTE: WTF
       var onload_event = function(el) {
         self.resources.push(_name);
         self.links.push(el);
 
         callback(error);
       };
+      */
 
       var t_callback = function(addedres, had_error) {
         console.group("ResourceManager::addResource()");
@@ -4270,8 +4263,6 @@
      * @constructor
      */
     init : function() {
-      var self = this;
-
       this.stack    = [];
       this.running  = false;
       this.bindings = {
@@ -4319,7 +4310,6 @@
      * @return void
      */
     run : function() {
-      var self = this;
       if ( this.running ) {
         return;
       }
@@ -4354,9 +4344,9 @@
      */
     call : function(mname, margs) {
       if ( this.bindings && this.bindings[mname] ) {
-        var r;
+        //var r;
         for ( var i = 0; i < this.bindings[mname].length; i++ ) {
-          r = this.bindings[mname][i].call(_Desktop, mname, margs); // FIXME: _Desktop is not this
+          /*r = */this.bindings[mname][i].call(_Desktop, mname, margs); // FIXME: _Desktop is not this
         }
       }
     },
@@ -4727,8 +4717,6 @@
      * @destructor
      */
     destroy : function() {
-      var self = this;
-
       $("#Desktop").unbind("contextmenu");
 
       if ( this._rtimeout ) {
@@ -4814,7 +4802,6 @@
           var ivlist = _Settings._get("desktop.grid", false, true);
           var root = $("<ul></ul>");
           var str, giter, e, i = 0, l = ivlist.length;
-          var last = null;
 
           for ( i; i < l; i++ ) {
             giter = ivlist[i];
@@ -4961,8 +4948,6 @@
      * @return  bool
      */
     defaultHandler : function(ev, eargs) {
-      var self = this;
-
       var redrawPanels = function(panels, e, ee) {
         if ( panels.length ) {
           for ( var i = 0; i < panels.length; i++ ) {
@@ -4987,8 +4972,6 @@
      * @return  bool
      */
     showContextMenu : function(ev) {
-      var self = this;
-
       var t = ev.target || ev.srcElement;
 
       if ( !t || !t.id == "Desktop" ) {
@@ -5916,7 +5899,7 @@
     getSession : function() {
       var self = this;
       var items = [];
-      for ( i = 0; i < this.items.length; i++ ) {
+      for ( var i = 0; i < this.items.length; i++ ) {
         items.push(this.items[i].getSession());
       }
 
@@ -6536,7 +6519,7 @@
           });
         }
 
-        el.find(".WindowTop").bind("contextmenu",function(e) {
+        el.find(".WindowTop").bind("contextmenu",function() {
           return false;
         });
 
@@ -6656,7 +6639,7 @@
         if ( this._is_draggable ) {
           el.draggable({
             handle : ".WindowTop",
-            start : function(ev) {
+            start : function() {
 
               if ( self._is_maximized ) {
                 API.ui.cursor("not-allowed");
@@ -6667,7 +6650,7 @@
 
               return true;
             },
-            stop : function(ev) {
+            stop : function() {
 
               el.removeClass("Blend");
               API.ui.cursor("default");
@@ -6681,7 +6664,7 @@
         if ( this._is_resizable ) {
           var ropts = {
             handles : "se",
-            start : function(ev) {
+            start : function() {
               if ( self._is_maximized ) {
                 API.ui.cursor("not-allowed");
                 return false;
@@ -6690,7 +6673,7 @@
 
               return true;
             },
-            stop : function(ev) {
+            stop : function() {
               el.removeClass("Blend");
 
               self._width = parseInt(self.$element.width(), 10);
@@ -6976,7 +6959,7 @@
               self._call("resize");
             }});
 
-            this._attrs_temp === null;
+            this._attrs_temp = null;
           }
 
           this.$element.find(".ActionMaximize").parent().removeClass("Active");
@@ -7196,7 +7179,7 @@
                 ev.stopPropagation();
               });
             } else {
-              $(this).click(function(ev) {
+              $(this).click(function() {
                 var c = $(this).find(".GtkMenu:first");
                 if ( last_menu && c !== last_menu ) {
                   last_menu.hide();
@@ -7355,7 +7338,8 @@
   var Menu = Class.extend({
 
     $element : null,  //!< Menu DOM Element
-    $focuser : null,
+    $focuser : null,  //!< DEPRECATED
+    $clicked : null,  //!< Clicked elemenet
 
     /**
      * Menu::init() -- Constructor
@@ -7363,6 +7347,7 @@
      */
     init : function(clicked) {
       this.$element = null;
+      this.$clicked = clicked;
 
       console.group("Menu::init()");
       console.groupEnd();
@@ -7489,8 +7474,6 @@
      * @return DOMElement
      */
     _createMenu : function(ev, menu) {
-      var self = this;
-
       var div = $("<div class=\"GUIMenu\"></div>");
       var ul  = $("<ul class=\"GUIMenuList\"></ul>");
 
