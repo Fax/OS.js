@@ -1,32 +1,56 @@
-Requirements:
+Dependencies:
 -------------------------------------------------------------------------------
-* UNIX-like operating system
-  * VFS Support is not tested on Windows
 * Apache >= 2.0
-  * Modules: htaccess, mod_headers, mod_expires, mod_rewrite, mod_deflate, mod_php5, mod_mime
+  Modules: htaccess, mod_headers, mod_expires, mod_rewrite, mod_deflate, mod_php5, mod_mime
+
 * PHP >= 5.3
-  * Modules: apache2 bcmath calendar curl curlwrappers gd inifile mysql snmp soap sockets sqlite3 sysvipc xmlreader xmlrpc xmlwriter xsl zip pdo imap mhash postgres tidy wddx mysqli intl pcntl gettext
-  * PHP.ini settings can be found in the top of 'header.php' file if your setup does not allow runtime-changes
+  Modules: apache2 bcmath calendar curl curlwrappers gd inifile mysql snmp soap sockets sqlite3 sysvipc xmlreader xmlrpc xmlwriter xsl zip pdo imap mhash postgres tidy wddx mysqli intl pcntl gettext
+
 * MySQL >= 5.0
+  Modules. UTF-8
 
-Install Vendor Stuff:
+* 'msgfmt'
+  Included in Linux
+
+* 'exiftool'
+  Debian users: apt-get install exiftool
+  Gentoo users: emerge exiftool
+  Download: http://www.sno.phy.queensu.ca/~phil/exiftool/
+
+* 'pdf2svg'
+  Debian users: apt-get install pdf2svg
+  Gentoo users: emerge pdf2svg
+  Download: http://www.cityinthesky.co.uk/opensource/pdf2svg
+
+* 'jsl' (JSLint)
+  Debian users must do: apt-get install python{X}.{Y}-dev (python --version)
+  Download: svn co https://javascriptlint.svn.sourceforge.net/svnroot/javascriptlint/trunk jsl
+
+Deployment (Development Target):
 -------------------------------------------------------------------------------
-* Install "jsl" (JSLint) from:
-  svn co https://javascriptlint.svn.sourceforge.net/svnroot/javascriptlint/trunk jsl
-  Debian users: apt-get install python{X}.{Y}-dev (python --version)
+* Clone the project from GitHub
+* Fix permissions with './bin/fix-permissions dev'
+> See "Deployment (All Targets)"
+* Create documentation wit './bin/documentation-gen'
 
-* Clone packages into src/packages/
+Deployment (Production Target):
+-------------------------------------------------------------------------------
+* Clone the project from GitHub
+* Fix permissions with './bin/fix-permissions live'
+> See "Deployment (All Targets)"
+* Compress/Minimize all resources with './bin/minimize-all'
+
+Deployment (All Targets):
+-------------------------------------------------------------------------------
+* Compile server-side locales. wit './bin/makelocale.sh'
+* Use a vhost template in 'doc/' and implement into Apache configuration
+* Update "php.ini" for the host or enable runtime ini_set for project.
+  The settings are found in the top of 'header.php'
 * Copy a X11's icon theme 16x16 and 32x32 folders into 'public_html/img/icons/'
-* 'exiftool' is required for some API stuff
-* 'pdf2svg' is required to read PDF files
+* Clone the "OSjs-Packages" repository into 'src/packages'
+  * Compile all applications with './bin/application-gen'
+  * Install all applications globally with './bin/install-all'
 
-First run:
+Upgrading (Production Target):
 -------------------------------------------------------------------------------
-* chown the 'public_html/media' directory to Apache user/group (recursive)
-* remove all ".gitignore" files in 'public_html/media' (recursive)
-* chown the 'logs' directory to Apache user/group
-
-Update to latest revision:
--------------------------------------------------------------------------------
-Run './bin/update_revision'.
-Note: You may have to change the script and set the appropriate Apache user/group
+* Run './bin/update'

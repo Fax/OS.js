@@ -1,50 +1,12 @@
 About OS.js:
 -------------------------------------------------------------------------------
-JavaScript Desktop Environment. For more information please visit the homepage.
+JavaScript Desktop Environment.
 
-For requirements, installation etc. see the INSTALL file.
-For developer information, see the README.developer file
-For HTML version of this document, see the README.markup file.
-
-Applications etc.
--------------------------------------------------------------------------------
-All Packages come separately. See the INSTALL files on how to obtain and install
-the default set.
-
-Features and Highlights (OUTDATED):
--------------------------------------------------------------------------------
-* Follows strict coding standards, fully documented
-* Uses HTML5 and CSS2+ features (Supported features are detected on first run.)
-* Uses a light-weight PHP backend
-* Lazy-loading of resources (on-demand loading to reduce bandwidth usage upon startup)
-* Simple process managment (process stack, kill processes etc)
-* Desktop environment (Customizable settings, themes, fonts, cursors etc)
-* Window Managment (With standard window actions like maximize, minimize, restore, on-top and so on)
-* Session Managment (Save/Restore local[Storage], Create snapshots on server (for backup))
-* Locales (Manage date/time, timezones and languages).
-* Desktop Panels (movable)
-* Desktop Panel items (See list below)
-* Sandboxed Applications with API access and crash-handling
-* Uses WebStorage to store system/user/application settings and sessions (Sessions can also be saved on server (including snapshots))
-* TCP/IP Socket connections via WebSocket wrapper (hybi-00 and hybi-10)
-* Application Compiler (Compiles Application+Glade-XML into JavaScript, CSS and PHP code, also minifies the code)
-* VFS - Virtual Filesystem support (Block devices, Network connections, Compressed files etc. File-Alteration monitoring)
-* Application WebWorkers for faster processing of complex data
-* Server-Side libraries: Database, JSON, IMAP/SMTP, VFS-Operations, Misc helper functions/classes
-* Common interactive dialogs:
-  * Dialog: Font and Color Picker
-  * Dialog: File Open, Save, Copy, Upload (HTML5)
-  * Dialog: Lauch Application
-  * Dialog: Modify Panel/PanelItem
-  * Dialog: Confirm, Input and Message Boxes
-
-Translations:
-* US English (en_US)
-* Norwegian Bokmål (nb_NO)
-
-Compability:
--------------------------------------------------------------------------------
-You can find this list on the official homepage.
+You can find more information on these pages:
+* Homepage    http://home.osjs.0o.no/
+* Google+     https://plus.google.com/b/113399210633478618934/113399210633478618934/posts
+* Facebook    https://www.facebook.com/pages/OSjs/226644300734574
+* Wordpress   http://anderse.wordpress.com/os-js/
 
 Vendor libraries used:
 -------------------------------------------------------------------------------
@@ -53,11 +15,3 @@ Vendor libraries used:
 * Sprintf by Alexandru Marasteanu
 * Yahoo YUI Compressor
 
-Links:
--------------------------------------------------------------------------------
-Homepage: http://home.OSjs.0o.no
-Demo Site: http://OSjs.0o.no
-Project Blog: http://anderse.wordpress.com/os-js/
-Google+ Page: https://plus.google.com/b/113399210633478618934/113399210633478618934/
-Facebook Page: https://www.facebook.com/pages/OSjs/226644300734574
-Private Blog: http://anderse.wordpress.com/
