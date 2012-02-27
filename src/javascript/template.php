@@ -88,7 +88,7 @@ if ( $locale = Core::get()->getLocale() ) {
 
 
   <!-- Vendor libraries -->
-  <link rel="stylesheet" type="text/css" href="/ui-lightness/jquery-ui-1.8.13.custom.css" />
+  <link rel="stylesheet" type="text/css" href="/vendor/ui-lightness/jquery-ui-1.8.13.custom.css" />
   <script type="text/javascript" src="/vendor/json2.js"></script>
   <script type="text/javascript" src="/vendor/sprintf-0.7-beta1.js"></script>
   <script type="text/javascript" src="/vendor/jquery-1.7.1.min.js"></script>
