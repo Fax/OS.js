@@ -1,0 +1,22 @@
+#!/bin/bash
+
+USR_SELF=`whoami`
+USR_APACHE="www-data"
+
+sudo chown -R $USR_APACHE:$USR_APACHE logs
+
+if [ "$#" -eq 0 ]
+then
+  echo "No argument given"
+else
+  if [ "$1" == "live" ]
+  then
+    echo "Setting media permissions to $USR_APACHE:$USR_APACHE"
+    sudo chown -R $USR_APACHE:$USR_APACHE public_html/media
+  else
+    echo "Setting media permissions to $USR_SELF:$USR_SELF"
+    sudo chown -R $USR_SELF:$USR_SELF public_html/media
+  fi
+fi
+
+exit 0
