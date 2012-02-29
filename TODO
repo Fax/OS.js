@@ -1,67 +1,46 @@
-CORE:
--------------------------------------------------------------------------------
 NOTES:
-  NOTE       : Check out pngcrush
-  TODO [xxx] : Cacheable ajax within lets say 1 sec
-  TODO [xxx] : Automatic installer for vendor libraries + install for OS.js
-  TODO [???] : Somehow re-loading desktop.grid fixes the arv overwrites
-  TODO [???] : Satify more YSlow results
-               * Expiration dates on production
-               * ETags for production
-               * Cookie free domains ?!
-
-0.6:
-  TODO [HIG] : Add a licence-key on init, and check then refuse if invalid domain
-
-  TODO [HIG] : Move package resources (img/app.xxx etc) to the actual package and make proxy
-  TODO [HIG] : _doShutdown was missing $result !??!?!!?
-  TODO [HIG] : Touch file in /System fails with WARNING
-  TODO [HIG] : /VFS/, /VFS/User etc. for VFS :D
-  TODO [HIG] : On compability dialog add depend() and warn() types
-               Also use the Browser class to determine support!
-  TODO [HIG] : Finish up Package Meta for loading from user
-  TODO [HIG] : On doPOST check last_session_id against session_id() and "crash" frontend
-  TODO [HIG] : When user clear browser cache, user looses login, check it out!
-  TODO [HIG] : Add/Remove Panel
-  TODO [HIG] : Custom Exception class
-
-  TODO [MED] : Implement MenuNew in GtkMenu
-
-  TODO [LOW] : Maxmimum call-stack size exceed exceptions does not include trace [JS]
-  TODO [LOW] : Hove Template HTML for dialogs into dialog.js
-  TODO [LOW] : VFS - Overwriting, fix parameters etc.
-  TODO [LOW] : Clean up CSS
-  TODO [LOW] : Remove the global resize event and make a poll ?!
-               This would increase the performance of panel redraws etc.
-
-0.7:
-  TODO [MED] : Rewrite Glade builder class
-  TODO [LOW] : Write custom GtkTab class
-  TODO [LOW] : Write custom GtkLoadingBar class
-  TODO [---] : Write custom $
-
-1.0:
-  Actual streaming of applications ?! like VNC
-
-APPLICATIONS ETC:
 -------------------------------------------------------------------------------
-* FIX: Draw on FF
-* Rewrite: SystemAbout
-* Finish: Mailing
-* Finish: Archiver
-* Finish: Writer
+Somehow re-loading desktop.grid fixes the agrv overwrites
+
+SECURITY:
+-------------------------------------------------------------------------------
+* Use session_id to crash OS.js when id has changed (changed computer, interception etc)
+  Also, make sure no more AJAX calls can be made!
+* Use a licence key of some sort to verify on server-side to handle response
+
+TODO
+-------------------------------------------------------------------------------
+[HIG]  Determine and set AJAX Cache timeout (life-time)
+[HIG]  Move package resources (img/app.xxx etc) to the actual package and make proxy
+[HIG]  _doShutdown was missing $result !??!?!!?
+[HIG]  When user clear browser cache, user looses login, check it out!
+[HIG]  Add/Remove Panel
+
+[MED]  Finish up Package Meta for loading from user
+[MED]  /VFS/, /VFS/User etc. for VFS :D
+[MED]  Implement MenuNew in GtkMenu
+
+[MED]  Rewrite Glade builder class
+
+[LOW]  Maxmimum call-stack size exceed exceptions does not include trace [JS]
+[LOW]  Hove Template HTML for dialogs into dialog.js
+[LOW]  VFS - Overwriting, fix parameters etc.
+[LOW]  Clean up CSS
+[LOW]  Remove the global resize event and make a poll ?!
+            This would increase the performance of panel redraws etc.
+
+[BIN]  Finish up the Installer
+[APP]  Drawing (FIXME: FireFox)
+[APP]  SystemAbout (TODO: Rewrite)
+[APP]  Mailing
+[APP]  Archiver
+[APP]  Writer
+
+[NUR]  Remove jQuery dependency, write custom library
+[NUR]  Remove jQuery UI dependency, write custom library
 
 SUGGESTIONS:
 -------------------------------------------------------------------------------
 * some sort of an application launcher. just an autocomplete search input somewhere in the header bar would be awesome.
 * Internet Explorer IFrame browser does not work
-
-BREAKS:
--------------------------------------------------------------------------------
-  Log output: https://pastee.org/gzkx5
-  Screenshot: http://oi39.tinypic.com/28ktues.jpg
-
-BROWSER COMPABILITY:
--------------------------------------------------------------------------------
-* Internet Explorer 9+ Table CSS
-* Opera 11+ Table CSS
+* Actual streaming of applications ?! like VNC

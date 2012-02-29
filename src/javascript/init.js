@@ -143,9 +143,9 @@
   // Browser Compability list
   OSjs.Public.CompabilityLabels = {
     "Local Storage"    : OSjs.Compability.SUPPORT_LSTORAGE,
-    "Session Storage"  : OSjs.Compability.SUPPORT_SSTORAGE,
-    "Global Storage"   : OSjs.Compability.SUPPORT_GSTORAGE,
-    "Database Storage" : OSjs.Compability.SUPPORT_DSTORAGE,
+    //"Session Storage"  : OSjs.Compability.SUPPORT_SSTORAGE,
+    //"Global Storage"   : OSjs.Compability.SUPPORT_GSTORAGE,
+    //"Database Storage" : OSjs.Compability.SUPPORT_DSTORAGE,
     "Canvas"           : OSjs.Compability.SUPPORT_CANVAS,
     "WebGL"            : OSjs.Compability.SUPPORT_WEBGL,
     "Audio"            : OSjs.Compability.SUPPORT_AUDIO,

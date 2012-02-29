@@ -310,12 +310,14 @@ class Core
           )
         ),
         "config"        => Array(
+          "sid"               => session_id(),
           "cache"             => ENABLE_CACHE,
           "system_language"   => DEFAULT_LANGUAGE,
           "browser_language"  => $browser_language,
           "init_language"     => $init_language,
           "stored_settings"   => $user->settings
-        )
+        ),
+        "user" => $user->getUserInfo()
       ));
     } else {
       $json['error'] = _("You are not logged in!");

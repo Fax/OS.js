@@ -45,7 +45,8 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
       "browser_touch" : "Your device is not fully supported due to lacking Touch support.",
       "browser_supp"  : "Your browser does not have any known problems.",
       "notes"         : "Please note that:",
-      "footnote"      : "This message will only be showed once!"
+      "footnote"      : "This message will only be showed once!",
+      "yourbrowser"   : "Your browser is"
     },
     "nb_NO" : {
       "title"         : "Nettleser støtte",
@@ -59,7 +60,8 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
       "browser_touch" : "Din enhet er ikke helt kompatibel pga bevegelses-skjerm.",
       "browser_supp"  : "Din nettleser har ingen kjente problemer.",
       "notes"         : "Bemerk at:",
-      "footnote"      : "Denne meldingen vises kun én gang!"
+      "footnote"      : "Denne meldingen vises kun én gang!",
+      "yourbrowser"   : "Din nettleser er"
     }
   };
 
@@ -94,7 +96,7 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
         }
 
         this._super("Crash", false);
-        this._content = "<div style=\"padding:10px;\"><div><b>Your browser is: <span style=\"color:" + color + ";\">" + supported + "</span></b></div> <table class=\"outer\"><tr><td class=\"content\"><table class=\"chart\"></table></td><td class=\"space\">&nbsp;</td><td class=\"content\"><div class=\"notes\"></div></td></tr></table></div>";
+        this._content = "<div style=\"padding:10px;\"><div><b>" + LABELS.yourbrowser + ": <span style=\"color:" + color + ";\">" + supported + "</span></b></div> <table class=\"outer\"><tr><td class=\"content\"><table class=\"chart\"></table></td><td class=\"space\">&nbsp;</td><td class=\"content\"><div class=\"notes\"></div></td></tr></table></div>";
         this._title = LABELS.title;
         this._icon = 'status/software-update-available.png';
         this._is_draggable = true;
@@ -107,7 +109,7 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
         this._is_orphan = false;
         this._is_ontop = true;
         this._width = 500;
-        this._height = 380;
+        this._height = 300;
         this._gravity = "center";
       },
 
@@ -117,7 +119,6 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
        * @return $
        */
       create : function(id, mcallback) {
-        var self = this;
         var el = this._super(id, mcallback);
 
         var mtable = el.find("table.outer");
