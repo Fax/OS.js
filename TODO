@@ -11,12 +11,12 @@ NOTES:
                * Cookie free domains ?!
 
 0.6:
+  TODO [HIG] : Add a licence-key on init, and check then refuse if invalid domain
+
   TODO [HIG] : Move package resources (img/app.xxx etc) to the actual package and make proxy
   TODO [HIG] : _doShutdown was missing $result !??!?!!?
   TODO [HIG] : Touch file in /System fails with WARNING
   TODO [HIG] : /VFS/, /VFS/User etc. for VFS :D
-  TODO [HIG] : Remove the global resize event and make a poll ?!
-               This would increase the performance of panel redraws etc.
   TODO [HIG] : On compability dialog add depend() and warn() types
                Also use the Browser class to determine support!
   TODO [HIG] : Finish up Package Meta for loading from user
@@ -24,17 +24,24 @@ NOTES:
   TODO [HIG] : When user clear browser cache, user looses login, check it out!
   TODO [HIG] : Add/Remove Panel
   TODO [HIG] : Custom Exception class
+
   TODO [MED] : Implement MenuNew in GtkMenu
+
   TODO [LOW] : Maxmimum call-stack size exceed exceptions does not include trace [JS]
   TODO [LOW] : Hove Template HTML for dialogs into dialog.js
   TODO [LOW] : VFS - Overwriting, fix parameters etc.
   TODO [LOW] : Clean up CSS
+  TODO [LOW] : Remove the global resize event and make a poll ?!
+               This would increase the performance of panel redraws etc.
 
 0.7:
   TODO [MED] : Rewrite Glade builder class
   TODO [LOW] : Write custom GtkTab class
   TODO [LOW] : Write custom GtkLoadingBar class
   TODO [---] : Write custom $
+
+1.0:
+  Actual streaming of applications ?! like VNC
 
 APPLICATIONS ETC:
 -------------------------------------------------------------------------------

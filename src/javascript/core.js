@@ -37,15 +37,15 @@
   /**
    * @constants CSS
    */
-  var ZINDEX_MENU         = 100000000;              //!< Default Menu z-index
-  var ZINDEX_RECT         = 100000000;              //!< Default Rect z-index
-  var ZINDEX_TOOLTIP      = 100000001;              //!< Default Tooltip z-index
-  var ZINDEX_NOTIFICATION = 100000002;              //!< Default Notification z-index
-  var ZINDEX_PANEL        = 1000000;                //!< Default Panel z-index
+  //var ZINDEX_MENU         = 100000000;              //!< Default Menu z-index
+  //var ZINDEX_RECT         = 100000000;              //!< Default Rect z-index
+  //var ZINDEX_TOOLTIP      = 100000001;              //!< Default Tooltip z-index
+  //var ZINDEX_NOTIFICATION = 100000002;              //!< Default Notification z-index
+  //var ZINDEX_PANEL        = 1000000;                //!< Default Panel z-index
   var ZINDEX_WINDOW       = 10;                     //!< Default Window z-index
-  var ZINDEX_WINDOW_MAX   = 88888889;               //!< Max Window z-index
+  //var ZINDEX_WINDOW_MAX   = 88888889;               //!< Max Window z-index
   var ZINDEX_WINDOW_ONTOP = 90000000;               //!< Window cur ontop z-index
-  var ZINDEX_LOADING      = 1000100;                //!< Loadingbar z-index
+  //var ZINDEX_LOADING      = 1000100;                //!< Loadingbar z-index
   // @endconstants
 
   /**
@@ -2412,6 +2412,12 @@
       if ( _Settings._get("user.first-run") === "true" ) {
         LaunchString("API::CompabilityDialog");
         _Settings._set("user.first-run", "false");
+
+        setTimeout(function() {
+          var _l = OSjs.Labels.FirstRun;
+          var _i = sprintf(ICON_URI_32, "emotes/face-smile-big.png");
+          API.system.notification(_l.title, _l.message, _i);
+        }, 500);
       }
 
       setTimeout(function() {
@@ -2528,7 +2534,7 @@
         if ( this.online ) {
           this.online = false;
 
-          API.system.notification("Warning", OSjs.Labels.WentOffline);
+          API.system.notification("Warning", OSjs.Labels.WentOffline); // FIXME: Language title
 
           console.log("Core::global_offline()", this.online);
         }
@@ -2536,7 +2542,7 @@
         if ( !this.online ) {
           this.online = true;
 
-          API.system.notification("Information", OSjs.Labels.WentOnline);
+          API.system.notification("Information", OSjs.Labels.WentOnline); // FIXME: Language title
 
           console.log("Core::global_offline()", this.online);
         }
@@ -2765,6 +2771,14 @@
           API.system.launch(s.name, s.argv, s.windows);
         }
       }
+
+      if ( i ) {
+        setTimeout(function() {
+          var _l = OSjs.Labels.SessionRestore;
+          var _i = sprintf(ICON_URI_32, "status/appointment-soon.png");
+          API.system.notification(_l.title, _l.message, _i);
+        }, 500);
+      }
     }
 
   }); // @endclass
@@ -2790,6 +2804,8 @@
      * @constructor
      */
     init : function(preload) {
+      var self = this;
+
       preload = preload || {images : []};
 
       console.group("ResourceManager::init()");
@@ -2801,7 +2817,9 @@
 
       this._super("(ResourceManager)", "apps/system-software-install.png", true);
 
-      this._preload(preload);
+      setTimeout(function() {
+        self._preload(preload);
+      }, 0);
     },
 
 
