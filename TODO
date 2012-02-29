@@ -3,6 +3,7 @@ CORE TODO:
 [HIG]  Determine and set AJAX Cache timeout (life-time)
 [HIG]  _doShutdown was missing $result !??!?!!?
 [HIG]  When user clear browser cache, user looses login, check it out!
+[HIG]  Restoring windows overflow when window height is low (crashes with panel)
 
 [MED]  Persistent connection alternative in settings (automatic store session on close)
 [MED]  Finish up Package Meta for loading from user

@@ -260,9 +260,6 @@ EOCSS;
       $type = "stylesheet";
     } else {
       $compress = false;
-      if ( preg_match() ) {
-        $file = substr($file, 1, strlen($file));
-      }
     }
 
     $rpath = null;
