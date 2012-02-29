@@ -1,28 +1,17 @@
-NOTES:
--------------------------------------------------------------------------------
-Somehow re-loading desktop.grid fixes the agrv overwrites
-
-SECURITY:
--------------------------------------------------------------------------------
-* Use session_id to crash OS.js when id has changed (changed computer, interception etc)
-  Also, make sure no more AJAX calls can be made!
-* Use a licence key of some sort to verify on server-side to handle response
-
-TODO
+CORE TODO:
 -------------------------------------------------------------------------------
 [HIG]  Determine and set AJAX Cache timeout (life-time)
 [HIG]  _doShutdown was missing $result !??!?!!?
 [HIG]  When user clear browser cache, user looses login, check it out!
-[HIG]  Add/Remove Panel
 
+[MED]  Persistent connection alternative in settings (automatic store session on close)
 [MED]  Finish up Package Meta for loading from user
 [MED]  /VFS/, /VFS/User etc. for VFS :D
-[MED]  Implement MenuNew in GtkMenu
 [MED]  ALWAYS relative icons ?!
 
-[MED]  Rewrite Glade builder class
-
-[LOW]  Maxmimum call-stack size exceed exceptions does not include trace [JS]
+[LOW]  Rewrite Glade builder class
+[LOW]  Implement MenuNew in GtkMenu
+[LOW]  Add/Remove Panel
 [LOW]  Hove Template HTML for dialogs into dialog.js
 [LOW]  VFS - Overwriting, fix parameters etc.
 [LOW]  Clean up CSS
@@ -30,6 +19,12 @@ TODO
             This would increase the performance of panel redraws etc.
 
 [BIN]  Finish up the Installer
+
+[NUR]  Remove jQuery dependency, write custom library
+[NUR]  Remove jQuery UI dependency, write custom library
+
+APP TODO:
+-------------------------------------------------------------------------------
 [APP]  Drawing (FIXME: FireFox)
 [APP]  Drawing (FIXME: Application::_getResourceURL)
 [APP]  SystemAbout (TODO: Rewrite)
@@ -37,11 +32,18 @@ TODO
 [APP]  Archiver
 [APP]  Writer
 
-[NUR]  Remove jQuery dependency, write custom library
-[NUR]  Remove jQuery UI dependency, write custom library
+BUGS:
+-------------------------------------------------------------------------------
+* Maxmimum call-stack size exceed exceptions does not include trace [JS]
+* Somehow re-loading desktop.grid fixes the agrv overwrites
+
+SECURITY:
+-------------------------------------------------------------------------------
+* Use session_id to crash OS.js when id has changed (changed computer, interception etc)
+  Also, make sure no more AJAX calls can be made!
+* Use a licence key of some sort to verify on server-side to handle response
 
 SUGGESTIONS:
 -------------------------------------------------------------------------------
 * some sort of an application launcher. just an autocomplete search input somewhere in the header bar would be awesome.
-* Internet Explorer IFrame browser does not work
 * Actual streaming of applications ?! like VNC
