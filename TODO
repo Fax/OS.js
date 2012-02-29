@@ -27,7 +27,7 @@ CORE TODO:
 APP TODO:
 -------------------------------------------------------------------------------
 [APP]  Drawing (FIXME: FireFox)
-[APP]  Drawing (FIXME: Application::_getResourceURL)
+[APP]  Drawing (REFACTOR: Application::_getResourceURL)
 [APP]  SystemAbout (TODO: Rewrite)
 [APP]  Mailing
 [APP]  Archiver

@@ -247,8 +247,8 @@ EOCSS;
   public static function getResource($file, $package, $compress, $raw = false) {
     $content = "";
 
-    $file     = preg_replace("/\.+/", ".", preg_replace("/[^a-zA-Z0-9\.]/", "", $file));
-    $package  = $package ? preg_replace("/[^a-zA-Z0-9]/", "", $package) : null;
+    $file     = preg_replace("/\.+/", ".", preg_replace("/[^a-zA-Z0-9\.\-\_]/", "", $file));
+    $package  = $package ? preg_replace("/[^a-zA-Z0-9\-\_]/", "", $package) : null;
     $type     = null;
     $path     = null;
     $mime     = "text/plain";
@@ -270,7 +270,6 @@ EOCSS;
       $rpath  = $compress ? RESOURCE_CORE_MIN : RESOURCE_CORE;
       $path   = sprintf($rpath, $file);
     }
-
 
     if ( $rpath && $path && file_exists($path) ) {
       if ( in_array($type, Array("javascript", "stylesheet")) ) {
