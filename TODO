@@ -12,7 +12,6 @@ TODO
 -------------------------------------------------------------------------------
 [HIG]  Move package resources (img/app.xxx etc) to the actual package and make proxy
 
-[HIG]  Constants for file-getting in _min for ResourceManager (like Package resource getting)
 [HIG]  Determine and set AJAX Cache timeout (life-time)
 [HIG]  _doShutdown was missing $result !??!?!!?
 [HIG]  When user clear browser cache, user looses login, check it out!

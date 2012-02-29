@@ -43,6 +43,19 @@ abstract class ResourceManager
 {
 
   /**
+   * @var Preloads
+   */
+  public static $Preload = Array(
+    "images" => Array(
+      "categories/applications-development.png", "categories/applications-games.png", "categories/applications-graphics.png", "categories/applications-office.png", "categories/applications-internet.png", "categories/applications-multimedia.png", "categories/applications-system.png", "categories/applications-utilities.png", "categories/gnome-other.png",
+      "actions/window_fullscreen.png", "actions/zoom-original.png", "actions/window_nofullscreen.png", "actions/window-close.png",
+      "actions/gtk-execute.png", "mimetypes/exec.png", "devices/network-wireless.png", "status/computer-fail.png","apps/system-software-install.png", "apps/system-software-update.png", "apps/xfwm4.png", "places/desktop.png",
+      "status/gtk-dialog-error.png", "status/gtk-dialog-info.png", "status/gtk-dialog-question.png", "status/gtk-dialog-warning.png",
+      "status/error.png", "emblems/emblem-unreadable.png"
+    )
+  );
+
+  /**
    * Minimize a File
    * @param  String   $base       Base absolute directory
    * @param  String   $filename   The file in directory to compress
@@ -110,14 +123,15 @@ abstract class ResourceManager
    */
   public static function getCursor($theme, $compress) {
     $theme = preg_replace("/[^a-zA-Z0-9]/", "", $theme);
-    $path = sprintf("%s/%scursor.%s.css", PATH_JSBASE, ($compress ? "_min/" : ""), $theme);
-    if ( file_exists($path) ) {
+    $theme = sprintf("cursor.%s.css", $theme);
+    $rpath = $compress ? RESOURCE_THEME_MIN : RESOURCE_THEME;
+
+    if ( file_exists(( $path = sprintf($rpath, $theme) )) ) {
       if ( !($content = file_get_contents($path)) ) {
-        $content = "/* FAILED TO GET CONTENTS */";
+        $content = "/* ERROR 204 */";
       }
       return $content;
     }
-    return false;
   }
 
   /**
@@ -128,14 +142,15 @@ abstract class ResourceManager
    */
   public static function getTheme($theme, $compress) {
     $theme = preg_replace("/[^a-zA-Z0-9]/", "", $theme);
-    $path = sprintf("%s/%stheme.%s.css", PATH_JSBASE, ($compress ? "_min/" : ""), $theme);
-    if ( file_exists($path) ) {
+    $theme = sprintf("theme.%s.css", $theme);
+    $rpath = $compress ? RESOURCE_THEME_MIN : RESOURCE_THEME;
+
+    if ( file_exists(( $path = sprintf($rpath, $theme) )) ) {
       if ( !($content = file_get_contents($path)) ) {
-        $content = "/* FAILED TO GET CONTENTS */";
+        $content = "/* ERROR 204 */";
       }
       return $content;
     }
-    return false;
   }
 
   /**
@@ -208,22 +223,13 @@ EOCSS;
    * @return  String
    */
   public static function getTranslation($locale, $compress) {
-    $res = preg_replace("/[^a-zA-Z0-9_]/", "", $locale);
-    if ( $compress ) {
-      $filename = sprintf("%s/_min/%s.js", PATH_JSLOCALE, $res);
-    } else {
-      $filename = sprintf("%s/%s.js", PATH_JSLOCALE, $res);
-    }
+    $locale = preg_replace("/[^a-zA-Z0-9_]/", "", $locale);
+    $rpath  = $compress ? RESOURCE_LOCALE_MIN : RESOURCE_LOCALE;
 
-    if ( file_exists($filename) ) {
-      return file_get_contents($filename);
+    if ( file_exists(( $path = sprintf($rpath, $locale) )) ) {
+      return file_get_contents($path);
     } else {
-      if ( $compress ) {
-        $filename = sprintf("%s/_min/%s.js", PATH_JSLOCALE, DEFAULT_LANGUAGE);
-      } else {
-        $filename = sprintf("%s/%s.js", PATH_JSLOCALE, DEFAULT_LANGUAGE);
-      }
-      return file_get_contents($filename);
+      return file_get_contents(sprintf($rpath, DEFAULT_LANGUAGE));
     }
 
     return false;
@@ -236,7 +242,7 @@ EOCSS;
    * @param  bool     $compress     Enable Compression
    * @return Mixed
    */
-  public static function getFile($file, $package, $compress) {
+  public static function getResource($file, $package, $compress) {
     $content = "";
 
     $file     = preg_replace("/\.+/", ".", preg_replace("/[^a-zA-Z0-9\.]/", "", $file));

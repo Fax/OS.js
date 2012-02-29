@@ -74,7 +74,7 @@ if ( isset($_GET['cursor']) && !empty($_GET['cursor']) ) {
 
 if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
   $pkg  = isset($_GET['package']) ? $_GET['package'] : null;
-  if ( ($file = ResourceManager::getFile($_GET['resource'], $pkg, ENV_PRODUCTION)) === false ) {
+  if ( ($file = ResourceManager::getResource($_GET['resource'], $pkg, ENV_PRODUCTION)) === false ) {
     header("HTTP/1.0 404 Not Found");
     exit;
   }

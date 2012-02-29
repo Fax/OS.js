@@ -292,13 +292,6 @@ class Core
         }
       }
 
-      $preload_images = Array(
-        "categories/applications-development.png", "categories/applications-games.png", "categories/applications-graphics.png", "categories/applications-office.png", "categories/applications-internet.png", "categories/applications-multimedia.png", "categories/applications-system.png", "categories/applications-utilities.png", "categories/gnome-other.png",
-        "actions/window_fullscreen.png", "actions/zoom-original.png", "actions/window_nofullscreen.png", "actions/window-close.png",
-        "actions/gtk-execute.png", "mimetypes/exec.png", "devices/network-wireless.png", "status/computer-fail.png","apps/system-software-install.png", "apps/system-software-update.png", "apps/xfwm4.png", "places/desktop.png",
-        "status/gtk-dialog-error.png", "status/gtk-dialog-info.png", "status/gtk-dialog-question.png", "status/gtk-dialog-warning.png",
-        "status/error.png", "emblems/emblem-unreadable.png"
-      );
 
       $json = Array("success" => true, "error" => null, "result" => Array(
         "settings"      => User::getDefaultSettings($installed_packages),
@@ -306,7 +299,7 @@ class Core
           "resources"         => $resources,
           "packages"          => $installed_packages,
           "preload"           => Array(
-            "images" => $preload_images
+            "images" => ResourceManager::$Preload["images"]
           )
         ),
         "config"        => Array(
