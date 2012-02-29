@@ -231,37 +231,59 @@ EOCSS;
 
   /**
    * Get a resource file (CSS or JS) [with compression]
-   * @param  String   $input        Filename
+   * @param  String   $file         Filename
    * @param  String   $package      Package name (If any)
    * @param  bool     $compress     Enable Compression
    * @return Mixed
    */
-  public static function getFile($input, $package, $compress) {
+  public static function getFile($file, $package, $compress) {
     $content = "";
 
-    $res   = preg_replace("/\.+/", ".", preg_replace("/[^a-zA-Z0-9\.]/", "", $input));
-    $pkg   = $package ? preg_replace("/[^a-zA-Z0-9]/", "", $package) : null;
-    $type  = preg_match("/\.js$/", $res) ? "js" : "css";
+    $file     = preg_replace("/\.+/", ".", preg_replace("/[^a-zA-Z0-9\.]/", "", $file));
+    $package  = $package ? preg_replace("/[^a-zA-Z0-9]/", "", $package) : null;
+    $type     = null;
+    $path     = null;
+    $mime     = "text/plain";
+    $content  = null;
 
-    if ( $compress ) {
-      if ( $pkg ) {
-        $path = sprintf("%s/%s/_min/%s", PATH_PACKAGES, $package, $res);
-      } else {
-        $path = sprintf("%s/_min/%s", PATH_JSBASE, $res);
-      }
+    if ( preg_match("/\.js$/", $file) ) {
+      $type = "javascript";
+    } else if ( preg_match("/\.css$/", $file) ) {
+      $type = "stylesheet";
     } else {
-      if ( $pkg ) {
-        $path = sprintf("%s/%s/%s", PATH_PACKAGES, $package, $res);
-      } else {
-        $path = sprintf("%s/%s", PATH_JSBASE, $res);
-      }
+      $compress = false;
     }
 
-    if ( file_exists($path) ) {
-      if ( !($content = file_get_contents($path)) ) {
-        $content = "/* FAILED TO GET CONTENTS */";
+    $rpath = null;
+    if ( $package ) {
+      $rpath  = $compress ? RESOURCE_PACKAGE_MIN : RESOURCE_PACKAGE;
+      $path   = sprintf($rpath, $package, $file);
+    } else {
+      $rpath  = $compress ? RESOURCE_CORE_MIN : RESOURCE_CORE;
+      $path   = sprintf($rpath, $file);
+    }
+
+
+    if ( $rpath && $path && file_exists($path) ) {
+      if ( in_array($type, Array("javascript", "stylesheet")) ) {
+        $mime = ($type == "javascript") ? "application/x-javascript" : "text/css";
+
+        if ( !($content = file_get_contents($path)) ) {
+          $content = "/* ERROR 204 */";
+        }
+      } else {
+        try {
+          if ( $m = VFS::GetMIME($path) ) {
+            $mime = $m[0];
+          }
+          $content = str_replace($rpath, "", $path);
+        } catch ( Exception $e ) {
+          $mime = "text/plain";
+          $content = "/* ERROR 500 or 204 */";
+        }
       }
-      return $content;
+
+      return Array($mime, $content);
     }
 
     return false;

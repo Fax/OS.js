@@ -96,6 +96,11 @@ define("PACKAGE_BUILD",      PATH_BUILD   . "/packages.xml");
 define("DATABASE_FILE",      PATH_BUILD   . "/database.sdb");
 define("MIME_MAGIC",         PATH_VENDOR  . "/mime.mgc");
 
+define("RESOURCE_CORE",         PATH_JSBASE . "/%s");
+define("RESOURCE_CORE_MIN",     PATH_JSBASE . "/_min/%s/");
+define("RESOURCE_PACKAGE",      PATH_PACKAGES . "/%s/%s");
+define("RESOURCE_PACKAGE_MIN",  PATH_PACKAGES . "/%s/_min/%s/");
+
 //
 // Database
 //

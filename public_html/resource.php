@@ -73,14 +73,14 @@ if ( isset($_GET['cursor']) && !empty($_GET['cursor']) ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
-  $type = preg_match("/\.js$/", $_GET['resource']) ? "js" : "css";
   $pkg  = isset($_GET['package']) ? $_GET['package'] : null;
-  if ( ($content = ResourceManager::getFile($_GET['resource'], $pkg, ENV_PRODUCTION)) === false ) {
+  if ( ($file = ResourceManager::getFile($_GET['resource'], $pkg, ENV_PRODUCTION)) === false ) {
     header("HTTP/1.0 404 Not Found");
     exit;
   }
 
-  header(sprintf("Content-Type: %s; charset=utf-8", $type == "js" ? "application/x-javascript" : "text/css"));
+  list($mime, $content) = $file;
+  header(sprintf("Content-Type: %s; charset=utf-8", $mime));
   print $content;
   exit;
 } else if ( isset($_GET['language']) ) {
