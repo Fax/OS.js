@@ -2905,7 +2905,7 @@
         return;
       }
 
-      if ( res.match(/^worker\./) ) {
+      if ( res.match(/^worker\./) || res.match(/[^(\.js|\.css)]$/) ) {
         callback(false);
         return;
       }
@@ -4197,6 +4197,14 @@
      */
     _setArgv : function(a, v) {
       this._argv[a] = v;
+    },
+
+    /**
+     * Application::_getResourceURL() -- Get Package resource URL
+     * @return void
+     */
+    _getResourceURL : function(resource) {
+      return sprintf("%s/%s/%s", RESOURCE_URI, this._name, resource);
     },
 
     /**
@@ -6827,7 +6835,8 @@
      */
     getIcon : function(size) {
       size = size || "16x16";
-      if ( this._icon.match(/^\/img/) ) {
+      //if ( this._icon.match(/^\/img/) ) {
+      if ( this._icon.match(/^\//) ) {
         return this._icon;
       }
       return sprintf(ICON_URI, size, this._icon);

@@ -224,6 +224,7 @@ EOCSS;
    */
   public static function getTranslation($locale, $compress) {
     $locale = preg_replace("/[^a-zA-Z0-9_]/", "", $locale);
+    $locale = sprintf("%s.js", $locale);
     $rpath  = $compress ? RESOURCE_LOCALE_MIN : RESOURCE_LOCALE;
 
     if ( file_exists(( $path = sprintf($rpath, $locale) )) ) {
@@ -240,9 +241,10 @@ EOCSS;
    * @param  String   $file         Filename
    * @param  String   $package      Package name (If any)
    * @param  bool     $compress     Enable Compression
+   * @param  bool     $raw          Get in RAW state
    * @return Mixed
    */
-  public static function getResource($file, $package, $compress) {
+  public static function getResource($file, $package, $compress, $raw = false) {
     $content = "";
 
     $file     = preg_replace("/\.+/", ".", preg_replace("/[^a-zA-Z0-9\.]/", "", $file));
@@ -258,6 +260,9 @@ EOCSS;
       $type = "stylesheet";
     } else {
       $compress = false;
+      if ( preg_match() ) {
+        $file = substr($file, 1, strlen($file));
+      }
     }
 
     $rpath = null;
@@ -282,10 +287,15 @@ EOCSS;
           if ( $m = VFS::GetMIME($path) ) {
             $mime = $m[0];
           }
-          $content = str_replace($rpath, "", $path);
+          if ( $raw ) {
+            $content = str_replace($rpath, "", $path);
+          } else {
+            if ( !($content = file_get_contents($path)) ) {
+              $content = "/* ERROR 500 or 204 */";
+            }
+          }
         } catch ( Exception $e ) {
           $mime = "text/plain";
-          $content = "/* ERROR 500 or 204 */";
         }
       }
 

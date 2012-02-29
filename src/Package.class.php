@@ -342,9 +342,44 @@ abstract class Package
       }
     }
 
+    // Fix relative icon
+    $picon = null;
+    foreach ( $met_xml->property as $pp ) {
+      if ( ((string)$pp['name']) == "icon" ) {
+        $tmp = (string) $pp;
+        if ( preg_match("/^\%/", $tmp) ) {
+          $picon = sprintf(URI_PACKAGE_RESOURCE, $package, preg_replace("/^\%/", "", $tmp));
+        }
+        break;
+      }
+    }
+
     $tmp = new DomDocument("1.0");
     $sxe = $tmp->importNode(dom_import_simplexml($met_xml), true);
+
+    if ( $picon ) {
+      $break = false;
+      foreach ( $sxe->childNodes as $nn ) {
+        if ( $nn->nodeType == XML_ELEMENT_NODE && $nn->nodeName == "property" ) {
+          foreach ( $nn->attributes as $p => $pp ) {
+            if ( $p == "name" && $pp->nodeValue == "icon" ) {
+              while ( $nn->hasChildNodes() ) {
+                $nn->removeChild($nn->firstChild);
+              }
+              $nn->appendChild(new DomText($picon));
+              $break = true;
+              break;
+            }
+          }
+        }
+
+        if ( $break )
+          break;
+      }
+    }
+
     $sxe = $tmp->appendChild($sxe);
+
     $node = $tmp->documentElement;
     $node->setAttribute("class", $package);
 

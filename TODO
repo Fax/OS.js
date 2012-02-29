@@ -10,8 +10,6 @@ SECURITY:
 
 TODO
 -------------------------------------------------------------------------------
-[HIG]  Move package resources (img/app.xxx etc) to the actual package and make proxy
-
 [HIG]  Determine and set AJAX Cache timeout (life-time)
 [HIG]  _doShutdown was missing $result !??!?!!?
 [HIG]  When user clear browser cache, user looses login, check it out!
@@ -20,6 +18,7 @@ TODO
 [MED]  Finish up Package Meta for loading from user
 [MED]  /VFS/, /VFS/User etc. for VFS :D
 [MED]  Implement MenuNew in GtkMenu
+[MED]  ALWAYS relative icons ?!
 
 [MED]  Rewrite Glade builder class
 
@@ -32,6 +31,7 @@ TODO
 
 [BIN]  Finish up the Installer
 [APP]  Drawing (FIXME: FireFox)
+[APP]  Drawing (FIXME: Application::_getResourceURL)
 [APP]  SystemAbout (TODO: Rewrite)
 [APP]  Mailing
 [APP]  Archiver
