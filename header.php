@@ -31,6 +31,23 @@
  * @created 2011-02-19
  */
 
+///////////////////////////////////////////////////////////////////////////////
+// CONFIGURATION - PHP [INI] SETTINGS
+///////////////////////////////////////////////////////////////////////////////
+
+ini_set("session.upload_progress.enabled",  true);
+ini_set("post_max_size",                    "256M");
+ini_set("upload_max_filesize",              "256M");
+ini_set("expose_php",                       "off");
+ini_set("display_errors",                   "off");
+//ini_set("session.upload-progress.name",     "OSjs");
+
+error_reporting(-1); // E_ALL | E_STRICT
+
+///////////////////////////////////////////////////////////////////////////////
+// CONFIGURATION - GLOBAL DEFINITIONS
+///////////////////////////////////////////////////////////////////////////////
+
 //
 // Project
 //
@@ -55,6 +72,10 @@ define("ENABLE_LOGGING",      true);
 define("ENABLE_GETTEXT",      true);
 define("GETTEXT_DOMAIN",      "messages");
 
+//
+// VFS Permissions etc.
+//
+
 define("VFS_SET_PERM",        false);
 define("VFS_USER",            "www-data"); //(PROJECT_HOST != "amitop" ? "www-data" : "apache")); // chown() user
 define("VFS_GROUP",           "www-data"); //(PROJECT_HOST != "amitop" ? "www-data" : "apache")); // chown() group
@@ -76,25 +97,24 @@ define("SERVER_NONBLOCK", false); // TODO
 // Paths
 //
 
-define("PATH",               dirname(__FILE__));
-define("PATH_DOC",           PATH . "/doc");
-define("PATH_BIN",           PATH . "/bin");
-define("PATH_SRC",           PATH . "/src");
-define("PATH_LIB",           PATH . "/lib");
-define("PATH_VENDOR",        PATH . "/vendor");
-define("PATH_HTML",          PATH . "/public_html");
-define("PATH_BUILD",         PATH . "/src/build");
-define("PATH_LOCALE",        PATH . "/src/locale");
-define("PATH_LOG",           PATH . "/logs");
-define("PATH_LOG_FILE",      PATH . "/logs/messages");
-define("PATH_PACKAGES",      PATH . "/src/packages");
-define("PATH_JSBASE",        PATH . "/src/javascript");
-define("PATH_JSLOCALE",      PATH . "/src/javascript/locale");
+define("PATH",                 dirname(__FILE__));
+define("PATH_DOC",             PATH . "/doc");
+define("PATH_BIN",             PATH . "/bin");
+define("PATH_SRC",             PATH . "/src");
+define("PATH_LIB",             PATH . "/lib");
+define("PATH_VENDOR",          PATH . "/vendor");
+define("PATH_HTML",            PATH . "/public_html");
+define("PATH_BUILD",           PATH . "/src/build");
+define("PATH_LOCALE",          PATH . "/src/locale");
+define("PATH_LOG",             PATH . "/logs");
+define("PATH_LOG_FILE",        PATH . "/logs/messages");
+define("PATH_PACKAGES",        PATH . "/src/packages");
+define("PATH_JSBASE",          PATH . "/src/javascript");
+define("PATH_JSLOCALE",        PATH . "/src/javascript/locale");
 
-define("MINIMIZE_CACHE",     PATH_BUILD   . "/minimize.cache");
-define("PACKAGE_BUILD",      PATH_BUILD   . "/packages.xml");
-define("DATABASE_FILE",      PATH_BUILD   . "/database.sdb");
-define("MIME_MAGIC",         PATH_VENDOR  . "/mime.mgc");
+//
+// Resources (Core, Package, etc.)
+//
 
 define("RESOURCE_CORE",         PATH_JSBASE . "/%s");
 define("RESOURCE_CORE_MIN",     PATH_JSBASE . "/_min/%s/");
@@ -110,6 +130,15 @@ define("RESOURCE_CURSOR_MIN",   PATH_JSBASE . "/_min/%s/");
 define("URI_API_OPERATION",     "/API/%s");
 define("URI_PACKAGE_RESOURCE",  "/VFS/resource/%s/%s");
 
+//
+// Misc. files
+//
+
+define("MINIMIZE_CACHE",       PATH_BUILD   . "/minimize.cache");
+define("PACKAGE_BUILD",        PATH_BUILD   . "/packages.xml");
+define("DATABASE_FILE",        PATH_BUILD   . "/database.sdb");
+define("MIME_MAGIC",           PATH_VENDOR  . "/mime.mgc");
+
 
 //
 // Database
@@ -120,45 +149,25 @@ define("DATABASE_HOST",     "localhost");
 define("DATABASE_USER",     "");
 define("DATABASE_PASS",     "");
 
-//
-// PHP INI
-//
-ini_set("session.upload_progress.enabled",  true);
-ini_set("post_max_size",                    "256M");
-ini_set("upload_max_filesize",              "256M");
-ini_set("expose_php",                       "off");
-ini_set("display_errors",                   "off");
-//ini_set("session.upload-progress.name",     "OSjs");
+///////////////////////////////////////////////////////////////////////////////
+// DEPENDENCIES
+///////////////////////////////////////////////////////////////////////////////
 
-//
-// Includes
-//
-
-// Internal libraries
 require "lib/Functions.php";
 require "lib/JSON.class.php";
 require "lib/Logger.class.php";
 require "lib/DB.class.php";
 require "lib/Browser.class.php";
 
-// Autoloading
+// Internal Automatic loading of source classes
 spl_autoload_register(function($cn) {
   if ( !class_exists($cn) )
     require PATH_SRC . "/{$cn}.class.php";
 });
 
-//
-// Default initialization
-//
-
-// Misc Initialization
-date_default_timezone_set(DEFAULT_TIMEZONE);
-
-DB::init();
-
-//
-// MOVE ME!
-//
+///////////////////////////////////////////////////////////////////////////////
+// LOW-LEVEL CLASSES
+///////////////////////////////////////////////////////////////////////////////
 
 abstract class CoreObject {}
 
@@ -250,5 +259,13 @@ class ExceptionPackage
     parent::__construct($message);
   }
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// MAIN
+///////////////////////////////////////////////////////////////////////////////
+
+date_default_timezone_set(DEFAULT_TIMEZONE);
+
+DB::init();
 
 ?>
