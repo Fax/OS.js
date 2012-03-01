@@ -153,8 +153,20 @@ if ( $locale = Core::get()->getLocale() ) {
   <!-- Loaded content will appear here -->
 </div>
 
-<!-- Loading -->
+<!-- Loading / Login -->
 <div id="Loading">
+  <div id="LoadingLogin">
+    <form method="post" action="javascript:void;" id="LoginForm">
+      <div class="Row">
+        <label for="LoginUsername">Username</label>
+        <input type="text" id="LoginUsername" value="" name="username" />
+      </div>
+      <div class="Row">
+        <label for="LoginPassword">Password</label>
+        <input type="password" id="LoginPassword" value="" name="password" />
+      </div>
+    </form>
+  </div>
   <div id="LoadingVersion"><?php print PROJECT_VERSION; ?></div>
   <div id="LoadingBarContainer">
     <div id="LoadingBar"></div>
@@ -162,23 +174,6 @@ if ( $locale = Core::get()->getLocale() ) {
 </div>
 
 <!-- Templates -->
-<div id="LoginWindow" class="Window" style="display:none">
-  <div id="LoginWindowStatus">Automatic login in <span>x</span> second(s)</div>
-
-  <form method="post" action="javascript:void;" id="LoginForm">
-    <div class="Row">
-      <label for="LoginUsername">Username</label>
-      <input type="text" id="LoginUsername" value="" name="username" />
-    </div>
-    <div class="Row">
-      <label for="LoginPassword">Password</label>
-      <input type="password" id="LoginPassword" value="" name="password" />
-    </div>
-    <div class="Buttons">
-      <input type="submit" value="Log in" id="LoginButton" />
-    </div>
-  </form>
-</div>
 
 <div id="Window" style="display:none">
   <div class="Window">

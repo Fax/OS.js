@@ -122,7 +122,6 @@ input.Disabled {
   margin : 0;
   padding : 0;
 }
-
 #LoadingBar {
   height : 22px;
   border : 0 none;
@@ -131,6 +130,38 @@ input.Disabled {
   height : 22px;
   border : 0 none;
 }
+#LoadingLogin {
+  width : 408px;
+  height : 97px;
+  position : absolute;
+  top : 288px;
+  left : 25px;
+}
+  #LoadingLogin .Row {
+    margin-bottom : 10px;
+  }
+  #LoadingLogin .Row input,
+  #LoadingLogin .Row label {
+    width : 406px; /* - border */
+    margin : 0;
+    padding : 0;
+    border : 0 none;
+    margin-bottom : 10px;
+  }
+  #LoadingLogin .Row input {
+    display : block;
+    color : #e6e6e6;
+    border : 1px solid #ccc;
+  }
+  #LoadingLogin .Row input:active {
+    color : #aaa;
+  }
+  #LoadingLogin .Row label {
+    display : block;
+    font-weight : bold;
+  }
+  #LoadingLogin .Row {
+  }
 /*
 #Loading .ui-progressbar-value {
 }
@@ -599,42 +630,6 @@ input.Disabled {
   z-index : 100000000;
   padding : 0;
 
-}
-
-#LoginWindow {
-  width : 300px;
-  height : 140px;
-  position : absolute;
-  top : 50%;
-  left : 50%;
-  margin-left : -150px;
-  margin-top : -70px;
-}
-#LoginWindow form {
-  margin : 10px;
-}
-#LoginWindow .Row {
-  clear : both;
-  margin-bottom : 10px;
-}
-#LoginWindow .Row label {
-  width : 300px;
-  display : block;
-}
-#LoginWindow .Row input {
-  display : block;
-  width : 275px;
-}
-#LoginWindow .Buttons {
-  clear : both;
-  text-align : center;
-}
-#LoginWindowStatus {
-  position : absolute;
-  top : 5px;
-  right : 5px;
-  font-size : 80%;
-  color : #888;
 }
 
 /*

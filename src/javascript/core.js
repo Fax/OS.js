@@ -202,6 +202,45 @@
 
   } // @endfunction
 
+
+  /**
+   * DoLogin() -- Perform login
+   * @param  String     username      Username
+   * @param  String     password      Password
+   * @param  Function   callback      Calback function after ajax
+   * @return void
+   * @function
+   */
+  function DoLogin(username, password, callback) {
+    $("#LoginUsername").val(username);
+    $("#LoginPassword").val(password);
+
+    var form = {
+      "username" : username,
+      "password" : password
+    };
+
+    console.group("DoLogin()");
+    console.log("Login data:", form);
+    console.groupEnd();
+
+    DoPost({'action' : 'login', 'form' : form}, function(data) {
+      console.log("Login success:", data.success);
+      console.log("Login result:", data.result);
+      console.groupEnd();
+
+      if ( data.success ) {
+        $("#LoginForm").get(0).onsubmit = null;
+      }
+
+      callback(data.success, false);
+    }, function() {
+      calback(false, true);
+    });
+
+
+  } // @endfunction
+
   /**
    * GetLocale() -- Get user locale
    * @return Object
@@ -2070,65 +2109,21 @@
 
       console.group("Core::init()");
 
-      // Login window handling
-      var subbed = false;
-      var interval = null;
-
-      var _do_login = function(username, password) {
-        self.login(username, password, function(success) {
-          if ( success ) {
-            subbed = true;
-
-            $("#LoginForm").get(0).onsubmit = null;
-            $("#LoginWindow").hide().remove();
-
-            if ( interval ) {
-              clearInterval(interval);
-              interval = null;
-            }
-
-            self.run();
-          }
-        });
-      };
-
-
-      if ( ENABLE_LOGIN ) {
-        //var lw = $("#LoginWindow").show();
-        var lf = $("#LoginForm");
-        //var lb = $("#LoginButton").focus();
-        var un = $("#LoginUsername").val(DEFAULT_USERNAME);
-        var up = $("#LoginPassword").val(DEFAULT_PASSWORD);
-        var ls = $("#LoginWindowStatus span").html(DEFAULT_LOGIN_TIMEOUT);
-
-        var count = parseInt(ls.html(), 10);
-
-        interval = setInterval(function() {
-          count--;
-
-          ls.html(count);
-
-          if ( !count ) {
-            clearInterval(interval);
-            interval = null;
-
-            lf.submit();
-          }
-
-        }, 1000);
-
-        lf.get(0).onsubmit = function() {
-          if ( !subbed ) {
-            _do_login(un.val(), up.val());
-          }
-          return false;
-        };
-      } else {
-        _do_login(DEFAULT_USERNAME, DEFAULT_PASSWORD);
-      }
-
+      $("#Loading").show();
 
       console.groupEnd();
+
+      // Login window handling
+      DoLogin(DEFAULT_USERNAME, DEFAULT_PASSWORD, function(success, server_error) {
+        if ( success && !server_error ) {
+          setTimeout(function() {
+            self.run();
+          }, 100);
+        } /* else {
+          TODO
+        }*/
+      });
+
     },
 
     /**
@@ -2230,29 +2225,6 @@
     },
 
     /**
-     * Core::login() -- Login function
-     * @param  Function   callback    Callback function
-     * @return void
-     */
-    login : function(username, password, callback) {
-      var form = {
-        "username" : username,
-        "password" : password
-      };
-
-      console.group("Core::login()");
-      console.log("Login data:", form);
-
-      DoPost({'action' : 'login', 'form' : form}, function(data) {
-        console.log("Login success:", data.success);
-        console.log("Login result:", data.result);
-        console.groupEnd();
-
-        callback(data.success);
-      });
-    },
-
-    /**
      * Core::shutdown() -- Main shutdown procedure
      * @param bool  save    Save session ?
      * @return void
@@ -2295,7 +2267,6 @@
       }
 
       console.group("Core::run()");
-      $("#Loading").show();
 
       // Load initial data
       var date    = (new Date()).toLocaleString();
