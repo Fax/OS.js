@@ -1,7 +1,6 @@
 CORE TODO:
 -------------------------------------------------------------------------------
 [HIG]  Solve flickering when adding CSS
-[HIG]  Create some sort of BackgroundService :-)
 [HIG]  Handle PHPSESSID loss more violently
 [HIG]  /VFS/, /VFS/User etc. for VFS :D
 [HIG]  When starting up and you have saved session, ask for a session to be loaded

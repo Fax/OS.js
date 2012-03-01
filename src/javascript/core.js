@@ -124,8 +124,9 @@
   var _TopIndex        = (ZINDEX_WINDOW + 1);             //!< OnTop z-index
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);       //!< OnTop instances index
   var _Running         = false;                           //!< Global running state
-  var _AppCache        = [];
-  var _PanelCache      = [];
+  var _AppCache        = [];                              //!< Global Application[Package] Cache
+  var _PanelCache      = [];                              //!< Global PanelItem[Package] Cache
+  var _BackgroundServiceCache = [];                       //!< Global BackgroundService[Package] Cache
   //var _DataRX          = 0;                               //!< Global Data recieve counter
   //var _DataTX          = 0;                               //!< Global Data transmit counter
   var _StartStamp      = -1;                              //!< Starting timestamp
@@ -573,6 +574,50 @@
           CrashCustom(iname, 
             sprintf(OSjs.Labels.CrashLaunchResourceMessage, errors.join("\n")),
             sprintf(OSjs.Labels.CrashLaunchResourceStack, "LaunchPanelItem", iname, eargs.join(",")) );
+
+          crashed = true;
+        }
+
+        console.groupEnd();
+
+        callback(crashed, error_msg);
+      });
+    }
+  } // @endfunction
+
+  /**
+   * LaunchBackgroundService() -- BackgroundService Launch handler
+   * @param   int       i             Item index
+   * @param   String    iname         Item name
+   * @param   Mixed     iargs         Item argument(s)
+   * @param   Function  callback      Callback function (Default = undefined)
+   * @return  void
+   * @function
+   */
+  function LaunchBackgroundService(i, iname, iargs, callback) {
+    callback = callback || function() {};
+
+    if ( InitLaunch(iname) && _BackgroundServiceCache[iname] ) {
+      var resources = _BackgroundServiceCache[iname].resources;
+      _Resources.addResources(resources, iname, function(error) {
+
+        console.group(">>> Initing loading of '" + iname + "' <<<");
+
+        var crashed = false;
+        var error_msg = null;
+
+        if ( !error && OSjs.Services[iname] ) {
+          var item = new OSjs.Services[iname](BackgroundService, API, iargs);
+        } else {
+          var errors = [];
+          var eargs = iargs;
+          for ( var x in resources ) {
+            errors.push("* " + resources[x]);
+          }
+
+          CrashCustom(iname,
+            sprintf(OSjs.Labels.CrashLaunchResourceMessage, errors.join("\n")),
+            sprintf(OSjs.Labels.CrashLaunchResourceStack, "LaunchBackgroundService", iname, eargs.join(",")) );
 
           crashed = true;
         }
@@ -1469,12 +1514,13 @@
           });
         },
 
-        'packages' : function(icons, apps, pitems) {
+        'packages' : function(icons, apps, pitems, sitems) {
           var activated = _Settings._get("user.installed.packages", false, true); // FIXME
           var result = [];
 
           apps = (apps === undefined) ? true : apps;
           pitems = (pitems === undefined) ? true : pitems;
+          sitems = (sitems === undefined) ? true : sitems;
 
           var ia, ip, iter;
           if ( apps ) {
@@ -1506,6 +1552,22 @@
                   type    : 'PanelItem',
                   locked  : true,
                   icon    : sprintf(ICON_URI_32, _PanelCache[ip].icon)
+                });
+              }
+            }
+          }
+
+          if ( sitems ) {
+            for ( ip in _BackgroundServiceCache ) {
+              if ( _BackgroundServiceCache.hasOwnProperty(ip) ) {
+                iter = _BackgroundServiceCache[ip];
+                result.push({
+                  name    : ip,
+                  label   : iter.title,
+                  active  : in_array(ip, activated),
+                  type    : 'BackgroundService',
+                  locked  : true,
+                  icon    : sprintf(ICON_URI_32, _BackgroundServiceCache[ip].icon)
                 });
               }
             }
@@ -3389,8 +3451,9 @@
 
       var _update = function(d) {
         if ( (d instanceof Object) && d.packages ) {
-          _PanelCache = d.packages.PanelItem || [];
-          _AppCache   = d.packages.Application || [];
+          _PanelCache             = d.packages.PanelItem || [];
+          _AppCache               = d.packages.Application || [];
+          _BackgroundServiceCache = d.packages.BackgroundService || [];
         }
       };
 
@@ -3584,6 +3647,45 @@
       return {
         'localStorage' : ls
       };
+    }
+
+  }); // @endclass
+
+  /////////////////////////////////////////////////////////////////////////////
+  // BACKGROUNDSERVICE
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * BackgroundService -- The Panel Item Class
+   * Basis for a PanelItem
+   *
+   * @extends Process
+   * @class
+   */
+  var BackgroundService = Process.extend({
+
+    /**
+     * BackgroundService::init() -- Constructor
+     * @constructor
+     */
+    init : function(name, icon)  {
+      this._super(name, icon);
+    },
+
+    /**
+     * BackgroundService::destroy() -- Destructor
+     * @destructor
+     */
+    destroy : function() {
+      this._super();
+    },
+
+    /**
+     * BackgroundService::run() -- Run Service
+     * @return  void
+     */
+    run : function() {
+      this._super();
     }
 
   }); // @endclass

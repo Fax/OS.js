@@ -86,8 +86,9 @@
 
     // Dynamic namespace containers
     Applications : { /* ... */ }, // @see core.js,Application.class.php - Dynamic
-    Dialogs      : { /* ... */ }, // @see core,Dialog.class.php.js - Dynamic
-    PanelItems   : { /* ... */ }, // @see core.js,Panel.class.php - Dynamic
+    Dialogs      : { /* ... */ }, // @see core,Dialog.class.php - Dynamic
+    PanelItems   : { /* ... */ }, // @see core.js,PanelItem.class.php - Dynamic
+    Services     : { /* ... */ }, // @see core,BackgroundService.class.php - Dynamic
     Classes      : { /* ... */ }  // @see classes.js
   };
 

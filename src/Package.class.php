@@ -62,6 +62,7 @@ abstract class Package
 
   protected static $_LoadedApplications = false;    //!< Loading lock
   protected static $_LoadedPanelItems   = false;    //!< Loading lock
+  protected static $_LoadedServices     = false;    //!< Loading lock
 
   /////////////////////////////////////////////////////////////////////////////
   // MAGICS
@@ -293,7 +294,19 @@ abstract class Package
     $path       = self::_GetPackagePath($user, $system);
     $class      = get_called_class();
     $base       = sprintf("%s/%s", $path, $package);
-    $nodeName   = ($class == "Application" ? "application" : "panelitem");
+
+    $nodeName = null;
+    switch ( $class ) {
+      case  "Application" :
+        $nodeName = "application";
+        break;
+      case "PanelItem" :
+        $nodeName = "panelitem";
+        break;
+      case "BackgroundService" :
+        $nodeName = "backgroundservice";
+        break;
+    }
 
     $met_xml = simplexml_load_file("{$base}/metadata.xml");
     $res_xml = simplexml_load_file($buildfile);
@@ -333,7 +346,19 @@ abstract class Package
     $path       = self::_GetPackagePath($user, $system);
     $class      = get_called_class();
     $base       = sprintf("%s/%s", $path, $package);
-    $nodeName   = ($class == "Application" ? "application" : "panelitem");
+
+    $nodeName = null;
+    switch ( $class ) {
+      case  "Application" :
+        $nodeName = "application";
+        break;
+      case "PanelItem" :
+        $nodeName = "panelitem";
+        break;
+      case "BackgroundService" :
+        $nodeName = "backgroundservice";
+        break;
+    }
 
     $met_xml = simplexml_load_file("{$base}/metadata.xml");
     $res_xml = simplexml_load_file($buildfile);
@@ -433,10 +458,9 @@ abstract class Package
         return self::$PackageRegister[$type][$name];
         break;
 
-      /*
       case self::TYPE_SERVICE :
         if ( !isset(self::$PackageRegister[$type][$name]) ) {
-          if ( $p = PanelItem::LoadPackage($name, $user, $system) ) {
+          if ( $p = BackgroundService::LoadPackage($name, $user, $system) ) {
             self::$PackageRegister[$type][$name] = $p[$name];
           } else {
             throw new Exception("Cannot Load BackgroundService '{$name}'!");
@@ -445,7 +469,6 @@ abstract class Package
 
         return self::$PackageRegister[$type][$name];
         break;
-      */
 
       default :
         throw new Exception("Cannot Load '{$name}' of type '{$type}'!");
@@ -489,20 +512,18 @@ abstract class Package
         self::$_LoadedPanelItems = true;
       }
     }
-    /*
     if ( ($type & self::TYPE_SERVICE) ) {
       $loaded = true;
-      if ( !self::$_LoadedPanelItems ) {
-        if ( $p = PanelItem::LoadPackage(null, $user, $system) ) {
+      if ( !self::$_LoadedServices ) {
+        if ( $p = BackgroundService::LoadPackage(null, $user, $system) ) {
           foreach ( $p as $k => $v ) {
             self::$PackageRegister[self::TYPE_SERVICE][$k] = $v;
           }
         }
         ksort(self::$PackageRegister[self::TYPE_SERVICE]);
-        self::$_LoadedPanelItems = true;
+        self::$_LoadedServices = true;
       }
     }
-     */
 
     if ( !$loaded ) {
       throw new Exception("Cannot LoadAll type '{$type}'");
@@ -541,12 +562,12 @@ abstract class Package
    * @return Array
    */
   public final static function GetInstalledPackages(User $user = null) {
-    Package::LoadAll(Package::TYPE_APPLICATION | Package::TYPE_PANELITEM/* | Package::TYPE_SERVICE*/, $user);
+    Package::LoadAll(Package::TYPE_APPLICATION | Package::TYPE_PANELITEM | Package::TYPE_SERVICE, $user);
 
     return Array(
       "Application"       => Package::GetPackageMeta(Package::TYPE_APPLICATION),
-      "PanelItem"         => Package::GetPackageMeta(Package::TYPE_PANELITEM)/*,
-      "BackgroundService" => Package::GetPackageMeta(Package::TYPE_SERVICE)*/
+      "PanelItem"         => Package::GetPackageMeta(Package::TYPE_PANELITEM),
+      "BackgroundService" => Package::GetPackageMeta(Package::TYPE_SERVICE)
     );
   }
 

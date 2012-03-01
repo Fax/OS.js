@@ -73,6 +73,68 @@ class       BackgroundService
    */
   public static final function LoadPackage($name = null, User $user = null, $system = true) {
     $return = Array();
+
+    if ( $xml = Package::LoadPackage(Package::TYPE_SERVICE, $user, $system) ) {
+      foreach ( $xml as $pi ) {
+        $sr_name          = (string) $pi['name'];
+        $sr_title         = BackgroundService::SERVICE_TITLE;
+        $sr_class         = (string) $pi['class'];
+        $sr_description   = BackgroundService::SERVICE_DESC;
+        $sr_descriptions  = Array();
+        $sr_icon          = BackgroundService::SERVICE_ICON;
+        $sr_class         = (string) $pi['class'];
+
+        if ( $name !== null && $name !== $sr_class ) {
+          continue;
+        }
+
+        foreach ( $pi->property as $prop ) {
+          switch ( (string) $prop['name'] ) {
+            case "title" :
+              if ( isset($prop['language']) ) {
+                $sr_titles[((string)$prop['language'])] = ((string) $prop);
+              } else {
+                $sr_title = (string) $prop;
+              }
+            break;
+            case "description" :
+              if ( isset($prop['language']) ) {
+                $sr_descriptions[((string)$prop['language'])] = ((string) $prop);
+              } else {
+                $sr_description = (string) $prop;
+              }
+            break;
+            case "icon" :
+              $sr_icon = (string) $prop;
+            break;
+          }
+        }
+
+        if ( !$sr_title && isset($sr_titles[DEFAULT_LANGUAGE]) ) {
+          $sr_title = $sr_titles[DEFAULT_LANGUAGE];
+        }
+        if ( !$sr_description && isset($sr_descriptions[DEFAULT_LANGUAGE]) ) {
+          $sr_description = $sr_descriptions[DEFAULT_LANGUAGE];
+        }
+
+        $resources = Array();
+        foreach ( $pi->resource as $res ) {
+          $resources[] = (string) $res;
+        }
+
+        $return[$sr_class] = Array(
+          "name"          => $sr_name,
+          "title"         => $sr_title,
+          "titles"        => $sr_titles,
+          "description"   => $sr_description,
+          "descriptions"  => $sr_descriptions,
+          "icon"          => $sr_icon,
+          "resources"     => $resources
+        );
+
+      }
+    }
+
     return $return;
   }
 

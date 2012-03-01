@@ -69,13 +69,31 @@ class Compiler
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Compile a Panelitem by Metadata file
+   * Compile a PanelItem by Metadata file
    * @param   String    $class_name         Class name
    * @param   String    $metadata_path      Metadata XML file path
    * @param   bool      $dry_run            Dry-run (Default = false)
    * @return Mixed
    */
   protected function compilePanelItem($class_name, $metadata_path, $dry_run = false) {
+    if ( $xml = new SimpleXmlElement(file_get_contents($metadata_path)) ) {
+      print "Compiling from '$metadata_path'\n";
+      print "\tDONE!\n";
+
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Compile a BackgroundService by Metadata file
+   * @param   String    $class_name         Class name
+   * @param   String    $metadata_path      Metadata XML file path
+   * @param   bool      $dry_run            Dry-run (Default = false)
+   * @return Mixed
+   */
+  protected function compileService($class_name, $metadata_path, $dry_run = false) {
     if ( $xml = new SimpleXmlElement(file_get_contents($metadata_path)) ) {
       print "Compiling from '$metadata_path'\n";
       print "\tDONE!\n";
@@ -287,6 +305,12 @@ class Compiler
             continue;
 
           $compiler->compilePanelItem($filename, $path, $dry_run);
+        } else if ( preg_match("/^Service(.*)$/", $filename) ) {
+          $path = "{$root}/{$filename}/metadata.xml";
+          if ( !file_exists($path) )
+            continue;
+
+          $compiler->compileService($filename, $path, $dry_run);
         }
       }
 
