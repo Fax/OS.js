@@ -1672,6 +1672,8 @@
      * @constructor
      */
     init : function(name, icon, locked) {
+      console.group("Process::init()");
+
       this._pid       = (_Processes.push(this) - 1);
       this._started   = new Date();
       this._proc_name = "(unknown)";
@@ -1687,6 +1689,8 @@
       if ( locked !== undefined ) {
         this._locked    = locked;
       }
+
+      console.groupEnd();
     },
 
     /**
@@ -1694,11 +1698,15 @@
      * @destructor
      */
     destroy : function() {
+      console.group("Process::destroy()");
+
       if ( this._pid >= 0 ) {
         _Processes[this._pid] = undefined;
       }
 
       this._started = null;
+
+      console.groupEnd();
     },
 
     /**
@@ -1707,6 +1715,8 @@
      */
     kill : function() {
       if ( !this._locked ) {
+        console.log("Process::kill()", this);
+
         this.destroy();
 
         return true;
