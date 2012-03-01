@@ -49,6 +49,13 @@ if ( !($json = $core->doGET($_GET)) === false ) {
 // POST operations
 //if ( !($json = $core->doPOST(file_get_contents('php://input'), true)) === false ) {
 if ( !($json = $core->doPOST($_POST)) === false ) {
+  // AJAX Does not cache anyway, but we do this anyway
+  $now = gmdate( 'D, d M Y H:i:s' );
+  header("Expires: Fri, 01 Jan 2010 05:00:00 GMT");
+  header("Last-Modified: $now GMT");
+  header("Cache-Control: maxage=1, no-cache, no-store, must-revalidate, post-check=0, pre-check=0");
+  header("Pragma: no-cache");
+
   header("Content-Type: application/json");
   die($json);
 }

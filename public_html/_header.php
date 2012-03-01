@@ -49,7 +49,7 @@ if ( !$use_gzip || !ob_start("ob_gzhandler") ) {
   ob_start();
 }
 
-if ( ENV_PRODUCTION || ENABLE_CACHE) {
+if ( ENV_PRODUCTION || ENABLE_CACHE ) {
   $now = gmdate( 'D, d M Y H:i:s' , (time() + (60)));
   header("Expires: $now GMT");
   header("Cache-Control: maxage=3600, public");

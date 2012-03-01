@@ -4,11 +4,10 @@ CORE TODO:
 [HIG]  /VFS/, /VFS/User etc. for VFS :D
 
 [MED]  ALWAYS relative icons ?!
-[MED]  Determine and set AJAX Cache timeout (life-time)
-[MED]  Hove Template HTML for dialogs into dialog.js
 [MED]  VFS - Overwriting, fix parameters etc.
 [MED]  Persistent connection alternative in settings (automatic store session on close)
 
+[LOW]  Hove Template HTML for dialogs into dialog.js
 [LOW]  Finish up Package Meta for loading from user
 [LOW]  Rewrite Glade builder class
 [LOW]  Implement MenuNew in GtkMenu
