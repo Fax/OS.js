@@ -581,3 +581,21 @@ function MergeRecursive(o1, o2) {
 
   return o1;
 }
+
+/**
+ * Get a cookie by name
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @return Mixed
+ */
+function GetCookie(name) {
+  var cookies = (document.cookie || "").split(";");
+  var i = 0, l = cookies.length, c;
+  for ( i; i < l; i++ ) {
+    c = cookies[i].replace(/^\s+|\s|\s$/g, "").split("=");
+    if ( (c.shift()) == name ) {
+      return c.join(" ");
+    }
+  }
+
+  return null;
+}

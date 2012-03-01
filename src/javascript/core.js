@@ -62,9 +62,10 @@
   var WARN_STORAGE_SIZE      = (1024 * 4) * 1000;   //!< Warning localStorage size
   var MAX_STORAGE_SIZE       = (1024 * 5) * 1000;   //!< Max localstorage size
   var STORAGE_SIZE_FREQ      = 1000;                //!< Storage check usage frequenzy
-  var ONLINECHK_FREQ         = 1000;                //!< On-line checking frequenzy
+  var ONLINECHK_FREQ         = 2500;                //!< On-line checking frequenzy
+  var SESSION_CHECK          = 5000;                //!< Connection by session check freq
+  var SESSION_KEY            = "PHPSESSID";         //!< The Server session cookie-key
   var TIMEOUT_CSS            = (1000 * 10);         //!< CSS loading timeout
-  var DEFAULT_UID            = 1;                   //!< Default User ID
   var DEFAULT_USERNAME       = "demo";              //!< Default User Username
   var DEFAULT_PASSWORD       = "demo";              //!< Default User Password
   var DEFAULT_LOGIN_TIMEOUT  = 5;                   //!< Default User Login Timeout (seconds)
@@ -73,7 +74,7 @@
   /**
    * @constants URIs
    */
-  var WEBSOCKET_URI    = "localhost:8888";          //!< WebSocket URI
+  var WEBSOCKET_URI    = "localhost:8888";          //!< WebSocket URI // FIXME: From server configuration
   var AJAX_URI         = "/";                       //!< AJAX URI (POST)
   var RESOURCE_URI     = "/ajax/resource/";         //!< Resource loading URI (GET)
   var THEME_URI        = "/ajax/theme/";            //!< Themes loading URI (GET)
@@ -124,9 +125,11 @@
   var _Running         = false;                           //!< Global running state
   var _AppCache        = [];
   var _PanelCache      = [];
-  var _DataRX          = 0;                               //!< Global Data recieve counter
-  var _DataTX          = 0;                               //!< Global Data transmit counter
+  //var _DataRX          = 0;                               //!< Global Data recieve counter
+  //var _DataTX          = 0;                               //!< Global Data transmit counter
   var _StartStamp      = -1;                              //!< Starting timestamp
+  var _SessionId       = "";                              //!< Server session id
+  var _SessionValid    = true;                            //!< Session is valid
 
   /**
    * Language
@@ -165,14 +168,14 @@
       }
     }
 
-    _DataTX += (JSON.stringify(ajax_args)).length;
+    //_DataTX += (JSON.stringify(ajax_args)).length;
 
     $.ajax({
       type      : "POST",
       url       : AJAX_URI,
       data      : ajax_args,
       success   : function(data) {
-        _DataRX += (JSON.stringify(data)).length;
+        //_DataRX += (JSON.stringify(data)).length;
         callback(data);
       },
       error     : function (xhr, ajaxOptions, thrownError){
@@ -1619,7 +1622,7 @@
    * @class
    */
   var ProcessService = Process.extend({
-    init : function(name, icon, locked) {
+    init : function(name, icon/*, locked*/) {
       //this._super(name, icon, locked);
       this._super(name, icon, true);
     }
@@ -2050,6 +2053,7 @@
     running : false,        //!< If core is running
     olint   : null,         //!< On-line checker interval
     cuint   : null,         //!< Cache update interval
+    sclint  : null,         //!< Cache  interval
 
     /**
      * Core::init() -- Constructor
@@ -2156,6 +2160,10 @@
         if ( this.cuint ) {
           clearInterval(this.cuint);
           this.cuint = null;
+        }
+        if ( this.sclint ) {
+          clearInterval(this.sclint);
+          this.sclint = null;
         }
       }
 
@@ -2334,7 +2342,8 @@
 
       bar.progressbar({value : 5});
 
-      // Languages
+      // Some generic globals
+      _SessionId       = data.result.config.sid;
       _BrowserLanguage = data.result.config.browser_language;
       _SystemLanguage  = data.result.config.system_language;
 
@@ -2354,6 +2363,10 @@
       this.olint = setInterval(function(ev) {
         self.global_offline(ev, !(navigator.onLine === false));
       }, ONLINECHK_FREQ);
+
+      this.sclint = setInterval(function(ev) {
+        self.global_endsession(ev, GetCookie(SESSION_KEY));
+      }, SESSION_CHECK);
 
       // Set some global variables
       if ( data.result.config ) {
@@ -2522,6 +2535,27 @@
     //
     // EVENTS
     //
+
+
+    /**
+     * Core::global_endsession() -- The Browser 'session cache clear' event handler
+     * @param   DOMEvent    ev      DOM Event
+     * @param   bool        state   If we went off-line
+     * @return  void
+     */
+    global_endsession : function(ev, sid) {
+      //console.info("Session valid", _SessionValid, "Registered", _SessionId, "Current", sid);
+      if ( _SessionValid ) {
+        if ( !sid || (_SessionId != sid) ) {
+          var ico = sprintf(ICON_URI_32, "status/network-error.png");
+          // FIXME
+          //API.system.notification("Error", OSjs.Labels.SessionFailure, ico); // FIXME: Language title
+          API.system.notification("Unexpected Error", "You have lost your server session.<br />This may cause errors, and you should restart!.", ico); // FIXME: Language title
+
+          _SessionValid = false;
+        }
+      }
+    },
 
     /**
      * Core::global_offline() -- The Browser 'offline' event handler
@@ -2910,12 +2944,12 @@
         return;
       }
 
-      var error   = false;
       var extra   = app ? (app + "/") : "";
       var type    = res.split(".");
           type    = type[type.length - 1];
 
       /* NOTE: WTF
+      var error   = false;
       var onload_event = function(el) {
         self.resources.push(_name);
         self.links.push(el);
@@ -5493,7 +5527,6 @@
 
       // Panel item dragging
       var oldPos = {'top' : 0, 'left' : 0};
-      var dragging = false;
       this.$element.draggable({
         axis : "y",
         snap : "body",
@@ -5507,7 +5540,7 @@
           self.$element.addClass("Blend");
           API.ui.cursor("move");
           oldPos = self.$element.offset();
-          dragging = true;
+          self.dragging = true;
         },
         stop : function() {
           self.$element.removeClass("Blend");
@@ -5531,7 +5564,7 @@
           if ( _Desktop ) {
             _Desktop.updatePanelPosition(self);
           }
-          dragging = false;
+          self.dragging = false;
         }
       });
 
@@ -5591,7 +5624,7 @@
               li.find(".Title").html(items[name].title);
               li.find(".Description").html(items[name].description);
 
-              (function(litem, iname, iitem) {
+              (function(litem, iname/*, iitem*/) {
                 litem.click(function() {
                   if ( current && current != this ) {
                     $(current).removeClass("Current");
@@ -6892,7 +6925,6 @@
      * @return void
      */
     _focus : function() {
-      var focused = false;
       if ( !this._current ) {
 
         if ( this._is_minimized ) {
@@ -6908,8 +6940,6 @@
         }
 
         this.$element.addClass("Current");
-
-        focused = true;
       }
 
       this._call("focus");

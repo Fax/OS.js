@@ -53,6 +53,7 @@
     "WindowManagerMissing"                : "Kan ikke utføre denne operasjonen fordi Vindus-håndteren ikke kjører.",
     "WentOffline"                         : "Du mistet tilkoblingen. Gjenoprett internett-tilkoblingen for å fortsette å bruke OS.js",
     "WentOnline"                          : "Tilkobling er gjenopprettet!",
+    "SessionFailure"                      : "Din sessjon ble avsluttet av en uventet årsak",
     "Quit"                                : "Er du sikker på at du vil avslutte? For å lagre sessjonen din må du bruke utlogging.",
     "PanelItemRemove"                     : "Er du sikker på at du vil fjerne denne?",
     "WebWorkerError"                      : "En feil skjedde under håndtering av WebWorker-skript '%s' på linje %d",

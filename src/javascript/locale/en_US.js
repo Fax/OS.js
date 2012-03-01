@@ -53,6 +53,7 @@
     "WindowManagerMissing"                : "Cannot perform this operation because the Window Manager is not running.",
     "WentOffline"                         : "Seems like you went offline. Please re-connect to continue using OS.js",
     "WentOnline"                          : "You are now back on-line!",
+    "SessionFailure"                      : "Your session has been unexpectedly ended!",
     "Quit"                                : "Are you sure you want to quit? To save your session use the Logout functionallity.",
     "PanelItemRemove"                     : "Are you sure you want to remove this item?",
     "WebWorkerError"                      : "An error occured while processing WebWorker script '%s' on line %d",
