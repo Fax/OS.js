@@ -130,6 +130,7 @@
   var _StartStamp      = -1;                              //!< Starting timestamp
   var _SessionId       = "";                              //!< Server session id
   var _SessionValid    = true;                            //!< Session is valid
+  var _SRevisionChange = false;                           //!< Settings revision update occured
 
   /**
    * Language
@@ -1279,9 +1280,9 @@
         return CreateDefaultApplicationMenu(ev, el);
       },
 
-      'notification' : function(title, message, icon) {
+      'notification' : function(title, message, icon, duration) {
         if ( _Desktop ) {
-          _Desktop.createNotification(title, message, icon);
+          _Desktop.createNotification(title, message, icon, duration);
         }
       }
 
@@ -2431,6 +2432,14 @@
           var _i = sprintf(ICON_URI_32, "emotes/face-smile-big.png");
           API.system.notification(_l.title, _l.message, _i);
         }, 500);
+      } else {
+        if ( _SRevisionChange ) {
+          setTimeout(function() {
+            var _l = OSjs.Labels.SRevisionChange;
+            var _i = sprintf(ICON_URI_32, "status/appointment-missed.png");
+            API.system.notification(_l.title, _l.message, _i, -1);
+          }, 500);
+        }
       }
 
       setTimeout(function() {
@@ -3140,6 +3149,8 @@
         updateable  = ["desktop.grid", "desktop.panels", "user.installed.packages"];
 
         localStorage.setItem("SETTING_REVISION", SETTING_REVISION);
+
+        _SRevisionChange = true;
       }
 
       // Make sure we have all external refs saved
@@ -5294,24 +5305,28 @@
      * @param   String    title     Title
      * @param   String    message   Message
      * @param   String    icon      Icon (if any)
+     * @param   int       duration  Visibility duration in ms (Default = NOTIFICATION_TIMEOUT)
      * @return  void
      */
-    createNotification : function(title, message, icon) {
+    createNotification : function(title, message, icon, duration) {
       var self = this;
 
       title     = title   || "Notification";
       message   = message || "Unknonwn notification";
       icon      = icon    || null;
 
+      duration  = parseInt(duration, 10) || NOTIFICATION_TIMEOUT;
+
       console.group("Desktop::createNotification()");
       console.log("title", title);
       console.log("message", message);
       console.log("icon", icon);
+      console.log("Duration", duration);
       console.groupEnd();
 
       // Create element
       var root = $("#DesktopNotifications");
-      var del = $(sprintf('<div class="DesktopNotification" style="display:none"><h1>%s</h1><p>%s</p></div>', title, message));
+      var del = $(sprintf('<div class="DesktopNotification" style="display:none"><h1>%s</h1><p>%s</p><div class=\"Close\">x</div></div>', title, message));
       if ( icon ) {
         del.css({
           'backgroundImage'     : sprintf("url('%s')", icon),
@@ -5321,6 +5336,7 @@
           'paddingLeft'         : "42px"
         });
       }
+
       root.append(del);
       del.fadeIn(ANIMATION_SPEED);
 
@@ -5333,16 +5349,20 @@
 
         if ( to ) {
           clearTimeout(to);
-          to = null;
         }
 
         if ( self.notifications ) {
           self.notifications--;
         }
+
+        to = null;
      };
 
       del.click(fu);
-      to = setTimeout(fu, NOTIFICATION_TIMEOUT);
+
+      if ( duration !== -1 ) {
+        to = setTimeout(fu, duration);
+      }
 
       this.notifications++;
     },

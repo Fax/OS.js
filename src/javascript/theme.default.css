@@ -268,6 +268,16 @@ textarea {
   background : #3c3c3d;
   color : #fff;
   border : 1px solid #222;
+  word-wrap: break-word;
+}
+.DesktopNotification .Close {
+  color : #ddd;
+  font-size : 12px;
+  letter-spacing : 0px;
+  line-height : 12px;
+}
+.DesktopNotification .Close:hover {
+  color : #fff;
 }
 
 .GUICheckList li.even {

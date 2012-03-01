@@ -1,6 +1,5 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG]  Notify user when SETTINGS_REVISION has been updated!
 [HIG]  Package -> Background Service :D
 [HIG]  Handle PHPSESSID loss more violently
 [HIG]  /VFS/, /VFS/User etc. for VFS :D

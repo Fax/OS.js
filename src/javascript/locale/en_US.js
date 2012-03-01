@@ -33,12 +33,16 @@
   // Labels
   OSjs.Labels = {
     "FirstRun"                            : {
-      "title"   : "Velkommen til OS.js",
-      "message" : "Dette er bare en demonstrasjons-versjon"
+      "title"   : "Welcome to OS.js",
+      "message" : "This is just a demonstration version"
+    },
+    "SRevisionChange"                     : {
+      "title"   : "User Settings notice",
+      "message" : "Because of an internal system change some of your settings may have been reset"
     },
     "SessionRestore" : {
-      "title"   : "Sessjons-endring",
-      "message" : "En tidligere sessjon har blitt lastet"
+      "title"   : "Session change",
+      "message" : "A previous session was restored"
     },
     "CannotStart"                         : "Your browser does not support WebStorage. Cannot continue...",
     "ApplicationCheckCompabilityMessage"  : "Your browser does not support '%s'",

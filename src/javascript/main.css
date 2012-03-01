@@ -673,18 +673,28 @@ input.Disabled {
   margin : 10px;
   padding : 10px;
   margin-bottom : 10px;
+  width : 250px;
+  position : relative;
 }
 
 .DesktopNotification h1 {
   font-size : 100%;
   margin : 0;
   padding : 0;
+  margin-left : 5px;
   margin-bottom : 10px;
 }
 
 .DesktopNotification p {
   margin : 0;
   padding : 0;
+  margin-left : 5px;
+}
+
+.DesktopNotification .Close {
+  position : absolute;
+  top : 5px;
+  right : 5px;
 }
 
 .OperationDialogFileProperties table {
