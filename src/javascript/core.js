@@ -51,9 +51,7 @@
   /**
    * @constants Local settings
    */
-  var ENABLE_CACHE           = false;               //!< Enabled caching
   var SETTING_REVISION       = 42;                  //!< The settings revision
-  var ENABLE_LOGIN           = false;               //!< Use login
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
   var TOOLTIP_TIMEOUT        = 300;                 //!< Tooltip timeout in ms
@@ -69,7 +67,6 @@
   var TIMEOUT_CSS            = (1000 * 10);         //!< CSS loading timeout
   var DEFAULT_USERNAME       = "demo";              //!< Default User Username
   var DEFAULT_PASSWORD       = "demo";              //!< Default User Password
-  var DEFAULT_LOGIN_TIMEOUT  = 5;                   //!< Default User Login Timeout (seconds)
   // @endconstants
 
   /**
@@ -2414,11 +2411,6 @@
       this.sclint = setInterval(function(ev) {
         self.global_endsession(ev, GetCookie(SESSION_KEY));
       }, SESSION_CHECK);
-
-      // Set some global variables
-      if ( data.result.config ) {
-        ENABLE_CACHE = data.result.config.cache;
-      }
 
       // Initialize settings
       _Settings = new SettingsManager(data.result.settings, data.result.cache, data.result.config.stored_settings);
