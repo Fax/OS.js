@@ -159,8 +159,8 @@ class User
       "Username"   => $this->username,
       "Name"       => $this->real_name,
       "Groups"     => $this->getGroups(),
-      "Registered" => ($this->created_at ? $this->created_at->format("c") : "Unknown"),
-      "Last Login" => "TODO",
+      "Registered" => ($this->created_at ? $this->created_at->format("c") : _("Unknown")),
+      "Last Login" => ($this->last_login ? $this->last_login->format("c") : _("Unknown")),
       "Browser"    => Browser::getInfo()
     );
   }
