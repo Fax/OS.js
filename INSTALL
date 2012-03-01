@@ -29,16 +29,18 @@ Dependencies:
 Deployment (Development Target):
 -------------------------------------------------------------------------------
 * Clone the project from GitHub
-* Fix permissions with './bin/fix-permissions dev'
+* Fix (temporary) permissions with './bin/fix-permissions dev'
 > See "Deployment (All Targets)"
 * Create documentation wit './bin/documentation-gen'
+* Fix permissions with './bin/fix-permissions live'
 
 Deployment (Production Target):
 -------------------------------------------------------------------------------
 * Clone the project from GitHub
-* Fix permissions with './bin/fix-permissions live'
+* Fix (temporary) permissions with './bin/fix-permissions dev'
 > See "Deployment (All Targets)"
 * Compress/Minimize all resources with './bin/minimize-all'
+* Fix permissions with './bin/fix-permissions live'
 
 Deployment (All Targets):
 -------------------------------------------------------------------------------

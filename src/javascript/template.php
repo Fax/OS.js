@@ -95,28 +95,28 @@ if ( $locale = Core::get()->getLocale() ) {
   <script type="text/javascript" src="/vendor/jquery-ui-1.8.17.custom.min.js"></script>
 
   <!-- OS.js stylesheets -->
-  <link rel="stylesheet" type="text/css" href="/ajax/resource/main.css" />
-  <link rel="stylesheet" type="text/css" href="/ajax/resource/glade.css" />
-  <link rel="stylesheet" type="text/css" href="/ajax/resource/pimp.css" />
+  <link rel="stylesheet" type="text/css" href="/VFS/resource/main.css" />
+  <link rel="stylesheet" type="text/css" href="/VFS/resource/glade.css" />
+  <link rel="stylesheet" type="text/css" href="/VFS/resource/pimp.css" />
 <!--[if lt IE 9]>
 <link rel="stylesheet" type="text/css" href="/?resource=ie.css" />
 <![endif]-->
 
   <!-- OS.js defineable -->
-  <link rel="stylesheet" type="text/css" href="/ajax/font/Sansation" id="FontFace" />
-  <link rel="stylesheet" type="text/css" href="/ajax/theme/default" id="ThemeBase" />
-  <link rel="stylesheet" type="text/css" href="/ajax/theme/dark" id="ThemeFace" />
-  <link rel="stylesheet" type="text/css" href="/ajax/cursor/default" id="CursorFace" />
+  <link rel="stylesheet" type="text/css" href="/VFS/font/Sansation" id="FontFace" />
+  <link rel="stylesheet" type="text/css" href="/VFS/theme/default" id="ThemeBase" />
+  <link rel="stylesheet" type="text/css" href="/VFS/theme/dark" id="ThemeFace" />
+  <link rel="stylesheet" type="text/css" href="/VFS/cursor/default" id="CursorFace" />
 
   <!-- OS.js libraries -->
 
   <!-- Utiltiy libraries -->
-  <script type="text/javascript" src="/ajax/resource/utils.js"></script>
-  <script type="text/javascript" src="/ajax/resource/init.js"></script>
-  <script type="text/javascript" src="/ajax/language/<?php print $current_locale; ?>" id="LanguageFile"></script>
-  <script type="text/javascript" src="/ajax/resource/classes.js"></script>
-  <script type="text/javascript" src="/ajax/resource/core.js"></script>
-  <script type="text/javascript" src="/ajax/resource/main.js"></script>
+  <script type="text/javascript" src="/VFS/resource/utils.js"></script>
+  <script type="text/javascript" src="/VFS/resource/init.js"></script>
+  <script type="text/javascript" src="/VFS/language/<?php print $current_locale; ?>" id="LanguageFile"></script>
+  <script type="text/javascript" src="/VFS/resource/classes.js"></script>
+  <script type="text/javascript" src="/VFS/resource/core.js"></script>
+  <script type="text/javascript" src="/VFS/resource/main.js"></script>
 
   <!-- Google Analytics -->
 <?php if ( ENV_PRODUCTION ) { ?>

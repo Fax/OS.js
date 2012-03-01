@@ -76,11 +76,11 @@
    */
   var WEBSOCKET_URI    = "localhost:8888";          //!< WebSocket URI // FIXME: From server configuration
   var AJAX_URI         = "/";                       //!< AJAX URI (POST)
-  var RESOURCE_URI     = "/ajax/resource/";         //!< Resource loading URI (GET)
-  var THEME_URI        = "/ajax/theme/";            //!< Themes loading URI (GET)
-  var FONT_URI         = "/ajax/font/";             //!< Font loading URI (GET)
-  var CURSOR_URI       = "/ajax/cursor/";           //!< Cursor loading URI (GET)
-  var LANGUAGE_URI     = "/ajax/language/";         //!< Language loading URI (GET)
+  var RESOURCE_URI     = "/VFS/resource/";          //!< Resource loading URI (GET)
+  var THEME_URI        = "/VFS/theme/";             //!< Themes loading URI (GET)
+  var FONT_URI         = "/VFS/font/";              //!< Font loading URI (GET)
+  var CURSOR_URI       = "/VFS/cursor/";            //!< Cursor loading URI (GET)
+  var LANGUAGE_URI     = "/VFS/language/";          //!< Language loading URI (GET)
   var UPLOAD_URI       = "/API/upload";             //!< File upload URI (POST)
   var ICON_URI         = "/img/icons/%s/%s";        //!< Icons URI (GET)
   var ICON_URI_16      = "/img/icons/16x16/%s";     //!< Icons URI 16x16 (GET)

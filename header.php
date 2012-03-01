@@ -107,7 +107,8 @@ define("RESOURCE_THEME_MIN",    PATH_JSBASE . "/_min/%s/");
 define("RESOURCE_CURSOR",       PATH_JSBASE . "/%s");
 define("RESOURCE_CURSOR_MIN",   PATH_JSBASE . "/_min/%s/");
 
-define("URI_PACKAGE_RESOURCE",  "/ajax/resource/%s/%s");
+define("URI_API_OPERATION",     "/API/%s");
+define("URI_PACKAGE_RESOURCE",  "/VFS/resource/%s/%s");
 
 
 //

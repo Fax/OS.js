@@ -1,6 +1,5 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG] /ajax/ is not a good name for fetching resources.... they are not ajax
 [HIG]  _doShutdown was missing $result !??!?!!?
 [HIG]  Restoring windows overflow when window height is low (crashes with panel)
 [HIG]  Handle PHPSESSID loss more violently
