@@ -254,7 +254,7 @@ EOCSS;
     if ( file_exists(( $path = sprintf($rpath, $locale) )) ) {
       return file_get_contents($path);
     } else {
-      return file_get_contents(sprintf($rpath, DEFAULT_LANGUAGE));
+      return file_get_contents(sprintf($rpath, DEFAULT_LANGUAGE . ".js"));
     }
 
     return false;

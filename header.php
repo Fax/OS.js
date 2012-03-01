@@ -117,15 +117,15 @@ define("PATH_JSLOCALE",        PATH . "/src/javascript/locale");
 //
 
 define("RESOURCE_CORE",         PATH_JSBASE . "/%s");
-define("RESOURCE_CORE_MIN",     PATH_JSBASE . "/_min/%s/");
+define("RESOURCE_CORE_MIN",     PATH_JSBASE . "/_min/%s");
 define("RESOURCE_PACKAGE",      PATH_PACKAGES . "/%s/%s");
-define("RESOURCE_PACKAGE_MIN",  PATH_PACKAGES . "/%s/_min/%s/");
+define("RESOURCE_PACKAGE_MIN",  PATH_PACKAGES . "/%s/_min/%s");
 define("RESOURCE_LOCALE",       PATH_JSLOCALE . "/%s");
-define("RESOURCE_LOCALE_MIN",   PATH_JSLOCALE . "/_min/%s/");
+define("RESOURCE_LOCALE_MIN",   PATH_JSLOCALE . "/_min/%s");
 define("RESOURCE_THEME",        PATH_JSBASE . "/%s");
-define("RESOURCE_THEME_MIN",    PATH_JSBASE . "/_min/%s/");
+define("RESOURCE_THEME_MIN",    PATH_JSBASE . "/_min/%s");
 define("RESOURCE_CURSOR",       PATH_JSBASE . "/%s");
-define("RESOURCE_CURSOR_MIN",   PATH_JSBASE . "/_min/%s/");
+define("RESOURCE_CURSOR_MIN",   PATH_JSBASE . "/_min/%s");
 
 define("URI_API_OPERATION",     "/API/%s");
 define("URI_PACKAGE_RESOURCE",  "/VFS/resource/%s/%s");
