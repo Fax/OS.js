@@ -27,12 +27,17 @@ CORE TODO:
 
 APP TODO:
 -------------------------------------------------------------------------------
-[APP]  Drawing (FIXME: FireFox)
-[APP]  Drawing (REFACTOR: Application::_getResourceURL)
-[APP]  SystemAbout (TODO: Rewrite)
-[APP]  Mailing
-[APP]  Archiver
-[APP]  Writer
+* Drawing
+  - Does not work in FireFox
+  - REFACTOR: Application::_getResourceURL ???
+* SystemAbout
+  - Rewrite
+* Mailing
+  - Not Finished
+* Archiver
+  - Not Finished
+* Writer
+  - Not finished
 
 BUGS:
 -------------------------------------------------------------------------------
