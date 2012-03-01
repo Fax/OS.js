@@ -43,6 +43,7 @@ abstract class Package
 {
   const TYPE_APPLICATION  = 1;
   const TYPE_PANELITEM    = 2;
+  const TYPE_SERVICE      = 3;
 
   /////////////////////////////////////////////////////////////////////////////
   // VARIABLES
@@ -55,7 +56,8 @@ abstract class Package
    */
   public static $PackageRegister = Array(
     self::TYPE_APPLICATION  => Array(),
-    self::TYPE_PANELITEM    => Array()
+    self::TYPE_PANELITEM    => Array(),
+    self::TYPE_SERVICE      => Array()
   );
 
   protected static $_LoadedApplications = false;    //!< Loading lock
@@ -431,6 +433,20 @@ abstract class Package
         return self::$PackageRegister[$type][$name];
         break;
 
+      /*
+      case self::TYPE_SERVICE :
+        if ( !isset(self::$PackageRegister[$type][$name]) ) {
+          if ( $p = PanelItem::LoadPackage($name, $user, $system) ) {
+            self::$PackageRegister[$type][$name] = $p[$name];
+          } else {
+            throw new Exception("Cannot Load BackgroundService '{$name}'!");
+          }
+        }
+
+        return self::$PackageRegister[$type][$name];
+        break;
+      */
+
       default :
         throw new Exception("Cannot Load '{$name}' of type '{$type}'!");
         break;
@@ -473,6 +489,20 @@ abstract class Package
         self::$_LoadedPanelItems = true;
       }
     }
+    /*
+    if ( ($type & self::TYPE_SERVICE) ) {
+      $loaded = true;
+      if ( !self::$_LoadedPanelItems ) {
+        if ( $p = PanelItem::LoadPackage(null, $user, $system) ) {
+          foreach ( $p as $k => $v ) {
+            self::$PackageRegister[self::TYPE_SERVICE][$k] = $v;
+          }
+        }
+        ksort(self::$PackageRegister[self::TYPE_SERVICE]);
+        self::$_LoadedPanelItems = true;
+      }
+    }
+     */
 
     if ( !$loaded ) {
       throw new Exception("Cannot LoadAll type '{$type}'");
@@ -495,6 +525,8 @@ abstract class Package
           return $xml->application;
         } else if ( $name == self::TYPE_PANELITEM ) {
           return $xml->panelitem;
+        } else if ( $name == self::TYPE_SERVICE ) {
+          return $xml->service;
         }
         return $xml;
       }
@@ -509,11 +541,12 @@ abstract class Package
    * @return Array
    */
   public final static function GetInstalledPackages(User $user = null) {
-    Package::LoadAll(Package::TYPE_APPLICATION | Package::TYPE_PANELITEM, $user);
+    Package::LoadAll(Package::TYPE_APPLICATION | Package::TYPE_PANELITEM/* | Package::TYPE_SERVICE*/, $user);
 
     return Array(
-      "Application" => Package::GetPackageMeta(Package::TYPE_APPLICATION),
-      "PanelItem"   => Package::GetPackageMeta(Package::TYPE_PANELITEM)
+      "Application"       => Package::GetPackageMeta(Package::TYPE_APPLICATION),
+      "PanelItem"         => Package::GetPackageMeta(Package::TYPE_PANELITEM)/*,
+      "BackgroundService" => Package::GetPackageMeta(Package::TYPE_SERVICE)*/
     );
   }
 
@@ -578,10 +611,27 @@ abstract class Package
   /**
    * Handle an Package event
    * @param  String       $action       Package Action
-   * @param  Package      $instance     Package Instance
+   * @param  Mixed        $instance     Package Instance
+   * @param  int          $ptyp         Package Type Identifier
    * @return Mixed
    */
-  public static function Handle($action, $instance) {
+  public static function Handle($action, $instance, $ptype = null) {
+    if ( $action && $instance ) {
+      if ( isset($instance['name']) && isset($instance['action']) ) {
+        $cname    = $instance['name'];
+        $aargs    = isset($instance['args']) ? $instance['args'] : Array();
+        $action   = $instance['action'];
+
+        if ( Package::Load($cname, $ptype) ) {
+          require_once PATH_PACKAGES . "/{$cname}/{$cname}.class.php";
+        }
+
+        if ( class_exists($cname) ) {
+          return $cname::Event($action, $aargs);
+        }
+      }
+    }
+
     return false;
   }
 

@@ -1,6 +1,7 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG]  Package -> Background Service :D
+[HIG]  Combine Splash with Login
+[HIG]  Create some sort of BackgroundService :-)
 [HIG]  Handle PHPSESSID loss more violently
 [HIG]  /VFS/, /VFS/User etc. for VFS :D
 [HIG]  When starting up and you have saved session, ask for a session to be loaded

@@ -141,24 +141,8 @@ class       PanelItem
   /**
    * @see Package::Handle()
    */
-  public static function Handle($action, $instance) {
-    if ( $action && $instance ) {
-      if ( isset($instance['name']) && isset($instance['action']) ) {
-        $cname    = $instance['name'];
-        $aargs    = isset($instance['args']) ? $instance['args'] : Array();
-        $action   = $instance['action'];
-
-        if ( Package::Load($cname, Package::TYPE_PANELITEM) ) {
-          require_once PATH_PACKAGES . "/{$cname}/{$cname}.class.php";
-        }
-
-        if ( class_exists($cname) ) {
-          return $cname::Event($action, $aargs);
-        }
-      }
-    }
-
-    return false;
+  public static function Handle($action, $instance, $ptype = null) {
+    return parent::Handle($action, $instance, Package::TYPE_PANELITEM);
   }
 
 }
