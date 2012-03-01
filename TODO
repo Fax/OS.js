@@ -1,7 +1,5 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG]  _doShutdown was missing $result !??!?!!?
-[HIG]  Restoring windows overflow when window height is low (crashes with panel)
 [HIG]  Handle PHPSESSID loss more violently
 [HIG]  /VFS/, /VFS/User etc. for VFS :D
 

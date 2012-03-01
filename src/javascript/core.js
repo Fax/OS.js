@@ -4648,14 +4648,15 @@
 
       if ( _Desktop ) {
         var panels = _Desktop.getPanels();
-        var i = 0, l = panels.length;
+        var i = 0, l = panels.length, p;
         for ( i; i < l; i++ ) {
-          if ( panels[i].getPosition() == "top" ) {
-            result.y += 30;
-            result.h -= 30;
+          p = panels[i];
+          if ( p.getPosition() == "top" ) {
+            result.y += p.getHeight();
+            result.h -= p.getHeight();
           } else {
-            //result.y += 30;
-            result.h -= 30;
+            //result.y += p.getHeight();
+            result.h -= p.getHeight();
           }
         }
       }
@@ -5944,6 +5945,14 @@
     },
 
     /**
+     * Panel::getHeight() -- Get panel height
+     * @return String
+     */
+    getHeight : function() {
+      return 35; // FIXME
+    },
+
+    /**
      * Panel::getPosition() -- Get placed position
      * @return String
      */
@@ -7070,9 +7079,24 @@
       dir = dir || this._gravity;
       if ( dir == "center" ) {
         var el = this.$element;
-        this._move(
-          (($(document).width() / 2) - ($(el).width() / 2)),
-          (($(document).height() / 2) - ($(el).height() / 2)) );
+        var x  = (($(document).width() / 2) - ($(el).width() / 2));
+        var y  = (($(document).height() / 2) - ($(el).height() / 2));
+
+        // We do not want our windows to dissappear out of view, right ?
+        if ( y < 0 ) {
+          y = 0;
+          if ( _Desktop ) {
+            var panels = _Desktop.getPanels();
+            var i = 0, l = panels.length;
+            for ( i; i < l; i++ ) {
+              if ( panels[i].getPosition() == "top" ) {
+                y += panels[i].getHeight();
+              }
+            }
+          }
+        }
+
+        this._move(x, y);
       }
     },
 
