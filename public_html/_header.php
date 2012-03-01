@@ -49,10 +49,15 @@ if ( !$use_gzip || !ob_start("ob_gzhandler") ) {
   ob_start();
 }
 
+// This is the default headers, may be overridden in resource.php
 if ( ENV_PRODUCTION || ENABLE_CACHE ) {
-  $now = gmdate( 'D, d M Y H:i:s' , (time() + (60)));
+  $time   = time();
+  $now    = ($time + CACHE_EXPIRE_ADD);
+  $max    = ($now - $time);
+  $stamp  = gmdate('D, d M Y H:i:s', $now);
+
   header("Expires: $now GMT");
-  header("Cache-Control: maxage=3600, public");
+  header("Cache-Control: maxage=$max, public");
 } else {
   $now = gmdate( 'D, d M Y H:i:s' );
   header("Expires: Fri, 01 Jan 2010 05:00:00 GMT");

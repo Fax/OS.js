@@ -40,11 +40,11 @@
   font-weight : bold;
   src: url('/media/System/Fonts/Sansation_Bold.ttf');
 }
-*/
 
 body {
   font-family : DefaultFont, Arial;
 }
+*/
 
 #Desktop *[draggable=true] {
   -khtml-user-drag: element;

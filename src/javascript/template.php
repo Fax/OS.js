@@ -87,7 +87,6 @@ if ( $locale = Core::get()->getLocale() ) {
   <meta name="copyright" content="Copyright (c) 2011-2012 Anders Evenrud" />
 
   <!-- OS.js stylesheets -->
-  <link rel="stylesheet" type="text/css" href="/VFS/font/Sansation" id="FontFace" />
   <link rel="stylesheet" type="text/css" href="/VFS/resource/main.css" />
   <link rel="stylesheet" type="text/css" href="/VFS/resource/glade.css" />
   <link rel="stylesheet" type="text/css" href="/VFS/resource/pimp.css" />
@@ -95,6 +94,7 @@ if ( $locale = Core::get()->getLocale() ) {
   <link rel="stylesheet" type="text/css" href="/VFS/theme/default" id="ThemeBase" />
   <link rel="stylesheet" type="text/css" href="/VFS/theme/dark" id="ThemeFace" />
   <link rel="stylesheet" type="text/css" href="/VFS/cursor/default" id="CursorFace" />
+  <link rel="stylesheet" type="text/css" href="/VFS/font/Sansation" id="FontFace" />
 
 <!--[if lt IE 9]>
 <link rel="stylesheet" type="text/css" href="/?resource=ie.css" />

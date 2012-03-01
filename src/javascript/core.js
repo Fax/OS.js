@@ -64,6 +64,7 @@
   var STORAGE_SIZE_FREQ      = 1000;                //!< Storage check usage frequenzy
   var ONLINECHK_FREQ         = 2500;                //!< On-line checking frequenzy
   var SESSION_CHECK          = 5000;                //!< Connection by session check freq
+  var LOGIN_WAIT             = 1000;                //!< Wait after login
   var SESSION_KEY            = "PHPSESSID";         //!< The Server session cookie-key
   var TIMEOUT_CSS            = (1000 * 10);         //!< CSS loading timeout
   var DEFAULT_USERNAME       = "demo";              //!< Default User Username
@@ -2118,7 +2119,7 @@
         if ( success && !server_error ) {
           setTimeout(function() {
             self.run();
-          }, 100);
+          }, LOGIN_WAIT);
         } /* else {
           TODO
         }*/

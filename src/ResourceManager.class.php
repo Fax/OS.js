@@ -167,10 +167,10 @@ abstract class ResourceManager
 
     $font_name    = addslashes($font);
     $sources      = Array(
-      "normal"   => sprintf("%s/%s.ttf", URI_FONT, $font_name),
-      "bold"     => sprintf("%s/%sBold.ttf", URI_FONT, $font_name),
-      "italic"   => sprintf("%s/%s%s.ttf", URI_FONT, $font_name, $italic),
-      "bitalic"  => sprintf("%s/%sBold%s.ttf", URI_FONT, $font_name, $italic)
+      "normal"   => sprintf("%s/%s.ttf",        URI_FONT, $font_name),
+      "bold"     => sprintf("%s/%sBold.ttf",    URI_FONT, $font_name),
+      "italic"   => sprintf("%s/%s%s.ttf",      URI_FONT, $font_name, $italic),
+      "bitalic"  => sprintf("%s/%sBold%s.ttf",  URI_FONT, $font_name, $italic)
     );
 
     /*

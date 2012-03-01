@@ -73,6 +73,11 @@ define("ENABLE_GETTEXT",      true);
 define("GETTEXT_DOMAIN",      "messages");
 
 //
+// Cache (Production)
+//
+define("CACHE_EXPIRE_ADD",    60); // FIXME
+
+//
 // VFS Permissions etc.
 //
 
@@ -167,7 +172,7 @@ spl_autoload_register(function($cn) {
 });
 
 ///////////////////////////////////////////////////////////////////////////////
-// LOW-LEVEL CLASSES
+// LOW-LEVEL CLASSES AND FUNCTIONS
 ///////////////////////////////////////////////////////////////////////////////
 
 abstract class CoreObject {}
