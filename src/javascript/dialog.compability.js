@@ -109,7 +109,7 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
         this._is_orphan = false;
         this._is_ontop = true;
         this._width = 500;
-        this._height = 300;
+        this._height = 340;
         this._gravity = "center";
       },
 
