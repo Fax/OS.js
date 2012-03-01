@@ -178,6 +178,21 @@ abstract class SettingsManager
     // USER
     //
 
+    "user.session.confirm" => Array(
+      "type" => "bool",
+      "value" => true
+    ),
+
+    "user.session.autorestore" => Array(
+      "type"  => "bool",
+      "value" => true
+    ),
+
+    "user.session.autosave" => Array(
+      "type"  => "bool",
+      "value" => true
+    ),
+
     "user.installed.packages" => Array(
       "type"  => "list",
       "items" => Array()

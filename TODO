@@ -2,10 +2,12 @@ CORE TODO:
 -------------------------------------------------------------------------------
 [HIG]  Handle PHPSESSID loss more violently
 [HIG]  /VFS/, /VFS/User etc. for VFS :D
+[HIG]  When starting up and you have saved session, ask for a session to be loaded
+       (from database alternatively)
+       May come in handy if something happened with browser or user
+       Has changed computers after logging out etc.
 
 [MED]  ALWAYS relative icons ?!
-[MED]  VFS - Overwriting, fix parameters etc.
-[MED]  Persistent connection alternative in settings (automatic store session on close)
 
 [LOW]  Hove Template HTML for dialogs into dialog.js
 [LOW]  Finish up Package Meta for loading from user

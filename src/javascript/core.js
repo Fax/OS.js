@@ -52,7 +52,7 @@
    * @constants Local settings
    */
   var ENABLE_CACHE           = false;               //!< Enabled caching
-  var SETTING_REVISION       = 39;                  //!< The settings revision
+  var SETTING_REVISION       = 40;                  //!< The settings revision
   var ENABLE_LOGIN           = false;               //!< Use login
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
@@ -2436,7 +2436,12 @@
       setTimeout(function() {
         // >>> Session
         bar.progressbar({value : 80});
-        API.session.restore();
+
+        var do_restore = API.user.settings.get("user.session.autorestore");
+        if ( do_restore === true || do_restore === "true" ) {
+          API.session.restore();
+        }
+
         bar.progressbar({value : 90});
 
         // >>> Finished
@@ -3502,6 +3507,12 @@
     _set : function(k, v) {
       if ( this._tree[k] !== undefined ) {
         try {
+          if ( (typeof v === "boolean") || (v instanceof Boolean) ) {
+            v = (v ? "true" : "false");
+          }/* else if ( v typeof Object ) {
+            v = JSON.stringify(v);
+          }*/
+
           localStorage.setItem(k, v);
         } catch ( e ) {
           // Caught by interval!
