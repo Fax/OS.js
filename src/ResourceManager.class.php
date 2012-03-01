@@ -165,11 +165,30 @@ abstract class ResourceManager
     $bos    = $font == "Sansation" ? "/*" : "";
     $boe    = $font == "Sansation" ? "*/" : "";
 
+    $font_name    = addslashes($font);
+    $sources      = Array(
+      "normal"   => sprintf("%s/%s.ttf", URI_FONT, $font_name),
+      "bold"     => sprintf("%s/%sBold.ttf", URI_FONT, $font_name),
+      "italic"   => sprintf("%s/%s%s.ttf", URI_FONT, $font_name, $italic),
+      "bitalic"  => sprintf("%s/%sBold%s.ttf", URI_FONT, $font_name, $italic)
+    );
+
+    /*
+    // Base64 Encode fonts
+    foreach ( $sources as $face => $rpath ) {
+      $apath = sprintf("%s/%s", PATH_HTML, $rpath);
+      if ( file_exists($apath) && ($content = file_get_contents($apath)) ) {
+        $b64 = base64_encode($content);
+        $sources[$face] = sprintf("data:application/x-font-ttf;base64,[%s]", $b64);
+      }
+    }
+   */
+
     $header = <<<EOCSS
 @charset "UTF-8";
 /*!
  * @file
- * OS.js - JavaScript Operating System - Font Stylesheet (CSS)
+ * OS.js - JavaScript Operating System - Font [$font] Stylesheet (CSS)
  *
  * Copyright (c) 2011, Anders Evenrud
  * All rights reserved.
@@ -200,30 +219,32 @@ abstract class ResourceManager
  * @created 2011-05-30
  */
 
+
 EOCSS;
 
 
-    $template = <<<EOCSS
+    $css = <<<EOCSS
 @font-face {
   font-family : CustomFont;
-  src: url('/media/System/Fonts/%1\$s.ttf');
+  src: url("{$sources['normal']}");
 }
 @font-face {
   font-family : CustomFont;
   font-weight : bold;
-  src: url('/media/System/Fonts/%1\$sBold.ttf');
+  src: url("{$sources['bold']}");
 }
 @font-face {
   font-family : CustomFont;
   font-style : italic;
-  src: url('/media/System/Fonts/%1\$s{$italic}.ttf');
+  src: url("{$sources['italic']}");
 }
+
 {$bos}
 @font-face {
   font-family : CustomFont;
   font-weight : bold;
   font-style : italic;
-  src: url('/media/System/Fonts/%1\$sBold{$italic}.ttf');
+  src: url("{$sources['bitalic']}");
 }
 {$boe}
 
@@ -232,11 +253,11 @@ body {
 }
 EOCSS;
 
-    $css = sprintf($template, addslashes($font));
     if ( $compress ) {
       $css = preg_replace("/\s/", "", $css);
       $css = preg_replace('%/\s*\*.*?\*/\s*%s', '', $css);
     }
+
     return ($header . $css);
   }
 

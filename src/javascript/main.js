@@ -50,7 +50,7 @@
    * @return bool
    * @function
    */
-  $(window).ready(function() {
+  $(document).ready(function() {
     return OSjs.__Run();
   });
 

@@ -1,6 +1,6 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG]  Combine Splash with Login
+[HIG]  Fix symlinks of vendor libs in template.php
 [HIG]  Create some sort of BackgroundService :-)
 [HIG]  Handle PHPSESSID loss more violently
 [HIG]  /VFS/, /VFS/User etc. for VFS :D
@@ -9,6 +9,7 @@ CORE TODO:
        May come in handy if something happened with browser or user
        Has changed computers after logging out etc.
 
+[MED]  Let user choose login username etc. Registering ?!
 [MED]  ALWAYS relative icons ?!
 
 [LOW]  Hove Template HTML for dialogs into dialog.js
