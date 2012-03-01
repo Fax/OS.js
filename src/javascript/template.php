@@ -96,17 +96,14 @@ if ( $locale = Core::get()->getLocale() ) {
   <link rel="stylesheet" type="text/css" href="/VFS/cursor/default" id="CursorFace" />
   <link rel="stylesheet" type="text/css" href="/VFS/font/Sansation" id="FontFace" />
 
-<!--[if lt IE 9]>
-<link rel="stylesheet" type="text/css" href="/?resource=ie.css" />
-<![endif]-->
+  <!-- Vendor stylesheets -->
+  <link rel="stylesheet" type="text/css" href="/vendor/jquery-ui-theme.css" />
 
   <!-- Vendor libraries -->
-  <link rel="stylesheet" type="text/css" href="/vendor/ui-lightness/jquery-ui-1.8.13.custom.css" />
-
-  <script type="text/javascript" src="/vendor/json2.js"></script>
-  <script type="text/javascript" src="/vendor/sprintf-0.7-beta1.js"></script>
-  <script type="text/javascript" src="/vendor/jquery-1.7.1.min.js"></script>
-  <script type="text/javascript" src="/vendor/jquery-ui-1.8.17.custom.min.js"></script>
+  <script type="text/javascript" src="/vendor/json.js"></script>
+  <script type="text/javascript" src="/vendor/sprintf.js"></script>
+  <script type="text/javascript" src="/vendor/jquery.js"></script>
+  <script type="text/javascript" src="/vendor/jquery-ui.js"></script>
 
   <!-- OS.js libraries -->
   <script type="text/javascript" src="/VFS/resource/utils.js"></script>

@@ -1,7 +1,6 @@
 CORE TODO:
 -------------------------------------------------------------------------------
 [HIG]  Solve flickering when adding CSS
-[HIG]  Fix symlinks of vendor libs in template.php
 [HIG]  Create some sort of BackgroundService :-)
 [HIG]  Handle PHPSESSID loss more violently
 [HIG]  /VFS/, /VFS/User etc. for VFS :D
