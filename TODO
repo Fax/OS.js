@@ -1,23 +1,23 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG]  Determine and set AJAX Cache timeout (life-time)
 [HIG]  _doShutdown was missing $result !??!?!!?
-[HIG]  When user clear browser cache, user looses login, check it out!
 [HIG]  Restoring windows overflow when window height is low (crashes with panel)
+[HIG]  Handle PHPSESSID loss more violently
+[LOW]  ALWAYS relative icons ?!
+[HIG]  /VFS/, /VFS/User etc. for VFS :D
 
+[MED]  Determine and set AJAX Cache timeout (life-time)
+[MED]  Hove Template HTML for dialogs into dialog.js
+[MED]  VFS - Overwriting, fix parameters etc.
 [MED]  Persistent connection alternative in settings (automatic store session on close)
-[MED]  Finish up Package Meta for loading from user
-[MED]  /VFS/, /VFS/User etc. for VFS :D
-[MED]  ALWAYS relative icons ?!
 
+[LOW]  Finish up Package Meta for loading from user
 [LOW]  Rewrite Glade builder class
 [LOW]  Implement MenuNew in GtkMenu
 [LOW]  Add/Remove Panel
-[LOW]  Hove Template HTML for dialogs into dialog.js
-[LOW]  VFS - Overwriting, fix parameters etc.
 [LOW]  Clean up CSS
 [LOW]  Remove the global resize event and make a poll ?!
-            This would increase the performance of panel redraws etc.
+       This would increase the performance of panel redraws etc.
 
 [BIN]  Finish up the Installer
 
