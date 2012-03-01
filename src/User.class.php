@@ -308,12 +308,21 @@ class User
       "options" => DateTimeZone::listIdentifiers()
     );
 
+    $merge["user.autorun"] = Array(
+      "items" => Array(
+        "ServiceNoop"
+      )
+    );
+
     if ( $packages ) {
       $results = Array();
       foreach ( $packages['Application'] as $pkg_name => $pkg_opts ) {
         $results[] = $pkg_name;
       }
       foreach ( $packages['PanelItem'] as $pkg_name => $pkg_opts ) {
+        $results[] = $pkg_name;
+      }
+      foreach ( $packages['BackgroundService'] as $pkg_name => $pkg_opts ) {
         $results[] = $pkg_name;
       }
 

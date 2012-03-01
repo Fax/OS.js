@@ -201,7 +201,12 @@ abstract class SettingsManager
     "user.first-run" => Array(
       "type" => "bool",
       "value" => true
-    )
+    ),
+
+    "user.autorun" => Array(
+      "type" => "list",
+      "items" => Array()
+    ),
   );
 
   /**

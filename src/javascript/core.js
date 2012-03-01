@@ -52,7 +52,7 @@
    * @constants Local settings
    */
   var ENABLE_CACHE           = false;               //!< Enabled caching
-  var SETTING_REVISION       = 41;                  //!< The settings revision
+  var SETTING_REVISION       = 42;                  //!< The settings revision
   var ENABLE_LOGIN           = false;               //!< Use login
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
@@ -587,15 +587,15 @@
 
   /**
    * LaunchBackgroundService() -- BackgroundService Launch handler
-   * @param   int       i             Item index
    * @param   String    iname         Item name
    * @param   Mixed     iargs         Item argument(s)
    * @param   Function  callback      Callback function (Default = undefined)
    * @return  void
    * @function
    */
-  function LaunchBackgroundService(i, iname, iargs, callback) {
+  function LaunchBackgroundService(iname, iargs, callback) {
     callback = callback || function() {};
+    iargs    = iargs    || {};
 
     if ( InitLaunch(iname) && _BackgroundServiceCache[iname] ) {
       var resources = _BackgroundServiceCache[iname].resources;
@@ -1518,9 +1518,9 @@
           var activated = _Settings._get("user.installed.packages", false, true); // FIXME
           var result = [];
 
-          apps = (apps === undefined) ? true : apps;
-          pitems = (pitems === undefined) ? true : pitems;
-          sitems = (sitems === undefined) ? true : sitems;
+          apps    = (apps === undefined)    ? true : apps;
+          pitems  = (pitems === undefined)  ? true : pitems;
+          sitems  = (sitems === undefined)  ? true : sitems;
 
           var ia, ip, iter;
           if ( apps ) {
@@ -2481,6 +2481,14 @@
       setTimeout(function() {
         // >>> Session
         bar.progressbar({value : 80});
+
+        var autostarters = _Settings._get("user.autorun", false, true);
+        var ai = 0, al = autostarters.length;
+        for ( ai; ai < al; ai++ ) {
+          LaunchBackgroundService(autostarters[ai]);
+        }
+
+        bar.progressbar({value : 85});
 
         var do_restore = API.user.settings.get("user.session.autorestore");
         if ( do_restore === true || do_restore === "true" ) {
