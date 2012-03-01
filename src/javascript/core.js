@@ -225,18 +225,20 @@
     console.log("Login data:", form);
     console.groupEnd();
 
-    DoPost({'action' : 'login', 'form' : form}, function(data) {
-      console.log("Login success:", data.success);
-      console.log("Login result:", data.result);
-      console.groupEnd();
+    $("#LoginButton").click(function() {
+      DoPost({'action' : 'login', 'form' : form}, function(data) {
+        console.log("Login success:", data.success);
+        console.log("Login result:", data.result);
+        console.groupEnd();
 
-      if ( data.success ) {
-        $("#LoginForm").get(0).onsubmit = null;
-      }
+        if ( data.success ) {
+          $("#LoginForm").get(0).onsubmit = null;
+        }
 
-      callback(data.success, false);
-    }, function() {
-      calback(false, true);
+        callback(data.success, false);
+      }, function() {
+        calback(false, true);
+      });
     });
 
 

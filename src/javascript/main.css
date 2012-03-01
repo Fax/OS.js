@@ -116,8 +116,8 @@ input.Disabled {
 #LoadingBarContainer {
   position : absolute;
   left : 25px;
-  right : 25px;
-  bottom : 25px;
+  right : 75px;
+  bottom : 46px;
   height : 22px;
   margin : 0;
   padding : 0;
@@ -138,7 +138,7 @@ input.Disabled {
   left : 25px;
 }
   #LoadingLogin .Row {
-    margin-bottom : 10px;
+    margin-bottom : 5px;
   }
   #LoadingLogin .Row input,
   #LoadingLogin .Row label {
@@ -146,21 +146,36 @@ input.Disabled {
     margin : 0;
     padding : 0;
     border : 0 none;
-    margin-bottom : 10px;
+    margin-bottom : 5px;
   }
   #LoadingLogin .Row input {
     display : block;
-    color : #e6e6e6;
+    color : #ddd;
     border : 1px solid #ccc;
+    padding : 2px;
+    background : #fff;
   }
   #LoadingLogin .Row input:active {
-    color : #aaa;
+    color : #999;
   }
   #LoadingLogin .Row label {
     display : block;
     font-weight : bold;
   }
   #LoadingLogin .Row {
+  }
+  #LoginButtonContainer {
+    text-align : right;
+    padding : 5px;
+  }
+  #LoginButton {
+    margin : 0;
+    margin-right : -8px;
+    padding : 2px;
+    padding-left : 5px;
+    padding-right : 5px;
+    border : 1px solid #ccc;
+    background : #fff;
   }
 /*
 #Loading .ui-progressbar-value {

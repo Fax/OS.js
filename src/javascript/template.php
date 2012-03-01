@@ -154,7 +154,7 @@ if ( $locale = Core::get()->getLocale() ) {
 <!-- Loading / Login -->
 <div id="Loading">
   <div id="LoadingLogin">
-    <form method="post" action="javascript:void;" id="LoginForm">
+    <form method="post" action="javascript:void(0);" id="LoginForm">
       <div class="Row">
         <label for="LoginUsername">Username</label>
         <input type="text" id="LoginUsername" value="" name="username" />
@@ -162,6 +162,9 @@ if ( $locale = Core::get()->getLocale() ) {
       <div class="Row">
         <label for="LoginPassword">Password</label>
         <input type="password" id="LoginPassword" value="" name="password" />
+      </div>
+      <div class="Row">
+        <div id="LoginButtonContainer"><button id="LoginButton">Login</button></div>
       </div>
     </form>
   </div>

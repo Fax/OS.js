@@ -74,4 +74,5 @@ $loc = $core->getLocale();
 header("X-OSjs-Version: " . PROJECT_VERSION);
 header("X-OSjs-Locale: " . $loc["locale_language"]);
 header("X-Provider: ObjectCore");
+
 ?>
