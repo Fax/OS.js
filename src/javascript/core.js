@@ -605,27 +605,32 @@
 
   /**
    * LaunchBackgroundService() -- BackgroundService Launch handler
-   * @param   String    iname         Item name
+   * @param   String    sname         Item name
    * @param   Mixed     iargs         Item argument(s)
    * @param   Function  callback      Callback function (Default = undefined)
    * @return  void
    * @function
    */
-  function LaunchBackgroundService(iname, iargs, callback) {
+  function LaunchBackgroundService(sname, iargs, callback) {
     callback = callback || function() {};
     iargs    = iargs    || {};
 
-    if ( InitLaunch(iname) && _BackgroundServiceCache[iname] ) {
-      var resources = _BackgroundServiceCache[iname].resources;
-      _Resources.addResources(resources, iname, function(error) {
+    if ( InitLaunch(sname) && _BackgroundServiceCache[sname] ) {
+      var resources = _BackgroundServiceCache[sname].resources;
+      _Resources.addResources(resources, sname, function(error) {
 
-        console.group(">>> Initing loading of '" + iname + "' <<<");
+        console.group(">>> Initing loading of '" + sname + "' <<<");
 
         var crashed = false;
         var error_msg = null;
 
-        if ( !error && OSjs.Services[iname] ) {
-          var item = new OSjs.Services[iname](BackgroundService, API, iargs);
+        if ( !error && OSjs.Services[sname] ) {
+          try {
+            var item = new OSjs.Services[sname](BackgroundService, API, iargs);
+            item.run();
+          } catch ( ex ) {
+            CrashApplication(sname, item, ex);
+          }
         } else {
           var errors = [];
           var eargs = iargs;
@@ -633,9 +638,9 @@
             errors.push("* " + resources[x]);
           }
 
-          CrashCustom(iname,
+          CrashCustom(sname,
             sprintf(OSjs.Labels.CrashLaunchResourceMessage, errors.join("\n")),
-            sprintf(OSjs.Labels.CrashLaunchResourceStack, "LaunchBackgroundService", iname, eargs.join(",")) );
+            sprintf(OSjs.Labels.CrashLaunchResourceStack, "LaunchBackgroundService", sname, eargs.join(",")) );
 
           crashed = true;
         }
@@ -5767,7 +5772,7 @@
         ev.stopPropagation();
 
         var labels = OSjs.Labels.ContextMenuPanel;
-        var ret = API.application.context_menu(ev, $(this), [
+        API.application.context_menu(ev, $(this), [
           {"title" : labels.title, "attribute" : "header"},
           {"title" : labels.add, "method" : function() {
             addItem(ev);
