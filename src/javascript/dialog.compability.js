@@ -122,6 +122,7 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
         var el = this._super(id, mcallback);
 
         var mtable = el.find("table.outer");
+        mtable.css("height", "280px");
         mtable.find("td.content").css({
           "width" : "230px",
           "verticalAlign" : "top",
