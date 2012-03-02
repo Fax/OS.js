@@ -3756,7 +3756,7 @@
      * @return  void
      */
     run : function() {
-      this._super();
+      //this._super(); // NOTE: DO NOT !
     }
 
   }); // @endclass
