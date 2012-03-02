@@ -257,6 +257,7 @@
       });
     });
 
+    _enableInput();
 
   } // @endfunction
 
