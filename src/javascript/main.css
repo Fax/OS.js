@@ -391,9 +391,12 @@ input.Disabled {
   min-height : 100px;
   width : 500px; /* PHP */
   height : 300px; /* PHP */
-  position : absolute;
+  position : absolute !important;
   z-index : 10;
   overflow : hidden;
+}
+#Desktop .Window {
+  position : absolute;
 }
 /*
 .Window.Dragging {
