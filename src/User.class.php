@@ -310,8 +310,7 @@ class User
 
     $merge["user.autorun"] = Array(
       "items" => Array(
-        "ServiceNoop",
-        "ServiceServerStatus"
+        "ServiceNoop"
       )
     );
 
