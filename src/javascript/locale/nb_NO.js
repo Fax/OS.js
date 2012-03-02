@@ -44,6 +44,8 @@
       "title"   : "Sessjons-endring",
       "message" : "En tidligere sessjon har blitt lastet"
     },
+    "LoginFailure"                        : "Klarte ikke logge inn. Vær sikker på at du har fyllt ut skjema med riktig brukernavn og passord.",
+    "LoginFailureOther"                   : "Det hendte en feil i systemet under innlogging, vennligst prøv igjen.",
     "CannotStart"                         : "Din nettleser støtter ikke WebStorage. Kan ikke fortsette uten...",
     "ApplicationCheckCompabilityMessage"  : "Nettleseren din støtter ikke '%s'",
     "ApplicationCheckCompabilityStack"    : "Application::_checkCompability(): Applikasjon navn: %s",

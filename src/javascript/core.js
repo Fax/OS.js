@@ -219,11 +219,25 @@
       "password" : password
     };
 
-    console.group("DoLogin()");
-    console.log("Login data:", form);
-    console.groupEnd();
+    var _disableInput = function() {
+      $("#LoginButton").attr("disabled", "disabled");
+      $("#LoginUsername").attr("disabled", "disabled").addClass("loading");
+      $("#LoginPassword").attr("disabled", "disabled").addClass("loading");
+    };
+    var _enableInput = function() {
+      $("#LoginButton").removeAttr("disabled");
+      $("#LoginUsername").removeAttr("disabled").removeClass("loading");
+      $("#LoginPassword").removeAttr("disabled").removeClass("loading");
+    };
 
     $("#LoginButton").click(function() {
+
+      console.group("DoLogin()");
+      console.log("Login data:", form);
+      console.groupEnd();
+
+      _disableInput();
+
       DoPost({'action' : 'login', 'form' : form}, function(data) {
         console.log("Login success:", data.success);
         console.log("Login result:", data.result);
@@ -231,11 +245,15 @@
 
         if ( data.success ) {
           $("#LoginForm").get(0).onsubmit = null;
+        } else {
+          _enableInput();
         }
 
         callback(data.success, false);
       }, function() {
         calback(false, true);
+
+        _enableInput();
       });
     });
 
@@ -2191,9 +2209,13 @@
           setTimeout(function() {
             self.run();
           }, LOGIN_WAIT);
-        } /* else {
-          TODO
-        }*/
+        } else {
+          if ( server_error ) {
+            MessageBox(OSjs.Labels.LoginFailureOther); // FIXME ?
+          } else {
+            MessageBox(OSjs.Labels.LoginFailure); // FIXME ?
+          }
+        }
       });
 
     },
@@ -2328,6 +2350,29 @@
     },
 
     /**
+     * Core::leaving() -- When user leaves the page
+     * @return void
+     */
+    leaving : function(ev) {
+      ev = ev || window.event;
+
+      if ( _Running ) {
+        ev.cancelBubble = true;
+        if ( ev.stopPropagation ) {
+          ev.stopPropagation();
+          ev.preventDefault();
+        }
+
+        var msg = OSjs.Labels.Quit;
+        ev.returnValue = msg;
+
+        return msg;
+      }
+
+      return true;
+    },
+
+    /**
      * Core::run() -- Main startup procedure wrapper
      * @return void
      */
@@ -2340,12 +2385,20 @@
 
       console.group("Core::run()");
 
+
+      // Register confirm leave page thingy
+      window.onbeforeunload = function(ev) {
+        return self.leaving(ev);
+      };
+
       // Load initial data
       var date    = (new Date()).toLocaleString();
       var lang    = API.system.language();
 
       DoPost({'action' : 'init', 'date' : date, 'language' : lang}, function(data) {
         if ( data.success ) {
+
+          _Running = true; // GLOBAL
 
           // Initialize resources
           _Resources = new ResourceManager(data.result.cache.preload);
@@ -7969,7 +8022,6 @@
 
     _StartStamp = ((new Date()).getTime());
     _Core       = new Core();
-    _Running    = true;
 
     try {
       delete OSjs.__Run;
@@ -8010,26 +8062,6 @@
    * @function
    */
   OSjs.__Leave = function(ev) {
-    ev = ev || window.event;
-
-    if ( _Running ) {
-      ev.cancelBubble = true;
-      if ( ev.stopPropagation ) {
-        ev.stopPropagation();
-        ev.preventDefault();
-      }
-
-      var msg = OSjs.Labels.Quit;
-      ev.returnValue = msg;
-
-      try {
-        delete OSjs.__Leave;
-      } catch (e) {}
-
-      return msg;
-    }
-
-    return true;
   }; // @endfunction
 
 })($);

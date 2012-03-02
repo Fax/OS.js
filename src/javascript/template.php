@@ -161,7 +161,9 @@ if ( $locale = Core::get()->getLocale() ) {
         <input type="password" id="LoginPassword" value="" name="password" />
       </div>
       <div class="Row">
-        <div id="LoginButtonContainer"><button id="LoginButton">Login</button></div>
+        <div id="LoginButtonContainer">
+          <button id="LoginButton">Login</button>
+        </div>
       </div>
     </form>
   </div>

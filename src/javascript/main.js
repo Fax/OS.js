@@ -54,15 +54,5 @@
     return OSjs.__Run();
   });
 
-  /**
-   * window::onbeforeunload() -- Browser event: Before close/redirect
-   * @see    core.js
-   * @return bool
-   * @function
-   */
-  window.onbeforeunload = function(ev) {
-    return OSjs.__Leave(ev);
-  };
-
 })($);
 
