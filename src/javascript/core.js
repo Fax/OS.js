@@ -51,7 +51,7 @@
   /**
    * @constants Local settings
    */
-  var SETTING_REVISION       = 42;                  //!< The settings revision
+  var SETTING_REVISION       = 43;                  //!< The settings revision
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
   var TOOLTIP_TIMEOUT        = 300;                 //!< Tooltip timeout in ms
@@ -3246,7 +3246,7 @@
         console.log("===============================================================");
 
         upgrade     = true;
-        updateable  = ["desktop.grid", "desktop.panels", "user.installed.packages"];
+        updateable  = ["desktop.grid", "desktop.panels", "user.installed.packages", "user.autorun"];
 
         localStorage.setItem("SETTING_REVISION", SETTING_REVISION);
 
