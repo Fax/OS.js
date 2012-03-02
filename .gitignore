@@ -14,8 +14,7 @@ public_html/media
 # Sub-modules
 src/apps
 src/packages
-vendor/apps
-vendor/packages
+vendor/*
 
 # Build files
 src/build/minimize.cache
@@ -32,12 +31,3 @@ src/base/_min
 src/base/locale/_min
 src/javascript/_min
 src/javascript/locale/_min
-
-# DEVELOPMENT STUFF
-public_html/js/vendor/jquery-git.js
-public_html/js/vendor/jquery-ui.min.js
-public_html/js/vendor/jquery.touch.js.txt
-public_html/js/vendor/jquery.ui.touch-punch.min.js
-
-# TODO
-#public_html/img/app.draw/icons/
