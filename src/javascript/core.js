@@ -230,6 +230,8 @@
       $("#LoginPassword").removeAttr("disabled").removeClass("loading");
     };
 
+    $("#LoginButton").focus();
+
     $("#LoginButton").click(function() {
 
       console.group("DoLogin()");
