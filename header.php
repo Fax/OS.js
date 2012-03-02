@@ -64,7 +64,7 @@ define("PROJECT_MODIFIED",  "1330274703");
 // Environment
 //
 
-define("ENV_PRODUCTION",      (PROJECT_HOST != "amitop"));
+define("ENV_PRODUCTION",      (PROJECT_HOST != "zamitop"));
 define("DEFAULT_TIMEZONE",    "UTC");
 define("DEFAULT_LANGUAGE",    "en_US");
 define("ENABLE_CACHE",        false);

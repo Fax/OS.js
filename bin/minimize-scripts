@@ -55,6 +55,12 @@ $locales   = Array(
   "nb_NO.js"
 );
 
+foreach ( Dialog::$Registered as $dkey => $dval ) {
+  foreach ( $dval["resources"] as $res ) {
+    $resources[] = $res;
+  }
+}
+
 if ( $xml = file_get_contents(PACKAGE_BUILD) ) {
   if ( $xml = new SimpleXmlElement($xml) ) {
     foreach ( $xml->application as $app ) {

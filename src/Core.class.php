@@ -248,7 +248,7 @@ class Core
    */
   protected static final function _doPackageOperation(Array $args, Array &$json, Core $inst = null) {
     if ( $user = $inst->getUser() ) {
-      Package::LoadAll(Package::TYPE_APPLICATION | Package::TYPE_PANELITEM, $user);
+      Package::LoadAll(Package::TYPE_APPLICATION | Package::TYPE_PANELITEM | Package::TYPE_SERVICE, $user);
 
       $json['success'] = true;
       $json['result']  = $args;
