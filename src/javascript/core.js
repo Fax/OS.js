@@ -1589,7 +1589,7 @@
                   label   : iter.title,
                   active  : in_array(ip, activated),
                   type    : 'BackgroundService',
-                  locked  : true,
+                  locked  : false,
                   icon    : sprintf(ICON_URI_32, _BackgroundServiceCache[ip].icon)
                 });
               }
@@ -3242,7 +3242,7 @@
       // Check for newer versioning
       var rev         = localStorage.getItem("SETTING_REVISION");
       var upgrade     = false;
-      var updateable  = [];
+      var updateable  = ["desktop.grid", "user.autorun"];
 
       console.log("Settings revision", SETTING_REVISION);
       console.log("Local revision", rev);
@@ -3253,7 +3253,7 @@
         console.log("===============================================================");
 
         upgrade     = true;
-        updateable  = ["desktop.grid", "desktop.panels", "user.installed.packages", "user.autorun"];
+        updateable  = ["desktop.panels", "user.installed.packages"];
 
         localStorage.setItem("SETTING_REVISION", SETTING_REVISION);
 
@@ -3554,18 +3554,20 @@
       console.log("Doing", action, "using", p, "and", args);
       console.log("Current", activated);
 
+      var op_start = [];
+      var op_stop  = [];
+
       // Manipulate storage
       switch ( action ) {
         case "enable"   :
-          if ( args.type == "Application" ) {
+          if ( in_array(args.type, ["Application", "PanelItem", "BackgroundService"]) ) {
             if ( !in_array(p, activated) ) {
               activated.push(p);
               result = true;
-            }
-          } else if ( args.type == "PanelItem" ) {
-            if ( !in_array(p, activated) ) {
-              activated.push(p);
-              result = true;
+
+              if ( args.type === "BackgroundService" ) {
+                op_start.push(args.name);
+              }
             }
           }
         break;
@@ -3574,6 +3576,10 @@
             if ( activated[i] == p ) {
               activated.splice(i, 1);
               result = true;
+
+              if ( args.type === "BackgroundService" ) {
+                op_stop.push(p);
+              }
               break;
             }
           }
@@ -3595,6 +3601,35 @@
       if ( result === true ) {
         _Settings._set("user.installed.packages", JSON.stringify(activated));
       }
+
+      /* NOTE: Goodshit
+      console.log("Starting", op_start.length, "services", op_start);
+      console.log("Stopping", op_stop.length, "services", op_stop);
+
+      if ( op_start.length ) {
+        for ( var opi = 0; opi < op_start.length; opi++ ) {
+          LaunchBackgroundService(op_start[opi]);
+        }
+      }
+
+      if ( op_stop.length ) {
+        var procs = _Core.getProcesses();
+        var brk = false, cur;
+        for ( var opl = 0; opl < op_stop.length; opl++ ) {
+          cur = op_stop[opl];
+          for ( var opx = 0; opx < procs.length; opx++ ) {
+            if ( procs[opx].name == cur ) {
+              procs[opx].kill();
+              brk = true;
+              break;
+            }
+          }
+
+          if ( brk )
+            break;
+        }
+      }
+      */
 
       console.log("Resulted", result, activated);
       console.groupEnd();
