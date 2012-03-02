@@ -71,6 +71,13 @@ if ( $xml = file_get_contents(PACKAGE_BUILD) ) {
         }
       }
     }
+    foreach ( $xml->service as $app ) {
+      if ( isset($app->resource) ) {
+        foreach ( $app->resource as $r ) {
+          $packages[] = "/" . (string) $app['class'] . "/" . (string) $r;
+        }
+      }
+    }
   }
 }
 
