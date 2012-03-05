@@ -94,6 +94,11 @@ abstract class VFS
       "type" => "chroot",
       "attr" => "rw",
       "icon" => "places/folder_home.png"
+    ),
+    "/Public" => Array(
+      "type" => "user",
+      "attr" => "rw",
+      "icon" => "places/folder-publicshare.png"
     )
   );
 
