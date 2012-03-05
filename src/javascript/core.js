@@ -259,6 +259,8 @@
       });
     });
 
+    //$("#LoginButton").click();
+
     _enableInput();
 
   } // @endfunction
@@ -521,17 +523,24 @@
           var errors = [];
           var eargs = [];
           for ( var x in resources ) {
-            errors.push("* " + resources[x]);
+            errors.push(resources[x]);
           }
+
+          if ( !errors.length ) {
+            errors = ["<unknown>"];
+          }
+
           for ( var a in app_args ) {
             eargs.push(app_args[a]);
           }
 
+          var extra = "\n\nThis may be due to a missing file or a syntax error in a resource."; // FIXME: Locale
+
           CrashApplication(app_name, {
             _name : app_name
           }, {
-            message : sprintf(OSjs.Labels.CrashLaunchResourceMessage, errors.join("\n")),
-            stack   : sprintf(OSjs.Labels.CrashLaunchResourceStack, "LaunchApplication", app_name, eargs.join(","))
+            message : sprintf(OSjs.Labels.CrashLaunchResourceMessage, errors.join(", ") + extra),
+            stack   : sprintf(OSjs.Labels.CrashLaunchResourceStack, "LaunchApplication", app_name, eargs.join(", "))
           });
 
           callback_error("AddResource() error");

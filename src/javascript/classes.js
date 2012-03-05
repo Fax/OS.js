@@ -1216,6 +1216,7 @@
         this.$context.stroke();
       }
       if (fill) {
+        this.$context.fillStyle = fill;
         this.$context.fill();
       }
     }

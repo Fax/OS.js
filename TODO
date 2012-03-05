@@ -3,6 +3,7 @@ CORE TODO:
 [HIG]  Solve flickering when adding CSS
 [HIG]  Handle PHPSESSID loss more violently
 [HIG]  Chrooted VFS User env.
+[HIG]  Auto-enable newly installed apps for users ?!
 
 [MED]  Background error logging only on production
 [MED]  Let user choose login username etc. Registering ?!
