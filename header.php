@@ -116,6 +116,8 @@ define("PATH_LOG_FILE",        PATH . "/logs/messages");
 define("PATH_PACKAGES",        PATH . "/src/packages");
 define("PATH_JSBASE",          PATH . "/src/javascript");
 define("PATH_JSLOCALE",        PATH . "/src/javascript/locale");
+define("PATH_MEDIA",           PATH . "/public_html/media");
+define("PATH_VFS",             PATH . "/VFS");
 
 //
 // Resources (Core, Package, etc.)

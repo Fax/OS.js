@@ -91,7 +91,7 @@ abstract class VFS
       "icon" => "places/folder-documents.png"
     ),
     "/User" => Array(
-      "type" => "user",
+      "type" => "chroot",
       "attr" => "rw",
       "icon" => "places/folder_home.png"
     )
@@ -133,7 +133,7 @@ abstract class VFS
    * @return Array
    */
   protected static function _secure($filename, $path = null, $exists = true, $write = true) {
-    $base           = sprintf("%s/media", PATH_HTML);
+    $base           = PATH_MEDIA;
     $special_charsa = array("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
     $special_charsb = array("?", "[", "]", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
 
@@ -158,6 +158,7 @@ abstract class VFS
     $destination  = null;
 
     // Check if the destination is not secured
+    // Or if this is a chrooted dir
     if ( $path !== null ) {
       if ( $write ) {
         if ( $path == "/" ) {
@@ -167,6 +168,12 @@ abstract class VFS
             if ( startsWith($path, $k) ) {
               if ( $v['attr'] != "rw" ) {
                 return false;
+              } else if ( $v['attr'] == "chroot" ) {
+                $uid = 0;
+                if ( !(($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
+                  return false;
+                }
+                $base = sprintf("%s/%d", PATH_VFS, $uid);
               }
             }
           }
@@ -193,6 +200,10 @@ abstract class VFS
         $destination = "{$location}{$path}";
       }
     }
+
+    $destination  = preg_replace("/\/+/", "/", $destination);
+    $path         = preg_replace("/\/+/", "/", $path);
+    $location     = preg_replace("/\/+/", "/", $location);
 
     // Check for existance (if required)
     if ( $exists && $destination ) {
@@ -341,7 +352,7 @@ abstract class VFS
   public static function file_info($argv) {
     if ( $res = self::_secure($argv, null, true) ) {
       if ( file_exists($res["destination"]) ) {
-        $base = sprintf("%s/media", PATH_HTML);
+        $base = PATH_MEDIA;
 
         // Read MIME info
         $file = basename($res["destination"]);
@@ -558,18 +569,26 @@ abstract class VFS
    * @return Array
    */
   public static function ls($path, Array $ignores = null, Array $mimes = Array()) {
+    $uid = 0;
+    if ( !(($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
+      return false;
+    }
+
     if ( $ignores === null ) {
       $ignores = Array(".", "..", ".gitignore", ".git", ".cvs");
     }
 
-    $base     = PATH_HTML . "/media";
+    $base     = PATH_MEDIA; //PATH_HTML . "/media";
     $absolute = "{$base}{$path}";
 
-    $apps = false;
+    $apps   = false;
+    $chroot = false;
     foreach ( self::$VirtualDirs as $k => $v ) {
       if ( startsWith($path, $k) ) {
         if ( $v['type'] == "packages" ) {
           $apps = true;
+        } else if ( $v['type'] == "chroot" ) {
+          $chroot = true;
         }
         break;
       }
@@ -614,7 +633,11 @@ abstract class VFS
       }
 
       return $items;
+    } else if ( $chroot ) {
+      $absolute = sprintf("%s/%d", PATH_VFS, $uid);
     }
+
+    $absolute = preg_replace("/\/+/", "/", $absolute);
 
     // Read directory
     if ( is_dir($absolute) && $handle = opendir($absolute)) {

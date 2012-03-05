@@ -67,6 +67,8 @@
   var TIMEOUT_CSS            = (1000 * 10);         //!< CSS loading timeout
   var DEFAULT_USERNAME       = "demo";              //!< Default User Username
   var DEFAULT_PASSWORD       = "demo";              //!< Default User Password
+  var ENV_CACHE              = undefined;           //!< Server-side cache enabled state
+  var ENV_PRODUCTION         = undefined;           //!< Server-side production env. state
   // @endconstants
 
   /**
@@ -214,11 +216,6 @@
     $("#LoginUsername").val(username);
     $("#LoginPassword").val(password);
 
-    var form = {
-      "username" : username,
-      "password" : password
-    };
-
     var _disableInput = function() {
       $("#LoginButton").attr("disabled", "disabled");
       $("#LoginUsername").attr("disabled", "disabled").addClass("loading");
@@ -233,6 +230,11 @@
     $("#LoginButton").focus();
 
     $("#LoginButton").click(function() {
+
+      var form = {
+        "username" : $("#LoginUsername").val(),
+        "password" : $("#LoginPassword").val()
+      };
 
       console.group("DoLogin()");
       console.log("Login data:", form);
@@ -259,7 +261,12 @@
       });
     });
 
-    //$("#LoginButton").click();
+    /*
+    if ( !ENV_PRODUCTION ) {
+      $("#LoginButton").click();
+      $("#LoginButton").attr("disabled", "disabled");
+    }
+    */
 
     _enableInput();
 
@@ -2216,25 +2223,9 @@
 
       console.group("Core::init()");
 
-      $("#Loading").show();
+      this.boot();
 
       console.groupEnd();
-
-      // Login window handling
-      DoLogin(DEFAULT_USERNAME, DEFAULT_PASSWORD, function(success, server_error) {
-        if ( success && !server_error ) {
-          setTimeout(function() {
-            self.run();
-          }, LOGIN_WAIT);
-        } else {
-          if ( server_error ) {
-            MessageBox(OSjs.Labels.LoginFailureOther); // FIXME ?
-          } else {
-            MessageBox(OSjs.Labels.LoginFailure); // FIXME ?
-          }
-        }
-      });
-
     },
 
     /**
@@ -2333,6 +2324,39 @@
       console.groupEnd();
 
       this._super();
+    },
+
+    /**
+     * Core::boot() -- Main booting procedure
+     * @return void
+     */
+    boot : function() {
+      var self = this;
+
+      $("#Loading").show();
+
+      DoPost({'action' : 'boot'}, function(response) {
+        ENV_CACHE       = response.cache;
+        ENV_PRODUCTION  = response.production;
+
+        // Login window handling
+        DoLogin(DEFAULT_USERNAME, DEFAULT_PASSWORD, function(success, server_error) {
+          if ( success && !server_error ) {
+            setTimeout(function() {
+              self.run();
+            }, LOGIN_WAIT);
+          } else {
+            if ( server_error ) {
+              MessageBox(OSjs.Labels.LoginFailureOther); // FIXME ?
+            } else {
+              MessageBox(OSjs.Labels.LoginFailure); // FIXME ?
+            }
+          }
+        });
+      }, function(xhr, ajaxOptions, thrownError) {
+        alert("A network error occured while booting OS.js: " + thrownError);
+        throw("Initialization error: " + thrownError);
+      });
     },
 
     /**

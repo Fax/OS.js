@@ -82,6 +82,14 @@ class Core
     )
   );
 
+  /**
+   * @var doPOST 'action' argument security mapping (session required)
+   */
+  protected static $__POSTEventsSecure = Array(
+    "shutdown", "snapshotLoad", "snapshotSave", "updateCache",
+    "init", "settings", "logout", "user", "event", "package", "service", "call"
+  );
+
   /////////////////////////////////////////////////////////////////////////////
   // MAGICS
   /////////////////////////////////////////////////////////////////////////////
@@ -178,6 +186,14 @@ class Core
         // Map actions to methods
         if ( isset($args['action']) ) {
 
+          // Check if a user session is required!
+          if ( in_array($args['action'], self::$__POSTEventsSecure) ) {
+            if ( !(($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
+              $json["error"] = _("You are not logged in!");
+              return $json;
+            }
+          }
+
           if ( !ENV_PRODUCTION ) {
             if ( $args['action'] == "debug" ) {
               return JSON::encode(Array(
@@ -239,6 +255,11 @@ class Core
    * @return void
    */
   protected static final function _doBoot(Array $args, Array &$json, Core $inst = null) {
+    $json['success'] = true;
+    $json['result']  = Array(
+      "production"  => ENV_PRODUCTION,
+      "cache"       => ENABLE_CACHE
+    );
   }
 
   /**
@@ -252,8 +273,6 @@ class Core
 
       $json['success'] = true;
       $json['result']  = $args;
-    } else {
-      $json['error'] = _("You are not logged in!");
     }
   }
 
@@ -268,8 +287,6 @@ class Core
       $json['result']  = Array(
         "packages" => Package::GetInstalledPackages($user)
       );
-    } else {
-      $json['error'] = _("You are not logged in!");
     }
   }
 
@@ -292,7 +309,6 @@ class Core
         }
       }
 
-
       $json = Array("success" => true, "error" => null, "result" => Array(
         "settings"      => User::getDefaultSettings($installed_packages),
         "cache"         => Array(
@@ -304,7 +320,6 @@ class Core
         ),
         "config"        => Array(
           "sid"               => session_id(),
-          "cache"             => ENABLE_CACHE,
           "system_language"   => DEFAULT_LANGUAGE,
           "browser_language"  => $browser_language,
           "init_language"     => $init_language,
@@ -312,8 +327,6 @@ class Core
         ),
         "user" => $user->getUserInfo()
       ));
-    } else {
-      $json['error'] = _("You are not logged in!");
     }
   }
 
@@ -476,8 +489,6 @@ class Core
     if ( $user = $inst->getUser() ) {
       $json['success'] = true;
       $json['result']  = $user->getUserInfo();
-    } else {
-      $json['error'] = _("You are not logged in!");
     }
   }
 
