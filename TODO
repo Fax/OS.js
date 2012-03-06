@@ -1,13 +1,7 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG]  Cannot read documents etc in /System ?! SOLVE: ADD CONSTANTS FOR R/W/S etc. in the vfs array iters
-       Need to add $myattr to param in _secure :D then check it for the requested file. whoops! PRØV Å HUSK DETTE
-
-[HIG]  Solve upload in /Public
+[HIG]  Fix 'ls' protected parameter
 [HIG]  Refactor VFS calls in apps to a prefix with VFS_*
-
-
-
 
 [HIG]  Solve flickering when adding CSS
 [HIG]  Handle _SessionValid and result.exception in DoPost() (_HasCrashed)

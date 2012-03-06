@@ -104,7 +104,7 @@ abstract class VFS
       "icon" => "places/folder_home.png"
     ),
     "/Public" => Array(
-      "type" => "user",
+      "type" => "public",
       "attr" => self::ATTR_RW,
       "icon" => "places/folder-publicshare.png"
     )
