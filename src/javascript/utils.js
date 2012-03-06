@@ -484,8 +484,12 @@ function dirname(dir) {
  * @return String
  */
 function basename(dir) {
-  var expl = dir.split("/");
-  return expl.length ? (expl[expl.length - 1]) : null;
+  if ( dir ) {
+    var expl = dir.split("/");
+    return expl.length ? (expl[expl.length - 1]) : null;
+  }
+
+  return dir;
 }
 
 /**
