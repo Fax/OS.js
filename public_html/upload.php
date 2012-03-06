@@ -34,7 +34,7 @@
  * @created 2011-11-13
  */
 
-require "../header.php";
+require "_header.php";
 
 // AJAX File uploading
 $return = 'null';
