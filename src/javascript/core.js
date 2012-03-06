@@ -132,6 +132,7 @@
   var _SessionId       = "";                              //!< Server session id
   var _SessionValid    = true;                            //!< Session is valid
   var _SRevisionChange = false;                           //!< Settings revision update occured
+  var _HasCrashed      = false;                           //!< If system has crashed
 
   /**
    * Language
@@ -160,6 +161,16 @@
     callback        = callback        || function() {};
     callback_error  = callback_error  || function() {};
 
+    // TODO
+    if ( !_SessionValid ) {
+      _HasCrashed = true;
+    }
+
+    // TODO
+    if ( _HasCrashed ) {
+      return;
+    }
+
     var ajax_args = {
       'ajax' : true
     };
@@ -179,6 +190,12 @@
       success   : function(data) {
         //_DataRX += (JSON.stringify(data)).length;
         callback(data);
+
+        // Check if we crashed!
+        // TODO
+        if ( data && data.error && data.exception ) {
+          _HasCrashed = true;
+        }
       },
       error     : function (xhr, ajaxOptions, thrownError){
         callback_error(xhr, ajaxOptions, thrownError);
