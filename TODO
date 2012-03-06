@@ -1,9 +1,11 @@
 CORE TODO:
 -------------------------------------------------------------------------------
+[HIG]  APP ControlPanel: _doUserOperation
 [HIG]  Core::_doUserOperation
 [HIG]  Handle _SessionValid and result.exception in DoPost() (_HasCrashed)
 [HIG]  Auto-enable newly installed apps for users ?!
 
+[MED]  User modification datestamp
 [MED]  Refactor SettingsManager
 [MED]  Background error logging only on production
 [MED]  Base64-encoded @font-face storage in XML (cace) ?!

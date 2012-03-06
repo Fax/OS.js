@@ -489,17 +489,88 @@ class Core
    */
   protected static final function _doUserOperation(Array $args, Array &$json, Core $inst = null) {
     if ( $user = $inst->getUser() ) {
+      $error  = null;
       $result = null;
       $arg    = isset($args['type']) ? $args['type'] : null;
+      $ruid   = isset($args['uid'])  ? ((int)$args['uid']) : null;
 
-      switch ( $arg ) {
-        default :
+      if ( $user->isAdmin() ) {
+        switch ( $arg ) {
+          case "create" :
+            $new_user = User::createDefault();
+            $new_user->username   = $args['form']['username'];
+            $new_user->password   = $args['form']['password'];
+            $new_user->privilege  = (int) $args['form']['privilege'];
+            $new_user->real_name  = $args['form']['real_name'];
+            $new_user->created_at = new DateTime();
+
+            if ( ($new_user = User::save($new_user)) ) {
+              $result = Array(
+                "instance"  => (array) $new_user,
+                "formatted" => $new_user->getUserInfo()
+              );
+            } else {
+              $error = _("Failed to create user!"); // FIXME: Locale
+            }
+          break;
+
+          case "update" :
+            if ( $ruid ) {
+              if ( $new_user = User::getById($ruid) ) {
+                $new_user->username   = $args['form']['username'];
+                $new_user->password   = $args['form']['password'];
+                $new_user->privilege  = (int) $args['form']['privilege'];
+                $new_user->real_name  = $args['form']['real_name'];
+
+                if ( ($new_user = User::save($new_user)) ) {
+                  $result = Array(
+                    "instance"  => (array) $new_user,
+                    "formatted" => $new_user->getUserInfo()
+                  );
+                } else {
+                  $error = _("Failed to create user!"); // FIXME: Locale
+                }
+              } else {
+                $error = _("Invalid user!"); // FIXME: Locale
+              }
+            } else {
+              $error = _("Invalid user!"); // FIXME: Locale
+            }
+          break;
+
+          case "delete" :
+            if ( $ruid ) {
+              if ( $new_user = User::getById($ruid) ) {
+                $result = false; // TODO
+              } else {
+                $error = _("Invalid user!"); // FIXME: Locale
+              }
+            } else {
+              $error = _("Invalid user!"); // FIXME: Locale
+            }
+          break;
+
+          case "info" :
+          default     :
+            $result = $user->getUserInfo();
+          break;
+        }
+      } else {
+        if ( !$arg || $arg == "info" ) {
           $result = $user->getUserInfo();
-        break;
+        } else {
+          $error = _("You do not have the privileges to perform this operation!"); // FIXME: Locale
+        }
       }
 
-      $json['success'] = true;
-      $json['result']  = $result;
+      if ( $result ) {
+        $json['success'] = true;
+        $json['result']  = $result;
+      } else {
+        if ( $error ) {
+          $json['error'] = $error;
+        }
+      }
     }
   }
 

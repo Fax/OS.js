@@ -109,6 +109,14 @@ class User
   }
 
   /**
+   * Check if Admin is in group Admin
+   * @return bool
+   */
+  public final function isAdmin() {
+    return $this->privilege & self::GROUP_ADMIN;
+  }
+
+  /**
    * Check if User is in group Admin
    * @return bool
    */
