@@ -46,8 +46,9 @@ $error_404 = false;
 
 if ( (isset($_GET["file"]) && ($path = $_GET['file'])) ) {
   if ( (($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
-    $rpath = dirname($path);
-    $rname = basename($path);
+    $download = isset($_GET['download']) && ($_GET['download'] === "true");
+    $rpath    = dirname($path);
+    $rname    = basename($path);
 
     if ( $rpath && $rname ) {
       $special_charsa = array("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
@@ -60,6 +61,21 @@ if ( (isset($_GET["file"]) && ($path = $_GET['file'])) ) {
       if ( file_exists($absolute) ) {
         $mime = VFS::GetMIME($absolute);
         header("Content-type: {$mime[1]}");
+
+        if ( $download ) {
+          $fsize = filesize($absolute);
+          $fmod  = filemtime($absolute);
+          $fmod  = strftime("D, d M Y H:i:s", $fmod);
+
+          header("Pragma: public");
+          header("Expires: 0");
+          header("Cache-Control: must-revalidate, post-check=0, pre-check=0, no-cache, public");
+          header("Content-Disposition: attachment; filename=\"{$filename}\"");
+          header("Content-Transfer-Encoding: binary");
+          header("Content-Length: {$fsize}");
+          header("Last-Modified: {$fmod} GMT");
+        }
+
         die(file_get_contents($absolute));
       } else {
         $error_404 = true;
