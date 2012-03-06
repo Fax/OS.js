@@ -263,7 +263,10 @@ class Core
     $json['success'] = true;
     $json['result']  = Array(
       "production"  => ENV_PRODUCTION,
-      "cache"       => ENABLE_CACHE
+      "cache"       => ENABLE_CACHE,
+      "preload"     => Array(
+        "images" => ResourceManager::$Preload["images"]
+      )
     );
   }
 
@@ -318,10 +321,7 @@ class Core
         "settings"      => User::getDefaultSettings($installed_packages),
         "cache"         => Array(
           "resources"         => $resources,
-          "packages"          => $installed_packages,
-          "preload"           => Array(
-            "images" => ResourceManager::$Preload["images"]
-          )
+          "packages"          => $installed_packages
         ),
         "config"        => Array(
           "sid"               => session_id(),

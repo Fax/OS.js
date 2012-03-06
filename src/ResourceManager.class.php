@@ -173,16 +173,14 @@ abstract class ResourceManager
       "bitalic"  => sprintf("%s/%sBold%s.ttf",  URI_FONT, $font_name, $italic)
     );
 
-    /*
     // Base64 Encode fonts
     foreach ( $sources as $face => $rpath ) {
       $apath = sprintf("%s/%s", PATH_HTML, $rpath);
       if ( file_exists($apath) && ($content = file_get_contents($apath)) ) {
         $b64 = base64_encode($content);
-        $sources[$face] = sprintf("data:application/x-font-ttf;base64,[%s]", $b64);
+        $sources[$face] = sprintf("data:application/x-font-ttf;base64,%s", $b64);
       }
     }
-   */
 
     $header = <<<EOCSS
 @charset "UTF-8";

@@ -986,7 +986,7 @@
 
             img.onload = null;
             img.onerror = null;
-            delete img;
+            //delete img;
           });
         }
       } else {
@@ -2353,8 +2353,11 @@
       $("#Loading").show();
 
       DoPost({'action' : 'boot'}, function(response) {
-        ENV_CACHE       = response.cache;
-        ENV_PRODUCTION  = response.production;
+        ENV_CACHE       = response.result.cache;
+        ENV_PRODUCTION  = response.result.production;
+
+        // Initialize resources
+        _Resources = new ResourceManager(response.result.preload);
 
         // Login window handling
         DoLogin(DEFAULT_USERNAME, DEFAULT_PASSWORD, function(success, server_error) {
@@ -2457,9 +2460,6 @@
         if ( data.success ) {
 
           _Running = true; // GLOBAL
-
-          // Initialize resources
-          _Resources = new ResourceManager(data.result.cache.preload);
 
           if ( data.result.cache.resources ) {
             _Resources.addResources(data.result.cache.resources, null, function() {
@@ -3011,20 +3011,24 @@
     init : function(preload) {
       var self = this;
 
-      preload = preload || {images : []};
-
       console.group("ResourceManager::init()");
+      console.log("Preload", preload);
 
-      this.resources = [];
-      this.links = [];
+      this.resources  = [];
+      this.links      = [];
 
       console.groupEnd();
 
       this._super("(ResourceManager)", "apps/system-software-install.png", true);
 
-      setTimeout(function() {
-        self._preload(preload);
-      }, 0);
+      if ( preload ) {
+        console.log("Preloading", preload);
+        console.groupEnd();
+
+        PreloadDefaultImages(ICON_URI_16, preload.images, function(loaded, failed, total) {
+          console.log("ResourceManager::init()", loaded, "of", total, "(" + failed + " failures)");
+        });
+      }
     },
 
 
@@ -3041,23 +3045,6 @@
       this.links = null;
 
       this._super();
-    },
-
-    /**
-     * ResourceManager::_preload() -- Preaload a list of images
-     * @param  Array    preload     List
-     * @return void
-     */
-    _preload : function(preload) {
-      if ( preload ) {
-        console.group("ResourceManager::_preload()");
-        console.log("Preloading", preload.images);
-        console.groupEnd();
-
-        PreloadDefaultImages(ICON_URI_16, preload.images, function(loaded, failed, total) {
-          console.log("ResourceManager::_preload()", loaded, "of", total, "(" + failed + " failures)");
-        });
-      }
     },
 
     /**
