@@ -190,6 +190,11 @@ class Core
           if ( in_array($args['action'], self::$__POSTEventsSecure) ) {
             if ( !(($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
               $json["error"] = _("You are not logged in!");
+
+              $json["exception"] = Array(
+                "type"  => "session",
+                "value" => "user"
+              );
               return $json;
             }
           }
@@ -552,7 +557,7 @@ class Core
     if ( method_exists("VFS", $method) ) {
       try {
         $json['result']  = call_user_func_array(Array("VFS", $method), Array($argv));
-        if ( $json['result'] ) {
+        if ( ($json['result']) !== false ) {
           $json['success'] = true;
         } else {
           throw new ExceptionVFS(ExceptionVFS::GENERIC, Array($argv));
