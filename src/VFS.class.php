@@ -788,9 +788,8 @@ abstract class VFS
             $fsize = filesize($abs_path);
             $icon  = self::getFileIcon($mmime, $mime, $ext);
             $mime  = $fmime;
-
           } else {
-            $tpath = str_replace("//", "/", $rel_path);
+            $tpath = preg_replace("/\/+/", "/", $rel_path);
             if ( isset(self::$VirtualDirs[$tpath]) ) {
               $icon = self::$VirtualDirs[$tpath]['icon'];
             }
@@ -800,13 +799,15 @@ abstract class VFS
         }
 
         $fpath = preg_replace("/\/+/", "/", $fpath);
+        $tmp_path = dirname($fpath);
 
-        if ( dirname($fpath) == "/" ) {
+        // FIXME: The regex is a temporary fix for the NOTE downstairs
+        if ( $tmp_path == "/" || preg_match("/\/System/", $tmp_path) ) {
           $protected = true;
         } else {
           foreach ( self::$VirtualDirs as $k => $v ) {
             if ( startsWith($fpath, $k) ) {
-              if ( !(((int)$v["attr"]) & self::ATTR_RW) ) { // FIXME
+              if ( !(((int)$v["attr"]) & self::ATTR_RW) ) { // FIXME NOTE
                 $protected = true;
               }
               break;

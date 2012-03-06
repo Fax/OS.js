@@ -1,6 +1,5 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG]  Fix 'ls' protected parameter
 [HIG]  Refactor VFS calls in apps to a prefix with VFS_*
 
 [HIG]  Solve flickering when adding CSS
