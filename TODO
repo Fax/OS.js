@@ -1,6 +1,6 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG]  Add "auth" to Core POST methods: User modification add/remove/manage ?!
+[HIG]  Core::_doUserOperation
 [HIG]  Handle _SessionValid and result.exception in DoPost() (_HasCrashed)
 [HIG]  Auto-enable newly installed apps for users ?!
 

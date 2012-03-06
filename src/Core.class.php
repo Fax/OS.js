@@ -69,7 +69,7 @@ class Core
     "settings"      => "doSettings",
     "login"         => "doUserLogin",
     "logout"        => "doUserLogout",
-    "user"          => "doUserInfo",
+    "user"          => "doUserOperation",
     "event"         => "doApplicationEvent",
     "package"       => "doPackageOperation",
     "service"       => Array(
@@ -483,14 +483,23 @@ class Core
   }
 
   /**
-   * Do a 'User Information' AJAX Call
+   * Do a 'User Operation' AJAX Call
    * @see Core::doPost
    * @return void
    */
-  protected static final function _doUserInfo(Array $args, Array &$json, Core $inst = null) {
+  protected static final function _doUserOperation(Array $args, Array &$json, Core $inst = null) {
     if ( $user = $inst->getUser() ) {
+      $result = null;
+      $arg    = isset($args['type']) ? $args['type'] : null;
+
+      switch ( $arg ) {
+        default :
+          $result = $user->getUserInfo();
+        break;
+      }
+
       $json['success'] = true;
-      $json['result']  = $user->getUserInfo();
+      $json['result']  = $result;
     }
   }
 
