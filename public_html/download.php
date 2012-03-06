@@ -68,15 +68,23 @@ if ( (isset($_GET["file"]) && ($path = $_GET['file'])) ) {
           $fmod  = strftime("D, d M Y H:i:s", $fmod);
 
           header("Pragma: public");
-          header("Expires: 0");
-          header("Cache-Control: must-revalidate, post-check=0, pre-check=0, no-cache, public");
+          header("Content-Description: File Transfer");
           header("Content-Disposition: attachment; filename=\"{$filename}\"");
           header("Content-Transfer-Encoding: binary");
           header("Content-Length: {$fsize}");
+          header("Cache-Control: must-revalidate, post-check=0, pre-check=0, no-cache");
           header("Last-Modified: {$fmod} GMT");
+          header("Expires: 0");
+
+          ob_clean();
         }
 
-        die(file_get_contents($absolute));
+        print file_get_contents($absolute);
+
+        if ( $download ) {
+          flush();
+        }
+        exit;
       } else {
         $error_404 = true;
       }
