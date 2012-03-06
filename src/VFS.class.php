@@ -42,6 +42,14 @@ abstract class VFS
   extends CoreObject
 {
 
+  const ATTR_READ     = 1;
+  const ATTR_WRITE    = 2;
+  const ATTR_SPECIAL  = 4;
+
+  const ATTR_RW       = 3;
+  const ATTR_RS       = 5;
+  const ATTR_RWS      = 7;
+
   /////////////////////////////////////////////////////////////////////////////
   // VARIABLES
   /////////////////////////////////////////////////////////////////////////////
@@ -52,52 +60,52 @@ abstract class VFS
   protected static $VirtualDirs = Array(
     "/System/Packages" => Array(
       "type" => "packages",
-      "attr" => "r",
+      "attr" => self::ATTR_READ,
       "icon" => "places/user-bookmarks.png"
     ),
     "/System/Docs" => Array(
       "type" => "core",
-      "attr" => "r",
+      "attr" => self::ATTR_READ,
       "icon" => "places/folder-documents.png"
     ),
     "/System/Wallpapers" => Array(
       "type" => "core",
-      "attr" => "r",
+      "attr" => self::ATTR_READ,
       "icon" => "places/folder-pictures.png"
     ),
     "/System/Fonts" => Array(
       "type" => "core",
-      "attr" => "r",
+      "attr" => self::ATTR_READ,
       "icon" => "places/user-desktop.png"
     ),
     "/System" => Array(
       "type" => "core",
-      "attr" => "r",
+      "attr" => self::ATTR_READ,
       "icon" => "places/folder-templates.png"
     ),
     "/User/Temp" => Array(
       "type" => "user",
-      "attr" => "rw",
+      "attr" => self::ATTR_RW,
       "icon" => "places/folder-templates.png"
     ),
     "/User/Packages" => Array(
       "type" => "packages",
-      "attr" => "rs",
+      "attr" => self::ATTR_RS,
       "icon" => "places/folder-download.png"
     ),
     "/User/Documents" => Array(
       "type" => "user",
-      "attr" => "rw",
+      "attr" => self::ATTR_RW,
       "icon" => "places/folder-documents.png"
     ),
     "/User" => Array(
       "type" => "chroot",
-      "attr" => "r",
+      "attr" => self::ATTR_READ,
       "icon" => "places/folder_home.png"
     ),
     "/Public" => Array(
       "type" => "user",
-      "attr" => "rw",
+      "attr" => self::ATTR_RW,
       "icon" => "places/folder-publicshare.png"
     )
   );
@@ -137,7 +145,7 @@ abstract class VFS
    * Secure a file path
    * @return Array
    */
-  protected static function _secure($filename, $path = null, $exists = true, $write = true) {
+  protected static function _secure($filename, $path = null, $exists = true, $method = self::ATTR_READ) {
     $special_charsa = array("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
     $special_charsb = array("?", "[", "]", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
 
@@ -158,12 +166,19 @@ abstract class VFS
     // Vars to use
     $filename     = trim(preg_replace('/\s+/', ' ', str_replace($special_charsa, '', $filename)), '.-_'); // Safe-named filename
     $path         = trim(preg_replace('/\s+/', ' ', str_replace($special_charsb, '', $path)), '.-_');     // Safe-named path
+    $path         = preg_replace("/\/+/", "/", $path);
     $base         = PATH_MEDIA;                                                                           // Absolute filesystem [media] root (dynamic)
     $rpath        = $path;                                                                                // $path is dynamic (as $base)
-    $rw           = true;                                                                                 // RW access indication
+    $attr         = 0;                                                                                    // Access indication
     $escape       = false;                                                                                // Escape the function
     $location     = null;                                                                                 // Relative VFS path
     $destination  = null;                                                                                 // Absolute filesystem path
+
+    //error_log("Filename:                   " . $filename);
+    //error_log("Path:                       " . $path);
+    //error_log("Base:                       " . $base);
+    //error_log("Check existence?:           " . ($exists ? "true" : "false"));
+    //error_log("Using attribute:            " . ((string)$method));
 
     unset($special_charsa);
     unset($special_charsb);
@@ -172,70 +187,83 @@ abstract class VFS
     // Loops through a list of known directories and uses the attributes
     // to decide what action and path to make
 
-    if ( $path !== null ) {
-      $path = preg_replace("/\/+/", "/", $path);
-      if ( $path == "/" ) {
-        $escape = true;
-        break;
-      } else {
-        foreach ( self::$VirtualDirs as $k => $v ) {
-          if ( startsWith($path, $k) ) {
-            if ( $v['attr'] != "rw" ) {
-              $rw = false;
-            }
+    if ( $path == "/" ) {
+      return false;
+    }
 
-            if ( ($v['type'] == "chroot") || ($v['type'] == "user") ) {
-              $uid = 0;
-              if ( !(($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
-                $escape = true;
-                break;
-              }
+    foreach ( self::$VirtualDirs as $k => $v ) {
+      if ( startsWith($path, $k) ) {
+        $attr = (int)$v['attr'];
 
-              // Remove the prefix of the path in user VFS dirs
-              if ( $v['type'] == "user" ) {
-                $path = preg_replace("/^\/+?User/", "", $path);
-              }
+        //error_log(">>> FOUND $k ($attr)");
 
-              // Set new base since we are operating in a "chroot"
-              $base = sprintf("%s/%d", PATH_VFS, $uid);
-            }
+        if ( ($attr < self::ATTR_READ) || (($attr == self::ATTR_READ) && ($method != self::ATTR_READ)) || !($attr & $method) ) {
+          //error_log(">>> INVALID MODE");
+          $escape = true;
+          break;
+        }
 
+        //error_log(">>> CHECKING TYPE");
+
+        if ( ($v['type'] == "chroot") || ($v['type'] == "user") ) {
+          $uid = 0;
+          if ( !(($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
+            //error_log(">>> USER $uid FOUND");
+            $escape = true;
             break;
           }
+
+          //error_log(">>> VALID VFS DIR <<<");
+
+          // Remove the prefix of the path in user VFS dirs
+          if ( $v['type'] == "user" ) {
+            $path = preg_replace("/^\/+?User/", "", $path);
+          }
+
+          // Set new base since we are operating in a "chroot"
+          $base = sprintf("%s/%d", PATH_VFS, $uid);
         }
-      }
 
-      // No read/write access
-      if ( $write && !$rw ) {
-        $escape = true;
-      }
-      if ( !$rw || $escape ) {
-        return false;
-      }
-
-      // Build absolute filesystem path
-      $location = $base . $path;
-      if ( $filename !== null ) {
-        $location .= "/{$filename}";
-      }
-
-      $location     = preg_replace("/\/+/", "/", $location);
-      $location     = realpath(dirname($location));
-
-      // Make sure we are operating inside a secure area again
-      if ( !($location) || !(startsWith($location, $base)) ) {
-        return false;
-      }
-
-      // Create destination string
-      if ( $filename !== null ) {
-        $destination = "{$location}/{$filename}";
-      } else {
-        $destination = "{$location}{$path}";
+        break;
       }
     }
 
+    //error_log("Escape?:                    " . ($escape ? "true" : "false"));
+
+    // Access denied ?
+    if ( $escape ) {
+      return false;
+    }
+
+    //error_log("New Path:                   " . $path);
+    //error_log("New Base:                   " . $base);
+
+    // Build absolute filesystem path
+    $location = $base . $path;
+    if ( $filename !== null ) {
+      $location .= "/{$filename}";
+    }
+
+    $location     = preg_replace("/\/+/", "/", $location);
+    $location     = realpath(dirname($location));
+
+    //error_log("Absolute location:          " . $base);
+
+    // Make sure we are operating inside a secure area again
+    if ( !($location) || !(startsWith($location, $base)) ) {
+      return false;
+    }
+
+    // Create destination string
+    if ( $filename !== null ) {
+      $destination = "{$location}/{$filename}";
+    } else {
+      $destination = "{$location}{$path}";
+    }
+
     $destination  = preg_replace("/\/+/", "/", $destination);
+
+    //error_log("Destination:                " . $destination);
 
     // Check for existance (if required)
     if ( $exists && $destination ) {
@@ -341,7 +369,7 @@ abstract class VFS
    * @retrun  Mixed
    */
   public static function upload($file, $path) {
-    if ( ($res = self::_secure($file["name"], $path, false)) !== false ) {
+    if ( ($res = self::_secure($file["name"], $path, false, self::ATTR_RW)) !== false ) {
       if ( $result = move_uploaded_file($file["tmp_name"], $res["destination"]) ) {
         self::_permissions($res["destination"]);
 
@@ -360,7 +388,7 @@ abstract class VFS
    * @retrun  bool
    */
   public static function mkdir($argv) {
-    if ( $res = self::_secure($argv, null, false) ) {
+    if ( $res = self::_secure($argv, null, false, self::ATTR_RW) ) {
       if ( !is_dir($res["destination"]) ) {
         if ( mkdir($res["destination"]) ) {
           self::_permissions($res["destination"], true);
@@ -441,7 +469,7 @@ abstract class VFS
    * @return String
    */
   public static function cat($argv) {
-    if ( $res = self::_secure($argv, null, true, false) ) {
+    if ( $res = self::_secure($argv, null, true) ) {
       return file_get_contents($res["destination"]);
     }
 
@@ -455,7 +483,7 @@ abstract class VFS
    * @return bool
    */
   public static function put($argv, $overwrite = true) {
-    if ( $res = self::_secure($argv['file'], null, false) ) {
+    if ( $res = self::_secure($argv['file'], null, false, self::ATTR_RW) ) {
       $encoding = isset($argv['encoding']) ? $argv['encoding'] : null;
       $content  = $argv['content'];
 
@@ -481,7 +509,7 @@ abstract class VFS
    * @return  bool
    */
   public static function touch($argv) {
-    if ( $res = self::_secure($argv, null, false) ) {
+    if ( $res = self::_secure($argv, null, false, self::ATTR_RW) ) {
       if ( !file_exists($res["destination"]) ) {
         if ( touch($res["destination"]) ) {
           return true;
@@ -500,7 +528,7 @@ abstract class VFS
    * @return bool
    */
   public static function rm($path) {
-    if ( $res = self::_secure($path, null, true) ) {
+    if ( $res = self::_secure($path, null, true, self::ATTR_RW) ) {
       if ( is_file($res["destination"]) || is_link($res["destination"]) ) {
         return unlink($res["destination"]);
       } else if ( is_dir($res["destination"]) ) {
@@ -522,8 +550,8 @@ abstract class VFS
    */
   public static function mv($path, $src, $dest) {
     $dir = dirname($path);
-    if ( $res_src = self::_secure($src, $dir) ) {
-      if ( $res_dest = self::_secure($dest, $dir, false) ) {
+    if ( $res_src = self::_secure($src, $dir, true, self::ATTR_RW) ) {
+      if ( $res_dest = self::_secure($dest, $dir, false, self::ATTR_RW) ) {
         if ( !file_exists($res_dest["destination"]) ) {
           return rename($res_src["destination"], $res_dest["destination"]);
         }
@@ -541,7 +569,7 @@ abstract class VFS
    */
   public static function extract_archive($arch, $dest) {
     if ( $res_a = self::_secure($arch, null, true) ) {
-      if ( $res_d = self::_secure("foo", $dest, false) ) {
+      if ( $res_d = self::_secure("foo", $dest, false, self::ATTR_RW) ) {
         require PATH_LIB . "/Archive.php";
         if ( $a = Archive::open($res_a["destination"]) ) {
           return $a->extract(dirname($res_d["destination"]));
@@ -614,7 +642,7 @@ abstract class VFS
    */
   public static function ls($path, Array $ignores = null, Array $mimes = Array()) {
     $uid = 0;
-    if ( !(($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
+    if ( !(($user = Core::get()->getUser()) && ($uid = $user->id)) ) {
       return false;
     }
 
@@ -622,12 +650,12 @@ abstract class VFS
       $ignores = Array(".", "..", ".gitignore", ".git", ".cvs");
     }
 
-    $base     = PATH_MEDIA; //PATH_HTML . "/media";
+    $base     = PATH_MEDIA;
     $absolute = "{$base}{$path}";
-
     $apps     = false;
     $chroot   = false;
     $uchroot  = false;
+
     foreach ( self::$VirtualDirs as $k => $v ) {
       if ( startsWith($path, $k) ) {
         if ( $v['type'] == "packages" ) {
@@ -636,7 +664,7 @@ abstract class VFS
           $chroot = true;
         } else if ( $v['type'] == "user" ) {
           $uchroot = true;
-        } 
+        }
         break;
       }
     }
@@ -702,7 +730,6 @@ abstract class VFS
         $mime      = "";
         $protected = false;
 
-        // Previous dir
         if ( $file == ".." ) {
           $xpath = explode("/", $path);
           array_pop($xpath);
@@ -712,11 +739,7 @@ abstract class VFS
           }
           $icon = "status/folder-visiting.png";
           $protected = true;
-        }
-
-        // New dir
-        else {
-
+        } else {
           $abs_path = "{$absolute}/{$file}";
           $rel_path = "{$path}/{$file}";
 
@@ -783,7 +806,7 @@ abstract class VFS
         } else {
           foreach ( self::$VirtualDirs as $k => $v ) {
             if ( startsWith($fpath, $k) ) {
-              if ( $v["attr"] != "rw" ) {
+              if ( !(((int)$v["attr"]) & self::ATTR_RW) ) { // FIXME
                 $protected = true;
               }
               break;
