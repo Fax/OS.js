@@ -112,6 +112,8 @@ class Core
     } else {
       Session::setLocale($this->setLocale(null));
     }
+
+    self::$__Instance = $this;
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -123,13 +125,7 @@ class Core
    * @return Core
    */
   public static function initialize() {
-    $i = null;
-    if ( self::$__Instance ) {
-      $i = (self::$__Instance);
-    } else {
-      $i = (self::$__Instance = new Core());
-    }
-    return $i;
+    return self::$__Instance ? self::$__Instance : (new Core());
   }
 
   /**
@@ -195,7 +191,7 @@ class Core
                 "type"  => "session",
                 "value" => "user"
               );
-              return $json;
+              return JSON::encode($json);
             }
           }
 
@@ -482,7 +478,8 @@ class Core
   protected static final function _doUserLogout(Array $args, Array &$json, Core $inst = null) {
     $json['success']  = true;
 
-    Session::setUser(null);
+    // FIXME
+    //Session::setUser(null);
   }
 
   /**

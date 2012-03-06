@@ -26,6 +26,11 @@ Dependencies:
   Debian users must do: apt-get install python{X}.{Y}-dev (python --version)
   Download: svn co https://javascriptlint.svn.sourceforge.net/svnroot/javascriptlint/trunk jsl
 
+Apache:
+-------------------------------------------------------------------------------
+* Use example from doc/XX_apache-vhost.conf
+* Create /var/cache/OSjs with permission to apache
+
 Deployment (Development Target):
 -------------------------------------------------------------------------------
 * Clone the project from GitHub
