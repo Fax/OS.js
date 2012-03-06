@@ -35,6 +35,7 @@
 // CONFIGURATION - PHP [INI] SETTINGS
 ///////////////////////////////////////////////////////////////////////////////
 
+// For the rest see vhost
 ini_set("session.upload_progress.enabled",  true);
 ini_set("post_max_size",                    "256M");
 ini_set("upload_max_filesize",              "256M");
