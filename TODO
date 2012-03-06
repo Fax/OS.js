@@ -1,6 +1,5 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG]  Refactor VFS calls in apps to a prefix with VFS_*
 [HIG]  Handle _SessionValid and result.exception in DoPost() (_HasCrashed)
 [HIG]  Auto-enable newly installed apps for users ?!
 
