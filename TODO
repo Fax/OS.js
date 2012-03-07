@@ -1,5 +1,7 @@
 CORE TODO:
 -------------------------------------------------------------------------------
+[HIG]  Check saving of default app-mime [defaults]
+       Check saving of application settings storage [settings]
 [HIG]  APP ControlPanel: _doUserOperation
 [HIG]  Core::_doUserOperation
 [HIG]  Handle _SessionValid and result.exception in DoPost() (_HasCrashed)
