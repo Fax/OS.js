@@ -1,10 +1,5 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG]  Refactor SettingsManager -- When i change user, the settings won't get
-       Loaded
-       This may be a good time to get rid of the _AppCache etc. and let them
-       all live inside SettingsManager :D
-
 [HIG]  APP ControlPanel: _doUserOperation
 [HIG]  Core::_doUserOperation
 [HIG]  Handle _SessionValid and result.exception in DoPost() (_HasCrashed)
