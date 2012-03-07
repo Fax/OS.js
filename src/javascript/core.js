@@ -3341,7 +3341,11 @@
 
             //case "array":
             case "list":
-              this._set(i, JSON.parse(registry[i]));
+              try {
+                this._set(i, JSON.parse(registry[i]));
+              } catch ( eee ) {
+                this._set(i, []);
+              }
             break;
 
             default :

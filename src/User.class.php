@@ -246,7 +246,7 @@ class User
    * @see Core::_doInit
    * @return Array
    */
-  public static function getDefaultSettings($packages = Array()) {
+  public static function getDefaultSettings($packages = Array(), $values = false) {
     $merge = Array();
 
     // Panel(s)
@@ -334,7 +334,18 @@ class User
       );
     }
 
-    return SettingsManager::getSettings($merge);
+    $settings = SettingsManager::getSettings($merge);
+    if ( $values ) {
+      $values = Array();
+      foreach ( $settings as $k => $item ) {
+        if ( isset($item["value"]) ) {
+          $values[$k] = $item["value"];
+        }
+      }
+      return $values;
+    }
+
+    return $settings;
   }
 
 }

@@ -474,7 +474,7 @@ class Core
         }
 
         if ( !($settings = $user->settings) ) {
-          $settings = User::getDefaultSettings($packages);
+          $settings = User::getDefaultSettings($packages, true);
         }
         if ( !($session = $user->last_session) ) {
           $session = User::getDefaultSession();
