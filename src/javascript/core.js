@@ -290,22 +290,6 @@
   } // @endfunction
 
   /**
-   * GetLocale() -- Get user locale
-   * @return Object
-   * @function
-   */
-  function GetLocale() {
-    return {
-      locale_location : API.user.settings.get("system.locale.location"),
-      locale_time     : API.user.settings.get("system.locale.time-format"),
-      locale_date     : API.user.settings.get("system.locale.date-format"),
-      locale_stamp    : API.user.settings.get("system.locale.timestamp-format"),
-      locale_language : API.user.settings.get("system.locale.language")
-    };
-  } // @function
-
-
-  /**
    * GetLanguage() -- Get Current language
    * @return String
    * @function
@@ -324,21 +308,6 @@
     l['auto']     = sprintf(l['auto'],    _BrowserLanguage);
     return l;
   } // @function
-
-  /**
-   * UploadSettings() -- Upload User settings to server
-   * @return void
-   * @function
-   */
-  function UploadSettings() {
-    var settings = {
-      locale : GetLocale()
-    };
-
-    DoPost({'action' : 'settings', 'settings' : settings}, function(data) {
-      console.log("UploadSetting()", data);
-    });
-  } // @endfunction
 
   /**
    * MessageBox() -- Crate a message box (alert)
@@ -3680,13 +3649,33 @@
      * @return  void
      */
     _apply : function(settings) {
+      console.group("SettingsManager::_apply()");
+      console.log("Applying", settings);
+
+      var changed = false;
       for ( var i in settings ) {
         if ( settings.hasOwnProperty(i) ) {
           this._set(i, settings[i]);
+
+          changed = true;
         }
       }
 
-      UploadSettings();
+      if ( changed ) {
+        settings = this.getSession();
+        DoPost({'action' : 'settings', "settings" : settings}, function(data) {
+          if ( data.result && !data.error ) {
+            API.system.notification("System Settings", "Your settings was saved", sprintf(ICON_URI_32, "emblems/emblem-default.png")); // FIXME: Locale
+          } else {
+            API.system.notification("System Settings", "Failed to save settings", sprintf(ICON_URI_32, "emblems/emblem-important.png")); // FIXME: Locale
+          }
+          console.groupEnd();
+        }, function() {
+          API.system.notification("System Settings", "Failed to save settings", sprintf(ICON_URI_32, "emblems/emblem-important.png")); // FIXME: Locale
+          console.error("Server error");
+          console.groupEnd();
+        });
+      }
     },
 
     /**

@@ -339,12 +339,20 @@ class Core
   protected static final function _doSettings(Array $args, Array &$json, Core $inst = null) {
     if ( isset($args['settings']) ) {
       if ( $inst instanceof Core ) {
-        if ( isset($args['settings']['locale']) ) {
-          $inst->setLocale($args['settings']['locale']);
+        if ( (isset($args['settings'])) && ($values = $args['settings']) ) {
+          $locale = Array(
+            "locale_location" => $values["system.locale.location"],
+            "locale_time"     => $values["system.locale.time-format"],
+            "locale_date"     => $values["system.locale.date-format"],
+            "locale_stamp"    => $values["system.locale.timestamp-format"],
+            "locale_language" => $values["system.locale.language"]
+          );
+
+          $inst->setLocale($locale);
+          Session::setLocale($locale);
+
           $json['success'] = true;
           $json['result']  = true;
-
-          Session::setLocale($args['settings']['locale']);
         }
       }
     }
