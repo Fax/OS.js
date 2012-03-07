@@ -44,6 +44,16 @@ abstract class SettingsManager
   /**
    * @var Default Settings
    */
+  public static $Session = Array(
+    "defaults" => Array(),
+    "session"  => Array(),
+    "settings" => Array()
+  );
+
+
+  /**
+   * @var Default Settings
+   */
   public static $Settings = Array
   (
     //

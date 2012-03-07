@@ -147,6 +147,7 @@ class DB
         }
 
         $query  = sprintf("UPDATE `%s` SET %s WHERE %s;", $table, implode(", ", $query_set), implode(" AND ", $query_where));
+
         if ( $sth = $db->prepare($query) ) {
           if ( $res = $sth->execute($values) ) {
             return true;
@@ -278,6 +279,7 @@ class DB
     // PDO
     else {
       $db     = new PDO((is_string($dsn) ? $dsn : DATABASE_DSN), DATABASE_USER, DATABASE_PASS);
+      $db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
     }
 
     return (self::$__INSTANCES[$dsn] = new self($db));

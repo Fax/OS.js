@@ -60,6 +60,7 @@ class User
   public $settings          = Array();              // User Settings Tree
   public $last_login        = null;                 // User Last login
   public $last_session_id   = null;                 // User Last Session ID
+  public $last_session      = Array();              // User Last Session
 
   public static $Groups = Array(
     self::GROUP_NONE        => "None",
@@ -78,8 +79,16 @@ class User
   public final function __construct(Array $data) {
     foreach ( $data as $k => $v ) {
       try {
-        if ( $k == "settings" )
-          $v = JSON::decode($v);
+        if ( $k == "settings" || $k == "last_session" )
+          if ( $v ) {
+            try {
+              $v = JSON::decode($v);
+            } catch ( Exception $e ) {
+              $v = Array();
+            }
+          } else {
+            $v = Array();
+          }
         elseif ( ($k == "created_at" || $k == "last_login") && $v )
           $v = new DateTime($v);
       } catch ( Exception $e ) {}
@@ -122,20 +131,6 @@ class User
    */
   public final function isInGroup($group) {
     return $this->privilege & $group;
-  }
-
-  /**
-   * Save instance with these new settings
-   * @param  Array    $session      Session JSON
-   * @param  Array    $settings     Settings JSON
-   * @return bool
-   */
-  public final function saveUser(Array $session, Array $settings) {
-    $this->settings = $settings;
-    if ( User::save($this) ) {
-      return true;
-    }
-    return false;
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -201,8 +196,8 @@ class User
       $values[$k] = $v;
     }
 
-    if ( isset($instance->id) && $instance->id ) {
-      if ( DB::Update("user", $values, Array("id" => $instance->id)) ) {
+    if ( isset($instance->id) && ($id = $instance->id) ) {
+      if ( DB::Update("user", $values, Array("id" => $id)) ) {
         return $instance;
       }
     } else {
@@ -242,16 +237,16 @@ class User
   // STATIC CORE FUNCTIONS
   /////////////////////////////////////////////////////////////////////////////
 
+  public static function getDefaultSession() {
+    return SettingsManager::$Session;
+  }
+
   /**
    * Get the Users default settings
    * @see Core::_doInit
    * @return Array
    */
-  public static function getDefaultSettings($packages) {
-    if ( !class_exists("SettingsManager") ) {
-      require "SettingsManager.class.php";
-    }
-
+  public static function getDefaultSettings($packages = Array()) {
     $merge = Array();
 
     // Panel(s)

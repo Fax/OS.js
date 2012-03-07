@@ -51,7 +51,6 @@
   /**
    * @constants Local settings
    */
-  var SETTING_REVISION       = 43;                  //!< The settings revision
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
   var TOOLTIP_TIMEOUT        = 300;                 //!< Tooltip timeout in ms
@@ -220,74 +219,6 @@
 
   } // @endfunction
 
-
-  /**
-   * DoLogin() -- Perform login
-   * @param  String     username      Username
-   * @param  String     password      Password
-   * @param  Function   callback      Calback function after ajax
-   * @return void
-   * @function
-   */
-  function DoLogin(username, password, callback) {
-    $("#LoginUsername").val(username);
-    $("#LoginPassword").val(password);
-
-    var _disableInput = function() {
-      $("#LoginButton").attr("disabled", "disabled");
-      $("#LoginUsername").attr("disabled", "disabled").addClass("loading");
-      $("#LoginPassword").attr("disabled", "disabled").addClass("loading");
-    };
-    var _enableInput = function() {
-      $("#LoginButton").removeAttr("disabled");
-      $("#LoginUsername").removeAttr("disabled").removeClass("loading");
-      $("#LoginPassword").removeAttr("disabled").removeClass("loading");
-    };
-
-    $("#LoginButton").focus();
-
-    $("#LoginButton").click(function() {
-
-      var form = {
-        "username" : $("#LoginUsername").val(),
-        "password" : $("#LoginPassword").val()
-      };
-
-      console.group("DoLogin()");
-      console.log("Login data:", form);
-      console.groupEnd();
-
-      _disableInput();
-
-      DoPost({'action' : 'login', 'form' : form}, function(data) {
-        console.log("Login success:", data.success);
-        console.log("Login result:", data.result);
-        console.groupEnd();
-
-        if ( data.success ) {
-          $("#LoginForm").get(0).onsubmit = null;
-        } else {
-          _enableInput();
-        }
-
-        callback(data.success, false);
-      }, function() {
-        calback(false, true);
-
-        _enableInput();
-      });
-    });
-
-    /*
-    if ( !ENV_PRODUCTION ) {
-      $("#LoginButton").click();
-      $("#LoginButton").attr("disabled", "disabled");
-    }
-    */
-
-    _enableInput();
-
-  } // @endfunction
 
   /**
    * GetLanguage() -- Get Current language
@@ -694,7 +625,7 @@
       var i;
 
       // Figure out what apps to display
-      var activated = _Settings._get("user.installed.packages", false, true); // FIXME
+      var activated = _Settings._get("user.installed.packages", true); // FIXME
       for ( i in _AppCache ) {
         if ( _AppCache.hasOwnProperty(i) ) {
           if ( in_array(i, activated) ) {
@@ -1445,15 +1376,12 @@
           return _Settings.getType(k);
         },
 
-        'get' : function(k) {
-          return _Settings._get(k);
+        'get' : function(k, json) {
+          return _Settings._get(k, json);
         },
 
         'options' : function(k) {
-          if ( API.user.settings.type(k) == "array" ) {
-            return _Settings._get(k, true);
-          }
-          return false;
+          return _Settings.getOptions(k);
         },
 
         'package_enable' : function(p, callback) {
@@ -1540,7 +1468,7 @@
         },
 
         'packages' : function(icons, apps, pitems, sitems) {
-          var activated = _Settings._get("user.installed.packages", false, true); // FIXME
+          var activated = _Settings._get("user.installed.packages", true);
           var result = [];
 
           apps    = (apps === undefined)    ? true : apps;
@@ -1638,6 +1566,7 @@
         _Core.sessionRestore();
       },
 
+      /*
       'snapshot_save' : function(name, callback) {
         console.group("=== API OPERATION ===");
         console.log("Method", "API.session.snapshot_save");
@@ -1655,6 +1584,7 @@
 
         _Core.sessionSnapshotLoad(name, callback);
       },
+      */
 
       'shutdown' : function(save) {
         console.group("=== API OPERATION ===");
@@ -2318,6 +2248,9 @@
      */
     boot : function() {
       var self = this;
+      if ( this.running ) {
+        return;
+      }
 
       $("#Loading").show();
 
@@ -2328,24 +2261,120 @@
         // Initialize resources
         _Resources = new ResourceManager(response.result.preload);
 
+        // Initialize settings
+        _Settings = new SettingsManager(response.result.registry);
+
         // Login window handling
-        DoLogin(DEFAULT_USERNAME, DEFAULT_PASSWORD, function(success, server_error) {
-          if ( success && !server_error ) {
-            setTimeout(function() {
-              self.run();
-            }, LOGIN_WAIT);
-          } else {
-            if ( server_error ) {
-              MessageBox(OSjs.Labels.LoginFailureOther); // FIXME ?
-            } else {
-              MessageBox(OSjs.Labels.LoginFailure); // FIXME ?
-            }
-          }
-        });
+        self._login(DEFAULT_USERNAME, DEFAULT_PASSWORD);
       }, function(xhr, ajaxOptions, thrownError) {
         alert("A network error occured while booting OS.js: " + thrownError);
         throw("Initialization error: " + thrownError);
       });
+    },
+
+    /**
+     * Core::_login() -- Perform login
+     * @param  String     username      Username
+     * @param  String     password      Password
+     * @param  Function   callback      Calback function after ajax
+     * @return void
+     * @function
+     */
+    _login : function(username, password, callback) {
+      var self = this;
+      $("#LoginUsername").val(username);
+      $("#LoginPassword").val(password);
+
+      var _disableInput = function() {
+        $("#LoginButton").attr("disabled", "disabled");
+        $("#LoginUsername").attr("disabled", "disabled").addClass("loading");
+        $("#LoginPassword").attr("disabled", "disabled").addClass("loading");
+      };
+      var _enableInput = function() {
+        $("#LoginButton").removeAttr("disabled");
+        $("#LoginUsername").removeAttr("disabled").removeClass("loading");
+        $("#LoginPassword").removeAttr("disabled").removeClass("loading");
+      };
+
+      var _doLoginError = function(server_error) {
+        if ( server_error ) {
+          MessageBox(OSjs.Labels.LoginFailureOther); // FIXME ?
+        } else {
+          MessageBox(OSjs.Labels.LoginFailure); // FIXME ?
+        }
+      };
+      var _doLogin = function(response) {
+        setTimeout(function() {
+          self.login(response);
+        }, LOGIN_WAIT);
+      };
+
+      $("#LoginButton").focus();
+
+      $("#LoginButton").click(function() {
+
+        var form = {
+          "username" : $("#LoginUsername").val(),
+          "password" : $("#LoginPassword").val()
+        };
+
+        console.group("Core::_login()");
+        console.log("Login data:", form);
+        console.groupEnd();
+
+        _disableInput();
+
+        DoPost({'action' : 'login', 'form' : form}, function(data) {
+          console.log("Login success:", data.success);
+          console.log("Login result:", data.result);
+          console.groupEnd();
+
+          if ( data.success ) {
+            $("#LoginForm").get(0).onsubmit = null;
+            _doLogin(data.result);
+          } else {
+            _enableInput(false);
+            _doLoginError();
+          }
+
+        }, function() {
+          _doLoginError(true);
+          _enableInput();
+        });
+      });
+
+      /*
+      if ( !ENV_PRODUCTION ) {
+        $("#LoginButton").click();
+        $("#LoginButton").attr("disabled", "disabled");
+      }
+      */
+
+      _enableInput();
+    },
+
+    login : function(response) {
+      var self = this;
+      if ( this.running ) {
+        return;
+      }
+
+      // Globals
+      _SessionId        = response.sid;
+      _BrowserLanguage  = response.lang_browser;
+      _SystemLanguage   = response.lang_user;
+
+      _Settings.run(response.registry, response.session, response.packages);
+
+      if ( response.preload ) {
+        _Resources.addResources(response.preload.resources, null, function(error) {
+          if ( !error ) {
+            self._run();
+          } // FIXME: ERROR
+        });
+      } else {
+        this._run();
+      }
     },
 
     /**
@@ -2354,29 +2383,35 @@
      * @return void
      */
     shutdown : function(save) {
-      var ssess     = _Core.getSession();
-      var ssett     = _Settings.getSession();
-      var dsess     = _Desktop ? _Desktop.getSession() : {};
-
+      var usession  = JSON.stringify(_Settings.getSession());
       var duration  = ((new Date()).getTime()) - _StartStamp;
 
       console.group("Core::shutdown()");
-      console.log("Core Session",     ssess);
-      console.log("Settings Session", ssett);
-      console.log("Desktop session",  dsess);
       console.log("Session duration", duration);
       console.groupEnd();
 
-      DoPost({'action' : 'shutdown', 'session' : ssess, 'settings' : ssett, 'desktop' : dsess, 'duration' : duration, 'save' : save}, function(data) {
-        if ( data.success ) {
-          console.log("Core::shutdown()", "Shutting down...");
+      var _shutdown = function() {
+        DoPost({'action' : 'shutdown', 'session' : usession, 'duration' : duration, 'save' : save}, function(data) {
+          if ( data.success ) {
+            console.log("Core::shutdown()", "Shutting down...");
 
-          OSjs.__Stop();
-        } else {
-          MessageBox(data.error);
-        }
+            OSjs.__Stop();
+          } else {
+            MessageBox(data.error);
+          }
+        }, function(xhr, ajaxOptions, thrownError) {
+          alert("A network error occured while shutting down OS.js: " + thrownError);
+          throw("Shutdown error: " + thrownError);
+        });
+      };
 
-      });
+      if ( save ) {
+        _Settings._save(false, function() {
+          _shutdown();
+        });
+      } else {
+        _shutdown();
+      }
     },
 
     /**
@@ -2403,10 +2438,10 @@
     },
 
     /**
-     * Core::run() -- Main startup procedure wrapper
+     * Core::_run() -- Main startup
      * @return void
      */
-    run : function() {
+    _run : function(data) {
       var self = this;
 
       if ( this.running ) {
@@ -2415,28 +2450,10 @@
 
       console.group("Core::run()");
 
-
-      // Register confirm leave page thingy
-      window.onbeforeunload = function(ev) {
-        return self.leaving(ev);
-      };
-
       // Load initial data
-      var date    = (new Date()).toLocaleString();
-      var lang    = API.system.language();
-
-      DoPost({'action' : 'init', 'date' : date, 'language' : lang}, function(data) {
+      DoPost({'action' : 'init'}, function(data) {
         if ( data.success ) {
-
-          _Running = true; // GLOBAL
-
-          if ( data.result.cache.resources ) {
-            _Resources.addResources(data.result.cache.resources, null, function() {
-              self._run(data);
-            });
-          } else {
-            self._run(data);
-          }
+          self.run();
         } else {
           MessageBox(data.error);
         }
@@ -2451,34 +2468,27 @@
     },
 
     /**
-     * Core::_run() -- Main startup
+     * Core::run() -- Main startup procedure wrapper
      * @return void
      */
-    _run : function(data) {
+    run : function() {
       var self = this;
 
       if ( this.running ) {
         return;
       }
 
+      // Register confirm leave page thingy
+      window.onbeforeunload = function(ev) {
+        return self.leaving(ev);
+      };
+
+      _Running = true; // GLOBAL
+
       var load    = $("#Loading");
       var bar     = $("#LoadingBar");
 
       bar.progressbar({value : 5});
-
-      // Some generic globals
-      _SessionId       = data.result.config.sid;
-      _BrowserLanguage = data.result.config.browser_language;
-      _SystemLanguage  = data.result.config.system_language;
-
-      // Bind global events
-      $(document).bind("keydown",     this.global_keydown);
-      $(document).bind("mousedown",   this.global_mousedown);
-      $(document).bind("mouseup",     this.global_mouseup);
-      $(document).bind("mousemove",   this.global_mousemove);
-      $(document).bind("click",       this.global_click);
-      $(document).bind("dblclick",    this.global_dblclick);
-      $(document).bind("contextmenu", this.global_contextmenu);
 
       /*window.addEventListener('offline', function(ev) {
         self.global_offline(ev, !(navigator.onLine === false));
@@ -2491,9 +2501,6 @@
       this.sclint = setInterval(function(ev) {
         self.global_endsession(ev, GetCookie(SESSION_KEY));
       }, SESSION_CHECK);
-
-      // Initialize settings
-      _Settings = new SettingsManager(data.result.settings, data.result.cache, data.result.config.stored_settings);
 
       bar.progressbar({value : 10});
 
@@ -2560,19 +2567,30 @@
         }
       }
 
+      // Bind global events
+      $(document).bind("keydown",     this.global_keydown);
+      $(document).bind("mousedown",   this.global_mousedown);
+      $(document).bind("mouseup",     this.global_mouseup);
+      $(document).bind("mousemove",   this.global_mousemove);
+      $(document).bind("click",       this.global_click);
+      $(document).bind("dblclick",    this.global_dblclick);
+      $(document).bind("contextmenu", this.global_contextmenu);
+
+      // Session
       setTimeout(function() {
-        // >>> Session
         bar.progressbar({value : 80});
 
-        var autostarters = _Settings._get("user.autorun", false, true);
-        var ai = 0, al = autostarters.length;
-        for ( ai; ai < al; ai++ ) {
-          LaunchBackgroundService(autostarters[ai]);
+        var autostarters = _Settings._get("user.autorun", true);
+        if ( autostarters ) {
+          var ai = 0, al = autostarters.length;
+          for ( ai; ai < al; ai++ ) {
+            LaunchBackgroundService(autostarters[ai]);
+          }
         }
 
         bar.progressbar({value : 85});
 
-        var do_restore = API.user.settings.get("user.session.autorestore");
+        var do_restore = _Settings._get("user.session.autorestore");
         if ( do_restore === true || do_restore === "true" ) {
           API.session.restore();
         }
@@ -2606,7 +2624,6 @@
      * @param   String        name        Name of the session
      * @param   Function      callback    Callback function upon result/error
      * @return void
-     */
     sessionSnapshotSave : function(name, callback) {
       callback = callback || function() {};
       name     = name     || "";
@@ -2622,6 +2639,7 @@
         });
       }
     },
+     */
 
     /**
      * Core::sessionSnapshotLoad() -- Load a [remote] session snapshot
@@ -2629,7 +2647,6 @@
      * @param   Function      callback    Callback function upon result/error
      * @param   bool          create      Create the session (Default = true)
      * @return void
-     */
     sessionSnapshotLoad : function(name, callback, create) {
       var self = this;
 
@@ -2651,6 +2668,7 @@
         });
       }
     },
+     */
 
     /**
      * Core::sessionSave() -- Save current [local] session (shutdown feature)
@@ -3227,54 +3245,36 @@
    */
   var SettingsManager = Process.extend({
 
-    _tree       : {},       //!< Storage registry
-    _saveable   : [],       //!< List of names to use when saving etc.
+    _registry   : [],
+    _session    : {
+      "settings" : {},
+      "defaults" : {},
+      "session"  : {}
+    },
     _cinterval  : null,     //!< Space checking interval
-    _tmpcheck   : null,
 
     /**
      * SettingsManager::init() -- Constructor
-     * @param   Object    defaults      Default settings
-     * @param   Object    caches        Cached settings etc.
-     * @param   Object    stored        Stored database settings (server-side, default = undefined)
+     * @param   Object    registry      Default registry
      * @constructor
      */
-    init : function(defaults, caches, stored) {
+    init : function(registry) {
       console.group("SettingsManager::init()");
 
-      this._tree      = defaults;
-      this._saveable  = [];
+      this._registry = registry;
 
-      // Check for newer versioning
-      var rev         = localStorage.getItem("SETTING_REVISION");
-      var upgrade     = false;
-      var updateable  = ["desktop.grid", "user.autorun"];
+      this._super("(SettingsManager)", "apps/system-software-update.png", true);
 
-      console.log("Settings revision", SETTING_REVISION);
-      console.log("Local revision", rev);
-
-      if ( parseInt(rev, 10) !== parseInt(SETTING_REVISION, 10) ) {
-        console.log("======================= FORCING UPGRADE =======================");
-        console.log("                     Resetting entire tree                     ");
-        console.log("===============================================================");
-
-        upgrade     = true;
-        updateable  = ["desktop.panels", "user.installed.packages"];
-
-        localStorage.setItem("SETTING_REVISION", SETTING_REVISION);
-
-        _SRevisionChange = true;
-      }
+      console.log("Registry", registry);
+      console.log("Usage", this.getStorageUsage());
 
       // Make sure we have all external refs saved
-      if ( upgrade || !localStorage.getItem("settings") ) {
-        localStorage.setItem("settings", JSON.stringify({}));
-      }
-      if ( upgrade || !localStorage.getItem("defaults") ) {
-        localStorage.setItem("defaults", JSON.stringify({}));
-      }
-      if ( upgrade || !localStorage.getItem("session") ) {
-        localStorage.setItem("session", JSON.stringify([]));
+      for ( var i in this._session ) {
+        if ( this._session.hasOwnProperty(i) ) {
+          if ( !localStorage.getItem(i) ) {
+            localStorage.setItem(i, "{}");
+          }
+        }
       }
 
       // Deprecated!
@@ -3288,27 +3288,12 @@
       localStorage.removeItem("desktop.panel.items");
       localStorage.removeItem("desktop.panel.position");
       localStorage.removeItem("applications");
-
-      // Now create a registry for internal use (browser storage is plain-text)
-      this._initStorage(upgrade, updateable, stored);
+      localStorage.removeItem("SETTINGS_REVISION");
 
       // Create space checking interval
       this._initQuota();
 
-      // Update caches
-      this.updateCache(false, caches);
-
-      if ( upgrade ) {
-        console.log("===============================================================");
-      }
-
-      console.log("Settings tree",      this._tree);
-      console.log("Saveable settings",  this._saveable);
-      console.log("Usage",              this.getStorageUsage());
       console.groupEnd();
-
-
-      this._super("(SettingsManager)", "apps/system-software-update.png", true);
     },
 
     /**
@@ -3316,8 +3301,8 @@
      * @destructor
      */
     destroy : function() {
-      this._tree     = {};
-      this._saveable = [];
+      this._registry = null;
+      this._session  = null;
 
       if ( this._cinterval ) {
         clearInterval(this._cinterval);
@@ -3327,33 +3312,100 @@
       this._super();
     },
 
-    /**
-     * SettingsManager::_initStorage() -- Initialize registry
-     * @see SettingsManager::init()
-     * @return void
-     */
-    _initStorage : function(upgrade, updateable, stored) {
-      var iter, i, force_update = false;
-      for ( i in this._tree ) {
-        if ( this._tree.hasOwnProperty(i) ) {
-          iter         = this._tree[i];
-          force_update = in_array(i, updateable);
-          if ( upgrade || !localStorage.getItem(i) || force_update ) {
-            console.log("Registering", i, "of type", iter.type);
+    run : function(user_registry, user_session, user_packages) {
+      this._applyUserRegistry(user_registry);
+      this._applyUserSession(user_session);
+      this._applyUserPackages(user_packages);
+    },
 
-            if ( iter.type == "array" ) {
-              localStorage.setItem(i, (iter.value === undefined) ? iter.options : iter.value);
-            } else if ( iter.type == "list" ) {
-              localStorage.setItem(i, JSON.stringify(iter.items));
-            } else {
-              localStorage.setItem(i, iter.value);
-            }
+    _applyUserRegistry : function(registry) {
+     console.group("SettingsManager::_applyUserSettings()");
+     if ( !(registry instanceof Object) || !registry ) {
+       registry = {};
+     }
+
+      var i;
+      for ( i in registry ) {
+        if ( registry.hasOwnProperty(i) ) {
+          console.log(i, this._registry[i].type, registry[i]);
+
+          switch ( this._registry[i].type ) {
+            case "bool":
+            case "boolean":
+              var val = "false";
+              if ( registry[i] === "true" || registry[i] === true ) {
+                val = "true";
+              }
+              this._set(i, val);
+            break;
+
+            //case "array":
+            case "list":
+              this._set(i, JSON.parse(registry[i]));
+            break;
+
+            default :
+              this._set(i, registry[i]);
+            break;
           }
-
-          // Add this type as 'saveable'
-          this._saveable.push(i);
         }
       }
+
+      console.groupEnd();
+    },
+
+    _applyUserSession : function(session) {
+     console.group("SettingsManager::_applyUserSession()");
+     if ( !(session instanceof Object) || !session ) {
+       session = {};
+     }
+
+      var i;
+      for ( i in session ) {
+        if ( session.hasOwnProperty(i) ) {
+          console.log(i, session[i]);
+          this._set(i, session[i]);
+        }
+      }
+
+      console.groupEnd();
+    },
+
+    _applyUserPackages : function(packages) {
+      var self = this;
+      if ( this._tmpcheck )
+        return;
+
+      console.log("SettingsManager::_applyUserPackages()");
+
+      var _update = function(d) {
+        if ( (d instanceof Object) ) {
+          _PanelCache             = d.PanelItem || [];
+          _AppCache               = d.Application || [];
+          _BackgroundServiceCache = d.BackgroundService || [];
+        }
+
+        console.group("SettingsManager::_applyUserPackages()");
+        console.log("PanelCache", _PanelCache);
+        console.log("AppCache", _AppCache);
+        console.log("BackgroundServiceCache", _BackgroundServiceCache);
+        console.groupEnd();
+      };
+
+      if ( !packages ) {
+        this._tmpcheck = true;
+        DoPost({'action' : 'updateCache'}, function(data) {
+          if ( data.result ) {
+            _update(data.result);
+          }
+          self._tmpcheck = false;
+        }, function() {
+          self._tmpcheck = false;
+        });
+      } else {
+        _update(packages);
+      }
+
     },
 
     /**
@@ -3476,7 +3528,7 @@
         console.log("Result", json);
         console.groupEnd();
 
-        var pp = 0, panels = this._get("desktop.panels", false, true);
+        var pp = 0, panels = this._get("desktop.panels", true);
         for ( pp; pp < panels.length; pp++ ) {
           if ( (panels[pp].name == json.name) && (panels[pp].index == json.index) ) {
             panels[pp] = json;
@@ -3485,7 +3537,7 @@
           }
         }
 
-        this._set("desktop.panels", JSON.stringify(panels));
+        this._set("desktop.panels", panels);
 
         return true;
       }
@@ -3511,50 +3563,9 @@
       return (item ? JSON.parse(item): {});
     },
 
-    /**
-     * SettingsManager::updateCache() -- Update application and panel cache
-     * @param   bool    fetch     Fetch from server
-     * @return  void
-     */
-    updateCache : function(fetch, data) {
-      var self = this;
-
-      if ( this._tmpcheck )
-        return;
-
-      console.group("SettingsManager::updateCache()");
-      console.log("Remote update", fetch);
-      console.groupEnd();
-
-      var _update = function(d) {
-        if ( (d instanceof Object) && d.packages ) {
-          _PanelCache             = d.packages.PanelItem || [];
-          _AppCache               = d.packages.Application || [];
-          _BackgroundServiceCache = d.packages.BackgroundService || [];
-        }
-      };
-
-      if ( fetch ) {
-        this._tmpcheck = true;
-
-        DoPost({'action' : 'updateCache'}, function(data) {
-          if ( data.result ) {
-            console.log("SettingsManager::updateCache()", data.result);
-            _update(data.result);
-          }
-
-          self._tmpcheck = false;
-        }, function() {
-          self._tmpcheck = false;
-        });
-      } else {
-        _update(data);
-      }
-    },
-
     modifyPackage : function(action, p, args) {
       var result;
-      var activated = _Settings._get("user.installed.packages", false, true);
+      var activated = _Settings._get("user.installed.packages", true);
 
       console.group("SettingsManager::modifyPackage()");
       console.log("Doing", action, "using", p, "and", args);
@@ -3605,7 +3616,7 @@
 
       // Now save
       if ( result === true ) {
-        _Settings._set("user.installed.packages", JSON.stringify(activated));
+        _Settings._set("user.installed.packages", activated);
       }
 
       /* NOTE: Goodshit
@@ -3662,20 +3673,44 @@
       }
 
       if ( changed ) {
-        settings = this.getSession();
-        DoPost({'action' : 'settings', "settings" : settings}, function(data) {
-          if ( data.result && !data.error ) {
-            API.system.notification("System Settings", "Your settings was saved", sprintf(ICON_URI_32, "emblems/emblem-default.png")); // FIXME: Locale
-          } else {
-            API.system.notification("System Settings", "Failed to save settings", sprintf(ICON_URI_32, "emblems/emblem-important.png")); // FIXME: Locale
-          }
-          console.groupEnd();
-        }, function() {
-          API.system.notification("System Settings", "Failed to save settings", sprintf(ICON_URI_32, "emblems/emblem-important.png")); // FIXME: Locale
-          console.error("Server error");
+        this._save(true, function() {
           console.groupEnd();
         });
+      } else {
+        console.groupEnd();
       }
+    },
+
+    /**
+     * SsettingsManager::_save() -- Save settings
+     * @return void
+     */
+    _save : function(internal, callback) {
+      internal = internal === undefined ? true : (internal ? true : false);
+      callback = callback || function() {};
+
+      var uregistry = JSON.stringify(this.getRegistry());
+      var usession  = JSON.stringify(this.getSession());
+      var pargs     = {"action" : "settings", "registry" : uregistry, "session" : usession};
+
+      DoPost(pargs, function(data) {
+          if ( data.error ) {
+            if ( internal ) {
+              API.system.notification("System Settings", "Failed to save settings", sprintf(ICON_URI_32, "emblems/emblem-important.png")); // FIXME: Locale
+            }
+            callback(false);
+          } else {
+            if ( internal ) {
+              API.system.notification("System Settings", "Your settings was saved", sprintf(ICON_URI_32, "emblems/emblem-default.png")); // FIXME: Locale
+            }
+            callback(true);
+          }
+      }, function() {
+        if ( internal ) {
+          API.system.notification("System Settings", "Failed to save settings (server error)", sprintf(ICON_URI_32, "emblems/emblem-important.png")); // FIXME: Locale
+        }
+        callback(false);
+      });
     },
 
     /**
@@ -3685,40 +3720,39 @@
      * @return  void
      */
     _set : function(k, v) {
-      if ( this._tree[k] !== undefined ) {
-        try {
-          if ( (typeof v === "boolean") || (v instanceof Boolean) ) {
-            v = (v ? "true" : "false");
-          }/* else if ( v typeof Object ) {
-            v = JSON.stringify(v);
-          }*/
-
-          localStorage.setItem(k, v);
-        } catch ( e ) {
-          // Caught by interval!
-          //  if ( e == QUOTA_EXCEEDED_ERR ) {
-          //    (function() {})();
+      try {
+        if ( (typeof v === "boolean") || (v instanceof Boolean) ) {
+          v = (v ? "true" : "false");
+        } else if ( (v instanceof Object || v instanceof Array) ) {
+          v = JSON.stringify(v);
         }
+        localStorage.setItem(k, v);
+      } catch ( e ) {
+        // Caught by interval!
+        //  if ( e == QUOTA_EXCEEDED_ERR ) {
+        //    (function() {})();
       }
     },
 
     /**
      * SettingsManager::_get() -- Get a storage item by key
      * @param   String    k       Settings Key
-     * @param   bool      keys    Return availible options
-     * @param   bool      jsn     Return as parsed JSON
+     * @param   bool      json    Parse as JSON
      * @return  Mixed
      */
-    _get : function(k, keys, jsn) {
-      var ls = undefined;
-      if ( this._tree[k] !== undefined ) {
-        if ( keys && this._tree[k] ) {
-          ls = this._tree[k].options;
-        } else {
-          ls = localStorage.getItem(k);
+    _get : function(k, json) {
+      var t = this.getType(k);
+      var v = localStorage.getItem(k);
+
+      if ( (json = json || false) ) {
+        try {
+          v = JSON.parse(v);
+        } catch ( e ) {
+          v = [];
         }
       }
-      return jsn ? (ls ? (JSON.parse(ls)) : ls) : ls;
+
+      return v;
     },
 
     /**
@@ -3748,7 +3782,34 @@
      * @return  String
      */
     getType : function(key) {
-      return (this._tree[key] ? (this._tree[key].type) : null);
+      return (this._registry[key] ? (this._registry[key].type) : null);
+    },
+
+    /**
+     * SettingsManager::getOptions() -- Get storage item option  by key
+     * @param   String    key     Settings Key
+     * @return  Mixed
+     */
+    getOptions : function(key) {
+      var type = this.getType(key);
+      if ( type == "array" ) {
+        return this._registry[key].options || [];
+      } else if ( type == "list" ) {
+        return this._registry[key].items || [];
+      }
+      return null;
+    },
+
+    /**
+     * SettingsManager::getRegistry() -- Get current Storage registry data
+     * @return JSON
+     */
+    getRegistry : function() {
+      var exp = {};
+      for ( var i in this._registry ) {
+        exp[i] = this._get(i, in_array(this._registry[i], ["list", "array"]));
+      }
+      return exp;
     },
 
     /**
@@ -3757,8 +3818,8 @@
      */
     getSession : function() {
       var exp = {};
-      for ( var i = 0; i < this._saveable.length; i++ ) {
-        exp[this._saveable[i]] = localStorage.getItem(this._saveable[i]);
+      for ( var i in this._session ) {
+        exp[i] = localStorage.getItem(i, true);
       }
       return exp;
     },
@@ -4833,8 +4894,7 @@
      * @return void
      */
     applySettings : function() {
-      var map = {
-      };
+      var map = {};
 
       console.group("WindowManager::applySettings() Applying user settings");
 
@@ -5090,31 +5150,34 @@
             $(document).click(); // Trigger this! (deselects context-menu)
           });
 
-          var ivlist = _Settings._get("desktop.grid", false, true);
+          var ivlist = _Settings._get("desktop.grid", true);
           var root = $("<ul></ul>");
-          var str, giter, e, i = 0, l = ivlist.length;
 
-          for ( i; i < l; i++ ) {
-            giter = ivlist[i];
-            str = sprintf("<li><div class=\"inner\"><div class=\"icon\"><img alt=\"\" src=\"%s\" /></div><div class=\"label\"><span>%s</span></div></div></li>", sprintf(ICON_URI_32, giter.icon), giter.title);
-            e = $(str);
+          if ( ivlist ) {
+            var str, giter, e, i = 0, l = ivlist.length;
 
-            self._createClick(e, i);
+            for ( i; i < l; i++ ) {
+              giter = ivlist[i];
+              str = sprintf("<li><div class=\"inner\"><div class=\"icon\"><img alt=\"\" src=\"%s\" /></div><div class=\"label\"><span>%s</span></div></div></li>", sprintf(ICON_URI_32, giter.icon), giter.title);
+              e = $(str);
 
-            e.find(".inner").click(function(ev) {
-              ev.stopPropagation();
+              self._createClick(e, i);
 
-              if ( self._sel ) {
-                $(self._sel).parent().removeClass("current");
-              }
+              e.find(".inner").click(function(ev) {
+                ev.stopPropagation();
 
-              $(this).parent().addClass("current");
-              self._sel = this;
+                if ( self._sel ) {
+                  $(self._sel).parent().removeClass("current");
+                }
 
-              $(document).click(); // Trigger this! (deselects context-menu)
-            });
+                $(this).parent().addClass("current");
+                self._sel = this;
 
-            root.append(e);
+                $(document).click(); // Trigger this! (deselects context-menu)
+              });
+
+              root.append(e);
+            }
           }
 
           $("#DesktopGrid").html(root);
@@ -5129,7 +5192,7 @@
             ev.preventDefault();
             ev.stopPropagation();
 
-            var iter = _Settings._get("desktop.grid", false, true)[index]; // NOTE: This was the solution ?! WTF
+            var iter = _Settings._get("desktop.grid", true)[index]; // NOTE: This was the solution ?! WTF
             if ( iter ) {
               API.system.launch(iter.launch, iter['arguments']);
             }
@@ -5141,6 +5204,7 @@
 
       }); // @class
 
+      console.log("Registering desktop grid...");
       try {
         self.iconview = new IconView();
       } catch ( exception ) {
@@ -5152,8 +5216,10 @@
       //
       console.log("Registering panels...");
       try {
-        var panels = _Settings._get("desktop.panels", false, true);
+        var panels = _Settings._get("desktop.panels", true);
         var panel, items;
+
+        console.log("Panels", panels);
 
         var additems = function(panel, items, callback_error) {
           var size = items.length;
@@ -5192,15 +5258,17 @@
 
         };
 
-        for ( var x = 0; x < panels.length; x++ ) {
-          panel = new Panel(panels[x].index, panels[x].name, panels[x].position);
-          items = panels[x].items;
+        if ( panels ) {
+          for ( var x = 0; x < panels.length; x++ ) {
+            panel = new Panel(panels[x].index, panels[x].name, panels[x].position);
+            items = panels[x].items;
 
-          additems(panel, items, function(error, p) {
-            CrashCustom("Panel", error, "Desktop::run(){[LaunchPanelitem()>{callback(error)}]}\nPanelItem::create(), ResourceManager::addResources() ?");
-          });
+            additems(panel, items, function(error, p) {
+              CrashCustom("Panel", error, "Desktop::run(){[LaunchPanelitem()>{callback(error)}]}\nPanelItem::create(), ResourceManager::addResources() ?");
+            });
 
-          self.addPanel(panel);
+            self.addPanel(panel);
+          }
         }
 
       } catch ( exception ) {
@@ -5383,16 +5451,18 @@
       for ( var i in map ) {
         if ( map.hasOwnProperty(i) ) {
           s = _Settings._get(i);
-          if ( i == 'desktop.cursor.theme' ) {
-            s = s.split(" ")[0];
-          }
           if ( s ) {
-            if ( typeof this[map[i]] == 'function' ) {
-              console.log(i, s);
+            if ( i == 'desktop.cursor.theme' ) {
+              s = s.split(" ")[0];
+            }
+            if ( s ) {
+              if ( typeof this[map[i]] == 'function' ) {
+                console.log(i, s);
 
-              this[map[i]](s);
+                this[map[i]](s);
 
-              c++;
+                c++;
+              }
             }
           }
         }
@@ -5466,7 +5536,9 @@
      * @return  void
      */
     setBackgroundColor : function(c) {
-      $("body").css("background-color", c);
+      if ( c ) {
+        $("body").css("background-color", c);
+      }
     },
 
     /**
@@ -5475,10 +5547,12 @@
      * @return  void
      */
     setTheme : function(theme) {
-      var css = $("#ThemeFace");
-      var href = THEME_URI + theme.toLowerCase();
-      if ( $(css).attr("href") != href ) {
-        $(css).attr("href", href);
+      if ( theme ) {
+        var css = $("#ThemeFace");
+        var href = THEME_URI + theme.toLowerCase();
+        if ( $(css).attr("href") != href ) {
+          $(css).attr("href", href);
+        }
       }
     },
 
@@ -5488,10 +5562,12 @@
      * @return  void
      */
     setFont : function(font) {
-      var css = $("#FontFace");
-      var href = FONT_URI + font;
-      if ( $(css).attr("href") != href ) {
-        $(css).attr("href", href);
+      if ( font ) {
+        var css = $("#FontFace");
+        var href = FONT_URI + font;
+        if ( $(css).attr("href") != href ) {
+          $(css).attr("href", href);
+        }
       }
     },
 
@@ -5501,10 +5577,12 @@
      * @return  void
      */
     setCursorTheme : function(cursor) {
-      var css = $("#CursorFace");
-      var href = CURSOR_URI + cursor.toLowerCase();
-      if ( $(css).attr("href") != href ) {
-        $(css).attr("href", href);
+      if ( cursor ) {
+        var css = $("#CursorFace");
+        var href = CURSOR_URI + cursor.toLowerCase();
+        if ( $(css).attr("href") != href ) {
+          $(css).attr("href", href);
+        }
       }
     },
 
@@ -5757,6 +5835,11 @@
     init : function(index, name, pos) {
       var self = this;
 
+      console.group("Panel::init()");
+      console.log("Index", index);
+      console.log("Name", name);
+      console.log("Position", pos);
+
       this.$element = $('<div class="DesktopPanel"><ul></ul></div>');
       this.pos      = pos;
       this.items    = [];
@@ -5910,6 +5993,8 @@
         this.$element.removeClass("Bottom");
         this.$element.css({"position" : "absolute", "top" : "0px", "bottom" : "auto"});
       }
+
+      console.groupEnd();
 
       this._super("Panel");
     },

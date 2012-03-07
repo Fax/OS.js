@@ -262,7 +262,8 @@ class Core
       "cache"       => ENABLE_CACHE,
       "preload"     => Array(
         "images" => ResourceManager::$Preload["images"]
-      )
+      ),
+      "registry"    => User::getDefaultSettings()
     );
   }
 
@@ -300,35 +301,8 @@ class Core
    * @return void
    */
   protected static final function _doInit(Array $args, Array &$json, Core $inst = null) {
-    $init_language    = isset($args['language']) ? $args['language'] : "default";
-    $browser_language = self::_getBrowserLanguage();
-
-    if ( $user = $inst->getUser() ) {
-      $installed_packages = Package::GetInstalledPackages($user);
-
-      $resources = Array();
-      foreach ( Dialog::$Registered as $name => $opts ) {
-        foreach ( $opts["resources"] as $res ) {
-          $resources[] = $res;
-        }
-      }
-
-      $json = Array("success" => true, "error" => null, "result" => Array(
-        "settings"      => User::getDefaultSettings($installed_packages),
-        "cache"         => Array(
-          "resources"         => $resources,
-          "packages"          => $installed_packages
-        ),
-        "config"        => Array(
-          "sid"               => session_id(),
-          "system_language"   => DEFAULT_LANGUAGE,
-          "browser_language"  => $browser_language,
-          "init_language"     => $init_language,
-          "stored_settings"   => $user->settings
-        ),
-        "user" => $user->getUserInfo()
-      ));
-    }
+    $json['success'] = true;
+    $json['result']  = true;
   }
 
   /**
@@ -337,23 +311,32 @@ class Core
    * @return void
    */
   protected static final function _doSettings(Array $args, Array &$json, Core $inst = null) {
-    if ( isset($args['settings']) ) {
-      if ( $inst instanceof Core ) {
-        if ( (isset($args['settings'])) && ($values = $args['settings']) ) {
-          $locale = Array(
-            "locale_location" => $values["system.locale.location"],
-            "locale_time"     => $values["system.locale.time-format"],
-            "locale_date"     => $values["system.locale.date-format"],
-            "locale_stamp"    => $values["system.locale.timestamp-format"],
-            "locale_language" => $values["system.locale.language"]
-          );
+    if ( $inst instanceof Core ) {
+      $user = $inst->getUser();
 
-          $inst->setLocale($locale);
-          Session::setLocale($locale);
+      if ( (isset($args['registry'])) && ($registry = JSON::decode($args['registry'], true)) ) {
+        $locale = Array(
+          "locale_location" => $registry["system.locale.location"],
+          "locale_time"     => $registry["system.locale.time-format"],
+          "locale_date"     => $registry["system.locale.date-format"],
+          "locale_stamp"    => $registry["system.locale.timestamp-format"],
+          "locale_language" => $registry["system.locale.language"]
+        );
 
-          $json['success'] = true;
-          $json['result']  = true;
-        }
+        $inst->setLocale($locale);
+        Session::setLocale($locale);
+
+        $user->settings = $registry;
+      }
+      if ( (isset($args['session'])) && ($session = JSON::decode($args['session'], true)) ) {
+        $user->last_session = $session;
+      }
+
+      if ( User::save($user) ) {
+        $json['success'] = true;
+        $json['result']  = true;
+      } else {
+        $json['error'] = _("Failed to save user!"); // FIXME: Locale
       }
     }
   }
@@ -364,19 +347,25 @@ class Core
    * @return void
    */
   protected static final function _doShutdown(Array $args, Array &$json, Core $inst = null) {
-    $settings = isset($args['settings']) ? $args['settings'] : Array();
     $session  = isset($args['session'])  ? $args['session']  : Array();
     $save     = isset($args['save'])     ? ($args['save'] == "true" ? true : false)     : Array();
 
-    $result = Array();
+    $json['result']   = true;
+    $json['success']  = true;
+
     if ( $save === true ) {
       if ( $user = $inst->getUser() ) {
-        $result['saved'] = $user->saveUser($session, $settings);
+        $user->last_session = JSON::decode($session);
+
+        if ( User::save($user) ) {
+          $json['success'] = true;
+        } else {
+          $json['result']  = false;
+          $json['success'] = false;
+          $json['error']   = _("Failed to save user!"); // FIXME: Locale
+        }
       }
     }
-
-    $json['result']   = $result;
-    $json['success']  = true;
 
     Session::clearSession();
   }
@@ -468,9 +457,37 @@ class Core
         $user->last_session_id  = session_id();
         User::save($user);
 
+        $init_language      = "default"; // FIXME: From User
+        $browser_language   = self::_getBrowserLanguage();
+        $resources          = Array();
+        $packages           = Package::GetInstalledPackages($user);
+
+        foreach ( Dialog::$Registered as $name => $opts ) {
+          foreach ( $opts["resources"] as $res ) {
+            $resources[] = $res;
+          }
+        }
+
+        if ( !($settings = $user->settings) ) {
+          $settings = User::getDefaultSettings($packages);
+        }
+        if ( !($session = $user->last_session) ) {
+          $session = User::getDefaultSession();
+        }
+
         $json['success'] = true;
         $json['result'] = Array(
-          "user"    => $user->getUserInfo()
+          "user"          => $user->getUserInfo(),
+          "registry"      => $settings,
+          "session"       => $session,
+          "packages"      => $packages,
+          "preload"       => Array(
+            "resources" => $resources
+          ),
+          "sid"           => session_id(),
+          "lang_system"   => DEFAULT_LANGUAGE,
+          "lang_user"     => $init_language,
+          "lang_browser"  => $browser_language
         );
       }
     }
