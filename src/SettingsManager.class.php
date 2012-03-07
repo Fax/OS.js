@@ -44,12 +44,7 @@ abstract class SettingsManager
   /**
    * @var Default Settings
    */
-  public static $Session = Array(
-    "defaults" => Array(),
-    "session"  => Array(),
-    "settings" => Array()
-  );
-
+  public static $Session = Array();
 
   /**
    * @var Default Settings
@@ -201,6 +196,17 @@ abstract class SettingsManager
     "user.session.autosave" => Array(
       "type"  => "bool",
       "value" => true
+    ),
+
+
+    "user.session.appmime" => Array(
+      "type"  => "list",
+      "items" => Array()
+    ),
+
+    "user.session.appstorage" => Array(
+      "type"  => "list",
+      "items" => Array()
     ),
 
     "user.installed.packages" => Array(

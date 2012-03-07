@@ -1535,8 +1535,6 @@
         console.log("Method", "API.user.logout");
         console.groupEnd();
 
-        API.session.save(save);
-
         API.session.shutdown(save);
       }
     },
@@ -1549,42 +1547,6 @@
       'processes' : function() {
         return _Core.getProcesses();
       },
-
-      'save' : function(save) {
-        var session = _Core.sessionSave(save);
-        console.group("=== API OPERATION ===");
-        console.log("Method", "API.session.save");
-        console.log("Save", save, session);
-        console.groupEnd();
-      },
-
-      'restore' : function() {
-        console.group("=== API OPERATION ===");
-        console.log("Method", "API.session.restore");
-        console.groupEnd();
-
-        _Core.sessionRestore();
-      },
-
-      /*
-      'snapshot_save' : function(name, callback) {
-        console.group("=== API OPERATION ===");
-        console.log("Method", "API.session.snapshot_save");
-        console.log("Save", name);
-        console.groupEnd();
-
-        _Core.sessionSnapshotSave(name, callback);
-      },
-
-      'snapshot_load' : function(name, callback) {
-        console.group("=== API OPERATION ===");
-        console.log("Method", "API.session.snapshot_load");
-        console.log("Load", name);
-        console.groupEnd();
-
-        _Core.sessionSnapshotLoad(name, callback);
-      },
-      */
 
       'shutdown' : function(save) {
         console.group("=== API OPERATION ===");
@@ -2364,12 +2326,12 @@
       _BrowserLanguage  = response.lang_browser;
       _SystemLanguage   = response.lang_user;
 
-      _Settings.run(response.registry, response.session, response.packages);
+      _Settings.run(response.registry, response.packages);
 
       if ( response.preload ) {
         _Resources.addResources(response.preload.resources, null, function(error) {
           if ( !error ) {
-            self._run();
+            self._run(response.session);
           } // FIXME: ERROR
         });
       } else {
@@ -2383,7 +2345,7 @@
      * @return void
      */
     shutdown : function(save) {
-      var usession  = JSON.stringify(_Settings.getSession());
+      var usession  = JSON.stringify(save ? _Core.getSession() : {});
       var duration  = ((new Date()).getTime()) - _StartStamp;
 
       console.group("Core::shutdown()");
@@ -2439,9 +2401,10 @@
 
     /**
      * Core::_run() -- Main startup
+     * @param  Object   session       Session to restore (if any)
      * @return void
      */
-    _run : function(data) {
+    _run : function(session) {
       var self = this;
 
       if ( this.running ) {
@@ -2453,7 +2416,7 @@
       // Load initial data
       DoPost({'action' : 'init'}, function(data) {
         if ( data.success ) {
-          self.run();
+          self.run(session);
         } else {
           MessageBox(data.error);
         }
@@ -2469,9 +2432,10 @@
 
     /**
      * Core::run() -- Main startup procedure wrapper
+     * @param  Object   session       Session to restore (if any)
      * @return void
      */
-    run : function() {
+    run : function(session) {
       var self = this;
 
       if ( this.running ) {
@@ -2592,7 +2556,7 @@
 
         var do_restore = _Settings._get("user.session.autorestore");
         if ( do_restore === true || do_restore === "true" ) {
-          API.session.restore();
+          _Core.setSession(session);
         }
 
         bar.progressbar({value : 90});
@@ -2619,81 +2583,9 @@
     // SESSIONS
     //
 
-    /**
-     * Core::sessionSnapshotSave() -- Create a [remote] session snapshot
-     * @param   String        name        Name of the session
-     * @param   Function      callback    Callback function upon result/error
-     * @return void
-    sessionSnapshotSave : function(name, callback) {
-      callback = callback || function() {};
-      name     = name     || "";
-
-      if ( name ) {
-        var session = this.getSession();
-        DoPost({'action' : 'snapshotSave', 'session' : {'data' : session, 'name' : name}}, function(data) {
-          if ( data.success ) {
-            callback(true, data.result, session);
-          } else {
-            callback(false, data.error, session);
-          }
-        });
-      }
-    },
-     */
-
-    /**
-     * Core::sessionSnapshotLoad() -- Load a [remote] session snapshot
-     * @param   String        name        Name of the session
-     * @param   Function      callback    Callback function upon result/error
-     * @param   bool          create      Create the session (Default = true)
-     * @return void
-    sessionSnapshotLoad : function(name, callback, create) {
-      var self = this;
-
-      callback = callback || function() {};
-      name     = name     || "";
-      create   = create === undefined ? true : (create ? true : false);
-
-      if ( name ) {
-        DoPost({'action' : 'snapshotLoad', 'session' : {'name' : name}}, function(data) {
-          if ( data.success ) {
-            if ( create ) {
-              self.setSession(data.result.session, true);
-            }
-
-            callback(true, data.result);
-          } else {
-            callback(false, data.error);
-          }
-        });
-      }
-    },
-     */
-
-    /**
-     * Core::sessionSave() -- Save current [local] session (shutdown feature)
-     * @param   bool    save      Save session (Default = true, otherwise empty session)
-     * @return  JSON
-     */
-    sessionSave : function(save) {
-      var sess = (save === true) ? this.getSession() : {};
-      return _Settings.saveSession(sess);
-    },
-
-    /**
-     * Core::sessionRestore() -- Restore last saved [local] session (boot feature)
-     * @return  JSON
-     */
-    sessionRestore : function() {
-      var session = _Settings.restoreSession();
-      this.setSession(session);
-      return session;
-    },
-
     //
     // EVENTS
     //
-
 
     /**
      * Core::global_endsession() -- The Browser 'session cache clear' event handler
@@ -2939,15 +2831,7 @@
      * Core::setSession() -- Restore a session
      * @return void
      */
-    setSession : function(session, full) {
-      full = full ? true : false;
-
-      if ( full ) {
-        _Settings.saveSession(session);
-        window.location.reload();
-        return;
-      }
-
+    setSession : function(session) {
       var i = 0;
       var l = session.length;
       var s;
@@ -3246,11 +3130,6 @@
   var SettingsManager = Process.extend({
 
     _registry   : [],
-    _session    : {
-      "settings" : {},
-      "defaults" : {},
-      "session"  : {}
-    },
     _cinterval  : null,     //!< Space checking interval
 
     /**
@@ -3268,12 +3147,26 @@
       console.log("Registry", registry);
       console.log("Usage", this.getStorageUsage());
 
-      // Make sure we have all external refs saved
-      for ( var i in this._session ) {
-        if ( this._session.hasOwnProperty(i) ) {
-          if ( !localStorage.getItem(i) ) {
-            localStorage.setItem(i, "{}");
-          }
+      // Make sure registry is up to date
+      for ( var j in this._registry ) {
+        if ( this._registry.hasOwnProperty(j) ) {
+          //if ( !localStorage.getItem(j) ) {
+            if ( this._registry[j].type == "list" ) {
+              try {
+                localStorage.setItem(j, JSON.stringify(this._registry[j].items));
+              }  catch ( eee ) {
+                localStorage.setItem(j, []);
+              }
+            } else if ( this._registry[j].type == "bool" ) {
+              var val = "false";
+              if ( this._registry[j].value == "true" || this._registry[j].value === true ) {
+                val = "true";
+              }
+              localStorage.setItem(j, val);
+            } else {
+              localStorage.setItem(j, this._registry[j].value || null);
+            }
+          //}
         }
       }
 
@@ -3302,7 +3195,6 @@
      */
     destroy : function() {
       this._registry = null;
-      this._session  = null;
 
       if ( this._cinterval ) {
         clearInterval(this._cinterval);
@@ -3312,9 +3204,8 @@
       this._super();
     },
 
-    run : function(user_registry, user_session, user_packages) {
+    run : function(user_registry, user_packages) {
       this._applyUserRegistry(user_registry);
-      this._applyUserSession(user_session);
       this._applyUserPackages(user_packages);
     },
 
@@ -3331,7 +3222,6 @@
 
           switch ( this._registry[i].type ) {
             case "bool":
-            case "boolean":
               var val = "false";
               if ( registry[i] === "true" || registry[i] === true ) {
                 val = "true";
@@ -3358,22 +3248,6 @@
       console.groupEnd();
     },
 
-    _applyUserSession : function(session) {
-     console.group("SettingsManager::_applyUserSession()");
-     if ( !(session instanceof Object) || !session ) {
-       session = {};
-     }
-
-      var i;
-      for ( i in session ) {
-        if ( session.hasOwnProperty(i) ) {
-          console.log(i, session[i]);
-          this._set(i, session[i]);
-        }
-      }
-
-      console.groupEnd();
-    },
 
     _applyUserPackages : function(packages) {
       var self = this;
@@ -3446,25 +3320,19 @@
      * SettingsManager::savePackageStorage() -- Save package data
      * @param   String    name      Application name
      * @param   Object    props     Application settings
-     * @return  void
+     * @return  Mixed
      */
     savePackageStorage : function(name, props) {
-      var storage = localStorage.getItem("settings");
-      if ( !storage ) {
+      var storage = this._get("user.session.appstorage", true);
+      if ( !(storage instanceof Object) || (storage instanceof Array) ) {
         storage = {};
-      } else {
-        try {
-          storage = JSON.parse(storage);
-        } catch ( e ) {
-          storage = {};
-        }
       }
+
       storage[name] = props;
 
-      localStorage.setItem("settings", JSON.stringify(storage));
+      this._set("user.session.appstorage", storage);
 
       console.group("SettingsManager::savePackageStorage()");
-      console.log(name);
       console.log(props);
       console.groupEnd();
 
@@ -3477,14 +3345,7 @@
      * @return  JSON
      */
     loadPackageStorage : function(name) {
-      var storage = localStorage.getItem("settings");
-      var res;
-      if ( storage ) {
-        try {
-          res = JSON.parse(storage);
-        } catch ( e ) {}
-      }
-
+      var res = this._get("user.session.appstorage", true);
       if ( (res instanceof Object) ) {
         if ( res[name] ) {
 
@@ -3546,25 +3407,6 @@
         return true;
       }
       return false;
-    },
-
-    /**
-     * SettingsManager::saveSession() -- Save a session
-     * @param  Object     session     Session
-     * @return Object
-     */
-    saveSession : function(session) {
-      localStorage.setItem('session', (session instanceof Object) ? JSON.stringify(session) : session);
-      return session;
-    },
-
-    /**
-     * SettingsManager::restoreSession() -- Restore previous session
-     * @return Object
-     */
-    restoreSession : function() {
-      var item    = localStorage.getItem('session');
-      return (item ? JSON.parse(item): {});
     },
 
     modifyPackage : function(action, p, args) {
@@ -3693,15 +3535,8 @@
       internal = internal === undefined ? true : (internal ? true : false);
       callback = callback || function() {};
 
-      // NOTE: Fix, save the current on server-side
-      var session   = this.getSession();
-      if ( session && session.session ) {
-        session.session = {};
-      }
-
       var uregistry = JSON.stringify(this.getRegistry());
-      var usession  = JSON.stringify(session);
-      var pargs     = {"action" : "settings", "registry" : uregistry, "session" : usession};
+      var pargs     = {"action" : "settings", "registry" : uregistry};
 
       DoPost(pargs, function(data) {
           if ( data.error ) {
@@ -3770,12 +3605,23 @@
      * @param   String    app       Application Name
      * @param   String    mime      MIME Type
      * @param   String    path      Path (Default = undefined)
-     * @return  void
+     * @return  Mixed
      */
     setDefaultApplication : function(app, mime, path) {
-      var list = JSON.parse(localStorage.getItem("defaults") || "{}");
+      var list = this._get("user.session.appmime", true);
+      if ( !(list instanceof Object) || (list instanceof Array) ) {
+        list = {};
+      }
+
       list[mime] = app;
-      localStorage.setItem("defaults", JSON.stringify(list));
+
+      this._set("user.session.appmime", list);
+
+      console.group("SettingsManager::setDefaultApplication()");
+      console.log(list);
+      console.groupEnd();
+
+      return list;
     },
 
     /**
@@ -3783,7 +3629,11 @@
      * @return Object
      */
     getDefaultApplications : function() {
-      return JSON.parse(localStorage.getItem("defaults") || "{}");
+      var list = this._get("user.session.appmime", true);
+      if ( !(list instanceof Object) || (list instanceof Array) ) {
+        list = {};
+      }
+      return list;
     },
 
     /**
@@ -3818,18 +3668,6 @@
       var exp = {};
       for ( var i in this._registry ) {
         exp[i] = this._get(i, in_array(this._registry[i], ["list", "array"]));
-      }
-      return exp;
-    },
-
-    /**
-     * SettingsManager::getSession() -- Get current Storage session data
-     * @return JSON
-     */
-    getSession : function() {
-      var exp = {};
-      for ( var i in this._session ) {
-        exp[i] = localStorage.getItem(i, true);
       }
       return exp;
     },
