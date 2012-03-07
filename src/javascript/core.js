@@ -3682,15 +3682,21 @@
     },
 
     /**
-     * SsettingsManager::_save() -- Save settings
+     * SettingsManager::_save() -- Save settings
      * @return void
      */
     _save : function(internal, callback) {
       internal = internal === undefined ? true : (internal ? true : false);
       callback = callback || function() {};
 
+      // NOTE: Fix, save the current on server-side
+      var session   = this.getSession();
+      if ( session && session.session ) {
+        session.session = {};
+      }
+
       var uregistry = JSON.stringify(this.getRegistry());
-      var usession  = JSON.stringify(this.getSession());
+      var usession  = JSON.stringify(session);
       var pargs     = {"action" : "settings", "registry" : uregistry, "session" : usession};
 
       DoPost(pargs, function(data) {

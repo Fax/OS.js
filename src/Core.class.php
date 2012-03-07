@@ -328,7 +328,12 @@ class Core
 
         $user->settings = $registry;
       }
+
       if ( (isset($args['session'])) && ($session = JSON::decode($args['session'], true)) ) {
+        // NOTE: See SettingsManager::_save() [JS]
+        if ( $user->last_session && isset($user->last_session->session) ) {
+          $session['session'] = $user->last_session->session;
+        }
         $user->last_session = $session;
       }
 
