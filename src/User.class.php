@@ -57,7 +57,7 @@ class User
   public $privilege         = self::GROUP_NONE;     // User Group(s)
   public $real_name         = "Undefined";          // User's Real Name
   public $created_at        = null;                 // User Created Timestamp
-  public $settings          = Array();              // User Settings Tree
+  public $last_registry     = Array();              // User Last Registry
   public $last_login        = null;                 // User Last login
   public $last_session_id   = null;                 // User Last Session ID
   public $last_session      = Array();              // User Last Session
@@ -79,7 +79,7 @@ class User
   public final function __construct(Array $data) {
     foreach ( $data as $k => $v ) {
       try {
-        if ( $k == "settings" || $k == "last_session" )
+        if ( $k == "last_registry" || $k == "last_session" )
           if ( $v ) {
             try {
               $v = JSON::decode($v);
@@ -157,14 +157,15 @@ class User
    * @return Array
    */
   public final function getUserInfo() {
-    return Array(
-      "User ID"    => $this->id,
-      "Username"   => $this->username,
-      "Name"       => $this->real_name,
-      "Groups"     => $this->getGroups(),
-      "Registered" => ($this->created_at ? $this->created_at->format("c") : _("Unknown")),
-      "Last Login" => ($this->last_login ? $this->last_login->format("c") : _("Unknown")),
-      "Browser"    => Browser::getInfo()
+    return Array( // NOTE: Locale is client-side
+      "User ID"        => $this->id,
+      "Username"       => $this->username,
+      "Name"           => $this->real_name,
+      "Groups"         => $this->getGroups(),
+      "Registered"     => ($this->created_at   ? $this->created_at->format("c")  : _("Unknown")),
+      "Last Modified"  => ($this->modified_at  ? $this->modified_at->format("c") : _("Unknown")),
+      "Last Login"     => ($this->last_login   ? $this->last_login->format("c")  : _("Unknown")),
+      "Browser"        => Browser::getInfo()
     );
   }
 
@@ -237,16 +238,21 @@ class User
   // STATIC CORE FUNCTIONS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Get the Users default session
+   * @see Core::_doInit
+   * @return Array
+   */
   public static function getDefaultSession() {
     return SettingsManager::$Session;
   }
 
   /**
-   * Get the Users default settings
+   * Get the Users default reigstry
    * @see Core::_doInit
    * @return Array
    */
-  public static function getDefaultSettings($packages = Array(), $values = false) {
+  public static function getDefaultRegistry($packages = Array(), $values = false) {
     $merge = Array();
 
     // Panel(s)
@@ -340,6 +346,18 @@ class User
       foreach ( $settings as $k => $item ) {
         if ( isset($item["value"]) ) {
           $values[$k] = $item["value"];
+        } else if ( isset($item["items"]) ) {
+          try {
+            $values[$k] = JSON::encode($item["items"]);
+          } catch ( Exception $e ) {
+            $values[$k] = JSON::encode(Array());
+          }
+        } else if ( isset($item["array"]) ) {
+          try {
+            $values[$k] = JSON::encode($item["options"]);
+          } catch ( Exception $e ) {
+            $values[$k] = JSON::encode(Array());
+          }
         }
       }
       return $values;

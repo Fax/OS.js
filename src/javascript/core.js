@@ -3150,6 +3150,7 @@
       // Make sure registry is up to date
       for ( var j in this._registry ) {
         if ( this._registry.hasOwnProperty(j) ) {
+          console.log("> Injecting", j);
           //if ( !localStorage.getItem(j) ) {
             if ( this._registry[j].type == "list" ) {
               try {
@@ -3181,6 +3182,9 @@
       localStorage.removeItem("desktop.panel.items");
       localStorage.removeItem("desktop.panel.position");
       localStorage.removeItem("applications");
+      localStorage.removeItem("settings");
+      localStorage.removeItem("defaults");
+      localStorage.removeItem("session");
       localStorage.removeItem("SETTINGS_REVISION");
 
       // Create space checking interval
@@ -3204,21 +3208,33 @@
       this._super();
     },
 
+    /**
+     * SettingsManager::run() -- Run
+     * @param  Object   user_registry   User registry
+     * @param  Object   user_packages   User packages
+     * @return void
+     */
     run : function(user_registry, user_packages) {
       this._applyUserRegistry(user_registry);
       this._applyUserPackages(user_packages);
     },
 
+    /**
+     * SettingsManager::_applyUserRegistry() -- Apply user registry settings
+     * @see SettingsManager::run()
+     * @return void
+     */
     _applyUserRegistry : function(registry) {
      console.group("SettingsManager::_applyUserSettings()");
      if ( !(registry instanceof Object) || !registry ) {
        registry = {};
      }
+     console.log("Registry", registry);
 
       var i;
       for ( i in registry ) {
         if ( registry.hasOwnProperty(i) ) {
-          console.log(i, this._registry[i].type, registry[i]);
+          console.log("> ", i, this._registry[i].type, registry[i]);
 
           switch ( this._registry[i].type ) {
             case "bool":
@@ -3249,12 +3265,15 @@
     },
 
 
+    /**
+     * SettingsManager::_applyUserPackages() -- Apply user package settings
+     * @see SettingsManager::run()
+     * @return void
+     */
     _applyUserPackages : function(packages) {
       var self = this;
       if ( this._tmpcheck )
         return;
-
-      console.log("SettingsManager::_applyUserPackages()");
 
       var _update = function(d) {
         if ( (d instanceof Object) ) {

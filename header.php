@@ -145,7 +145,6 @@ define("URI_PACKAGE_RESOURCE",  "/VFS/resource/%s/%s");
 
 define("MINIMIZE_CACHE",       PATH_BUILD   . "/minimize.cache");
 define("PACKAGE_BUILD",        PATH_BUILD   . "/packages.xml");
-define("DATABASE_FILE",        PATH_BUILD   . "/database.sdb");
 define("MIME_MAGIC",           PATH_VENDOR  . "/mime.mgc");
 
 
@@ -153,10 +152,10 @@ define("MIME_MAGIC",           PATH_VENDOR  . "/mime.mgc");
 // Database
 //
 
-define("DATABASE_DSN",      "sqlite:" . DATABASE_FILE);
 define("DATABASE_HOST",     "localhost");
-define("DATABASE_USER",     "");
-define("DATABASE_PASS",     "");
+define("DATABASE_DSN",      "mysql:dbname=osjs;host=localhost");
+define("DATABASE_USER",     "osjs");
+define("DATABASE_PASS",     "IeDici7AhghaeG4athobas");
 
 ///////////////////////////////////////////////////////////////////////////////
 // DEPENDENCIES
@@ -275,6 +274,8 @@ class ExceptionPackage
 
 date_default_timezone_set(DEFAULT_TIMEZONE);
 
-DB::init();
+if ( !DB::init() ) {
+  die("Failed to initialize OS.js Database!");
+}
 
 ?>

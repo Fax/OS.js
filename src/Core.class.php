@@ -263,7 +263,7 @@ class Core
       "preload"     => Array(
         "images" => ResourceManager::$Preload["images"]
       ),
-      "registry"    => User::getDefaultSettings()
+      "registry"    => User::getDefaultRegistry()
     );
   }
 
@@ -326,7 +326,7 @@ class Core
         $inst->setLocale($locale);
         Session::setLocale($locale);
 
-        $user->settings = $registry;
+        $user->last_registry = $registry;
       }
 
       if ( User::save($user) ) {
@@ -465,8 +465,8 @@ class Core
           }
         }
 
-        if ( !($settings = $user->settings) ) {
-          $settings = User::getDefaultSettings($packages, true);
+        if ( !($registry = $user->last_registry) ) {
+          $registry = User::getDefaultRegistry($packages, true);
         }
         if ( !($session = $user->last_session) ) {
           $session = User::getDefaultSession();
@@ -475,7 +475,7 @@ class Core
         $json['success'] = true;
         $json['result'] = Array(
           "user"          => $user->getUserInfo(),
-          "registry"      => $settings,
+          "registry"      => $registry,
           "session"       => $session,
           "packages"      => $packages,
           "preload"       => Array(

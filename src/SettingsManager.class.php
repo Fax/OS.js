@@ -198,7 +198,6 @@ abstract class SettingsManager
       "value" => true
     ),
 
-
     "user.session.appmime" => Array(
       "type"  => "list",
       "items" => Array()
