@@ -5692,7 +5692,8 @@
     pos           : "",         //!< Panel Position
     items         : [],         //!< Panel Items
     running       : false,      //!< Panel running state
-    dragging      : false,      //!< Current item dragging
+    dragging      : false,      //!< Current panel dragging
+    idragging     : false,      //!< Current item dragging
     width         : -1,         //!< Current width
 
     /**
@@ -5888,6 +5889,8 @@
         _Desktop.removePanel(this, true);
       }
 
+      this.dragging = null;
+      this.idragging = null;
       this.running = false;
 
       this._super();
@@ -5913,7 +5916,7 @@
 
       var self = this;
       $(document).mouseup(function(ev) {
-        if ( self.dragging ) {
+        if ( self.idragging ) {
           self._stopItemDrag(ev);
         }
       });
@@ -5926,7 +5929,7 @@
      */
     _startItemDrag : function(ev, item) {
       var self = this;
-      if ( !this.dragging ) {
+      if ( !this.idragging ) {
         var dw = $(document).width();
         var off = item.$element.offset();
         var ghost = $("<li class=\"Ghost PanelItemSeparator\"></li>");
@@ -5937,7 +5940,7 @@
           "height" : item.$element.height() + "px"
         });
 
-        this.dragging = {
+        this.idragging = {
           'start'   : item._align == "right" ? (dw - (off['left'] + item.$element.width())) : off['left'],
           'item'    : item,
           'result'  : null,
@@ -5945,13 +5948,13 @@
           'startX'  : ev.pageX
         };
 
-        console.log("Panel::_startItemDrag()", ev, this.dragging);
+        console.log("Panel::_startItemDrag()", ev, this.idragging);
 
         $(document).bind("mousemove", function(ev) {
           self._handleItemDrag(ev);
         });
 
-        this.$element.append(this.dragging.ghost);
+        this.$element.append(this.idragging.ghost);
       }
     },
 
@@ -5962,18 +5965,18 @@
      */
     _stopItemDrag : function(ev) {
       var self = this;
-      if ( this.dragging ) {
-        console.log("Panel::_stopItemDrag()", ev, this.dragging);
+      if ( this.idragging ) {
+        console.log("Panel::_stopItemDrag()", ev, this.idragging);
 
         $(document).unbind("mousemove", function(ev) {
           self._handleItemDrag(ev);
         });
 
-        this.dragging.item.setPosition(this.dragging.result, true);
+        this.idragging.item.setPosition(this.idragging.result, true);
 
-        this.dragging.ghost.remove();
+        this.idragging.ghost.remove();
       }
-      this.dragging = false;
+      this.idragging = false;
     },
 
     /**
@@ -5982,16 +5985,16 @@
      * @return void
      */
     _handleItemDrag : function(ev) {
-      if ( this.dragging ) {
-        var cur, diff = this.dragging.startX - ev.pageX;
-        if ( this.dragging.item._align == "left" ) {
-          cur = this.dragging.start - diff;
-          this.dragging.result = {"left" : (cur + "px"), "right" : "auto"};
+      if ( this.idragging ) {
+        var cur, diff = this.idragging.startX - ev.pageX;
+        if ( this.idragging.item._align == "left" ) {
+          cur = this.idragging.start - diff;
+          this.idragging.result = {"left" : (cur + "px"), "right" : "auto"};
         } else {
-          cur = this.dragging.start + diff;
-          this.dragging.result = {"right" : (cur + "px"), "left" : "auto"};
+          cur = this.idragging.start + diff;
+          this.idragging.result = {"right" : (cur + "px"), "left" : "auto"};
         }
-        this.dragging.ghost.css(this.dragging.result);
+        this.idragging.ghost.css(this.idragging.result);
       }
     },
 
@@ -6284,8 +6287,8 @@
       });
       this.$element.bind("mousedown", function(ev) {
         ev.preventDefault();
-        /*ev.stopPropagation();
-        return false;*/
+        ev.stopPropagation();
+        return false;
       });
       /*this.$element.bind("mouseup", function(ev) {
         ev.preventDefault();
