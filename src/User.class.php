@@ -57,6 +57,7 @@ class User
   public $privilege         = self::GROUP_NONE;     // User Group(s)
   public $real_name         = "Undefined";          // User's Real Name
   public $created_at        = null;                 // User Created Timestamp
+  public $modified_at       = null;                 // User Modified Timestamp
   public $last_registry     = Array();              // User Last Registry
   public $last_login        = null;                 // User Last login
   public $last_session_id   = null;                 // User Last Session ID

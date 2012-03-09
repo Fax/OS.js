@@ -1,10 +1,11 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG]  APP ControlPanel: _doUserOperation
-[HIG]  Core::_doUserOperation
+[HIG]  Session timeout login
 [HIG]  Handle _SessionValid and result.exception in DoPost() (_HasCrashed)
 [HIG]  Auto-enable newly installed apps for users ?!
 
+[MED]  Core::_doUserOperation
+[MED]  APP ControlPanel: _doUserOperation
 [MED]  Re-implement snapshots [JS]
 [MED]  Panel dragging triggers when using menu button, nono in PanelItme ?!
 [MED]  User modification datestamp
