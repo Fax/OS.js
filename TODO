@@ -7,15 +7,10 @@ CORE TODO:
 [MED]  Core::_doUserOperation
 [MED]  APP ControlPanel: _doUserOperation
 [MED]  Re-implement snapshots [JS]
-[MED]  User modification datestamp
 [MED]  Background error logging only on production
 [MED]  Base64-encoded @font-face storage in XML (cace) ?!
 [MED]  Let user choose login username etc. Registering ?!
 [MED]  ALWAYS relative icons ?!
-[MED]  When starting up and you have saved session, ask for a session to be loaded
-       (from database alternatively)
-       May come in handy if something happened with browser or user
-       Has changed computers after logging out etc.
 
 [LOW]  Hove Template HTML for dialogs into dialog.js
 [LOW]  Finish up Package Meta for loading from user
