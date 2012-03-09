@@ -44,7 +44,7 @@
       "title"   : "Session change",
       "message" : "A previous session was restored"
     },
-    "LoginFailure"                        : "Failed to log in. Make sure you are using the correct username and/or password",
+    "LoginFailure"                        : "Failed to log in: %s",
     "LoginFailureOther"                   : "A system error occured while logging in, please try again.",
     "CannotStart"                         : "Your browser does not support WebStorage. Cannot continue...",
     "ApplicationCheckCompabilityMessage"  : "Your browser does not support '%s'",

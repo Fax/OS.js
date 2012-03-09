@@ -2258,16 +2258,27 @@
         $("#LoginPassword").removeAttr("disabled").removeClass("loading");
       };
 
-      var _doLoginError = function(server_error) {
+      var _doLoginError = function(server_error, message) {
         if ( server_error ) {
           MessageBox(OSjs.Labels.LoginFailureOther); // FIXME ?
         } else {
-          MessageBox(OSjs.Labels.LoginFailure); // FIXME ?
+          MessageBox(sprintf(OSjs.Labels.LoginFailure, message)); // FIXME ?
         }
       };
-      var _doLogin = function(response) {
+      var _doLogin = function(response, dcallback) {
+        dcallback = dcallback || function() {};
+
         setTimeout(function() {
-          self.login(response);
+          if ( response.duplicate === true || response.duplicate === "1" || response.duplicate === 1 ) {
+            var con = confirm("You are already logged in, are you sure you want to continue?"); // FIXME: Locale
+            if ( con ) {
+              self.login(response);
+            } else {
+              dcallback();
+            }
+          } else {
+            self.login(response);
+          }
         }, LOGIN_WAIT);
       };
 
@@ -2293,10 +2304,12 @@
 
           if ( data.success ) {
             $("#LoginForm").get(0).onsubmit = null;
-            _doLogin(data.result);
+            _doLogin(data.result, function() {
+              _enableInput();
+            });
           } else {
             _enableInput(false);
-            _doLoginError();
+            _doLoginError(false, data.error);
           }
 
         }, function() {

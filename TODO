@@ -1,17 +1,15 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG]  Session timeout login
 [HIG]  Handle _SessionValid and result.exception in DoPost() (_HasCrashed)
 [HIG]  Auto-enable newly installed apps for users ?!
 
-[MED]  Core::_doUserOperation
-[MED]  APP ControlPanel: _doUserOperation
 [MED]  Re-implement snapshots [JS]
 [MED]  Background error logging only on production
 [MED]  Base64-encoded @font-face storage in XML (cace) ?!
-[MED]  Let user choose login username etc. Registering ?!
 [MED]  ALWAYS relative icons ?!
 
+[LOW]  Core::_doUserOperation
+[LOW]  APP ControlPanel: _doUserOperation
 [LOW]  Hove Template HTML for dialogs into dialog.js
 [LOW]  Finish up Package Meta for loading from user
 [LOW]  Rewrite Glade builder class

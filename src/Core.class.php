@@ -179,12 +179,23 @@ class Core
           "result"  => null
         );
 
+        // Check if we are logged in
+        $uid        = 0;
+        $user       = null;
+        $logged_in  = false;
+        if ( (($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
+          $user->heartbeat_at = new DateTime();
+          User::save($user);
+
+          $logged_in = true;
+        }
+
         // Map actions to methods
         if ( isset($args['action']) ) {
 
           // Check if a user session is required!
           if ( in_array($args['action'], self::$__POSTEventsSecure) ) {
-            if ( !(($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
+            if ( !$logged_in ) {
               $json["error"] = _("You are not logged in!");
 
               $json["exception"] = Array(
@@ -448,8 +459,10 @@ class Core
     }
 
     $user = null;
+    $errored = true;
     if ( $user = User::getByUsername($uname) ) {
       if ( $user->password == $upass ) {
+        $user->logged_in        = 1;
         $user->last_login       = new DateTime();
         $user->last_session_id  = session_id();
         User::save($user);
@@ -484,9 +497,16 @@ class Core
           "sid"           => session_id(),
           "lang_system"   => DEFAULT_LANGUAGE,
           "lang_user"     => $init_language,
-          "lang_browser"  => $browser_language
+          "lang_browser"  => $browser_language,
+          "duplicate"     => $user->isLoggedIn()
         );
+
+        $errored = false;
       }
+    }
+
+    if (  $errored ) {
+      $json['error'] = _("Check username and password"); // FIXME: Locale
     }
 
     Session::setUser(($user && ($user instanceof User)) ? $user : null);
@@ -498,10 +518,20 @@ class Core
    * @return void
    */
   protected static final function _doUserLogout(Array $args, Array &$json, Core $inst = null) {
-    $json['success']  = true;
+    if ( $user = $inst->getUser() ) {
+      $user->last_logout = new DateTime();
+      $user->logged_in   = 0;
 
-    // FIXME
-    //Session::setUser(null);
+      if ( User::save($user) ) {
+        $json['success']  = true;
+      } else {
+        $json['error'] = _("Failed to save user!"); // FIXME: Locale
+      }
+
+      //FIXME
+      //Session::setUser(null);
+    }
+
   }
 
   /**

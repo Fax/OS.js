@@ -58,10 +58,13 @@ class User
   public $real_name         = "Undefined";          // User's Real Name
   public $created_at        = null;                 // User Created Timestamp
   public $modified_at       = null;                 // User Modified Timestamp
+  public $heartbeat_at      = null;                 // User Heartbeat Timestamp
   public $last_registry     = Array();              // User Last Registry
   public $last_login        = null;                 // User Last login
+  public $last_logout       = null;                 // User Last logout
   public $last_session_id   = null;                 // User Last Session ID
   public $last_session      = Array();              // User Last Session
+  public $logged_in         = false;                // User is logged in ?!
 
   public static $Groups = Array(
     self::GROUP_NONE        => "None",
@@ -80,7 +83,7 @@ class User
   public final function __construct(Array $data) {
     foreach ( $data as $k => $v ) {
       try {
-        if ( $k == "last_registry" || $k == "last_session" )
+        if ( $k == "last_registry" || $k == "last_session" ) {
           if ( $v ) {
             try {
               $v = JSON::decode($v);
@@ -90,8 +93,11 @@ class User
           } else {
             $v = Array();
           }
-        elseif ( ($k == "created_at" || $k == "last_login") && $v )
+        } elseif ( ($k == "created_at" || $k == "last_login" || $k == "last_logout" || $k == "modified_at" || $k == "heartbeat_at" ) && $v ) {
           $v = new DateTime($v);
+        } else if ( $k == "logged_in" ) {
+          $v = (int) $v;
+        }
       } catch ( Exception $e ) {}
 
       $this->$k = $v;
@@ -132,6 +138,14 @@ class User
    */
   public final function isInGroup($group) {
     return $this->privilege & $group;
+  }
+
+  /**
+   * Check if User is logged in
+   * @return bool
+   */
+  public final function isLoggedIn() {
+    return $this->logged_in ? true : false;
   }
 
   /////////////////////////////////////////////////////////////////////////////
