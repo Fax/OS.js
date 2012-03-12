@@ -122,16 +122,15 @@
   var _TopIndex        = (ZINDEX_WINDOW + 1);             //!< OnTop z-index
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);       //!< OnTop instances index
   var _Running         = false;                           //!< Global running state
-  var _AppCache        = [];                              //!< Global Application[Package] Cache
-  var _PanelCache      = [];                              //!< Global PanelItem[Package] Cache
-  var _BackgroundServiceCache = [];                       //!< Global BackgroundService[Package] Cache
-  //var _DataRX          = 0;                               //!< Global Data recieve counter
-  //var _DataTX          = 0;                               //!< Global Data transmit counter
   var _StartStamp      = -1;                              //!< Starting timestamp
   var _SessionId       = "";                              //!< Server session id
   var _SessionValid    = true;                            //!< Session is valid
-  var _SRevisionChange = false;                           //!< Settings revision update occured
   var _HasCrashed      = false;                           //!< If system has crashed
+  var _PackageCache    = {                                //!< Cached packages
+    'Application'         : {},
+    'PanelItem'           : {},
+    'BackgroundService'   : {}
+  };
 
   /**
    * Language
@@ -170,28 +169,20 @@
       return;
     }
 
-    var ajax_args = {
-      'ajax' : true
-    };
-
+    var ajax_args = {'ajax' : true};
     for ( var i in args ) {
       if ( args.hasOwnProperty(i) ) {
         ajax_args[i] = args[i];
       }
     }
 
-    //_DataTX += (JSON.stringify(ajax_args)).length;
-
     $.ajax({
       type      : "POST",
       url       : AJAX_URI,
       data      : ajax_args,
       success   : function(data) {
-        //_DataRX += (JSON.stringify(data)).length;
         callback(data);
 
-        // Check if we crashed!
-        // TODO
         if ( data && data.error && data.exception ) {
           _HasCrashed = true;
         }
@@ -200,22 +191,6 @@
         callback_error(xhr, ajaxOptions, thrownError);
       }
     });
-
-    /*
-    $.post(AJAX_URI, ajax_args, function(data) {
-      _DataRX += (JSON.stringify(data)).length;
-
-      callback(data);
-    });
-    */
-
-    /*
-    OSjs.Classes.AJAX(AJAX_URI, ajax_args, function(data) {
-      _DataRX += (JSON.stringify(data)).length;
-
-      callback(data);
-    });
-    */
 
   } // @endfunction
 
@@ -278,14 +253,16 @@
     // First check if avail
     var plist = API.user.settings.packages();
     var found = false;
+    var active = false;
     for ( i = 0; i < plist.length; i++ ) {
-      if ( (plist[i].name == name) && (plist[i].active) ) {
+      if ( (plist[i].name == name) ) {
         found = true;
+        active = (plist[i].active);
         break;
       }
     }
 
-    if ( !found ) {
+    if ( !found || !active ) {
       msg   = sprintf(OSjs.Labels.InitLaunchNotFound, name);
       trace = sprintf("InitLaunch(%s)", name);
 
@@ -404,10 +381,11 @@
     callback = callback || function() {};
     callback_error = callback_error || function() {};
 
-    if ( InitLaunch(app_name) && _AppCache[app_name] ) {
+    var applications = _PackageCache.Application;
+    if ( InitLaunch(app_name) && applications[app_name] ) {
       API.ui.cursor("wait");
 
-      var resources = _AppCache[app_name].resources;
+      var resources = applications[app_name].resources;
       _Resources.addResources(resources, app_name, function(error) {
         console.group(">>> Initing loading of '" + app_name + "' <<<");
 
@@ -494,8 +472,9 @@
   function LaunchPanelItem(i, iname, iargs, ialign, panel, callback, save) {
     callback = callback || function() {};
 
-    if ( InitLaunch(iname) && _PanelCache[iname] ) {
-      var resources = _PanelCache[iname].resources;
+    var panelitems = _PackageCache.PanelItem;
+    if ( InitLaunch(iname) && panelitems[iname] ) {
+      var resources = panelitems[iname].resources;
       _Resources.addResources(resources, iname, function(error) {
 
         console.group(">>> Initing loading of '" + iname + "' <<<");
@@ -548,8 +527,9 @@
     callback = callback || function() {};
     iargs    = iargs    || {};
 
-    if ( InitLaunch(sname) && _BackgroundServiceCache[sname] ) {
-      var resources = _BackgroundServiceCache[sname].resources;
+    var services = _PackageCache.BackgroundService;
+    if ( InitLaunch(sname) && services[sname] ) {
+      var resources = services[sname].resources;
       _Resources.addResources(resources, sname, function(error) {
 
         console.group(">>> Initing loading of '" + sname + "' <<<");
@@ -626,10 +606,11 @@
 
       // Figure out what apps to display
       var activated = _Settings._get("user.installed.packages", true); // FIXME
-      for ( i in _AppCache ) {
-        if ( _AppCache.hasOwnProperty(i) ) {
+      var applications = _PackageCache.Application;
+      for ( i in applications ) {
+        if ( applications.hasOwnProperty(i) ) {
           if ( in_array(i, activated) ) {
-            apps[i] = _AppCache[i];
+            apps[i] = applications[i];
           }
         }
       }
@@ -1475,56 +1456,56 @@
           pitems  = (pitems === undefined)  ? true : pitems;
           sitems  = (sitems === undefined)  ? true : sitems;
 
-          var ia, ip, iter;
-          if ( apps ) {
-            for ( ia in _AppCache ) {
-              if ( _AppCache.hasOwnProperty(ia) ) {
-                iter = _AppCache[ia];
-                result.push({
-                  name      : ia,
-                  label     : _AppCache[ia].titles[GetLanguage()] || iter.title,
-                  active    : iter.category == "system" || in_array(ia, activated), // FIXME: HACKISH
-                  type      : 'Application',
-                  locked    : iter.category == "system",
-                  icon      : iter.icon,
-                  icon      : (icons ? (iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_32, iter.icon)) : iter.icon),
-                  category  : iter.category
-                });
-              }
-            }
-          }
+          var is, ia, ip, iter, list;
+          for ( is in _PackageCache ) {
+            if ( _PackageCache.hasOwnProperty(is) ) {
+              list = _PackageCache[is];
 
-          if ( pitems ) {
-            for ( ip in _PanelCache ) {
-              if ( _PanelCache.hasOwnProperty(ip) ) {
-                iter = _PanelCache[ip];
-                result.push({
-                  name    : ip,
-                  label   : iter.title,
-                  active  : in_array(ip, activated),
-                  type    : 'PanelItem',
-                  locked  : true,
-                  icon    : sprintf(ICON_URI_32, _PanelCache[ip].icon)
-                });
-              }
-            }
-          }
+              for ( ia in list ) {
+                if ( list.hasOwnProperty(ia) ) {
+                  iter = list[ia];
 
-          if ( sitems ) {
-            for ( ip in _BackgroundServiceCache ) {
-              if ( _BackgroundServiceCache.hasOwnProperty(ip) ) {
-                iter = _BackgroundServiceCache[ip];
-                result.push({
-                  name    : ip,
-                  label   : iter.title,
-                  active  : in_array(ip, activated),
-                  type    : 'BackgroundService',
-                  locked  : false,
-                  icon    : sprintf(ICON_URI_32, _BackgroundServiceCache[ip].icon)
-                });
+                  if ( is == "Application" ) {
+                    if ( apps ) {
+                      result.push({
+                        name      : ia,
+                        label     : iter.titles[GetLanguage()] || iter.title,
+                        active    : iter.category == "system" || in_array(ia, activated), // FIXME: HACKISH
+                        type      : 'Application',
+                        locked    : iter.category == "system",
+                        icon      : iter.icon,
+                        icon      : (icons ? (iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_32, iter.icon)) : iter.icon),
+                        category  : iter.category
+                      });
+                    }
+                  } else if ( is == "PanelItem" ) {
+                    if ( pitems ) {
+                      result.push({
+                        name    : ia,
+                        label   : iter.title,
+                        active  : in_array(ia, activated),
+                        type    : 'PanelItem',
+                        locked  : true,
+                        icon    : sprintf(ICON_URI_32, iter.icon)
+                      });
+                    }
+                  } else if ( is == "BackgroundService" ) {
+                    if ( sitems ) {
+                      result.push({
+                        name    : ia,
+                        label   : iter.title,
+                        active  : in_array(ia, activated),
+                        type    : 'BackgroundService',
+                        locked  : false,
+                        icon    : sprintf(ICON_URI_32, iter.icon)
+                      });
+                    }
+                  }
+
+                } // ia
               }
             }
-          }
+          } // is
 
           return result;
         }
@@ -2269,7 +2250,7 @@
         dcallback = dcallback || function() {};
 
         setTimeout(function() {
-          if ( response.duplicate === true || response.duplicate === "1" || response.duplicate === 1 ) {
+          if ( response.duplicate ) {
             var con = confirm("You are already logged in, are you sure you want to continue?"); // FIXME: Locale
             if ( con ) {
               self.login(response);
@@ -2534,14 +2515,6 @@
           var _i = sprintf(ICON_URI_32, "emotes/face-smile-big.png");
           API.system.notification(_l.title, _l.message, _i);
         }, 500);
-      } else {
-        if ( _SRevisionChange ) {
-          setTimeout(function() {
-            var _l = OSjs.Labels.SRevisionChange;
-            var _i = sprintf(ICON_URI_32, "status/appointment-missed.png");
-            API.system.notification(_l.title, _l.message, _i, -1);
-          }, 500);
-        }
       }
 
       // Bind global events
@@ -3290,15 +3263,21 @@
 
       var _update = function(d) {
         if ( (d instanceof Object) ) {
-          _PanelCache             = d.PanelItem || [];
-          _AppCache               = d.Application || [];
-          _BackgroundServiceCache = d.BackgroundService || [];
+          for ( var i in d ) {
+            if ( d.hasOwnProperty(i) ) {
+              if ( _PackageCache[i] ) {
+                try {
+                  _PackageCache[i] = d[i] || {};
+                } catch ( eee ) {
+                  _PackageCache[i] = {};
+                }
+              }
+            }
+          }
         }
 
         console.group("SettingsManager::_applyUserPackages()");
-        console.log("PanelCache", _PanelCache);
-        console.log("AppCache", _AppCache);
-        console.log("BackgroundServiceCache", _BackgroundServiceCache);
+        console.log("Cache", _PackageCache);
         console.groupEnd();
       };
 
@@ -5818,7 +5797,7 @@
         }
 
         var pitem = new OSjs.Dialogs.PanelItemOperationDialog(OperationDialog, API, [this, function(diag) {
-          var items = _PanelCache;
+          var items = _PackageCache.PanelItem;
           var name, li, current, selected;
 
           for ( name in items ) {
@@ -7626,7 +7605,6 @@
   var Menu = Class.extend({
 
     $element : null,  //!< Menu DOM Element
-    $focuser : null,  //!< DEPRECATED
     $clicked : null,  //!< Clicked elemenet
 
     /**
@@ -7653,10 +7631,6 @@
       if ( this.$element ) {
         this.$element.remove();
         this.$element = null;
-      }
-      if ( this.$focuser ) {
-        this.$focuser.remove();
-        this.$focuser = null;
       }
 
       if ( _Menu ) {
@@ -7709,7 +7683,6 @@
           }
 
           self.destroy();
-          //self.$focuser.blur();
         });
       } else {
         li.click(function(ev) {
@@ -7791,27 +7764,11 @@
       console.group("Menu::create()");
 
       var div = this._createMenu(ev, menu);
-      //var f   = $("<input type=\"text\" value=\"\" />");
-
-      /*
-      var self = this;
-      f.focus(function() {
-      });
-      f.blur(function(ev) {
-        self.destroy();
-      });
-      */
-      //div.append(f);
-
       this.$element = div;
-      //this.$focuser = f;
 
       if ( show === true ) {
         this.show(ev, this.$element);
       }
-
-      //f.focus();
-
 
       console.groupEnd();
 

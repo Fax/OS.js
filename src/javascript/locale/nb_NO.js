@@ -36,10 +36,6 @@
       "title"   : "Velkommen til OS.js",
       "message" : "Dette er bare en demonstrasjons-versjon"
     },
-    "SRevisionChange"                     : {
-      "title"   : "Brukerinstillinger notis",
-      "message" : "På grunn av en intern endring kan noen av dine instillinger blitt nullstilt"
-    },
     "SessionRestore" : {
       "title"   : "Sessjons-endring",
       "message" : "En tidligere sessjon har blitt lastet"

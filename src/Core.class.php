@@ -182,12 +182,12 @@ class Core
         // Check if we are logged in
         $uid        = 0;
         $user       = null;
-        $logged_in  = false;
+        $logged_in  = 0;
         if ( (($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
           $user->heartbeat_at = new DateTime();
           User::save($user);
 
-          $logged_in = true;
+          $logged_in = 1;
         }
 
         // Map actions to methods
@@ -361,17 +361,19 @@ class Core
     $json['result']   = true;
     $json['success']  = true;
 
-    if ( $save === true ) {
-      if ( $user = $inst->getUser() ) {
+    if ( $user = $inst->getUser() ) {
+      if ( $save === true ) {
         $user->last_session = JSON::decode($session);
+      }
+      $user->last_logout = new DateTime();
+      $user->logged_in   = 0;
 
-        if ( User::save($user) ) {
-          $json['success'] = true;
-        } else {
-          $json['result']  = false;
-          $json['success'] = false;
-          $json['error']   = _("Failed to save user!"); // FIXME: Locale
-        }
+      if ( User::save($user) ) {
+        $json['success'] = true;
+      } else {
+        $json['result']  = false;
+        $json['success'] = false;
+        $json['error']   = _("Failed to save user!"); // FIXME: Locale
       }
     }
 
@@ -462,7 +464,6 @@ class Core
     $errored = true;
     if ( $user = User::getByUsername($uname) ) {
       if ( $user->password == $upass ) {
-        $user->logged_in        = 1;
         $user->last_login       = new DateTime();
         $user->last_session_id  = session_id();
         User::save($user);
@@ -501,6 +502,10 @@ class Core
           "duplicate"     => $user->isLoggedIn()
         );
 
+        if ( !$user->isLoggedIn() ) {
+          $user->logged_in        = 1;
+        }
+
         $errored = false;
       }
     }
@@ -516,7 +521,6 @@ class Core
    * Do a 'User Logout' AJAX Call
    * @see Core::doPost
    * @return void
-   */
   protected static final function _doUserLogout(Array $args, Array &$json, Core $inst = null) {
     if ( $user = $inst->getUser() ) {
       $user->last_logout = new DateTime();
@@ -533,6 +537,7 @@ class Core
     }
 
   }
+   */
 
   /**
    * Do a 'User Operation' AJAX Call

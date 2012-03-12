@@ -145,7 +145,7 @@ class User
    * @return bool
    */
   public final function isLoggedIn() {
-    return $this->logged_in ? true : false;
+    return $this->logged_in === 1 ? true : false;
   }
 
   /////////////////////////////////////////////////////////////////////////////

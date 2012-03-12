@@ -36,10 +36,6 @@
       "title"   : "Welcome to OS.js",
       "message" : "This is just a demonstration version"
     },
-    "SRevisionChange"                     : {
-      "title"   : "User Settings notice",
-      "message" : "Because of an internal system change some of your settings may have been reset"
-    },
     "SessionRestore" : {
       "title"   : "Session change",
       "message" : "A previous session was restored"
