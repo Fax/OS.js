@@ -212,7 +212,7 @@ class User
       $values[$k] = $v;
     }
 
-    if ( isset($instance->id) && ($id = $instance->id) ) {
+    if ( isset($instance->id) && (($id = $instance->id) > 0) ) {
       if ( DB::Update("user", $values, Array("id" => $id)) ) {
         return $instance;
       }

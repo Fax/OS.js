@@ -156,8 +156,8 @@ class Session
       $values[$k] = $v;
     }
 
-    if ( isset($instance->id) && $instance->id ) {
-      if ( DB::Update("session", $values, Array("id" => $instance->id)) ) {
+    if ( isset($instance->id) && (($id = $instance->id) > 0) ) {
+      if ( DB::Update("session", $values, Array("id" => $id)) ) {
         return $instance;
       }
     } else {
@@ -212,6 +212,34 @@ class Session
   public static final function snapshotLoad(User $user, $name) {
     return Session::getBySnapshot($user->id, $name);
   }
+
+  /**
+   * Delete a snapshot by name
+   * @see    Snapshot::getBySnapshot()
+   * @return Snapshot
+   */
+  public static final function snapshotDelete(User $user, $name) {
+    if ( $s = Session::getBySnapshot($user->id, $name) ) {
+      return DB::Delete("session", Array("id" => $s->id, "user_id" => $user->id), 1);
+    }
+    return false;
+  }
+
+  /**
+   * Get a list of snapshots
+   * @return Snapshot
+   */
+  public static final function snapshotList(User $user) {
+    if ( $res = DB::Select("session", "*", Array("user_id" => $user->id)) ) {
+      $result = Array();
+      foreach ( $res as $r ) {
+        $result[] = new Session($r);
+      }
+      return $result;
+    }
+    return null;
+  }
+
 }
 
 ?>

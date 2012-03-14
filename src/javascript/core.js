@@ -66,6 +66,8 @@
   var TIMEOUT_CSS            = (1000 * 10);         //!< CSS loading timeout
   var DEFAULT_USERNAME       = "demo";              //!< Default User Username
   var DEFAULT_PASSWORD       = "demo";              //!< Default User Password
+  var AUTOMATIC_LOGIN        = true;                //!< Wherever to turn on automatic login
+  var SESSION_CONFIRM        = false;               //!< Wherever to turn on confirmation of session collision
   var ENV_CACHE              = undefined;           //!< Server-side cache enabled state
   var ENV_PRODUCTION         = undefined;           //!< Server-side production env. state
   // @endconstants
@@ -1306,6 +1308,10 @@
 
       'notification' : function(title, message, icon, duration) {
         if ( _Desktop ) {
+          if ( !icon.match(/^\//) ) {
+            icon = sprintf(ICON_URI_32, icon);
+          }
+
           _Desktop.createNotification(title, message, icon, duration);
         }
       }
@@ -1527,6 +1533,65 @@
     'session' : {
       'processes' : function() {
         return _Core.getProcesses();
+      },
+
+      'snapshot_create' : function(name, callback) {
+        callback = callback || function() {};
+
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.session.snapshot_create", name);
+        console.groupEnd();
+
+        if ( name ) {
+          var data = JSON.stringify({
+            "session"   : _Core.getSession(),
+            "registry"  : _Settings.getRegistry()
+          });
+
+          DoPost({'action' : 'snapshotSave', 'session' : {'name' : name, 'data' : data}}, function(result) {
+            callback(result);
+          });
+        }
+      },
+
+      'snapshot_restore' : function(name, callback) {
+        callback = callback || function() {};
+
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.session.snapshot_restore", name);
+        console.groupEnd();
+
+        if ( name ) {
+          DoPost({'action' : 'snapshotLoad', 'session' : {'name' : name}}, function(result) {
+            callback(result);
+          });
+        }
+      },
+
+      'snapshot_delete' : function(name, callback) {
+        callback = callback || function() {};
+
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.session.snapshot_delete", name);
+        console.groupEnd();
+
+        if ( name ) {
+          DoPost({'action' : 'snapshotDelete', 'session' : {'name' : name}}, function(result) {
+            callback(result);
+          });
+        }
+      },
+
+      'snapshot_list' : function(callback) {
+        callback = callback || function() {};
+
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.session.snapshot_list");
+        console.groupEnd();
+
+        DoPost({'action' : 'snapshotList'}, function(result) {
+          callback(result);
+        });
       },
 
       'shutdown' : function(save) {
@@ -2246,12 +2311,13 @@
           MessageBox(sprintf(OSjs.Labels.LoginFailure, message)); // FIXME ?
         }
       };
+
       var _doLogin = function(response, dcallback) {
         dcallback = dcallback || function() {};
 
         setTimeout(function() {
           if ( response.duplicate ) {
-            var con = confirm("You are already logged in, are you sure you want to continue?"); // FIXME: Locale
+            var con = !SESSION_CONFIRM || confirm("You are already logged in, are you sure you want to continue?"); // FIXME: Locale
             if ( con ) {
               self.login(response);
             } else {
@@ -2299,14 +2365,12 @@
         });
       });
 
-      /*
-      if ( !ENV_PRODUCTION ) {
+      _enableInput();
+
+      if ( AUTOMATIC_LOGIN ) {
         $("#LoginButton").click();
         $("#LoginButton").attr("disabled", "disabled");
       }
-      */
-
-      _enableInput();
     },
 
     login : function(response) {
@@ -4380,6 +4444,8 @@
      * @return  void
      */
     _setArgv : function(a, v) {
+      console.log("Application::_setArgv()", a, v);
+
       this._argv[a] = v;
     },
 

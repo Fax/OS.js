@@ -60,19 +60,21 @@ class Core
    * @var doPOST 'action' argument method mapping
    */
   protected static $__POSTEvents = Array(
-    "boot"          => "doBoot",
-    "shutdown"      => "doShutdown",
-    "snapshotSave"  => "doSnapshotSave",
-    "snapshotLoad"  => "doSnapshotLoad",
-    "updateCache"   => "doCacheUpdate",
-    "init"          => "doInit",
-    "settings"      => "doSettings",
-    "login"         => "doUserLogin",
-    "logout"        => "doUserLogout",
-    "user"          => "doUserOperation",
-    "event"         => "doApplicationEvent",
-    "package"       => "doPackageOperation",
-    "service"       => Array(
+    "boot"              => "doBoot",
+    "shutdown"          => "doShutdown",
+    "snapshotList"      => "doSnapshotList",
+    "snapshotSave"      => "doSnapshotSave",
+    "snapshotLoad"      => "doSnapshotLoad",
+    "snapshotDelete"    => "doSnapshotDelete",
+    "updateCache"       => "doCacheUpdate",
+    "init"              => "doInit",
+    "settings"          => "doSettings",
+    "login"             => "doUserLogin",
+    "logout"            => "doUserLogout",
+    "user"              => "doUserOperation",
+    "event"             => "doApplicationEvent",
+    "package"           => "doPackageOperation",
+    "service"           => Array(
       "method" => "doService",
       "depend" => Array("arguments")
     ),
@@ -86,7 +88,7 @@ class Core
    * @var doPOST 'action' argument security mapping (session required)
    */
   protected static $__POSTEventsSecure = Array(
-    "shutdown", "snapshotLoad", "snapshotSave", "updateCache",
+    "shutdown", "snapshotList", "snapshotLoad", "snapshotSave", "snapshotDelete", "updateCache",
     "init", "settings", "logout", "user", "event", "package", "service", "call"
   );
 
@@ -356,13 +358,13 @@ class Core
    */
   protected static final function _doShutdown(Array $args, Array &$json, Core $inst = null) {
     $session  = isset($args['session'])  ? $args['session']  : Array();
-    $save     = isset($args['save'])     ? ($args['save'] == "true" ? true : false)     : Array();
+    $save     = isset($args['save'])     ? ($args['save'] == "true" ? true : false) : false;
 
     $json['result']   = true;
     $json['success']  = true;
 
     if ( $user = $inst->getUser() ) {
-      if ( $save === true ) {
+      if ( $save ) {
         $user->last_session = JSON::decode($session);
       }
       $user->last_logout = new DateTime();
@@ -391,8 +393,15 @@ class Core
       $session  = Array();
 
       if ( isset($args['session']) ) {
-        $name     = $args['session']['name'];
-        $session  = $args['session']['data'];
+        $name = $args['session']['name'];
+        try {
+          $session  = JSON::encode($args['session']['data']);
+        } catch ( Exception $e ) {
+          $session = JSON::encode(Array(
+            "registry" => Array(),
+            "session"  => Array()
+          ));
+        }
       }
 
       if ( $name && $session ) {
@@ -428,8 +437,16 @@ class Core
 
       if ( $name ) {
         if ( ($snapshot = Session::snapshotLoad($user, $name)) ) {
-          $json['success'] = true;
-          $json['result']  = $snapshot;
+
+          $user->last_registry = $snapshot->session_data->registry;
+          $user->last_session  = $snapshot->session_data->session;
+
+          if ( User::save($user) ) {
+            $json['success'] = true;
+            $json['result']  = true;
+          } else {
+            $json['error'] = _("Cannot load snapshot. Failed to save to database!"); // FIXME: Locale
+          }
         } else {
           $json['error'] = _("Cannot load snapshot. Failed to load from database!");
         }
@@ -438,6 +455,55 @@ class Core
       }
     } else {
       $json['error'] = _("Cannot load snapshot. No running session found!");
+    }
+  }
+
+  /**
+   * Do a 'Delete Session Snapshot' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doSnapshotDelete(Array $args, Array &$json, Core $inst = null) {
+    if ( ($inst instanceof Core) && ($user = $inst->getUser()) ) {
+      $name     = "";
+      if ( isset($args['session']) ) {
+        $name     = $args['session']['name'];
+      }
+
+      if ( $name ) {
+        if ( Session::snapshotDelete($user, $name) ) {
+          $json['success'] = true;
+          $json['result']  = true;
+        } else {
+          $json['error'] = _("Cannot delete snapshot. Failed to delete from database!"); // FIXME: Locale
+        }
+      } else {
+        $json['error'] = _("Cannot delete snapshot. No input data given!"); // FIXME: Locale
+      }
+    } else {
+      $json['error'] = _("Cannot delete snapshot. No running session found!"); // FIXME: Locale
+    }
+  }
+
+  /**
+   * Do a 'List Session Snapshot' AJAX Call
+   * @see Core::doPost
+   * @return void
+   */
+  protected static final function _doSnapshotList(Array $args, Array &$json, Core $inst = null) {
+    if ( ($inst instanceof Core) && ($user = $inst->getUser()) ) {
+      if ( ($list = Session::snapshotList($user)) ) {
+        $snapshots = Array();
+        foreach ( $list as $l ) {
+          $snapshots[] = $l->session_name;
+        }
+        $json['success'] = true;
+        $json['result']  = $snapshots;
+      } else {
+        $json['error'] = _("Cannot list snapshots. Failed to list from database!"); // FIXME: Locale
+      }
+    } else {
+      $json['error'] = _("Cannot list snapshots. No running session found!"); // FIXME: Locale
     }
   }
 

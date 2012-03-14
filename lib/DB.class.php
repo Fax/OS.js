@@ -86,6 +86,9 @@ class DB
         $values = Array();
 
         foreach ( $args as $k => $v ) {
+          if ( $k == "id" ) // FIXME
+            continue;
+
           $query_columns[] = "`$k`";
           $query_values[]  = ":$k";
           if ( is_object($v) && ($v instanceof DateTime) ) {
