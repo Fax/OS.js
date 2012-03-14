@@ -207,6 +207,8 @@ class User
    * @return Mixed
    */
   public static function save(User $instance) {
+    $instance->modified_at = new DateTime();
+
     $values = Array();
     foreach ( $instance as $k => $v ) {
       $values[$k] = $v;
@@ -217,6 +219,7 @@ class User
         return $instance;
       }
     } else {
+      unset($values["modified_at"]);
       if ( $id = DB::Insert("user", $values) ) {
         $instance->id = $id;
         return $instance;
