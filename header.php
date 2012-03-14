@@ -55,7 +55,7 @@ error_reporting(-1); // E_ALL | E_STRICT
 
 define("PROJECT_AUTHOR",    "Anders Evenrud");
 define("PROJECT_CONTACT",   "andersevenrud@gmail.com");
-define("PROJECT_VERSION",   "0.7.001");
+define("PROJECT_VERSION",   "0.7.002");
 define("PROJECT_CODENAME",  "Catwalk");
 define("PROJECT_HOST",      (php_uname('n')));
 define("PROJECT_BUILD",     "13f3ae3");
