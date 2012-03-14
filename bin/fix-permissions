@@ -13,9 +13,15 @@ else
   then
     echo "Setting media permissions to $USR_APACHE:$USR_APACHE"
     sudo chown -R $USR_APACHE:$USR_APACHE public_html/media
+    sudo chown -R $USR_APACHE:$USR_APACHE logs
+    sudo chown -R $USR_APACHE:$USR_APACHE VFS
+    sudo chmod a-w public_html/media/System
   else
     echo "Setting media permissions to $USR_SELF:$USR_SELF"
     sudo chown -R $USR_SELF:$USR_SELF public_html/media
+    sudo chown -R $USR_SELF:$USR_SELF logs
+    sudo chown -R $USR_SELF:$USR_SELF VFS
+    sudo chmod a+w public_html/media/System
   fi
 fi
 

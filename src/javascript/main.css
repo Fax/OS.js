@@ -94,17 +94,17 @@ input.Disabled {
 }
 
 #Loading {
-  width : 458px;
-  height : 458px;
+  width : 500px;
+  height : 330px;
   position : absolute;
   top : 50%;
   left : 50%;
   margin : 0;
-  margin-left : -219px;
-  margin-top : -219px;
+  margin-left : -250px;
+  margin-top : -165px;
   padding : 0;
   z-index : 1000100;
-  background : #fff url('/img/loading.png') no-repeat center center;
+  background : #fff url('/img/logo.png') no-repeat center 20px;
   display : none;
 }
 #LoadingVersion {
@@ -115,12 +115,13 @@ input.Disabled {
 }
 #LoadingBarContainer {
   position : absolute;
-  left : 25px;
-  right : 75px;
-  bottom : 46px;
+  width : 412px;
   height : 22px;
   margin : 0;
   padding : 0;
+  left : 50%;
+  top : 150px;
+  margin-left : -199px;
 }
 #LoadingBar {
   height : 22px;
@@ -131,18 +132,18 @@ input.Disabled {
   border : 0 none;
 }
 #LoadingLogin {
-  width : 408px;
-  height : 97px;
+  width : 400px;
   position : absolute;
-  top : 288px;
-  left : 25px;
+  left : 50%;
+  margin-left : -200px;
+  bottom : 10px;
 }
   #LoadingLogin .Row {
     margin-bottom : 5px;
   }
   #LoadingLogin .Row input,
   #LoadingLogin .Row label {
-    width : 406px; /* - border */
+    width : 400px; /* - border */
     margin : 0;
     padding : 0;
     border : 0 none;
