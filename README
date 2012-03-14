@@ -10,8 +10,26 @@ You can find more information on these pages:
 
 Vendor libraries used:
 -------------------------------------------------------------------------------
-* jQuery
+* jQuery and jQuery UI
 * JSON2 by Douglas Crockford
 * Sprintf by Alexandru Marasteanu
 * Yahoo YUI Compressor
+* Gnome 2.x icon pack(s)
 
+Features:
+-------------------------------------------------------------------------------
+* BSD Licensed
+* Multi-user web-based desktop environment
+* Uses latest HTML and CSS features
+* Minimalistic, light-weight, fast and easy to extend
+* Simple Desktop Environment and Window Manager (inspired by Xfce)
+* Package Managment and Compiler (Project creation)
+* Package Compiler (Project Creation. Glade Interface Designer is supported.)
+* Large API on both client-/server-side
+* VFS (Virtual Filesystem) supporting physical paths and devices/streams
+* TCP Connections via a WebSocket wrapper
+* User sessions, User settings registry, Application settings storage
+* Session/Registry/Storage snapshot features
+* Resource lazy-loading for increased performance
+* Comes with common dialogs (File-, Color-, Font-operations etc.)
+* Comes (alternatively) with a collection of Packages
