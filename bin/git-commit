@@ -6,6 +6,6 @@ then
   sleep 1
 
   VER=`git rev-parse HEAD`
-  ./bin/commit-prepare $VER
+  ./bin/git-commit-prepare $VER
   git commit header.php -m "[AUTO]: header.php update"
 fi

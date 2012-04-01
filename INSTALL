@@ -36,7 +36,7 @@ Deployment (Development Target):
 * Clone the project from GitHub
 * Fix (temporary) permissions with './bin/fix-permissions dev'
 > See "Deployment (All Targets)"
-* Create documentation wit './bin/documentation-gen'
+* Create documentation wit './bin/update-documentation'
 * Fix permissions with './bin/fix-permissions live'
 
 Deployment (Production Target):
@@ -44,7 +44,7 @@ Deployment (Production Target):
 * Clone the project from GitHub
 * Fix (temporary) permissions with './bin/fix-permissions dev'
 > See "Deployment (All Targets)"
-* Compress/Minimize all resources with './bin/minimize-all'
+* Compress/Minimize all resources with './bin/update-compression'
 * Fix permissions with './bin/fix-permissions live'
 
 Deployment (All Targets):

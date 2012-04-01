@@ -12,8 +12,8 @@ cd ../../
 git pull
 ./bin/application-gen
 ./bin/install-all
-./bin/minimize-scripts
-./bin/makelocale.sh
+./bin/update-compression
+./bin/update-locale
 ./bin/update-fontcache
 ./bin/fix-permissions live
 
