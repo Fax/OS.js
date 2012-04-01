@@ -68,7 +68,7 @@ if ( ENV_PRODUCTION || ENABLE_CACHE ) {
 
 // NOTE: http://www.p3pwriter.com/LRN_111.asp
 //header("P3P: CP=\"IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA\"");
-header("P3P: CP=\"NOI DSP COR CURa ADMa OUR NOR COM STA\"");
+//header("P3P: CP=\"NOI DSP COR CURa ADMa OUR NOR COM STA\"");
 
 $loc = $core->getLocale();
 header("X-OSjs-Version: " . PROJECT_VERSION);

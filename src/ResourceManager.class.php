@@ -175,7 +175,7 @@ abstract class ResourceManager
 
     // Base64 Encode fonts
     try {
-      $bdocument = new SimpleXMLElement(file_get_contents(FONT_CACHE));
+      $bdocument = @(new SimpleXMLElement(file_get_contents(FONT_CACHE)));
     } catch ( Exception $e ) {
       $bdocument = null;
     }
@@ -191,19 +191,10 @@ abstract class ResourceManager
             break;
           }
         }
+        unset($filename);
       }
-
-      // Force local encoding (slower!)
-      if ( !isset($sources[$face]) ) {
-        $apath = sprintf("%s/%s", PATH_HTML, $rpath);
-        if ( file_exists($apath) && ($content = file_get_contents($apath)) ) {
-          $b64 = base64_encode($content);
-          $sources[$face] = sprintf("data:application/x-font-ttf;base64,%s", $b64);
-        }
-      }
-
-      unset($filename);
     }
+
     unset($bdocument);
 
     $header = <<<EOCSS

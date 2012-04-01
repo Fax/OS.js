@@ -600,7 +600,7 @@ class Core
         $json['error'] = _("Failed to save user!"); // FIXME: Locale
       }
 
-      Session::clearSession();
+      //Session::clearSession();
     }
 
   }
