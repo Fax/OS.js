@@ -1,0 +1,11 @@
+#!/bin/bash
+git commit "$@"
+
+if [ $? -eq 0 ]
+then
+  sleep 1
+
+  VER=`git rev-parse HEAD`
+  ./bin/commit-prepare $VER
+  git commit header.php -m "[AUTO]: header.php update"
+fi
