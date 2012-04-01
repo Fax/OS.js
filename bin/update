@@ -9,10 +9,16 @@ cd ../../
 
 # Do the magick
 ./bin/fix-permissions dev
-git pull && ./bin/application-gen && ./bin/install-all && ./bin/minimize-scripts
-./bin/fix-permissions live
+git pull
+./bin/application-gen
+./bin/install-all
+./bin/minimize-scripts
 ./bin/makelocale.sh
+./bin/update-fontcache
+./bin/fix-permissions live
 
 # Restart apache
 sudo /etc/init.d/apache2 restart
 
+# Restart mysql
+sudo /etc/init.d/mysql restart
