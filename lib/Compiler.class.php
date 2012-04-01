@@ -286,7 +286,6 @@ class Compiler
    * @return  bool
    */
   public static function compileAll($dry_run = false, $root = null) {
-    $config = PACKAGE_BUILD;
     $root   = ($root ? $root : PATH_PACKAGES);
 
     if ( $dh  = opendir($root) ) {

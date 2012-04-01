@@ -144,6 +144,7 @@ define("URI_PACKAGE_RESOURCE",  "/VFS/resource/%s/%s");
 //
 
 define("MINIMIZE_CACHE",       PATH_BUILD   . "/minimize.cache");
+define("FONT_CACHE",           PATH_BUILD   . "/fontcache.xml");
 define("PACKAGE_BUILD",        PATH_BUILD   . "/packages.xml");
 define("MIME_MAGIC",           PATH_VENDOR  . "/mime.mgc");
 

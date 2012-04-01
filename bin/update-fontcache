@@ -1,0 +1,39 @@
+#!/usr/bin/env php
+<?php
+
+require "header.php";
+
+$timestamp = time();
+
+$path = sprintf("%s/System/Fonts", PATH_MEDIA);
+
+$dom = new DomDocument("1.0");
+$dom->preserveWhiteSpace = false;
+$dom->formatOutput = true;
+
+$node = $dom->createElement("fonts");
+$node->setAttribute("date", "{$timestamp}");
+
+
+if ( $handle = opendir($path) ) {
+  while ( false !== ($entry = readdir($handle)) ) {
+    if ( preg_match("/\.ttf$/", $entry) ) {
+      print "Updating '$entry'\n";
+
+      $n = $dom->createElement("font");
+      $n->setAttribute("name", $entry);
+      $n->appendChild(new DomText(base64_encode(file_get_contents(sprintf("%s/%s", $path, $entry)))));
+
+      $node->appendChild($n);
+    }
+  }
+
+  closedir($handle);
+  unset($handle);
+}
+
+$dom->appendChild($node);
+
+file_put_contents(FONT_CACHE, $dom->saveXML());
+
+?>

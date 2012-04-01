@@ -174,13 +174,37 @@ abstract class ResourceManager
     );
 
     // Base64 Encode fonts
-    foreach ( $sources as $face => $rpath ) {
-      $apath = sprintf("%s/%s", PATH_HTML, $rpath);
-      if ( file_exists($apath) && ($content = file_get_contents($apath)) ) {
-        $b64 = base64_encode($content);
-        $sources[$face] = sprintf("data:application/x-font-ttf;base64,%s", $b64);
-      }
+    try {
+      $bdocument = new SimpleXMLElement(file_get_contents(FONT_CACHE));
+    } catch ( Exception $e ) {
+      $bdocument = null;
     }
+
+    foreach ( $sources as $face => $rpath )
+    {
+      // First check the cache
+      if ( $bdocument ) {
+        $filename = basename($rpath);
+        foreach ( $bdocument as $bn ) {
+          if ( ((string)$bn['name']) == $filename ) {
+            $sources[$face] = sprintf("data:application/x-font-ttf;base64,%s", (string)$bn);
+            break;
+          }
+        }
+      }
+
+      // Force local encoding (slower!)
+      if ( !isset($sources[$face]) ) {
+        $apath = sprintf("%s/%s", PATH_HTML, $rpath);
+        if ( file_exists($apath) && ($content = file_get_contents($apath)) ) {
+          $b64 = base64_encode($content);
+          $sources[$face] = sprintf("data:application/x-font-ttf;base64,%s", $b64);
+        }
+      }
+
+      unset($filename);
+    }
+    unset($bdocument);
 
     $header = <<<EOCSS
 @charset "UTF-8";
@@ -223,23 +247,23 @@ EOCSS;
 
     $css = <<<EOCSS
 @font-face {
-  font-family : CustomFont;
+  font-family : OSjsFont;
   src: url("{$sources['normal']}");
 }
 @font-face {
-  font-family : CustomFont;
+  font-family : OSjsFont;
   font-weight : bold;
   src: url("{$sources['bold']}");
 }
 @font-face {
-  font-family : CustomFont;
+  font-family : OSjsFont;
   font-style : italic;
   src: url("{$sources['italic']}");
 }
 
 {$bos}
 @font-face {
-  font-family : CustomFont;
+  font-family : OSjsFont;
   font-weight : bold;
   font-style : italic;
   src: url("{$sources['bitalic']}");
@@ -247,7 +271,7 @@ EOCSS;
 {$boe}
 
 body {
-  font-family : CustomFont, Arial;
+  font-family : OSjsFont, Arial;
 }
 EOCSS;
 

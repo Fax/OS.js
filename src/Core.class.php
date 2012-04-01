@@ -440,6 +440,7 @@ class Core
 
           $user->last_registry = $snapshot->session_data->registry;
           $user->last_session  = $snapshot->session_data->session;
+          $user->logged_in     = 0;
 
           if ( User::save($user) ) {
             $json['success'] = true;
@@ -587,6 +588,7 @@ class Core
    * Do a 'User Logout' AJAX Call
    * @see Core::doPost
    * @return void
+   */
   protected static final function _doUserLogout(Array $args, Array &$json, Core $inst = null) {
     if ( $user = $inst->getUser() ) {
       $user->last_logout = new DateTime();
@@ -598,12 +600,10 @@ class Core
         $json['error'] = _("Failed to save user!"); // FIXME: Locale
       }
 
-      //FIXME
-      //Session::setUser(null);
+      Session::clearSession();
     }
 
   }
-   */
 
   /**
    * Do a 'User Operation' AJAX Call

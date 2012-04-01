@@ -24,6 +24,7 @@ src/build/packages.xml
 src/build/applications.xml
 src/build/database.sdb
 src/build/filesystem.sdb
+src/build/fontcache.xml
 
 # Minimized files
 src/apps/*/_min
