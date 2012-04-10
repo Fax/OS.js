@@ -54,10 +54,11 @@ Deployment (All Targets):
 * Update "php.ini" for the host or enable runtime ini_set for project.
   The settings are found in the top of 'header.php'
 * Copy a X11's icon theme 16x16 and 32x32 folders into 'public_html/img/icons/'
+  * Ex: http://ftp.gnome.org/pub/GNOME/sources/gnome-icon-theme/
 * Clone the "OSjs-Packages" repository into 'src/packages'
   * Compile all applications with './bin/application-gen'
   * Install all applications globally with './bin/install-all'
 
 Upgrading (Production Target):
 -------------------------------------------------------------------------------
-* Run './bin/update'
+* Run './bin/git-update'
