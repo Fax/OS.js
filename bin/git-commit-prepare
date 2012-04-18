@@ -1,4 +1,10 @@
 #!/usr/bin/env php
+#
+# Project Git script: Prepare Commit changes
+#
+# @author Anders Evenrud <andersevenrud@gmail.com>
+# @licence Simplified BSD License
+#
 <?php
 
 date_default_timezone_set("GMT");

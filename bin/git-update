@@ -1,4 +1,10 @@
 #!/bin/bash
+#
+# Project codebase script: Pull changes
+#
+# @author Anders Evenrud <andersevenrud@gmail.com>
+# @licence Simplified BSD License
+#
 
 # First update packages
 cd src/packages
