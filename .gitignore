@@ -10,6 +10,8 @@ doc/api/*
 doc/*
 public_html/.htpasswd
 public_html/media
+VFS/*
+!VFS/0
 
 # Sub-modules
 src/packages
