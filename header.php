@@ -148,7 +148,6 @@ define("FONT_CACHE",           PATH_BUILD   . "/fontcache.xml");
 define("PACKAGE_BUILD",        PATH_BUILD   . "/packages.xml");
 define("MIME_MAGIC",           PATH_VENDOR  . "/mime.mgc");
 
-
 //
 // Database
 //
@@ -157,6 +156,13 @@ define("DATABASE_HOST",     "localhost");
 define("DATABASE_DSN",      "mysql:dbname=osjs;host=localhost");
 define("DATABASE_USER",     "osjs");
 define("DATABASE_PASS",     "IeDici7AhghaeG4athobas");
+
+//
+// External Services
+//
+
+define("GA_ENABLE",         ENV_PRODUCTION);    // Google Analytics enable
+define("GA_ACCOUNT_ID",     "UA-26635797-1");   // Google Analytics account id
 
 ///////////////////////////////////////////////////////////////////////////////
 // DEPENDENCIES

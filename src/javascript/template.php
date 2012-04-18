@@ -114,10 +114,10 @@ if ( $locale = Core::get()->getLocale() ) {
   <script type="text/javascript" src="/VFS/resource/main.js"></script>
 
   <!-- Google Analytics -->
-<?php if ( ENV_PRODUCTION ) { ?>
+<?php if ( GA_ENABLE ) { ?>
   <script type="text/javascript">
     var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-26635797-1']);
+    _gaq.push(['_setAccount', '<?php print GA_ACCOUNT_ID; ?>']);
     _gaq.push(['_trackPageview']);
 
     (function() {
