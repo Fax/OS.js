@@ -1,12 +1,18 @@
+Notes:
+-------------------------------------------------------------------------------
+This has only been tested using:
+* Gentoo Linux (2011, 2012) Stable and Unmasked
+* Ubuntu Linux (10, 11, 12) Stable and Beta
+
 Dependencies:
 -------------------------------------------------------------------------------
-* Apache >= 2.0
+* Apache 2+
   Modules: htaccess, mod_headers, mod_expires, mod_rewrite, mod_deflate, mod_php5, mod_mime
 
-* PHP >= 5.3
-  Modules: apache2 bcmath calendar curl curlwrappers gd inifile mysql snmp soap sockets sqlite3 sysvipc xmlreader xmlrpc xmlwriter xsl zip pdo imap mhash postgres tidy wddx mysqli intl pcntl gettext
+* PHP 5.3 +
+  Modules: apache2 curl curlwrappers gd inifile mysql snmp sockets xmlreader xmlwriter zip pdo imap mhash mysqli gettext
 
-* MySQL >= 5.0
+* MySQL 5+
   Modules. UTF-8
 
 * 'msgfmt'
@@ -17,48 +23,50 @@ Dependencies:
   Gentoo users: emerge exiftool
   Download: http://www.sno.phy.queensu.ca/~phil/exiftool/
 
-* 'pdf2svg'
+* 'pdf2svg' (Optional)
   Debian users: apt-get install pdf2svg
   Gentoo users: emerge pdf2svg
   Download: http://www.cityinthesky.co.uk/opensource/pdf2svg
 
-* 'jsl' (JSLint)
-  Debian users must do: apt-get install python{X}.{Y}-dev (python --version)
-  Download: svn co https://javascriptlint.svn.sourceforge.net/svnroot/javascriptlint/trunk jsl
-
-Apache:
+Installation:
 -------------------------------------------------------------------------------
-* Use example from doc/XX_apache-vhost.conf
-* Create /var/cache/OSjs with permission to apache
+First clone the GitHub repository then set up using these instructions:
 
-Deployment (Development Target):
--------------------------------------------------------------------------------
-* Clone the project from GitHub
-* Fix (temporary) permissions with './bin/fix-permissions dev'
-> See "Deployment (All Targets)"
-* Create documentation wit './bin/update-documentation'
-* Fix permissions with './bin/fix-permissions live'
+- Initialize:
+* Set (temporary) permissions with './bin/fix-permissions dev' [See note]
+* Create documentation with './bin/update-documentation' (Optional)
 
-Deployment (Production Target):
--------------------------------------------------------------------------------
-* Clone the project from GitHub
-* Fix (temporary) permissions with './bin/fix-permissions dev'
-> See "Deployment (All Targets)"
-* Compress/Minimize all resources with './bin/update-compression'
-* Fix permissions with './bin/fix-permissions live'
+- MySQL
+* Use the './schema.sql' dump.
+* Edit or use connection settings in './header.php'
 
-Deployment (All Targets):
--------------------------------------------------------------------------------
-* Compile server-side locales. wit './bin/makelocale.sh'
-* Use a vhost template in 'doc/' and implement into Apache configuration
-* Update "php.ini" for the host or enable runtime ini_set for project.
+- Apache
+* Use a vhost template in './doc/' and set up your web server
+* Create /var/cache/OSjs with permission to Apache
+* Update "php.ini" for the host or enable runtime ini_set for project
   The settings are found in the top of 'header.php'
+
+- Misc
+* Compile server-side locales with './bin/update-locale'
 * Copy a X11's icon theme 16x16 and 32x32 folders into 'public_html/img/icons/'
   * Ex: http://ftp.gnome.org/pub/GNOME/sources/gnome-icon-theme/
+
+- Extras
 * Clone the "OSjs-Packages" repository into 'src/packages'
   * Compile all applications with './bin/application-gen'
   * Install all applications globally with './bin/install-all'
 
-Upgrading (Production Target):
+- Finish
+* If you're in a production environment or doing testing procedures run
+  './bin/update-compression' to compress all scripts etc. (Optional)
+* Fix permissions with './bin/fix-permissions live' [See note]
+
+[NOTE: You may have to edit the fix-permissions script to suit your environment]
+
+Updating codebase (Production Target):
 -------------------------------------------------------------------------------
 * Run './bin/git-update'
+
+Adding Users:
+-------------------------------------------------------------------------------
+Use the 'bin/add-user' script
