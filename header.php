@@ -58,8 +58,8 @@ define("PROJECT_CONTACT",   "andersevenrud@gmail.com");
 define("PROJECT_VERSION",   "0.7.002");
 define("PROJECT_CODENAME",  "Catwalk");
 define("PROJECT_HOST",      (php_uname('n')));
-define("PROJECT_BUILD",     "1f2b2f1");
-define("PROJECT_MODIFIED",  "1333324787");
+define("PROJECT_BUILD",     "f3b37ab");
+define("PROJECT_MODIFIED",  "1334768959");
 
 //
 // Environment
