@@ -39,6 +39,8 @@ First clone the GitHub repository then set up using these instructions:
 - MySQL
 * Use the './schema.sql' dump.
 * Edit or use connection settings in './header.php'
+* Add an administrator user using './bin/add-user'
+  NB: Make sure database is clean and user is created with user_id=1
 
 - Apache
 * Use a vhost template in './doc/' and set up your web server
@@ -63,10 +65,10 @@ First clone the GitHub repository then set up using these instructions:
 
 [NOTE: You may have to edit the fix-permissions script to suit your environment]
 
-Updating codebase (Production Target):
+Updating codebase (Pulling latest changes):
 -------------------------------------------------------------------------------
-* Run './bin/git-update'
+Just run './bin/git-update'
 
 Adding Users:
 -------------------------------------------------------------------------------
-Use the 'bin/add-user' script
+Use the './bin/add-user' script
