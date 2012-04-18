@@ -8,6 +8,10 @@ You can find more information on these pages:
 * Facebook    https://www.facebook.com/pages/OSjs/226644300734574
 * Wordpress   http://anderse.wordpress.com/os-js/
 
+- Author contacts are located in the AUTHORS file.
+- License is in the LICENSE file.
+- Installation help is in the INSTALL file.
+
 Vendor libraries used:
 -------------------------------------------------------------------------------
 * jQuery and jQuery UI
