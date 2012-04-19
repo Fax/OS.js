@@ -11,13 +11,15 @@ Creating Application:
 
 Creating Other Packages:
 -------------------------------------------------------------------------------
-Follow instructions like above except name the package 'TypeMyPackage' where
-type is one of the following:
+Follow instructions like above except name the package 'TypeMyApp' where
+'Type' is one of the following:
 - Service
   Background Service
 - Application
   Frontend Application
 - System
+  Same as Application, except this package cannot be hidden or modified by
+  the user (a required package)
 
 Notes:
 -------------------------------------------------------------------------------
