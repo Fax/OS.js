@@ -3,7 +3,7 @@
  * @file
  * OS.js - JavaScript Operating System - Dialog.class.php -- OS.js Dialog Window Class
  *
- * Copyright (c) 2011, Anders Evenrud
+ * Copyright (c) 2011-2012, Anders Evenrud <andersevenrud@gmail.com>
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without

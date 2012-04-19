@@ -3,7 +3,7 @@
  * @file
  * OS.js - JavaScript Operating System - ResourceManager.class.php
  *
- * Copyright (c) 2011, Anders Evenrud
+ * Copyright (c) 2011-2012, Anders Evenrud <andersevenrud@gmail.com>
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -203,7 +203,7 @@ abstract class ResourceManager
  * @file
  * OS.js - JavaScript Operating System - Font [$font] Stylesheet (CSS)
  *
- * Copyright (c) 2011, Anders Evenrud
+ * Copyright (c) 2011-2012, Anders Evenrud <andersevenrud@gmail.com>
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
