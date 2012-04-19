@@ -1,4 +1,4 @@
-Creating Application:
+Packages - Creating and Installing an Application:
 -------------------------------------------------------------------------------
 - Create 'packages/ApplicationMyApp'
 - Create 'metadata.xml' in the directory (see example)
@@ -9,21 +9,37 @@ Creating Application:
 - Install with './bin/install-all'
 - Minimize with './bin/update-compression' (Optional or for updating on test/pub)
 
-Creating Other Packages:
+Pakages - Creating Other Packages:
 -------------------------------------------------------------------------------
 Follow instructions like above except name the package 'TypeMyApp' where
 'Type' is one of the following:
 - Service
-  Background Service
+  Background Service.
 - Application
   Frontend Application
 - System
   Same as Application, except this package cannot be hidden or modified by
   the user (a required package)
 
-Notes:
+Follow the examples.
+
+Packages - Notes:
 -------------------------------------------------------------------------------
 - You have to restart OS.js every time you change a package code.
   Or alternatively close the application (for now)
 - If the package does not show in the application menu or does not run etc.
   check if it's enabled in the control panel.
+
+WebSocket - TCP/IP Tunnel:
+-------------------------------------------------------------------------------
+Start the server with 'php bin/socket-server'
+
+VFS - Troubleshooting:
+-------------------------------------------------------------------------------
+- Uploading does not work.
+  First test fixing permissions with './bin/fix-permissions live'.
+
+  Make sure the 'VFS' folder and 'public_html/media' folder has Apache
+  uid and gid set with read and write permissions.
+
+  For security remove the write permissions to 'public_html/media/System'.
