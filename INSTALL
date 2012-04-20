@@ -4,7 +4,7 @@ This has only been tested using:
 * Gentoo Linux (2011, 2012) Stable and Unmasked
 * Ubuntu Linux (10, 11, 12) Stable and Beta
 
-Dependencies:
+System Dependencies:
 -------------------------------------------------------------------------------
 * Apache 2+
   Modules: htaccess, mod_headers, mod_expires, mod_rewrite, mod_deflate, mod_php5, mod_mime
@@ -28,6 +28,26 @@ Dependencies:
   Gentoo users: emerge pdf2svg
   Download: http://www.cityinthesky.co.uk/opensource/pdf2svg
 
+Frontend Dependencies:
+-------------------------------------------------------------------------------
+* jQuery
+  http://code.jquery.com/jquery-1.7.1.min.js
+
+* jQuery UI
+  http://jqueryui.com/download/jquery-ui-1.8.17.custom.zip
+
+* JSON2 by Douglas Crockford
+  https://raw.github.com/douglascrockford/JSON-js/master/json2.js
+
+* Sprintf by Alexandru Marasteanu
+  http://www.diveintojavascript.com/projects/javascript-sprintf
+
+* Gnome 2.x icon pack(s)
+  https://raw.github.com/douglascrockford/JSON-js/master/json2.js
+
+* Yahoo YUI Compressor (Included)
+  http://developer.yahoo.com/yui/compressor/
+
 Installation:
 -------------------------------------------------------------------------------
 First clone the GitHub repository then set up using these instructions:
@@ -48,10 +68,25 @@ First clone the GitHub repository then set up using these instructions:
 * Update "php.ini" for the host or enable runtime ini_set for project
   The settings are found in the top of 'header.php'
 
+- Vendor libraries
+* Download jQuery (1.7.1 by default)
+  - Drop into 'vendor/'
+  - Symlink JS to 'public_html/vendor/jquery.js' (Should exist)
+* Download jQuery UI (1.8.17 by default)
+  - Drop into 'vendor/'
+  - Symlink JS to 'public_html/vendor/jquery-ui.js' (Should exist)
+  - Symlink CSS to 'public_html/vendor/jquery-ui-theme.css' (Should exist)
+  - Symlink CSS images to 'public_html/vendor/images' (Should exist)
+* Download sprintf
+  - Drop into 'vendor/'
+  - Symlink JS to 'public_html/vendor/sprintf.js' (Should exist)
+* Download JSON2
+  - Drop into 'vendor/'
+  - Symlink JS to 'public_html/vendor/json.js' (Should exist)
+
 - Misc
 * Compile server-side locales with './bin/update-locale'
 * Copy a X11's icon theme 16x16 and 32x32 folders into 'public_html/img/icons/'
-  * Ex: http://ftp.gnome.org/pub/GNOME/sources/gnome-icon-theme/
 
 - Extras
 * Clone the "OSjs-Packages" repository into 'src/packages'
@@ -59,6 +94,7 @@ First clone the GitHub repository then set up using these instructions:
   * Install all applications globally with './bin/install-all'
 
 - Finish
+* Set up other settings in 'header.php' if required
 * If you're in a production environment or doing testing procedures run
   './bin/update-compression' to compress all scripts etc. (Optional)
 * Fix permissions with './bin/fix-permissions live' [See note]

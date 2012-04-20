@@ -8089,9 +8089,25 @@
       return false;
     }
 
-    console.log("================================ [ OS.js ] ================================");
-    console.log("=                    Copyright (c) 2012 Anders Evenrud                    =");
-    console.log("===========================================================================");
+
+    console.log("                                                                               ");
+    console.log("                        ____      ____                                         ");
+    console.log("                       6MMMMb    6MMMMb\     68b                               ");
+    console.log("                      8P    Y8  6M'    `     Y89                               ");
+    console.log("                     6M      Mb MM           ___   ____                        ");
+    console.log("                     MM      MM YM.          `MM  6MMMMb\                      ");
+    console.log("                     MM      MM  YMMMMb       MM MM'    `                      ");
+    console.log("                     MM      MM      `Mb      MM YM.                           ");
+    console.log("                     MM      MM       MM      MM  YMMMMb                       ");
+    console.log("                     YM      M9       MM      MM      `Mb                      ");
+    console.log("                      8b    d8  L    ,M9 68b  MM L    ,MM                      ");
+    console.log("                       YMMMM9   MYMMMM9  Y89  MM MYMMMM9                       ");
+    console.log("                                              MM                               ");
+    console.log("                                          (8) M9                               ");
+    console.log("                                           YMM9                                ");
+    console.log("                                                                               ");
+    console.log("                      Copyright (c) 2012 Anders Evenrud                        ");
+    console.log("                                                                               ");
 
     _StartStamp = ((new Date()).getTime());
     _Core       = new Core();

@@ -13,14 +13,6 @@ You can find more information on these pages:
 - Installation help is in the INSTALL file.
 - Developer information can be found in the README.developer file
 
-Vendor libraries used:
--------------------------------------------------------------------------------
-* jQuery and jQuery UI
-* JSON2 by Douglas Crockford
-* Sprintf by Alexandru Marasteanu
-* Yahoo YUI Compressor
-* Gnome 2.x icon pack(s)
-
 Features:
 -------------------------------------------------------------------------------
 * BSD Licensed
