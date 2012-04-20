@@ -2,12 +2,14 @@ CORE TODO:
 -------------------------------------------------------------------------------
 [HIG]  Handle _SessionValid and result.exception in DoPost() (_HasCrashed)
 [HIG]  Auto-enable newly installed apps for users ?!
+[HIG]  Rewrite VFS PHP Scripts (Merge from branch)
 
-[MED]  Background error logging only on production
-[MED]  ALWAYS relative icons ?!
+[MED]  Finish desktop icon grid
+[MED]  Fix icon registering. Always use relative paths in metadata
+[MED]  Finish up locale strings (Export to gettext, some are still static, marked)
 
-[LOW]  Core::_doUserOperation
-[LOW]  APP ControlPanel: _doUserOperation
+[LOW]  Core::_doUserOperation (User manipulation, backend)
+[LOW]  APP ControlPanel: _doUserOperation (User manipulation, frontend)
 [LOW]  Finish up Package Meta for loading from user
 [LOW]  Rewrite Glade builder class
 [LOW]  Implement MenuNew in GtkMenu
@@ -17,6 +19,7 @@ CORE TODO:
        This would increase the performance of panel redraws etc.
 
 [BIN]  Finish up the Installer
+[BIN]  Finish up Console
 
 [NUR]  Remove jQuery dependency, write custom library
 [NUR]  Remove jQuery UI dependency, write custom library

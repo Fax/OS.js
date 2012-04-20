@@ -1,3 +1,19 @@
+General:
+-------------------------------------------------------------------------------
+This project was developed using Vim with formatting:
+* No tabs (spaces as tabs)
+* Indent spacing of 2 (spaces)
+* Strict PHP 5.3+ (E_STRICT)
+* Strict JavaScript (jslint)
+
+Please note that performance is noticably slower in development mode, beacause:
+* JavaScript debugging and logging is enabled
+* Caching and Expiration of resources has been disabled
+* Backend logging is enabled
+* Resources are loaded from raw, no compression or minimization
+
+All resources are Gzipped by default (if browser has native support).
+
 Packages - Creating and Installing an Application:
 -------------------------------------------------------------------------------
 - Create 'packages/ApplicationMyApp'
@@ -29,6 +45,7 @@ Packages - Notes:
   Or alternatively close the application (for now)
 - If the package does not show in the application menu or does not run etc.
   check if it's enabled in the control panel.
+- When minimizing/compressing scripts all debugging code and symbols are removed
 
 WebSocket - TCP/IP Tunnel:
 -------------------------------------------------------------------------------

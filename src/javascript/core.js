@@ -2960,7 +2960,7 @@
         console.groupEnd();
 
         PreloadDefaultImages(ICON_URI_16, preload.images, function(loaded, failed, total) {
-          console.log("ResourceManager::init()", loaded, "of", total, "(" + failed + " failures)");
+          console.log("ResourceManager::init() Preloaded", loaded, "of", total, "image(s) (" + failed + " failures)");
         });
       }
     },
