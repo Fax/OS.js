@@ -66,7 +66,8 @@ First clone the GitHub repository then set up using these instructions:
 * Use a vhost template in './doc/' and set up your web server
 * Create /var/cache/OSjs with permission to Apache
 * Update "php.ini" for the host or enable runtime ini_set for project
-  The settings are found in the top of 'header.php'
+  The settings are found in the top of 'header.php'.
+  (You can alternatively allow PHP scripts allow settings ini-settings)
 
 - Vendor libraries
 * Download jQuery (1.7.1 by default)
@@ -95,6 +96,8 @@ First clone the GitHub repository then set up using these instructions:
 
 - Finish
 * Set up other settings in 'header.php' if required
+- ENV_PRODUCTION = Is this a production setup ?
+- DATABASE_* = Database configuration
 * If you're in a production environment or doing testing procedures run
   './bin/update-compression' to compress all scripts etc. (Optional)
 * Fix permissions with './bin/fix-permissions live' [See note]
