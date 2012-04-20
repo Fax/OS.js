@@ -14,6 +14,18 @@ Please note that performance is noticably slower in development mode, beacause:
 
 All resources are Gzipped by default (if browser has native support).
 
+Committing changes:
+-------------------------------------------------------------------------------
+Just run './bin/git-commit' wrapper (works just like normal `git commit`)
+
+Updating codebase (Pulling latest changes):
+-------------------------------------------------------------------------------
+Just run './bin/git-update'
+
+Adding Users:
+-------------------------------------------------------------------------------
+Use the './bin/add-user' script
+
 Packages - Creating and Installing an Application:
 -------------------------------------------------------------------------------
 - Create 'packages/ApplicationMyApp'

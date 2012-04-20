@@ -100,11 +100,3 @@ First clone the GitHub repository then set up using these instructions:
 * Fix permissions with './bin/fix-permissions live' [See note]
 
 [NOTE: You may have to edit the fix-permissions script to suit your environment]
-
-Updating codebase (Pulling latest changes):
--------------------------------------------------------------------------------
-Just run './bin/git-update'
-
-Adding Users:
--------------------------------------------------------------------------------
-Use the './bin/add-user' script
