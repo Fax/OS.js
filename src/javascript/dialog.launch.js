@@ -61,7 +61,7 @@ OSjs.Dialogs.LaunchOperationDialog = (function($, undefined) {
 
         this._super("Launch");
         this._title    = LABELS.title;
-        this._content  = $("#OperationDialogLaunch").html();
+        this._content  = $("<div class=\"OperationDialog OperationDialogLaunch\">    <div class=\"OperationDialogInner\">      <ul>      </ul>      <div>        <input type=\"checkbox\" /> <label class=\"UseDefault\">Use this as default application</label>      </div>    </div>  </div>");
         this._width    = 400;
         this._height   = 300;
       },

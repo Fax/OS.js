@@ -71,7 +71,7 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
         this._super("Upload");
         this._title    = LABELS.title;
         this._icon     = "actions/up.png";
-        this._content  = $("#OperationDialogUpload").html();
+        this._content  = $("<div class=\"OperationDialog OperationDialogUpload\">    <h1>Upload file...</h1>    <div class=\"OperationDialogInner\">      <p class=\"Status\">No file selected</p>      <div class=\"ProgressBar\"></div>    </div>  </div>");
         this._width    = 400;
         this._height   = 180;
       },

@@ -5916,7 +5916,7 @@
 
           }, function() {
             self.reload();
-        }, "Add new panel item", $("#OperationDialogPanelItemAdd")]);
+        }, "Add new panel item", true]);
 
         pitem.height = 300;
         pitem._gravity = "center";

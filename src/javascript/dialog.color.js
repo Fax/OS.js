@@ -60,7 +60,7 @@ OSjs.Dialogs.ColorOperationDialog = (function($, undefined) {
         this._super("Color");
         this._title    = LABELS.title;
         this._icon     = "apps/style.png";
-        this._content  = $("#OperationDialogColor").html();
+        this._content  = $("<div class=\"OperationDialog OperationDialogColor\">    <div class=\"OperationDialogInner\">      <div>        <div class=\"Slider SliderR\"></div>      </div>      <div>        <div class=\"Slider SliderG\"></div>      </div>      <div>        <div class=\"Slider SliderB\"></div>      </div>    </div>    <div class=\"CurrentColor\">    </div>    <div class=\"CurrentColorDesc\">    </div>  </div>");
         this._width    = 400;
         this._height   = 170;
       },

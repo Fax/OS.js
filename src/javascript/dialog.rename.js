@@ -56,7 +56,7 @@ OSjs.Dialogs.RenameOperationDialog = (function($, undefined) {
 
         this._super("Rename");
         this._title    = LABELS.title;
-        this._content  = $("#OperationDialogRename").html();
+        this._content  = $("<div class=\"OperationDialog OperationDialogRename\">    <h1>Rename file</h1>    <div class=\"OperationDialogInner\">      <input type=\"text\" />    </div>  </div>");
         this._width    = 200;
         this._height   = 100;
       },

@@ -64,7 +64,7 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
         this._super("File");
         this._title        = type == "save" ? LABELS.title_saveas : LABELS.title_open;
         this._icon         = type == "save" ? "actions/document-save.png" : "actions/document-open.png";
-        this._content      = $("#OperationDialogFile").html();
+        this._content      = $("<div class=\"OperationDialog OperationDialogFile\">    <div class=\"FileChooser\">      <ul>      </ul>    </div>    <div class=\"FileChooserInput\">      <input type=\"text\" />    </div>  </div>");
         this._is_resizable = true;
         this._width        = 400;
         this._height       = 300;

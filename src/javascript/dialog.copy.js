@@ -57,7 +57,7 @@ OSjs.Dialogs.CopyOperationDialog = (function($, undefined) {
 
         this._super("Copy");
         this._title    = LABELS.title;
-        this._content  = $("#OperationDialogCopy").html();
+        this._content  = $("<div class=\"OperationDialog OperationDialogCopy\">    <h1>Copy file</h1>    <div class=\"OperationDialogInner\">      <p class=\"Status\">0 of 0</p>      <div class=\"ProgressBar\"></div>    </div>  </div>");
         this._width    = 400;
         this._height   = 170;
       },

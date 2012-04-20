@@ -57,7 +57,7 @@ OSjs.Dialogs.FilePropertyOperationDialog = (function($, undefined) {
         this._super("FileProperties");
         this._title        = LABELS.title;
         this._icon         = "actions/document-properties.png";
-        this._content      = $("#OperationDialogFileProperties").html();
+        this._content      = $("<div class=\"OperationDialog OperationDialogFileProperties\">    <table>      <tr>        <td class=\"pri\">Filename<td>        <td class=\"sec TDName\">&nbsp;</td>      </tr>      <tr>        <td class=\"pri\">Path<td>        <td class=\"sec TDPath\">&nbsp;</td>      </tr>      <tr>        <td class=\"pri\">Size<td>        <td class=\"sec TDSize\">&nbsp;</td>      </tr>      <tr>        <td class=\"pri\">MIME<td>        <td class=\"sec TDMIME\">&nbsp;</td>      </tr>      <tr>        <td class=\"pri\">Information<td>        <td class=\"sec TDInfo\">          <div class=\"InfoBox\">            <pre></pre>          </div>        </td>      </tr>    </table>  </div>");
         this._is_resizable = true;
         this._width        = 400;
         this._height       = 400;

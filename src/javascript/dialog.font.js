@@ -65,7 +65,7 @@ OSjs.Dialogs.FontOperationDialog = (function($, undefined) {
 
         this._super("Font");
         this._title    = LABELS.title;
-        this._content  = $("#OperationDialogFont").html();
+        this._content  = $("<div class=\"OperationDialog OperationDialogFont\">    <div class=\"OperationDialogInner\">      <select class=\"OperationDialogFontList\" multiple=\"false\" height=\"10\"></select>      <select class=\"OperationDialogFontSize\" multiple=\"false\" height=\"10\"></select>      <div class=\"OperationDialogFontPreview\">      </div>    </div>  </div>");
         this._width    = 350;
         this._height   = 250;
       },

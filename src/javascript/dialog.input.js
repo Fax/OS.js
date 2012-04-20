@@ -57,7 +57,7 @@ OSjs.Dialogs.InputOperationDialog = (function($, undefined) {
 
         this._super("Input");
         this._title    = LABELS.title;
-        this._content  = $("#OperationDialogInput").html();
+        this._content  = $("<div class=\"OperationDialog OperationDialogInput\">    <h1>Input:</h1>    <div class=\"OperationDialogInner\">      <input type=\"text\" />    </div>  </div>");
         this._width    = 200;
         this._height   = 100;
       },
