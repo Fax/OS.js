@@ -72,3 +72,86 @@ VFS - Troubleshooting:
   uid and gid set with read and write permissions.
 
   For security remove the write permissions to 'public_html/media/System'.
+
+
+Directories and Files:
+-------------------------------------------------------------------------------
+/bin/                     Misc scripts
+  add-user                  Add a user
+  application-gen           Compile all packages
+  fix-permissions           Correct file/directory permissions
+  git-commit                Git Wrapper: Commit changes
+  git-commit-prepare        Git Helper: Commit preparation
+  git-update                Git Wrapper: Pull latest changes
+  install-all               Install all packages
+  joxygen                   Update/Generate Frontend Documentation
+  update-compression        Compress/Minimize (All) Resources
+  update-documentation      Update/Generate Backend Documentation
+  update-fontcache          Update/Generate Font cache
+  update-locale             Update/Generate Backend Locales
+  yui.sh                    Yahoo Compressor shell wrapper
+/doc/                     Documentation
+  /api/                     Backend Documentation
+  /javascript/              Frontend Documentation
+  XX_apache-vhost.conf      Apache Host Configuration Example
+  doxygen.conf              Doxygen Configuration
+/lib/                     Main Libraries
+  Archive.php               Archive Handling
+  Functions.php             Misc. Functions
+  IMAP.php                  IMAP and Mailing
+  Services.php              Internet and Network services
+  Browser.class.php         Browser Information Class
+  Compiler.class.php        Package/Project Compiler Class
+  Daemon.class.php          Daemon Process Class
+  DB.class.php              Database connection and handling Class
+  Glade.class.php           Glade/GTK+ XML to JS/PHP/XML Class
+  JSON.class.php            JSON Wrapper Class
+  Logger.class.php          Logging Handling Class
+  PDF.class.php             PDF Document Handling Class
+  Server.class.php          WebSocket Server Main Class
+  ServerUser.class.php      WebSocket Server User Class
+/logs/                    Logs
+  error_log                 Apache Error Log
+  access_log                Apache Access Log
+  messages                  Backend Logging
+/public_html/             Main Apache Root
+  /img/                     Frontend images
+  /media/                   Virtual File System root
+  vendor/                   Frontend Vendor Libraries (Symlinks)
+  _header.php               * Header file for scripts below
+  download.php              * Download files
+  index.php                 * Main script
+  resource.php              * Resource fetcher
+  upload.php                * Upload files
+  robots.txt                Search Engine whitelisting
+  crossdomain.xml           Flash helper
+/src/                     Main Sources
+  /build/                   Build files, cache and temporary files
+    /apps/                    Package build output
+    fontcache.xml             Font cache
+    packages.xml              Package registry
+  /javascript/              Frontend scripts etc.
+    /locale/                  Frontend Locales
+  /locale/                  Backend Locales
+    /xx_XX/
+      /LC_MESSAGES/
+        messages.po
+  /packages/                Frontend packages (Applications etc)
+  Application.class.php     Package > Application Class
+  BackgroundService.cl...   Package > Background Service Class
+  Core.class.php            Core, Main Class
+  Dialog.class.php          Frontend Dialog Class
+  Package.class.php         Package Main Class
+  Panel.class.php           Frontend Panel Class
+  PanelItem.class.php       Frontend Panel Item Class
+  ResourceManager.class.php Resource Managment Class
+  Session.class.php         User Session Handling Class
+  SettingsManager.class.php User Settings Handling Class
+  User.class.php            User Main Handling Class
+  VFS.class.php             Virtual File System Main Class
+/vendor/                  Vendor Libraries
+/VFS/                     Virtual File System for Users
+  /0/                       VFS User template
+header.php                Configuration, Bootstrap and main init script
+
+* = Frontend URI
