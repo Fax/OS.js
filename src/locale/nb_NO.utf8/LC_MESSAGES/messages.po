@@ -108,3 +108,37 @@ msgstr "Du har ikke tilgang til '%s'!"
 
 msgid "Cannot read/write '%s'!"
 msgstr "Kan ikke lese/skrive '%s'!"
+
+msgid "Failed to create user!"
+msgstr "Klarte ikke opprette bruker!"
+
+msgid "Invalid user!"
+msgstr "Ugyldig bruker!"
+
+msgid "You do not have the privileges to perform this operation!"
+msgstr "Du har ikke rettigheter til å utføre denne operasjonen!"
+
+msgid "Failed to save user!"
+msgstr "Klarte ikke lagre bruker!"
+
+msgid "Cannot load snapshot. Failed to save to database!"
+msgstr "Klarte ikke lagre bilde. Kunne ikke lagre til databasen!"
+
+msgid "Cannot delete snapshot. Failed to delete from database!"
+msgstr "Klarte ikke slette bilde. Kunne ikke slette fra database!"
+
+msgid "Cannot delete snapshot. No input data given!"
+msgstr "Klarte ikke slette bilde. Ingen data angitt!"
+
+msgid "Cannot delete snapshot. No running session found!"
+msgstr "Klarte ikke slette bilde. Ingen sessjon funnet!"
+
+msgid "Cannot list snapshots. Failed to list from database!"
+msgstr "Klarte ikke oppsummere bilder. Klarte ikke henting fra database!"
+
+msgid "Cannot list snapshots. No running session found!"
+msgstr "Klarte ikke oppsummere bilder. Ingen sessjon funnet!"
+
+msgid "Check username and password!"
+msgstr "Sjekk brukernavn og passord!"
+

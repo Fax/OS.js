@@ -54,6 +54,9 @@ VFS - Troubleshooting:
 
   For security remove the write permissions to 'public_html/media/System'.
 
+Locales - Notes:
+-------------------------------------------------------------------------------
+- After chaning Gettext (PHP) locales a restart of Apache is required.
 
 Directories and Files:
 -------------------------------------------------------------------------------

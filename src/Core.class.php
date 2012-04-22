@@ -346,7 +346,7 @@ class Core
         $json['success'] = true;
         $json['result']  = true;
       } else {
-        $json['error'] = _("Failed to save user!"); // FIXME: Locale
+        $json['error'] = _("Failed to save user!");
       }
     }
   }
@@ -375,7 +375,7 @@ class Core
       } else {
         $json['result']  = false;
         $json['success'] = false;
-        $json['error']   = _("Failed to save user!"); // FIXME: Locale
+        $json['error']   = _("Failed to save user!");
       }
     }
 
@@ -446,7 +446,7 @@ class Core
             $json['success'] = true;
             $json['result']  = true;
           } else {
-            $json['error'] = _("Cannot load snapshot. Failed to save to database!"); // FIXME: Locale
+            $json['error'] = _("Cannot load snapshot. Failed to save to database!");
           }
         } else {
           $json['error'] = _("Cannot load snapshot. Failed to load from database!");
@@ -476,13 +476,13 @@ class Core
           $json['success'] = true;
           $json['result']  = true;
         } else {
-          $json['error'] = _("Cannot delete snapshot. Failed to delete from database!"); // FIXME: Locale
+          $json['error'] = _("Cannot delete snapshot. Failed to delete from database!");
         }
       } else {
-        $json['error'] = _("Cannot delete snapshot. No input data given!"); // FIXME: Locale
+        $json['error'] = _("Cannot delete snapshot. No input data given!");
       }
     } else {
-      $json['error'] = _("Cannot delete snapshot. No running session found!"); // FIXME: Locale
+      $json['error'] = _("Cannot delete snapshot. No running session found!");
     }
   }
 
@@ -501,10 +501,10 @@ class Core
         $json['success'] = true;
         $json['result']  = $snapshots;
       } else {
-        $json['error'] = _("Cannot list snapshots. Failed to list from database!"); // FIXME: Locale
+        $json['error'] = _("Cannot list snapshots. Failed to list from database!");
       }
     } else {
-      $json['error'] = _("Cannot list snapshots. No running session found!"); // FIXME: Locale
+      $json['error'] = _("Cannot list snapshots. No running session found!");
     }
   }
 
@@ -578,7 +578,7 @@ class Core
     }
 
     if (  $errored ) {
-      $json['error'] = _("Check username and password"); // FIXME: Locale
+      $json['error'] = _("Check username and password!");
     }
 
     Session::setUser(($user && ($user instanceof User)) ? $user : null);
@@ -597,7 +597,7 @@ class Core
       if ( User::save($user) ) {
         $json['success']  = true;
       } else {
-        $json['error'] = _("Failed to save user!"); // FIXME: Locale
+        $json['error'] = _("Failed to save user!");
       }
 
       //Session::clearSession();
@@ -633,7 +633,7 @@ class Core
                 "formatted" => $new_user->getUserInfo()
               );
             } else {
-              $error = _("Failed to create user!"); // FIXME: Locale
+              $error = _("Failed to create user!");
             }
           break;
 
@@ -651,13 +651,13 @@ class Core
                     "formatted" => $new_user->getUserInfo()
                   );
                 } else {
-                  $error = _("Failed to create user!"); // FIXME: Locale
+                  $error = _("Failed to create user!");
                 }
               } else {
-                $error = _("Invalid user!"); // FIXME: Locale
+                $error = _("Invalid user!");
               }
             } else {
-              $error = _("Invalid user!"); // FIXME: Locale
+              $error = _("Invalid user!");
             }
           break;
 
@@ -666,10 +666,10 @@ class Core
               if ( $new_user = User::getById($ruid) ) {
                 $result = false; // TODO
               } else {
-                $error = _("Invalid user!"); // FIXME: Locale
+                $error = _("Invalid user!");
               }
             } else {
-              $error = _("Invalid user!"); // FIXME: Locale
+              $error = _("Invalid user!");
             }
           break;
 
@@ -682,7 +682,7 @@ class Core
         if ( !$arg || $arg == "info" ) {
           $result = $user->getUserInfo();
         } else {
-          $error = _("You do not have the privileges to perform this operation!"); // FIXME: Locale
+          $error = _("You do not have the privileges to perform this operation!");
         }
       }
 

@@ -109,3 +109,36 @@ msgstr "You do not have permission to '%s'!"
 msgid "Cannot read/write '%s'!"
 msgstr "Cannot read/write '%s'!"
 
+msgid "Failed to create user!"
+msgstr "Failed to create user!"
+
+msgid "Invalid user!"
+msgstr "Invalid user!"
+
+msgid "You do not have the privileges to perform this operation!"
+msgstr "You do not have the privileges to perform this operation!"
+
+msgid "Failed to save user!"
+msgstr "Failed to save user!"
+
+msgid "Cannot load snapshot. Failed to save to database!"
+msgstr "Cannot load snapshot. Failed to save to database!"
+
+msgid "Cannot delete snapshot. Failed to delete from database!"
+msgstr "Cannot delete snapshot. Failed to delete from database!"
+
+msgid "Cannot delete snapshot. No input data given!"
+msgstr "Cannot delete snapshot. No input data given!"
+
+msgid "Cannot delete snapshot. No running session found!"
+msgstr "Cannot delete snapshot. No running session found!"
+
+msgid "Cannot list snapshots. Failed to list from database!"
+msgstr "Cannot list snapshots. Failed to list from database!"
+
+msgid "Cannot list snapshots. No running session found!"
+msgstr "Cannot list snapshots. No running session found!"
+
+msgid "Check username and password!"
+msgstr "Check username and password!"
+

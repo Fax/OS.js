@@ -6,7 +6,6 @@ CORE TODO:
 
 [MED]  Finish desktop icon grid
 [MED]  Fix icon registering. Always use relative paths in metadata
-[MED]  Finish up locale strings (Export to gettext, some are still static, marked)
 
 [LOW]  Core::_doUserOperation (User manipulation, backend)
 [LOW]  APP ControlPanel: _doUserOperation (User manipulation, frontend)
