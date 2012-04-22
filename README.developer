@@ -28,28 +28,9 @@ Use the './bin/add-user' script
 
 Packages - Creating and Installing an Application:
 -------------------------------------------------------------------------------
-- Create 'packages/ApplicationMyApp'
-- Create 'metadata.xml' in the directory (see example)
-- Generate template files with './bin/application-gen'
-- Copy template files to directory
--- cp 'src/build/apps/ApplicationMyApp.js' -> 'main.js'
--- cp 'src/build/apps/ApplicationMyApp.css' -> 'main.css'
+- Create a package with './bin/create-package'
 - Install with './bin/install-all'
 - Minimize with './bin/update-compression' (Optional or for updating on test/pub)
-
-Pakages - Creating Other Packages:
--------------------------------------------------------------------------------
-Follow instructions like above except name the package 'TypeMyApp' where
-'Type' is one of the following:
-- Service
-  Background Service.
-- Application
-  Frontend Application
-- System
-  Same as Application, except this package cannot be hidden or modified by
-  the user (a required package)
-
-Follow the examples.
 
 Packages - Notes:
 -------------------------------------------------------------------------------

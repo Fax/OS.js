@@ -275,9 +275,26 @@ class Compiler
   // PUBLIC METHODS
   /////////////////////////////////////////////////////////////////////////////
 
-  /*public static function compile($project_name, $path = null) {
+  public static function compile($project_name, $dry_run = false, $root = null) {
+    $root = ($root ? $root : PATH_PACKAGES);
+    $compiler = new self();
 
-  }*/
+    if ( preg_match("/^(Application|System)(.*)$/", $project_name) ) {
+      $path = "{$root}/{$project_name}/metadata.xml";
+      if ( file_exists($path) )
+        return $compiler->compileProject($project_name, $path, $dry_run);
+    } else if ( preg_match("/^PanelItem(.*)$/", $project_name) ) {
+      $path = "{$root}/{$project_name}/metadata.xml";
+      if ( file_exists($path) )
+        return $compiler->compilePanelItem($project_name, $path, $dry_run);
+    } else if ( preg_match("/^Service(.*)$/", $project_name) ) {
+      $path = "{$root}/{$project_name}/metadata.xml";
+      if ( file_exists($path) )
+        return $compiler->compileService($project_name, $path, $dry_run);
+    }
+
+    return false;
+  }
 
   /**
    * Compile all Applications found in folder
