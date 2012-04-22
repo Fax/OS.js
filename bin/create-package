@@ -56,6 +56,7 @@ $cmd_long   = Array(
 // Help text
 $help = <<<EOTXT
 Create a new Package from template:
+
 -v  --variant           Package variant (default: 1 [TYPE_APPLICATION])
 -n  --name              Internal Name, required (ex: Clock)
 -t  --title             Showing Title (Default: name, ex: Analog/Digital Clock)
