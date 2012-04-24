@@ -295,7 +295,71 @@ class Glade
 
       // Append directly to class if we are using a window
       if ( in_array($class, Array("GtkWindow", "GtkDialog")) ) {
-        $this->properties[$window_id] = $props;
+        $properties = Array(
+          "type"            => $class == "GtkWindow" ? "window" : "dialog",
+          "title"           => "",
+          "icon"            => "",
+          "is_draggable"    => true,
+          "is_resizable"    => true,
+          "is_scrollable"   => false,
+          "is_sessionable"  => true,
+          "is_minimizable"  => true,
+          "is_maximizable"  => true,
+          "is_closable"     => true,
+          "is_orphan"       => false,
+          "skip_taskbar"    => false,
+          "skip_pager"      => false,
+          "width"           => 500,
+          "height"          => 300,
+          "gravity"         => ""
+        );
+
+        foreach ( $props as $p => $pv ) {
+          switch ( $p ) {
+            case 'resizable' :
+              if ( $pv == "False" ) {
+                $properties['is_resizable'] = false;
+              }
+              break;
+            case 'title' :
+              if ( $pv ) {
+                $properties['title'] = $pv;
+              }
+            break;
+            case 'icon' :
+              if ( $pv ) {
+                $properties['icon'] = $pv;
+              }
+            break;
+            case 'default_width' :
+              $properties['width'] = (int) $pv;
+            break;
+            case 'default_height' :
+              $properties['height'] = (int) $pv;
+            break;
+            case 'window_position' :
+              $properties['gravity'] = $pv;
+            break;
+            case 'skip_taskbar_hint' :
+              if ( $pv == "True" ) {
+                $properties['skip_taskbar'] = true;
+              }
+            break;
+            case 'skip_pager_hint' :
+              if ( $pv == "True" ) {
+                $properties['skip_pager'] = true;
+              }
+            break;
+
+            case "border_width" :
+              if ( (int) $pv > 0 ) {
+                $styles[] = "padding:{$pv}px";
+              }
+            break;
+          }
+        }
+
+        $this->properties[$window_id] = $properties;
       }
     }
 
@@ -335,13 +399,6 @@ class Glade
 
     // Styles
     if ( !in_array($class, Array("GtkWindow", "GtkDialog")) ) {
-      if ( isset($props['default_width']) ) {
-        $styles[] = "width:{$props['default_width']}px";
-      }
-      if ( isset($props['default_height']) ) {
-        $styles[] = "height:{$props['default_height']}px";
-      }
-
       if ( isset($props['width']) ) {
         $styles[] = "width:{$props['width']}px";
       }
@@ -640,10 +697,8 @@ class Glade
         $ec = end($class);
 
         // Check if this is a valid window
-        if ( in_array($mc, Array("GtkWindow", "GtkDialog")) && ($ec != $mc) ) {
-          $signals    = Array();
-          $properties = Array();
-
+        if ( in_array($mc, Array("GtkWindow", "GtkDialog")) && ($ec != $mc) )
+        {
           // Export the HTML
           $dom = new DomDocument();
           $dom->xmlVersion          = "1.0";
@@ -651,6 +706,11 @@ class Glade
           $dom->encoding            = 'UTF-8';
           $dom->preserveWhitespace  = false;
           $dom->appendChild($dom->importNode($c, true));
+
+          // Export variables
+          $signals    = Array();
+          $properties = Array();
+          $html       = str_replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "", $dom->saveXML());
 
           // Find all root window signals
           if ( isset($this->signals[$ec]) )
@@ -661,11 +721,13 @@ class Glade
             $properties = $this->properties[$ec];
 
           // Push data
-          $content[$ec] = Array(
-            "signals"     => $signals,
-            "properties"  => $properties,
-            "content"     => str_replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "", $dom->saveXML())
-          );
+          if ( $properties ) {
+            $content[$ec] = Array(
+              "signals"     => $signals,
+              "properties"  => $properties,
+              "content"     => $html
+            );
+          }
         }
       }
     }
