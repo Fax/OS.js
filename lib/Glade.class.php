@@ -704,6 +704,4 @@ class Glade
 
 }
 
-var_dump(Glade::Parse($argv[1]));
-
 ?>
