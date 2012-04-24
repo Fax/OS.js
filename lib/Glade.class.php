@@ -48,9 +48,10 @@ class Glade
   // VARIABLES
   /////////////////////////////////////////////////////////////////////////////
 
-  private $dom      = null;       //!< DOM Document
-  private $root     = null;       //!< DOM Root Element
-  private $signals  = Array();    //!< DOM Event Signals
+  private $dom          = null;       //!< Entire DOM Document
+  private $root         = null;       //!< DOM Root Element
+  private $signals      = Array();    //!< DOM Event Signals
+  private $properties   = Array();    //!< DOM Window Properties
 
   /**
    * @var Short-Closed HTML Tags
@@ -279,9 +280,10 @@ class Glade
    */
   protected function _scan($window_id, $o, $is_packed = false) {
     $node     = null;
-    $class    = (string)$o['class'];
+    $class    = (string) $o['class'];
+    $id       = (string) $o['id'];
     $styles   = Array();
-    $classes  = Array($class, (string) $o['id']);
+    $classes  = Array($class, $id);
     $props    = Array();
     $packed   = false;
 
@@ -290,19 +292,44 @@ class Glade
       foreach ( $o->property as $p ) {
         $props[((string) $p['name'])] = ((string)$p);
       }
+
+      // Append directly to class if we are using a window
+      if ( in_array($class, Array("GtkWindow", "GtkDialog")) ) {
+        $this->properties[$window_id] = $props;
+      }
     }
 
     // Signals (Append directly to class)
     if ( isset($o->signal) ) {
+      if ( !isset($this->signals[$window_id]) ) {
+        $this->signals[$window_id] = Array();
+      }
+
       foreach ( $o->signal as $p ) {
-        if ( !isset($this->signals[$window_id]) ) {
-          $this->signals[$window_id] = Array();
+        $ev_name    = ((string) $p['name']);
+        $ev_handler = ((string) $p['handler']);
+
+        // Corrigations
+        switch ( $ev_name ) {
+          case "item-activated" :
+          case "group-changed" :
+          case "select" :
+          case "clicked" :
+            $ev_name = "click";
+          break;
+          case "activate" :
+            if ( $class == "GtkEntry" ) {
+              $ev_name = "input-activate";
+            } else {
+              $ev_name = "click";
+            }
+          break;
         }
-        $this->signals[$window_id][] = Array(
-          "name"    => ((string) $p['name']),
-          "handler" => ((string) $p['handler']),
-          "swapped" => ((string) $p['swapped'])
-        );
+
+        if ( !isset($this->signals[$window_id][$id]) ) {
+          $this->signals[$window_id][$id] = Array();
+        }
+        $this->signals[$window_id][$id][$ev_name] = $ev_handler;
       }
     }
 
@@ -314,13 +341,32 @@ class Glade
       if ( isset($props['default_height']) ) {
         $styles[] = "height:{$props['default_height']}px";
       }
-    }
-    if ( !in_array($class, Array("GtkWindow", "GtkDialog")) ) {
+
       if ( isset($props['width']) ) {
         $styles[] = "width:{$props['width']}px";
       }
       if ( isset($props['height']) ) {
         $styles[] = "height:{$props['height']}px";
+      }
+
+      // FIXME: Move to packing
+      if ( isset($props['x']) ) {
+        $styles[] = "left:{$props['x']}px";
+      }
+      if ( isset($props['y']) ) {
+        $styles[] = "top:{$props['y']}px";
+      }
+
+      if ( isset($props['border_width']) ) {
+        $styles[] = "padding:{$props['border_width']}px";
+      }
+
+      if ( isset($props['layout_style']) ) {
+        $styles[] = "text-align:{$props['layout_style']}";
+      }
+
+      if ( isset($props['visible']) && ($props['visible'] == "False") ) {
+        $styles[] = "display:none";
       }
     }
 
@@ -346,10 +392,18 @@ class Glade
       case "GtkToggleButton" :
         $node = $this->dom->createElement("input");
         $node->setAttribute("type", "button");
+
+        if ( isset($props['active']) && ($props['active'] == "True") ) {
+          $node->setAttribute("checked", "checked");
+        }
       break;
       case "GtkDrawingArea"   :
         $node = $this->dom->createElement("div");
         $classes[] = "Canvas";
+      break;
+      case "GtkFileChooserButton"   :
+        // TODO
+        $node = $this->dom->createElement("div");
       break;
 
 
@@ -359,6 +413,7 @@ class Glade
       case "GtkLabel"   :
         $node = $this->dom->createElement("div");
         $label = $this->dom->createElement("span");
+        // FIXME: Stock icons and translations
         $label->appendChild(new DomText(htmlspecialchars($props['label'])));
       break;
       case "GtkImage" :
@@ -586,6 +641,8 @@ class Glade
 
         // Check if this is a valid window
         if ( in_array($mc, Array("GtkWindow", "GtkDialog")) && ($ec != $mc) ) {
+          $signals    = Array();
+          $properties = Array();
 
           // Export the HTML
           $dom = new DomDocument();
@@ -595,19 +652,21 @@ class Glade
           $dom->preserveWhitespace  = false;
           $dom->appendChild($dom->importNode($c, true));
 
+          // Find all root window signals
+          if ( isset($this->signals[$ec]) )
+            $signals = $this->signals[$ec];
+
+          // Find all root window properties
+          if ( isset($this->properties[$ec]) )
+            $properties = $this->properties[$ec];
+
           // Push data
           $content[$ec] = Array(
-            "signals" => Array(),
-            "data"    => str_replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "", $dom->saveXML())
+            "signals"     => $signals,
+            "properties"  => $properties,
+            "content"     => str_replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "", $dom->saveXML())
           );
         }
-      }
-    }
-
-    // Find all root window signals
-    foreach ( $this->signals as $wid => $sigs ) {
-      if ( isset($content[$wid]) ) {
-        $content[$wid]["signals"] = $sigs;
       }
     }
 
