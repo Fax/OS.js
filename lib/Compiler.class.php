@@ -663,7 +663,7 @@ OSjs.Applications.%CLASSNAME% = (function(\$, undefined) {
   return function(GtkWindow, Application, API, argv, windows) {
     "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
 
-    var LABELS = _LINGUAS[API.system.language()] || LINGUAS["%DEFAULT_LANGUAGE%"];
+    var LABELS = _LINGUAS[API.system.language()] || _LINGUAS["%DEFAULT_LANGUAGE%"];
 
     ///////////////////////////////////////////////////////////////////////////
     // WINDOWS
