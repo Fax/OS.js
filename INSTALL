@@ -10,12 +10,13 @@ System Dependencies:
   Modules: htaccess, mod_headers, mod_expires, mod_rewrite, mod_deflate, mod_php5, mod_mime
 
 * PHP 5.3 +
-  Modules: apache2 curl curlwrappers gd inifile mysql snmp sockets xmlreader xmlwriter zip pdo imap mhash mysqli gettext
+  Modules: apache2 mysql sockets xmlreader xmlwriter zip pdo imap mhash mysqli gettext
+  Suggested Modules: curl curlwrappers gd inifile snmp
 
 * MySQL 5+
   Modules. UTF-8
 
-* 'msgfmt'
+* 'msgfmt' (Optional, Locale generation, for localization and translations)
   Included in Linux
 
 * 'exiftool'
@@ -23,7 +24,7 @@ System Dependencies:
   Gentoo users: emerge exiftool
   Download: http://www.sno.phy.queensu.ca/~phil/exiftool/
 
-* 'pdf2svg' (Optional)
+* 'pdf2svg' (Optional, for use with PDF applications)
   Debian users: apt-get install pdf2svg
   Gentoo users: emerge pdf2svg
   Download: http://www.cityinthesky.co.uk/opensource/pdf2svg
