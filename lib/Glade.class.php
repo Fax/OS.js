@@ -280,6 +280,7 @@ class Glade
       // Create and insert inner elements
       $label = $dom->createElement("span");
       if ( $t_hinted ) {
+        // "Hinted" Underlined first character
         $u = $dom->createElement("u");
         $u->appendChild(new DomText(substr($t_label, 0, 1)));
         $label->appendChild($u);

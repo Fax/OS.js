@@ -30,6 +30,12 @@
  * @licence Simplified BSD License
  */
 
+.WindowContentInner {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-flex : 1;
+}
+
 /* GtkWindow GtkDialog */
 .GtkWindow,
 .GtkDialog {
