@@ -58,7 +58,7 @@ class Glade
    * @var Short-Closed HTML Tags
    */
   protected static $ShortTags = Array(
-    "GtkImage", "GtkEntry", "GtkSeparator"
+    "GtkImage", "GtkEntry", "GtkSeparator", "GtkSeparatorToolItem"
   );
 
   /**
@@ -211,6 +211,18 @@ class Glade
       "label" => "Align Right",
       "icon" => "actions/format-justify-right.png"
     ),
+    "gtk-justify-left" => Array(
+      "label" => "Align Left",
+      "icon" => "actions/format-justify-left.png"
+    ),
+    "gtk-justify-center" => Array(
+      "label" => "Align Center",
+      "icon" => "actions/format-justify-center.png"
+    ),
+    "gtk-justify-right" => Array(
+      "label" => "Align Right",
+      "icon" => "actions/format-justify-right.png"
+    )
   );
 
   /////////////////////////////////////////////////////////////////////////////
@@ -249,8 +261,9 @@ class Glade
       $t_src    = null;
 
       // Parse stock icon(s)
-      if ( isset($props['use_stock']) && ($props['use_stock'] == "True") ) {
-        if ( isset(self::$StockIcons[$t_label]) && ($iter = self::$StockIcons[$t_label]) ) {
+      if ( isset($props['stock_id']) || (isset($props['use_stock']) && ($props['use_stock'] == "True")) ) {
+        $stock_id = isset($props['stock_id']) ? $props['stock_id'] : $t_label;
+        if ( isset(self::$StockIcons[$stock_id]) && ($iter = self::$StockIcons[$stock_id]) ) {
           $t_hinted = preg_match("/^\_/", $iter['label']);
           $t_label  = htmlspecialchars($t_hinted ? _(substr($iter['label'], 1)) : _($iter['label']));
           $t_src    = sprintf("/img/icons/16x16/%s", $iter['icon']);
@@ -511,6 +524,11 @@ class Glade
       case "GtkToolButton" :
       case "GtkToggleToolButton" :
         $node = $dom->createElement("button");
+        $this->_stock($dom, $node, null, $props, true);
+      break;
+
+      case "GtkSeparatorToolItem" :
+        $node = $dom->createElement("hr");
       break;
 
       //
