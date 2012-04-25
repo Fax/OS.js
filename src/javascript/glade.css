@@ -91,6 +91,7 @@
   min-height : 10px;
 }
 .GtkBoxPackage.Fill {
+  overflow : hidden;
   -webkit-box-flex : 1;
 }
 .GtkBoxPackage.Fill > * {
@@ -275,6 +276,7 @@
 /* GtkStatusbar */
 .GtkStatusbar {
   height : 15px;
+  width : 100%;
   padding : 5px;
   border-top : 1px solid #d1d4d7;
 }
