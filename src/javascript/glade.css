@@ -79,6 +79,10 @@
 
 /* GtkBox */
 .GtkBox {
+  width : 100%;
+  height : 100%;
+  display : relative;
+
   display: -webkit-box;
   -webkit-box-align: stretch;
   -webkit-box-pack : start;
@@ -129,12 +133,17 @@
   -moz-box-flex : 1;
   box-flex : 1;
 }
-.GtkBoxPackage.Fill > * {
+.GtkBoxPackage > * {
+  /*
   position : absolute;
   top : 0px;
   left : 0px;
   right : 0px;
   bottom : 0px;
+  */
+  -webkit-box-flex : 1;
+  -moz-box-flex : 1;
+  box-flex : 1;
 }
 
 .GtkBox .GtkTab {
@@ -314,6 +323,7 @@
   width : 100%;
   padding : 5px;
   border-top : 1px solid #d1d4d7;
+  background : #e6e6e6;
 }
 
 /* GtkCheckButton */
