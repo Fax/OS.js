@@ -64,6 +64,16 @@
   -webkit-box-orient: horizontal;
   -webkit-box-pack : center;
   -webkit-box-flex : 1;
+
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-pack : center;
+  -moz-box-flex : 1;
+
+  display: box;
+  box-orient: horizontal;
+  box-pack : center;
+  box-flex : 1;
 }
 
 
@@ -75,17 +85,40 @@
   -webkit-box-lines : multiple;
   -webkit-box-direction : normal;
   -webkit-box-flex : 1;
+
+  display: -moz-box;
+  -moz-box-align: stretch;
+  -moz-box-pack : start;
+  -moz-box-lines : multiple;
+  -moz-box-direction : normal;
+  -moz-box-flex : 1;
+
+  display: box;
+  box-align: stretch;
+  box-pack : start;
+  box-lines : multiple;
+  box-direction : normal;
+  box-flex : 1;
 }
 .GtkBoxHorizontal {
   -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  box-orient: horizontal;
 }
 .GtkBoxVertical {
   -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  box-orient: vertical;
 }
 
 .GtkBoxPackage {
   display: -webkit-box;
   -webkit-box-flex : 0;
+  display: -moz-box;
+  -moz-box-flex : 0;
+  display: box;
+  box-flex : 0;
+
   position : relative;
   min-width : 10px;
   min-height : 10px;
@@ -93,6 +126,8 @@
 .GtkBoxPackage.Fill {
   overflow : hidden;
   -webkit-box-flex : 1;
+  -moz-box-flex : 1;
+  box-flex : 1;
 }
 .GtkBoxPackage.Fill > * {
   position : absolute;
