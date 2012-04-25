@@ -234,6 +234,65 @@ class Glade
   /////////////////////////////////////////////////////////////////////////////
 
   /**
+   * Check if we have a stock label or image and apply
+   * @param   DOMDocument   $dom          The DOM Document
+   * @param   DOMElement    $node         The outer DOM Node Element
+   * @param   DOMElement    $inner        The inner DOM Element
+   * @param   Array         $props        Object Glade properties
+   * @param   bool          $simple       If this is an element without inner wrapper
+   * @return void
+   */
+  protected function _stock(DOMDocument $dom, $node, $inner, $props, $simple = false) {
+    if ( isset($props['label']) ) {
+      $t_hinted = preg_match("/^\_/", $props['label']);
+      $t_label  = htmlspecialchars($t_hinted ? substr($props['label'], 1) : $props['label']);
+      $t_src    = null;
+
+      // Parse stock icon(s)
+      if ( isset($props['use_stock']) && ($props['use_stock'] == "True") ) {
+        if ( isset(self::$StockIcons[$t_label]) && ($iter = self::$StockIcons[$t_label]) ) {
+          $t_hinted = preg_match("/^\_/", $iter['label']);
+          $t_label  = htmlspecialchars($t_hinted ? _(substr($iter['label'], 1)) : _($iter['label']));
+          $t_src    = sprintf("/img/icons/16x16/%s", $iter['icon']);
+        }
+      }
+
+      // Create and insert inner elements
+      if ( $t_src ) {
+        $image = $dom->createElement("img");
+        $image->setAttribute("alt", $t_label);
+        $image->setAttribute("src", $t_src);
+      }
+
+      // Create and insert inner elements
+      $label = $dom->createElement("span");
+      if ( $t_hinted ) {
+        $u = $dom->createElement("u");
+        $u->appendChild(new DomText(substr($t_label, 0, 1)));
+        $label->appendChild($u);
+        $label->appendChild(new DomText(substr($t_label, 1)));
+      } else {
+        $label->appendChild(new DomText($t_label));
+      }
+
+      if ( $simple ) {
+        if ( $t_src ) {
+          $node->appendChild($image);
+        }
+        $node->appendChild($label);
+      } else {
+        if ( $t_src ) {
+          $inner->appendChild($image);
+        }
+        $inner->appendChild($label);
+        $node->appendChild($inner);
+      }
+    } else {
+      $node->appendChild(new DomText("&nbsp;"));
+    }
+  }
+
+  /**
    * Perform packing of an element (GtkBox)
    * @param   DOMDocument       $dom        The DOM Document
    * @param   SimpleXMLElement  $a          The Array iterator
@@ -412,6 +471,7 @@ class Glade
         } else {
           $label->appendChild(new DomText("&nbsp;"));
         }
+        $this->_stock($dom, $node, null, $props, true);
       break;
       case "GtkImage" :
         $node = $dom->createElement("img");
@@ -427,6 +487,10 @@ class Glade
       break;
       case "GtkScale"   :
         $node = $dom->createElement("div");
+      break;
+      case "GtkButton"   :
+        $node = $dom->createElement("button");
+        $this->_stock($dom, $node, null, $props, true);
       break;
 
       //
@@ -459,6 +523,7 @@ class Glade
         $node = $dom->createElement("ul");
       break;
 
+      case "GtkImageMenuItem" :
       case "GtkRadioMenuItem" :
       case "GtkMenuItem" :
         $node = $dom->createElement("li");
@@ -467,71 +532,7 @@ class Glade
         $inner = $dom->createElement("div");
         $inner->setAttribute("class", "GtkMenuItemInner");
 
-        $t_hinted = preg_match("/^_/", $props['label']);
-        $t_label  = htmlspecialchars($t_hinted ? substr($props['label'], 1) : $props['label']);
-
-        // Parse stock label(s)
-        if ( isset($props['use_stock']) && ($props['use_stock'] == "True") ) {
-          if ( isset(self::$StockIcons[$t_label]) && ($iter = self::$StockIcons[$t_label]) ) {
-            $t_hinted = preg_match("/^_/", $iter['label']);
-            $t_label  = htmlspecialchars($t_hinted ? _(substr($iter['label'], 1)) : _($iter['label']));
-          }
-        }
-
-        // Create and insert inner elements
-        $label = $dom->createElement("span");
-        if ( $t_hinted ) {
-          $u = $dom->createElement("u");
-          $u->appendChild(new DomText(substr($t_label, 0, 1)));
-          $label->appendChild($u);
-          $label->appendChild(new DomText(substr($t_label, 1)));
-        } else {
-          $label->appendChild(new DomText($t_label));
-        }
-
-        $inner->appendChild($label);
-        $node->appendChild($inner);
-      break;
-
-      case "GtkImageMenuItem" :
-        $node = $dom->createElement("li");
-
-        // We need some children here
-        $inner = $dom->createElement("div");
-        $inner->setAttribute("class", "GtkMenuItemInner");
-
-        $t_hinted = preg_match("/^\_/", $props['label']);
-        $t_label  = htmlspecialchars($t_hinted ? substr($props['label'], 1) : $props['label']);
-        $t_src    = sprintf("/img/icons/16x16/actions/%s.png", $props['label']);
-
-        // Parse stock icon(s)
-        if ( isset($props['use_stock']) && ($props['use_stock'] == "True") ) {
-          if ( isset(self::$StockIcons[$t_label]) && ($iter = self::$StockIcons[$t_label]) ) {
-            $t_hinted = preg_match("/^\_/", $iter['label']);
-            $t_label  = htmlspecialchars($t_hinted ? _(substr($iter['label'], 1)) : _($iter['label']));
-            $t_src    = sprintf("/img/icons/16x16/%s", $iter['icon']);
-          }
-        }
-
-        // Create and insert inner elements
-        $image = $dom->createElement("img");
-        $image->setAttribute("alt", $t_label);
-        $image->setAttribute("src", $t_src);
-
-        // Create and insert inner elements
-        $label = $dom->createElement("span");
-        if ( $t_hinted ) {
-          $u = $dom->createElement("u");
-          $u->appendChild(new DomText(substr($t_label, 0, 1)));
-          $label->appendChild($u);
-          $label->appendChild(new DomText(substr($t_label, 1)));
-        } else {
-          $label->appendChild(new DomText($t_label));
-        }
-
-        $inner->appendChild($image);
-        $inner->appendChild($label);
-        $node->appendChild($inner);
+        $this->_stock($dom, $node, $inner, $props);
       break;
 
       //

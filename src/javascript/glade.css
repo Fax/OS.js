@@ -30,35 +30,15 @@
  * @licence Simplified BSD License
  */
 
-/* TODOs */
-.GtkToolbar {
-  height : 32px;
-  width : 100%;
-  margin : 0;
-  padding : 0;
-  list-style-type : none;
-  white-space : nowrap;
-}
-.GtkToolbar {
-  background : #aaeaaa;
-}
-.GtkToolbar li {
-  float : left;
-  overflow : hidden;
-  height : 20px;
-  padding : 6px;
-  position : relative;
-}
-
-
 /* GtkWindow GtkDialog */
 .GtkWindow,
 .GtkDialog {
   position : absolute;
-  top : 5px;
-  left : 5px;
-  right : 5px;
-  bottom : 5px;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 0px;
+  /*
 
   display: -webkit-box;
   -webkit-box-orient: horizontal;
@@ -74,6 +54,7 @@
   box-orient: horizontal;
   box-pack : center;
   box-flex : 1;
+  */
 }
 
 
@@ -183,14 +164,7 @@
   margin : 0;
   padding : 0;
   text-align : right;
-  margin-top : 10px;
 }
-
-  .GtkButtonBox li {
-    display : inline-block;
-    margin : 0;
-    padding : 0;
-  }
 
 /* GtkLabel */
 .GtkLabel {
@@ -368,20 +342,20 @@
 
 /* GtkToolbar */
 .GtkToolbar {
-  /*
-  height : 20px;
-  margin : -5px;
-  padding : 5px;
+  height : 32px;
+  width : 100%;
+  margin : 0;
+  padding : 0;
   list-style-type : none;
-  */
+  white-space : nowrap;
 }
 
   .GtkToolbar li {
-    /*
     float : left;
-    margin : 0;
-    padding : 5px;
-    */
+    overflow : hidden;
+    height : 20px;
+    padding : 6px;
+    position : relative;
   }
 
   .GtkToolbar .Checked button {
