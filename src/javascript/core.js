@@ -67,7 +67,7 @@
   var DEFAULT_USERNAME       = "demo";              //!< Default User Username
   var DEFAULT_PASSWORD       = "demo";              //!< Default User Password
   var AUTOMATIC_LOGIN        = false;               //!< Wherever to turn on automatic login
-  var SESSION_CONFIRM        = false;               //!< Wherever to turn on confirmation of session collision
+  var SESSION_CONFIRM        = true;                //!< Wherever to turn on confirmation of session collision
   var ENV_CACHE              = undefined;           //!< Server-side cache enabled state
   var ENV_PRODUCTION         = undefined;           //!< Server-side production env. state
   // @endconstants
@@ -7634,40 +7634,9 @@
           }
         }
 
-        //
-        // Box factors (LAST!)
-        //
-
-        setTimeout(function() {
-          self.__calculateExpansion();
-        }, 0);
-
-        /*this._bind("resize", function() {
-          self.__calculateExpansion();
-        });*/
       }
 
       return el;
-    },
-
-    /**
-     * GtkWindow::__calculateExpansion() -- Do GTK+ Expansions
-     * @return void
-     */
-    __calculateExpansion : function() {
-      this.$element.find("td.Fill").each(function() {
-        if ( !$(this).hasClass("Expand") ) {
-          //var height = parseInt($(this).css("height"), 10);
-          //if ( !height || isNaN(height) ) {
-          //}
-          var first = $(this).find(".TableCellWrap :first-child");
-          var height = parseInt(first.height(), 10);
-          if ( !isNaN(height) && height ) {
-            $(this).parent().css("height", height + "px");
-            //$(this).css("height", height + "px");
-          }
-        }
-      });
     }
 
   }); // @endclass

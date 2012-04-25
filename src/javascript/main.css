@@ -444,6 +444,10 @@ input.Disabled {
   bottom : 0px;
 }
 .WindowContentInner {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-flex : 1;
+  height : 100%;
 }
 
 /*
