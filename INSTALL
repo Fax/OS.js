@@ -85,9 +85,6 @@ First clone the GitHub repository then set up using these instructions:
 * Download JSON2
   - Drop into 'vendor/'
   - Symlink JS to 'public_html/vendor/json.js' (Should exist)
-
-- Misc
-* Compile server-side locales with './bin/update-locale'
 * Copy a X11's icon theme 16x16 and 32x32 folders into 'public_html/img/icons/'
 
 - Extras
@@ -99,6 +96,7 @@ First clone the GitHub repository then set up using these instructions:
 * Set up other settings in 'header.php' if required
 - ENV_PRODUCTION = Is this a production setup ?
 - DATABASE_* = Database configuration
+* Compile server-side locales with './bin/update-locale'
 * If you're in a production environment or doing testing procedures run
   './bin/update-compression' to compress all scripts etc. (Optional)
 * Fix permissions with './bin/fix-permissions live' [See note]
