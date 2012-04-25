@@ -37,6 +37,10 @@
 require "header.php";
 require "lib/Compiler.class.php";
 
-Compiler::compileAll();
+if ( isset($argv) && isset($argv[1]) ) {
+  Compiler::compile($argv[1]);
+} else {
+  Compiler::compileAll();
+}
 
 ?>
