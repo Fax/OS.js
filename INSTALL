@@ -93,6 +93,8 @@ First clone the GitHub repository then set up using these instructions:
   * Install all applications globally with './bin/install-all'
 
 - Finish
+* Copy 'config.example.php' to 'config.php'
+- You could also use a symlink if you are not planning to change anything
 * Set up other settings in 'header.php' if required
 - ENV_PRODUCTION = Is this a production setup ?
 - DATABASE_* = Database configuration

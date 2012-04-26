@@ -40,10 +40,15 @@ ini_set("session.upload_progress.enabled",  true);
 ini_set("post_max_size",                    "256M");
 ini_set("upload_max_filesize",              "256M");
 ini_set("expose_php",                       "off");
-ini_set("display_errors",                   "off");
 //ini_set("session.upload-progress.name",     "OSjs");
 
-error_reporting(-1); // E_ALL | E_STRICT
+///////////////////////////////////////////////////////////////////////////////
+// CONFIGURATION - GLOBAL DEFINITIONS
+///////////////////////////////////////////////////////////////////////////////
+
+// Modified after including config.php
+error_reporting(E_ALL | E_STRICT); 
+ini_set("display_errors", "on");
 
 ///////////////////////////////////////////////////////////////////////////////
 // CONFIGURATION - GLOBAL DEFINITIONS
@@ -62,42 +67,9 @@ define("PROJECT_BUILD",     "c26df2b");
 define("PROJECT_MODIFIED",  "1335302764");
 
 //
-// Environment
-//
-
-define("ENV_PRODUCTION",      (PROJECT_HOST != "amitop"));
-define("DEFAULT_TIMEZONE",    "UTC");
-define("DEFAULT_LANGUAGE",    "en_US");
-define("ENABLE_CACHE",        false);
-define("ENABLE_LOGGING",      true);
-define("ENABLE_GETTEXT",      true);
-define("GETTEXT_DOMAIN",      "messages");
-
-//
 // Cache (Production)
 //
 define("CACHE_EXPIRE_ADD",    60); // FIXME
-
-//
-// VFS Permissions etc.
-//
-
-define("VFS_SET_PERM",        false);
-define("VFS_USER",            "www-data"); //(PROJECT_HOST != "amitop" ? "www-data" : "apache")); // chown() user
-define("VFS_GROUP",           "www-data"); //(PROJECT_HOST != "amitop" ? "www-data" : "apache")); // chown() group
-define("VFS_FPERM",           "0555"/*0644*/); // chmod() for uploaded files
-define("VFS_DPERM",           "0555"/*0644*/); // chmod() for uploaed dirs
-define("VFS_UMASK",           ""); // umask()
-
-//
-// Server
-//
-
-define("SERVER_HOST",     "0.0.0.0");
-//define("SERVER_HOST",   "localhost");
-define("SERVER_PORT",     8888);
-define("SERVER_BACKLOG",  20);
-define("SERVER_NONBLOCK", false); // TODO
 
 //
 // Paths
@@ -148,21 +120,26 @@ define("FONT_CACHE",           PATH_BUILD   . "/fontcache.xml");
 define("PACKAGE_BUILD",        PATH_BUILD   . "/packages.xml");
 define("MIME_MAGIC",           PATH_VENDOR  . "/mime.mgc");
 
-//
-// Database
-//
+///////////////////////////////////////////////////////////////////////////////
+// CONFIGURATION - LOCAL DEFINITIONS
+///////////////////////////////////////////////////////////////////////////////
 
-define("DATABASE_HOST",     "localhost");
-define("DATABASE_DSN",      "mysql:dbname=osjs;host=localhost");
-define("DATABASE_USER",     "osjs");
-define("DATABASE_PASS",     "IeDici7AhghaeG4athobas");
+require "config.php";
 
-//
-// External Services
-//
+if ( !defined("ENV_PRODUCTION") )
+  define("ENV_PRODUCTION",      false);
+if ( !defined("DEFAULT_TIMEZONE") )
+  define("DEFAULT_TIMEZONE",    "UTC");
+if ( !defined("DEFAULT_LANGUAGE") )
+  define("DEFAULT_LANGUAGE",    "en_US");
+if ( !defined("GETTEXT_DOMAIN") )
+  define("GETTEXT_DOMAIN",      "messages");
 
-define("GA_ENABLE",         ENV_PRODUCTION);    // Google Analytics enable
-define("GA_ACCOUNT_ID",     "UA-26635797-1");   // Google Analytics account id
+// ERROR REPORTING
+if ( ENV_PRODUCTION ) {
+  error_reporting(-1);
+  ini_set("display_errors", "off");
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // DEPENDENCIES
