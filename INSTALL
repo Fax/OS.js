@@ -60,7 +60,7 @@ The installer is not yet complete. See the next section.
 
 ## Database
 * Use the `schema.sql` dump.
-* Make a note of SQL-user or use the example in `config.example.php`
+* Use settings from `config.php` or create new and edit the file
 * Add an administrator user using `./bin/add-user`  
   **NB:** Make sure database is clean and user is created with user_id=1
 

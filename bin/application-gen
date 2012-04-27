@@ -34,6 +34,7 @@
  * @created 2012-01-04
  */
 
+define("NODB", true);
 require "header.php";
 require "lib/Compiler.class.php";
 

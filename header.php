@@ -259,7 +259,9 @@ class ExceptionPackage
 date_default_timezone_set(DEFAULT_TIMEZONE);
 
 if ( !DB::init() ) {
-  die("Failed to initialize OS.js Database!");
+  if ( !defined("NODB") ) {
+    die("Failed to initialize OS.js Database!");
+  }
 }
 
 ?>
