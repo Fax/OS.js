@@ -1,106 +1,103 @@
-Notes:
+This has only been tested on these Linux distributions:
+* Gentoo Linux
+* Ubuntu Linux
+
+# Backend Dependencies:
 -------------------------------------------------------------------------------
-This has only been tested using:
-* Gentoo Linux (2011, 2012) Stable and Unmasked
-* Ubuntu Linux (10, 11, 12) Stable and Beta
+* Apache 2+  
+  Modules: ```htaccess, mod_headers, mod_expires, mod_rewrite, mod_deflate, mod_php5, mod_mime```
+* PHP 5.3 +  
+  Modules: ```apache2 mysql sockets xmlreader xmlwriter zip pdo imap mhash mysqli gettext```  
+  Suggested Modules: ```curl curlwrappers gd inifile snmp```
+* MySQL 5+  
+* 'msgfmt' (Optional, Locale generation, for localization and translations)  
+  ```Included in Linux```
+* 'exiftool'  
+  Debian users: ```apt-get install exiftool```  
+  Gentoo users: ```emerge exiftool```  
+  Download: ```http://www.sno.phy.queensu.ca/~phil/exiftool/```  
+* 'pdf2svg' (Optional, for use with PDF applications)  
+  Debian users: ```apt-get install pdf2svg```  
+  Gentoo users: ```emerge pdf2svg```  
+  Download: ```http://www.cityinthesky.co.uk/opensource/pdf2svg```  
 
-System Dependencies:
+# Frontend Dependencies:
 -------------------------------------------------------------------------------
-* Apache 2+
-  Modules: htaccess, mod_headers, mod_expires, mod_rewrite, mod_deflate, mod_php5, mod_mime
+* jQuery  
+  ```http://code.jquery.com/jquery-1.7.1.min.js```
 
-* PHP 5.3 +
-  Modules: apache2 mysql sockets xmlreader xmlwriter zip pdo imap mhash mysqli gettext
-  Suggested Modules: curl curlwrappers gd inifile snmp
+* jQuery UI  
+  ```http://jqueryui.com/download/jquery-ui-1.8.17.custom.zip```
 
-* MySQL 5+
-  Modules. UTF-8
+* JSON2 by Douglas Crockford  
+  ```https://raw.github.com/douglascrockford/JSON-js/master/json2.js```
 
-* 'msgfmt' (Optional, Locale generation, for localization and translations)
-  Included in Linux
+* Sprintf by Alexandru Marasteanu  
+  ```http://www.diveintojavascript.com/projects/javascript-sprintf```
 
-* 'exiftool'
-  Debian users: apt-get install exiftool
-  Gentoo users: emerge exiftool
-  Download: http://www.sno.phy.queensu.ca/~phil/exiftool/
+* Gnome 2.x icon pack(s)  
+  ```http://ftp.gnome.org/pub/GNOME/sources/gnome-icon-theme/```
 
-* 'pdf2svg' (Optional, for use with PDF applications)
-  Debian users: apt-get install pdf2svg
-  Gentoo users: emerge pdf2svg
-  Download: http://www.cityinthesky.co.uk/opensource/pdf2svg
+* Yahoo YUI Compressor (Included)  
+  ```http://developer.yahoo.com/yui/compressor/```
 
-Frontend Dependencies:
+# Automated Installation:
 -------------------------------------------------------------------------------
-* jQuery
-  http://code.jquery.com/jquery-1.7.1.min.js
+The installer is not yet complete. See the next section.
 
-* jQuery UI
-  http://jqueryui.com/download/jquery-ui-1.8.17.custom.zip
-
-* JSON2 by Douglas Crockford
-  https://raw.github.com/douglascrockford/JSON-js/master/json2.js
-
-* Sprintf by Alexandru Marasteanu
-  http://www.diveintojavascript.com/projects/javascript-sprintf
-
-* Gnome 2.x icon pack(s)
-  http://ftp.gnome.org/pub/GNOME/sources/gnome-icon-theme/
-
-* Yahoo YUI Compressor (Included)
-  http://developer.yahoo.com/yui/compressor/
-
-Installation:
+# Manual Installation:
 -------------------------------------------------------------------------------
-First clone the GitHub repository then set up using these instructions:
 
-- Initialize:
-* Set (temporary) permissions with './bin/fix-permissions dev' [See note]
-* Create documentation with './bin/update-documentation' (Optional)
+## First steps
 
-- MySQL
-* Use the './schema.sql' dump.
-* Edit or use connection settings in './header.php'
-* Add an administrator user using './bin/add-user'
-  NB: Make sure database is clean and user is created with user_id=1
+* Clone OS.js from Github
+* Set up `config.php`
+  - Create a copy of `config.example.php` and edit
+  - Or create a symlink and keep current example config
+* Set up other settings in `header.php` if required 
+* Set (temporary) permissions with `./bin/fix-permissions dev` [See note]
+* Create documentation with `./bin/update-documentation` (Optional)
 
-- Apache
-* Use a vhost template in './doc/' and set up your web server
-* Create /var/cache/OSjs with permission to Apache
-* Update "php.ini" for the host or enable runtime ini_set for project
-  The settings are found in the top of 'header.php'.
+## Database
+* Use the `schema.sql` dump.
+* Make a note of SQL-user or use the example in `config.example.php`
+* Add an administrator user using `./bin/add-user`  
+  **NB:** Make sure database is clean and user is created with user_id=1
+
+## Web-Server
+* Use a vhost template in `doc/` and set up your web server
+* Create `/var/cache/OSjs` with permission to Apache
+* Update `php.ini` for the host or enable runtime ini_set for project  
+  The settings are found in the top of `header.php`.  
   (You can alternatively allow PHP scripts allow settings ini-settings)
 
-- Vendor libraries
-* Download jQuery (1.7.1 by default)
-  - Drop into 'vendor/'
-  - Symlink JS to 'public_html/vendor/jquery.js' (Should exist)
-* Download jQuery UI (1.8.17 by default)
-  - Drop into 'vendor/'
-  - Symlink JS to 'public_html/vendor/jquery-ui.js' (Should exist)
-  - Symlink CSS to 'public_html/vendor/jquery-ui-theme.css' (Should exist)
-  - Symlink CSS images to 'public_html/vendor/images' (Should exist)
-* Download sprintf
-  - Drop into 'vendor/'
-  - Symlink JS to 'public_html/vendor/sprintf.js' (Should exist)
-* Download JSON2
-  - Drop into 'vendor/'
-  - Symlink JS to 'public_html/vendor/json.js' (Should exist)
-* Copy a X11's icon theme 16x16 and 32x32 folders into 'public_html/img/icons/'
+## Frontend Dependencies
+* Download **jQuery** (1.7.1 by default)  
+  - Drop into `vendor/`  
+  - Symlink JS to `public_html/vendor/jquery.js` (Should exist)  
+* Download **jQuery UI** (1.8.17 by default)  
+  - Drop into `vendor/`  
+  - Symlink JS to `public_html/vendor/jquery-ui.js` (Should exist)  
+  - Symlink CSS to `public_html/vendor/jquery-ui-theme.css` (Should exist)  
+  - Symlink CSS images to `public_html/vendor/images` (Should exist)  
+* Download **sprintf**  
+  - Drop into `vendor/`  
+  - Symlink JS to `public_html/vendor/sprintf.js` (Should exist)  
+* Download **JSON2**  
+  - Drop into `vendor/`  
+  - Symlink JS to `public_html/vendor/json.js` (Should exist)  
+* Copy **Gnome's icon theme** 16x16 and 32x32 folders into `public_html/img/icons/`
 
-- Extras
-* Clone the "OSjs-Packages" repository into 'src/packages'
-  * Compile all applications with './bin/application-gen'
-  * Install all applications globally with './bin/install-all'
 
-- Finish
-* Copy 'config.example.php' to 'config.php'
-- You could also use a symlink if you are not planning to change anything
-* Set up other settings in 'header.php' if required
-- ENV_PRODUCTION = Is this a production setup ?
-- DATABASE_* = Database configuration
-* Compile server-side locales with './bin/update-locale'
-* If you're in a production environment or doing testing procedures run
-  './bin/update-compression' to compress all scripts etc. (Optional)
-* Fix permissions with './bin/fix-permissions live' [See note]
+## Extras
+* Clone the "OSjs-Packages" repository into `src/packages`  
+  - Compile all applications with `./bin/application-gen`  
+  - Install all applications globally with `./bin/install-all`
 
-[NOTE: You may have to edit the fix-permissions script to suit your environment]
+## Finishing steps
+* Compile server-side locales with `./bin/update-locale`
+* If you're in a production environment or doing testing procedures run `./bin/update-compression` to compress all scripts etc. (Optional)
+* Fix permissions with `./bin/fix-permissions live` [See note]
+
+# Notes
+* `config.php` needs the correct VFS permissions set.

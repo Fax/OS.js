@@ -32,7 +32,14 @@
 # @created 2012-01-04
 
 USR_SELF=`whoami`
-USR_APACHE="www-data"
+USR_APACHE=`cat config.php | grep VFS_USER | awk '{print $2}' | sed -e 's/[^A-Za-z0-9\-]//g'`
+GRP_APACHE=`cat config.php | grep VFS_GROUP | awk '{print $2}' | sed -e 's/[^A-Za-z0-9\-]//g'`
+
+echo "User:          $USR_SELF"
+echo "Group:         $USR_SELF"
+echo "Apache User:   $USR_APACHE"
+echo "Apache Group:  $GRP_APACHE"
+echo "Apache values are taken from config.php"
 
 sudo chown -R $USR_APACHE:$USR_APACHE logs
 
@@ -43,9 +50,9 @@ else
   if [ "$1" == "live" ]
   then
     echo "Setting media permissions to $USR_APACHE:$USR_APACHE"
-    sudo chown -R $USR_APACHE:$USR_APACHE public_html/media
-    sudo chown -R $USR_APACHE:$USR_APACHE logs
-    sudo chown -R $USR_APACHE:$USR_APACHE VFS
+    sudo chown -R $USR_APACHE:$GRP_APACHE public_html/media
+    sudo chown -R $USR_APACHE:$GRP_APACHE logs
+    sudo chown -R $USR_APACHE:$GRP_APACHE VFS
     sudo chmod a-w public_html/media/System
   else
     echo "Setting media permissions to $USR_SELF:$USR_SELF"
