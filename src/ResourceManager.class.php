@@ -63,7 +63,7 @@ abstract class ResourceManager
    */
   public static function MinimizeFile($base, $filename) {
     $mindir       = sprintf("%s/_min", $base);
-    $cmd          = sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_BIN, PATH_VENDOR);
+    $cmd          = BIN_YUI;
     $type         = preg_match("/\.js$/", $filename) ? "js" : "css";
     $path         = sprintf("%s/%s", $base, $filename);
     $destination  = sprintf("%s/%s", $mindir, $filename);

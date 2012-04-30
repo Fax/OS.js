@@ -276,9 +276,7 @@ class Core
       "production"  => ENV_PRODUCTION,
       "demo"        => ENV_DEMO,
       "cache"       => ENABLE_CACHE,
-      "preload"     => Array(
-        "images" => ResourceManager::$Preload["images"]
-      ),
+      "preload"     => ResourceManager::$Preload["images"],
       "registry"    => User::getDefaultRegistry()
     );
   }

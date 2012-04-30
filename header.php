@@ -137,8 +137,11 @@ if ( !defined("DEFAULT_LANGUAGE") )
 if ( !defined("GETTEXT_DOMAIN") )
   define("GETTEXT_DOMAIN",      "messages");
 
+if ( !defined("BIN_YUI") )
+  define("BIN_YUI",             sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_BIN, PATH_VENDOR));
+
 // ERROR REPORTING
-if ( ENV_PRODUCTION ) {
+if ( ENV_PRODUCTION || ENV_DEMO ) {
   error_reporting(-1);
   ini_set("display_errors", "off");
 }
@@ -147,11 +150,16 @@ if ( ENV_PRODUCTION ) {
 // DEPENDENCIES
 ///////////////////////////////////////////////////////////////////////////////
 
+require "lib/Misc.php";
 require "lib/Functions.php";
 require "lib/JSON.class.php";
 require "lib/Logger.class.php";
 require "lib/DB.class.php";
 require "lib/Browser.class.php";
+
+///////////////////////////////////////////////////////////////////////////////
+// MAIN
+///////////////////////////////////////////////////////////////////////////////
 
 // Internal Automatic loading of source classes
 spl_autoload_register(function($cn) {
@@ -159,107 +167,10 @@ spl_autoload_register(function($cn) {
     require PATH_SRC . "/{$cn}.class.php";
 });
 
-///////////////////////////////////////////////////////////////////////////////
-// LOW-LEVEL CLASSES AND FUNCTIONS
-///////////////////////////////////////////////////////////////////////////////
-
-abstract class CoreObject {}
-
-class ExceptionVFS
-  extends Exception
-{
-  const DOES_NOT_EXIST    = 1;
-  const ALREADY_EXISTS    = 2;
-  const PERMISSION_DENIED = 3;
-  const GENERIC           = 254;
-
-  public function __construct($type, Array $args = Array()) {
-    $message = _("Unknown VFS Error occured");
-
-    switch ( $type ) {
-      case self::DOES_NOT_EXIST :
-        $message = vsprintf(_("The file '%s' does not exist!"), $args);
-      break;
-      case self::ALREADY_EXISTS :
-        $message = vsprintf(_("The file '%s' already exists!"), $args);
-      break;
-      case self::PERMISSION_DENIED :
-        $message = vsprintf(_("You do not have permission to '%s'!"), $args);
-      break;
-      case self::GENERIC :
-        $tmp = reset($args);
-        if ( $tmp && is_array($tmp) ) {
-          $args = Array(isset($tmp['file']) ? $tmp['file'] : (isset($tmp['path']) ? $tmp['path'] : current($tmp)));
-        }
-        $message = vsprintf(_("Failed to handle '%s'. Make sure you have permissions in this directory!"), $args);
-      break;
-    }
-
-    parent::__construct($message);
-  }
-}
-
-class ExceptionPackage
-  extends Exception
-{
-  const PACKAGE_NOT_EXISTS    = 0;
-  const PACKAGE_EXISTS        = 1;
-  const MISSING_METADATA      = 2;
-  const INVALID_METADATA      = 3;
-  const MISSING_FILE          = 4;
-  const FAILED_CREATE         = 5;
-  const FAILED_OPEN           = 6;
-  const INVALID_DESTINATION   = 7;
-  const FAILED_CREATE_DEST    = 8;
-
-  const INVALID               = 255;
-
-  public function __construct($type, Array $args = Array()) {
-    $message = _("Unknown Package Error occured");
-
-    switch ( $type ) {
-      case self::PACKAGE_NOT_EXISTS :
-        $message = vsprintf(_("The package archive '%s' does not exist!"), $args);
-      break;
-      case self::PACKAGE_EXISTS :
-        $message = vsprintf(_("The package already exists in '%s'!"), $args);
-      break;
-      case self::MISSING_METADATA :
-        $message = vsprintf(_("'%s' is missing metadata.xml!"), $args);
-      break;
-      case self::INVALID_METADATA :
-        $message = vsprintf(_("'%s' has invalid metadata.xml!"), $args);
-      break;
-      case self::MISSING_FILE :
-        $message = vsprintf(_("'%s' is missing the file '%s'!"), $args);
-      break;
-      case self::FAILED_CREATE :
-        $message = vsprintf(_("Failed to create archive for project '%s' in '%s' (%d)!"), $args);
-      break;
-      case self::FAILED_OPEN :
-        $message = vsprintf(_("Failed to open archive for project '%s' in '%s' (%d)!"), $args);
-      break;
-      case self::INVALID_DESTINATION :
-        $message = vsprintf(_("The destination '%s' is invalid!"), $args);
-      break;
-      case self::FAILED_CREATE_DEST :
-        $message = vsprintf(_("The destination '%s' cannot be created!"), $args);
-      break;
-      case self::INVALID :
-        $message = vsprintf(_("The package archive '%s' is invalid!"), $args);
-      break;
-    }
-
-    parent::__construct($message);
-  }
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// MAIN
-///////////////////////////////////////////////////////////////////////////////
-
+// Locales
 date_default_timezone_set(DEFAULT_TIMEZONE);
 
+// Database
 if ( !DB::init() ) {
   if ( !defined("NODB") ) {
     die("Failed to initialize OS.js Database!");
