@@ -68,6 +68,7 @@
   var DEFAULT_PASSWORD       = "demo";              //!< Default User Password
   var AUTOMATIC_LOGIN        = false;               //!< Wherever to turn on automatic login
   var SESSION_CONFIRM        = true;                //!< Wherever to turn on confirmation of session collision
+  var ENABLE_SOUNDS          = false;               //!< Wherever to turn on sounds by default
   var ENV_CACHE              = undefined;           //!< Server-side cache enabled state
   var ENV_PRODUCTION         = undefined;           //!< Server-side production env. state
   var ENV_DEMO               = undefined;           //!< Server-side demo env. state
@@ -87,6 +88,7 @@
   var ICON_URI         = "/img/icons/%s/%s";        //!< Icons URI (GET)
   var ICON_URI_16      = "/img/icons/16x16/%s";     //!< Icons URI 16x16 (GET)
   var ICON_URI_32      = "/img/icons/32x32/%s";     //!< Icons URI 32x32 (GET)
+  var SOUND_URI        = "/sounds/%s.%s";           //!< Sound URI (GET)
   // @endconstants
 
   /**
@@ -819,149 +821,65 @@
   } // @endfunction
 
   /**
-   * Preload a list of default defined images
-   * @return Mixed
-   * @function
+   * PreloadResourceList() -- Preload a list of resources (simple Wrapper)
+   * @param   Array     list      Resource list
+   * @param   Function  creator   DOM Creation function
+   * @param   Function  callback  Callback When Done
+   * @return  void
    */
-  var PreloadDefaultImages = (function() {
-    // Create a image
-    var __load = function(index, src, callback) {
-      try {
-        var img =  new Image();
-        img.onload = function() {
-          callback(true, index, src, img);
-        };
-        img.onerror = function() {
-          callback(false, index, src, img);
-        };
-        img.alt = src;
-        img.src = src;
-      } catch ( eee ) {
-        callback(false, index, src, null);
-      }
-    };
+  function PreloadResourceList(list, creator, callback) {
+    var loaded = 0;
+    var errors = 0;
+    var total  = list.length;
 
-    // Main
-    return function(sprf, list, callback) {
-      var i     = 0;
-      var l     = list.length;
+    var i = 0;
+    for ( i; i < total; i++ ) {
+      creator(list[i], function() {
+        loaded++;
 
-      function __callback(loaded, failed, total) {
-        console.groupEnd();
-        callback(loaded, failed, total);
-      }
-
-      if ( l ) {
-        var total = (l - 1);
-        var loaded = 0;
-        var failed = 0;
-        for ( i; i < l; i++ ) {
-          __load(i, sprintf(sprf, list[i]), function(success, index, src, img) {
-            if ( !success ) {
-              failed++;
-            } else {
-              loaded++;
-            }
-
-            if ( total <= 0 ) {
-              __callback(loaded, failed, l);
-            }
-            total--;
-
-            img.onload = null;
-            img.onerror = null;
-            //delete img;
-          });
+        var totals = (loaded + errors);
+        if ( totals >= total ) {
+          callback(true, totals, loaded, errors);
         }
-      } else {
-        __callback(0, 0, 0);
-      }
-    };
-  })(); // @endfunction
+      }, function() {
+        errors++;
+
+        var totals = (loaded + errors);
+        if ( totals >= total ) {
+          callback(false, totals, loaded, errors);
+        }
+      });
+    }
+  }
 
   /**
-   * TransitionEffect() -- Apply a transition effect on an element
-   * @TODO
-   * @function
+   * PlaySound() -- Play a specified sound
+   * @return void
    */
-  /*
-  function TransitionEffect(el, t, trans, args, callback) {
-    trans     = trans     || true;
-    args      = args      || {};
-    callback  = callback  || function() {};
+  function PlaySound(type) {
+    if ( ENABLE_SOUNDS && OSjs.Compability.SUPPORT_AUDIO ) {
+      var src = null;
+      var filetype = "oga";
+      if ( !OSjs.Compability.SUPPORT_AUDIO_OGG || OSjs.Compability.SUPPORT_AUDIO_MP3 ) {
+        filetype = "mp3";
+      }
 
-    var eff     = _Settings._get(t) || "default";
-    var method  = "";
-    var vargs   = {
-      "duration" : ANIMATION_SPEED,
-      "complete" : callback
-    };
-
-    if ( eff == "default" ) {
-      switch ( t ) {
-        case "wm.animation.windowOpen" :
-          method = "show";
-          break;
-
-        case "wm.animation.windowClose" :
-          method = "fadeOut";
-          break;
-
-        case "wm.animation.windowMaximize" :
-          method = "animate";
-          break;
-
-        case "wm.animation.windowMinimize" :
-          method = "animate";
-          break;
-
-        case "wm.animation.windowRestore" :
-          break;
-
-        case "wm.animation.menuOpen" :
-          break;
-
-        case "wm.animation.menuClose" :
-          break;
-
-        default:
-          method = (trans ? "show" : "hide");
+      switch ( type ) {
+        default :
+          src = null; // TODO
         break;
       }
-    } else {
-      switch ( eff ) {
-        case "fade" :
-          method = (trans ? "fadeIn" : "fadeOut");
-          break;
 
-        case "scroll":
-          method = "animate";
-          break;
-
-        case "grow" :
-          method = "animate";
-          break;
-
-        case "shrink" :
-          method = "animate";
-          break;
-
-        default :
-          method = (trans ? "show" : "hide");
-          break;
+      if ( src ) {
+        var aud           = new Audio();
+        aud.onloadeddata  = onload;
+        aud.onerror       = onerror;
+        aud.preload       = "auto";
+        aud.src           = sprintf(SOUND_URI, src, filetype);
+        aud.play();
       }
     }
-
-    var res;
-    if ( method == "animate" ) {
-      res = $(el).animate(args, vargs);
-    } else {
-      res = $(el)[method](vargs);
-    }
-
-    return res;
-  } // @endfunction
-   */
+  }
 
   /////////////////////////////////////////////////////////////////////////////
   // PUBLIC API
@@ -1087,6 +1005,10 @@
 
       'languages' : function() {
         return GetLanguages();
+      },
+
+      'sound' : function(type) {
+        return PlaySound(type);
       },
 
       'run' : function(path, mime, use_default) {
@@ -2966,9 +2888,31 @@
         console.log("Preloading", preload);
         console.groupEnd();
 
-        PreloadDefaultImages(ICON_URI_16, preload.images, function(loaded, failed, total) {
+        PreloadResourceList(preload.images, function(src, onload, onerror) {
+          var img     = new Image();
+          img.onload  = onload;
+          img.onerror = onerror;
+          img.src     = sprintf(ICON_URI_16, src);
+        }, function(result, total, loaded, failed) {
           console.log("ResourceManager::init() Preloaded", loaded, "of", total, "image(s) (" + failed + " failures)");
         });
+
+        if ( ENABLE_SOUNDS && OSjs.Compability.SUPPORT_AUDIO ) {
+          var filetype = "oga";
+          if ( !OSjs.Compability.SUPPORT_AUDIO_OGG || OSjs.Compability.SUPPORT_AUDIO_MP3 ) {
+            filetype = "mp3";
+          }
+
+          PreloadResourceList(preload.sounds, function(src, onload, onerror) {
+            var aud           = new Audio();
+            aud.onloadeddata  = onload;
+            aud.onerror       = onerror;
+            aud.preload       = "auto";
+            aud.src           = sprintf(SOUND_URI, src, filetype);
+          }, function(result, total, loaded, failed) {
+            console.log("ResourceManager::init() Preloaded", loaded, "of", total, "sound(s) (" + failed + " failures)");
+          });
+        }
       }
     },
 

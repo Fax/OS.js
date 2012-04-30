@@ -46,6 +46,9 @@ abstract class ResourceManager
    * @var Preloads
    */
   public static $Preload = Array(
+    "sounds" => Array(
+      "bell", "complete", "message", "service-login", "service-logout", "dialog-information", "dialog-warning"
+    ),
     "images" => Array(
       "categories/applications-development.png", "categories/applications-games.png", "categories/applications-graphics.png", "categories/applications-office.png", "categories/applications-internet.png", "categories/applications-multimedia.png", "categories/applications-system.png", "categories/applications-utilities.png", "categories/gnome-other.png",
       "actions/window_fullscreen.png", "actions/zoom-original.png", "actions/window_nofullscreen.png", "actions/window-close.png",
