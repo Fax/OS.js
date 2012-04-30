@@ -68,7 +68,6 @@
   var DEFAULT_PASSWORD       = "demo";              //!< Default User Password
   var AUTOMATIC_LOGIN        = false;               //!< Wherever to turn on automatic login
   var SESSION_CONFIRM        = true;                //!< Wherever to turn on confirmation of session collision
-  var ENABLE_SOUNDS          = false;               //!< Wherever to turn on sounds by default
   var ENV_CACHE              = undefined;           //!< Server-side cache enabled state
   var ENV_PRODUCTION         = undefined;           //!< Server-side production env. state
   var ENV_DEMO               = undefined;           //!< Server-side demo env. state
@@ -131,6 +130,7 @@
   var _SessionId       = "";                              //!< Server session id
   var _SessionValid    = true;                            //!< Session is valid
   var _HasCrashed      = false;                           //!< If system has crashed
+  var _SoundEnabled    = false;                           //!< Wherever to turn on sounds by default
   var _PackageCache    = {                                //!< Cached packages
     'Application'         : {},
     'PanelItem'           : {},
@@ -233,6 +233,13 @@
   function MessageBox(msg, type, misc, callback) {
     callback = callback || function() {};
     type = type || "error";
+
+    if ( type == "error" ) {
+      PlaySound("dialog-warning");
+    } else {
+      PlaySound("dialog-information");
+    }
+
     if ( _WM ) {
       API.system.dialog(type, msg, callback, misc);
     } else {
@@ -330,10 +337,13 @@
       } catch ( eee ) {
         console.error(">>>>>>>>>>", "ooopsie", app_name, application);
       }
+
+      PlaySound("dialog-warning");
     } catch ( ee ) {
       var label = OSjs.Labels.CrashProcess;
       MessageBox(sprintf(label, app_name, ex));
     }
+
   } // @endfunction
 
   /**
@@ -345,6 +355,7 @@
     extra = extra || [];
     try {
       _WM.addWindow(new OSjs.Dialogs.CrashDialog(Window, Application, API, [title, message, description, extra]));
+      PlaySound("dialog-warning");
     } catch ( eee ) {
       var label = OSjs.Labels.CrashProcess;
       MessageBox(sprintf(label, name, extra));
@@ -836,14 +847,12 @@
     for ( i; i < total; i++ ) {
       creator(list[i], function() {
         loaded++;
-
         var totals = (loaded + errors);
         if ( totals >= total ) {
           callback(true, totals, loaded, errors);
         }
       }, function() {
         errors++;
-
         var totals = (loaded + errors);
         if ( totals >= total ) {
           callback(false, totals, loaded, errors);
@@ -857,7 +866,7 @@
    * @return void
    */
   function PlaySound(type) {
-    if ( ENABLE_SOUNDS && OSjs.Compability.SUPPORT_AUDIO ) {
+    if ( _SoundEnabled && OSjs.Compability.SUPPORT_AUDIO ) {
       var src = null;
       var filetype = "oga";
       if ( !OSjs.Compability.SUPPORT_AUDIO_OGG || OSjs.Compability.SUPPORT_AUDIO_MP3 ) {
@@ -866,14 +875,12 @@
 
       switch ( type ) {
         default :
-          src = null; // TODO
+          src = type;
         break;
       }
 
       if ( src ) {
         var aud           = new Audio();
-        aud.onloadeddata  = onload;
-        aud.onerror       = onerror;
         aud.preload       = "auto";
         aud.src           = sprintf(SOUND_URI, src, filetype);
         aud.play();
@@ -2357,6 +2364,8 @@
           if ( data.success ) {
             console.log("Core::shutdown()", "Shutting down...");
 
+            PlaySound("service-logout");
+
             OSjs.__Stop();
           } else {
             MessageBox(data.error);
@@ -2523,6 +2532,10 @@
         }, 500);
       }
 
+      if ( _Settings._get("system.sounds.enable") === "true" ) {
+        _SoundEnabled = true;
+      }
+
       // Bind global events
       $(document).bind("keydown",     this.global_keydown);
       $(document).bind("mousedown",   this.global_mousedown);
@@ -2564,6 +2577,8 @@
             bar.progressbar({value : 100});
 
             self.running = true;
+
+            PlaySound("service-login");
           }, 125);
 
         }, 250); // <<< Finished
@@ -2897,7 +2912,7 @@
           console.log("ResourceManager::init() Preloaded", loaded, "of", total, "image(s) (" + failed + " failures)");
         });
 
-        if ( ENABLE_SOUNDS && OSjs.Compability.SUPPORT_AUDIO ) {
+        if ( _SoundEnabled && OSjs.Compability.SUPPORT_AUDIO ) {
           var filetype = "oga";
           if ( !OSjs.Compability.SUPPORT_AUDIO_OGG || OSjs.Compability.SUPPORT_AUDIO_MP3 ) {
             filetype = "mp3";
@@ -2905,10 +2920,17 @@
 
           PreloadResourceList(preload.sounds, function(src, onload, onerror) {
             var aud           = new Audio();
-            aud.onloadeddata  = onload;
+            aud.addEventListener('canplaythrough', function(ev) {
+              onload();
+
+              aud.removeEventListener('canplaythrough', function(ev) {
+                onload();
+              }, false );
+            }, false );
             aud.onerror       = onerror;
             aud.preload       = "auto";
             aud.src           = sprintf(SOUND_URI, src, filetype);
+            aud.load();
           }, function(result, total, loaded, failed) {
             console.log("ResourceManager::init() Preloaded", loaded, "of", total, "sound(s) (" + failed + " failures)");
           });
@@ -5512,7 +5534,10 @@
         });
       }
 
+      PlaySound("message");
+
       root.append(del);
+
       del.fadeIn(ANIMATION_SPEED);
 
       // Removal functions

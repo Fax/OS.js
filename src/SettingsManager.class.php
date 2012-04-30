@@ -179,6 +179,12 @@ abstract class SettingsManager
       "value" => "default"
     ),
 
+    // Sounds
+    "system.sounds.enable" => Array(
+      "type" => "bool",
+      "value" => "true"
+    ),
+
     //
     // USER
     //

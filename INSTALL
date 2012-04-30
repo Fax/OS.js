@@ -41,6 +41,9 @@ This has only been tested on these Linux distributions:
 * Yahoo YUI Compressor (Included)  
   ```http://developer.yahoo.com/yui/compressor/```
 
+* Freedesktop Sound Theme
+  ```http://cgit.freedesktop.org/sound-theme-freedesktop/tree/```
+
 # Automated Installation:
 -------------------------------------------------------------------------------
 The installer is not yet complete. See the next section.
@@ -87,6 +90,9 @@ The installer is not yet complete. See the next section.
   - Drop into `vendor/`  
   - Symlink JS to `public_html/vendor/json.js` (Should exist)  
 * Copy **Gnome's icon theme** 16x16 and 32x32 folders into `public_html/img/icons/`
+* Download **Freedesktop Sound Theme**
+  - Drop into `vendor/`  
+  - Symlink `stere` directory to `public_html/sounds` (Should exist)  
 
 
 ## Extras
