@@ -41,7 +41,7 @@ This has only been tested on these Linux distributions:
 * Yahoo YUI Compressor (Included)  
   ```http://developer.yahoo.com/yui/compressor/```
 
-* Freedesktop Sound Theme
+* Freedesktop Sound Theme  
   ```http://cgit.freedesktop.org/sound-theme-freedesktop/tree/```
 
 # Automated Installation:
