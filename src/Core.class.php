@@ -187,7 +187,9 @@ class Core
         $logged_in  = 0;
         if ( (($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
           $user->heartbeat_at = new DateTime();
-          User::save($user);
+          if ( !ENV_DEMO ) {
+            User::save($user);
+          }
 
           $logged_in = 1;
         }
@@ -272,6 +274,7 @@ class Core
     $json['success'] = true;
     $json['result']  = Array(
       "production"  => ENV_PRODUCTION,
+      "demo"        => ENV_DEMO,
       "cache"       => ENABLE_CACHE,
       "preload"     => Array(
         "images" => ResourceManager::$Preload["images"]
@@ -342,7 +345,7 @@ class Core
         $user->last_registry = $registry;
       }
 
-      if ( User::save($user) ) {
+      if ( (ENV_DEMO) || User::save($user) ) {
         $json['success'] = true;
         $json['result']  = true;
       } else {
@@ -370,7 +373,7 @@ class Core
       $user->last_logout = new DateTime();
       $user->logged_in   = 0;
 
-      if ( User::save($user) ) {
+      if ( (ENV_DEMO) || User::save($user) ) {
         $json['success'] = true;
       } else {
         $json['result']  = false;
@@ -442,7 +445,7 @@ class Core
           $user->last_session  = $snapshot->session_data->session;
           $user->logged_in     = 0;
 
-          if ( User::save($user) ) {
+          if ( (ENV_DEMO) || User::save($user) ) {
             $json['success'] = true;
             $json['result']  = true;
           } else {
@@ -533,7 +536,9 @@ class Core
       if ( $user->password == $upass ) {
         $user->last_login       = new DateTime();
         $user->last_session_id  = session_id();
-        User::save($user);
+        if ( !ENV_DEMO ) {
+          User::save($user);
+        }
 
         $init_language      = "default"; // FIXME: From User
         $browser_language   = self::_getBrowserLanguage();
@@ -594,7 +599,7 @@ class Core
       $user->last_logout = new DateTime();
       $user->logged_in   = 0;
 
-      if ( User::save($user) ) {
+      if ( (ENV_DEMO) || User::save($user) ) {
         $json['success']  = true;
       } else {
         $json['error'] = _("Failed to save user!");

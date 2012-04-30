@@ -67,9 +67,10 @@
   var DEFAULT_USERNAME       = "demo";              //!< Default User Username
   var DEFAULT_PASSWORD       = "demo";              //!< Default User Password
   var AUTOMATIC_LOGIN        = false;               //!< Wherever to turn on automatic login
-  var SESSION_CONFIRM        = false;               //!< Wherever to turn on confirmation of session collision
+  var SESSION_CONFIRM        = true;                //!< Wherever to turn on confirmation of session collision
   var ENV_CACHE              = undefined;           //!< Server-side cache enabled state
   var ENV_PRODUCTION         = undefined;           //!< Server-side production env. state
+  var ENV_DEMO               = undefined;           //!< Server-side demo env. state
   // @endconstants
 
   /**
@@ -1308,7 +1309,7 @@
 
       'notification' : function(title, message, icon, duration) {
         if ( _Desktop ) {
-          if ( !icon.match(/^\//) ) {
+          if ( icon && !icon.match(/^\//) ) {
             icon = sprintf(ICON_URI_32, icon);
           }
 
@@ -2278,6 +2279,12 @@
       DoPost({'action' : 'boot'}, function(response) {
         ENV_CACHE       = response.result.cache;
         ENV_PRODUCTION  = response.result.production;
+        ENV_DEMO        = response.result.demo;
+
+        if ( ENV_DEMO ) {
+          AUTOMATIC_LOGIN = false;
+          SESSION_CONFIRM = false;
+        }
 
         // Initialize resources
         _Resources = new ResourceManager(response.result.preload);

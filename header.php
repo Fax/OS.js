@@ -128,6 +128,8 @@ require "config.php";
 
 if ( !defined("ENV_PRODUCTION") )
   define("ENV_PRODUCTION",      false);
+if ( !defined("ENV_DEMO") )
+  define("ENV_DEMO",            false);
 if ( !defined("DEFAULT_TIMEZONE") )
   define("DEFAULT_TIMEZONE",    "UTC");
 if ( !defined("DEFAULT_LANGUAGE") )
