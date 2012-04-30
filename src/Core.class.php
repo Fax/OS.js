@@ -327,7 +327,7 @@ class Core
    * @return void
    */
   protected static final function _doSettings(Array $args, Array &$json, Core $inst = null) {
-    if ( $inst instanceof Core ) {
+    if ( ($inst instanceof Core) ) {
       $user = $inst->getUser();
 
       if ( (isset($args['registry'])) && ($registry = JSON::decode($args['registry'], true)) ) {
@@ -366,7 +366,7 @@ class Core
     $json['result']   = true;
     $json['success']  = true;
 
-    if ( $user = $inst->getUser() ) {
+    if ( ($user = $inst->getUser()) ) {
       if ( $save ) {
         $user->last_session = JSON::decode($session);
       }
@@ -391,7 +391,7 @@ class Core
    * @return void
    */
   protected static final function _doSnapshotSave(Array $args, Array &$json, Core $inst = null) {
-    if ( ($inst instanceof Core) && ($user = $inst->getUser()) ) {
+    if ( !ENV_DEMO && (($inst instanceof Core) && ($user = $inst->getUser())) ) {
       $name     = "";
       $session  = Array();
 
@@ -432,7 +432,7 @@ class Core
    * @return void
    */
   protected static final function _doSnapshotLoad(Array $args, Array &$json, Core $inst = null) {
-    if ( ($inst instanceof Core) && ($user = $inst->getUser()) ) {
+    if ( !ENV_DEMO && (($inst instanceof Core) && ($user = $inst->getUser())) ) {
       $name     = "";
       if ( isset($args['session']) ) {
         $name     = $args['session']['name'];
@@ -468,7 +468,7 @@ class Core
    * @return void
    */
   protected static final function _doSnapshotDelete(Array $args, Array &$json, Core $inst = null) {
-    if ( ($inst instanceof Core) && ($user = $inst->getUser()) ) {
+    if ( !ENV_DEMO && (($inst instanceof Core) && ($user = $inst->getUser())) ) {
       $name     = "";
       if ( isset($args['session']) ) {
         $name     = $args['session']['name'];
@@ -495,7 +495,7 @@ class Core
    * @return void
    */
   protected static final function _doSnapshotList(Array $args, Array &$json, Core $inst = null) {
-    if ( ($inst instanceof Core) && ($user = $inst->getUser()) ) {
+    if ( !ENV_DEMO && (($inst instanceof Core) && ($user = $inst->getUser())) ) {
       if ( ($list = Session::snapshotList($user)) ) {
         $snapshots = Array();
         foreach ( $list as $l ) {
@@ -595,7 +595,7 @@ class Core
    * @return void
    */
   protected static final function _doUserLogout(Array $args, Array &$json, Core $inst = null) {
-    if ( $user = $inst->getUser() ) {
+    if ( ($user = $inst->getUser()) ) {
       $user->last_logout = new DateTime();
       $user->logged_in   = 0;
 
@@ -616,7 +616,7 @@ class Core
    * @return void
    */
   protected static final function _doUserOperation(Array $args, Array &$json, Core $inst = null) {
-    if ( $user = $inst->getUser() ) {
+    if ( !ENV_DEMO && ($user = $inst->getUser()) ) {
       $error  = null;
       $result = null;
       $arg    = isset($args['type']) ? $args['type'] : null;
