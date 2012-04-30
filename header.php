@@ -203,14 +203,14 @@ class ExceptionPackage
   extends Exception
 {
   const PACKAGE_NOT_EXISTS    = 0;
-  const PACKAGE_EXISTS        = 0;
-  const MISSING_METADATA      = 1;
-  const INVALID_METADATA      = 2;
-  const MISSING_FILE          = 3;
-  const FAILED_CREATE         = 4;
-  const FAILED_OPEN           = 5;
-  const INVALID_DESTINATION   = 6;
-  const FAILED_CREATE_DEST    = 7;
+  const PACKAGE_EXISTS        = 1;
+  const MISSING_METADATA      = 2;
+  const INVALID_METADATA      = 3;
+  const MISSING_FILE          = 4;
+  const FAILED_CREATE         = 5;
+  const FAILED_OPEN           = 6;
+  const INVALID_DESTINATION   = 7;
+  const FAILED_CREATE_DEST    = 8;
 
   const INVALID               = 255;
 
