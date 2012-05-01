@@ -130,7 +130,6 @@
   var _SessionId       = "";                              //!< Server session id
   var _SessionValid    = true;                            //!< Session is valid
   var _HasCrashed      = false;                           //!< If system has crashed
-  var _SoundEnabled    = false;                           //!< Wherever to turn on sounds by default
   var _PackageCache    = {                                //!< Cached packages
     'Application'         : {},
     'PanelItem'           : {},
@@ -866,10 +865,13 @@
    * @return void
    */
   function PlaySound(type) {
-    if ( _SoundEnabled && OSjs.Compability.SUPPORT_AUDIO ) {
+    var se = (_Settings._get("system.sounds.enable") === "true");
+    var sv = parseInt(_Settings._get("system.sounds.volume"), 10);
+
+    if ( se && OSjs.Compability.SUPPORT_AUDIO ) {
       var src = null;
       var filetype = "oga";
-      if ( !OSjs.Compability.SUPPORT_AUDIO_OGG || OSjs.Compability.SUPPORT_AUDIO_MP3 ) {
+      if ( !OSjs.Compability.SUPPORT_AUDIO_OGG && OSjs.Compability.SUPPORT_AUDIO_MP3 ) {
         filetype = "mp3";
       }
 
@@ -883,6 +885,8 @@
         var aud           = new Audio();
         aud.preload       = "auto";
         aud.src           = sprintf(SOUND_URI, src, filetype);
+        aud.volume        = (sv / 100);
+        //aud.currentTime   = 0;
         aud.play();
       }
     }
@@ -2532,10 +2536,6 @@
         }, 500);
       }
 
-      if ( _Settings._get("system.sounds.enable") === "true" ) {
-        _SoundEnabled = true;
-      }
-
       // Bind global events
       $(document).bind("keydown",     this.global_keydown);
       $(document).bind("mousedown",   this.global_mousedown);
@@ -2912,7 +2912,7 @@
           console.log("ResourceManager::init() Preloaded", loaded, "of", total, "image(s) (" + failed + " failures)");
         });
 
-        if ( _SoundEnabled && OSjs.Compability.SUPPORT_AUDIO ) {
+        if ( OSjs.Compability.SUPPORT_AUDIO ) {
           var filetype = "oga";
           if ( !OSjs.Compability.SUPPORT_AUDIO_OGG || OSjs.Compability.SUPPORT_AUDIO_MP3 ) {
             filetype = "mp3";
@@ -3600,17 +3600,17 @@
       var pargs     = {"action" : "settings", "registry" : uregistry};
 
       DoPost(pargs, function(data) {
-          if ( data.error ) {
-            if ( internal ) {
-              API.system.notification("System Settings", "Failed to save settings", sprintf(ICON_URI_32, "emblems/emblem-important.png")); // FIXME: Locale
-            }
-            callback(false);
-          } else {
-            if ( internal ) {
-              API.system.notification("System Settings", "Your settings was saved", sprintf(ICON_URI_32, "emblems/emblem-default.png")); // FIXME: Locale
-            }
-            callback(true);
+        if ( data.error ) {
+          if ( internal ) {
+            API.system.notification("System Settings", "Failed to save settings", sprintf(ICON_URI_32, "emblems/emblem-important.png")); // FIXME: Locale
           }
+          callback(false);
+        } else {
+          if ( internal ) {
+            API.system.notification("System Settings", "Your settings was saved", sprintf(ICON_URI_32, "emblems/emblem-default.png")); // FIXME: Locale
+          }
+          callback(true);
+        }
       }, function() {
         if ( internal ) {
           API.system.notification("System Settings", "Failed to save settings (server error)", sprintf(ICON_URI_32, "emblems/emblem-important.png")); // FIXME: Locale

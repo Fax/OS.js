@@ -20,7 +20,7 @@ This has only been tested on these Linux distributions:
   Debian users: ```apt-get install pdf2svg```  
   Gentoo users: ```emerge pdf2svg```  
   Download: ```http://www.cityinthesky.co.uk/opensource/pdf2svg```  
-* _ffmpeg_ (Optional, for converting samples from OGG to MPEG  
+* _ffmpeg_ (Optional, for converting samples from OGG to MPEG)  
 Download: ```http://ffmpeg.org/download.html```
 
 # Frontend Dependencies:

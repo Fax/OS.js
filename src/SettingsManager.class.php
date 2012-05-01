@@ -184,6 +184,15 @@ abstract class SettingsManager
       "type" => "bool",
       "value" => "true"
     ),
+    "system.sounds.volume" => Array(
+      "type" => "integer",
+      "value" => "100",
+    ),
+    "system.sounds.theme" => Array(
+      "type"    => "array",
+      "options" => Array("Default"/*, "User-Defined"*/),
+      "value"   => "Default"
+    ),
 
     //
     // USER
