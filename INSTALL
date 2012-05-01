@@ -20,6 +20,8 @@ This has only been tested on these Linux distributions:
   Debian users: ```apt-get install pdf2svg```  
   Gentoo users: ```emerge pdf2svg```  
   Download: ```http://www.cityinthesky.co.uk/opensource/pdf2svg```  
+* _ffmpeg_ (Optional, for converting samples from OGG to MPEG  
+Download: ```http://ffmpeg.org/download.html```
 
 # Frontend Dependencies:
 -------------------------------------------------------------------------------
@@ -93,6 +95,7 @@ The installer is not yet complete. See the next section.
 * Download **Freedesktop Sound Theme**
   - Drop into `vendor/`  
   - Symlink `stere` directory to `public_html/sounds` (Should exist)  
+  - Run `./bin/convert-sounds` to create MP3 samples (Optional)
 
 
 ## Extras
