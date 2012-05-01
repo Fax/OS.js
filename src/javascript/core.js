@@ -2914,7 +2914,7 @@
 
         if ( OSjs.Compability.SUPPORT_AUDIO ) {
           var filetype = "oga";
-          if ( !OSjs.Compability.SUPPORT_AUDIO_OGG || OSjs.Compability.SUPPORT_AUDIO_MP3 ) {
+          if ( !OSjs.Compability.SUPPORT_AUDIO_OGG && OSjs.Compability.SUPPORT_AUDIO_MP3 ) {
             filetype = "mp3";
           }
 
