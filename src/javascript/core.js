@@ -867,6 +867,11 @@
   function PlaySound(type) {
     var se = (_Settings._get("system.sounds.enable") === "true");
     var sv = parseInt(_Settings._get("system.sounds.volume"), 10);
+    if ( sv < 0 ) {
+      sv = 0;
+    } else if ( sv > 100 ) {
+      sv = 100;
+    }
 
     if ( se && OSjs.Compability.SUPPORT_AUDIO ) {
       var src = null;
@@ -2903,6 +2908,7 @@
         console.log("Preloading", preload);
         console.groupEnd();
 
+        // Preload images
         PreloadResourceList(preload.images, function(src, onload, onerror) {
           var img     = new Image();
           img.onload  = onload;
@@ -2912,6 +2918,7 @@
           console.log("ResourceManager::init() Preloaded", loaded, "of", total, "image(s) (" + failed + " failures)");
         });
 
+        // Preload sounds
         if ( OSjs.Compability.SUPPORT_AUDIO ) {
           var filetype = "oga";
           if ( !OSjs.Compability.SUPPORT_AUDIO_OGG && OSjs.Compability.SUPPORT_AUDIO_MP3 ) {
