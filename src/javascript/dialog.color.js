@@ -60,49 +60,96 @@ OSjs.Dialogs.ColorOperationDialog = (function($, undefined) {
         this._super("Color");
         this._title    = LABELS.title;
         this._icon     = "apps/style.png";
-        this._content  = $("<div class=\"OperationDialog OperationDialogColor\">    <div class=\"OperationDialogInner\">      <div>        <div class=\"Slider SliderR\"></div>      </div>      <div>        <div class=\"Slider SliderG\"></div>      </div>      <div>        <div class=\"Slider SliderB\"></div>      </div>    </div>    <div class=\"CurrentColor\">    </div>    <div class=\"CurrentColorDesc\">    </div>  </div>");
-        this._width    = 400;
-        this._height   = 170;
+        this._content  = $("<div class=\"OperationDialog OperationDialogColor\">          <div class=\"OperationDialogInner\">            <div class=\"Sliders\">              <div class=\"Label\">Red</div>              <div><div class=\"Slider SliderR\"></div></div>              <div class=\"Label\">Green</div>              <div><div class=\"Slider SliderG\"></div></div>              <div class=\"Label\">Blue</div>              <div><div class=\"Slider SliderB\"></div></div>            </div>            <div class=\"CurrentColor\"></div>            <div class=\"ColorPalette\"><canvas width=\"200\" height=\"200\" class=\"ColorPaletteCanvas\"></canvas></div>            <div class=\"CurrentColorDesc\"></div>          </div>        </div>");
+        this._width    = 500;
+        this._height   = 280;
       },
 
       create : function(id, mcallback) {
         var self = this;
         this._super(id, mcallback);
 
-        var desc      = $(self.$element).find(".CurrentColorDesc");
-        var cube      = $(self.$element).find(".CurrentColor");
-        var running   = false;
-
-        var _update   = function() {
-          if ( running ) {
-            self.colorObj.red   = parseInt($(self.$element).find(".SliderR").slider("value"), 10);
-            self.colorObj.green = parseInt($(self.$element).find(".SliderG").slider("value"), 10);
-            self.colorObj.blue  = parseInt($(self.$element).find(".SliderB").slider("value"), 10);
-          }
-
-          var hex = hexFromRGB(self.colorObj.red, self.colorObj.green, self.colorObj.blue);
-          $(cube).css("background-color", "#" + hex);
-          $(desc).html(sprintf("R: %03d, G: %03d, B: %03d (#%s)", self.colorObj.red, self.colorObj.green, self.colorObj.blue, hex));
-        };
-
-        this.$element.find(".DialogButtons .Close").hide().find(".DialogButtons .Cancel").show();
-        this.$element.find(".DialogButtons .Ok").show().click(function() {
-          self.clb_finish(self.colorObj, "#" + hexFromRGB(self.colorObj.red, self.colorObj.green, self.colorObj.blue));
-        });
-
+        // Sliders
         $(this.$element).find(".Slider").slider({
           'min'    : 0,
           'max'    : 255,
           'step'   : 1,
-          'slide'  : _update,
-          'change' : _update
+          'slide'  : function() {
+            self.colorObj.red   = parseInt($(self.$element).find(".SliderR").slider("value"), 10);
+            self.colorObj.green = parseInt($(self.$element).find(".SliderG").slider("value"), 10);
+            self.colorObj.blue  = parseInt($(self.$element).find(".SliderB").slider("value"), 10);
+            self.update_color();
+          }
         });
 
+        // Init items
+        this.draw_palette();
+        this.update_color();
+        this.update_sliders();
+
+        // Dialog buttons
+        this.$element.find(".DialogButtons .Close").hide();
+        this.$element.find(".DialogButtons .Cancel").show();
+        this.$element.find(".DialogButtons .Ok").show().click(function() {
+          self.clb_finish(self.colorObj, "#" + hexFromRGB(self.colorObj.red, self.colorObj.green, self.colorObj.blue));
+        });
+      },
+
+      update_sliders : function() {
         this.$element.find(".SliderR").slider("value", this.colorObj.red);
         this.$element.find(".SliderG").slider("value", this.colorObj.green);
         this.$element.find(".SliderB").slider("value", this.colorObj.blue);
+      },
 
-        running = true;
+      update_color : function() {
+        var hex = hexFromRGB(this.colorObj.red, this.colorObj.green, this.colorObj.blue);
+        var rgb = sprintf("R: %03d, G: %03d, B: %03d (#%s)", this.colorObj.red, this.colorObj.green, this.colorObj.blue, hex);
+
+        $(this.$element).find(".CurrentColor").css("background-color", "#" + hex);
+        $(this.$element).find(".CurrentColorDesc").html(rgb);
+      },
+
+      draw_palette : function() {
+        var cv        = this.$element.find(".ColorPaletteCanvas");
+        var ctx       = cv.get(0).getContext('2d');
+        var gradient  = ctx.createLinearGradient(0, 0, ctx.canvas.width, 0);
+
+        // Create color gradient
+        gradient.addColorStop(0,    "rgb(255,   0,   0)");
+        gradient.addColorStop(0.15, "rgb(255,   0, 255)");
+        gradient.addColorStop(0.33, "rgb(0,     0, 255)");
+        gradient.addColorStop(0.49, "rgb(0,   255, 255)");
+        gradient.addColorStop(0.67, "rgb(0,   255,   0)");
+        gradient.addColorStop(0.84, "rgb(255, 255,   0)");
+        gradient.addColorStop(1,    "rgb(255,   0,   0)");
+
+        // Apply gradient to canvas
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+        // Create semi transparent gradient (white -> trans. -> black)
+        gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+        gradient.addColorStop(0,   "rgba(255, 255, 255, 1)");
+        gradient.addColorStop(0.5, "rgba(255, 255, 255, 0)");
+        gradient.addColorStop(0.5, "rgba(0,     0,   0, 0)");
+        gradient.addColorStop(1,   "rgba(0,     0,   0, 1)");
+
+        // Apply gradient to canvas
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+        var self = this;
+        cv.click(function(e) {
+          var data = ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
+          self.colorObj = {
+            'red'   : data[0],
+            'green' : data[1],
+            'blue'  : data[2]
+          };
+          console.log(data, self.colorObj);
+          self.update_sliders();
+          self.update_color();
+        });
       }
     });
 

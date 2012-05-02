@@ -572,19 +572,35 @@ input.Disabled {
 }
   */
 
-.OperationDialogColor .Slider {
-  margin : 10px;
-  margin-right : 120px;
+.OperationDialogColor .ColorPalette {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+}
+.OperationDialogColor .Sliders {
+  position : absolute;
+  top : 0px;
+  left : 210px;
+  right : 5px;
+}
+.OperationDialogColor .CurrentColorDesc {
+  position : absolute;
+  top : 150px;
+  left : 205px;
+  right : 5px;
+  padding : 4px;
 }
 .OperationDialogColor .CurrentColor {
   position : absolute;
-  top : 0px;
-  right : 0px;
-  width : 100px;
-  height : 100px;
+  top : 177px;
+  left : 205px;
+  right : 5px;
+  height : 20px;
 }
-.OperationDialogColor .CurrentColorDesc {
-  margin-left : 10px;
+
+.OperationDialogColor .Slider {
+  margin : 5px;
+  margin-bottom : 15px;
 }
 
 .OperationDialogPanelItemAdd {
