@@ -60,7 +60,7 @@ ini_set("display_errors", "on");
 
 define("PROJECT_AUTHOR",    "Anders Evenrud");
 define("PROJECT_CONTACT",   "andersevenrud@gmail.com");
-define("PROJECT_VERSION",   "0.7.002");
+define("PROJECT_VERSION",   "0.7.010");
 define("PROJECT_CODENAME",  "Catwalk");
 define("PROJECT_HOST",      (php_uname('n')));
 define("PROJECT_BUILD",     "3a1b1c2");
