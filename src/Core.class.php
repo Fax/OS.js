@@ -538,7 +538,7 @@ class Core
           User::save($user);
         }
 
-        $init_language      = "default"; // FIXME: From User
+        $init_language      = "default"; // NOTE: Should be set to user ? used as 'SystemLanguage'
         $browser_language   = self::_getBrowserLanguage();
         $resources          = Array();
         $packages           = Package::GetInstalledPackages($user);

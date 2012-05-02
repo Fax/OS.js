@@ -2214,7 +2214,24 @@
 
       $("#Loading").show();
 
-      DoPost({'action' : 'boot'}, function(response) {
+      var nav = {
+        appName     : window.navigator.appName,
+        appVersion  : window.navigator.appVersion,
+        platform    : window.navigator.platform,
+        os          : window.navigator.oscpu || "unknown",
+        userAgent   : window.navigator.userAgent,
+        cookes      : window.navigator.cookieEnabled,
+        language    : window.navigator.language,
+        browser     : {
+          buildId    : window.navigator.buildId     || null,
+          product    : window.navigator.product     || null,
+          productSub : window.navigator.productSub  || null,
+          vendor     : window.navigator.vendor      || null,
+          vendorSub  : window.navigator.vendorSub   || null
+        }
+      };
+
+      DoPost({'action' : 'boot', 'navigator' : nav}, function(response) {
         ENV_CACHE       = response.result.cache;
         ENV_PRODUCTION  = response.result.production;
         ENV_DEMO        = response.result.demo;
@@ -2331,6 +2348,11 @@
       }
     },
 
+    /**
+     * Core::login() -- Main login procedure
+     * @param  Object   response      _login response
+     * @return void
+     */
     login : function(response) {
       var self = this;
       if ( this.running ) {
