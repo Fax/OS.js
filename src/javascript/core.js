@@ -66,8 +66,8 @@
   var TIMEOUT_CSS            = (1000 * 10);         //!< CSS loading timeout
   var DEFAULT_USERNAME       = "demo";              //!< Default User Username
   var DEFAULT_PASSWORD       = "demo";              //!< Default User Password
-  var AUTOMATIC_LOGIN        = true;               //!< Wherever to turn on automatic login
-  var SESSION_CONFIRM        = false;                //!< Wherever to turn on confirmation of session collision
+  var AUTOMATIC_LOGIN        = false;               //!< Wherever to turn on automatic login
+  var SESSION_CONFIRM        = true;                //!< Wherever to turn on confirmation of session collision
   var ENV_CACHE              = undefined;           //!< Server-side cache enabled state
   var ENV_PRODUCTION         = undefined;           //!< Server-side production env. state
   var ENV_DEMO               = undefined;           //!< Server-side demo env. state
@@ -2604,8 +2604,6 @@
             bar.progressbar({value : 100});
 
             self.running = true;
-
-            API.system.dialog_color("#000000", function() {});
 
             PlaySound("service-login");
           }, 125);
