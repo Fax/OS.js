@@ -316,16 +316,16 @@ EOCSS;
     $mime     = "text/plain";
     $content  = null;
 
+    if ( preg_match("/\.js$/", $file) ) {
+      $type = "javascript";
+    } else if ( preg_match("/\.css$/", $file) ) {
+      $type = "stylesheet";
+    } else {
+      $compress = false;
+    }
+
     if ( $udef ) {
       $compress = false;
-    } else {
-      if ( preg_match("/\.js$/", $file) ) {
-        $type = "javascript";
-      } else if ( preg_match("/\.css$/", $file) ) {
-        $type = "stylesheet";
-      } else {
-        $compress = false;
-      }
     }
 
     $rpath = null;
