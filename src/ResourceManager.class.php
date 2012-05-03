@@ -301,11 +301,12 @@ EOCSS;
    * Get a resource file (CSS or JS) [with compression]
    * @param  String   $file         Filename
    * @param  String   $package      Package name (If any)
+   * @param  bool     $udef         User VFS package ?
    * @param  bool     $compress     Enable Compression
    * @param  bool     $raw          Get in RAW state
    * @return Mixed
    */
-  public static function getResource($file, $package, $compress, $raw = false) {
+  public static function getResource($file, $package, $udef, $compress, $raw = false) {
     $content = "";
 
     $file     = preg_replace("/\.+/", ".", preg_replace("/[^a-zA-Z0-9\.\-\_]/", "", $file));
@@ -315,18 +316,29 @@ EOCSS;
     $mime     = "text/plain";
     $content  = null;
 
-    if ( preg_match("/\.js$/", $file) ) {
-      $type = "javascript";
-    } else if ( preg_match("/\.css$/", $file) ) {
-      $type = "stylesheet";
-    } else {
+    if ( $udef ) {
       $compress = false;
+    } else {
+      if ( preg_match("/\.js$/", $file) ) {
+        $type = "javascript";
+      } else if ( preg_match("/\.css$/", $file) ) {
+        $type = "stylesheet";
+      } else {
+        $compress = false;
+      }
     }
 
     $rpath = null;
     if ( $package ) {
-      $rpath  = $compress ? RESOURCE_PACKAGE_MIN : RESOURCE_PACKAGE;
-      $path   = sprintf($rpath, $package, $file);
+      if ( $udef ) {
+        if ( $user = Core::get()->getUser() ) {
+          $rpath  = sprintf(URI_VFS_USER_PACKAGES, $user->id) . "/%s/%s";
+          $path   = sprintf($rpath, $package, $file);
+        }
+      } else {
+        $rpath  = $compress ? RESOURCE_PACKAGE_MIN : RESOURCE_PACKAGE;
+        $path   = sprintf($rpath, $package, $file);
+      }
     } else {
       $rpath  = $compress ? RESOURCE_CORE_MIN : RESOURCE_CORE;
       $path   = sprintf($rpath, $file);

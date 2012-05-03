@@ -591,11 +591,9 @@ abstract class Package
    * @return String
    */
   protected static function _GetPackagePath(User $user = null, $system = true) {
-    /*
     if ( ($user instanceof User) && ($system === false) ) {
-      return PATH_HTTP . "/media/User/Packages";
+      return sprintf(URI_VFS_USER_PACKAGES, $user->id);
     }
-     */
     return PATH_PACKAGES;
   }
 
@@ -606,11 +604,9 @@ abstract class Package
    * @return String
    */
   protected static function _GetPackageBuild(User $user = null, $system = true) {
-    /*
     if ( ($user instanceof User) && ($system === false) ) {
-      return PATH_HTTP . "/media/User/packages.xml";
+      return sprintf(URI_VFS_USER_METADATA, $user->id);
     }
-     */
     return PACKAGE_BUILD;
   }
 
