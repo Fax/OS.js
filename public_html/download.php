@@ -44,6 +44,7 @@ $error_400 = false;
 $error_401 = false;
 $error_404 = false;
 
+
 if ( (isset($_GET["file"]) && ($path = $_GET['file'])) ) {
   if ( (($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
     $download = isset($_GET['download']) && ($_GET['download'] === "true");
@@ -75,8 +76,6 @@ if ( (isset($_GET["file"]) && ($path = $_GET['file'])) ) {
           header("Cache-Control: must-revalidate, post-check=0, pre-check=0, no-cache");
           header("Last-Modified: {$fmod} GMT");
           header("Expires: 0");
-
-          ob_clean();
         }
 
         print file_get_contents($absolute);
