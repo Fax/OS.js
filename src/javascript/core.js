@@ -3576,7 +3576,8 @@
    * @class
    */
   var PackageManager = Process.extend({
-    cache : {},  //!< Cached packages
+    cache : {},         //!< Cached packages
+    running : false,    //!< Running state
 
     /**
      * PackageManager::init() -- Constructor
@@ -3603,6 +3604,7 @@
      * @return void
      */
     reset : function() {
+      this.running = false;
       this.cache = {
         'Application'         : {},
         'PanelItem'           : {},
@@ -3616,7 +3618,9 @@
      * @return void
      */
     run : function(packages) {
-      this.setPackages(packages);
+      if ( !this.running )
+        this.setPackages(packages);
+      this.running = true;
     },
 
     /**
@@ -3818,7 +3822,7 @@
         }
 
         console.group("PackageManager::setPackages()");
-        console.log("Cache", this.cache);
+        console.log("Cache", self.cache);
         console.groupEnd();
       };
 
