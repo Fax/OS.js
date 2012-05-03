@@ -120,6 +120,7 @@
   var _WM              = null;                            //!< WindowManager instance [not required]
   var _Desktop         = null;                            //!< Desktop instance [not required]
   var _Window          = null;                            //!< Current Window instance [dynamic]
+  var _PackMan         = null;                            //!< Current PackageManager instance [dynamic]
   var _Tooltip         = null;                            //!< Current Tooltip instance [dynamic]
   var _Menu            = null;
   var _Processes       = [];                              //!< Process instance list
@@ -130,11 +131,6 @@
   var _SessionId       = "";                              //!< Server session id
   var _SessionValid    = true;                            //!< Session is valid
   var _HasCrashed      = false;                           //!< If system has crashed
-  var _PackageCache    = {                                //!< Cached packages
-    'Application'         : {},
-    'PanelItem'           : {},
-    'BackgroundService'   : {}
-  };
 
   /**
    * Language
@@ -396,7 +392,7 @@
     callback = callback || function() {};
     callback_error = callback_error || function() {};
 
-    var applications = _PackageCache.Application;
+    var applications = _PackMan.getPackages("Application");
     if ( InitLaunch(app_name) && applications[app_name] ) {
       API.ui.cursor("wait");
 
@@ -487,7 +483,7 @@
   function LaunchPanelItem(i, iname, iargs, ialign, panel, callback, save) {
     callback = callback || function() {};
 
-    var panelitems = _PackageCache.PanelItem;
+    var panelitems = _PackMan.getPackages("PanelItem");
     if ( InitLaunch(iname) && panelitems[iname] ) {
       var resources = panelitems[iname].resources;
       _Resources.addResources(resources, iname, function(error) {
@@ -542,7 +538,7 @@
     callback = callback || function() {};
     iargs    = iargs    || {};
 
-    var services = _PackageCache.BackgroundService;
+    var services = _PackMan.getPackages("BackgroundService");
     if ( InitLaunch(sname) && services[sname] ) {
       var resources = services[sname].resources;
       _Resources.addResources(resources, sname, function(error) {
@@ -620,8 +616,8 @@
       var i;
 
       // Figure out what apps to display
-      var activated = _Settings._get("user.installed.packages", true); // FIXME
-      var applications = _PackageCache.Application;
+      var activated     = _Settings._get("user.installed.packages", true); // FIXME
+      var applications  = _PackMan.getPackages("Application");
       for ( i in applications ) {
         if ( applications.hasOwnProperty(i) ) {
           if ( in_array(i, activated) ) {
@@ -1319,16 +1315,7 @@
           console.groupEnd();
 
           if ( (p instanceof Object) && sizeof(p) ) {
-            DoPost({'action' : 'package', 'operation' : 'enable', 'data' : p}, function(res) {
-              var results = {};
-              for ( var i in p ) {
-                if ( p.hasOwnProperty(i) ) {
-                  results[i] = _Settings.modifyPackage("enable", i, p[i]);
-                }
-              }
-
-              callback(res, results);
-            });
+            _PackMan.enable(p, callback);
           } else {
             console.group("===    ABORTED    ===");
           }
@@ -1342,16 +1329,7 @@
           console.groupEnd();
 
           if ( (p instanceof Object) && sizeof(p) ) {
-            DoPost({'action' : 'package', 'operation' : 'disable', 'data' : p}, function(res) {
-              var results = {};
-              for ( var i in p ) {
-                if ( p.hasOwnProperty(i) ) {
-                  results[i] = _Settings.modifyPackage("disable", i, p[i]);
-                }
-              }
-
-              callback(res, results);
-            });
+            _PackMan.disable(p, callback);
           } else {
             console.group("===    ABORTED    ===");
           }
@@ -1365,16 +1343,7 @@
           console.groupEnd();
 
           if ( (p instanceof Object) && sizeof(p) ) {
-            DoPost({'action' : 'package', 'operation' : 'uninstall', 'data' : p}, function(res) {
-              var results = {};
-              for ( var i in p ) {
-                if ( p.hasOwnProperty(i) ) {
-                  results[i] = _Settings.modifyPackage("uninstall", i, p[i]);
-                }
-              }
-
-              callback(res, results);
-            });
+            _PackMan.uninstall(p, callback);
           } else {
             console.group("===    ABORTED    ===");
           }
@@ -1387,72 +1356,11 @@
           console.log("Arguments", p, callback);
           console.groupEnd();
 
-          DoPost({'action' : 'package', 'operation' : 'install', 'data' : p}, function(res) {
-            var inst = _Settings.modifyPackage("install", p);
-            callback(res, inst);
-          });
+          _PackMan.install(p, callback);
         },
 
         'packages' : function(icons, apps, pitems, sitems) {
-          var activated = _Settings._get("user.installed.packages", true);
-          var result = [];
-
-          apps    = (apps === undefined)    ? true : apps;
-          pitems  = (pitems === undefined)  ? true : pitems;
-          sitems  = (sitems === undefined)  ? true : sitems;
-
-          var is, ia, ip, iter, list;
-          for ( is in _PackageCache ) {
-            if ( _PackageCache.hasOwnProperty(is) ) {
-              list = _PackageCache[is];
-
-              for ( ia in list ) {
-                if ( list.hasOwnProperty(ia) ) {
-                  iter = list[ia];
-
-                  if ( is == "Application" ) {
-                    if ( apps ) {
-                      result.push({
-                        name      : ia,
-                        label     : iter.titles[GetLanguage()] || iter.title,
-                        active    : iter.category == "system" || in_array(ia, activated), // FIXME: HACKISH
-                        type      : 'Application',
-                        locked    : iter.category == "system",
-                        icon      : iter.icon,
-                        icon      : (icons ? (iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_32, iter.icon)) : iter.icon),
-                        category  : iter.category
-                      });
-                    }
-                  } else if ( is == "PanelItem" ) {
-                    if ( pitems ) {
-                      result.push({
-                        name    : ia,
-                        label   : iter.title,
-                        active  : in_array(ia, activated),
-                        type    : 'PanelItem',
-                        locked  : true,
-                        icon    : sprintf(ICON_URI_32, iter.icon)
-                      });
-                    }
-                  } else if ( is == "BackgroundService" ) {
-                    if ( sitems ) {
-                      result.push({
-                        name    : ia,
-                        label   : iter.title,
-                        active  : in_array(ia, activated),
-                        type    : 'BackgroundService',
-                        locked  : false,
-                        icon    : sprintf(ICON_URI_32, iter.icon)
-                      });
-                    }
-                  }
-
-                } // ia
-              }
-            }
-          } // is
-
-          return result;
+          return _PackMan.getUserPackages(icons, apps, pitems, sitems);
         }
       },
 
@@ -2165,6 +2073,12 @@
       }
       console.groupEnd();
 
+      console.group("Shutting down 'PackageManager'");
+      if ( _PackMan ) {
+        _PackMan.destroy();
+      }
+      console.groupEnd();
+
       console.group("Shutting down 'SettingsManager'");
       if ( _Settings ) {
         _Settings.destroy();
@@ -2185,6 +2099,7 @@
       _Desktop    = null;
       _WM         = null;
       _Window     = null;
+      _PackMan    = null;
       _Tooltip    = null;
       _Menu    = null;
       _Processes  = [];
@@ -2246,6 +2161,9 @@
 
         // Initialize settings
         _Settings = new SettingsManager(response.result.registry);
+
+        // Initialize packages
+        _PackMan = new PackageManager();
 
         // Login window handling
         self._login(DEFAULT_USERNAME, DEFAULT_PASSWORD);
@@ -2364,7 +2282,8 @@
       _BrowserLanguage  = response.lang_browser;
       _SystemLanguage   = response.lang_user;
 
-      _Settings.run(response.registry, response.packages);
+      _Settings.run(response.registry);
+      _PackMan.run(response.packages);
 
       if ( response.preload ) {
         _Resources.addResources(response.preload.resources, null, function(error) {
@@ -3276,12 +3195,10 @@
     /**
      * SettingsManager::run() -- Run
      * @param  Object   user_registry   User registry
-     * @param  Object   user_packages   User packages
      * @return void
      */
-    run : function(user_registry, user_packages) {
+    run : function(user_registry) {
       this._applyUserRegistry(user_registry);
-      this._applyUserPackages(user_packages);
     },
 
     /**
@@ -3327,53 +3244,6 @@
       }
 
       console.groupEnd();
-    },
-
-
-    /**
-     * SettingsManager::_applyUserPackages() -- Apply user package settings
-     * @see SettingsManager::run()
-     * @return void
-     */
-    _applyUserPackages : function(packages) {
-      var self = this;
-      if ( this._tmpcheck )
-        return;
-
-      var _update = function(d) {
-        if ( (d instanceof Object) ) {
-          for ( var i in d ) {
-            if ( d.hasOwnProperty(i) ) {
-              if ( _PackageCache[i] ) {
-                try {
-                  _PackageCache[i] = d[i] || {};
-                } catch ( eee ) {
-                  _PackageCache[i] = {};
-                }
-              }
-            }
-          }
-        }
-
-        console.group("SettingsManager::_applyUserPackages()");
-        console.log("Cache", _PackageCache);
-        console.groupEnd();
-      };
-
-      if ( !packages ) {
-        this._tmpcheck = true;
-        DoPost({'action' : 'updateCache'}, function(data) {
-          if ( data.result ) {
-            _update(data.result);
-          }
-          self._tmpcheck = false;
-        }, function() {
-          self._tmpcheck = false;
-        });
-      } else {
-        _update(packages);
-      }
-
     },
 
     /**
@@ -3781,6 +3651,264 @@
     }
 
   }); // @endclass
+
+  /////////////////////////////////////////////////////////////////////////////
+  // PACKAGEMANAGER
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * PackageManager -- Package Manager
+   *
+   * @extends Process
+   * @class
+   */
+  var PackageManager = Process.extend({
+    cache : {},  //!< Cached packages
+
+    /**
+     * PackageManager::init() -- Constructor
+     * @constructor
+     */
+    init : function() {
+      console.group("PackageManager::init()");
+      this._super("(PackageManager)", "emblems/emblem-package.png", true);
+      this.cache = {
+        'Application'         : {},
+        'PanelItem'           : {},
+        'BackgroundService'   : {}
+      };
+      console.groupEnd();
+    },
+
+    /**
+     * PackageManager::destroy() -- Destructor
+     * @destructor
+     */
+    destroy : function() {
+      this._super();
+    },
+
+    /**
+     * PackageManager::run() -- Run
+     * @param  Object   packages   Packages
+     * @return void
+     */
+    run : function(packages) {
+      this.setPackages(packages);
+    },
+
+    launchVFS : function() {
+
+    },
+
+    launchApplication : function() {
+
+    },
+
+    launchPanelItem : function() {
+
+    },
+
+    launchService : function() {
+
+    },
+
+    /**
+     * PackageManager::enable() -- Enable Package(s)
+     * @param  Array    p           Package list
+     * @param  Function callback    Callback function
+     * @return void
+     */
+    enable : function(p, callback) {
+      DoPost({'action' : 'package', 'operation' : 'enable', 'data' : p}, function(res) {
+        var results = {};
+        for ( var i in p ) {
+          if ( p.hasOwnProperty(i) ) {
+            results[i] = _Settings.modifyPackage("enable", i, p[i]);
+          }
+        }
+
+        callback(res, results);
+      });
+    },
+
+    /**
+     * PackageManager::disable() -- Disable Package(s)
+     * @param  Array    p           Package list
+     * @param  Function callback    Callback function
+     * @return void
+     */
+    disable : function(p, callback) {
+      DoPost({'action' : 'package', 'operation' : 'disable', 'data' : p}, function(res) {
+        var results = {};
+        for ( var i in p ) {
+          if ( p.hasOwnProperty(i) ) {
+            results[i] = _Settings.modifyPackage("disable", i, p[i]);
+          }
+        }
+
+        callback(res, results);
+      });
+    },
+
+    /**
+     * PackageManager::install() -- Install Package(s)
+     * @param  Array    p           Package list
+     * @param  Function callback    Callback function
+     * @return void
+     */
+    install : function(p, callback) {
+      DoPost({'action' : 'package', 'operation' : 'install', 'data' : p}, function(res) {
+        var inst = _Settings.modifyPackage("install", p);
+        callback(res, inst);
+      });
+    },
+
+    /**
+     * PackageManager::uninstall() -- Uninstall Package(s)
+     * @param  Array    p           Package list
+     * @param  Function callback    Callback function
+     * @return void
+     */
+    uninstall : function(p, callback) {
+      DoPost({'action' : 'package', 'operation' : 'uninstall', 'data' : p}, function(res) {
+        var results = {};
+        for ( var i in p ) {
+          if ( p.hasOwnProperty(i) ) {
+            results[i] = _Settings.modifyPackage("uninstall", i, p[i]);
+          }
+        }
+
+        callback(res, results);
+      });
+    },
+
+    /**
+     * PackageManager::setPackages() -- Apply user package settings
+     * @see SettingsManager::run()
+     * @return void
+     */
+    setPackages : function(packages) {
+      var self = this;
+      if ( this._tmpcheck )
+        return;
+
+      var _update = function(d) {
+        if ( (d instanceof Object) ) {
+          for ( var i in d ) {
+            if ( d.hasOwnProperty(i) ) {
+              if ( self.cache[i] ) {
+                try {
+                  self.cache[i] = d[i] || {};
+                } catch ( eee ) {
+                  self.cache[i] = {};
+                }
+              }
+            }
+          }
+        }
+
+        console.group("PackageManager::setPackages()");
+        console.log("Cache", this.cache);
+        console.groupEnd();
+      };
+
+      if ( !packages ) {
+        this._tmpcheck = true;
+        DoPost({'action' : 'updateCache'}, function(data) {
+          if ( data.result ) {
+            _update(data.result);
+          }
+          self._tmpcheck = false;
+        }, function() {
+          self._tmpcheck = false;
+        });
+      } else {
+        _update(packages);
+      }
+    },
+
+    /**
+     * PackageManager::getUserPackages() -- Get user packages
+     * Uses the settings registry to check for states and user installed packages
+     * @param  bool   icons       Enumerate Icons
+     * @param  bool   apps        Enumerate Application items
+     * @param  bool   pitems      Enumerate PanelItem items
+     * @param  bool   sitems      Enumerate Service items
+     * @return Mixed
+     */
+    getUserPackages : function(icons, apps, pitems, sitems) {
+      var activated = _Settings._get("user.installed.packages", true);
+      var result = [];
+
+      apps    = (apps === undefined)    ? true : apps;
+      pitems  = (pitems === undefined)  ? true : pitems;
+      sitems  = (sitems === undefined)  ? true : sitems;
+
+      var is, ia, ip, iter, list;
+      for ( is in this.cache ) {
+        if ( this.cache.hasOwnProperty(is) ) {
+          list = this.cache[is];
+
+          for ( ia in list ) {
+            if ( list.hasOwnProperty(ia) ) {
+              iter = list[ia];
+
+              if ( is == "Application" ) {
+                if ( apps ) {
+                  result.push({
+                    name      : ia,
+                    label     : iter.titles[GetLanguage()] || iter.title,
+                    active    : iter.category == "system" || in_array(ia, activated), // FIXME: HACKISH
+                    type      : 'Application',
+                    locked    : iter.category == "system",
+                    icon      : iter.icon,
+                    icon      : (icons ? (iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_32, iter.icon)) : iter.icon),
+                    category  : iter.category
+                  });
+                }
+              } else if ( is == "PanelItem" ) {
+                if ( pitems ) {
+                  result.push({
+                    name    : ia,
+                    label   : iter.title,
+                    active  : in_array(ia, activated),
+                    type    : 'PanelItem',
+                    locked  : true,
+                    icon    : sprintf(ICON_URI_32, iter.icon)
+                  });
+                }
+              } else if ( is == "BackgroundService" ) {
+                if ( sitems ) {
+                  result.push({
+                    name    : ia,
+                    label   : iter.title,
+                    active  : in_array(ia, activated),
+                    type    : 'BackgroundService',
+                    locked  : false,
+                    icon    : sprintf(ICON_URI_32, iter.icon)
+                  });
+                }
+              }
+
+            } // ia
+          }
+        }
+      } // is
+
+      return result;
+    },
+
+    /**
+     * PackageManager::getPackage() -- Get package(s)
+     * @param  String   type    Get types (optional)
+     * @return Mixed
+     */
+    getPackages : function(type) {
+      return type ? this.cache[type] : this.cache;
+    }
+
+  });
 
   /////////////////////////////////////////////////////////////////////////////
   // BACKGROUNDSERVICE
@@ -5881,7 +6009,7 @@
         }
 
         var pitem = new OSjs.Dialogs.PanelItemOperationDialog(OperationDialog, API, [this, function(diag) {
-          var items = _PackageCache.PanelItem;
+          var items = _PackMan.getPackages("PanelItem");
           var name, li, current, selected;
 
           for ( name in items ) {
