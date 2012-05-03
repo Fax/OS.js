@@ -2905,7 +2905,6 @@
     /**
      * ResourceManager::updateManifest() -- Force MANIFEST update
      * @return void
-     */
     updateManifest : function() {
       var cache = window.applicationCache;
 
@@ -2925,6 +2924,7 @@
       }
 
     },
+     */
 
     /**
      * ResourceManager::hasResource() -- Check if given resource is already loaded
@@ -3192,6 +3192,10 @@
       this._super();
     },
 
+    reset : function() {
+
+    },
+
     /**
      * SettingsManager::run() -- Run
      * @param  Object   user_registry   User registry
@@ -3367,97 +3371,6 @@
         return true;
       }
       return false;
-    },
-
-    modifyPackage : function(action, p, args) {
-      var result;
-      var activated = _Settings._get("user.installed.packages", true);
-
-      console.group("SettingsManager::modifyPackage()");
-      console.log("Doing", action, "using", p, "and", args);
-      console.log("Current", activated);
-
-      var op_start = [];
-      var op_stop  = [];
-
-      // Manipulate storage
-      switch ( action ) {
-        case "enable"   :
-          if ( in_array(args.type, ["Application", "PanelItem", "BackgroundService"]) ) {
-            if ( !in_array(p, activated) ) {
-              activated.push(p);
-              result = true;
-
-              if ( args.type === "BackgroundService" ) {
-                op_start.push(args.name);
-              }
-            }
-          }
-        break;
-        case "disable" :
-          for ( var i = 0; i < activated.length; i++ ) {
-            if ( activated[i] == p ) {
-              activated.splice(i, 1);
-              result = true;
-
-              if ( args.type === "BackgroundService" ) {
-                op_stop.push(p);
-              }
-              break;
-            }
-          }
-        break;
-        case "uninstall"  :
-          //this.updateCache(true);
-          result = false;
-        break;
-        case "install" :
-          //this.updateCache(true);
-          result = false;
-        break;
-        default :
-          result = false;
-        break;
-      }
-
-      // Now save
-      if ( result === true ) {
-        _Settings._set("user.installed.packages", activated);
-      }
-
-      /* NOTE: Goodshit
-      console.log("Starting", op_start.length, "services", op_start);
-      console.log("Stopping", op_stop.length, "services", op_stop);
-
-      if ( op_start.length ) {
-        for ( var opi = 0; opi < op_start.length; opi++ ) {
-          LaunchBackgroundService(op_start[opi]);
-        }
-      }
-
-      if ( op_stop.length ) {
-        var procs = _Core.getProcesses();
-        var brk = false, cur;
-        for ( var opl = 0; opl < op_stop.length; opl++ ) {
-          cur = op_stop[opl];
-          for ( var opx = 0; opx < procs.length; opx++ ) {
-            if ( procs[opx].name == cur ) {
-              procs[opx].kill();
-              brk = true;
-              break;
-            }
-          }
-
-          if ( brk )
-            break;
-        }
-      }
-      */
-
-      console.log("Resulted", result, activated);
-      console.groupEnd();
-
-      return result;
     },
 
     /**
@@ -3672,11 +3585,7 @@
     init : function() {
       console.group("PackageManager::init()");
       this._super("(PackageManager)", "emblems/emblem-package.png", true);
-      this.cache = {
-        'Application'         : {},
-        'PanelItem'           : {},
-        'BackgroundService'   : {}
-      };
+      this.reset();
       console.groupEnd();
     },
 
@@ -3685,7 +3594,20 @@
      * @destructor
      */
     destroy : function() {
+      this.reset();
       this._super();
+    },
+
+    /**
+     * PackageManager::reset() -- Reset instance
+     * @return void
+     */
+    reset : function() {
+      this.cache = {
+        'Application'         : {},
+        'PanelItem'           : {},
+        'BackgroundService'   : {}
+      };
     },
 
     /**
@@ -3697,20 +3619,103 @@
       this.setPackages(packages);
     },
 
-    launchVFS : function() {
+    /**
+     * PackageManager::modifyPackage() -- Wrapper function for package methods
+     * @param  String   action      Package Action
+     * @param  String   p           Package Name
+     * @param  Enum     args        Action Arguments
+     * @return bool
+     */
+    modifyPackage : function(action, p, args) {
+      var result;
+      var activated = _Settings._get("user.installed.packages", true);
 
-    },
+      console.group("PackageManager::modifyPackage()");
+      console.log("Doing", action, "using", p, "and", args);
+      console.log("Current", activated);
 
-    launchApplication : function() {
+      var op_start = [];
+      var op_stop  = [];
 
-    },
+      // Manipulate storage
+      switch ( action ) {
+        case "enable"   :
+          if ( in_array(args.type, ["Application", "PanelItem", "BackgroundService"]) ) {
+            if ( !in_array(p, activated) ) {
+              activated.push(p);
+              result = true;
 
-    launchPanelItem : function() {
+              if ( args.type === "BackgroundService" ) {
+                op_start.push(args.name);
+              }
+            }
+          }
+        break;
+        case "disable" :
+          for ( var i = 0; i < activated.length; i++ ) {
+            if ( activated[i] == p ) {
+              activated.splice(i, 1);
+              result = true;
 
-    },
+              if ( args.type === "BackgroundService" ) {
+                op_stop.push(p);
+              }
+              break;
+            }
+          }
+        break;
+        case "uninstall"  :
+          //this.updateCache(true);
+          result = false;
+        break;
+        case "install" :
+          //this.updateCache(true);
+          result = false;
+        break;
+        default :
+          result = false;
+        break;
+      }
 
-    launchService : function() {
+      // Now save
+      if ( result === true ) {
+        _Settings._set("user.installed.packages", activated);
+        _Settings._save();
+      }
 
+      /* NOTE: Goodshit
+      console.log("Starting", op_start.length, "services", op_start);
+      console.log("Stopping", op_stop.length, "services", op_stop);
+
+      if ( op_start.length ) {
+        for ( var opi = 0; opi < op_start.length; opi++ ) {
+          LaunchBackgroundService(op_start[opi]);
+        }
+      }
+
+      if ( op_stop.length ) {
+        var procs = _Core.getProcesses();
+        var brk = false, cur;
+        for ( var opl = 0; opl < op_stop.length; opl++ ) {
+          cur = op_stop[opl];
+          for ( var opx = 0; opx < procs.length; opx++ ) {
+            if ( procs[opx].name == cur ) {
+              procs[opx].kill();
+              brk = true;
+              break;
+            }
+          }
+
+          if ( brk )
+            break;
+        }
+      }
+      */
+
+      console.log("Resulted", result, activated);
+      console.groupEnd();
+
+      return result;
     },
 
     /**
@@ -3720,11 +3725,12 @@
      * @return void
      */
     enable : function(p, callback) {
+      var self = this;
       DoPost({'action' : 'package', 'operation' : 'enable', 'data' : p}, function(res) {
         var results = {};
         for ( var i in p ) {
           if ( p.hasOwnProperty(i) ) {
-            results[i] = _Settings.modifyPackage("enable", i, p[i]);
+            results[i] = self.modifyPackage("enable", i, p[i]);
           }
         }
 
@@ -3739,11 +3745,12 @@
      * @return void
      */
     disable : function(p, callback) {
+      var self = this;
       DoPost({'action' : 'package', 'operation' : 'disable', 'data' : p}, function(res) {
         var results = {};
         for ( var i in p ) {
           if ( p.hasOwnProperty(i) ) {
-            results[i] = _Settings.modifyPackage("disable", i, p[i]);
+            results[i] = self.modifyPackage("disable", i, p[i]);
           }
         }
 
@@ -3758,8 +3765,9 @@
      * @return void
      */
     install : function(p, callback) {
+      var self = this;
       DoPost({'action' : 'package', 'operation' : 'install', 'data' : p}, function(res) {
-        var inst = _Settings.modifyPackage("install", p);
+        var inst = self.modifyPackage("install", p);
         callback(res, inst);
       });
     },
@@ -3771,11 +3779,12 @@
      * @return void
      */
     uninstall : function(p, callback) {
+      var self = this;
       DoPost({'action' : 'package', 'operation' : 'uninstall', 'data' : p}, function(res) {
         var results = {};
         for ( var i in p ) {
           if ( p.hasOwnProperty(i) ) {
-            results[i] = _Settings.modifyPackage("uninstall", i, p[i]);
+            results[i] = self.modifyPackage("uninstall", i, p[i]);
           }
         }
 
