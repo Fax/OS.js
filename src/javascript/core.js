@@ -468,7 +468,7 @@
         } else {
           console.log("LaunchProcess()", name, "<", "ERROR");
 
-          var extra   = "\n\nThis may be due to a missing file or a syntax error in a resource."; // FIXME: Locale
+          var extra   = "\n\n" + OSjs.Labels.CrashProcessResource;
           var errors  = [];
           var eargs   = [];
           for ( var x in resources ) {
@@ -2116,7 +2116,7 @@
 
         setTimeout(function() {
           if ( response.duplicate ) {
-            var con = !SESSION_CONFIRM || confirm("You are already logged in, are you sure you want to continue?"); // FIXME: Locale
+            var con = !SESSION_CONFIRM || confirm(OSjs.Labels.LoginConfirm);
             if ( con ) {
               self.login(response);
             } else {
@@ -3323,18 +3323,18 @@
       DoPost(pargs, function(data) {
         if ( data.error ) {
           if ( internal ) {
-            API.system.notification("System Settings", "Failed to save settings", GetIcon("emblems/emblem-important.png", "32x32")); // FIXME: Locale
+            API.system.notification(OSjs.Labels.SettingsNotifyTitle, OSjs.Labels.SettingsNotifyFailSave, GetIcon("emblems/emblem-important.png", "32x32"));
           }
           callback(false);
         } else {
           if ( internal ) {
-            API.system.notification("System Settings", "Your settings was saved", GetIcon("emblems/emblem-default.png", "32x32")); // FIXME: Locale
+            API.system.notification(OSjs.Labels.SettingsNotifyTitle, OSjs.Labels.SettingsNotifySave, GetIcon("emblems/emblem-default.png", "32x32"));
           }
           callback(true);
         }
       }, function() {
         if ( internal ) {
-          API.system.notification("System Settings", "Failed to save settings (server error)", GetIcon("emblems/emblem-important.png", "32x32")); // FIXME: Locale
+          API.system.notification(OSjs.Labels.SettingsNotifyTitle, OSjs.Labels.SettingsNotifyFailSaveServer, GetIcon("emblems/emblem-important.png", "32x32"));
         }
         callback(false);
       });

@@ -40,6 +40,7 @@
       "title"   : "Session change",
       "message" : "A previous session was restored"
     },
+    "LoginConfirm"                        : "You are already logged in, are you sure you want to continue?",
     "LoginFailure"                        : "Failed to log in: %s",
     "LoginFailureOther"                   : "A system error occured while logging in, please try again.",
     "CannotStart"                         : "Your browser does not support WebStorage. Cannot continue...",
@@ -49,6 +50,7 @@
     "CrashLaunchResourceMessage"          : "One or more of these resources failed to load:\n%s",
     "CrashLaunchResourceStack"            : "[%s]API::system::launch()\n  Process: %s\n  Arguments: %s",
     "CrashApplicationOpen"                : "Cannot open '%s' with MIME '%s' in this application",
+    "CrashProcessResource"                : "This may be due to a missing file or a syntax error in a resource.",
     "ErrorLaunchString"                   : "Cannot launch '%s'. Invalid operation!",
     "InitLaunchError"                     : "Cannot launch '%s'.\nMaximum allowed processes are: %d",
     "InitLaunchNotFound"                  : "Cannot launch '%s'.\nThe package is not installer or enabled",
@@ -68,6 +70,10 @@
     "CrashPanelStart"                     : "An error occured while starting the panels!",
     "CrashSessionRestore"                 : "Cannot restore your session because the initialization failed!",
     "CrashCoreRunService"                 : "Cannot start '%s' because of an error during startup: %s",
+    "SettingsNotifyTitle"                 : "System Settings",
+    "SettingsNotifyFailSave"              : "Failed to save settings",
+    "SettingsNotifySave"                  : "Your settings was saved",
+    "SettingsNotifyFailSaveServer"        : "Failed to save settings (server error)",
     "ApplicationCategories"               : {
       "development" : "Development",
       "games"       : "Games",

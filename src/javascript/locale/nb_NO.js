@@ -40,6 +40,7 @@
       "title"   : "Sessjons-endring",
       "message" : "En tidligere sessjon har blitt lastet"
     },
+    "LoginConfirm"                        : "Du er allerede innlogget, er du sikker på at du vil fortsette?",
     "LoginFailure"                        : "Klarte ikke logge inn: %s",
     "LoginFailureOther"                   : "Det hendte en feil i systemet under innlogging, vennligst prøv igjen.",
     "CannotStart"                         : "Din nettleser støtter ikke WebStorage. Kan ikke fortsette uten...",
@@ -49,6 +50,7 @@
     "CrashLaunchResourceMessage"          : "En eller flere av disse ressursjene ble ikke lastet::\n%s",
     "CrashLaunchResourceStack"            : "[%s]API::system::launch()\n  Prosess: %s\n  Argumenter: %s",
     "CrashApplicationOpen"                : "Kan ikke åpne '%s' med MIME '%s' med denne applikasjonen",
+    "CrashProcessResource"                : "Dette kan være på grunn av en manglende fil eller programmerings-feil i en ressursj.",
     "ErrorLaunchString"                   : "Kan ikke starte '%s'. Ugyldig operasjon!",
     "InitLaunchError"                     : "Kan ikke kjøre '%s'.\nMaks antall prosesser er: %d",
     "InitLaunchNotFound"                  : "Kan ikke kjøre '%s'.\nPakken er ikke installert eller slått på",
@@ -68,6 +70,10 @@
     "CrashPanelStart"                     : "En feil oppstod under starting av panel(er)!",
     "CrashSessionRestore"                 : "Kan ikke gjenoprette sessjonen din pga. feil under oppstart!",
     "CrashCoreRunService"                 : "Kan ikke starte '%s' fordi en feil hendte under oppstart: %s",
+    "SettingsNotifyTitle"                 : "System Instillinger",
+    "SettingsNotifyFailSave"              : "Klarte ikke lagre instillinger",
+    "SettingsNotifySave"                  : "Dine instillinger ble lagret",
+    "SettingsNotifyFailSaveServer"        : "Klarte ikke lagre instillinger (server feil)",
     "ApplicationCategories"               : {
       "development" : "Utvikling",
       "games"       : "Spill",
