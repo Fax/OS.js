@@ -381,9 +381,9 @@
   function LaunchProcess(name, type, args) {
     args = args || {};
 
-    var process = InitLaunch(name, type);
-    var callback_result = undefined;
-    var callback_message = undefined;
+    var process           = InitLaunch(name, type);
+    var callback_result   = undefined;
+    var callback_message  = undefined;
 
     console.group("LaunchProcess()");
     console.log("Name", name);

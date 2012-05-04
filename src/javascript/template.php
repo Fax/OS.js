@@ -232,8 +232,8 @@ if ( $locale = Core::get()->getLocale() ) {
 
 <!-- Version Stamp -->
 <div id="Version">
-  OS.js <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>) | Build <?php echo PROJECT_BUILD; ?><br />
-  &copy; <?php print PROJECT_AUTHOR; ?> &lt;<?php print PROJECT_CONTACT; ?>&gt;
+  OS.js <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)<br />
+  &copy; <?php print htmlspecialchars(PROJECT_COPYRIGHT); ?>
 </div>
 
 <!-- Google -->
