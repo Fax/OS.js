@@ -88,6 +88,7 @@
   var ICON_URI_16      = "/img/icons/16x16/%s";     //!< Icons URI 16x16 (GET)
   var ICON_URI_32      = "/img/icons/32x32/%s";     //!< Icons URI 32x32 (GET)
   var SOUND_URI        = "/sounds/%s.%s";           //!< Sound URI (GET)
+  var PKG_RES_URI      = RESOURCE_URI + "%s/%s";    //!< Package Resource URI (GET)
   // @endconstants
 
   /**
@@ -775,7 +776,7 @@
       }
     };
 
-    var apps  = API.user.settings.packages(false, true, false);
+    var apps  = API.user.settings.packages("16x16", true, false, false);
     var i, iter, cat;
     for ( i in apps ) {
       if ( apps.hasOwnProperty(i) ) {
@@ -784,7 +785,7 @@
           cat = cats[iter.category] ? iter.category : "unknown";
           cats[cat].items.push({
             "title"   : iter.label,
-            "icon"    : iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_16, iter.icon),
+            "icon"    : GetIcon(iter.icon, "16x16", iter.packagename),
             "method"  : (function(app) {
               return function() {
                 API.system.launch(app);
@@ -871,6 +872,32 @@
         aud.play();
       }
     }
+  }
+
+  /**
+   * GetIcon() -- Get a icon by name/size/resource
+   * @param   String    name      Icon name (filename)
+   * @param   String    size      Icon size (Optional)
+   * @param   String    pkg       Package Name (Optional)
+   * @return  String
+   * @function
+   */
+  function GetIcon(name, size, pkg) {
+    if ( name.match(/^\//) ) {
+      return name;
+    } else {
+      if ( pkg && !name.match(/(.*)\/(.*)/) ) {
+        return sprintf(PKG_RES_URI, pkg, name);
+      } else {
+        if ( size == "16x16" ) {
+          return sprintf(ICON_URI_16, name);
+        } else {
+          return sprintf(ICON_URI_32, name);
+        }
+      }
+    }
+
+    return null;
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -1223,8 +1250,8 @@
 
       'notification' : function(title, message, icon, duration) {
         if ( _Desktop ) {
-          if ( icon && !icon.match(/^\//) ) {
-            icon = sprintf(ICON_URI_32, icon);
+          if ( icon ) {
+            icon = GetIcon(icon, "32x32");
           }
 
           _Desktop.createNotification(title, message, icon, duration);
@@ -2429,7 +2456,7 @@
 
         setTimeout(function() {
           var _l = OSjs.Labels.FirstRun;
-          var _i = sprintf(ICON_URI_32, "emotes/face-smile-big.png");
+          var _i = GetIcon("emotes/face-smile-big.png", "32x32");
           API.system.notification(_l.title, _l.message, _i);
         }, 500);
       }
@@ -2502,7 +2529,7 @@
       //console.info("Session valid", _SessionValid, "Registered", _SessionId, "Current", sid);
       if ( _SessionValid ) {
         if ( !sid || (_SessionId != sid) ) {
-          var ico = sprintf(ICON_URI_32, "status/network-error.png");
+          var ico = GetIcon("status/network-error.png", "32x32");
           // FIXME
           //API.system.notification("Error", OSjs.Labels.SessionFailure, ico); // FIXME: Language title
           API.system.notification("Unexpected Error", "You have lost your server session.<br />This may cause errors, and you should restart!.", ico); // FIXME: Language title
@@ -2756,7 +2783,7 @@
       if ( i ) {
         setTimeout(function() {
           var _l = OSjs.Labels.SessionRestore;
-          var _i = sprintf(ICON_URI_32, "status/appointment-soon.png");
+          var _i = GetIcon("status/appointment-soon.png", "32x32");
           API.system.notification(_l.title, _l.message, _i);
         }, 500);
       }
@@ -2806,7 +2833,7 @@
           var img     = new Image();
           img.onload  = onload;
           img.onerror = onerror;
-          img.src     = sprintf(ICON_URI_16, src);
+          img.src     = GetIcon(src, "16x16");
         }, function(result, total, loaded, failed) {
           console.log("ResourceManager::init() Preloaded", loaded, "of", total, "image(s) (" + failed + " failures)");
         });
@@ -3369,18 +3396,18 @@
       DoPost(pargs, function(data) {
         if ( data.error ) {
           if ( internal ) {
-            API.system.notification("System Settings", "Failed to save settings", sprintf(ICON_URI_32, "emblems/emblem-important.png")); // FIXME: Locale
+            API.system.notification("System Settings", "Failed to save settings", GetIcon("emblems/emblem-important.png", "32x32")); // FIXME: Locale
           }
           callback(false);
         } else {
           if ( internal ) {
-            API.system.notification("System Settings", "Your settings was saved", sprintf(ICON_URI_32, "emblems/emblem-default.png")); // FIXME: Locale
+            API.system.notification("System Settings", "Your settings was saved", GetIcon("emblems/emblem-default.png", "32x32")); // FIXME: Locale
           }
           callback(true);
         }
       }, function() {
         if ( internal ) {
-          API.system.notification("System Settings", "Failed to save settings (server error)", sprintf(ICON_URI_32, "emblems/emblem-important.png")); // FIXME: Locale
+          API.system.notification("System Settings", "Failed to save settings (server error)", GetIcon("emblems/emblem-important.png", "32x32")); // FIXME: Locale
         }
         callback(false);
       });
@@ -3645,6 +3672,9 @@
       pitems  = (pitems === undefined)  ? true : pitems;
       sitems  = (sitems === undefined)  ? true : sitems;
 
+      if ( icons === true )
+        icons = "32x32";
+
       var cat, lst, iter, item;
       for ( cat in this.cache ) {
         if ( this.cache.hasOwnProperty(cat) ) {
@@ -3659,7 +3689,7 @@
                   type      : 'Application',
                   locked    : cat == "System",
                   icon      : item.icon,
-                  icon      : (icons ? (item.icon.match(/^\//) ? item.icon : sprintf(ICON_URI_32, item.icon)) : item.icon),
+                  icon      : (icons ? GetIcon(item.icon, icons, iter) : item.icon),
                   category  : item.category
                 });
               } else if ( item.type == "PanelItem" && pitems ) {
@@ -3668,7 +3698,7 @@
                   label   : item.title,
                   type    : 'PanelItem',
                   locked  : cat == "System",
-                  icon    : sprintf(ICON_URI_32, item.icon)
+                  icon    : (icons ? GetIcon(item.icon, icons, iter) : item.icon)
                 });
               } else if ( item.type == "Service" && sitems ) {
                 result.push({
@@ -3676,7 +3706,7 @@
                   label   : item.title,
                   type    : 'BackgroundService',
                   locked  : cat == "System",
-                  icon    : sprintf(ICON_URI_32, item.icon)
+                  icon    : (icons ? GetIcon(item.icon, icons, iter) : item.icon)
                 });
               }
             }
@@ -5055,7 +5085,7 @@
 
             for ( i; i < l; i++ ) {
               giter = ivlist[i];
-              str = sprintf("<li><div class=\"inner\"><div class=\"icon\"><img alt=\"\" src=\"%s\" /></div><div class=\"label\"><span>%s</span></div></div></li>", sprintf(ICON_URI_32, giter.icon), giter.title);
+              str = sprintf("<li><div class=\"inner\"><div class=\"icon\"><img alt=\"\" src=\"%s\" /></div><div class=\"label\"><span>%s</span></div></div></li>", GetIcon(giter.icon, "32x32"), giter.title);
               e = $(str);
 
               self._createClick(e, i);
@@ -5844,7 +5874,7 @@
           for ( name in items ) {
             if ( items.hasOwnProperty(name) ) {
               li = $("<li><img alt=\"/img/blank.gif\" /><div class=\"Inner\"><div class=\"Title\">Title</div><div class=\"Description\">Description</div></div></li>");
-              li.find("img").attr("src", sprintf(ICON_URI_32, items[name].icon));
+              li.find("img").attr("src", GetIcon(items[name].icon, "32x32"));
               li.find(".Title").html(items[name].title);
               li.find(".Description").html(items[name].description);
 
@@ -6392,7 +6422,7 @@
     crash : function(error) {
       this.$element.find("*").remove();
       this.$element.addClass("Crashed");
-      this.$element.html("<img alt=\"\" src=\"" + sprintf(ICON_URI_16, "status/error.png") + "\"/><span>" + error + "</span>");
+      this.$element.html("<img alt=\"\" src=\"" + GetIcon("status/error.png", "16x16") + "\"/><span>" + error + "</span>");
 
       this._crashed = true;
     },
@@ -6755,7 +6785,7 @@
             }
 
             if ( icon ) {
-              el.find(".WindowTopInner img").attr("src", sprintf(ICON_URI_16, sprintf("status/gtk-dialog-%s.png", icon)));
+              el.find(".WindowTopInner img").attr("src", GetIcon(sprintf("status/gtk-dialog-%s.png", icon), "16x16"));
             } else {
               el.find(".WindowTopInner img").hide();
             }
@@ -7700,7 +7730,7 @@
       var disabled = false;
 
       if ( iter.icon ) {
-        src = iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_16, iter.icon);
+        src = GetIcon(iter.icon, "16x16");
         li.append($(sprintf("<img alt=\"%s\" src=\"%s\" />", iter.title, src)));
       }
 
