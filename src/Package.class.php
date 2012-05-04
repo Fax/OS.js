@@ -76,15 +76,16 @@ abstract class Package
   public static function GetResource($package, $filename, $compress = false) {
     $mime     = "text/plain";
     $content  = "/* ERROR 500  */";
+    $script   = preg_match("/\.js$/", $filename) || preg_match("/\.css$/", $filename);
     $user     = Core::get()->getUser();
 
     if ( ($pkg = self::FindPackage($package, $user)) ) {
       if ( $pkg["found"] ) {
         if ( $pkg["user"] ) {
-          $root = $compress ? RESOURCE_VFS_PACKAGE_MIN : RESOURCE_VFS_PACKAGE;
+          $root = $script && $compress ? RESOURCE_VFS_PACKAGE_MIN : RESOURCE_VFS_PACKAGE;
           $path = sprintf($root, $user->id, $package, $filename);
         } else {
-          $root = $compress ? RESOURCE_PACKAGE_MIN : RESOURCE_PACKAGE;
+          $root = $script && $compress ? RESOURCE_PACKAGE_MIN : RESOURCE_PACKAGE;
           $path = sprintf($root, $package, $filename);
         }
 
