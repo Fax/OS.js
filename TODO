@@ -19,20 +19,6 @@ CORE TODO:
 [NUR]  Remove jQuery dependency, write custom library
 [NUR]  Remove jQuery UI dependency, write custom library
 
-APP TODO:
--------------------------------------------------------------------------------
-* Drawing
-  - Does not work in FireFox
-  - REFACTOR: Application::_getResourceURL ???
-* SystemAbout
-  - Rewrite
-* Mailing
-  - Not Finished
-* Archiver
-  - Not Finished
-* Writer
-  - Not finished
-
 BUGS:
 -------------------------------------------------------------------------------
 * Maxmimum call-stack size exceed exceptions does not include trace [JS]
