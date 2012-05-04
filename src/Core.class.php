@@ -287,14 +287,14 @@ class Core
    * @return void
    */
   protected static final function _doPackageOperation(Array $args, Array &$json, Core $inst = null) {
-    if ( $user = $inst->getUser() ) {
+    if ( !ENV_DEMO && ($user = $inst->getUser()) ) {
       if ( $args['operation'] == "install" ) {
         $archive = $args['archive'];
         if ( $result = PackageManager::InstallPackage($archive, $user, true) ) {
           $json['success'] = true;
           $json['result']  = true;
         } else {
-          $json['error'] = sprintf(_("Failed to install '%s'. Archive error?!"), basename($archive)); // FIXME: Locale
+          $json['error'] = sprintf(_("Failed to install '%s'. Archive error or VFS failure!"), basename($archive)); // FIXME: Locale
         }
       } else if ( $args['operation'] == "uninstall" ) {
         $package = $args['package']['name'];
