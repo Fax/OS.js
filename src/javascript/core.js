@@ -567,7 +567,7 @@
           if ( apps.hasOwnProperty(i) ) {
             app = apps[i];
             app.name = i; // append
-            if ( app.mimes.length ) {
+            if ( app.mimes && app.mimes.length ) {
               for ( check in app.mimes ) {
                 if ( app.mimes.hasOwnProperty(check) ) {
                   mtype = app.mimes[check].split("/");
