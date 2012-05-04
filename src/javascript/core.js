@@ -3688,6 +3688,31 @@
     },
 
     /**
+     * PackageManager::getPackagesByType() -- Get packages by type
+     * @param  String   type      Package Type
+     * @return Object
+     */
+    getPackagesByType : function(type) {
+      var result = {};
+      var i;
+      for ( i in this.cache.System ) {
+        if ( this.cache.System.hasOwnProperty(i) ) {
+          if ( this.cache.System[i].type == type ) {
+            result[i] = this.cache.System[i];
+          }
+        }
+      }
+      for ( i in this.cache.User ) {
+        if ( this.cache.User.hasOwnProperty(i) ) {
+          if ( this.cache.User[i].type == type ) {
+            result[i] = this.cache.User[i];
+          }
+        }
+      }
+      return result;
+    },
+
+    /**
      * PackageManager::getPackage() -- Get package(s)
      * @param  bool   merged      Get merged object
      * @return Mixed
@@ -5812,7 +5837,7 @@
         }
 
         var pitem = new OSjs.Dialogs.PanelItemOperationDialog(OperationDialog, API, [this, function(diag) {
-          var items = _PackMan.getPackages("PanelItem");
+          var items = _PackMan.getPackagesByType("PanelItem");
           var name, li, current, selected;
 
           for ( name in items ) {
