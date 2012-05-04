@@ -736,12 +736,14 @@ class Core
         $action   = $instance['action'];
         $root     = PATH_PACKAGES . "/{$cname}/{$cname}.class.php";
 
-        if ( file_exists($root) ) {
-          require_once $root;
-        }
+        // Make sure call is from a system package
+        $packages = PackageManager::GetSystemPackages();
+        if ( isset($packages[$cname]) ) {
+          if ( file_exists($root) ) {
+            require_once $root;
+          }
 
-        if ( class_exists($cname) ) {
-          $result = $cname::Event($action, $aargs);
+          $result = $cname::Event($action, $aargs); // NOTE: Do not use 'class_exists'
         }
       }
     }

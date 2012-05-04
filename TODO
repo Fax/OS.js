@@ -1,5 +1,6 @@
 CORE TODO:
 -------------------------------------------------------------------------------
+[HIG]  Finish missing locales JS + PHP
 [HIG]  More descriptive error messages in VFS intall package etc. + locale
 [HIG]  Handle _SessionValid and result.exception in DoPost() (_HasCrashed)
 [HIG]  Rewrite VFS PHP Scripts (Merge from branch)

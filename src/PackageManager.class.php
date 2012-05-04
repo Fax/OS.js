@@ -237,14 +237,31 @@ abstract class PackageManager
   }
 
   /**
+   * @see PackageManager::GetPackages()
+   */
+  public static function GetUserPackages(User $user = null) {
+    if ( $user ) {
+      return self::_getPackages($user);
+    }
+    return Array();
+  }
+
+  /**
+   * @see PackageManager::GetPackages()
+   */
+  public static function GetSystemPackages() {
+    return self::_getPackages();
+  }
+
+  /**
    * Get all packages
    * @param  User     $user     If defined, User VFS is used
    * @return Array
    */
   public static function GetPackages(User $user = null) {
     return Array(
-      "User"    => self::_getPackages($user),
-      "System"  => self::_getPackages()
+      "User"    => self::GetUserPackages($user),
+      "System"  => self::GetSystemPackages()
     );
   }
 
