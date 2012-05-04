@@ -63,8 +63,54 @@ abstract class Package
   }
 
   /////////////////////////////////////////////////////////////////////////////
-  // MANAGMENT - STATIC METHODS
+  // STATIC METHODS
   /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Get a Package resource file
+   * @param  String   $package        Package Name
+   * @param  String   $filename       Resource Filename
+   * @param  bool     $compress       Use Compression ?
+   * @param  bool     $user           User Package ?
+   * @return Object
+   */
+  public static function GetResource($package, $filename, $compress = false, $user = false) {
+    $root = $compress ? RESOURCE_PACKAGE_MIN : RESOURCE_PACKAGE;
+    if ( $user ) {
+      $root = sprintf(URI_VFS_USER_PACKAGES, $user->id) . "/%s/%s";
+    }
+
+    $path = sprintf($root, $package, $filename);
+    $mime = "text/plain";
+    $content = null;
+    if ( file_exists($path) ) {
+      $type = null;
+      if ( preg_match("/\.js$/", $filename) ) {
+        $type = "javascript";
+        $mime = "application/x-javascript";
+      } else if ( preg_match("/\.css$/", $filename) ) {
+        $type = "stylesheet";
+        $mime = "text/css";
+      } else {
+        try {
+          if ( $m = VFS::GetMIME($path) ) {
+            $mime = $m[0];
+          }
+        } catch ( Exception $e ) {}
+      }
+
+      if ( !($content = file_get_contents($path)) ) {
+        $content = "/* ERROR 204 */";
+      }
+    } else {
+      $content = "/* ERROR 404  */";
+    }
+
+    return Array(
+      "mime"    => $mime,
+      "content" => $content
+    );
+  }
 
   /**
    * Create a new Package Archive from Project path

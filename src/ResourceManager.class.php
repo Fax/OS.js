@@ -303,71 +303,41 @@ EOCSS;
    * @param  String   $package      Package name (If any)
    * @param  bool     $udef         User VFS package ?
    * @param  bool     $compress     Enable Compression
-   * @param  bool     $raw          Get in RAW state
    * @return Mixed
    */
-  public static function getResource($file, $package, $udef, $compress, $raw = false) {
-    $content = "";
-
+  public static function getResource($file, $package, $udef, $compress) {
     $file     = preg_replace("/\.+/", ".", preg_replace("/[^a-zA-Z0-9\.\-\_]/", "", $file));
     $package  = $package ? preg_replace("/[^a-zA-Z0-9\-\_]/", "", $package) : null;
-    $type     = null;
-    $path     = null;
     $mime     = "text/plain";
     $content  = null;
 
-    if ( preg_match("/\.js$/", $file) ) {
-      $type = "javascript";
-    } else if ( preg_match("/\.css$/", $file) ) {
-      $type = "stylesheet";
-    } else {
-      $compress = false;
-    }
-
-    $rpath = null;
     if ( $package ) {
-      if ( $udef ) {
-        if ( $user = Core::get()->getUser() ) {
-          $rpath  = sprintf(URI_VFS_USER_PACKAGES, $user->id) . "/%s/%s";
-          $path   = sprintf($rpath, $package, $file);
-        }
-      } else {
-        $rpath  = $compress ? RESOURCE_PACKAGE_MIN : RESOURCE_PACKAGE;
-        $path   = sprintf($rpath, $package, $file);
+      if ( $result = Package::GetResource($package, $file, $compress, $udef) ) {
+        $mime = $result["mime"];
+        $content = $result["content"];
       }
     } else {
+      $type = null;
+      if ( preg_match("/\.js$/", $file) ) {
+        $type = "javascript";
+      } else if ( preg_match("/\.css$/", $file) ) {
+        $type = "stylesheet";
+      }
+
       $rpath  = $compress ? RESOURCE_CORE_MIN : RESOURCE_CORE;
       $path   = sprintf($rpath, $file);
-    }
 
-    if ( $rpath && $path && file_exists($path) ) {
-      if ( in_array($type, Array("javascript", "stylesheet")) ) {
+      if ( file_exists($path) ) {
         $mime = ($type == "javascript") ? "application/x-javascript" : "text/css";
-
         if ( !($content = file_get_contents($path)) ) {
           $content = "/* ERROR 204 */";
         }
       } else {
-        try {
-          if ( $m = VFS::GetMIME($path) ) {
-            $mime = $m[0];
-          }
-          if ( $raw ) {
-            $content = str_replace($rpath, "", $path);
-          } else {
-            if ( !($content = file_get_contents($path)) ) {
-              $content = "/* ERROR 500 or 204 */";
-            }
-          }
-        } catch ( Exception $e ) {
-          $mime = "text/plain";
-        }
+        $content = "/* ERROR 404 */";
       }
-
-      return Array($mime, $content);
     }
 
-    return false;
+    return Array($mime, $content);
   }
 
 }

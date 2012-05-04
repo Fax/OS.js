@@ -8,7 +8,6 @@ CORE TODO:
 
 [LOW]  Core::_doUserOperation (User manipulation, backend)
 [LOW]  APP ControlPanel: _doUserOperation (User manipulation, frontend)
-[LOW]  Rewrite Glade builder class
 [LOW]  Implement MenuNew in GtkMenu
 [LOW]  Add/Remove Panel
 [LOW]  Remove the global resize event and make a poll ?!
