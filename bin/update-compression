@@ -92,8 +92,9 @@ if ( $xml = file_get_contents(PACKAGE_BUILD) ) {
   if ( $xml = new SimpleXmlElement($xml) ) {
     foreach ( $xml as $app ) {
       if ( isset($app->resource) ) {
+      var_dump($app);
         foreach ( $app->resource as $r ) {
-          $packages[] = "/" . (((string) $app['type']) . ((string) $app['name'])) . "/" . (string) $r;
+          $packages[] = "/" . ((string) $app['packagename']) . "/" . (string) $r;
         }
       }
     }

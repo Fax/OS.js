@@ -35,7 +35,7 @@
 // Environment
 //
 
-define("ENV_PRODUCTION",      (PROJECT_HOST != "amitop"));
+define("ENV_PRODUCTION",      false);
 define("ENABLE_CACHE",        false);
 define("ENABLE_LOGGING",      true);
 define("ENABLE_GETTEXT",      true);
