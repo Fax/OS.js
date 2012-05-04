@@ -288,10 +288,29 @@ class Core
    */
   protected static final function _doPackageOperation(Array $args, Array &$json, Core $inst = null) {
     if ( $user = $inst->getUser() ) {
-      Package::LoadAll(Package::TYPE_APPLICATION | Package::TYPE_PANELITEM | Package::TYPE_SERVICE, $user);
-
-      $json['success'] = true;
-      $json['result']  = $args;
+      if ( $args['operation'] == "install" ) {
+        $archive = $args['archive'];
+        if ( $result = PackageManager::InstallPackage($archive, $user, true) ) {
+          $json['success'] = true;
+          $json['result']  = true;
+        } else {
+          $json['error'] = sprintf(_("Failed to install '%s'. Archive error?!"), basename($archive)); // FIXME: Locale
+        }
+      } else if ( $args['operation'] == "uninstall" ) {
+        $package = $args['package']['name'];
+        if ( $result = Package::FindPackage($package, $user) ) {
+          if ( $result["found"] && $result["user"] ) {
+            if ( PackageManager::UninstallPackage($package, $user, true) ) {
+              $json['success'] = true;
+              $json['result']  = true;
+            } else {
+              $json['error'] = sprintf(_("Failed to uninstall '%s'!"), $package); // FIXME: Locale
+            }
+          } else {
+            $json['error'] = sprintf(_("Failed to uninstall '%s'. Package not found or access denied!"), $package); // FIXME: Locale
+          }
+        }
+      }
     }
   }
 

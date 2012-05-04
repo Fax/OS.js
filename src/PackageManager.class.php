@@ -138,27 +138,38 @@ abstract class PackageManager
 
   /**
    * Uninstall a package from Metadata file
-   * @param  XML      $package  SimpleXML Package Node
-   * @param  User     $user     If defined, User VFS is used
+   * @param  String   $package    Package name
+   * @param  User     $user       User
+   * @param  bool     $removal    Remove files ?
    * @return bool
    */
-  public static function UninstallPackage($package, User $user = null) {
-    $config = $user ? sprintf(PACKAGE_USER_BUILD, $user->id) : PACKAGE_BUILD;
-    $p_type = (string) $package['type'];
-    $p_name = (string) $package['name'];
-
+  public static function UninstallPackage($package, User $user, $removal = false) {
+    $config = sprintf(PACKAGE_USER_BUILD, $user->id);
     if ( $data = self::_readXML($config) ) {
       $found = false;
       foreach ( $data as $k => $n ) {
-        if ( ((string) $n['type'] == $p_type) && ((string) $n['name'] == $p_name) ) {
-          $found = true;
-          unset($data[$k]);
+        if ( ((string) $n['packagename']) == $package ) {
+          $found = $package;
           break;
         }
       }
 
+
       if ( $found ) {
-        return self::_saveXML($config, $data);
+        if ( self::_saveXML($config, $data) ) {
+          if ( $removal ) {
+            $path = sprintf(RESOURCE_VFS_PACKAGE, $user->id, $found, "");
+            if ( is_dir($path) ) {
+              rrmdir($path);
+              if ( !is_dir($path) ) {
+                return self::RefreshMetadata($user);
+              }
+            }
+            return false;
+          }
+
+          return true;
+        }
       }
     }
     return false;
@@ -166,27 +177,33 @@ abstract class PackageManager
 
   /**
    * Install a package into Metadata file
-   * @param  XML      $package  SimpleXML Package Node
-   * @param  User     $user     If defined, User VFS is used
+   * @param  String   $package  Package name or archive path
+   * @param  User     $user     User
    * @return bool
    */
-  public static function InstallPackage($package, User $user = null) {
-    $config = $user ? sprintf(PACKAGE_USER_BUILD, $user->id) : PACKAGE_BUILD;
-    $p_type = (string) $package['type'];
-    $p_name = (string) $package['name'];
+  public static function InstallPackage($package, User $user) {
+    $pname    = $package;
+    if ( preg_match("/\.zip$/", strtolower($package)) ) {
+      $package  = preg_replace("/^\/User/", "", $package);
+      $dest     = sprintf(PATH_VFS_PACKAGES, $user->id);
+      $archive  = sprintf(PATH_VFS_USER, $user->id) . $package;
 
-    if ( $data = self::_readXML($config) ) {
-      $found = false;
-      foreach ( $data as $n ) {
-        if ( ((string) $n['type'] == $p_type) && ((string) $n['name'] == $p_name) ) {
-          $found = true;
-          break;
+      try {
+        if ( !Package::ExtractArchive($archive, $dest) ) {
+          return false;
         }
+      } catch ( Exception $eee ) {
+        error_log("EXCEPTION");
+        return false;
       }
 
-      if ( !$found ) {
-        $data[] = $package;
-        return self::_saveXML($config, $data);
+      $pname = basename($package, ".zip");
+    }
+
+    $package = sprintf(RESOURCE_VFS_PACKAGE, $user->id, $pname, "metadata.xml");
+    if ( $package = self::_readXML($package) ) {
+      if ( ($res = Package::FindPackage($pname, $user)) && !($res["found"]) ) {
+        return self::RefreshMetadata($user);
       }
     }
     return false;

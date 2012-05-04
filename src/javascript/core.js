@@ -1321,11 +1321,7 @@
           console.log("Arguments", p, callback);
           console.groupEnd();
 
-          if ( (p instanceof Object) && sizeof(p) ) {
-            _PackMan.uninstall(p, callback);
-          } else {
-            console.group("===    ABORTED    ===");
-          }
+          _PackMan.uninstall(p, callback);
         },
         'package_install' : function(p, callback) {
           callback = callback || function() {};
@@ -3605,15 +3601,21 @@
     },
 
     /**
-     * PackageManager::install() -- Install Package(s)
-     * @param  Array    p           Package list
+     * PackageManager::install() -- Install Package from Archive
+     * @param  String   p           Package Archive Path
      * @param  Function callback    Callback function
      * @return void
      */
     install : function(p, callback) {
       var self = this;
-      DoPost({'action' : 'package', 'operation' : 'install', 'data' : p}, function(res) {
-        callback(res, false); // TODO
+      DoPost({'action' : 'package', 'operation' : 'install', 'archive' : p}, function(res) {
+        if ( res.error ) {
+          MessageBox(res.error);
+        } else {
+          _PackMan.setPackages(null, function() {
+            callback(res);
+          });
+        }
       });
     },
 
@@ -3625,8 +3627,14 @@
      */
     uninstall : function(p, callback) {
       var self = this;
-      DoPost({'action' : 'package', 'operation' : 'uninstall', 'data' : p}, function(res) {
-        callback(res, false); // TODO
+      DoPost({'action' : 'package', 'operation' : 'uninstall', 'package' : p}, function(res) {
+        if ( res.error ) {
+          MessageBox(res.error);
+        } else {
+          _PackMan.setPackages(null, function() {
+            callback(res);
+          });
+        }
       });
     },
 
@@ -3635,8 +3643,9 @@
      * @see SettingsManager::run()
      * @return void
      */
-    setPackages : function(packages) {
+    setPackages : function(packages, callback) {
       var self = this;
+      callback = callback || function() {};
       if ( packages ) {
         this.cache = packages;
 
@@ -3646,11 +3655,15 @@
       } else {
         DoPost({'action' : 'updateCache'}, function(data) {
           if ( data.result ) {
-            self.cache = data.result;
+            self.cache = data.result.packages;
 
             console.group("PackageManager::setPackages()");
             console.log("Cache", self.cache);
             console.groupEnd();
+
+            setTimeout(function() {
+              callback();
+            }, 0);
           }
         });
       }

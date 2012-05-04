@@ -112,4 +112,19 @@ function getHumanSize($bytes) {
   return "0 B";
 }
 
+/**
+ * Remove directory recursivly
+ * @param  String   $dir      Directory
+ * @return void
+ */
+function rrmdir($dir) {
+  foreach(glob($dir . '/*') as $file) {
+    if(is_dir($file))
+      rrmdir($file);
+    else
+      unlink($file);
+  }
+  rmdir($dir);
+}
+
 ?>

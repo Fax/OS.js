@@ -91,7 +91,8 @@ define("PATH_JSBASE",          PATH . "/src/javascript");
 define("PATH_JSLOCALE",        PATH . "/src/javascript/locale");
 define("PATH_MEDIA",           PATH . "/public_html/media");
 define("PATH_VFS",             PATH . "/VFS");
-define("PATH_VFS_PACKAGES",    PATH . "/VFS/%d/Packages");
+define("PATH_VFS_USER",        PATH . "/VFS/%d");
+define("PATH_VFS_PACKAGES",    PATH_VFS_USER . "/Packages");
 
 //
 // Resources (Core, Package, etc.)

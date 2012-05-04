@@ -63,6 +63,7 @@ Directories and Files:
 /bin/                     Misc scripts
   add-user                  Add a user
   compile-all               Compile all packages
+  create-archive            Create package zipped archive
   create-package            Create a new Package
   fix-permissions           Correct file/directory permissions
   git-commit                Git Wrapper: Commit changes
