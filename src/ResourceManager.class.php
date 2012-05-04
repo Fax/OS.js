@@ -301,18 +301,17 @@ EOCSS;
    * Get a resource file (CSS or JS) [with compression]
    * @param  String   $file         Filename
    * @param  String   $package      Package name (If any)
-   * @param  bool     $udef         User VFS package ?
    * @param  bool     $compress     Enable Compression
    * @return Mixed
    */
-  public static function getResource($file, $package, $udef, $compress) {
+  public static function getResource($file, $package, $compress) {
     $file     = preg_replace("/\.+/", ".", preg_replace("/[^a-zA-Z0-9\.\-\_]/", "", $file));
     $package  = $package ? preg_replace("/[^a-zA-Z0-9\-\_]/", "", $package) : null;
     $mime     = "text/plain";
     $content  = null;
 
     if ( $package ) {
-      if ( $result = Package::GetResource($package, $file, $compress, $udef) ) {
+      if ( $result = Package::GetResource($package, $file, $compress) ) {
         $mime = $result["mime"];
         $content = $result["content"];
       }

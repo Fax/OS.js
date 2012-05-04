@@ -71,39 +71,46 @@ abstract class Package
    * @param  String   $package        Package Name
    * @param  String   $filename       Resource Filename
    * @param  bool     $compress       Use Compression ?
-   * @param  bool     $user           User Package ?
    * @return Object
    */
-  public static function GetResource($package, $filename, $compress = false, $user = false) {
-    $root = $compress ? RESOURCE_PACKAGE_MIN : RESOURCE_PACKAGE;
-    if ( $user ) {
-      $root = sprintf(URI_VFS_USER_PACKAGES, $user->id) . "/%s/%s";
-    }
+  public static function GetResource($package, $filename, $compress = false) {
+    $mime     = "text/plain";
+    $content  = "/* ERROR 500  */";
+    $user     = Core::get()->getUser();
 
-    $path = sprintf($root, $package, $filename);
-    $mime = "text/plain";
-    $content = null;
-    if ( file_exists($path) ) {
-      $type = null;
-      if ( preg_match("/\.js$/", $filename) ) {
-        $type = "javascript";
-        $mime = "application/x-javascript";
-      } else if ( preg_match("/\.css$/", $filename) ) {
-        $type = "stylesheet";
-        $mime = "text/css";
-      } else {
-        try {
-          if ( $m = VFS::GetMIME($path) ) {
-            $mime = $m[0];
+    if ( ($pkg = self::FindPackage($package, $user)) ) {
+      if ( $pkg["found"] ) {
+        if ( $pkg["user"] ) {
+          $root = $compress ? RESOURCE_VFS_PACKAGE_MIN : RESOURCE_VFS_PACKAGE;
+          $path = sprintf($root, $user->id, $package, $filename);
+        } else {
+          $root = $compress ? RESOURCE_PACKAGE_MIN : RESOURCE_PACKAGE;
+          $path = sprintf($root, $package, $filename);
+        }
+
+        if ( file_exists($path) ) {
+          $type = null;
+          if ( preg_match("/\.js$/", $filename) ) {
+            $type = "javascript";
+            $mime = "application/x-javascript";
+          } else if ( preg_match("/\.css$/", $filename) ) {
+            $type = "stylesheet";
+            $mime = "text/css";
+          } else {
+            try {
+              if ( $m = VFS::GetMIME($path) ) {
+                $mime = $m[0];
+              }
+            } catch ( Exception $e ) {}
           }
-        } catch ( Exception $e ) {}
-      }
 
-      if ( !($content = file_get_contents($path)) ) {
-        $content = "/* ERROR 204 */";
+          if ( !($content = file_get_contents($path)) ) {
+            $content = "/* ERROR 204 */";
+          }
+        } else {
+          $content = "/* ERROR 404  */";
+        }
       }
-    } else {
-      $content = "/* ERROR 404  */";
     }
 
     return Array(
@@ -314,9 +321,32 @@ abstract class Package
     return $result;
   }
 
-  /////////////////////////////////////////////////////////////////////////////
-  // INSTANCES - STATIC METHODS
-  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Find a Package by name
+   * @param  String     $name     Package Name
+   * @param  User       $user     User Instance (Optional)
+   * @return Object
+   */
+  public static function FindPackage($name, User $user = null) {
+    $found = false;
+    $upackage = false;
+    $packages = PackageManager::GetPackages($user);
+    foreach ( $packages["System"] as $key => $p ) {
+      if ( $key == $name ) {
+        $found = true;
+        break;
+      }
+    }
+    foreach ( $packages["User"] as $key => $p ) {
+      if ( $key == $name ) {
+        $found = true;
+        $upackage = true;
+        break;
+      }
+    }
+
+    return Array("found" => $found, "user" => $upackage);
+  }
 
   /**
    * Load (a) Package(s)

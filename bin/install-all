@@ -35,7 +35,12 @@
  * @created 2012-01-04
  */
 
-define("NODB", true);
-require "header.php";
-var_dump(PackageManager::RefreshMetadata());
+if ( isset($argv) && isset($argv[1]) ) {
+  require "header.php";
+  var_dump(PackageManager::RefreshMetadata(User::getById($argv[1])));
+} else {
+  define("NODB", true);
+  require "header.php";
+  var_dump(PackageManager::RefreshMetadata());
+}
 ?>
