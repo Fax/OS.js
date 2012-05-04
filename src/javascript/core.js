@@ -371,62 +371,106 @@
   } // @endfunction
 
   /**
-   * LaunchApplication() -- Application Launch handler
-   * @param   String    app_name              Application name
-   * @param   Mixed     app_args              Application starting arguments (argv)
-   * @param   Array     windows               Window list (used for restoration)
-   * @param   Function  callback              Callback on success
-   * @param   Function  callback_error        Callback on error
+   * LaunchProcess() - Launch a process by name, type and args
+   * @param   String    name      Package name
+   * @param   String    type      Package type
+   * @param   Object    args      Arguments to send
    * @return  void
    * @function
    */
-  function LaunchApplication(app_name, app_args, windows, callback, callback_error) {
-    callback = callback || function() {};
-    callback_error = callback_error || function() {};
+  function LaunchProcess(name, type, args) {
+    args = args || {};
 
-    var application = InitLaunch(app_name, "Application");
-    if ( application ) {
+    var process = InitLaunch(name, type);
+    var callback_result = undefined;
+    var callback_message = undefined;
+
+    console.group("LaunchProcess()");
+    console.log("Name", name);
+    console.log("Type", type);
+    console.log("Args", args);
+    console.log("Found?", process);
+    console.groupEnd();
+
+    if ( process ) {
+
       API.ui.cursor("wait");
 
-      var resources = application.resources;
-      _Resources.addResources(resources, app_name, function(error) {
-        console.group(">>> Initing loading of '" + app_name + "' <<<");
+      var resources = process.resources;
+      _Resources.addResources(resources, name, function(error) {
+        if ( !error ) {
+          var ref, obj;
+          var crashed   = false;
+          var runnable  = false;
 
-        var app_ref = OSjs.Applications[app_name];
-        console.log("Checking if resources was sucessfully loaded...");
+          console.log("LaunchProcess()", name, ">", "Launching...");
 
-        if ( !error && app_ref ) {
-          var crashed = false;
-          var application;
+          switch ( type ) {
+            case "PanelItem" :
+              ref = OSjs.PanelItems[name];
+              try {
+                obj = new OSjs.PanelItems[name](PanelItem, args.panel, API, args.argv || {});
+                obj._panel = args.panel;
+                obj._index = args.index;
+                args.panel.addItem(obj, args.align, args.save);
+              } catch ( ex ) {
+                obj = null;
+                crashed = true;
 
-          console.log("Trying to create application...");
+                callback_result = crashed;
+                callback_message = name + ": " + ex;
+              }
+            break;
 
-          try {
-            application = new app_ref(GtkWindow, Application, API, app_args, windows);
-            application._checkCompability();
+            case "Service"           :
+            case "BackgroundService" :
+              ref = OSjs.Services[name];
+              try {
+                obj = new OSjs.Services[name](BackgroundService, API, args.argv || {});
+                runnable = true;
+              } catch ( ex ) {
+                CrashApplication(name, obj, ex);
+                crashed = true;
+              }
+            break;
 
-            console.log("<<< CREATED >>>");
-          } catch ( ex ) {
-            CrashApplication(app_name, application, ex);
-            crashed = true;
+            default :
+              ref = OSjs.Applications[name];
+              if ( ref ) {
+                try {
+                  obj = new ref(GtkWindow, Application, API, args.argv || {}, args.restore || []);
+                  obj._checkCompability();
+                  runnable = true;
+                } catch ( ex ) {
+                  CrashApplication(name, obj, ex);
+                  crashed = true;
+                }
+              }
+            break;
           }
 
           if ( !crashed ) {
-            console.log("Running application");
-
-            setTimeout(function() {
-              try {
-                application.run();
-              } catch ( ex ) {
-                CrashApplication(app_name, application, ex);
+            console.log("LaunchProcess()", name, ">", "Launched!");
+            if ( runnable ) {
+              setTimeout(function() {
+                try {
+                  obj.run();
+                } catch ( ex ) {
+                  CrashApplication(name, obj, ex);
+                }
+              }, 50);
+            } else {
+              if ( args && args.callback ) {
+                args.callback(callback_result, callback_message);
               }
-            }, 100);
-          } else {
-            console.log("!!! FAILED !!!");
+            }
           }
         } else {
-          var errors = [];
-          var eargs = [];
+          console.log("LaunchProcess()", name, "<", "ERROR");
+
+          var extra   = "\n\nThis may be due to a missing file or a syntax error in a resource."; // FIXME: Locale
+          var errors  = [];
+          var eargs   = [];
           for ( var x in resources ) {
             errors.push(resources[x]);
           }
@@ -439,131 +483,18 @@
             eargs.push(app_args[a]);
           }
 
-          var extra = "\n\nThis may be due to a missing file or a syntax error in a resource."; // FIXME: Locale
-
-          CrashApplication(app_name, {
-            _name : app_name
+          CrashApplication(name, {
+            _name : name
           }, {
             message : sprintf(OSjs.Labels.CrashLaunchResourceMessage, errors.join(", ") + extra),
-            stack   : sprintf(OSjs.Labels.CrashLaunchResourceStack, "LaunchApplication", app_name, eargs.join(", "))
+            stack   : sprintf(OSjs.Labels.CrashLaunchResourceStack, "LaunchProcess", name, eargs.join(", "))
           });
-
-          callback_error("AddResource() error");
         }
 
         setTimeout(function() {
           API.ui.cursor("default");
         }, 50);
 
-        console.groupEnd();
-      });
-    }
-  } // @endfunction
-
-  /**
-   * LaunchPanelItem() -- PanelItem Launch handler
-   * @param   int       i             Item index
-   * @param   String    iname         Item name
-   * @param   Mixed     iargs         Item argument(s)
-   * @param   String    ialign        Item alignment
-   * @param   Panel     panel         Panel instance reference
-   * @param   Function  callback      Callback function (Default = undefined)
-   * @param   bool      save          Save panel after launch (Default = undefined)
-   * @return  void
-   * @function
-   */
-  function LaunchPanelItem(i, iname, iargs, ialign, panel, callback, save) {
-    callback = callback || function() {};
-
-    var panelitem = InitLaunch(iname, "PanelItem");
-    if ( panelitem ) {
-      var resources = panelitem.resources;
-      _Resources.addResources(resources, iname, function(error) {
-
-        console.group(">>> Initing loading of '" + iname + "' <<<");
-
-        var crashed = false;
-        var error_msg = null;
-
-        if ( !error && OSjs.PanelItems[iname] ) {
-          var item = new OSjs.PanelItems[iname](PanelItem, panel, API, iargs);
-          if ( item ) {
-            item._panel = panel;
-            item._index = i;
-            try {
-              panel.addItem(item, ialign, save);
-            } catch ( exception ) {
-              crashed = true;
-              error_msg = iname + ": " + exception;
-            }
-          }
-        } else {
-          var errors = [];
-          var eargs = iargs;
-          for ( var x in resources ) {
-            errors.push("* " + resources[x]);
-          }
-
-          CrashCustom(iname, 
-            sprintf(OSjs.Labels.CrashLaunchResourceMessage, errors.join("\n")),
-            sprintf(OSjs.Labels.CrashLaunchResourceStack, "LaunchPanelItem", iname, eargs.join(",")) );
-
-          crashed = true;
-        }
-
-        console.groupEnd();
-
-        callback(crashed, error_msg);
-      });
-    }
-  } // @endfunction
-
-  /**
-   * LaunchBackgroundService() -- BackgroundService Launch handler
-   * @param   String    sname         Item name
-   * @param   Mixed     iargs         Item argument(s)
-   * @param   Function  callback      Callback function (Default = undefined)
-   * @return  void
-   * @function
-   */
-  function LaunchBackgroundService(sname, iargs, callback) {
-    callback = callback || function() {};
-    iargs    = iargs    || {};
-
-    var service = InitLaunch(sname, "BackgroundService");
-    if ( service ) {
-      var resources = service.resources;
-      _Resources.addResources(resources, sname, function(error) {
-
-        console.group(">>> Initing loading of '" + sname + "' <<<");
-
-        var crashed = false;
-        var error_msg = null;
-
-        if ( !error && OSjs.Services[sname] ) {
-          try {
-            var item = new OSjs.Services[sname](BackgroundService, API, iargs);
-            item.run();
-          } catch ( ex ) {
-            CrashApplication(sname, item, ex);
-          }
-        } else {
-          var errors = [];
-          var eargs = iargs;
-          for ( var x in resources ) {
-            errors.push("* " + resources[x]);
-          }
-
-          CrashCustom(sname,
-            sprintf(OSjs.Labels.CrashLaunchResourceMessage, errors.join("\n")),
-            sprintf(OSjs.Labels.CrashLaunchResourceStack, "LaunchBackgroundService", sname, eargs.join(",")) );
-
-          crashed = true;
-        }
-
-        console.groupEnd();
-
-        callback(crashed, error_msg);
       });
     }
   } // @endfunction
@@ -1085,7 +1016,7 @@
         console.groupEnd();
 
         if ( launch_application ) {
-          LaunchApplication(app_name, app_args, windows);
+          LaunchProcess(app_name, "Application", {"argv" : app_args, "restore" : windows});
         } else {
           LaunchString(app_name, app_args, windows);
         }
@@ -2474,7 +2405,7 @@
         if ( autostarters ) {
           var ai = 0, al = autostarters.length;
           for ( ai; ai < al; ai++ ) {
-            LaunchBackgroundService(autostarters[ai]);
+            LaunchProcess(autostarters[ai], "BackgroundService");
           }
         }
 
@@ -5172,7 +5103,7 @@
             var iargs   = el[1];
             var ialign  = el[2] || "left:0";
 
-            LaunchPanelItem(index, iname, iargs, ialign, panel, function(crashed, error_msg) {
+            LaunchProcess(iname, "PanelItem", {"index" : index, "argv" : iargs, "align" : ialign, "panel" : panel, "callback" : function(crashed, error_msg) {
               current++;
 
               if ( crashed && error_msg ) {
@@ -5189,7 +5120,7 @@
                   callback_error(exception, panel);
                 }
               }
-            });
+            }});
           };
 
           if ( size > 0 ) {
@@ -5915,7 +5846,7 @@
             diag.$element.find(".DialogButtons .Ok").show().click(function() {
               if ( selected ) {
                 var pos = pos_ev.pageX;
-                LaunchPanelItem(self.items.length, selected, [], "left:" + pos, self, undefined, true);
+                LaunchProcess(selected, "PanelItem", {"index" : self.items.length, "argv" : [], "align" : "left:" + pos, "panel" : self, "save" : true});
               }
             }).attr("disabled", "disabled");
 
