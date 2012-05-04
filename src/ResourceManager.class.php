@@ -324,10 +324,6 @@ EOCSS;
       $compress = false;
     }
 
-    if ( $udef ) {
-      $compress = false;
-    }
-
     $rpath = null;
     if ( $package ) {
       if ( $udef ) {

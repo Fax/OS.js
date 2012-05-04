@@ -304,7 +304,7 @@ class Core
     if ( $user = $inst->getUser() ) {
       $json['success'] = true;
       $json['result']  = Array(
-        "packages" => Package::GetInstalledPackages($user)
+        "packages" => PackageManager::GetPackages($user)
       );
     }
   }
@@ -541,7 +541,7 @@ class Core
         $init_language      = "default"; // NOTE: Should be set to user ? used as 'SystemLanguage'
         $browser_language   = self::_getBrowserLanguage();
         $resources          = Array();
-        $packages           = Package::GetInstalledPackages($user);
+        $packages           = PackageManager::GetPackages($user);
 
         foreach ( Dialog::$Registered as $name => $opts ) {
           foreach ( $opts["resources"] as $res ) {
@@ -550,7 +550,7 @@ class Core
         }
 
         if ( !($registry = $user->last_registry) ) {
-          $registry = User::getDefaultRegistry($packages, true);
+          $registry = User::getDefaultRegistry(true);
         }
         if ( !($session = $user->last_session) ) {
           $session = User::getDefaultSession();
@@ -706,7 +706,28 @@ class Core
    * @return void
    */
   protected static final function _doApplicationEvent(Array $args, Array &$json, Core $inst = null) {
-    if ( ($result = Application::Handle($args['action'], $args['instance'])) ) {
+    $action   = $args['action'];
+    $instance = $args['instance'];
+    $result   = null;
+
+    if ( $action && $instance ) {
+      if ( isset($instance['name']) && isset($instance['action']) ) {
+        $cname    = preg_replace("/[^A-z0-9]/", "", $instance['name']);
+        $aargs    = isset($instance['args']) ? $instance['args'] : Array();
+        $action   = $instance['action'];
+        $root     = PATH_PACKAGES . "/{$cname}/{$cname}.class.php";
+
+        if ( file_exists($root) ) {
+          require_once $root;
+        }
+
+        if ( class_exists($cname) ) {
+          $result = $cname::Event($action, $aargs);
+        }
+      }
+    }
+
+    if ( $result ) {
       $json['success'] = ($result === true) || is_array($result);
       $json['error']   = $json['success'] ? null : (is_string($result) ? $result : _("Unknown error"));
       $json['result']  = $json['success'] ? $result : null;

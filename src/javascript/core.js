@@ -251,25 +251,16 @@
   /**
    * InitLaunch() -- Initialize a launching of process
    * @param   String    name      Name of process to launch
+   * @param   String    type      Package type
    * @return  bool
    * @function
    */
-  function InitLaunch(name) {
+  function InitLaunch(name, type) {
     var i, msg, trace;
 
     // First check if avail
-    var plist = API.user.settings.packages();
-    var found = false;
-    var active = false;
-    for ( i = 0; i < plist.length; i++ ) {
-      if ( (plist[i].name == name) ) {
-        found = true;
-        active = (plist[i].active);
-        break;
-      }
-    }
-
-    if ( !found || !active ) {
+    var found = _PackMan.getPackage(name, "PanelItem");
+    if ( !found ) {
       msg   = sprintf(OSjs.Labels.InitLaunchNotFound, name);
       trace = sprintf("InitLaunch(%s)", name);
 
@@ -307,7 +298,7 @@
       return false;
     }
 
-    return true;
+    return found;
   } // @endfunction
 
   /**
@@ -392,11 +383,11 @@
     callback = callback || function() {};
     callback_error = callback_error || function() {};
 
-    var applications = _PackMan.getPackages("Application");
-    if ( InitLaunch(app_name) && applications[app_name] ) {
+    var application = InitLaunch(app_name, "Application");
+    if ( application ) {
       API.ui.cursor("wait");
 
-      var resources = applications[app_name].resources;
+      var resources = application.resources;
       _Resources.addResources(resources, app_name, function(error) {
         console.group(">>> Initing loading of '" + app_name + "' <<<");
 
@@ -483,9 +474,9 @@
   function LaunchPanelItem(i, iname, iargs, ialign, panel, callback, save) {
     callback = callback || function() {};
 
-    var panelitems = _PackMan.getPackages("PanelItem");
-    if ( InitLaunch(iname) && panelitems[iname] ) {
-      var resources = panelitems[iname].resources;
+    var panelitem = InitLaunch(iname, "PanelItem");
+    if ( panelitem ) {
+      var resources = panelitem.resources;
       _Resources.addResources(resources, iname, function(error) {
 
         console.group(">>> Initing loading of '" + iname + "' <<<");
@@ -538,9 +529,9 @@
     callback = callback || function() {};
     iargs    = iargs    || {};
 
-    var services = _PackMan.getPackages("BackgroundService");
-    if ( InitLaunch(sname) && services[sname] ) {
-      var resources = services[sname].resources;
+    var service = InitLaunch(sname, "BackgroundService");
+    if ( service ) {
+      var resources = service.resources;
       _Resources.addResources(resources, sname, function(error) {
 
         console.group(">>> Initing loading of '" + sname + "' <<<");
@@ -607,24 +598,13 @@
       }
 
       var default_app = null;
-      var apps        = {};
+      var apps        = _PackMan.getPackages(true);
       var found       = [];
       var list        = [];
       var inmime      = mime.split("/");
-      var launched      = false;
+      var launched    = false;
 
       var i;
-
-      // Figure out what apps to display
-      var activated     = _Settings._get("user.installed.packages", true); // FIXME
-      var applications  = _PackMan.getPackages("Application");
-      for ( i in applications ) {
-        if ( applications.hasOwnProperty(i) ) {
-          if ( in_array(i, activated) ) {
-            apps[i] = applications[i];
-          }
-        }
-      }
 
       if ( udef ) {
         // First, figure out default application
@@ -800,7 +780,7 @@
     for ( i in apps ) {
       if ( apps.hasOwnProperty(i) ) {
         iter = apps[i];
-        if ( (iter.type == "Application") && iter.active ) {
+        if ( (iter.type == "Application") ) {
           cat = cats[iter.category] ? iter.category : "unknown";
           cats[cat].items.push({
             "title"   : iter.label,
@@ -1306,34 +1286,6 @@
           return _Settings.getOptions(k);
         },
 
-        'package_enable' : function(p, callback) {
-          callback = callback || function() {};
-
-          console.group("=== API OPERATION ===");
-          console.log("Method", "API.user.settings.package_enable");
-          console.log("Arguments", p);
-          console.groupEnd();
-
-          if ( (p instanceof Object) && sizeof(p) ) {
-            _PackMan.enable(p, callback);
-          } else {
-            console.group("===    ABORTED    ===");
-          }
-        },
-        'package_disable' : function(p, callback) {
-          callback = callback || function() {};
-
-          console.group("=== API OPERATION ===");
-          console.log("Method", "API.user.settings.package_disable");
-          console.log("Arguments", p);
-          console.groupEnd();
-
-          if ( (p instanceof Object) && sizeof(p) ) {
-            _PackMan.disable(p, callback);
-          } else {
-            console.group("===    ABORTED    ===");
-          }
-        },
         'package_uninstall' : function(p, callback) {
           callback = callback || function() {};
 
@@ -3220,6 +3172,9 @@
       var i;
       for ( i in registry ) {
         if ( registry.hasOwnProperty(i) ) {
+          if ( !this._registry[i] )
+            continue;
+
           console.log("> ", i, this._registry[i].type, registry[i]);
 
           switch ( this._registry[i].type ) {
@@ -3606,9 +3561,8 @@
     reset : function() {
       this.running = false;
       this.cache = {
-        'Application'         : {},
-        'PanelItem'           : {},
-        'BackgroundService'   : {}
+        'User'    : {},
+        'System'  : {}
       };
     },
 
@@ -3624,145 +3578,6 @@
     },
 
     /**
-     * PackageManager::modifyPackage() -- Wrapper function for package methods
-     * @param  String   action      Package Action
-     * @param  String   p           Package Name
-     * @param  Enum     args        Action Arguments
-     * @return bool
-     */
-    modifyPackage : function(action, p, args) {
-      var result;
-      var activated = _Settings._get("user.installed.packages", true);
-
-      console.group("PackageManager::modifyPackage()");
-      console.log("Doing", action, "using", p, "and", args);
-      console.log("Current", activated);
-
-      var op_start = [];
-      var op_stop  = [];
-
-      // Manipulate storage
-      switch ( action ) {
-        case "enable"   :
-          if ( in_array(args.type, ["Application", "PanelItem", "BackgroundService"]) ) {
-            if ( !in_array(p, activated) ) {
-              activated.push(p);
-              result = true;
-
-              if ( args.type === "BackgroundService" ) {
-                op_start.push(args.name);
-              }
-            }
-          }
-        break;
-        case "disable" :
-          for ( var i = 0; i < activated.length; i++ ) {
-            if ( activated[i] == p ) {
-              activated.splice(i, 1);
-              result = true;
-
-              if ( args.type === "BackgroundService" ) {
-                op_stop.push(p);
-              }
-              break;
-            }
-          }
-        break;
-        case "uninstall"  :
-          //this.updateCache(true);
-          result = false;
-        break;
-        case "install" :
-          //this.updateCache(true);
-          result = false;
-        break;
-        default :
-          result = false;
-        break;
-      }
-
-      // Now save
-      if ( result === true ) {
-        _Settings._set("user.installed.packages", activated);
-        _Settings._save();
-      }
-
-      /* NOTE: Goodshit
-      console.log("Starting", op_start.length, "services", op_start);
-      console.log("Stopping", op_stop.length, "services", op_stop);
-
-      if ( op_start.length ) {
-        for ( var opi = 0; opi < op_start.length; opi++ ) {
-          LaunchBackgroundService(op_start[opi]);
-        }
-      }
-
-      if ( op_stop.length ) {
-        var procs = _Core.getProcesses();
-        var brk = false, cur;
-        for ( var opl = 0; opl < op_stop.length; opl++ ) {
-          cur = op_stop[opl];
-          for ( var opx = 0; opx < procs.length; opx++ ) {
-            if ( procs[opx].name == cur ) {
-              procs[opx].kill();
-              brk = true;
-              break;
-            }
-          }
-
-          if ( brk )
-            break;
-        }
-      }
-      */
-
-      console.log("Resulted", result, activated);
-      console.groupEnd();
-
-      return result;
-    },
-
-    /**
-     * PackageManager::enable() -- Enable Package(s)
-     * @param  Array    p           Package list
-     * @param  Function callback    Callback function
-     * @return void
-     */
-    enable : function(p, callback) {
-      var self = this;
-      DoPost({'action' : 'package', 'operation' : 'enable', 'data' : p}, function(res) {
-        var results = {};
-        for ( var i in p ) {
-          if ( p.hasOwnProperty(i) ) {
-            results[i] = self.modifyPackage("enable", i, p[i]);
-          }
-        }
-
-        callback(res, results);
-      });
-    },
-
-    /**
-     * PackageManager::disable() -- Disable Package(s)
-     * @param  Array    p           Package list
-     * @param  Function callback    Callback function
-     * @return void
-     */
-    disable : function(p, callback) {
-      var self = this;
-      DoPost({'action' : 'package', 'operation' : 'disable', 'data' : p}, function(res) {
-        var results = {};
-        for ( var i in p ) {
-          if ( p.hasOwnProperty(i) ) {
-            results[i] = self.modifyPackage("disable", i, p[i]);
-          }
-        }
-
-        callback(res, results);
-      });
-    },
-
-    /**
      * PackageManager::install() -- Install Package(s)
      * @param  Array    p           Package list
      * @param  Function callback    Callback function
@@ -3771,8 +3586,7 @@
     install : function(p, callback) {
       var self = this;
       DoPost({'action' : 'package', 'operation' : 'install', 'data' : p}, function(res) {
-        var inst = self.modifyPackage("install", p);
-        callback(res, inst);
+        callback(res, false); // TODO
       });
     },
 
@@ -3785,14 +3599,7 @@
     uninstall : function(p, callback) {
       var self = this;
       DoPost({'action' : 'package', 'operation' : 'uninstall', 'data' : p}, function(res) {
-        var results = {};
-        for ( var i in p ) {
-          if ( p.hasOwnProperty(i) ) {
-            results[i] = self.modifyPackage("uninstall", i, p[i]);
-          }
-        }
-
-        callback(res, results);
+        callback(res, false); // TODO
       });
     },
 
@@ -3803,41 +3610,22 @@
      */
     setPackages : function(packages) {
       var self = this;
-      if ( this._tmpcheck )
-        return;
-
-      var _update = function(d) {
-        if ( (d instanceof Object) ) {
-          for ( var i in d ) {
-            if ( d.hasOwnProperty(i) ) {
-              if ( self.cache[i] ) {
-                try {
-                  self.cache[i] = d[i] || {};
-                } catch ( eee ) {
-                  self.cache[i] = {};
-                }
-              }
-            }
-          }
-        }
+      if ( packages ) {
+        this.cache = packages;
 
         console.group("PackageManager::setPackages()");
-        console.log("Cache", self.cache);
+        console.log("Cache", this.cache);
         console.groupEnd();
-      };
-
-      if ( !packages ) {
-        this._tmpcheck = true;
+      } else {
         DoPost({'action' : 'updateCache'}, function(data) {
           if ( data.result ) {
-            _update(data.result);
+            self.cache = data.result;
+
+            console.group("PackageManager::setPackages()");
+            console.log("Cache", self.cache);
+            console.groupEnd();
           }
-          self._tmpcheck = false;
-        }, function() {
-          self._tmpcheck = false;
         });
-      } else {
-        _update(packages);
       }
     },
 
@@ -3851,74 +3639,102 @@
      * @return Mixed
      */
     getUserPackages : function(icons, apps, pitems, sitems) {
-      var activated = _Settings._get("user.installed.packages", true);
       var result = [];
 
       apps    = (apps === undefined)    ? true : apps;
       pitems  = (pitems === undefined)  ? true : pitems;
       sitems  = (sitems === undefined)  ? true : sitems;
 
-      var is, ia, ip, iter, list;
-      for ( is in this.cache ) {
-        if ( this.cache.hasOwnProperty(is) ) {
-          list = this.cache[is];
-
-          for ( ia in list ) {
-            if ( list.hasOwnProperty(ia) ) {
-              iter = list[ia];
-
-              if ( is == "Application" ) {
-                if ( apps ) {
-                  result.push({
-                    name      : ia,
-                    label     : iter.titles[GetLanguage()] || iter.title,
-                    active    : iter.category == "system" || in_array(ia, activated), // FIXME: HACKISH
-                    type      : 'Application',
-                    locked    : iter.category == "system",
-                    icon      : iter.icon,
-                    icon      : (icons ? (iter.icon.match(/^\//) ? iter.icon : sprintf(ICON_URI_32, iter.icon)) : iter.icon),
-                    category  : iter.category
-                  });
-                }
-              } else if ( is == "PanelItem" ) {
-                if ( pitems ) {
-                  result.push({
-                    name    : ia,
-                    label   : iter.title,
-                    active  : in_array(ia, activated),
-                    type    : 'PanelItem',
-                    locked  : true,
-                    icon    : sprintf(ICON_URI_32, iter.icon)
-                  });
-                }
-              } else if ( is == "BackgroundService" ) {
-                if ( sitems ) {
-                  result.push({
-                    name    : ia,
-                    label   : iter.title,
-                    active  : in_array(ia, activated),
-                    type    : 'BackgroundService',
-                    locked  : false,
-                    icon    : sprintf(ICON_URI_32, iter.icon)
-                  });
-                }
+      var cat, lst, iter, item;
+      for ( cat in this.cache ) {
+        if ( this.cache.hasOwnProperty(cat) ) {
+          lst = this.cache[cat];
+          for ( iter in lst ) {
+            if ( lst.hasOwnProperty(iter) ) {
+              item = lst[iter];
+              if ( item.type == "Application" && apps ) {
+                result.push({
+                  name      : iter,
+                  label     : item.titles[GetLanguage()] || item.title,
+                  type      : 'Application',
+                  locked    : cat == "System",
+                  icon      : item.icon,
+                  icon      : (icons ? (item.icon.match(/^\//) ? item.icon : sprintf(ICON_URI_32, item.icon)) : item.icon),
+                  category  : item.category
+                });
+              } else if ( item.type == "PanelItem" && pitems ) {
+                result.push({
+                  name    : iter,
+                  label   : item.title,
+                  type    : 'PanelItem',
+                  locked  : cat == "System",
+                  icon    : sprintf(ICON_URI_32, item.icon)
+                });
+              } else if ( item.type == "Service" && sitems ) {
+                result.push({
+                  name    : iter,
+                  label   : item.title,
+                  type    : 'BackgroundService',
+                  locked  : cat == "System",
+                  icon    : sprintf(ICON_URI_32, item.icon)
+                });
               }
-
-            } // ia
+            }
           }
         }
-      } // is
+      }
 
       return result;
     },
 
     /**
-     * PackageManager::getPackage() -- Get package(s)
-     * @param  String   type    Get types (optional)
+     * PackageManager::getPackage() -- Get a package
+     * @param  String   name      Package Name
+     * @param  String   type      Package Type
      * @return Mixed
      */
-    getPackages : function(type) {
-      return type ? this.cache[type] : this.cache;
+    getPackage : function(name, type) {
+      var i;
+      for ( i in this.cache.System ) {
+        if ( this.cache.System.hasOwnProperty(i) ) {
+          if ( i == name ) {
+            return this.cache.System[i];
+          }
+        }
+      }
+      for ( i in this.cache.User ) {
+        if ( this.cache.User.hasOwnProperty(i) ) {
+          if ( i == name ) {
+            return this.cache.User[i];
+          }
+        }
+      }
+
+      return null;
+    },
+
+    /**
+     * PackageManager::getPackage() -- Get package(s)
+     * @param  bool   merged      Get merged object
+     * @return Mixed
+     */
+    getPackages : function(merged) {
+      if ( merged ) {
+        var result = {}, i;
+        for ( i in this.cache.System ) {
+          if ( this.cache.System.hasOwnProperty(i) ) {
+            result[i] = this.cache.System[i];
+          }
+        }
+        for ( i in this.cache.User ) {
+          if ( this.cache.User.hasOwnProperty(i) ) {
+            result[i] = this.cache.User[i];
+          }
+        }
+        return result;
+      }
+
+      return this.cache;
     }
 
   });

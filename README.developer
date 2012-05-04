@@ -62,7 +62,7 @@ Directories and Files:
 -------------------------------------------------------------------------------
 /bin/                     Misc scripts
   add-user                  Add a user
-  application-gen           Compile all packages
+  compile-all               Compile all packages
   create-package            Create a new Package
   fix-permissions           Correct file/directory permissions
   git-commit                Git Wrapper: Commit changes
@@ -127,6 +127,7 @@ Directories and Files:
   Core.class.php            Core, Main Class
   Dialog.class.php          Frontend Dialog Class
   Package.class.php         Package Main Class
+  PackageManager.class.php  Package Managment Class
   Panel.class.php           Frontend Panel Class
   PanelItem.class.php       Frontend Panel Item Class
   ResourceManager.class.php Resource Managment Class

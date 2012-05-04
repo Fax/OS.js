@@ -279,18 +279,15 @@ class Compiler
     $root = ($root ? $root : PATH_PACKAGES);
     $compiler = new self();
 
-    if ( preg_match("/^(Application|System)(.*)$/", $project_name) ) {
-      $path = "{$root}/{$project_name}/metadata.xml";
-      if ( file_exists($path) )
+    $path = "{$root}/{$project_name}/metadata.xml";
+    if ( file_exists($path) ) {
+      if ( preg_match("/^(Application|System)(.*)$/", $project_name) ) {
         return $compiler->compileProject($project_name, $path, $dry_run);
-    } else if ( preg_match("/^PanelItem(.*)$/", $project_name) ) {
-      $path = "{$root}/{$project_name}/metadata.xml";
-      if ( file_exists($path) )
+      } else if ( preg_match("/^PanelItem(.*)$/", $project_name) ) {
         return $compiler->compilePanelItem($project_name, $path, $dry_run);
-    } else if ( preg_match("/^Service(.*)$/", $project_name) ) {
-      $path = "{$root}/{$project_name}/metadata.xml";
-      if ( file_exists($path) )
+      } else if ( preg_match("/^Service(.*)$/", $project_name) ) {
         return $compiler->compileService($project_name, $path, $dry_run);
+      }
     }
 
     return false;
@@ -309,24 +306,22 @@ class Compiler
       $compiler = new self();
 
       while (false !== ($filename = readdir($dh))) {
-        if ( preg_match("/^(Application|System)(.*)$/", $filename) ) {
-          $path = "{$root}/{$filename}/metadata.xml";
-          if ( !file_exists($path) )
-            continue;
-
-          $compiler->compileProject($filename, $path, $dry_run);
-        } else if ( preg_match("/^PanelItem(.*)$/", $filename) ) {
-          $path = "{$root}/{$filename}/metadata.xml";
-          if ( !file_exists($path) )
-            continue;
-
-          $compiler->compilePanelItem($filename, $path, $dry_run);
-        } else if ( preg_match("/^Service(.*)$/", $filename) ) {
-          $path = "{$root}/{$filename}/metadata.xml";
-          if ( !file_exists($path) )
-            continue;
-
-          $compiler->compileService($filename, $path, $dry_run);
+        $path = "{$root}/{$filename}/metadata.xml";
+        if ( file_exists($path) ) {
+          if ( ($xml = file_get_contents($path)) && ($data = new SimpleXmlElement($xml)) ) {
+            switch ( ((string) $data['type']) ) {
+              case "Application" :
+                $compiler->compileProject($filename, $path, $dry_run);
+              break;
+              case "PanelItem" :
+                $compiler->compilePanelItem($filename, $path, $dry_run);
+              break;
+              case "Service" :
+              case "BackgroundService" :
+                $compiler->compileService($filename, $path, $dry_run);
+              break;
+            }
+          }
         }
       }
 

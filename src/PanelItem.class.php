@@ -53,96 +53,60 @@ class       PanelItem
   }
 
   /**
-   * Uninstall PanelItem
-   * @see Package::Uninstall()
-   */
-  public static function Uninstall($package, User $user = null, $system = true) {
-    return parent::Uninstall($package, $user, $system);
-  }
-
-  /**
-   * Install PanelItem
-   * @see Package::Install()
-   */
-  public static function Install($package, User $user = null, $system = true) {
-    return parent::Install($package, $user, $system);
-  }
-
-  /**
    * @see Package::LoadPackage()
    */
-  public static final function LoadPackage($name = null, User $user = null, $system = true) {
-    $return = Array();
+  public static function LoadPackage($iter) {
+    $iter_name          = (string) $iter['name'];
+    $iter_title         = PanelItem::PANELITEM_TITLE;
+    $iter_description   = PanelItem::PANELITEM_DESC;
+    $iter_descriptions  = Array();
+    $iter_icon          = PanelItem::PANELITEM_ICON;
 
-    if ( $xml = Package::LoadPackage(Package::TYPE_PANELITEM, $user, $system) ) {
-      foreach ( $xml as $pi ) {
-        $pi_name          = (string) $pi['name'];
-        $pi_title         = PanelItem::PANELITEM_TITLE;
-        $pi_class         = (string) $pi['class'];
-        $pi_description   = PanelItem::PANELITEM_DESC;
-        $pi_descriptions  = Array();
-        $pi_icon          = PanelItem::PANELITEM_ICON;
-        $pi_class         = (string) $pi['class'];
-
-        if ( $name !== null && $name !== $pi_class ) {
-          continue;
-        }
-
-        foreach ( $pi->property as $prop ) {
-          switch ( (string) $prop['name'] ) {
-            case "title" :
-              if ( isset($prop['language']) ) {
-                $pi_titles[((string)$prop['language'])] = ((string) $prop);
-              } else {
-                $pi_title = (string) $prop;
-              }
-            break;
-            case "description" :
-              if ( isset($prop['language']) ) {
-                $pi_descriptions[((string)$prop['language'])] = ((string) $prop);
-              } else {
-                $pi_description = (string) $prop;
-              }
-            break;
-            case "icon" :
-              $pi_icon = (string) $prop;
-            break;
+    foreach ( $iter->property as $prop ) {
+      switch ( (string) $prop['name'] ) {
+        case "title" :
+          if ( isset($prop['language']) ) {
+            $iter_titles[((string)$prop['language'])] = ((string) $prop);
+          } else {
+            $iter_title = (string) $prop;
           }
-        }
-
-        if ( !$pi_title && isset($pi_titles[DEFAULT_LANGUAGE]) ) {
-          $pi_title = $pi_titles[DEFAULT_LANGUAGE];
-        }
-        if ( !$pi_description && isset($pi_descriptions[DEFAULT_LANGUAGE]) ) {
-          $pi_description = $pi_descriptions[DEFAULT_LANGUAGE];
-        }
-
-        $resources = Array();
-        foreach ( $pi->resource as $res ) {
-          $resources[] = (string) $res;
-        }
-
-        $return[$pi_class] = Array(
-          "name"          => $pi_name,
-          "title"         => $pi_title,
-          "titles"        => $pi_titles,
-          "description"   => $pi_description,
-          "descriptions"  => $pi_descriptions,
-          "icon"          => $pi_icon,
-          "resources"     => $resources
-        );
-
+        break;
+        case "description" :
+          if ( isset($prop['language']) ) {
+            $iter_descriptions[((string)$prop['language'])] = ((string) $prop);
+          } else {
+            $iter_description = (string) $prop;
+          }
+        break;
+        case "icon" :
+          $iter_icon = (string) $prop;
+        break;
       }
     }
 
-    return $return;
-  }
+    if ( !$iter_title && isset($iter_titles[DEFAULT_LANGUAGE]) ) {
+      $iter_title = $iter_titles[DEFAULT_LANGUAGE];
+    }
+    if ( !$iter_description && isset($iter_descriptions[DEFAULT_LANGUAGE]) ) {
+      $iter_description = $iter_descriptions[DEFAULT_LANGUAGE];
+    }
 
-  /**
-   * @see Package::Handle()
-   */
-  public static function Handle($action, $instance, $ptype = null) {
-    return parent::Handle($action, $instance, Package::TYPE_PANELITEM);
+    $resources = Array();
+    foreach ( $iter->resource as $res ) {
+      $resources[] = (string) $res;
+    }
+
+    return Array(
+      "type"          => (string) $iter['type'],
+      "packagename"   => (string) $iter['packagename'],
+      "name"          => $iter_name,
+      "title"         => $iter_title,
+      "titles"        => $iter_titles,
+      "description"   => $iter_description,
+      "descriptions"  => $iter_descriptions,
+      "icon"          => $iter_icon,
+      "resources"     => $resources
+    );
   }
 
 }

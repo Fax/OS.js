@@ -91,21 +91,24 @@ define("PATH_JSBASE",          PATH . "/src/javascript");
 define("PATH_JSLOCALE",        PATH . "/src/javascript/locale");
 define("PATH_MEDIA",           PATH . "/public_html/media");
 define("PATH_VFS",             PATH . "/VFS");
+define("PATH_VFS_PACKAGES",    PATH . "/VFS/%d/Packages");
 
 //
 // Resources (Core, Package, etc.)
 //
 
-define("RESOURCE_CORE",         PATH_JSBASE   . "/%s");
-define("RESOURCE_CORE_MIN",     PATH_JSBASE   . "/_min/%s");
-define("RESOURCE_PACKAGE",      PATH_PACKAGES . "/%s/%s");
-define("RESOURCE_PACKAGE_MIN",  PATH_PACKAGES . "/%s/_min/%s");
-define("RESOURCE_LOCALE",       PATH_JSLOCALE . "/%s");
-define("RESOURCE_LOCALE_MIN",   PATH_JSLOCALE . "/_min/%s");
-define("RESOURCE_THEME",        PATH_JSBASE   . "/%s");
-define("RESOURCE_THEME_MIN",    PATH_JSBASE   . "/_min/%s");
-define("RESOURCE_CURSOR",       PATH_JSBASE   . "/%s");
-define("RESOURCE_CURSOR_MIN",   PATH_JSBASE   . "/_min/%s");
+define("RESOURCE_CORE",             PATH_JSBASE       . "/%s");
+define("RESOURCE_CORE_MIN",         PATH_JSBASE       . "/_min/%s");
+define("RESOURCE_PACKAGE",          PATH_PACKAGES     . "/%s/%s");
+define("RESOURCE_PACKAGE_MIN",      PATH_PACKAGES     . "/%s/_min/%s");
+define("RESOURCE_LOCALE",           PATH_JSLOCALE     . "/%s");
+define("RESOURCE_LOCALE_MIN",       PATH_JSLOCALE     . "/_min/%s");
+define("RESOURCE_THEME",            PATH_JSBASE       . "/%s");
+define("RESOURCE_THEME_MIN",        PATH_JSBASE       . "/_min/%s");
+define("RESOURCE_CURSOR",           PATH_JSBASE       . "/%s");
+define("RESOURCE_CURSOR_MIN",       PATH_JSBASE       . "/_min/%s");
+define("RESOURCE_VFS_PACKAGE",      PATH_VFS_PACKAGES . "/%s/%s");
+define("RESOURCE_VFS_PACKAGE_MIN",  PATH_VFS_PACKAGES . "/%s/_min/%s");
 
 define("URI_SOUND",             "/sounds/%s");
 define("URI_FONT",              "/media/System/Fonts");
@@ -122,6 +125,7 @@ define("URI_VFS_USER_PACKAGES", "/VFS/%d/Packages");
 define("MINIMIZE_CACHE",       PATH_BUILD   . "/minimize.cache");
 define("FONT_CACHE",           PATH_BUILD   . "/fontcache.xml");
 define("PACKAGE_BUILD",        PATH_BUILD   . "/packages.xml");
+define("PACKAGE_USER_BUILD",   PATH_VFS     . "/%d/packages.xml");
 define("MIME_MAGIC",           PATH_VENDOR  . "/mime.mgc");
 
 ///////////////////////////////////////////////////////////////////////////////

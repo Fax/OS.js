@@ -51,19 +51,6 @@ abstract class Package
 
   private $_iType = -1;               //!< Package Type Identifier
 
-  /**
-   * @var Package Registry
-   */
-  public static $PackageRegister = Array(
-    self::TYPE_APPLICATION  => Array(),
-    self::TYPE_PANELITEM    => Array(),
-    self::TYPE_SERVICE      => Array()
-  );
-
-  protected static $_LoadedApplications = false;    //!< Loading lock
-  protected static $_LoadedPanelItems   = false;    //!< Loading lock
-  protected static $_LoadedServices     = false;    //!< Loading lock
-
   /////////////////////////////////////////////////////////////////////////////
   // MAGICS
   /////////////////////////////////////////////////////////////////////////////
@@ -80,13 +67,13 @@ abstract class Package
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Create a new Zipped Package from Project path
+   * Create a new Package Archive from Project path
    * @param  String     $project      Project absolute path
    * @param  String     $dst_path     Absolute destination path (Default = use internal)
    * @throws ExceptionPackage
    * @return bool
    */
-  public static function CreatePackage($project, $dst_path) {
+  public static function CreateArchive($project, $dst_path) {
     $name = basename($project);
     $dest = sprintf("%s/%s.zip", $dst_path, $name);
 
@@ -157,13 +144,13 @@ abstract class Package
   }
 
   /**
-   * Extract a Zipped Package to project directory
+   * Extract a Package Archive to project directory
    * @param  String   $package      Absolute package path (zip-file)
    * @param  String   $dst_path     Absolute destination path
    * @throws ExceptionPackage
    * @return bool
    */
-  public static function ExtractPackage($package, $dst_path) {
+  public static function ExtractArchive($package, $dst_path) {
     $name = str_replace(".zip", "", basename($package));
     $dest = sprintf("%s/%s", $dst_path, $name);
 
@@ -257,11 +244,10 @@ abstract class Package
    * Minimize Package
    * @param  String     $package      Package Name
    * @param  User       $user         User Instance
-   * @param  bool       $system       System Application (default = true)
    * @return Mixed
    */
-  public static function Minimize($package, User $user = null, $system = true) {
-    $path     = self::_GetPackagePath($user, $system);
+  public static function Minimize($package, User $user = null) {
+    $path     = $user ? sprintf(PATH_VFS_PACKAGES, $user->id) : PATH_PACKAGES;
     $base     = sprintf("%s/%s", $path, $package);
     $metadata = sprintf("%s/%s", $base, "metadata.xml");
     $result   = false;
@@ -282,337 +268,21 @@ abstract class Package
     return $result;
   }
 
-  /**
-   * Uninstall Package
-   * @param  String     $package      Package Name
-   * @param  User       $user         User Instance
-   * @param  bool       $system       System Application (default = true)
-   * @return Mixed
-   */
-  public static function Uninstall($package, User $user = null, $system = true) {
-    $buildfile  = self::_GetPackageBuild($user, $system);
-    $path       = self::_GetPackagePath($user, $system);
-    $class      = get_called_class();
-    $base       = sprintf("%s/%s", $path, $package);
-
-    $nodeName = null;
-    switch ( $class ) {
-      case  "Application" :
-        $nodeName = "application";
-        break;
-      case "PanelItem" :
-        $nodeName = "panelitem";
-        break;
-      case "BackgroundService" :
-        $nodeName = "backgroundservice";
-        break;
-    }
-
-    $met_xml = simplexml_load_file("{$base}/metadata.xml");
-    $res_xml = simplexml_load_file($buildfile);
-
-    $removed = false;
-    foreach ( $res_xml as $n ) {
-      if ( ((string) $n['class']) == $package ) {
-        $dom = dom_import_simplexml($n);
-        $dom->parentNode->removeChild($dom);
-        $removed = true;
-        break;
-      }
-    }
-
-    if ( $removed ) {
-      $doc = new DomDocument("1.0");
-      $doc->preserveWhiteSpace = false;
-      $doc->formatOutput = true;
-      $sxe = $doc->importNode(dom_import_simplexml($res_xml), true);
-      $sxe = $doc->appendChild($sxe);
-
-      return file_put_contents($buildfile, $doc->saveXML()) ? true : false;
-    }
-
-    return false;
-  }
-
-  /**
-   * Install Package
-   * @param  String     $package      Package Name
-   * @param  User       $user         User Instance
-   * @param  bool       $system       System Application (default = true)
-   * @return Mixed
-   */
-  public static function Install($package, User $user = null, $system = true) {
-    $buildfile  = self::_GetPackageBuild($user, $system, $system);
-    $path       = self::_GetPackagePath($user, $system);
-    $class      = get_called_class();
-    $base       = sprintf("%s/%s", $path, $package);
-
-    $nodeName = null;
-    switch ( $class ) {
-      case  "Application" :
-        $nodeName = "application";
-        break;
-      case "PanelItem" :
-        $nodeName = "panelitem";
-        break;
-      case "BackgroundService" :
-        $nodeName = "backgroundservice";
-        break;
-    }
-
-    $met_xml = simplexml_load_file("{$base}/metadata.xml");
-    $res_xml = simplexml_load_file($buildfile);
-
-    foreach ( $res_xml->$nodeName as $n ) {
-      if ( $n['class'] == $package ) {
-        return false;
-      }
-    }
-
-    // Fix relative icon
-    $picon = null;
-    foreach ( $met_xml->property as $pp ) {
-      if ( ((string)$pp['name']) == "icon" ) {
-        $tmp = (string) $pp;
-        if ( preg_match("/^\%/", $tmp) ) {
-          $picon = sprintf(URI_PACKAGE_RESOURCE, $package, preg_replace("/^\%/", "", $tmp));
-        }
-        break;
-      }
-    }
-
-    $tmp = new DomDocument("1.0");
-    $sxe = $tmp->importNode(dom_import_simplexml($met_xml), true);
-
-    if ( $picon ) {
-      $break = false;
-      foreach ( $sxe->childNodes as $nn ) {
-        if ( $nn->nodeType == XML_ELEMENT_NODE && $nn->nodeName == "property" ) {
-          foreach ( $nn->attributes as $p => $pp ) {
-            if ( $p == "name" && $pp->nodeValue == "icon" ) {
-              while ( $nn->hasChildNodes() ) {
-                $nn->removeChild($nn->firstChild);
-              }
-              $nn->appendChild(new DomText($picon));
-              $break = true;
-              break;
-            }
-          }
-        }
-
-        if ( $break )
-          break;
-      }
-    }
-
-    $sxe = $tmp->appendChild($sxe);
-
-    $node = $tmp->documentElement;
-    $node->setAttribute("class", $package);
-
-    $dom = new DomDocument("1.0");
-    $dom->preserveWhiteSpace = false;
-    $dom->formatOutput = true;
-    $sxe = $dom->importNode(dom_import_simplexml($res_xml), true);
-    $sxe = $dom->appendChild($sxe);
-    $dom->documentElement->appendChild($dom->importNode($node, true));
-
-    return file_put_contents($buildfile, $dom->saveXML()) ? true : false;
-  }
-
   /////////////////////////////////////////////////////////////////////////////
   // INSTANCES - STATIC METHODS
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Load A Package by name and type
-   * @param  String     $name         Package name
-   * @param  int        $type         Package type
-   * @param  User       $u            User instance
-   * @param  bool       $system       System Application (default = true)
-   * @return void
-   */
-  public static function Load($name, $type = -1, User $user = null, $system = true) {
-    switch ( (int) $type ) {
-      case self::TYPE_APPLICATION :
-        if ( !isset(self::$PackageRegister[$type][$name]) ) {
-          if ( $p = Application::LoadPackage($name, $user, $system) ) {
-            self::$PackageRegister[$type][$name] = $p[$name];
-          } else {
-            throw new Exception("Cannot Load Application '{$name}'!");
-          }
-        }
-
-        return self::$PackageRegister[$type][$name];
-        break;
-
-      case self::TYPE_PANELITEM :
-        if ( !isset(self::$PackageRegister[$type][$name]) ) {
-          if ( $p = PanelItem::LoadPackage($name, $user, $system) ) {
-            self::$PackageRegister[$type][$name] = $p[$name];
-          } else {
-            throw new Exception("Cannot Load PanelItem '{$name}'!");
-          }
-        }
-
-        return self::$PackageRegister[$type][$name];
-        break;
-
-      case self::TYPE_SERVICE :
-        if ( !isset(self::$PackageRegister[$type][$name]) ) {
-          if ( $p = BackgroundService::LoadPackage($name, $user, $system) ) {
-            self::$PackageRegister[$type][$name] = $p[$name];
-          } else {
-            throw new Exception("Cannot Load BackgroundService '{$name}'!");
-          }
-        }
-
-        return self::$PackageRegister[$type][$name];
-        break;
-
-      default :
-        throw new Exception("Cannot Load '{$name}' of type '{$type}'!");
-        break;
-    }
-
-    return null;
-  }
-
-  /**
-   * Load All Packages by type
-   * @param  int        $type         Package type
-   * @param  User       $user         User instance
-   * @param  bool       $system       System Application (default = true)
-   * @return void
-   */
-  public static function LoadAll($type = -1, User $user = null, $system = true) {
-    $loaded = false;
-
-    if ( ($type & self::TYPE_APPLICATION) ) {
-      $loaded = true;
-      if ( !self::$_LoadedApplications ) {
-        if ( $p = Application::LoadPackage(null, $user, $system) ) {
-          foreach ( $p as $k => $v ) {
-            self::$PackageRegister[self::TYPE_APPLICATION][$k] = $v;
-          }
-        }
-        ksort(self::$PackageRegister[self::TYPE_APPLICATION]);
-        self::$_LoadedApplications = true;
-      }
-    }
-    if ( ($type & self::TYPE_PANELITEM) ) {
-      $loaded = true;
-      if ( !self::$_LoadedPanelItems ) {
-        if ( $p = PanelItem::LoadPackage(null, $user, $system) ) {
-          foreach ( $p as $k => $v ) {
-            self::$PackageRegister[self::TYPE_PANELITEM][$k] = $v;
-          }
-        }
-        ksort(self::$PackageRegister[self::TYPE_PANELITEM]);
-        self::$_LoadedPanelItems = true;
-      }
-    }
-    if ( ($type & self::TYPE_SERVICE) ) {
-      $loaded = true;
-      if ( !self::$_LoadedServices ) {
-        if ( $p = BackgroundService::LoadPackage(null, $user, $system) ) {
-          foreach ( $p as $k => $v ) {
-            self::$PackageRegister[self::TYPE_SERVICE][$k] = $v;
-          }
-        }
-        ksort(self::$PackageRegister[self::TYPE_SERVICE]);
-        self::$_LoadedServices = true;
-      }
-    }
-
-    if ( !$loaded ) {
-      throw new Exception("Cannot LoadAll type '{$type}'");
-    }
-  }
-
-  /**
    * Load (a) Package(s)
-   * @param  String     $name         Package name (if any)
-   * @param  User       $user         User Reference
-   * @param  bool       $system       System Application (default = true)
+   * @param  Array     $iter     SimpleXML Iter
+   * @see    Application
+   * @see    PanelItem
+   * @see    BackgroundService
    * @return Mixed
    */
-  public static function LoadPackage($name = null, User $user = null, $system = true) {
-    $config = self::_GetPackageBuild($user, $system);
-
-    if ( $xml = file_get_contents($config) ) {
-      if ( $xml = new SimpleXmlElement($xml) ) {
-        if ( $name === self::TYPE_APPLICATION ) {
-          return $xml->application;
-        } else if ( $name == self::TYPE_PANELITEM ) {
-          return $xml->panelitem;
-        } else if ( $name == self::TYPE_SERVICE ) {
-          return $xml->service;
-        }
-        return $xml;
-      }
-    }
-
+  public static function LoadPackage($iter) {
     return false;
   }
-
-  /**
-   * Get installed packages
-   * @param  User     $user     User Reference
-   * @return Array
-   */
-  public final static function GetInstalledPackages(User $user = null) {
-    Package::LoadAll(Package::TYPE_APPLICATION | Package::TYPE_PANELITEM | Package::TYPE_SERVICE, $user);
-
-    return Array(
-      "Application"       => Package::GetPackageMeta(Package::TYPE_APPLICATION),
-      "PanelItem"         => Package::GetPackageMeta(Package::TYPE_PANELITEM),
-      "BackgroundService" => Package::GetPackageMeta(Package::TYPE_SERVICE)
-    );
-  }
-
-  /**
-   * Get Package Metadata
-   * @param   int     $type     Package Type
-   * @return Array
-   */
-  public static function GetPackageMeta($type) {
-    $result = Array();
-    if ( isset(Package::$PackageRegister[$type]) ) {
-      $result = Package::$PackageRegister[$type];
-    }
-    return $result;
-  }
-
-  /**
-   * Get Package Path
-   * @param  User       $user         User Reference
-   * @param  bool       $system       System Application (default = true)
-   * @return String
-   */
-  protected static function _GetPackagePath(User $user = null, $system = true) {
-    if ( ($user instanceof User) && ($system === false) ) {
-      return sprintf(URI_VFS_USER_PACKAGES, $user->id);
-    }
-    return PATH_PACKAGES;
-  }
-
-  /**
-   * Get Package Build File
-   * @param  User       $user         User Reference
-   * @param  bool       $system       System Application (default = true)
-   * @return String
-   */
-  protected static function _GetPackageBuild(User $user = null, $system = true) {
-    if ( ($user instanceof User) && ($system === false) ) {
-      return sprintf(URI_VFS_USER_METADATA, $user->id);
-    }
-    return PACKAGE_BUILD;
-  }
-
-  /////////////////////////////////////////////////////////////////////////////
-  // EVENTS - STATIC METHODS
-  /////////////////////////////////////////////////////////////////////////////
 
   /**
    * Event performed by AJAX
@@ -623,33 +293,6 @@ abstract class Package
    */
   public static function Event($action, Array $args) {
     return Array();
-  }
-
-  /**
-   * Handle an Package event
-   * @param  String       $action       Package Action
-   * @param  Mixed        $instance     Package Instance
-   * @param  int          $ptyp         Package Type Identifier
-   * @return Mixed
-   */
-  public static function Handle($action, $instance, $ptype = null) {
-    if ( $action && $instance ) {
-      if ( isset($instance['name']) && isset($instance['action']) ) {
-        $cname    = $instance['name'];
-        $aargs    = isset($instance['args']) ? $instance['args'] : Array();
-        $action   = $instance['action'];
-
-        if ( Package::Load($cname, $ptype) ) {
-          require_once PATH_PACKAGES . "/{$cname}/{$cname}.class.php";
-        }
-
-        if ( class_exists($cname) ) {
-          return $cname::Event($action, $aargs);
-        }
-      }
-    }
-
-    return false;
   }
 
   /////////////////////////////////////////////////////////////////////////////

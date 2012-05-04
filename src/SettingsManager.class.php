@@ -223,11 +223,6 @@ abstract class SettingsManager
       "items" => Array()
     ),
 
-    "user.installed.packages" => Array(
-      "type"  => "list",
-      "items" => Array()
-    ),
-
     "user.first-run" => Array(
       "type" => "bool",
       "value" => true

@@ -270,7 +270,7 @@ class User
    * @see Core::_doInit
    * @return Array
    */
-  public static function getDefaultRegistry($packages = Array(), $values = false) {
+  public static function getDefaultRegistry($values = false) {
     $merge = Array();
 
     // Panel(s)
@@ -340,23 +340,6 @@ class User
         "ServiceNoop"
       )
     );
-
-    if ( $packages ) {
-      $results = Array();
-      foreach ( $packages['Application'] as $pkg_name => $pkg_opts ) {
-        $results[] = $pkg_name;
-      }
-      foreach ( $packages['PanelItem'] as $pkg_name => $pkg_opts ) {
-        $results[] = $pkg_name;
-      }
-      foreach ( $packages['BackgroundService'] as $pkg_name => $pkg_opts ) {
-        $results[] = $pkg_name;
-      }
-
-      $merge["user.installed.packages"] = Array(
-        "items" => $results
-      );
-    }
 
     $settings = SettingsManager::getSettings($merge);
     if ( $values ) {

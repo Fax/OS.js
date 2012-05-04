@@ -52,98 +52,63 @@ abstract class Application
   }
 
   /**
-   * Uninstall Application
-   * @see Package::Uninstall()
-   */
-  public static function Uninstall($package, User $user = null, $system = true) {
-    return parent::Uninstall($package, $user, $system);
-  }
-
-  /**
-   * Install Application
-   * @see Package::Install()
-   */
-  public static function Install($package, User $user = null, $system = true) {
-    return parent::Install($package, $user, $system);
-  }
-
-  /**
    * @see Package::LoadPackage()
    */
-  public static final function LoadPackage($name = null, User $user = null, $system = true) {
-    $return = Array();
+  public static function LoadPackage($iter) {
+    $iter_name     = (string) $iter['name'];
+    $iter_title    = Application::APPLICATION_TITLE;
+    $iter_icon     = Application::APPLICATION_ICON;
+    $iter_titles   = Array();
+    $iter_category = (string) $iter['category'];
 
-    if ( $xml = Package::LoadPackage(Package::TYPE_APPLICATION, $user, $system) ) {
-      foreach ( $xml as $app ) {
-        $app_name     = (string) $app['name'];
-        $app_title    = Application::APPLICATION_TITLE;
-        $app_icon     = Application::APPLICATION_ICON;
-        $app_titles   = Array();
-        $app_class    = (string) $app['class'];
-        $app_category = (string) $app['category'];
-
-        if ( $name !== null && $name !== $app_class ) {
-          continue;
-        }
-
-        foreach ( $app->property as $prop ) {
-          switch ( (string) $prop['name'] ) {
-            case "title" :
-              if ( isset($prop['language']) ) {
-                $app_titles[((string)$prop['language'])] = ((string) $prop);
-              } else {
-                $app_title = (string) $prop;
-              }
-            break;
-            case "icon" :
-              $app_icon = (string) $prop;
-            break;
-            case "system" :
-              if ( ((string) $prop) == "true" ) {
-                $app_category = "system";
-              }
-            break;
+    foreach ( $iter->property as $prop ) {
+      switch ( (string) $prop['name'] ) {
+        case "title" :
+          if ( isset($prop['language']) ) {
+            $iter_titles[((string)$prop['language'])] = ((string) $prop);
+          } else {
+            $iter_title = (string) $prop;
           }
-        }
-
-        if ( !$app_title && isset($app_titles[DEFAULT_LANGUAGE]) ) {
-          $app_title = $app_titles[DEFAULT_LANGUAGE];
-        }
-        if ( !$app_category ) {
-          $app_category = "unknown";
-        }
-
-        $resources = Array();
-        foreach ( $app->resource as $res ) {
-          $resources[] = (string) $res;
-        }
-
-        $mimes     = Array();
-        foreach ( $app->mime as $mime ) {
-          $mimes[] = (string) $mime;
-        }
-
-        $return[$app_class] = Array(
-          "name"      => $app_name,
-          "title"     => $app_title,
-          "titles"    => $app_titles,
-          "icon"      => $app_icon,
-          "category"  => $app_category,
-          "mimes"     => $mimes,
-          "resources" => $resources
-        );
-
+        break;
+        case "icon" :
+          $iter_icon = (string) $prop;
+        break;
+        case "system" :
+          if ( ((string) $prop) == "true" ) {
+            $iter_category = "system";
+          }
+        break;
       }
     }
 
-    return $return;
-  }
+    if ( !$iter_title && isset($iter_titles[DEFAULT_LANGUAGE]) ) {
+      $iter_title = $iter_titles[DEFAULT_LANGUAGE];
+    }
+    if ( !$iter_category ) {
+      $iter_category = "unknown";
+    }
 
-  /**
-   * @see Package::Handle()
-   */
-  public static function Handle($action, $instance, $ptype = null) {
-    return parent::Handle($action, $instance, Package::TYPE_APPLICATION);
+    $resources = Array();
+    foreach ( $iter->resource as $res ) {
+      $resources[] = (string) $res;
+    }
+
+    $mimes     = Array();
+    foreach ( $iter->mime as $mime ) {
+      $mimes[] = (string) $mime;
+    }
+
+    return Array(
+      "type"        => (string) $iter['type'],
+      "packagename" => (string) $iter['packagename'],
+      "name"        => $iter_name,
+      "title"       => $iter_title,
+      "titles"      => $iter_titles,
+      "icon"        => $iter_icon,
+      "category"    => $iter_category,
+      "mimes"       => $mimes,
+      "resources"   => $resources
+    );
   }
 
 }

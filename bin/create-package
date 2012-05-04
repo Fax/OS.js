@@ -96,7 +96,7 @@ $opts     = Array(
 
 $template_application = <<<EOXML
 <?xml version="1.0" encoding="UTF-8"?>
-<application name="%name%" schema="%schema%" category="%category%">
+<package type="Application" name="%name%" schema="%schema%" category="%category%">
   <property name="enabled">true</property>
   <property name="title">%title%</property>
   <property name="icon">%icon%</property>
@@ -104,12 +104,12 @@ $template_application = <<<EOXML
 
   <resource>main.css</resource>
   <resource>main.js</resource>
-</application>
+</package>
 EOXML;
 
 $template_panelitem = <<<EOXML
 <?xml version="1.0" encoding="UTF-8"?>
-<panelitem name="Clock">
+<package type="PanelItem" name="Clock">
   <property name="enabled">true</property>
   <property name="title">%title%</property>
   <property name="description">%description%</property>
@@ -122,14 +122,14 @@ EOXML;
 
 $template_service = <<<EOXML
 <?xml version="1.0" encoding="UTF-8"?>
-<service name="%name%">
+<package type="Service" name="%name%">
   <property name="enabled">true</property>
   <property name="title">%title%</property>
   <property name="description">%description%</property>
   <property name="icon">%icon%</property>
 
   <resource>main.js</resource>
-</service>
+</package>
 EOXML;
 
 ///////////////////////////////////////////////////////////////////////////////

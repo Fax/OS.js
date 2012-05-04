@@ -48,7 +48,7 @@ if ( file_exists(MINIMIZE_CACHE) ) {
 function check($path) {
   global $timestamps;
 
-  $fp = filemtime($path);
+  $fp = @filemtime($path);
   $changed = true;
   if ( isset($timestamps[$path]) ) {
     $changed = ($timestamps[$path] != $fp);
@@ -90,24 +90,10 @@ foreach ( Dialog::$Registered as $dkey => $dval ) {
 
 if ( $xml = file_get_contents(PACKAGE_BUILD) ) {
   if ( $xml = new SimpleXmlElement($xml) ) {
-    foreach ( $xml->application as $app ) {
+    foreach ( $xml as $app ) {
       if ( isset($app->resource) ) {
         foreach ( $app->resource as $r ) {
-          $packages[] = "/" . (string) $app['class'] . "/" . (string) $r;
-        }
-      }
-    }
-    foreach ( $xml->panelitem as $app ) {
-      if ( isset($app->resource) ) {
-        foreach ( $app->resource as $r ) {
-          $packages[] = "/" . (string) $app['class'] . "/" . (string) $r;
-        }
-      }
-    }
-    foreach ( $xml->service as $app ) {
-      if ( isset($app->resource) ) {
-        foreach ( $app->resource as $r ) {
-          $packages[] = "/" . (string) $app['class'] . "/" . (string) $r;
+          $packages[] = "/" . (((string) $app['type']) . ((string) $app['name'])) . "/" . (string) $r;
         }
       }
     }
