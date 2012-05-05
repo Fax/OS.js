@@ -456,6 +456,7 @@
 
       if ( OSjs.Compability.SUPPORT_DND ) {
         el.bind("dragover", function(ev) {
+          ev.stopPropagation();
           ev.preventDefault();
           self.on_drag_over(ev);
           return false;
@@ -467,6 +468,9 @@
         });
         el.bind("dragenter", function(ev) {
           el.addClass("DND-Enter");
+          ev.stopPropagation();
+          ev.preventDefault();
+          ev.originalEvent.dataTransfer.dropEffect = "copy";
           return false;
         });
         el.bind("dragend", function(ev) {
@@ -475,8 +479,8 @@
         });
         el.bind("drop", function(ev) {
           var data = ev.originalEvent.dataTransfer.getData("text/plain");
+          var jsn = null;
           if ( data ) {
-            var jsn = null;
             try {
               jsn = JSON.parse(data);
             } catch (e) {}
@@ -485,7 +489,7 @@
           ev.preventDefault();
           ev.stopPropagation();
 
-          self.on_drop(ev, jsn);
+          self.on_drop(ev, jsn, null, ev.originalEvent.dataTransfer.files);
           return false;
         });
       }
@@ -651,8 +655,8 @@
           el.bind("drop", (function(dst) {
             return function(ev) {
               var data = ev.originalEvent.dataTransfer.getData("text/plain");
+              var jsn = null;
               if ( data ) {
-                var jsn = null;
                 try {
                   jsn = JSON.parse(data);
                 } catch (e) {}
@@ -661,7 +665,7 @@
               ev.preventDefault();
               ev.stopPropagation();
 
-              self.on_drop_item(ev, jsn, dst);
+              self.on_drop_item(ev, jsn, dst, ev.originalEvent.dataTransfer.files);
               return false;
             };
           })(item));
@@ -1382,16 +1386,17 @@
     /**
      * Uploader::upload() -- Upload A file
      * @param  DOMElement     form      DOM Form Element
+     * @param  Object         file      ... or a File
      * @return void
      */
-    upload : function(form) {
+    upload : function(form, file) {
       var self = this;
 
       var xhr = new XMLHttpRequest();
       var fd  = new FormData();
       fd.append("upload", 1);
       fd.append("path", this.dest);
-      fd.append("upload", $(form).find("input[type=file]").get(0).files[0]);
+      fd.append("upload", file ? file : $(form).find("input[type=file]").get(0).files[0]);
 
       xhr.upload.addEventListener("progress", function(evt) { self.uploadProgress(evt); }, false);
       xhr.addEventListener("load", function(evt) { self.uploadComplete(evt); }, false);

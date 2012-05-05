@@ -1093,7 +1093,7 @@
         return _WM.addWindow(new OSjs.Dialogs.RenameOperationDialog(OperationDialog, API, [path, clb_finish]));
       },
 
-      'dialog_upload' : function(path, clb_finish, clb_progress, clb_cancel) {
+      'dialog_upload' : function(path, clb_finish, clb_progress, clb_cancel, opts) {
         if ( !_WM ) {
           MessageBox(OSjs.Labels.WindowManagerMissing);
           return null;
@@ -1103,7 +1103,7 @@
         console.log("Method", "API.system.dialog_upload");
         console.groupEnd();
 
-        return _WM.addWindow(new OSjs.Dialogs.UploadOperationDialog(OperationDialog, API, [UPLOAD_URI, path, clb_finish, clb_progress, clb_cancel]));
+        return _WM.addWindow(new OSjs.Dialogs.UploadOperationDialog(OperationDialog, API, [UPLOAD_URI, path, clb_finish, clb_progress, clb_cancel, opts]));
       },
 
       'dialog_file' : function(clb_finish, mime_filter, type, cur_dir) {
@@ -3965,15 +3965,16 @@
      * Application::defaultFileUpload() -- Perform default file-upload (with dialog)
      * @param   String    dir       Upload directory
      * @param   Function  callback  Callback function
+     * @param   Object    opts      Options
      * @return  void
      */
-    defaultFileUpload : function(dir, callback) {
+    defaultFileUpload : function(dir, callback, opts) {
       var self = this;
 
       this.createUploadDialog(dir, function(dir, fmime, response) {
         VFSEvent("update", {'file' : dir, 'mime' : fmime}, self);
         callback(dir, fmime, response);
-      });
+      }, null, null, opts);
     },
 
     /**
@@ -4118,10 +4119,10 @@
      * @see     API.system.dialog_upload
      * @return  void
      */
-    createUploadDialog : function(dir, callback, callback_progress, callback_cancel) {
+    createUploadDialog : function(dir, callback, callback_progress, callback_cancel, opts) {
       this._addWindow(API.system.dialog_upload(dir, function(fpath, fmime, response) {
         callback(fpath, fmime, response);
-      }, callback_progress, callback_cancel));
+      }, callback_progress, callback_cancel, opts));
     },
 
     /**

@@ -60,13 +60,14 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _UploadOperationDialog = OperationDialog.extend({
-      init : function(uri, path, clb_finish, clb_progress, clb_cancel) {
+      init : function(uri, path, clb_finish, clb_progress, clb_cancel, opts) {
         this.upload_uri   = uri;
         this.uploader     = null;
         this.upload_path  = path;
         this.clb_finish   = clb_finish   || function() {};
         this.clb_progress = clb_progress || function() {};
         this.clb_cancel   = clb_cancel   || function() {};
+        this.init_opts    = opts || {};
 
         this._super("Upload");
         this._title    = LABELS.title;
@@ -123,6 +124,12 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
 
             self.clb_cancel(fname, error);
           });
+
+          // Automatic DnD uploading
+          if ( self.init_opts && self.init_opts.dnd ) {
+            u.fileSelected(null, self.init_opts.dnd);
+            u.upload(null, self.init_opts.dnd);
+          }
 
 
           var form = sprintf("<div style=\"position:relative;margin-top:10px;\"><form action=\"%s\" method=\"post\" enctype=\"multipart/form-data\" class=\"FileForm\"><input type=\"hidden\" name=\"path\" value=\"/\" /><div class=\"file\"><input type=\"file\" name=\"upload\" /></div><div class=\"button\"><input type=\"submit\" name=\"upload\" value=\"%s\"/></div></form></div>", this.upload_uri, LABELS.upload);
