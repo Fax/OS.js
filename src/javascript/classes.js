@@ -442,6 +442,33 @@
         return false;
       });
 
+      if ( OSjs.Compability.SUPPORT_DND ) {
+        el.bind("dragover", function(ev) {
+          ev.preventDefault();
+          return false;
+        });
+        el.bind("dragleave", function(ev) {
+          ev.preventDefault();
+          return false;
+        });
+        el.bind("dragenter", function(ev) {
+          ev.preventDefault();
+          return false;
+        });
+        el.bind("drop", function(ev) {
+          ev.preventDefault();
+          console.log(ev);
+          /*
+          var dt = ev.originalEvent.dataTransfer;
+          console.log(dt, dt.getData('Text'));
+          console.log(dt.getData('text/uri-list'));
+          console.log(dt.getData('text/plain'));
+          console.log(dt.getData('text/html'));
+          */
+          return false;
+        });
+      }
+
       return $(el);
     },
 
@@ -567,6 +594,11 @@
             self.on_context(ev, $(this), item);
             return false;
           });
+        }
+
+        // Drag-and-drop
+        if ( OSjs.Compability.SUPPORT_DND ) {
+          el.find(".Inner").first().attr("draggable", "true");
         }
 
         b.append(el);

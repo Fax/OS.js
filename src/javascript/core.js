@@ -4911,8 +4911,6 @@
         //ev.preventDefault();
       });
 
-
-      /*
       $("#Desktop").bind("dragover", function(ev) {
         ev.preventDefault();
         return false;
@@ -4927,14 +4925,15 @@
       });
       $("#Desktop").bind("drop", function(ev) {
         ev.preventDefault();
+        /*
         var dt = ev.originalEvent.dataTransfer;
         console.log(dt, dt.getData('Text'));
         console.log(dt.getData('text/uri-list'));
         console.log(dt.getData('text/plain'));
         console.log(dt.getData('text/html'));
+        */
         return false;
       });
-      */
 
       // Global resize event
       var curHeight = $(window).height();
@@ -4966,12 +4965,20 @@
      */
     destroy : function() {
       $("#Desktop").unbind("contextmenu");
+      $("#Desktop").unbind("dragover");
+      $("#Desktop").unbind("dragleave");
+      $("#Desktop").unbind("dragenter");
+      $("#Desktop").unbind("drop");
 
       if ( this._rtimeout ) {
         clearTimeout(this._rtimeout);
       }
 
       $(window).unbind("resize");
+      $("#Desktop").unbind("dragover");
+      $("#Desktop").unbind("dragleave");
+      $("#Desktop").unbind("dragenter");
+      $("#Desktop").unbind("drop");
 
       // Remove panel
       if ( this.panels ) {

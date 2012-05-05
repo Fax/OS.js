@@ -362,7 +362,7 @@ class Core
         $user->last_registry = $registry;
       }
 
-      if ( (ENV_DEMO) || User::save($user) ) {
+      if ( (ENV_DEMO) || User::save($user, Array("last_registry")) ) {
         $json['success'] = true;
         $json['result']  = true;
       } else {
@@ -390,7 +390,7 @@ class Core
       $user->last_logout = new DateTime();
       $user->logged_in   = 0;
 
-      if ( (ENV_DEMO) || User::save($user) ) {
+      if ( (ENV_DEMO) || User::save($user, Array("last_logout", "logged_in")) ) {
         $json['success'] = true;
       } else {
         $json['result']  = false;
@@ -462,7 +462,7 @@ class Core
           $user->last_session  = $snapshot->session_data->session;
           $user->logged_in     = 0;
 
-          if ( (ENV_DEMO) || User::save($user) ) {
+          if ( (ENV_DEMO) || User::save($user, Array("last_registry", "last_session", "logged_in")) ) {
             $json['success'] = true;
             $json['result']  = true;
           } else {
@@ -551,12 +551,6 @@ class Core
     $errored = true;
     if ( $user = User::getByUsername($uname) ) {
       if ( $user->password == $upass ) {
-        $user->last_login       = new DateTime();
-        $user->last_session_id  = session_id();
-        if ( !ENV_DEMO ) {
-          User::save($user, Array("last_login", "last_session_id"));
-        }
-
         $init_language      = "default"; // NOTE: Should be set to user ? used as 'SystemLanguage'
         $browser_language   = self::_getBrowserLanguage();
         $resources          = Array();
@@ -591,8 +585,14 @@ class Core
           "duplicate"     => $user->isLoggedIn()
         );
 
+        $user->last_login       = new DateTime();
+        $user->last_session_id  = session_id();
         if ( !$user->isLoggedIn() ) {
-          $user->logged_in        = 1;
+          $user->logged_in      = 1;
+        }
+
+        if ( !ENV_DEMO ) {
+          User::save($user, Array("last_login", "last_session_id", "logged_in"));
         }
 
         $errored = false;
@@ -616,7 +616,7 @@ class Core
       $user->last_logout = new DateTime();
       $user->logged_in   = 0;
 
-      if ( (ENV_DEMO) || User::save($user) ) {
+      if ( (ENV_DEMO) || User::save($user, Array("last_logout", "logged_in")) ) {
         $json['success']  = true;
       } else {
         $json['error'] = _("Failed to save user!");

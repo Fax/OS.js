@@ -77,7 +77,8 @@
       "SUPPORT_AUDIO"          : (audio_supported),
       "SUPPORT_AUDIO_OGG"      : (audio_supported && !!document.createElement('audio').canPlayType('audio/ogg; codecs="vorbis')),
       "SUPPORT_AUDIO_MP3"      : (audio_supported && !!document.createElement('audio').canPlayType('audio/mpeg')),
-      "SUPPORT_RICHTEXT"       : (!!document.createElement('textarea').contentEditable)
+      "SUPPORT_RICHTEXT"       : (!!document.createElement('textarea').contentEditable),
+      "SUPPORT_DND"            : ('draggable' in document.createElement('span'))
     },
 
     // Internal namespace containers

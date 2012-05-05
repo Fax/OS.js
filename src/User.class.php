@@ -213,9 +213,7 @@ class User
     $values = Array();
     if ( $only ) {
       foreach ( $only as $k ) {
-        if ( isset($instance->$k) ) {
-          $values[$k] = $instance->$k;
-        }
+        $values[$k] = $instance->$k;
       }
     } else {
       foreach ( $instance as $k => $v ) {
