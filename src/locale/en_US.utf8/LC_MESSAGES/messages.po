@@ -142,3 +142,12 @@ msgstr "Cannot list snapshots. No running session found!"
 msgid "Check username and password!"
 msgstr "Check username and password!"
 
+msgid "Failed to install '%s'. Archive, Permission or Duplicate error!"
+msgstr "Failed to install '%s'. Archive, Permission or Duplicate error!"
+
+msgid "Failed to uninstall '%s'. Package or permission error!"
+msgstr "Failed to uninstall '%s'. Package or permission error!"
+
+msgid "Failed to uninstall '%s'. Package not found!"
+msgstr "Failed to uninstall '%s'. Package not found!"
+

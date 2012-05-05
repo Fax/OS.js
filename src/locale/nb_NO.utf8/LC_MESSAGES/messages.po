@@ -142,3 +142,12 @@ msgstr "Klarte ikke oppsummere bilder. Ingen sessjon funnet!"
 msgid "Check username and password!"
 msgstr "Sjekk brukernavn og passord!"
 
+msgid "Failed to install '%s'. Archive, Permission or Duplicate error!"
+msgstr "Klarte ikke installere '%s'. Arkiv, Adgang eller Duplikat feil!"
+
+msgid "Failed to uninstall '%s'. Package or permission error!"
+msgstr "Klarte ikke avinstallere '%s'. Pakke eller adgangs feil!"
+
+msgid "Failed to uninstall '%s'. Package not found!"
+msgstr "Klarte ikke avinstallere '%s'. Pakke ikke funnet!"
+

@@ -294,7 +294,7 @@ class Core
           $json['success'] = true;
           $json['result']  = true;
         } else {
-          $json['error'] = sprintf(_("Failed to install '%s'. Archive error or VFS failure!"), basename($archive)); // FIXME: Locale
+          $json['error'] = sprintf(_("Failed to install '%s'. Archive, Permission or Duplicate error!"), basename($archive));
         }
       } else if ( $args['operation'] == "uninstall" ) {
         $package = $args['package']['name'];
@@ -304,10 +304,10 @@ class Core
               $json['success'] = true;
               $json['result']  = true;
             } else {
-              $json['error'] = sprintf(_("Failed to uninstall '%s'!"), $package); // FIXME: Locale
+              $json['error'] = sprintf(_("Failed to uninstall '%s'. Package or permission error!"), $package);
             }
           } else {
-            $json['error'] = sprintf(_("Failed to uninstall '%s'. Package not found or access denied!"), $package); // FIXME: Locale
+            $json['error'] = sprintf(_("Failed to uninstall '%s'. Package not found!"), $package);
           }
         }
       }
