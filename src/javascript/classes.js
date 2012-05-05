@@ -262,18 +262,24 @@
    */
   OSjs.Classes.IconView = Class.extend({
 
-    type          : -1,                   //!< View Type
-    list          : [],                   //!< List
-    columns       : [],                   //!< Columns
-    transparent   : false,                //!< Bubble events?
-    $root         : null,                 //!< Root Container DOM Element
-    $element      : null,                 //!< View DOM Element
-    $selected     : null,                 //!< Selected DOM Element
-    on_render     : function() {},        //!< Render item callback function
-    on_activate   : function() {},        //!< Activate item callback function
-    on_toggle     : function() {},        //!< Toggle item callback function
-    on_focus      : function() {},        //!< On-focus event
-    on_context    : function() {},        //!< On context-menu show
+    type                : -1,                   //!< View Type
+    list                : [],                   //!< List
+    columns             : [],                   //!< Columns
+    transparent         : false,                //!< Bubble events?
+    $root               : null,                 //!< Root Container DOM Element
+    $element            : null,                 //!< View DOM Element
+    $selected           : null,                 //!< Selected DOM Element
+    on_render           : function() {},        //!< Render item callback function
+    on_activate         : function() {},        //!< Activate item callback function
+    on_toggle           : function() {},        //!< Toggle item callback function
+    on_focus            : function() {},        //!< On-focus event
+    on_context          : function() {},        //!< On context-menu show
+    on_drop             : function() {},        //!< DnD: Dropped in view
+    on_drag_over        : function() {},        //!< DnD: View mouseover
+    on_drag_leave       : function() {},        //!< DnD: View mouseout
+    on_drop_item        : function() {},        //!< DnD: Dropped in item
+    on_drag_item_over   : function() {},        //!< DnD: Item mouseover
+    on_drag_item_leave  : function() {},        //!< DnD: Item mouseout
 
     /**
      * IconView::init() -- Constructor
@@ -287,11 +293,17 @@
       this.$element     = null;
       this.$selected    = null;
 
-      this.on_render    = on_render   || function() {};
-      this.on_activate  = on_activate || function() {};
-      this.on_toggle    = on_toggle   || function() {};
-      this.on_focus     = function() {};
-      this.on_context   = function() {};
+      this.on_render            = on_render   || function() {};
+      this.on_activate          = on_activate || function() {};
+      this.on_toggle            = on_toggle   || function() {};
+      this.on_focus             = function() {};
+      this.on_context           = function() {};
+      this.on_drop              = function() {};
+      this.on_drag_over         = function() {};
+      this.on_drag_leave        = function() {};
+      this.on_drop_item         = function() {};
+      this.on_drag_item_over    = function() {};
+      this.on_drag_item_leaver  = function() {};
 
       if ( $(root).hasClass("GtkIconView") ) {
         this.$root = root;
@@ -445,26 +457,35 @@
       if ( OSjs.Compability.SUPPORT_DND ) {
         el.bind("dragover", function(ev) {
           ev.preventDefault();
+          self.on_drag_over(ev);
           return false;
         });
         el.bind("dragleave", function(ev) {
-          ev.preventDefault();
+          el.removeClass("DND-Enter");
+          self.on_drag_leave(ev);
           return false;
         });
         el.bind("dragenter", function(ev) {
-          ev.preventDefault();
+          el.addClass("DND-Enter");
+          return false;
+        });
+        el.bind("dragend", function(ev) {
+          el.find(".DND-Active").removeClass("DND-Active");
           return false;
         });
         el.bind("drop", function(ev) {
+          var data = ev.originalEvent.dataTransfer.getData("text/plain");
+          if ( data ) {
+            var jsn = null;
+            try {
+              jsn = JSON.parse(data);
+            } catch (e) {}
+          }
+
           ev.preventDefault();
-          console.log(ev);
-          /*
-          var dt = ev.originalEvent.dataTransfer;
-          console.log(dt, dt.getData('Text'));
-          console.log(dt.getData('text/uri-list'));
-          console.log(dt.getData('text/plain'));
-          console.log(dt.getData('text/html'));
-          */
+          ev.stopPropagation();
+
+          self.on_drop(ev, jsn);
           return false;
         });
       }
@@ -529,8 +550,12 @@
             };
           })(item)).mousedown((function(it) {
             return function(ev) {
-              ev.preventDefault();
-              //ev.stopPropagation();
+              var t = $(ev.target || ev.srcElement);
+              if ( !(t.attr("draggable") === "true" || t.closest("*[draggable=true]", t).length) ) {
+                ev.preventDefault();
+              } else {
+                ev.stopPropagation();
+              }
 
               self._toggleItem(ev, $(this), it);
             };
@@ -596,16 +621,51 @@
           });
         }
 
-        // Drag-and-drop
-        if ( OSjs.Compability.SUPPORT_DND ) {
-          el.find(".Inner").first().attr("draggable", "true");
-        }
-
         b.append(el);
-
 
         this.on_render(el, item, this.type, i);
 
+        // Drag-and-drop
+        if ( OSjs.Compability.SUPPORT_DND ) {
+          el.attr("draggable", "true");
+          el.bind("dragover", function(ev) {
+            ev.preventDefault();
+            self.on_drag_item_over(ev);
+            return false;
+          });
+          el.bind("dragleave", function(ev) {
+            el.removeClass("DND-Enter");
+            self.on_drag_item_leave(ev);
+            return false;
+          });
+          el.bind("dragstart", function(ev) {
+            var jsn = JSON.stringify(item);
+            ev.originalEvent.dataTransfer.setData('text/plain', jsn);
+            el.addClass("DND-Active");
+            return true;
+          });
+          el.bind("dragend", function(ev) {
+            return false;
+          });
+
+          el.bind("drop", (function(dst) {
+            return function(ev) {
+              var data = ev.originalEvent.dataTransfer.getData("text/plain");
+              if ( data ) {
+                var jsn = null;
+                try {
+                  jsn = JSON.parse(data);
+                } catch (e) {}
+              }
+
+              ev.preventDefault();
+              ev.stopPropagation();
+
+              self.on_drop_item(ev, jsn, dst);
+              return false;
+            };
+          })(item));
+        }
       }
 
       setTimeout(function() {

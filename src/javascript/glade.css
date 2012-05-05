@@ -169,6 +169,7 @@
 /* GtkIconView */
 .GtkIconView {
   background : #fff;
+  position : relative;
 }
 
   /* GtkIconViewHeader : Custom */
@@ -206,6 +207,11 @@
     list-style-type : none;
     padding : 0;
     margin : 0;
+    position : absolute;
+    top : 0px;
+    left : 0px;
+    right : 0px;
+    bottom : 0px;
   }
   .GtkIconView li {
     float : left;

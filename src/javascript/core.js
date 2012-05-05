@@ -2558,23 +2558,23 @@
 
     /**
      * Core::global_dblclick() -- Global Event Handler: dblclick
-     * @param   DOMEvent    ev      DOM Event
+     * @param   DOMEvent    ev      DKM Event
      * @return  void
      */
     global_dblclick : function(ev) {
-      ev.preventDefault();
+  
     },
 
     /**
      * Core::global_mousedown() -- Global Event Handler: mousedown
-     * @param   DOMEvent    ev      DOM Event
+     * @param   DOMEvent    ev      DKM Event
      * @return  bool
      */
     global_mousedown : function(ev) {
       var t = ev.target || ev.srcElement;
       if ( t && t.tagName ) {
         var tmp = $(t);
-        if ( !tmp.hasClass("GtkTextView") && !tmp.hasClass("textarea") && !tmp.parents(".textarea").length ) {
+        if ( !(tmp.attr("draggable") === "true" || tmp.closest("*[draggable=true]", tmp).length) && !tmp.hasClass("GtkTextView") && !tmp.hasClass("textarea") && !tmp.parents(".textarea").length ) {
           var tagName = t.tagName.toLowerCase();
           if ( tagName !== "canvas" && tagName !== "input" && tagName !== "textarea" && tagName !== "select" && tagName != "option" ) {
             ev.preventDefault();
@@ -3826,7 +3826,8 @@
       this._workers     = {};
       this._sockets     = {};
       this._bindings    = {
-        "vfs" : []
+        "vfs" : [],
+        "dnd" : []
       };
 
       console.group("Application::init()");
@@ -4911,30 +4912,6 @@
         //ev.preventDefault();
       });
 
-      $("#Desktop").bind("dragover", function(ev) {
-        ev.preventDefault();
-        return false;
-      });
-      $("#Desktop").bind("dragleave", function(ev) {
-        ev.preventDefault();
-        return false;
-      });
-      $("#Desktop").bind("dragenter", function(ev) {
-        ev.preventDefault();
-        return false;
-      });
-      $("#Desktop").bind("drop", function(ev) {
-        ev.preventDefault();
-        /*
-        var dt = ev.originalEvent.dataTransfer;
-        console.log(dt, dt.getData('Text'));
-        console.log(dt.getData('text/uri-list'));
-        console.log(dt.getData('text/plain'));
-        console.log(dt.getData('text/html'));
-        */
-        return false;
-      });
-
       // Global resize event
       var curHeight = $(window).height();
       var curWidth  = $(window).width();
@@ -4964,21 +4941,11 @@
      * @destructor
      */
     destroy : function() {
-      $("#Desktop").unbind("contextmenu");
-      $("#Desktop").unbind("dragover");
-      $("#Desktop").unbind("dragleave");
-      $("#Desktop").unbind("dragenter");
-      $("#Desktop").unbind("drop");
-
       if ( this._rtimeout ) {
         clearTimeout(this._rtimeout);
       }
 
       $(window).unbind("resize");
-      $("#Desktop").unbind("dragover");
-      $("#Desktop").unbind("dragleave");
-      $("#Desktop").unbind("dragenter");
-      $("#Desktop").unbind("drop");
 
       // Remove panel
       if ( this.panels ) {
@@ -6611,6 +6578,7 @@
     _lock_size        : false,                            //!< Lock window size
     _lock_width       : -1,                               //!< Lock to this window width in px
     _lock_height      : -1,                               //!< Lock to this window height in px
+    _global_dnd       : false,                            //!< Enable DnD support on window globally
     _bindings         : {},                               //!< Event bindings list
 
     /**
@@ -6657,6 +6625,7 @@
       this._lock_size        = false;
       this._lock_width       = -1;
       this._lock_height      = -1;
+      this._global_dnd       = false;
 
       // Window attributes
       this._name           = name;
@@ -7021,6 +6990,67 @@
           }
 
           el.resizable(ropts);
+        }
+
+        //
+        // DnD
+        //
+        if ( (OSjs.Compability.SUPPORT_DND) && this._global_dnd ) {
+          var dnd_hover = $("<div class=\"TempDnD\"></div>");
+
+          var ___showing = false;
+          var ___show = function() {
+            if ( ___showing )
+              return;
+
+            var pos = el.offset();
+            el.addClass("DND-Over");
+            dnd_hover.css({
+              "left"  : pos.left    + "px",
+              "top"   : pos.top     + "px",
+              "width" : el.width()  + "px",
+              "height": el.height() + "px"
+            });
+
+            $("body").append(dnd_hover);
+
+            ___showing = true;
+          };
+          var ___hide = function() {
+            if ( ___showing ) {
+              el.removeClass("DND-Over");
+              dnd_hover.remove();
+              ___showing = false;
+            }
+          };
+
+          dnd_hover.bind("mouseleave", function(ev) {
+            ___hide();
+          });
+          dnd_hover.bind("mousedown", function(ev) {
+            ___hide();
+          });
+          dnd_hover.bind("dragover", function(ev) {
+            ev.preventDefault();
+            ev.originalEvent.dataTransfer.dropEffect = 'copy';
+          });
+          dnd_hover.bind("drop", function(ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+            self._call("dnd", ev.originalEvent.dataTransfer);
+            ___hide();
+            return false;
+          });
+
+          el.bind("dragleave", function(ev) {
+            ___hide();
+          });
+          el.bind("dragenter", function(ev) {
+            ___show();
+          });
+          el.bind("dragend", function(ev) {
+            ___hide();
+          });
         }
 
         //
