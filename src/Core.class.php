@@ -287,7 +287,7 @@ class Core
    * @return void
    */
   protected static final function _doPackageOperation(Array $args, Array &$json, Core $inst = null) {
-    if ( !ENV_DEMO && ($user = $inst->getUser()) ) {
+    if ( !ENV_DEMO && ($user = $inst->getUser()) && ($user->isInGroup(User::GROUP_PACKAGES)) ) {
       if ( $args['operation'] == "install" ) {
         $archive = $args['archive'];
         if ( $result = PackageManager::InstallPackage($archive, $user, true) ) {
