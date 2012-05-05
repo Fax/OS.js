@@ -5051,25 +5051,67 @@
           var root = $("<ul></ul>");
 
           if ( ivlist ) {
-            var str, giter, e, i = 0, l = ivlist.length;
 
+            // > Selection
+            var __select = function(selement) {
+              if ( self._sel ) {
+                $(self._sel).parent().removeClass("current");
+              }
+
+              $(selement).parent().addClass("current");
+              self._sel = selement;
+            };
+
+            // > Context > Remove
+            var __remove = function(index, el) {
+              if ( ivlist[index] ) {
+                ivlist.splice(index, 1);
+                el.remove();
+                API.user.settings.save({"desktop.grid" : ivlist});
+              }
+            };
+
+            // > Click
+            var __click = function(ev, index) {
+              ev.preventDefault();
+              ev.stopPropagation();
+
+              var iter = _Settings._get("desktop.grid", true)[index]; // NOTE: This was the solution ?! WTF
+              if ( iter ) {
+                API.system.launch(iter.launch, iter['arguments']);
+              }
+              $("#DesktopGrid").click(); // Unselect
+
+              return false;
+            };
+
+            var giter, e, i = 0, l = ivlist.length;
             for ( i; i < l; i++ ) {
               giter = ivlist[i];
-              str = sprintf("<li><div class=\"inner\"><div class=\"icon\"><img alt=\"\" src=\"%s\" /></div><div class=\"label\"><span>%s</span></div></div></li>", GetIcon(giter.icon, "32x32"), giter.title);
-              e = $(str);
+              e = $(sprintf("<li><div class=\"inner\"><div class=\"icon\"><img alt=\"\" src=\"%s\" /></div><div class=\"label\"><span>%s</span></div></div></li>", GetIcon(giter.icon, "32x32"), giter.title));
 
-              self._createClick(e, i);
+              e.find(".inner").dblclick((function(index) {
+                return function(ev) {
+                  return __click(ev, index);
+                };
+              })(i));
+
+              e.find(".inner").bind("contextmenu", (function(index, eel, disabled) {
+                return function(ev) {
+                  __select(this);
+
+                  // FIXME: Locale
+                  return API.application.context_menu(ev, $(this), [
+                    {"title" : "Pinned Item", "attribute" : "header"},
+                    {"title" : "Remove", "disabled" : disabled, "method" : function() { __remove(index, eel); }}
+
+                  ], true);
+                };
+              })(i, e, giter['protected']));
 
               e.find(".inner").click(function(ev) {
                 ev.stopPropagation();
-
-                if ( self._sel ) {
-                  $(self._sel).parent().removeClass("current");
-                }
-
-                $(this).parent().addClass("current");
-                self._sel = this;
-
+                __select(this);
                 $(document).click(); // Trigger this! (deselects context-menu)
               });
 
@@ -5082,22 +5124,8 @@
 
         destroy : function() {
           $("#DesktopGrid").empty(); //.remove();
-        },
-
-        _createClick : function(e, index) {
-          e.find(".inner").dblclick(function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-
-            var iter = _Settings._get("desktop.grid", true)[index]; // NOTE: This was the solution ?! WTF
-            if ( iter ) {
-              API.system.launch(iter.launch, iter['arguments']);
-            }
-            $("#DesktopGrid").click(); // Unselect
-
-            return false;
-          });
         }
+
 
       }); // @class
 
