@@ -384,13 +384,15 @@ class Core
     $json['success']  = true;
 
     if ( ($user = $inst->getUser()) ) {
+      $only = Array("last_logout", "logged_in");
       if ( $save ) {
         $user->last_session = JSON::decode($session);
+        $only[] = "last_session";
       }
       $user->last_logout = new DateTime();
       $user->logged_in   = 0;
 
-      if ( (ENV_DEMO) || User::save($user, Array("last_logout", "logged_in")) ) {
+      if ( (ENV_DEMO) || User::save($user, $only) ) {
         $json['success'] = true;
       } else {
         $json['result']  = false;
