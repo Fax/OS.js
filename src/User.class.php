@@ -204,14 +204,23 @@ class User
   /**
    * Save this User instance
    * @param  User     $instance     User instance
+   * @param  Array    $only         Only these params
    * @return Mixed
    */
-  public static function save(User $instance) {
+  public static function save(User $instance, Array $only = Array()) {
     $instance->modified_at = new DateTime();
 
     $values = Array();
-    foreach ( $instance as $k => $v ) {
-      $values[$k] = $v;
+    if ( $only ) {
+      foreach ( $only as $k ) {
+        if ( isset($instance->$k) ) {
+          $values[$k] = $instance->$k;
+        }
+      }
+    } else {
+      foreach ( $instance as $k => $v ) {
+        $values[$k] = $v;
+      }
     }
 
     if ( isset($instance->id) && (($id = $instance->id) > 0) ) {
@@ -319,13 +328,15 @@ class User
           "title"      => "Home",
           "icon"       => "places/user-home.png",
           "launch"     => "ApplicationFileManager",
-          "arguments"  => Array("path" => "/User/Documents")
+          "arguments"  => Array("path" => "/User/Documents"),
+          "protected"  => true
         ),
         Array(
           "title"     => "Browser Compability",
           "icon"      => "status/software-update-urgent.png",
           "launch"    => "API::CompabilityDialog",
-          "arguments" => null
+          "arguments" => null,
+          "protected" => true
         )
       )
     );

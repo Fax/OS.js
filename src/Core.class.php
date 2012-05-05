@@ -188,7 +188,7 @@ class Core
         if ( (($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
           $user->heartbeat_at = new DateTime();
           if ( !ENV_DEMO ) {
-            User::save($user);
+            User::save($user, Array("heartbeat_at"));
           }
 
           $logged_in = 1;
@@ -554,7 +554,7 @@ class Core
         $user->last_login       = new DateTime();
         $user->last_session_id  = session_id();
         if ( !ENV_DEMO ) {
-          User::save($user);
+          User::save($user, Array("last_login", "last_session_id"));
         }
 
         $init_language      = "default"; // NOTE: Should be set to user ? used as 'SystemLanguage'
