@@ -59,7 +59,7 @@ abstract class VFS
    */
   protected static $VirtualDirs = Array(
     "/System/Packages" => Array(
-      "type" => "packages",
+      "type" => "system_packages",
       "attr" => self::ATTR_READ,
       "icon" => "places/user-bookmarks.png"
     ),
@@ -89,7 +89,7 @@ abstract class VFS
       "icon" => "places/folder-templates.png"
     ),
     "/User/Packages" => Array(
-      "type" => "packages",
+      "type" => "user_packages",
       "attr" => self::ATTR_RS,
       "icon" => "places/folder-download.png"
     ),
@@ -658,8 +658,10 @@ abstract class VFS
 
     foreach ( self::$VirtualDirs as $k => $v ) {
       if ( startsWith($path, $k) ) {
-        if ( $v['type'] == "packages" ) {
-          $apps = true;
+        if ( $v['type'] == "system_packages" ) {
+          $apps = 1;
+        } else if ( $v['type'] == "user_packages" ) {
+          $apps = 2;
         } else if ( $v['type'] == "chroot" ) {
           $chroot = true;
         } else if ( $v['type'] == "user" ) {
@@ -685,26 +687,32 @@ abstract class VFS
           "protected"  => 1
       );
 
-      Package::LoadAll(Package::TYPE_APPLICATION | Package::TYPE_PANELITEM);
-      foreach ( Package::$PackageRegister[Package::TYPE_APPLICATION] as $c => $opts ) {
-        $items["{$opts['title']} ($c)"] = Array(
-          "path"       => "{$path}/{$c}",
-          "size"       => 0,
-          "mime"       => "OSjs/Application",
-          "icon"       => $opts['icon'],
-          "type"       => "file",
-          "protected"  => 1,
-        );
-      }
-      foreach ( Package::$PackageRegister[Package::TYPE_PANELITEM] as $c => $opts ) {
-        $items["{$opts['title']} ($c)"] = Array(
-          "path"       => "{$path}/{$c}",
-          "size"       => 0,
-          "mime"       => "OSjs/PanelItem",
-          "icon"       => $opts['icon'],
-          "type"       => "file",
-          "protected"  => 1,
-        );
+      if ( $apps == 1 ) {
+        if ( $packages = PackageManager::GetSystemPackages() ) {
+          foreach ( $packages as $c => $opts ) {
+            $items["{$opts['title']} ($c)"] = Array(
+              "path"       => "{$path}/{$c}",
+              "size"       => 0,
+              "mime"       => "OSjs/{$opts["type"]}",
+              "icon"       => $opts['icon'],
+              "type"       => "file",
+              "protected"  => 1,
+            );
+          }
+        }
+      } else if ( $apps == 2 ) {
+        if ( $packages = PackageManager::GetUserPackages(Core::get()->getUser()) ) {
+          foreach ( $packages as $c => $opts ) {
+            $items["{$opts['title']} ($c)"] = Array(
+              "path"       => "{$path}/{$c}",
+              "size"       => 0,
+              "mime"       => "OSjs/{$opts["type"]}",
+              "icon"       => $opts['icon'],
+              "type"       => "file",
+              "protected"  => 1,
+            );
+          }
+        }
       }
 
       return $items;
