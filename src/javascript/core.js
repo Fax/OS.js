@@ -7004,6 +7004,7 @@
             if ( ___showing )
               return;
 
+            /*
             var pos = el.offset();
             el.addClass("DND-Over");
             dnd_hover.css({
@@ -7016,6 +7017,7 @@
             $("body").append(dnd_hover);
 
             ___showing = true;
+            */
           };
           var ___hide = function() {
             if ( ___showing ) {
@@ -7025,32 +7027,35 @@
             }
           };
 
-          dnd_hover.bind("mouseleave", function(ev) {
-            ___hide();
-          });
-          dnd_hover.bind("mousedown", function(ev) {
-            ___hide();
-          });
-          dnd_hover.bind("dragover", function(ev) {
+          var dnd = el;// .find(".WindowContent").first();
+          dnd.bind("dragover", function(ev) {
             ev.preventDefault();
-            ev.originalEvent.dataTransfer.dropEffect = 'copy';
-          });
-          dnd_hover.bind("drop", function(ev) {
             ev.stopPropagation();
-            ev.preventDefault();
-            self._call("dnd", ev.originalEvent.dataTransfer);
+            ev.originalEvent.dataTransfer.dropEffect = 'link';
+            return false;
+          });
+          dnd.bind("dragleave", function(ev) {
             ___hide();
             return false;
           });
-
-          el.bind("dragleave", function(ev) {
-            ___hide();
-          });
-          el.bind("dragenter", function(ev) {
+          dnd.bind("dragenter", function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
             ___show();
+            return false;
           });
-          el.bind("dragend", function(ev) {
+          dnd.bind("dragend", function(ev) {
             ___hide();
+            return false;
+          });
+          dnd.bind("drop", function(ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+            if ( self.app ) {
+              self.app._call("dnd", ev.originalEvent.dataTransfer);
+            }
+            ___hide();
+            return false;
           });
         }
 

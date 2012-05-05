@@ -642,12 +642,13 @@
             self.on_drag_item_leave(ev);
             return false;
           });
-          el.bind("dragstart", function(ev) {
-            var jsn = JSON.stringify(item);
-            ev.originalEvent.dataTransfer.setData('text/plain', jsn);
-            el.addClass("DND-Active");
-            return true;
-          });
+          el.bind("dragstart", (function(jsn) {
+            return function(ev) {
+              ev.originalEvent.dataTransfer.setData('text/plain', jsn);
+              el.addClass("DND-Active");
+              return true;
+            };
+          })(JSON.stringify(item)));
           el.bind("dragend", function(ev) {
             return false;
           });
