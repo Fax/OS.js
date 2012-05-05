@@ -3276,6 +3276,7 @@
         }
 
         this._set("desktop.panels", panels);
+        this._save(false);
 
         return true;
       }
