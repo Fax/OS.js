@@ -358,15 +358,32 @@
   function LaunchString(str, args) {
     args = args || [];
 
-    var operation = str.split("API::").pop().replace(/\s[^A-z0-9]/g, "");
-    switch ( operation ) {
-      case 'CompabilityDialog' :
-        _WM.addWindow(new OSjs.Dialogs.CompabilityDialog(Window, API, args));
-      break;
+    var spl = str.split("::");
+    spl.shift();
+    if ( spl.length ) {
+      var operation = spl[0];
+      var error     = false;
+      switch ( operation ) {
+        case 'CompabilityDialog' :
+          _WM.addWindow(new OSjs.Dialogs.CompabilityDialog(Window, API, args));
+        break;
 
-      default :
+        case 'Launch' :
+          if ( args && args.path && args.mime.match(/(.*)\/(.*)/) ) {
+            API.system.run(args.path, args.mime);
+          } else {
+            error = true;
+          }
+        break;
+
+        default :
+          error = true;
+        break;
+      }
+
+      if ( error ) {
         MessageBox(sprintf(OSjs.Labels.ErrorLaunchString, operation));
-      break;
+      }
     }
   } // @endfunction
 
@@ -638,10 +655,6 @@
           console.log("Triggering", ev, "for", iter);
           iter._call("vfs", params);
         }
-      }
-
-      if ( _Desktop ) {
-        _Desktop.updateIconView(params);
       }
     }
 
@@ -1225,8 +1238,8 @@
 
     'user' : {
       'settings' : {
-        'save' : function(settings) {
-          _Settings._apply(settings);
+        'save' : function(settings, callback) {
+          _Settings._apply(settings, callback);
 
           if ( _WM ) {
             _WM.applySettings();
@@ -3291,13 +3304,17 @@
     /**
      * SettingsManager::_apply() -- Apply a changeset
      * @param   Object    settings    Settings Array
+     * @param   Function  callback    Callback function
      * @return  void
      */
-    _apply : function(settings) {
+    _apply : function(settings, callback) {
       console.group("SettingsManager::_apply()");
       console.log("Applying", settings);
 
+      var internal = !callback;
       var changed = false;
+      callback = callback || function() {};
+
       for ( var i in settings ) {
         if ( settings.hasOwnProperty(i) ) {
           this._set(i, settings[i]);
@@ -3307,11 +3324,13 @@
       }
 
       if ( changed ) {
-        this._save(true, function() {
+        this._save(internal, function() {
+          callback();
           console.groupEnd();
         });
       } else {
         console.groupEnd();
+        callback();
       }
     },
 
@@ -5015,14 +5034,16 @@
 
         _sel  : null,
         _root : null,
+        _list : null,
 
         init : function() {
           var self = this;
+          var grid = $("#DesktopGrid");
 
           this._root = $("<ul></ul>");
 
-          $("#DesktopGrid").html(this._root);
-          $("#DesktopGrid").click(function() {
+          grid.html(this._root);
+          grid.click(function() {
             if ( self._sel ) {
               $(self._sel).parent().removeClass("current");
               self._sel = null;
@@ -5031,12 +5052,81 @@
             $(document).click(); // Trigger this! (deselects context-menu)
           });
 
+          grid.bind("dragenter", function(ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+            ev.originalEvent.dataTransfer.dropEffect = "link";
+            return false;
+          });
+          grid.bind("dragend", function(ev) {
+            return false;
+          });
+          grid.bind("dragover", function(ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+            return false;
+          });
+          grid.bind("drop", function(ev) {
+            var data = ev.originalEvent.dataTransfer.getData("text/plain");
+            var jsn = null;
+            if ( data ) {
+              try {
+                jsn = JSON.parse(data);
+              } catch (e) {}
+            }
+
+            ev.preventDefault();
+            ev.stopPropagation();
+
+            if ( jsn ) {
+              self.addItem(jsn);
+            }
+
+            return false;
+          });
+
           this.refresh();
         },
 
+        removeItem : function(index, el) {
+          if ( this._list[index] ) {
+            this._list.splice(index, 1);
+
+            el.remove();
+
+            _Settings._apply({"desktop.grid" : this._list}, function() {
+            //  self.refresh();
+            });
+          }
+        },
+
+        addItem : function(jsn) {
+          var self = this;
+          if ( jsn ) {
+            if ( jsn.mime && !jsn.mime.match(/^OSjs/) ) {
+              var iter = {
+                'title'     : jsn.name,
+                'icon'      : jsn.icon,
+                'launch'    : "API::Launch",
+                'arguments' : {path: jsn.path, mime: jsn.mime},
+                'protected' : false
+              };
+
+              console.log(jsn, iter);
+              this._list.push(iter);
+
+              _Settings._apply({"desktop.grid" : this._list}, function() {
+                self.refresh();
+              });
+            }
+          }
+        },
+
         refresh : function() {
-          var ivlist = _Settings._get("desktop.grid", true);
-          if ( ivlist ) {
+          var self = this;
+
+          this._list = _Settings._get("desktop.grid", true);
+          if ( this._list ) {
             this._root.empty();
 
             // > Selection
@@ -5047,15 +5137,6 @@
 
               $(selement).parent().addClass("current");
               self._sel = selement;
-            };
-
-            // > Context > Remove
-            var __remove = function(index, el) {
-              if ( ivlist[index] ) {
-                ivlist.splice(index, 1);
-                el.remove();
-                API.user.settings.save({"desktop.grid" : ivlist});
-              }
             };
 
             // > Click
@@ -5072,9 +5153,9 @@
               return false;
             };
 
-            var giter, e, i = 0, l = ivlist.length;
+            var giter, e, i = 0, l = this._list.length;
             for ( i; i < l; i++ ) {
-              giter = ivlist[i];
+              giter = this._list[i];
               e = $(sprintf("<li><div class=\"inner\"><div class=\"icon\"><img alt=\"\" src=\"%s\" /></div><div class=\"label\"><span>%s</span></div></div></li>", GetIcon(giter.icon, "32x32"), giter.title));
 
               e.find(".inner").dblclick((function(index) {
@@ -5087,10 +5168,9 @@
                 return function(ev) {
                   __select(this);
 
-                  // FIXME: Locale
                   return API.application.context_menu(ev, $(this), [
-                    {"title" : "Pinned Item", "attribute" : "header"},
-                    {"title" : "Remove", "disabled" : disabled, "method" : function() { __remove(index, eel); }}
+                    {"title" : OSjs.Labels.DesktopGridHeader, "attribute" : "header"},
+                    {"title" : OSjs.Labels.DesktopGridRemove, "disabled" : disabled, "method" : function() { self.removeItem(index, eel); }}
 
                   ], true);
                 };
@@ -5109,6 +5189,8 @@
 
         destroy : function() {
           $("#DesktopGrid").empty(); //.remove();
+          this._list = null;
+          this._sel  = null;
         }
 
       }); // @class
@@ -5334,18 +5416,6 @@
       var p = this.getPanel();
       if ( p ) {
         p.triggerExpand();
-      }
-    },
-
-    /**
-     * Desktop::updateIconView() -- Update IconView
-     * Normally triggered on an VFS event.
-     * @param  Object   params      Parameters (if any)
-     * @return void
-     */
-    updateIconView : function(params) {
-      if ( this.iconview ) {
-        this.iconview.refresh(params);
       }
     },
 

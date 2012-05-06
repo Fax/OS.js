@@ -74,6 +74,8 @@
     "SettingsNotifyFailSave"              : "Failed to save settings",
     "SettingsNotifySave"                  : "Your settings was saved",
     "SettingsNotifyFailSaveServer"        : "Failed to save settings (server error)",
+    "DesktopGridHeader"                   : "Pinned Item",
+    "DesktopGridRemove"                   : "Remove",
     "ApplicationCategories"               : {
       "development" : "Development",
       "games"       : "Games",

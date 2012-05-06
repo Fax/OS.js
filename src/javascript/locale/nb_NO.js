@@ -74,6 +74,8 @@
     "SettingsNotifyFailSave"              : "Klarte ikke lagre instillinger",
     "SettingsNotifySave"                  : "Dine instillinger ble lagret",
     "SettingsNotifyFailSaveServer"        : "Klarte ikke lagre instillinger (server feil)",
+    "DesktopGridHeader"                   : "Stiftet ikon",
+    "DesktopGridRemove"                   : "Fjern",
     "ApplicationCategories"               : {
       "development" : "Utvikling",
       "games"       : "Spill",
