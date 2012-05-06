@@ -847,6 +847,10 @@
     //
 
     'ui' : {
+      'getIcon' : function(name, size, pkg) {
+        return GetIcon(name, size, pkg);
+      },
+
       'windows' : {
         'tile' : function() {
           if ( !_WM ) {
