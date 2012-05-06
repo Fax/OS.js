@@ -636,12 +636,12 @@
         iter = _Processes[i];
         if ( (iter instanceof Application) && (iter !== instance) ) {
           console.log("Triggering", ev, "for", iter);
-
-          iter._call("vfs", {
-            "file" : params.file,
-            "mime" : params.mime
-          });
+          iter._call("vfs", params);
         }
+      }
+
+      if ( _Desktop ) {
+        _Desktop.updateIconView(params);
       }
     }
 
@@ -3073,6 +3073,7 @@
       localStorage.removeItem("system.installed.application");
       localStorage.removeItem("system.installed.panelitem");
       localStorage.removeItem("system.installed.packages");
+      localStorage.removeItem("user.installed.applications");
       localStorage.removeItem("desktop.panel.items");
       localStorage.removeItem("desktop.panel.position");
       localStorage.removeItem("applications");
@@ -5007,16 +5008,20 @@
       this.applySettings();
 
       //
-      // Create IconView and items from localStorage
+      // Desktop Grid - Icon View
       //
 
       var IconView = Class.extend({
 
-        _sel : null,
+        _sel  : null,
+        _root : null,
 
         init : function() {
           var self = this;
 
+          this._root = $("<ul></ul>");
+
+          $("#DesktopGrid").html(this._root);
           $("#DesktopGrid").click(function() {
             if ( self._sel ) {
               $(self._sel).parent().removeClass("current");
@@ -5026,10 +5031,13 @@
             $(document).click(); // Trigger this! (deselects context-menu)
           });
 
-          var ivlist = _Settings._get("desktop.grid", true);
-          var root = $("<ul></ul>");
+          this.refresh();
+        },
 
+        refresh : function() {
+          var ivlist = _Settings._get("desktop.grid", true);
           if ( ivlist ) {
+            this._root.empty();
 
             // > Selection
             var __select = function(selement) {
@@ -5094,17 +5102,14 @@
                 $(document).click(); // Trigger this! (deselects context-menu)
               });
 
-              root.append(e);
+              this._root.append(e);
             }
           }
-
-          $("#DesktopGrid").html(root);
         },
 
         destroy : function() {
           $("#DesktopGrid").empty(); //.remove();
         }
-
 
       }); // @class
 
@@ -5329,6 +5334,18 @@
       var p = this.getPanel();
       if ( p ) {
         p.triggerExpand();
+      }
+    },
+
+    /**
+     * Desktop::updateIconView() -- Update IconView
+     * Normally triggered on an VFS event.
+     * @param  Object   params      Parameters (if any)
+     * @return void
+     */
+    updateIconView : function(params) {
+      if ( this.iconview ) {
+        this.iconview.refresh(params);
       }
     },
 

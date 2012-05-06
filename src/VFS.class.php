@@ -98,6 +98,11 @@ abstract class VFS
       "attr" => self::ATTR_RW,
       "icon" => "places/folder-documents.png"
     ),
+    "/User/Desktop" => Array(
+      "type" => "user",
+      "attr" => self::ATTR_RW,
+      "icon" => "places/user-desktop.png"
+    ),
     "/User" => Array(
       "type" => "chroot",
       "attr" => self::ATTR_READ,
