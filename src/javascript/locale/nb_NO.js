@@ -76,6 +76,7 @@
     "SettingsNotifyFailSaveServer"        : "Klarte ikke lagre instillinger (server feil)",
     "DesktopGridHeader"                   : "Stiftet ikon",
     "DesktopGridRemove"                   : "Fjern",
+    "AddPanelItem"                        : "Legg til panel-objekt",
     "ApplicationCategories"               : {
       "development" : "Utvikling",
       "games"       : "Spill",
@@ -89,9 +90,7 @@
     },
     "ContextMenuPanel"                    : {
       "title"     : "Panel",
-      "add"       : "Legg til",
-      "create"    : "Nytt panel",
-      "remove"    : "Fern panel"
+      "add"       : "Legg til"
     },
     "ContextMenuPanelItem"                : {
       "move"      : "Flytt",
@@ -105,7 +104,8 @@
     "ContextMenuDesktop"                  : {
       "title"     : "Skrivebord",
       "wallpaper" : "Endre Bakgrunn",
-      "sort"      : "Sorter vinduer"
+      "sort"      : "Sorter vinduer",
+      "panels"    : "Panel Instillinger"
     },
     "ContextMenuWindowMenu"               : {
       "max"     : "Maksimer",

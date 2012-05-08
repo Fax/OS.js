@@ -282,39 +282,92 @@ class User
 
     // Panel(s)
     $panel = Array(
-      Array("PanelItemMenu", Array(), "left:0"),
-      Array("PanelItemSeparator", Array(), "left:38"),
-      Array("PanelItemWindowList", Array(), "left:48"),
-      Array("PanelItemClock", Array(), "right:0"),
-      Array("PanelItemSeparator", Array(), "right:115"),
-      Array("PanelItemDock", Array(Array(
-        Array(
-          "title"  => "About",
-          "icon"   => "actions/gtk-about.png",
-          "launch" => "SystemAbout"
-        ),
-        Array(
-          "title"  => "Control Panel",
-          "icon"   => "categories/preferences-system.png",
-          "launch" => "SystemControlPanel"
-        ),
-        Array(
-          "title"  => "Save and Quit",
-          "icon"   => "actions/gnome-logout.png",
-          "launch" => "SystemLogout"
-        )
-      )), "right:120"),
-      Array("PanelItemSeparator", Array(), "right:205"),
-      Array("PanelItemWeather", Array(), "right:215")
+      Array(
+        "index"     => 0,
+        "name"      => "PanelItemMenu",
+        "opts"      => Array(),
+        "align"     => "left",
+        "position"  => 0
+      ),
+      Array(
+        "index"     => 1,
+        "name"      => "PanelItemSeparator",
+        "opts"      => Array(),
+        "align"     => "left",
+        "position"  => 38
+      ),
+      Array(
+        "index"     => 2,
+        "name"      => "PanelItemWindowList",
+        "opts"      => Array(),
+        "align"     => "left",
+        "position"  => 48
+      ),
+      Array(
+        "index"     => 3,
+        "name"      => "PanelItemClock",
+        "opts"      => Array(),
+        "align"     => "right",
+        "position"  => 0
+      ),
+      Array(
+        "index"     => 4,
+        "name"      => "PanelItemSeparator",
+        "opts"      => Array(),
+        "align"     => "right",
+        "position"  => 115
+      ),
+      Array(
+        "index"     => 5,
+        "name"      => "PanelItemDock",
+        "opts"      => Array(Array(
+          Array(
+            "title"  => "About",
+            "icon"   => "actions/gtk-about.png",
+            "launch" => "SystemAbout"
+          ),
+          Array(
+            "title"  => "Control Panel",
+            "icon"   => "categories/preferences-system.png",
+            "launch" => "SystemControlPanel"
+          ),
+          Array(
+            "title"  => "Save and Quit",
+            "icon"   => "actions/gnome-logout.png",
+            "launch" => "SystemLogout"
+          )
+        )),
+        "align"     => "right",
+        "position"  => 120
+      ),
+      Array(
+        "index"     => 6,
+        "name"      => "PanelItemSeparator",
+        "opts"      => Array(),
+        "align"     => "right",
+        "position"  => 205
+      ),
+      Array(
+        "index"     => 7,
+        "name"      => "PanelItemWeather",
+        "opts"      => Array(),
+        "align"     => "right",
+        "position"  => 215
+      )
     );
 
     $merge["desktop.panels"] = Array(
       "items" => Array(
         Array(
-          "name"  => "Default",
-          "index" => 0,
-          "items" => $panel,
-          "position" => "top"
+          "name"      => "Default",
+          "index"     => 0,
+          "items"     => $panel,
+          "position"  => "top",
+          "style"     => Array(
+            "type"        => "default",
+            "background"  => null,
+            "opacity"     => "default"
+          )
         )
       )
     );

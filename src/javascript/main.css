@@ -283,6 +283,9 @@ input.Disabled {
   z-index : 1000000;
   display : none;
 }
+.DesktopPanel.Transparent {
+  background : transparent;
+}
 .DesktopPanel.Bottom {
   top : auto;
   bottom : 0px;
@@ -652,6 +655,24 @@ input.Disabled {
   text-decoration : underline;
 }
 
+.OperationDialogPanelItemAdd ul.Panels {
+  padding : 0;
+}
+.OperationDialogPanelItemAdd ul.Panels .Header {
+  font-weight : bold;
+  font-size : 120%;
+}
+.OperationDialogPanelItemAdd ul.Panels .Label {
+  font-weight : bold;
+}
+.OperationDialogPanelItemAdd ul.Panels .Option {
+}
+.OperationDialogPanelItemAdd ul.Panels .Option select {
+  width : 100%;
+}
+.OperationDialogPanelItemAdd ul.Panels .Option .Slider {
+  margin : 5px;
+}
 
 #ContextMenu {
   position : absolute;

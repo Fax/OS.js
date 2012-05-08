@@ -99,6 +99,11 @@ body {
   -moz-opacity: 0.98;       /* mozilla, netscape */
   opacity: 0.98;           /* fx, safari, opera */
 }
+.DesktopPanel.Transparent {
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
 .DesktopPanel.Blend {
   filter: alpha(opacity=50); /* internet explorer */
   -khtml-opacity: 0.50;      /* khtml, old safari */

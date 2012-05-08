@@ -50,6 +50,10 @@ body {
   border-left : 1px solid #2a2a2b;
   border-right : 1px solid #2a2a2b;
 }
+.DesktopPanel.Transparent {
+  background : transparent;
+  border : 0 none;
+}
 
 .PanelItem {
   color : #b0c2c1;

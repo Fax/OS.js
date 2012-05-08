@@ -76,6 +76,7 @@
     "SettingsNotifyFailSaveServer"        : "Failed to save settings (server error)",
     "DesktopGridHeader"                   : "Pinned Item",
     "DesktopGridRemove"                   : "Remove",
+    "AddPanelItem"                        : "Add new panel item",
     "ApplicationCategories"               : {
       "development" : "Development",
       "games"       : "Games",
@@ -89,9 +90,7 @@
     },
     "ContextMenuPanel"                    : {
       "title"     : "Panel",
-      "add"       : "Add new item",
-      "create"    : "New panel",
-      "remove"    : "Remove panel"
+      "add"       : "Add new item"
     },
     "ContextMenuPanelItem"                : {
       "move"      : "Move",
@@ -105,7 +104,8 @@
     "ContextMenuDesktop"                  : {
       "title"     : "Desktop",
       "wallpaper" : "Change Wallpaper",
-      "sort"      : "Tile Windows"
+      "sort"      : "Tile Windows",
+      "panels"    : "Panel Preferences"
     },
     "ContextMenuWindowMenu"               : {
       "max"     : "Maximize",

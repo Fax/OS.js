@@ -398,9 +398,7 @@
   function LaunchProcess(name, type, args) {
     args = args || {};
 
-    var process           = InitLaunch(name, type);
-    var callback_result   = undefined;
-    var callback_message  = undefined;
+    var process = InitLaunch(name, type);
 
     console.group("LaunchProcess()");
     console.log("Name", name);
@@ -408,6 +406,12 @@
     console.log("Args", args);
     console.log("Found?", process);
     console.groupEnd();
+
+    if ( !process ) {
+      if ( args && args.callback ) {
+        args.callback(false);
+      }
+    }
 
     if ( process ) {
 
@@ -426,16 +430,22 @@
             case "PanelItem" :
               ref = OSjs.PanelItems[name];
               try {
-                obj = new OSjs.PanelItems[name](PanelItem, args.panel, API, args.argv || {});
-                obj._panel = args.panel;
-                obj._index = args.index;
-                args.panel.addItem(obj, args.align, args.save);
+                var argv  = args.opts || [];
+                var pref  = args.panel;
+                var psave = args.save === undefined ? false : (args.save ? true : false);
+                var pargs = {
+                  index     : args.index,
+                  name      : args.name,
+                  align     : args.align,
+                  position  : args.position
+                };
+
+                obj = new OSjs.PanelItems[name](PanelItem, pref, API, argv || {});
+                pref.addItem(obj, pargs, psave);
               } catch ( ex ) {
+                CrashApplication(name, obj, ex);
                 obj = null;
                 crashed = true;
-
-                callback_result = crashed;
-                callback_message = name + ": " + ex;
               }
             break;
 
@@ -476,11 +486,11 @@
                   CrashApplication(name, obj, ex);
                 }
               }, 50);
-            } else {
-              if ( args && args.callback ) {
-                args.callback(callback_result, callback_message);
-              }
             }
+          }
+
+          if ( args && args.callback ) {
+            args.callback(!crashed);
           }
         } else {
           console.log("LaunchProcess()", name, "<", "ERROR");
@@ -3258,42 +3268,17 @@
      */
     savePanel : function(p) {
       if ( p instanceof Panel ) {
-        var sess = p.getSession();
-        var items = [];
-
-        // Panel Items
-        var i, iter, opts;
-        for ( i = 0; i < sess.items.length; i++ ) {
-          iter  = sess.items[i];
-          items.push([iter.name, iter.opts, (iter.align + ":" + iter.position)]);
+        var session = [];
+        var panels  = _Desktop.getPanels();
+        for ( var i = 0; i < panels.length; i++ ) {
+          session.push(panels[i].getSession());
         }
-        delete i;
-        delete iter;
-        delete opts;
-
-        // Panel
-        var json = {
-          name      : sess.name,
-          index     : sess.index,
-          position  : sess.position,
-          items     : items
-        };
 
         console.group("SettingsManager::savePanel()");
-        console.log(p, sess);
-        console.log("Result", json);
+        console.log(p, session);
         console.groupEnd();
 
-        var pp = 0, panels = this._get("desktop.panels", true);
-        for ( pp; pp < panels.length; pp++ ) {
-          if ( (panels[pp].name == json.name) && (panels[pp].index == json.index) ) {
-            panels[pp] = json;
-            console.log("Saved panel", pp, panels[pp]);
-            break;
-          }
-        }
-
-        this._set("desktop.panels", panels);
+        this._set("desktop.panels", session);
         this._save(false);
 
         return true;
@@ -5208,27 +5193,18 @@
       console.log("Registering panels...");
       try {
         var panels = _Settings._get("desktop.panels", true);
-        var panel, items;
 
         console.log("Panels", panels);
 
-        var additems = function(panel, items, callback_error) {
+        var additems = function(panel, items, callback) {
           var size = items.length;
           var current = 0;
 
           var additem = function(index) {
-
             var el      = items[index];
-            var iname   = el[0];
-            var iargs   = el[1];
-            var ialign  = el[2] || "left:0";
-
-            LaunchProcess(iname, "PanelItem", {"index" : index, "argv" : iargs, "align" : ialign, "panel" : panel, "callback" : function(crashed, error_msg) {
+            el.panel    = panel;
+            el.callback = function() {
               current++;
-
-              if ( crashed && error_msg ) {
-                callback_error(error_msg, panel);
-              }
 
               if ( current < size ) {
                 additem(current);
@@ -5237,10 +5213,14 @@
                   panel.run();
                   self.updatePanelPosition(panel);
                 } catch ( exception ) {
-                  callback_error(exception, panel);
+                  CrashCustom("Panel", error, "Panel.run() in Desktop::run(): " + exception);
                 }
+
+                callback(panel);
               }
-            }});
+            };
+
+            LaunchProcess(el.name, "PanelItem", el);
           };
 
           if ( size > 0 ) {
@@ -5250,15 +5230,12 @@
         };
 
         if ( panels ) {
+          var panel;
           for ( var x = 0; x < panels.length; x++ ) {
-            panel = new Panel(panels[x].index, panels[x].name, panels[x].position);
-            items = panels[x].items;
-
-            additems(panel, items, function(error, p) {
-              CrashCustom("Panel", error, "Desktop::run(){[LaunchPanelitem()>{callback(error)}]}\nPanelItem::create(), ResourceManager::addResources() ?");
+            panel = new Panel(panels[x].index, panels[x].name, panels[x].position, panels[x].style);
+            additems(panel, panels[x].items, function(pref) {
+              self.addPanel(pref);
             });
-
-            self.addPanel(panel);
           }
         }
 
@@ -5323,6 +5300,7 @@
      */
     showContextMenu : function(ev) {
       var t = ev.target || ev.srcElement;
+      var self = this;
 
       if ( !t || !t.id == "Desktop" ) {
         return true;
@@ -5347,12 +5325,13 @@
               "desktop.wallpaper.path" : fname
             });
           }, ["image/*"], "open", dir);
-        }
-      },
-      {"title" : labels.sort, "method" : function() { 
-        API.ui.windows.tile();
-      }}
-
+        }},
+        {"title" : labels.sort, "method" : function() {
+          API.ui.windows.tile();
+        }},
+        {"title" : labels.panels, "method" : function() {
+          self.showPanelPreferences();
+        }}
       ], true);
 
       /*if ( ev.which > 1 ) {
@@ -5360,6 +5339,165 @@
       }*/
 
       return ret;
+    },
+
+    /**
+     * Desktop::showPanelPreferences() -- Show Panel preferences dialog
+     * @return void
+     */
+    showPanelPreferences : function() {
+      var self = this;
+
+      var _panels   = [];
+      var _size     = 0;
+      var _current  = -1;
+      var _selected = null;
+
+      var __onchange = function(panel, key, value) {
+        panel = _Desktop.getPanel(panel.index);
+        if ( panel ) {
+          var style = panel.getStyle();
+          style[key] = value;
+          panel.setStyle(style, true);
+
+          console.log("Desktop::showPanelPreferences()", "__onchange", panel, [key, value], style);
+          var session = [];
+          var panels  = self.getPanels();
+          for ( var i = 0; i < panels.length; i++ ) {
+            session.push(panels[i].getSession());
+          }
+
+          _Settings._apply({"desktop.panels" : session}, function() {
+            // void -- removes message
+          });
+        }
+      };
+
+      var _selectItem = function(item) {
+        if ( _selected )
+          _selected.removeClass("Selected");
+
+        item.addClass("Selected");
+        _selected = item;
+      };
+
+      var _createPrefs = function(el, panel) {
+        var opa  = 100;
+        var type = "solid";
+        var opt  = null;
+
+        if ( panel.style && panel.style.opacity ) {
+          if ( panel.style.opacity != "default" ) {
+            opa = panel.style.opacity;
+          }
+        }
+        if ( panel.style && panel.style.type ) {
+          if ( panel.style.type != "default" ) {
+            type = panel.style.type;
+          }
+        }
+        if ( panel.style && panel.style.background ) {
+          opt = panel.style.background;
+        }
+
+        el.append(sprintf("<div class=\"PType\"><div class=\"Label\">%s</div><div class=\"Option\"><select></select></div></div>", "Background Type"));
+        el.append(sprintf("<div class=\"POption\"><div class=\"Label\">%s</div><div class=\"Option\"></div></div>", "Background Option"));
+        el.append(sprintf("<div class=\"POpacity\"><div class=\"Label\">%s</div><div class=\"Option\"><div class=\"Slider\"></div></div></div>", "Opacity"));
+
+        el.find(".PType select").append(sprintf("<option value=\"solid\">%s</option>", "Solid Color"));
+        el.find(".PType select").append(sprintf("<option value=\"image\">%s</option>", "Background Image"));
+        el.find(".PType select").append(sprintf("<option value=\"transparent\">%s</option>", "Transparent"));
+
+        // Type
+        el.find(".PType select").change(function() {
+          __onchange(panel, "type", $(this).val());
+        });
+        el.find(".PType select").val(type);
+
+        // Background
+        el.find(".POption select").change(function() {
+          __onchange(panel, "background", $(this).val());
+        });
+        el.find(".POption .Option").html(opt || "None");
+
+        // Opacity
+        var stimeout = null;
+
+        el.find(".POpacity .Slider").slider({
+          min   : 1,
+          max   : 100,
+          value : opa,
+          slide : function() {
+            if ( stimeout ) {
+              clearTimeout(stimeout);
+              stimeout = null;
+            }
+            stimeout = setTimeout((function(slider) {
+              return function() {
+                __onchange(panel, "opacity", slider.slider("value"));
+              };
+            })($(this)), 100);
+          }
+        });
+      };
+
+      var _refreshList = function(list) {
+        list.empty();
+
+        _panels   = _Settings._get("desktop.panels", true);
+        _size     = 0;
+        _current  = -1;
+
+        var pp = 0, li;
+        for ( pp; pp < _panels.length; pp++ ) {
+          li = $(sprintf("<li><!--<div class=\"Header\">Panel %d</div>--><div class=\"Prefs\"></div></li>", parseInt(_panels[pp].index, 10) + 1));
+
+          _createPrefs(li.find(".Prefs"), _panels[pp]);
+
+          li.click((function(i) {
+            return function() {
+              _current = i;
+            };
+          })(_size));
+
+          _size++;
+          list.append(li);
+        }
+      };
+
+      var pfd = new OSjs.Dialogs.PanelItemOperationDialog(OperationDialog, API, [this, function(diag) {
+        var list = diag.$element.find(".DialogContent ul");
+        var buttons = diag.$element.find(".DialogButtons");
+        list.addClass("Panels");
+
+        _refreshList(list);
+
+        buttons.find(".DialogButtons .Close").show();
+        buttons.find(".DialogButtons .Ok").hide();
+
+        /*
+        var add_btn = $(sprintf("<button class=\"AddPanel\">%s</button>", "+"));
+        var rem_btn = $(sprintf("<button class=\"RemovePanel\">%s</button>", "-"));
+
+        add_btn.click(function() {
+          _refreshList(list);
+        });
+        rem_btn.click(function() {
+          if ( _size > 1 ) {
+            _refreshList(list);
+          }
+        });
+
+        buttons.append(add_btn, rem_btn);
+        */
+
+      }, function() {}, OSjs.Labels.ContextMenuDesktop.panels, true]);
+
+      pfd.height = 300;
+      pfd._gravity = "center";
+      pfd.icon = "categories/applications-utilities.png";
+
+      _WM.addWindow(pfd);
     },
 
     /**
@@ -5822,12 +5960,15 @@
     dragging      : false,      //!< Current panel dragging
     idragging     : false,      //!< Current item dragging
     width         : -1,         //!< Current width
+    btype         : "",         //!< Background Type
+    bbackground   : "",         //!< Background Value
+    bopacity      : "",         //!< Background Opacity
 
     /**
      * Panel::init() -- Constructor
      * @constructor
      */
-    init : function(index, name, pos) {
+    init : function(index, name, pos, style) {
       var self = this;
 
       console.group("Panel::init()");
@@ -5835,13 +5976,15 @@
       console.log("Name", name);
       console.log("Position", pos);
 
-      this.$element = $('<div class="DesktopPanel"><ul></ul></div>');
-      this.pos      = pos;
-      this.items    = [];
-      this.running  = false;
-      this.index    = parseInt(index, 10);
-      this.name     = name || "Panel";
-      this.width    = -1;
+      this.$element     = $('<div class="DesktopPanel"><ul></ul></div>');
+      this.pos          = pos;
+      this.items        = [];
+      this.running      = false;
+      this.index        = parseInt(index, 10);
+      this.name         = name || "Panel";
+      this.width        = -1;
+
+      this.setStyle(style || {}, true);
 
       // Panel item dragging
       var oldPos = {'top' : 0, 'left' : 0};
@@ -5915,10 +6058,7 @@
           {"title" : labels.title, "attribute" : "header"},
           {"title" : labels.add, "method" : function() {
             addItem(ev);
-          }},
-          {"title" : labels.create, "disabled" : true},
-          {"title" : labels.remove, "disabled" : true}
-
+          }}
         ], true);
 
         return false;
@@ -5972,7 +6112,7 @@
 
           }, function() {
             self.reload();
-        }, "Add new panel item", true]);
+        }, OSjs.Labels.AddPanelItem, true]);
 
         pitem.height = 300;
         pitem._gravity = "center";
@@ -6146,18 +6286,20 @@
     /**
      * Panel::addItem() -- Add a new PanelItem
      * @param   PanelItem   i       Item
-     * @param   String      pos     Position string
+     * @param   Object      opts    Item Options
      * @param   bool        save    Save panel (Default = undefined)
      * @return  Mixed
      */
-    addItem : function(i, pos, save) {
+    addItem : function(i, opts, save) {
       if ( i instanceof PanelItem ) {
 
         console.group("Panel::addItem()");
-        console.log(i._name, i);
+        console.log(i, save, opts);
         console.groupEnd();
 
-        var el = i.create(pos);
+        i._panel = this;
+        i._index = this.items.length;
+        var el = i.create(opts);
         if ( el ) {
           el.attr("id", "PanelItem" + this.items.length);
           this.$element.find("ul").first().append(el);
@@ -6266,6 +6408,58 @@
     },
 
     /**
+     * Panel::setStyle() -- Set panel style
+     * @param  Object   style     Style Object
+     * @param  bool     append    Append to DOM
+     * @return void
+     */
+    setStyle : function(style, append) {
+      this.btype        = (style.type)       ? style.type        : "default";
+      this.bbackground  = (style.background) ? style.background  : null;
+      this.bopacity     = (style.opacity)    ? style.opacity     : "default";
+
+      console.log("Panel::setStyle()", style, append);
+
+      if ( append ) {
+        var background = false;
+        var opacity    = false;
+
+        if ( style.type === "transparent" ) {
+          background = "transparent";
+        } else {
+          if ( style.background ) {
+            if ( style.type == "background" ) {
+              background = "url('" + style.background + "')";
+            } else if ( style.type == "solid" ){
+              background = style.background;
+            }
+          }
+        }
+
+        // Reset to default
+        this.$element.css("background", "");
+        this.$element.css("opacity", "1.0");
+        this.$element.removeClass("Transparent");
+
+        if ( !isNaN(style.opacity) ) {
+          opacity = parseInt(style.opacity, 10) / 100;
+        }
+
+        if ( background !== false ) {
+          this.$element.css("background", background);
+          if ( background === "transparent" ) {
+            this.$element.addClass("Transparent");
+          }
+        }
+
+        if ( opacity !== false ) {
+          this.$element.css("opacity", opacity);
+        }
+
+      }
+    },
+
+    /**
      * Panel::getHeight() -- Get panel height
      * @return String
      */
@@ -6282,6 +6476,18 @@
     },
 
     /**
+     * Panel::getStyle() -- Get style
+     * @return Object
+     */
+    getStyle : function() {
+      return {
+        "type"        : this.btype,
+        "background"  : this.bbackground,
+        "opacity"     : this.bopacity
+      };
+    },
+
+    /**
      * Panel::getSession() -- Get the panel session
      * @return Object
      */
@@ -6293,10 +6499,11 @@
       }
 
       return {
-        "index"     : self.index,
         "name"      : self.name,
+        "index"     : self.index,
+        "items"     : items,
         "position"  : self.pos,
-        "items"     : items
+        "style"     : self.getStyle()
       };
     }
 
@@ -6335,13 +6542,10 @@
      * @param   String    align   Panel Item alignment
      * @constructor
      */
-    init : function(name, align)  {
-      if ( align == "AlignLeft" ) align = "left";
-      if ( align == "AlignRight" ) align = "right";
-
+    init : function(name)  {
       this._name         = name;
       this._named        = name;
-      this._align        = align || this._align;
+      this._align        = "left";
       this._expand       = false;
       this._dynamic      = false;
       this._orphan       = true;
@@ -6370,19 +6574,15 @@
 
     /**
      * PanelItem::create() -- Create DOM elements etc.
-     * @param   String    pos     Item Alignment
+     * @param   Object      lopts   Item Options
      * @return  $
      */
-    create : function(pos) {
+    create : function(lopts) {
       var self = this;
 
-      var spl = pos.split(":");
-      var px = parseInt(spl[1], 10);
-      pos = spl[0];
-
-      if ( pos ) {
-        this._align = pos;
-      }
+      this._align     = lopts.align || this._align;
+      this._index     = lopts.index || this._index;
+      this._position  = lopts.position;
 
       this.$element = $("<li></li>");
       this.$element.addClass("PanelItem " + this._name);
@@ -6390,13 +6590,13 @@
       var cpos;
       if ( this._align == "right" ) {
         this.$element.addClass("AlignRight");
-        cpos = {"left" : "auto", "right" : (px + "px")};
+        cpos = {"left" : "auto", "right" : (self._position + "px")};
       } else {
         this.$element.removeClass("AlignRight");
-        cpos = {"right" : "auto", "left" : (px + "px")};
+        cpos = {"right" : "auto", "left" : (self._position + "px")};
       }
 
-      console.log("PanelItem::create()", this._name, cpos, this._align);
+      console.log("PanelItem::create()", lopts, cpos);
 
       this.$element.bind("contextmenu", function(ev) {
         ev.preventDefault();
@@ -6417,16 +6617,6 @@
         ev.stopPropagation();
         return false;
       });
-      /*this.$element.bind("mouseup", function(ev) {
-        ev.preventDefault();
-        ev.stopPropagation();
-        return false;
-      });
-      this.$element.bind("dblclick", function(ev) {
-        ev.preventDefault();
-        ev.stopPropagation();
-        return false;
-      });*/
 
       this.setPosition(cpos);
 
@@ -6611,11 +6801,11 @@
      */
     getSession : function() {
       return {
-        "name"      : this._name,
         "index"     : this._index,
+        "name"      : this._name,
+        "opts"      : [],
         "align"     : this._align,
-        "position"  : this._position,
-        "opts"      : []
+        "position"  : this._position
       };
     }
 
@@ -7475,11 +7665,11 @@
         if ( y < 0 ) {
           y = 0;
           if ( _Desktop ) {
-            var panels = _Desktop.getPanels();
+            var panels = _desktop.getpanels();
             var i = 0, l = panels.length;
             for ( i; i < l; i++ ) {
-              if ( panels[i].getPosition() == "top" ) {
-                y += panels[i].getHeight();
+              if ( panels[i].getposition() == "top" ) {
+                y += panels[i].getheight();
               }
             }
           }
