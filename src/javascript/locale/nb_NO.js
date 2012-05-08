@@ -77,6 +77,15 @@
     "DesktopGridHeader"                   : "Stiftet ikon",
     "DesktopGridRemove"                   : "Fjern",
     "AddPanelItem"                        : "Legg til panel-objekt",
+    "PanelPreferences"                    : {
+      "type"          : "Bakgrunnstype",
+      "opt"           : "Bunkgrunns-instillinger",
+      "transparent"   : "Gjennomsiktig",
+      "solid"         : "Solid Farge",
+      "background"    : "Bilde",
+      "transparent"   : "Transparent",
+      "opacity"       : "Gjennomsiktighet"
+    },
     "ApplicationCategories"               : {
       "development" : "Utvikling",
       "games"       : "Spill",

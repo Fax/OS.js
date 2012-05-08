@@ -5385,6 +5385,7 @@
         var opa  = 100;
         var type = "solid";
         var opt  = null;
+        var lbl  = OSjs.Labels.PanelPreferences;
 
         if ( panel.style && panel.style.opacity ) {
           if ( panel.style.opacity != "default" ) {
@@ -5400,13 +5401,13 @@
           opt = panel.style.background;
         }
 
-        el.append(sprintf("<div class=\"PType\"><div class=\"Label\">%s</div><div class=\"Option\"><select></select></div></div>", "Background Type"));
-        el.append(sprintf("<div class=\"POption\"><div class=\"Label\">%s</div><div class=\"Option\"></div></div>", "Background Option"));
-        el.append(sprintf("<div class=\"POpacity\"><div class=\"Label\">%s</div><div class=\"Option\"><div class=\"Slider\"></div></div></div>", "Opacity"));
+        el.append(sprintf("<div class=\"PType\"><div class=\"Label\">%s</div><div class=\"Option\"><select></select></div></div>", lbl.type));
+        //el.append(sprintf("<div class=\"POption\"><div class=\"Label\">%s</div><div class=\"Option\"></div></div>", lbl.opt));
+        el.append(sprintf("<div class=\"POpacity\"><div class=\"Label\">%s</div><div class=\"Option\"><div class=\"Slider\"></div></div></div>", lbl.opacity));
 
-        el.find(".PType select").append(sprintf("<option value=\"solid\">%s</option>", "Solid Color"));
-        el.find(".PType select").append(sprintf("<option value=\"image\">%s</option>", "Background Image"));
-        el.find(".PType select").append(sprintf("<option value=\"transparent\">%s</option>", "Transparent"));
+        el.find(".PType select").append(sprintf("<option value=\"solid\">%s</option>", lbl.solid));
+        //el.find(".PType select").append(sprintf("<option value=\"image\">%s</option>", lbl.background));
+        el.find(".PType select").append(sprintf("<option value=\"transparent\">%s</option>", lbl.transparent));
 
         // Type
         el.find(".PType select").change(function() {
@@ -5415,10 +5416,12 @@
         el.find(".PType select").val(type);
 
         // Background
+        /*
         el.find(".POption select").change(function() {
           __onchange(panel, "background", $(this).val());
         });
         el.find(".POption .Option").html(opt || "None");
+        */
 
         // Opacity
         var stimeout = null;

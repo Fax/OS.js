@@ -77,6 +77,15 @@
     "DesktopGridHeader"                   : "Pinned Item",
     "DesktopGridRemove"                   : "Remove",
     "AddPanelItem"                        : "Add new panel item",
+    "PanelPreferences"                    : {
+      "type"          : "Background Type",
+      "opt"           : "Background Option",
+      "transparent"   : "Transparent",
+      "solid"         : "Solid Color",
+      "background"    : "Background Image",
+      "transparent"   : "Transparent",
+      "opacity"       : "Opacity"
+    },
     "ApplicationCategories"               : {
       "development" : "Development",
       "games"       : "Games",
