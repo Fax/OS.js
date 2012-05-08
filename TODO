@@ -7,6 +7,7 @@ CORE TODO:
 [HIG]  Rewrite Glade/GTK (Merge from branch)
 
 [LOW]  Focus default button in dialogs
+[LOG]  WindowManager effect configuration
 [LOW]  Panel setting: Background
 [LOW]  Panel setting: Transparency
 [LOW]  Core::_doUserOperation (User manipulation, backend)
