@@ -6106,7 +6106,7 @@
             diag.$element.find(".DialogButtons .Ok").show().click(function() {
               if ( selected ) {
                 var pos = pos_ev.pageX;
-                LaunchProcess(selected, "PanelItem", {"index" : self.items.length, "argv" : [], "align" : "left:" + pos, "panel" : self, "save" : true});
+                LaunchProcess(selected, "PanelItem", {"index" : self.items.length, "argv" : [], "align" : "left", "position" : pos, "panel" : self, "save" : true});
               }
             }).attr("disabled", "disabled");
 
@@ -6197,6 +6197,7 @@
     _startItemDrag : function(ev, item) {
       var self = this;
       if ( !this.idragging ) {
+
         var dw = $(document).width();
         var off = item.$element.offset();
         var ghost = $("<li class=\"Ghost PanelItemSeparator\"></li>");
@@ -6206,6 +6207,8 @@
           "width"  : item.$element.width() + "px",
           "height" : item.$element.height() + "px"
         });
+
+        console.log("Panel::_startItemDrag()", item, off);
 
         this.idragging = {
           'start'   : item._align == "right" ? (dw - (off['left'] + item.$element.width())) : off['left'],
