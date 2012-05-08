@@ -5401,6 +5401,7 @@
           opt = panel.style.background;
         }
 
+        // TODO 0.7.100
         el.append(sprintf("<div class=\"PType\"><div class=\"Label\">%s</div><div class=\"Option\"><select></select></div></div>", lbl.type));
         //el.append(sprintf("<div class=\"POption\"><div class=\"Label\">%s</div><div class=\"Option\"></div></div>", lbl.opt));
         el.append(sprintf("<div class=\"POpacity\"><div class=\"Label\">%s</div><div class=\"Option\"><div class=\"Slider\"></div></div></div>", lbl.opacity));
@@ -6748,7 +6749,8 @@
 
     /**
      * PanelItem::setAlignment() -- Set new alignment
-     * @return void
+     * @param   String    align     Alignment
+     * @return  void
      */
     setAlignment : function(align) {
       this._align = align;
