@@ -46,6 +46,7 @@ body {
 }
 */
 
+/* DnD */
 [draggable] {
   -moz-user-select: none;
   -khtml-user-select: none;
@@ -55,6 +56,21 @@ body {
   -khtml-user-drag: element;
   -webkit-user-drag: element;
 }
+
+/* Fullscreen */
+:-moz-full-screen,
+:-webkit-full-screen,
+:fullscreen {
+  width: 100% !important;
+  height : 100% !important;
+}
+:-webkit-full-screen .tohide,
+:-moz-full-screen .tohide,
+:fullscreen .tohide {
+  display: none;
+}
+
+/* Misc */
 
 #Loading {
   -moz-border-radius: 10px; /* Firefox */

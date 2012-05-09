@@ -132,6 +132,7 @@
   var _SessionId       = "";                              //!< Server session id
   var _SessionValid    = true;                            //!< Session is valid
   var _HasCrashed      = false;                           //!< If system has crashed
+  var _IsFullscreen    = false;                           //!< If we are in fullscreen mode
 
   /**
    * Language
@@ -1956,13 +1957,18 @@
       if ( this.running ) {
         console.log("Unbinding events...");
 
-        $(document).unbind("keydown",     this.global_keydown);
-        $(document).unbind("mousedown",   this.global_mousedown);
-        $(document).unbind("mouseup",     this.global_mouseup);
-        $(document).unbind("mousemove",   this.global_mousemove);
-        $(document).unbind("click",       this.global_click);
-        $(document).unbind("dblclick",    this.global_dblclick);
-        $(document).unbind("contextmenu", this.global_contextmenu);
+        $(document).unbind("keydown",                 this.global_keydown);
+        $(document).unbind("mousedown",               this.global_mousedown);
+        $(document).unbind("mouseup",                 this.global_mouseup);
+        $(document).unbind("mousemove",               this.global_mousemove);
+        $(document).unbind("click",                   this.global_click);
+        $(document).unbind("dblclick",                this.global_dblclick);
+        $(document).unbind("contextmenu",             this.global_contextmenu);
+        /*
+        $(document).unbind("fullscreenchange",        this.global_fullscreen);
+        $(document).unbind("mozfullscreenchange",     this.global_fullscreen);
+        $(document).unbind("webkitfullscreenchange",  this.global_fullscreen);
+        */
 
         /*window.removeEventListener('offline', function(ev) {
           self.global_offline(ev, !(navigator.onLine === false));
@@ -2088,6 +2094,12 @@
           AUTOMATIC_LOGIN = false;
           SESSION_CONFIRM = false;
         }
+
+        /*
+        $(document).bind("fullscreenchange",        this.global_fullscreen);
+        $(document).bind("mozfullscreenchange",     this.global_fullscreen);
+        $(document).bind("webkitfullscreenchange",  this.global_fullscreen);
+        */
 
         // Initialize resources
         _Resources = new ResourceManager(response.result.preload);
@@ -2589,7 +2601,6 @@
      * @return  void
      */
     global_dblclick : function(ev) {
-  
     },
 
     /**
@@ -2645,6 +2656,23 @@
       }
       return true;
     },
+
+    /**
+     * Core::global_fullscreen() -- Global Event Handler: fullscreen
+     * @param   DOMEvent    e       DOM Event
+     * @return void
+    global_fullscreen : function(e) {
+      if ( "fullscreen" in document ) {
+        _IsFullscreen = document.fullscreen ? true : false;
+      } else if ( "mozFullScreen" in document ) {
+        _IsFullscreen = document.mozFullScreen ? true : false;
+      } else if ( "webkitIsFullScreen" in document ) {
+        _IsFullscreen = document.webkitIsFullScreen ? true : false;
+      }
+
+      console.log("Core::global_fullscreen()", e, _IsFullscreen);
+    },
+     */
 
     // GETTERS / SETTERS
 

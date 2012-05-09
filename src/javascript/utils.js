@@ -603,3 +603,44 @@ function GetCookie(name) {
 
   return null;
 }
+
+
+/**
+ * Enter fullscreen mode if browser supports
+ * @link    http://updates.html5rocks.com/tag/code
+ * @return  void
+ */
+function FullscreenEnter() {
+  var del = document.documentElement;
+  var isf = (del.fullScreenElement && del.fullScreenElement !== null) || (!del.mozFullScreen && !del.webkitIsFullScreen);
+  console.log("utils.js::FullscreenEnter()", del, isf);
+
+  if ( isf ) {
+    if ( del.requestFullScreen )
+      del.requestFullScreen();
+    else if ( del.mozRequestFullScreen )
+      del.mozRequestFullScreen();
+    else if ( del.webkitRequestFullScreen )
+      del.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+  }
+}
+
+/**
+ * Exit fullscreen mode if browser supports
+ * @link    http://updates.html5rocks.com/tag/code
+ * @return  void
+ */
+function FullscreenExit() {
+  var del = document.documentElement;
+  var isf = (del.fullScreenElement && del.fullScreenElement !== null) || (!del.mozFullScreen && !del.webkitIsFullScreen);
+  console.log("utils.js::FullscreenExit()", del, !isf);
+
+  if ( !isf ) {
+    if ( document.cancelFullScreen )
+      document.cancelFullScreen();
+    else if ( document.mozCancelFullScreen )
+      document.mozCancelFullScreen();
+    else if ( document.webkitCancelFullScreen )
+      document.webkitCancelFullScreen();
+  }
+}
