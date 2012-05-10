@@ -304,7 +304,7 @@
       xhr.open('GET', url, true);
       xhr.responseType = 'arraybuffer';
 
-      xhr.addEventListener('error', error);
+      xhr.addEventListener('error', self.error);
       xhr.addEventListener('load', function() {
         self.write(name, xhr.response, callback);
       });
@@ -481,14 +481,12 @@
           msg = 'INVALID_STATE_ERR';
           break;
         default:
-          msg = 'Unknown Error';
+          msg = 'Unknown Error: ' + e;
           break;
       }
 
       console.error('Error: ' + msg);
     }
-
-
   });
 
   /**

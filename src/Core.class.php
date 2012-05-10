@@ -276,7 +276,7 @@ class Core
       "production"  => ENV_PRODUCTION,
       "demo"        => ENV_DEMO,
       "cache"       => ENABLE_CACHE,
-      "preload"     => ResourceManager::$Preload,
+      "preload"     => ResourceManager::getAllPreloads("boot"),
       "registry"    => User::getDefaultRegistry()
     );
   }
@@ -555,14 +555,9 @@ class Core
       if ( $user->password == $upass ) {
         $init_language      = "default"; // NOTE: Should be set to user ? used as 'SystemLanguage'
         $browser_language   = self::_getBrowserLanguage();
-        $resources          = Array();
+        $resources          = ResourceManager::getAllPreloads("login");
         $packages           = PackageManager::GetPackages($user);
 
-        foreach ( Dialog::$Registered as $name => $opts ) {
-          foreach ( $opts["resources"] as $res ) {
-            $resources[] = $res;
-          }
-        }
 
         if ( !($registry = $user->last_registry) ) {
           $registry = User::getDefaultRegistry(true);

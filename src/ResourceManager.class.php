@@ -34,6 +34,8 @@
 /**
  * ResourceManager -- Main OS.js resource Class
  *
+ * This class handles resource requests.
+ *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package OSjs.Sources.Core
  * @class
@@ -42,28 +44,13 @@ abstract class ResourceManager
   extends CoreObject
 {
 
-  /**
-   * @var Frontend Preloads
-   */
-  public static $Preload = Array(
-    "sounds" => Array(
-      "bell", "complete", "message", "service-login", "service-logout", "dialog-information", "dialog-warning"
-    ),
-    "images" => Array(
-      "categories/applications-development.png", "categories/applications-games.png", "categories/applications-graphics.png", "categories/applications-office.png", "categories/applications-internet.png", "categories/applications-multimedia.png", "categories/applications-system.png", "categories/applications-utilities.png", "categories/gnome-other.png",
-      "actions/window_fullscreen.png", "actions/zoom-original.png", "actions/window_nofullscreen.png", "actions/window-close.png",
-      "actions/gtk-execute.png", "mimetypes/exec.png", "devices/network-wireless.png", "status/computer-fail.png","apps/system-software-install.png", "apps/system-software-update.png", "apps/xfwm4.png", "places/desktop.png",
-      "status/gtk-dialog-error.png", "status/gtk-dialog-info.png", "status/gtk-dialog-question.png", "status/gtk-dialog-warning.png",
-      "status/error.png", "emblems/emblem-unreadable.png"
-    ),
-    "scripts" => Array(
-    ),
-    "styles" => Array(
-    )
-  );
+  /////////////////////////////////////////////////////////////////////////////
+  // CORE RESOURCE REGISTRY
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
    * @var Frontend Locales
+   * @desc Used mainly for file compression lists
    */
   public static $Locales = Array(
     "en_US.js", "nb_NO.js"
@@ -71,6 +58,7 @@ abstract class ResourceManager
 
   /**
    * @var Frontend Main Resources
+   * @desc Used mainly for file compression lists
    */
   public static $Resources = Array(
     "theme.default.css",
@@ -86,6 +74,76 @@ abstract class ResourceManager
     "main.js",
     "utils.js"
   );
+
+  /**
+   * @var Frontend Module Resources
+   * @desc Used for preloading and file compression lists
+   */
+  public static $ModuleResources = Array(
+    "ColorOperationDialog" => Array(
+      "resources" => Array("dialog.color.js")
+    ),
+    "FontOperationDialog" => Array(
+      "resources" => Array("dialog.font.js")
+    ),
+    "CopyOperationDialog" => Array(
+      "resources" => Array("dialog.copy.js")
+    ),
+    "FileOperationDialog" => Array(
+      "resources" => Array("dialog.file.js")
+    ),
+    "InputOperationDialog" => Array(
+      "resources" => Array("dialog.input.js")
+    ),
+    "LaunchOperationDialog" => Array(
+      "resources" => Array("dialog.launch.js")
+    ),
+    "PanelItemOperationDialog" => Array(
+      "resources" => Array("dialog.panel.js")
+    ),
+    "RenameOperationDialog" => Array(
+      "resources" => Array("dialog.rename.js")
+    ),
+    "UploadOperationDialog" => Array(
+      "resources" => Array("dialog.upload.js")
+    ),
+    "FilePropertyOperationDialog" => Array(
+      "resources" => Array("dialog.properties.js")
+    ),
+    "CompabilityDialog" => Array(
+      "resources" => Array("dialog.compability.js")
+    ),
+    "CrashDialog" => Array(
+      "resources" => Array("dialog.crash.js")
+    )
+  );
+
+  /////////////////////////////////////////////////////////////////////////////
+  // PRELOADING REGISTRY
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * @var Frontend Preloads
+   */
+  public static $Preload = Array(
+    "sounds" => Array(
+      "bell", "complete", "message", "service-login", "service-logout", "dialog-information", "dialog-warning"
+    ),
+    "images" => Array(
+      "categories/applications-development.png", "categories/applications-games.png", "categories/applications-graphics.png", "categories/applications-office.png", "categories/applications-internet.png", "categories/applications-multimedia.png", "categories/applications-system.png", "categories/applications-utilities.png", "categories/gnome-other.png",
+      "actions/window_fullscreen.png", "actions/zoom-original.png", "actions/window_nofullscreen.png", "actions/window-close.png",
+      "actions/gtk-execute.png", "mimetypes/exec.png", "devices/network-wireless.png", "status/computer-fail.png","apps/system-software-install.png", "apps/system-software-update.png", "apps/xfwm4.png", "places/desktop.png",
+      "status/gtk-dialog-error.png", "status/gtk-dialog-info.png", "status/gtk-dialog-question.png", "status/gtk-dialog-warning.png",
+      "status/error.png", "emblems/emblem-unreadable.png"
+    ),
+    "resources" => Array(
+      // Other core resources
+    )
+  );
+
+  /////////////////////////////////////////////////////////////////////////////
+  // CACHE, COMPRESSION ETC
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
    * Minimize a File
@@ -146,6 +204,10 @@ abstract class ResourceManager
 
     return $result;
   }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // CORE RESOURCES
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
    * Get Cursor StyleSheet
@@ -368,8 +430,32 @@ EOCSS;
     return Array($mime, $content);
   }
 
+  /////////////////////////////////////////////////////////////////////////////
+  // MISC STATIC METHODS
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Get all preload resources
+   * @param  String   $mode       Preload mode (boot/login)
+   * @return Array
+   */
+  public static function getAllPreloads($mode = 'boot') {
+    $result = Array();
+    if ( $mode == "boot" ) {
+      $result = self::$Preload;
+    } else if ( $mode == "login" ) {
+      foreach ( self::$ModuleResources as $name => $opts ) {
+        foreach ( $opts["resources"] as $res ) {
+          $result[] = $res;
+        }
+      }
+    }
+    return $result;
+  }
+
   /**
    * Get all resources
+   * @see bin/update-compression
    * @return Array
    */
   public static function getAllResources() {
@@ -390,7 +476,7 @@ EOCSS;
     }
 
     // Dialogs
-    foreach ( Dialog::$Registered as $name => $opts ) {
+    foreach ( self::$ModuleResources as $name => $opts ) {
       foreach ( $opts["resources"] as $res ) {
         $result['resources'][] = sprintf("%s/%s", PATH_JSBASE, $res);
       }
