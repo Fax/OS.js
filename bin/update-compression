@@ -37,124 +37,62 @@
 define("NODB", true);
 require "header.php";
 
-//
-// Cache
-//
-$timestamps = Array();
+$size_before      = 0;
+$size_after       = 0;
+$size_result      = 0;
+$total_files      = 0;
+$total_compressed = 0;
+$timestamps       = Array();
+
+// Check for timestamps
 if ( file_exists(MINIMIZE_CACHE) ) {
   $timestamps = (Array)json_decode(file_get_contents(MINIMIZE_CACHE));
 }
 
-function check($path) {
-  global $timestamps;
+// Loop over resources
+if ( $resources = ResourceManager::getAllResources() ) {
+  foreach ( $resources as $key => $val ) {
+    print sprintf("Updating '%s':\n", $key);
 
-  $fp = @filemtime($path);
-  $changed = true;
-  if ( isset($timestamps[$path]) ) {
-    $changed = ($timestamps[$path] != $fp);
-  }
-  $timestamps[$path] = $fp;
+    foreach ( $val as $res ) {
+      $name = str_replace(PATH, "", $res);
 
-  return $changed;
-}
-
-//
-// Collect resources
-//
-
-$packages  = Array();
-$resources = Array(
-  "theme.default.css",
-  "theme.dark.css",
-  "theme.light.css",
-  "cursor.default.css",
-  "main.css",
-  "pimp.css",
-  "glade.css",
-  "init.js",
-  "classes.js",
-  "core.js",
-  "main.js",
-  "utils.js"
-);
-$locales   = Array(
-  "en_US.js",
-  "nb_NO.js"
-);
-
-foreach ( Dialog::$Registered as $dkey => $dval ) {
-  foreach ( $dval["resources"] as $res ) {
-    $resources[] = $res;
-  }
-}
-
-if ( $xml = file_get_contents(PACKAGE_BUILD) ) {
-  if ( $xml = new SimpleXmlElement($xml) ) {
-    foreach ( $xml as $app ) {
-      if ( isset($app->resource) ) {
-        foreach ( $app->resource as $r ) {
-          $packages[] = "/" . ((string) $app['packagename']) . "/" . (string) $r;
-        }
+      // Check timestamp
+      $fp = @filemtime($res);
+      $changed = true;
+      if ( isset($timestamps[$res]) ) {
+        $changed = ($timestamps[$res] != $fp);
       }
+      $timestamps[$res] = $fp;
+
+      // Minimize if file changed
+      if ( $changed ) {
+        if ( $r = ResourceManager::MinimizeFile(dirname($res), basename($res)) ) {
+          print sprintf("  MINIMIZED: %s\n", $name);
+          $size_before += $r['before'];
+          $size_after  += $r['after'];
+
+          $total_compressed++;
+        }
+      } else {
+        print sprintf("  SKIPPED:   %s\n", $name);
+      }
+
+      $total_files++;
     }
   }
 }
 
-//
-// Minimize
-//
-$size_before = 0;
-$size_after  = 0;
-$size_result = 0;
-
-print "Compressing Resources:\n";
-foreach ( $resources as $res ) {
-  if ( check(sprintf("%s/%s", PATH_JSBASE, $res)) ) {
-    if ( $r = ResourceManager::MinimizeFile(PATH_JSBASE, $res) ) {
-      print "  * {$r['filename']}\n";
-      $size_before += $r['before'];
-      $size_after  += $r['after'];
-    }
-  } else {
-    print "  * {$res} [SKIPPED]\n";
-  }
-}
-
-print "Compressing Locales:\n";
-foreach ( $locales as $loc ) {
-  if ( check(sprintf("%s/%s", PATH_JSLOCALE, $loc)) ) {
-    if ( $r = ResourceManager::MinimizeFile(PATH_JSLOCALE, $loc) ) {
-      print "  * {$r['filename']}\n";
-      $size_before += $r['before'];
-      $size_after  += $r['after'];
-    }
-  } else {
-    print "  * {$loc} [SKIPPED]\n";
-  }
-}
-
-print "Compressing Packages:\n";
-foreach ( $packages as $pkg ) {
-  $dir = dirname($pkg);
-  $fna = basename($pkg);
-  $base = sprintf("%s/%s", PATH_PACKAGES, $dir);
-
-  if ( check(sprintf("%s/%s", $base, $fna)) ) {
-    if ( $r = ResourceManager::MinimizeFile($base, $fna) ) {
-      print "  * {$pkg}\n";
-      $size_before += $r['before'];
-      $size_after  += $r['after'];
-    }
-  } else {
-    print "  * {$pkg} [SKIPPED]\n";
-  }
-}
-
+// Compute results
 if ( $size_before > 0 && $size_after > 0 ) {
   $size_result = ((int) ((($size_before - $size_after) / $size_before) * 100));
 }
 
+// Write new timestamps
 file_put_contents(MINIMIZE_CACHE, json_encode((Array)$timestamps));
 
-print "\nCompleted! Before: {$size_before}, After: {$size_after}, {$size_result}%\n";
+// Display result
+print sprintf("\nCompressed %d of %d file(s)\n", $total_compressed, $total_files);
+print sprintf("Initial size: %db, Resulted size: %db, %d%% Compression\n\n", $size_before, $size_after, $size_result);
+
 ?>
