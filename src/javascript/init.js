@@ -67,6 +67,7 @@
       "SUPPORT_CANVAS"         : (!!document.createElement('canvas').getContext),
       "SUPPORT_WEBGL"          : false,
       "SUPPORT_CANVAS_CONTEXT" : [],
+      "SUPPORT_FS"             : (('requestFileSystem' in window) || ('webkitRequestFileSystem' in window)),
 
       // http://www.w3.org/TR/html5/video.html
       "SUPPORT_VIDEO"          : (video_supported),
@@ -84,6 +85,11 @@
     // Internal namespace containers
     Labels       : { /* ... */ },
     Public       : { /* ... */ },
+    Helpers      : {
+      requestFileSystem         : (window.requestFileSystem || window.webkitRequestFileSystem),
+      storageInfo               : (window.storageInfo || window.webkitStorageInfo),
+      resolveLocalFilesystemURL : (window.resolveLocalFileSystemURL || window.webkitResolveLocalFileSystemURL)
+    },
 
     // Dynamic namespace containers
     Applications : { /* ... */ }, // @see core.js,Application.class.php - Dynamic
@@ -139,7 +145,8 @@
     "socket"          : OSjs.Compability.SUPPORT_SOCKET,
     "richtext"        : OSjs.Compability.SUPPORT_RICHTEXT,
     "upload"          : OSjs.Compability.SUPPORT_UPLOAD,
-    "worker"          : OSjs.Compability.SUPPORT_WORKER
+    "worker"          : OSjs.Compability.SUPPORT_WORKER,
+    "filesystem"      : OSjs.Compability.SUPPORT_FS
   };
 
   // Browser Compability list

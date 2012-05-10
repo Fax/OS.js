@@ -153,6 +153,367 @@
   });
 
   /////////////////////////////////////////////////////////////////////////////
+  // FILESYSTEM
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * VFS -- VFS Storage
+   * @class
+   */
+  var VFS = Class.extend({
+
+    _fs     : null,     //!< FileSystem reference object
+    _quota  : -1,       //!< FileSystem Quota size in bytes
+
+    /**
+     * VFS::init() -- Constructor
+     * @param   Function    callback      Callback function
+     * @param   int         type          VFS Type (PERSISTENT | TEMPORARY)
+     * @param   int         quota         Initial quota size request
+     * @constructor
+     */
+    init : function(callback, type, quota) {
+      callback = callback || function() {};
+      quota    = quota    || 5*1024*1024; // 5 MB
+
+      if ( !OSjs.Compabiltiy.SUPPORT_FS )
+        throw("FileSystem not supported");
+
+      this._fs = null;
+      this._quota = -1;
+
+      var self = this;
+      OSjs.Helpers.storageInfo.requestQuota(type, quota, function(grantedBytes) {
+        self._quota = grantedBytes;
+
+        OSjs.Helpers.requestFileSystem(type, quota, function(fs) {
+          self._fs = fs;
+
+          callback();
+        }, self.error);
+      });
+    },
+
+    /**
+     * VFS::destroy() -- Destructor
+     * @destructor
+     */
+    destroy : function() {
+      this._fs = null;
+      this._quota = -1;
+    },
+
+    /**
+     * VFS::read() -- Read file
+     * @param  String     name      File name
+     * @param  Function   callback  Async callback
+     * @return void
+     */
+    read : function(name, callback) {
+      var self = this;
+      callback = callback || function() {};
+      this._fs.root.getFile(name, {}, function(fileEntry) {
+        fileEntry.file(function(file) {
+          var reader = new FileReader();
+          reader.onloadend = function(e) {
+            callback(this.result);
+          };
+          reader.readAsText(file);
+        }, self.error);
+      }, self.error);
+    },
+
+    /**
+     * VFS::touch() -- Create file
+     * @param  String     name      File name
+     * @param  Function   callback  Async callback
+     * @return void
+     */
+    touch : function(name, callback) {
+      callback = callback || function() {};
+      var self = this;
+      this._fs.root.getFile(name, {create: true, exclusive: true}, function(fileEntry) {
+        callback();
+      }, self.error);
+    },
+
+    /**
+     * VFS::write() -- Write file
+     * @param  String     name      File name
+     * @param  Mixed      data      Data to write
+     * @param  Function   callback  Async callback
+     * @return void
+     */
+    write : function(name, data, callback) {
+      var self = this;
+      callback = callback || function() {};
+      this._fs.root.getFile(name, {create: true}, function(fileEntry) {
+        fileEntry.createWriter(function(fileWriter) {
+          fileWriter.onwriteend = function(e) {
+            console.log('Write completed.');
+          };
+
+          fileWriter.onerror = function(e) {
+            console.log('Write failed: ' + e.toString());
+          };
+
+          var bb = new BlobBuilder();
+          bb.append(data);
+          fileWriter.write(bb.getBlob('text/plain'));
+
+          callback();
+        }, self.error);
+      }, self.error);
+    },
+
+    /**
+     * VFS::append() -- Append (Write) file
+     * @param  String     name      File name
+     * @param  Mixed      data      Data to append
+     * @param  Function   callback  Async callback
+     * @return void
+     */
+    append : function(name, data, callback) {
+      var self = this;
+      callback = callback || function() {};
+      this._fs.root.getFile(name, {create: false}, function(fileEntry) {
+        fileEntry.createWriter(function(fileWriter) {
+          fileWriter.seek(fileWriter.length);
+          var bb = new BlobBuilder();
+          bb.append(data);
+          fileWriter.write(bb.getBlob('text/plain'));
+
+          callback();
+        });
+      }, self.error);
+    },
+
+    /**
+     * VFS::writeURL() -- Wirte file from URL
+     * @param  String     url       Full URL to load
+     * @param  String     name      Directory name
+     * @param  Function   callback  Async callback
+     * @param  Function   error     XHR Async error callback
+     * @return void
+     */
+    writeURL : function(url, name, callback, error) {
+      var self = this;
+      callback = callback || function() {};
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.responseType = 'arraybuffer';
+
+      xhr.addEventListener('error', error);
+      xhr.addEventListener('load', function() {
+        self.write(name, xhr.response, callback);
+      });
+
+      xhr.send();
+    },
+
+    /**
+     * VFS::mkdir() -- Create directory
+     * @param  String     name      Directory name
+     * @param  Function   callback  Async callback
+     * @return void
+     */
+    mkdir : function(name, callback) {
+      callback = callback || function() {};
+      var self = this;
+      this._fs.root.getDirectory(name, {create: true}, function(fileEntry) {
+        callback();
+      }, self.error);
+    },
+
+    /**
+     * VFS::rm() -- Remove File
+     * @param  String     name      File name
+     * @param  Function   callback  Async callback
+     * @return void
+     */
+    rm : function(name, callback) {
+      var self = this;
+      callback = callback || function() {};
+
+      this._fs.root.getFile(name, {}, function(fileEntry) {
+        fileEntry.remove(function() {
+          callback();
+        });
+      }, self.error);
+    },
+
+    /**
+     * VFS::rmdir() -- Remove Directory
+     * @param  String     name      Directory name
+     * @param  Function   callback  Async callback
+     * @return void
+     */
+    rmdir : function(name, callback) {
+      var self = this;
+      callback = callback || function() {};
+
+      this._fs.root.getDirectory(name, {}, function(fileEntry) {
+        fileEntry.remove(function() {
+          callback();
+        });
+      }, self.error);
+    },
+
+    /**
+     * VFS::rrmdir() -- Remove Directory Recursivly
+     * @param  String     name      Directory name
+     * @param  Function   callback  Async callback
+     * @return void
+     */
+    rrmdir : function(name, callback) {
+      var self = this;
+      callback = callback || function() {};
+
+      this._fs.root.getDirectory(name, {}, function(fileEntry) {
+        fileEntry.removeRecursively(function() {
+          callback();
+        });
+      }, self.error);
+    },
+
+    /**
+     * VFS::ls() -- List directory contents
+     * @param  String     name      Directory name
+     * @param  Function   callback  Async callback
+     * @return void
+     */
+    ls : function(name, callback) {
+      var self = this;
+      callback = callback || function() {};
+
+      var dirReader = this._fs.root.createReader();
+      var entries = [];
+
+      var readEntries = function() {
+        dirReader.readEntries (function(results) {
+          if (!results.length) {
+            callback(entries.sort());
+          } else {
+            entries = entries.concat(toArray(results));
+            readEntries();
+          }
+        }, errorHandler);
+      };
+
+      readEntries();
+    },
+
+    /**
+     * VFS::cp() -- Copy file
+     * @param  FileSystem cwd       Current root
+     * @param  String     src       Source name
+     * @param  String     dest      Destination name
+     * @param  Function   callback  Async callback
+     * @return void
+     */
+    cp : function(cwd, src, dest, callback) {
+      var self = this;
+      callback = callback || function() {};
+
+      cwd.getFile(src, {}, function(fileEntry) {
+        cwd.getDirectory(dest, {}, function(dirEntry) {
+          fileEntry.copyTo(dirEntry);
+
+          callback();
+        }, self.error);
+      }, self.error);
+    },
+
+    /**
+     * VFS::rename() -- Move/Rename file
+     * @param  FileSystem cwd       Current root
+     * @param  String     src       Source name
+     * @param  String     dest      Destination name
+     * @param  Function   callback  Async callback
+     * @return void
+     */
+    rename : function(cwd, src, dest, callback) {
+      var self = this;
+      callback = callback || function() {};
+
+      cwd.getFile(src, {}, function(fileEntry) {
+        fileEntry.moveTo(cwd, dest);
+      }, self.error);
+    },
+
+    /**
+     * VFS::url() -- Get URL from entry
+     * @param  String     name      File name
+     * @param  Function   callback  Async callback
+     * @return  void
+     */
+    url : function(name, callback) {
+      var self = this;
+      callback = callback || function() {};
+
+      OSjs.Helpers.resolveLocalFilesystemURL(name, function(fileEntry) {
+        callback(fileEntry.toURL());
+      });
+    },
+
+    /**
+     * VFS::error() -- Handle Error
+     * @param  DOMEvent   e       Event
+     * @return void
+     */
+    error : function(e) {
+      var msg = '';
+      switch (e.code) {
+        case FileError.QUOTA_EXCEEDED_ERR:
+          msg = 'QUOTA_EXCEEDED_ERR';
+          break;
+        case FileError.NOT_FOUND_ERR:
+          msg = 'NOT_FOUND_ERR';
+          break;
+        case FileError.SECURITY_ERR:
+          msg = 'SECURITY_ERR';
+          break;
+        case FileError.INVALID_MODIFICATION_ERR:
+          msg = 'INVALID_MODIFICATION_ERR';
+          break;
+        case FileError.INVALID_STATE_ERR:
+          msg = 'INVALID_STATE_ERR';
+          break;
+        default:
+          msg = 'Unknown Error';
+          break;
+      }
+
+      console.error('Error: ' + msg);
+    }
+
+
+  });
+
+  /**
+   * VFSTemprary -- VFS Temporary Storage
+   * @see VFS
+   * @class
+   */
+  OSjs.Classes.VFSTemprary = VFS.extend({
+    init : function(callback, quota) {
+      this._super(callback, TEMPORARY, quota);
+    }
+  });
+
+  /**
+   * VFSPersistent -- VFS Persistent Storage
+   * @see VFS
+   * @class
+   */
+  OSjs.Classes.VFSPersistent = VFS.extend({
+    init : function(callback, quota) {
+      this._super(callback, PERSISTENT, quota);
+    }
+  });
+
+  /////////////////////////////////////////////////////////////////////////////
   // CHECKLIST
   /////////////////////////////////////////////////////////////////////////////
 
