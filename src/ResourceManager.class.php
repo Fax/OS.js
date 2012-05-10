@@ -43,7 +43,7 @@ abstract class ResourceManager
 {
 
   /**
-   * @var Preloads
+   * @var Frontend Preloads
    */
   public static $Preload = Array(
     "sounds" => Array(
@@ -55,7 +55,36 @@ abstract class ResourceManager
       "actions/gtk-execute.png", "mimetypes/exec.png", "devices/network-wireless.png", "status/computer-fail.png","apps/system-software-install.png", "apps/system-software-update.png", "apps/xfwm4.png", "places/desktop.png",
       "status/gtk-dialog-error.png", "status/gtk-dialog-info.png", "status/gtk-dialog-question.png", "status/gtk-dialog-warning.png",
       "status/error.png", "emblems/emblem-unreadable.png"
+    ),
+    "scripts" => Array(
+    ),
+    "styles" => Array(
     )
+  );
+
+  /**
+   * @var Frontend Locales
+   */
+  public static $Locales = Array(
+    "en_US.js", "nb_NO.js"
+  );
+
+  /**
+   * @var Frontend Main Resources
+   */
+  public static $Resources = Array(
+    "theme.default.css",
+    "theme.dark.css",
+    "theme.light.css",
+    "cursor.default.css",
+    "main.css",
+    "pimp.css",
+    "glade.css",
+    "init.js",
+    "classes.js",
+    "core.js",
+    "main.js",
+    "utils.js"
   );
 
   /**
@@ -337,6 +366,50 @@ EOCSS;
     }
 
     return Array($mime, $content);
+  }
+
+  /**
+   * Get all resources
+   * @return Array
+   */
+  public static function getAllResources() {
+    $result = Array(
+      "locales"   => Array(),
+      "resources" => Array(),
+      "packages"  => Array()
+    );
+
+    // Locales
+    foreach ( self::$Locales as $locale ) {
+      $result['locales'][] = sprintf("%s/%s", PATH_JSLOCALE, $locale);
+    }
+
+    // Main Resources
+    foreach ( self::$Resources as $res ) {
+      $result['resources'][] = sprintf("%s/%s", PATH_JSBASE, $res);
+    }
+
+    // Dialogs
+    foreach ( Dialog::$Registered as $name => $opts ) {
+      foreach ( $opts["resources"] as $res ) {
+        $result['resources'][] = sprintf("%s/%s", PATH_JSBASE, $res);
+      }
+    }
+
+    // Packages
+    if ( $xml = file_get_contents(PACKAGE_BUILD) ) {
+      if ( $xml = new SimpleXmlElement($xml) ) {
+        foreach ( $xml as $app ) {
+          if ( isset($app->resource) ) {
+            foreach ( $app->resource as $r ) {
+              $result['packages'][] = sprintf("%s/%s/%s", PATH_PACKAGES, ((string) $app['packagename']), ((string) $r));
+            }
+          }
+        }
+      }
+    }
+
+    return $result;
   }
 
 }
