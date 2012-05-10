@@ -187,9 +187,7 @@ class Core
         $logged_in  = 0;
         if ( (($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
           $user->heartbeat_at = new DateTime();
-          if ( !ENV_DEMO ) {
-            User::save($user, Array("heartbeat_at"));
-          }
+          User::save($user, Array("heartbeat_at"));
 
           $logged_in = 1;
         }
@@ -287,7 +285,7 @@ class Core
    * @return void
    */
   protected static final function _doPackageOperation(Array $args, Array &$json, Core $inst = null) {
-    if ( !ENV_DEMO && ($user = $inst->getUser()) && ($user->isInGroup(User::GROUP_PACKAGES)) ) {
+    if ( ($user = $inst->getUser()) && ($user->isInGroup(User::GROUP_PACKAGES)) ) {
       if ( $args['operation'] == "install" ) {
         $archive = $args['archive'];
         if ( $result = PackageManager::InstallPackage($archive, $user, true) ) {
@@ -362,7 +360,7 @@ class Core
         $user->last_registry = $registry;
       }
 
-      if ( (ENV_DEMO) || User::save($user, Array("last_registry")) ) {
+      if ( User::save($user, Array("last_registry")) ) {
         $json['success'] = true;
         $json['result']  = true;
       } else {
@@ -392,7 +390,7 @@ class Core
       $user->last_logout = new DateTime();
       $user->logged_in   = 0;
 
-      if ( (ENV_DEMO) || User::save($user, $only) ) {
+      if ( User::save($user, $only) ) {
         $json['success'] = true;
       } else {
         $json['result']  = false;
@@ -410,7 +408,7 @@ class Core
    * @return void
    */
   protected static final function _doSnapshotSave(Array $args, Array &$json, Core $inst = null) {
-    if ( !ENV_DEMO && (($inst instanceof Core) && ($user = $inst->getUser())) ) {
+    if ( (($inst instanceof Core) && ($user = $inst->getUser())) ) {
       $name     = "";
       $session  = Array();
 
@@ -451,7 +449,7 @@ class Core
    * @return void
    */
   protected static final function _doSnapshotLoad(Array $args, Array &$json, Core $inst = null) {
-    if ( !ENV_DEMO && (($inst instanceof Core) && ($user = $inst->getUser())) ) {
+    if ( (($inst instanceof Core) && ($user = $inst->getUser())) ) {
       $name     = "";
       if ( isset($args['session']) ) {
         $name     = $args['session']['name'];
@@ -464,7 +462,7 @@ class Core
           $user->last_session  = $snapshot->session_data->session;
           $user->logged_in     = 0;
 
-          if ( (ENV_DEMO) || User::save($user, Array("last_registry", "last_session", "logged_in")) ) {
+          if ( User::save($user, Array("last_registry", "last_session", "logged_in")) ) {
             $json['success'] = true;
             $json['result']  = true;
           } else {
@@ -487,7 +485,7 @@ class Core
    * @return void
    */
   protected static final function _doSnapshotDelete(Array $args, Array &$json, Core $inst = null) {
-    if ( !ENV_DEMO && (($inst instanceof Core) && ($user = $inst->getUser())) ) {
+    if ( (($inst instanceof Core) && ($user = $inst->getUser())) ) {
       $name     = "";
       if ( isset($args['session']) ) {
         $name     = $args['session']['name'];
@@ -514,7 +512,7 @@ class Core
    * @return void
    */
   protected static final function _doSnapshotList(Array $args, Array &$json, Core $inst = null) {
-    if ( !ENV_DEMO && (($inst instanceof Core) && ($user = $inst->getUser())) ) {
+    if ( (($inst instanceof Core) && ($user = $inst->getUser())) ) {
       if ( ($list = Session::snapshotList($user)) ) {
         $snapshots = Array();
         foreach ( $list as $l ) {
@@ -536,9 +534,10 @@ class Core
    * @return void
    */
   protected static final function _doUserLogin(Array $args, Array &$json, Core $inst = null) {
-    $uname = "demo";
-    $upass = "demo";
-    $time  = isset($args['time']) ? $args['time'] : null;
+    $uname  = "demo";
+    $upass  = "demo";
+    $time   = isset($args['time'])   ? $args['time'] : null;
+    $create = isset($args['create']) ? ($args['create'] ? true : false) : false;
 
     if ( isset($args['form']) ) {
       if ( isset($args['form']['username']) ) {
@@ -551,7 +550,7 @@ class Core
 
     $user = null;
     $errored = true;
-    if ( $user = User::getByUsername($uname) ) {
+    if ( $create ? ($user = User::createNew($uname, $upass)) : ($user = User::getByUsername($uname)) ) {
       if ( $user->password == $upass ) {
         $init_language      = "default"; // NOTE: Should be set to user ? used as 'SystemLanguage'
         $browser_language   = self::_getBrowserLanguage();
@@ -588,16 +587,18 @@ class Core
           $user->logged_in      = 1;
         }
 
-        if ( !ENV_DEMO ) {
-          User::save($user, Array("last_login", "last_session_id", "logged_in"));
-        }
+        User::save($user, Array("last_login", "last_session_id", "logged_in"));
 
         $errored = false;
       }
     }
 
     if (  $errored ) {
-      $json['error'] = _("Check username and password!");
+      if ( $create ) {
+        $json['error'] = _("The username already exists!");
+      } else {
+        $json['error'] = _("Check username and password!");
+      }
     }
 
     Session::setUser(($user && ($user instanceof User)) ? $user : null);
@@ -613,7 +614,7 @@ class Core
       $user->last_logout = new DateTime();
       $user->logged_in   = 0;
 
-      if ( (ENV_DEMO) || User::save($user, Array("last_logout", "logged_in")) ) {
+      if ( User::save($user, Array("last_logout", "logged_in")) ) {
         $json['success']  = true;
       } else {
         $json['error'] = _("Failed to save user!");

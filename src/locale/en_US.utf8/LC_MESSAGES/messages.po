@@ -151,3 +151,6 @@ msgstr "Failed to uninstall '%s'. Package or permission error!"
 msgid "Failed to uninstall '%s'. Package not found!"
 msgstr "Failed to uninstall '%s'. Package not found!"
 
+msgid "The username already exists!"
+msgstr "The username already exists!"
+

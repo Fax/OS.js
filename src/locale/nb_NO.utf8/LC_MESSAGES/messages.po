@@ -151,3 +151,6 @@ msgstr "Klarte ikke avinstallere '%s'. Pakke eller adgangs feil!"
 msgid "Failed to uninstall '%s'. Package not found!"
 msgstr "Klarte ikke avinstallere '%s'. Pakke ikke funnet!"
 
+msgid "The username already exists!"
+msgstr "Brukernavnet er opptatt!"
+

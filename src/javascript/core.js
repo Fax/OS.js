@@ -64,8 +64,8 @@
   var LOGIN_WAIT             = 1000;                //!< Wait after login
   var SESSION_KEY            = "PHPSESSID";         //!< The Server session cookie-key
   var TIMEOUT_CSS            = (1000 * 10);         //!< CSS loading timeout
-  var DEFAULT_USERNAME       = "demo";              //!< Default User Username
-  var DEFAULT_PASSWORD       = "demo";              //!< Default User Password
+  var DEFAULT_USERNAME       = "";                  //!< Default User Username
+  var DEFAULT_PASSWORD       = "";                  //!< Default User Password
   var AUTOMATIC_LOGIN        = false;               //!< Wherever to turn on automatic login
   var SESSION_CONFIRM        = true;                //!< Wherever to turn on confirmation of session collision
   var ENV_CACHE              = undefined;           //!< Server-side cache enabled state
@@ -2092,8 +2092,13 @@
 
         if ( ENV_DEMO ) {
           AUTOMATIC_LOGIN = false;
-          SESSION_CONFIRM = false;
         }
+        /*
+        if ( !ENV_PRODUCTION ) {
+          DEFAULT_USERNAME = "demo";
+          DEFAULT_PASSWORD = "demo";
+        }
+        */
 
         /*
         $(document).bind("fullscreenchange",        this.global_fullscreen);
@@ -2133,21 +2138,15 @@
 
       var _disableInput = function() {
         $("#LoginButton").attr("disabled", "disabled");
+        $("#CreateLoginButton").attr("disabled", "disabled");
         $("#LoginUsername").attr("disabled", "disabled").addClass("loading");
         $("#LoginPassword").attr("disabled", "disabled").addClass("loading");
       };
       var _enableInput = function() {
         $("#LoginButton").removeAttr("disabled");
+        $("#CreateLoginButton").removeAttr("disabled");
         $("#LoginUsername").removeAttr("disabled").removeClass("loading");
         $("#LoginPassword").removeAttr("disabled").removeClass("loading");
-      };
-
-      var _doLoginError = function(server_error, message) {
-        if ( server_error ) {
-          MessageBox(OSjs.Labels.LoginFailureOther); // FIXME ?
-        } else {
-          MessageBox(sprintf(OSjs.Labels.LoginFailure, message)); // FIXME ?
-        }
       };
 
       var _doLogin = function(response, dcallback) {
@@ -2167,25 +2166,17 @@
         }, LOGIN_WAIT);
       };
 
-      $("#LoginButton").focus();
-
-      $("#LoginButton").click(function() {
-
-        var form = {
-          "username" : $("#LoginUsername").val(),
-          "password" : $("#LoginPassword").val()
-        };
+      var _loginPost = function(form, create) {
+        _disableInput();
 
         console.group("Core::_login()");
         console.log("Login data:", form);
+        console.log("Create login:", create);
         console.groupEnd();
 
-        _disableInput();
-
-        DoPost({'action' : 'login', 'form' : form}, function(data) {
+        DoPost({'action' : 'login', 'form' : form, 'create' : create}, function(data) {
           console.log("Login success:", data.success);
           console.log("Login result:", data.result);
-          console.groupEnd();
 
           if ( data.success ) {
             $("#LoginForm").get(0).onsubmit = null;
@@ -2194,16 +2185,39 @@
             });
           } else {
             _enableInput(false);
-            _doLoginError(false, data.error);
+            if ( create ) {
+              MessageBox(sprintf(OSjs.Labels.CreateLoginFailure, data.error));
+            } else {
+              MessageBox(sprintf(OSjs.Labels.LoginFailure, data.error));
+            }
           }
 
         }, function() {
-          _doLoginError(true);
+          if ( create ) {
+            MessageBox(OSjs.Labels.CreateLoginFailureOther);
+          } else {
+            MessageBox(OSjs.Labels.LoginFailureOther);
+          }
           _enableInput();
         });
+      };
+
+      $("#LoginButton").click(function() {
+        _loginPost({
+          "username" : $("#LoginUsername").val(),
+          "password" : $("#LoginPassword").val()
+        }, false);
+      });
+      $("#CreateLoginButton").click(function() {
+        _loginPost({
+          "username" : $("#LoginUsername").val(),
+          "password" : $("#LoginPassword").val()
+        }, true);
       });
 
       _enableInput();
+
+      $("#LoginButton").focus();
 
       if ( AUTOMATIC_LOGIN ) {
         $("#LoginButton").click();

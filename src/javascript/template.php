@@ -154,14 +154,15 @@ if ( $locale = Core::get()->getLocale() ) {
     <form method="post" action="javascript:void(0);" id="LoginForm">
       <div class="Row">
         <label for="LoginUsername">Username</label>
-        <input type="text" id="LoginUsername" value="" name="username" />
+        <input type="text" id="LoginUsername" value="" name="username" placeholder="Username" />
       </div>
       <div class="Row">
         <label for="LoginPassword">Password</label>
-        <input type="password" id="LoginPassword" value="" name="password" />
+        <input type="password" id="LoginPassword" value="" name="password" placeholder="Password" />
       </div>
       <div class="Row">
         <div id="LoginButtonContainer">
+          <button id="CreateLoginButton">Create User</button>
           <button id="LoginButton">Login</button>
         </div>
       </div>

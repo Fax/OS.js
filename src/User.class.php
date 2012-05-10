@@ -202,6 +202,27 @@ class User
   }
 
   /**
+   * Create a new instance
+   * @return User
+   */
+  public static function createNew($username, $password) {
+    $user = new self(Array(
+      "username"    => $username,
+      "password"    => $password,
+      "privilege"   => self::GROUP_USER | self::GROUP_PACKAGES,
+      "real_name"   => $username
+    ));
+
+    if ( !User::getByUsername($username) ) {
+      if ( User::save($user) ) {
+        return $user;
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * Save this User instance
    * @param  User     $instance     User instance
    * @param  Array    $only         Only these params
