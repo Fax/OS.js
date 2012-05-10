@@ -206,19 +206,40 @@ class User
    * @return User
    */
   public static function createNew($username, $password) {
-    $user = new self(Array(
-      "username"    => $username,
-      "password"    => $password,
-      "privilege"   => self::GROUP_USER | self::GROUP_PACKAGES,
-      "real_name"   => $username
-    ));
+    if ( $username && $password ) {
+      $user = new self(Array(
+        "username"    => $username,
+        "password"    => $password,
+        "privilege"   => self::GROUP_USER | self::GROUP_PACKAGES,
+        "real_name"   => $username
+      ));
 
-    if ( !User::getByUsername($username) ) {
-      if ( User::save($user) ) {
-        return $user;
+      if ( !User::getByUsername($username) ) {
+        if ( User::save($user) ) {
+          if ( User::generateVFS($user) ) {
+            return $user;
+          }
+        }
       }
     }
 
+    return false;
+  }
+
+  /**
+   * Create a new user VFS root directory
+   * @param  User     $user     User instance
+   * @return bool
+   */
+  public static function generateVFS(User $user) {
+    $src = VFS_TEMPLATE;
+    $dst = sprintf("%s/%d", PATH_VFS, $user->id);
+    if ( is_dir($src) && !is_dir($dst) ) {
+      recurse_copy($src, $dst);
+      if ( is_dir($dst) ) {
+        return true;
+      }
+    }
     return false;
   }
 
@@ -274,8 +295,10 @@ class User
    * @return Mixed
    */
   public static function getByUsername($username) {
-    if ( $res = DB::Select("user", "*", Array("username" => $username), 1) ) {
-      return new User($res);
+    if ( $username ) {
+      if ( $res = DB::Select("user", "*", Array("username" => $username), 1) ) {
+        return new User($res);
+      }
     }
     return null;
   }

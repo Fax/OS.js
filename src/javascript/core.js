@@ -797,6 +797,9 @@
    * @return void
    */
   function PlaySound(type) {
+    if ( !_Running )
+      return;
+
     var se = (_Settings._get("system.sounds.enable") === "true");
     var sv = parseInt(_Settings._get("system.sounds.volume"), 10);
     if ( sv < 0 ) {
@@ -2133,8 +2136,6 @@
      */
     _login : function(username, password, callback) {
       var self = this;
-      $("#LoginUsername").val(username);
-      $("#LoginPassword").val(password);
 
       var _disableInput = function() {
         $("#LoginButton").attr("disabled", "disabled");
@@ -2215,8 +2216,28 @@
         }, true);
       });
 
+      $("#LoginUsername").keydown(function(ev) {
+        var key = ev.keyCode || ev.which;
+        if ( key == 13 ) {
+          $("#LoginPassword").focus();
+          ev.preventDefault();
+          ev.stopPropagation();
+        }
+      });
+
+      $("#LoginPassword").keydown(function(ev) {
+        var key = ev.keyCode || ev.which;
+        if ( key == 13 ) {
+          $("#LoginButton").click();
+          ev.preventDefault();
+          ev.stopPropagation();
+        }
+      });
+
       _enableInput();
 
+      $("#LoginUsername").val(username);
+      $("#LoginPassword").val(password);
       $("#LoginButton").focus();
 
       if ( AUTOMATIC_LOGIN ) {

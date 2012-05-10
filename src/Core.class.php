@@ -537,7 +537,7 @@ class Core
     $uname  = "demo";
     $upass  = "demo";
     $time   = isset($args['time'])   ? $args['time'] : null;
-    $create = isset($args['create']) ? ($args['create'] ? true : false) : false;
+    $create = isset($args['create']) ? $args['create'] === "true" : false;
 
     if ( isset($args['form']) ) {
       if ( isset($args['form']['username']) ) {
