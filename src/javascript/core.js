@@ -3473,6 +3473,7 @@
       list[mime] = app;
 
       this._set("user.session.appmime", list);
+      this._save(false);
 
       console.group("SettingsManager::setDefaultApplication()");
       console.log(list);
