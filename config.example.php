@@ -37,6 +37,7 @@
 
 define("ENV_PRODUCTION",      false);
 define("ENABLE_CACHE",        false);
+define("ENV_DEMO",            true);
 define("ENABLE_LOGGING",      true);
 define("ENABLE_GETTEXT",      true);
 

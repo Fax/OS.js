@@ -185,6 +185,16 @@ input.Disabled {
     background : #fff;
     cursor : pointer;
   }
+  #LoginDemoNotice {
+    font-size : 85%;
+    width : 400px;
+    position : absolute;
+    top : -40px;
+  }
+  #LoginDemoNotice p {
+    margin : 0;
+    padding : 0;
+  }
 /*
 #Loading .ui-progressbar-value {
 }

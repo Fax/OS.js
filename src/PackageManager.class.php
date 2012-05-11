@@ -84,6 +84,11 @@ abstract class PackageManager
 
   /**
    * Generate a Metadata file
+   *
+   * This method Generates a Metadata file containing
+   * meta information about a list of packages.
+   * Only packages with the property "enabled" is enumerated.
+   *
    * @param  String     $dir      Directory to seek
    * @return String
    */
@@ -97,13 +102,29 @@ abstract class PackageManager
       $root = $dom->createElement("packages");
 
       while (false !== ($filename = readdir($dh))) {
-        $abspath = "{$dir}/{$filename}";
-        $absmeta = "{$dir}/{$filename}/metadata.xml";
+        $abspath  = "{$dir}/{$filename}";
+        $absmeta  = "{$dir}/{$filename}/metadata.xml";
+        $continue = true;
+
         if ( is_dir($abspath) && file_exists($absmeta) ) {
           if ( $xml = self::_readXML($absmeta) ) {
-            $sxe = $dom->importNode(dom_import_simplexml($xml), true);
-            $sxe->setAttribute("packagename", $filename);
-            $sxe = $root->appendChild($sxe);
+            // Search for enabled state
+            if ( isset($xml->property) ) {
+              foreach ( $xml->property as $prop ) {
+                if ( strtolower((string) $prop['name']) == "enabled" ) {
+                  if ( strtolower((string) $prop) === "false" ) {
+                    $continue = false;
+                  }
+                  break;
+                }
+              }
+            }
+
+            if ( $continue ) {
+              $sxe = $dom->importNode(dom_import_simplexml($xml), true);
+              $sxe->setAttribute("packagename", $filename);
+              $sxe = $root->appendChild($sxe);
+            }
           }
 
         }

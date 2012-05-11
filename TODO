@@ -1,16 +1,13 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG]  Clean up settings saving... saving MUCH more than we need to each time
-        Especially panel/panelitems
+[HIG]  Package Metadata schema property can be linked to HTML
 [HIG]  Handle _SessionValid and result.exception in DoPost() (_HasCrashed)
 [HIG]  Manifest and Cache: http://updates.html5rocks.com/2012/04/Taking-an-Entire-Page-Offline-using-the-HTML5-FileSystem-API
 [HIG]  Rewrite VFS PHP Scripts (Merge from branch)
 [HIG]  Rewrite Glade/GTK (Merge from branch)
 
-[LOW]  Focus default button in dialogs
 [LOG]  WindowManager effect configuration
 [LOW]  Panel setting: Background
-[LOW]  Panel setting: Transparency
 [LOW]  Core::_doUserOperation (User manipulation, backend)
 [LOW]  APP ControlPanel: _doUserOperation (User manipulation, frontend)
 [LOW]  Implement MenuNew in GtkMenu

@@ -84,7 +84,7 @@ if ( $locale = Core::get()->getLocale() ) {
   <meta name="keywords" content="OS.js, JavaScript Operating System, Web Desktop" />
   <meta name="description" content="OS.js - JavaScript Web Desktop" />
   <meta name="author" content="<?php print PROJECT_AUTHOR; ?> <?php print PROJECT_CONTACT; ?>" />
-  <meta name="copyright" content="Copyright (c) 2011-2012 Anders Evenrud" />
+  <meta name="copyright" content="Copyright (c) <?php print PROJECT_COPYRIGHT; ?>" />
 
   <!-- OS.js stylesheets -->
   <link rel="stylesheet" type="text/css" href="/VFS/resource/main.css" />
@@ -130,7 +130,7 @@ if ( $locale = Core::get()->getLocale() ) {
   <!-- Disabled on development environment -->
 <?php } ?>
 </head>
-<body>
+<body class="env_<?php print (ENV_DEMO ? "demo" : (ENV_PRODUCTION ? "live" : "dev")); ?>">
 
 <!-- Main Container -->
 <div id="Desktop">
@@ -151,6 +151,13 @@ if ( $locale = Core::get()->getLocale() ) {
 <!-- Loading / Login -->
 <div id="Loading">
   <div id="LoadingLogin">
+    <div id="LoginDemoNotice" style="display:<?php print ENV_DEMO ? "block" : "none"; ?>">
+        <p>
+          <b>NOTE:</b> This is a demonstration version.
+          If any errors occur, please clear the browser cache and try again before reporting any bugs.
+          You can also try to create a new user.
+        </p>
+    </div>
     <form method="post" action="javascript:void(0);" id="LoginForm">
       <div class="Row">
         <label for="LoginUsername">Username</label>

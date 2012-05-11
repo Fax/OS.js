@@ -2455,11 +2455,13 @@
         LaunchString("API::CompabilityDialog");
         _Settings._set("user.first-run", "false");
 
-        setTimeout(function() {
-          var _l = OSjs.Labels.FirstRun;
-          var _i = GetIcon("emotes/face-smile-big.png", "32x32");
-          API.system.notification(_l.title, _l.message, _i);
-        }, 500);
+        if ( ENV_DEMO ) {
+          setTimeout(function() {
+            var _l = OSjs.Labels.FirstRun;
+            var _i = GetIcon("emotes/face-smile-big.png", "32x32");
+            API.system.notification(_l.title, _l.message, _i);
+          }, 500);
+        }
       }
 
       // Bind global events
@@ -8388,6 +8390,13 @@
         if ( l.hasOwnProperty(c) ) {
           this.$element.find("button ." + c).html(l[c]);
         }
+      }
+
+      // Focus default button
+      if ( this._is_dialog == "confirm" ) {
+        this.$element.find(".DialogButtons .Cancel").focus();
+      } else {
+        this.$element.find(".DialogButtons .Close").focus();
       }
     }
 

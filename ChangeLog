@@ -1,0 +1,154 @@
+
+## 0.7.090
+* Feature: HTML5 FullScreen API Added
+* Core: ResourceManager now has complete list of resources
+* `bin/update-compression`: Using new ResourceManager method
+* classes.js: Added VFS - Not done
+* Core: Removed classes Dialog and Panel. Moved code to ResourceManager
+* Users can now create login in initial login screen
+* Login Screen Fixes and additions
+* Core: Metadata generator now looks up "enabled" property again
+* core.js: Focus default button in dialogs
+* Template: Fixed copyright notices
+* Demo sites now working again
+* Updated Locales, Documentation
+
+## 0.7.080
+
+**NOTE:** Breaks Panel/PanelItem Settings Registry from older versions. Refactored code and temporary code removal in API. The registry key 'dekstop.panels' should be removed from any user settings in DB (this will remove errors, but reset panel preferences)
+
+* Desktop Panel Preferences Dialog
+* Panel Background adjustments
+* Panel and PanelItem Launching refactoring
+
+## 0.7.070
+Full DnD support and Desktop Grid.
+
+* core.js: DnD bugfixes
+* core.js: Desktop Icon Grid done. Pin items with DnD
+* core.js: Added removal of old registry keys
+* core.js: Locale updates
+
+
+## 0.7.060
+* Core: Check for user group on package operations
+* Core: PackageManager error updates
+* Core: User::save() now accepts an array for save-keys
+* JS: Drag-and-drop support for Window and GtkIconView
+* JS: Drag-and-drop file uploading
+* JS: Save panel on changes
+* Bugfix: Session saving error
+* 'bin/status-update' removed debugging
+* Locale updates
+* Documentation updates
+
+## 0.7.051
+**Critical Fix**
+* Bugfix: Package::GetResource() - No-script files failure
+* Bugfix: LaunchVFSObject() - Not working after package change
+* Bugfix: LaunchProcess("PanelItem") - Not working correctly when adding
+* Bugfix: 'bin/update-compression' - Not working after package changes
+* Bugfix: Only "System" packages can use Package::Event()
+* Locales: JavaScript Updated
+
+## 0.7.050
+* Finished package handling
+* Frontend package handling finished
+* core.js now launches all processes via `LaunchProcess()`
+
+## 0.7.040
+* Rewritten Resource fetching for Packages
+* Frontend icon fixes (Added GetIcon())
+* User-installable apps runnable
+* User can now install/uninstall apps in VFS
+* Updated documentation and diagrams
+
+## 0.7.030
+
+**MERGED 'NewPackageMeta'!**
+
+* Fixed Download scripts
+* Changed package Metadata syntax
+* Package handling rewritten, Optimized
+* PHP PackageManager Class
+* JS PackageManager Class updated
+* Core process launching refactor
+* 'header.php' now contains VFS package information
+* Compiler updated for new Metadata syntax
+* Application Extended classes are now a lot slimmer
+* Package classes are now a lot slimmer
+* Removed Registry Setting 'user.installed.applications'
+* Application handling rewritten
+* Updated 'bin/install-all'
+* Renamed 'bin/application-gen' -> 'bin/compile-all'
+* Updated Documentation
+
+## 0.7.020
+* General bugfixes and locale updates
+* Sound Support, Implemented sound feedback. Uses freedesktop sound theme
+* Moved dialog HTML into the JS source files
+* New Color Selection Dialog
+* Google Analytics now configurable as module
+* Now possible to specify package to compile in 'application-gen'
+* Separate config file (config.php)
+* Added example config (config.example.php)
+* New preloader for JS core (sound and images)
+* Added 'API.session.restart'
+* Timestamp fixes for User
+* Added 'bin/add-user' script
+* Added 'bin/create-package' script
+* Added 'bin/convert-sounds' script
+* Added 'lib/Misc.php', moved stuff from 'header.php'
+* Added ENV_DEMO to config
+* Updated LICENSE in all files
+* Updated Documentation
+* Included Documentation Diagrams
+* Updated Vhosts
+* Application 'SystemControlPanel' now supports sound settings. Some UI changes
+
+## 0.7.002
+* New splash screen
+* Session snapshots working again
+
+## 0.7.001
+* Faster, lighter
+* Full support for multi-user environment
+* Fully reworked User VFS ('chroot')
+* Refactored initialization process
+
+Summary Frontend:
+* Window fixes
+* BackgroundService error handling
+* Fixed some exceptions for running new processes
+* Session checking
+* Bugfixes in utils.js
+* SettingsManager refactored
+* Panel dragging only on panel itself (items block)
+* Check if user is already logged in
+* LocalStorage items are no more persistent
+* Removed a lot of LocalStorage items
+* Preload on boot
+
+Summary Backend:
+* MySQL as primary database backend
+* VFS: User 'chroot' environment (/VFS/{uid}/)
+* VFS: Added '/Public/'
+* VFS: Added Downloading of files
+* Session information is now sendt to server
+* Fixed font flickering (base64 content, not cached)
+* Sessions now stored in '/var/cache/OSjs'
+* Core POST operation name changes
+* Core -> SettingsManager refactored
+* User: Refactored database
+
+Misc:
+* Refcators
+* Updates
+* Documentation
+
+Notes:
+* Missing translations
+* Missing documentation
+
+## 0.6-alpha9
+...

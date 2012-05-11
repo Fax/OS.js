@@ -29,3 +29,21 @@ Please note that this site may be down at times. To access this demo you need to
 * Resource lazy-loading for increased performance
 * Comes with common dialogs (File-, Color-, Font-operations etc.)
 * Comes (alternatively) with a collection of Packages
+
+# ChangeLog
+
+The full list is in the `ChangeLog` file.
+
+## 0.7.090
+* Feature: HTML5 FullScreen API Added
+* Core: ResourceManager now has complete list of resources
+* `bin/update-compression`: Using new ResourceManager method
+* classes.js: Added VFS - Not done
+* Core: Removed classes Dialog and Panel. Moved code to ResourceManager
+* Users can now create login in initial login screen
+* Login Screen Fixes and additions
+* Core: Metadata generator now looks up "enabled" property again
+* core.js: Focus default button in dialogs
+* Template: Fixed copyright notices
+* Demo sites now working again
+* Updated Locales, Documentation
