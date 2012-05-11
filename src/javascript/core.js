@@ -7738,11 +7738,11 @@
         if ( y < 0 ) {
           y = 0;
           if ( _Desktop ) {
-            var panels = _desktop.getpanels();
+            var panels = _Desktop.getPanels();
             var i = 0, l = panels.length;
             for ( i; i < l; i++ ) {
-              if ( panels[i].getposition() == "top" ) {
-                y += panels[i].getheight();
+              if ( panels[i].getPosition() == "top" ) {
+                y += panels[i].getHeight();
               }
             }
           }
