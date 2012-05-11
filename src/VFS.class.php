@@ -774,7 +774,7 @@ abstract class VFS
           $expl = explode(".", $file);
           $ext = end($expl);
 
-          if ( !is_dir($abs_path) ) {
+          if ( is_file($abs_path) || is_link($abs_path) ) {
             $type  = "file";
 
             // Read MIME info
@@ -816,11 +816,13 @@ abstract class VFS
             $fsize = filesize($abs_path);
             $icon  = self::getFileIcon($mmime, $mime, $ext);
             $mime  = $fmime;
-          } else {
+          } else if ( is_dir($abs_path) ) {
             $tpath = preg_replace("/\/+/", "/", $rel_path);
             if ( isset(self::$VirtualDirs[$tpath]) ) {
               $icon = self::$VirtualDirs[$tpath]['icon'];
             }
+          } else {
+            continue;
           }
 
           $fpath = $rel_path;
