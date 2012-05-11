@@ -197,7 +197,8 @@ class User
       "username"    => "Guest",
       "password"    => "",
       "privilege"   => self::GROUP_GUEST,
-      "real_name"   => "Guest User"
+      "real_name"   => "Guest User",
+      "created_at"  => new DateTime()
     ));
   }
 
@@ -211,7 +212,8 @@ class User
         "username"    => $username,
         "password"    => $password,
         "privilege"   => self::GROUP_USER | self::GROUP_PACKAGES,
-        "real_name"   => $username
+        "real_name"   => $username,
+        "created_at"  => new DateTime()
       ));
 
       if ( !User::getByUsername($username) ) {
