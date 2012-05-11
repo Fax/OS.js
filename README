@@ -13,6 +13,8 @@ You can find more information on these pages:
 A live demonstration is available on http://OSjs.0o.no
 Please note that this site may be down at times. To access this demo you need to register a user.
 
+Sources will be released when reaching version `1.0-rc1` (Summer 2012).
+
 # Features:
 * BSD Licensed
 * Multi-user web-based desktop environment
@@ -33,6 +35,14 @@ Please note that this site may be down at times. To access this demo you need to
 # ChangeLog
 
 The full list is in the `ChangeLog` file.
+
+## 0.7.095
+* Core: VFS - Bugfix for unreachable files
+* core.js: Window Gravitate syntax error fixes
+* Core: Packages - Now minimized upon install
+* Core: User - Fixed ENV_DEMO bug for fetching user information
+* Core: User - Fixed 'created_at' timestamp
+* Updated Documentation
 
 ## 0.7.090
 * Feature: HTML5 FullScreen API Added
