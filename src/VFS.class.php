@@ -78,6 +78,21 @@ abstract class VFS
       "attr" => self::ATTR_READ,
       "icon" => "places/user-desktop.png"
     ),
+    "/System/Sounds" => Array(
+      "type" => "core",
+      "attr" => self::ATTR_READ,
+      "icon" => "places/folder-music.png"
+    ),
+    "/System/Templates" => Array(
+      "type" => "core",
+      "attr" => self::ATTR_READ,
+      "icon" => "places/folder-templates.png"
+    ),
+    "/System/Themes" => Array(
+      "type" => "core",
+      "attr" => self::ATTR_READ,
+      "icon" => "places/user-bookmarks.png"
+    ),
     "/System" => Array(
       "type" => "core",
       "attr" => self::ATTR_READ,

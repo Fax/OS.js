@@ -631,13 +631,13 @@ class Core
    * @return void
    */
   protected static final function _doUserOperation(Array $args, Array &$json, Core $inst = null) {
-    if ( !ENV_DEMO && ($user = $inst->getUser()) ) {
+    if ( ($user = $inst->getUser()) ) {
       $error  = null;
       $result = null;
       $arg    = isset($args['type']) ? $args['type'] : null;
       $ruid   = isset($args['uid'])  ? ((int)$args['uid']) : null;
 
-      if ( $user->isAdmin() ) {
+      if ( !ENV_DEMO && $user->isAdmin() ) {
         switch ( $arg ) {
           case "create" :
             $new_user = User::createDefault();

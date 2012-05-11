@@ -9,9 +9,9 @@ doc/doxygen.log
 doc/api/*
 doc/*
 public_html/.htpasswd
-public_html/media
 VFS/*
 !VFS/0
+public_html/media/Public/*
 
 # Sub-modules
 src/packages

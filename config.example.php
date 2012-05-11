@@ -35,7 +35,7 @@
 // Environment
 //
 
-define("ENV_PRODUCTION",      false);
+define("ENV_PRODUCTION",      true);
 define("ENABLE_CACHE",        false);
 define("ENV_DEMO",            true);
 define("ENABLE_LOGGING",      true);
