@@ -158,4 +158,199 @@ Notes:
 * Missing documentation
 
 ## 0.6-alpha9
-...
+* Compability dialog fixes
+* New Package type 'BackgroundService'
+* New login (active only as demo user)
+* Refactored ResourceManager::getFont
+* Caching updates
+* Removed all /public_html/vendor files
+- Vendor libs are now symlinked to /vendor/
+- User/Script can now update without changing template
+* User can now have a list of auto-launching application on launch
+* Cleanups, Documentation update, TODO/FIXME/INSTALL updates
+
+## 0.6-alpha8
+* Updated VHosts
+* Removed htaccess
+* CSS Loading timeout increase
+* Removed Propel Schema
+* All JS and CSS vendor are now in public_html/vendor
+* Better Caching (of all types)
+* Added bin/fix-permissions (for fixing VFS media perms)
+* Notification
+  - Static width
+  - Added close button
+  - Added timeout definition posibility (-1 = Forever)
+  - Notification on first run
+  - Notification on session changes (restore)
+  - Notification when a SESSION_REVISION change occurs
+* CompabilityDialog: Updated, lighter
+* Refactored - ResourceManager::getXXX() methods
+* Removal of some old unwanted code
+* Packages now can (and does) contain ALL resources (Moved away from OS.js codebase)
+* Server Session ID is checked by an interval to see if user has a real connection
+  - If a user clears browser -- WARNING
+  - If server restarts -- WARNING
+  > Not finished
+* URI Change: /ajax/ is now /VFS/ (finally)
+* Window Manager: Windows cannot be spawned so they are in negative Y
+* New User settings for sessions [ControlPanel]
+* Cleanup of header files
+* Updated Translations
+* Updated TODO, README, INSTALL and other documentation
+
+## 0.6-alpha7
+* Even more strict JSLint rules followed
+* /js/utils.js now moved to src/javascript
+* Updated README, INSTALL, TODO
+* Removed the (awfull) jQuery touch libs. Creating my own
+* Removed remaining browser alert()'s
+
+## 0.6-alpha6
+* Added HTML Meta tags for SEO
+* Fixed bug for moving panel items
+* Added missing icons
+* Added Browser class for determine browser (PHP to JS)
+* Fixed wallpaper lookup path when accessing desktop context menu
+* PanelItem CSS moved from core to packages (incl. metadata update)
+* Added some more Functions (global)
+* Added avatar image to user
+* Session ID is now stored in database (for preventing hijacking)
+* CSS ContextMenu fixes
+* A compiled list of resources are now loaded in background while OS.js initializes, for faster performance of showing commonly used items (images etc.)
+* PanelItemDock defaults are now updated
+* GZIP Compression if supported
+* New version branding in template
+* Renamed "ApplicationVFS" to "VFS"
+* Removed "ApplicationAPI", moved methods to "VFS"
+* Added VFS::touch()
+* Fixed 'global_mousedown' handler [JS]
+* Added '/User/Temp' to VFS
+* Fixed problems with IconView context menus
+* Fixed uploading
+* Package::ExtractPackage(), Package::CreatePackate(), Package::MinimizeFile() [PHP]
+* Package::Install(), Package::Uninstall() - From CLI [PHP]
+* Packages are now only required() when using Handle()/Event() Methods [PHP]
+* Added some new functions to utils.js
+* Added '/bin/install-all'
+* Cleanups in User, Core, Session [PHP]
+* Implemented more Exceptions [PHP]
+* Updated documentation
+* Renaming of header constants
+* Autoloading of classes in src/
+* Package Abstraction implementation (Application, PanelItem)
+* SettingsManager/API Package implementation updates
+* Applications and PanelItems are now allways launched from cache
+* PanelItem resources moved to Package (External repo)
+* API Operations now use packages
+* Fixed crash dialogs for all types
+* SettingsManager tree key changes
+* PanelItems are now configurable again
+* PanelItem configuration changes are now saved
+* Cleanups: Panel, Application Loading (JS)
+* Removal: Application UUID, Old Methods, DBObject
+* Refactors: Application, PanelItem (PHP)
+* Refactors: Menu, ContextMenu (JS)
+* Rename: src/base to src/javascript
+* Move: src/resources/ to src/javascript
+* Change: VFS Media root updates (User home etc)
+* CSS cross-browser fixes
+* Updated locales
+* Updated bin/ scripts
+* Updated documentations
+
+
+## 0.6-alpha2
+* VFS update triggered on file upload
+* SettingsManager rewrite
+* Settings tree moved to User. Saveable via DB
+* Improved cleanup on quit
+* Resolved a lot of FIXME and TODO in core.js
+* Added error callback to DoPost()
+* Fixed Menu/ContextMenu bugs
+* Panel Items context menu fixes. Now contains alignment and moving options
+* Panel Item Adding/Removing and Saving
+* Improved Panel Item moving
+* Updated documentation, added missing locales
+
+## 0.6-alpha1
+* Fixed some critical bugs, updated the testing procedures
+* Splash Screen
+* Implemented [simple] LaunchString() function that runs apps/API operations by string
+* Timeouts added to Core::run(). Solves load problems with panel
+* Re-implemented Desktop IconView (Custom IconView for desktop)
+* Panel items can now be moved (SHIFT + FIRST_MOUSE_BUTTON)
+* Updated translations
+* Added LICENSE to missing (file docu headers)
+* Fixed Content Menu overflow issues
+* Core::global_keydown() now registers special keys (shift, alt, ctrl)
+* Implemented ApplicationException, ProcessException
+* mod_rewrite for loading resources urls (better for debugging)
+* Removed the #Panels container. Was causing input problems.
+* Fixed panel positioning bugs
+* Custom scrollbars for WebKit browsers
+* Updated developer README file
+* Published documentation: PHP, Core
+* Developer: Added possibility to force refresh of certain items in SettingsManager
+
+## 0.5-beta10 / 0.5-beta11
+* Desktop wallpaper adjustment, color adjustment
+* IMAP Implementation updated
+* Application cross-browser fixes (Not those marked with "UNDER DEVELOPMENT")
+* Updated Mailing application
+* IconView updates
+* Added Core Database Driver and Database-Object Mapping (Custom wrapper using PDO etc.)
+* Added MongoDB and SQLite Support. (SQLite is set as default)
+* User login support, sessions on server (Disabled on production)
+* Added MusicPlayer and VideoPlayer [HTML5] classes to public API (Implemented in apps using these features)
+* Implemented default applications pr. mime type storage in session
+* Implemented support for multiple Panels
+* Implemented support for session snapshot loading/saving (On server-side)
+* Implemented simple file-monitoring (Bind event in Application upon file-changes)
+* Applications now remember the last UI-state upon session saving (Resuming at correct tab, etc.)
+* Dynamic cache Application and PanelItem cache
+* Fixed timezones on server-side (Handled on client-side, UTC by default)
+* Added language detection/setting and client/server translation-handling.
+* Added PHP JSON Class with error handling
+* Session fixes (Fixed storage of current context path -- application resumes with correct file loaded)
+* Launcher fixes. Now waits for resources to be fully loaded (Fixes slow(er) connections and random errors).
+* Rewritten compiler
+* Cleanups, Bugfixes, Refactoring and Documentation updates. More speed and stability.
+* Changed License from GPL to BSD
+
+## 0.5-beta9
+* General cleanup of project files and paths
+* Fixed panel item expansion (dynamic PanelItem content)
+* Fixed process names
+* Services ignored by maximum process count
+* Updated Services and Socket (Also updated apps depending on this)
+* Cross-Browser CSS for some applications
+* Added IconView Class (Also updated apps depending on this)
+* Main CSS files now also compressed on production env.
+* Added IconView to desktop (DISABLED FOR NOW)
+* Fixed some errors with browser resizing
+* Propel has been removed as main dependency (Now optional)
+* Added IMAP Functionality
+* Added Mail Application
+* Documentation Updates
+
+## 0.5-beta8
+* Added Writer Application (Under development)
+* Added Mandelbrot (Testing) Application
+* Panel and Panel Item fixes and updates
+* WebWorker improvements
+* Socket improvements
+* Process fixes
+* Re-factor of Application source structures
+* Security fixes
+* Bugfixes
+* Documentation updates
+
+## 0.5-beta7
+* VFS and Core fixes
+* Added 'mkdir' command
+* Added File Properties Dialog
+* Updated FileManager with mkdir and File Properties
+* Security Fixes
+* Dynamic Resource loading in template
+
