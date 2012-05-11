@@ -214,7 +214,7 @@ abstract class Package
     }
 
     // Check if target exists
-    if ( !is_dir($dst_path) && !is_dir($dest) ) {
+    if ( !is_dir($dst_path) || is_dir($dest) ) {
       throw new ExceptionPackage(ExceptionPackage::INVALID_DESTINATION, Array($dest));
     }
 

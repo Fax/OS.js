@@ -204,6 +204,8 @@ abstract class PackageManager
    */
   public static function InstallPackage($package, User $user) {
     $pname    = $package;
+
+    // Extract the archive
     if ( preg_match("/\.zip$/", strtolower($package)) ) {
       $package  = preg_replace("/^\/User/", "", $package);
       $dest     = sprintf(PATH_VFS_PACKAGES, $user->id);
@@ -221,9 +223,14 @@ abstract class PackageManager
       $pname = basename($package, ".zip");
     }
 
+    // Now check if the package was installed
     $package = sprintf(RESOURCE_VFS_PACKAGE, $user->id, $pname, "metadata.xml");
     if ( $package = self::_readXML($package) ) {
       if ( ($res = Package::FindPackage($pname, $user)) && !($res["found"]) ) {
+        // Now we can compress the resources
+
+        Package::Minimize($pname, $user);
+
         return self::RefreshMetadata($user);
       }
     }
