@@ -115,7 +115,7 @@ input.Disabled {
 }
 #LoadingBarContainer {
   position : absolute;
-  width : 412px;
+  width : 400px;
   height : 22px;
   margin : 0;
   padding : 0;
