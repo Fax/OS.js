@@ -41,7 +41,6 @@
 abstract class VFS
   extends CoreObject
 {
-
   const ATTR_READ     = 1;
   const ATTR_WRITE    = 2;
   const ATTR_SPECIAL  = 4;
@@ -130,9 +129,199 @@ abstract class VFS
     )
   );
 
+  /**
+   * @var Available Function Calls
+   */
+  protected static $_calls = Array(
+    "exists"          => Array("Exists"),
+    "readdir"         => Array("ListDirectory"),
+    "ls"              => Array("ListDirectory"),
+    "delete"          => Array("Delete"),
+    "rm"              => Array("Delete"),
+    "mv"              => Array("Move", Array("path", "name")),
+    "rename"          => Array("Move", Array("path", "name")),
+    "read"            => Array("ReadFile"),
+    "cat"             => Array("ReadFile"),
+    "put"             => Array("WriteFile", Array("file", "content", "encoding")),
+    "write"           => Array("WriteFile", Array("file", "content", "encoding")),
+    "mkdir"           => Array("CreateDirectory"),
+    "file_info"       => Array("FileInformation"),
+    "fileinfo"        => Array("FileInformation"),
+    "readurl"         => Array("ReadURL"),
+    "readpdf"         => Array("ReadPDF"),
+    "cp"              => Array("Copy", Array("source", "destination")),
+    "copy"            => Array("Copy", Array("source", "destination")),
+    "upload"          => Array("Upload", Array("file", "path")),
+    "ls_archive"      => Array("ListArchive"),
+    "extract_archive" => Array("ExtractArchive")
+  );
+
+  /**
+   * @var Default Ignore files
+   */
+  protected static $_ignores = Array(
+    ".", "..", ".gitignore", ".git", ".cvs"
+  );
+
   /////////////////////////////////////////////////////////////////////////////
-  // INTERNAL METHODS
+  // MAGICS
   /////////////////////////////////////////////////////////////////////////////
+
+  public static function __callStatic($name, $arguments) {
+    if ( isset(self::$_calls[$name]) ) {
+      $iter = self::$_calls[$name];
+      $func = $iter[0];
+      $args = isset($iter[1]) ? $iter[1] : null;
+
+      if ( $args ) {
+        $tmp = Array();
+        $arg = reset($arguments);
+        foreach ( $args as $a ) {
+          $tmp[] = isset($arg[$a]) ? $arg[$a] : false;
+        }
+        $arguments = $tmp;
+      }
+
+      return call_user_func_array(Array(__CLASS__, $func), $arguments);
+    }
+
+    return false;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // HELPERS
+  /////////////////////////////////////////////////////////////////////////////
+
+  public static function checkVirtual($path, $method = self::ATTR_READ) {
+    $result = true;
+
+    foreach ( self::$VirtualDirs as $k => $v ) {
+      if ( startsWith($path, $k) ) {
+        $attr = (int)$v['attr'];
+
+
+        if ( ($attr < self::ATTR_READ) || (($attr == self::ATTR_READ) && ($method != self::ATTR_READ)) || !($attr & $method) ) {
+          $result = false;
+          break;
+        }
+
+        if ( ($v['type'] == "chroot") || ($v['type'] == "user") ) {
+          if ( Core::get() && !(($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
+            $result = false;
+            break;
+          }
+        }
+
+        break;
+      }
+    }
+
+    return $result;
+  }
+
+  public static function buildPath($path, $method = self::ATTR_READ) {
+    $blacklist = array("?", "[", "]", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
+    $path      = preg_replace("/\/$/", "", str_replace($blacklist, "", $path));
+    $root      = sprintf("%s%s", PATH_MEDIA, $path);
+
+    if ( preg_match("/^\/User/", $path) ) {
+      $uid = 0;
+      if ( (Core::get()) && ($user = Core::get()->getUser()) ) {
+        $uid = $user->id;
+      }
+      $root = sprintf("%s%s", sprintf(PATH_VFS_USER, $uid), preg_replace("/^\/User/", "", $path));
+    }
+
+    return Array(
+      "path" => $path,
+      "root" => $root,
+      "perm" => self::checkVirtual($path, $method)
+    );
+  }
+
+  /**
+   * Fix unknown MIME by using file extension
+   * @param  String   $mime   MIME Type
+   * @param  String   $ext    File Extenstion
+   * @return String
+   */
+  protected final static function _fixMIME($mime, $ext) {
+    if ( $mime == "application/octet-stream"  ) {
+      switch ( strtolower($ext) ) {
+        case "webm" :
+          $mime = "video/webm";
+        break;
+        case "ogv" :
+          $mime = "video/ogg";
+        break;
+        case "ogg" :
+          $mime = "audio/ogg";
+        break;
+      }
+    } else if ( $mime == "application/ogg" ) {
+      switch ( strtolower($ext) ) {
+        case "ogv" :
+          $mime = "video/ogg";
+        break;
+        case "ogg" :
+          $mime = "audio/ogg";
+        break;
+      }
+    }
+
+    return $mime;
+  }
+
+  /**
+   * MediaInformation() -- Get information about a media file
+   * @param  String   $path   Destination
+   * @return Mixed
+   */
+  public static function MediaInformation($path) {
+    $pcmd   = escapeshellarg($path);
+    $result = exec("exiftool -j {$pcmd}", $outval, $retval);
+    if ( $retval == 0 && $result ) {
+      try {
+        $json = (array) JSON::decode(implode("", $outval));
+        $json = (array) reset($json);
+      } catch ( Exception $e ) {
+        $json = Array();
+      }
+    }
+
+    if ( isset($json["SourceFile"]) ) {
+      unset($json["SourceFile"]);
+    }
+    if ( isset($json["ExifToolVersion"]) ) {
+      unset($json["ExifToolVersion"]);
+    }
+    if ( isset($json["Directory"]) ) {
+      unset($json["Directory"]);
+    }
+
+    if ( $json ) {
+      return $json;
+    }
+
+    return false;
+  }
+
+  /**
+   * GetMIME() -- Get a file MIME information
+   * @return Array
+   */
+  public static function GetMIME($path) {
+    $expl = explode(".", $path);
+    $ext = end($expl);
+
+    $fi = new finfo(FILEINFO_MIME);
+    $finfo = $fi->file($path);
+    //$mime  = explode("; charset=", $finfo);
+    $mime  = explode(";", $finfo);
+    $mime  = trim(reset($mime));
+    $fmime = self::_fixMIME($mime, $ext);
+    return Array($mime, $fmime);
+  }
 
   /**
    * Set permissions
@@ -159,712 +348,6 @@ abstract class VFS
         umask($dest, $m);
       }
     }
-  }
-
-  /**
-   * Secure a file path
-   * @return Array
-   */
-  protected static function _secure($filename, $path = null, $exists = true, $method = self::ATTR_READ) {
-    $special_charsa = array("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
-    $special_charsb = array("?", "[", "]", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
-
-    // Convert single $filename into ($path, $filename)
-    if ( !$path && $filename ) {
-      $spl = preg_split("/\//", $filename, -1, PREG_SPLIT_NO_EMPTY);
-      if ( sizeof($spl) == 1 ) {
-        $path     = "/";
-        $filename = $spl[0];
-      } else if ( sizeof($spl) > 1 ) {
-        $filename = array_pop($spl);
-        $path     = "/" . implode("/", $spl) . "/";
-      } else {
-        return false;
-      }
-    }
-
-    // Vars to use
-    $filename     = trim(preg_replace('/\s+/', ' ', str_replace($special_charsa, '', $filename)), '.-_'); // Safe-named filename
-    $path         = trim(preg_replace('/\s+/', ' ', str_replace($special_charsb, '', $path)), '.-_');     // Safe-named path
-    $path         = preg_replace("/\/+/", "/", $path);
-    $base         = PATH_MEDIA;                                                                           // Absolute filesystem [media] root (dynamic)
-    $rpath        = $path;                                                                                // $path is dynamic (as $base)
-    $attr         = 0;                                                                                    // Access indication
-    $escape       = false;                                                                                // Escape the function
-    $location     = null;                                                                                 // Relative VFS path
-    $destination  = null;                                                                                 // Absolute filesystem path
-
-    //error_log("Filename:                   " . $filename);
-    //error_log("Path:                       " . $path);
-    //error_log("Base:                       " . $base);
-    //error_log("Check existence?:           " . ($exists ? "true" : "false"));
-    //error_log("Using attribute:            " . ((string)$method));
-
-    unset($special_charsa);
-    unset($special_charsb);
-
-    // Check if we are operating inside a SAFE area (VFS or /media/)
-    // Loops through a list of known directories and uses the attributes
-    // to decide what action and path to make
-
-    if ( $path == "/" ) {
-      return false;
-    }
-
-    foreach ( self::$VirtualDirs as $k => $v ) {
-      if ( startsWith($path, $k) ) {
-        $attr = (int)$v['attr'];
-
-        //error_log(">>> FOUND $k ($attr)");
-
-        if ( ($attr < self::ATTR_READ) || (($attr == self::ATTR_READ) && ($method != self::ATTR_READ)) || !($attr & $method) ) {
-          //error_log(">>> INVALID MODE");
-          $escape = true;
-          break;
-        }
-
-        //error_log(">>> CHECKING TYPE");
-
-        if ( ($v['type'] == "chroot") || ($v['type'] == "user") ) {
-          $uid = 0;
-          if ( !(($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
-            //error_log(">>> USER $uid FOUND");
-            $escape = true;
-            break;
-          }
-
-          //error_log(">>> VALID VFS DIR <<<");
-
-          // Remove the prefix of the path in user VFS dirs
-          if ( $v['type'] == "user" ) {
-            $path = preg_replace("/^\/+?User/", "", $path);
-          }
-
-          // Set new base since we are operating in a "chroot"
-          $base = sprintf("%s/%d", PATH_VFS, $uid);
-        }
-
-        break;
-      }
-    }
-
-    //error_log("Escape?:                    " . ($escape ? "true" : "false"));
-
-    // Access denied ?
-    if ( $escape ) {
-      return false;
-    }
-
-    //error_log("New Path:                   " . $path);
-    //error_log("New Base:                   " . $base);
-
-    // Build absolute filesystem path
-    $location = $base . $path;
-    if ( $filename !== null ) {
-      $location .= "/{$filename}";
-    }
-
-    $location     = preg_replace("/\/+/", "/", $location);
-    $location     = realpath(dirname($location));
-
-    //error_log("Absolute location:          " . $base);
-
-    // Make sure we are operating inside a secure area again
-    if ( !($location) || !(startsWith($location, $base)) ) {
-      return false;
-    }
-
-    // Create destination string
-    if ( $filename !== null ) {
-      $destination = "{$location}/{$filename}";
-    } else {
-      $destination = "{$location}{$path}";
-    }
-
-    $destination  = preg_replace("/\/+/", "/", $destination);
-
-    //error_log("Destination:                " . $destination);
-
-    // Check for existance (if required)
-    if ( $exists && $destination ) {
-      if ( !(is_file($destination) || is_link($destination) || is_dir($destination)) ) {
-        return false;
-      }
-    }
-
-    return Array(
-      "filename"    => $filename,
-      "path"        => $rpath,
-      "location"    => $location,
-      "destination" => $destination
-    );
-  }
-
-  /////////////////////////////////////////////////////////////////////////////
-  // WRAPPER METHODS
-  /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * @see VFS::cat()
-   * @see Core::_doVFS()
-   */
-  public static function read($argv) {
-    return self::cat($argv);
-  }
-
-  /**
-   * @see VFS::put()
-   * @see Core::_doVFS()
-   */
-  public static function write($argv) {
-    return self::put($argv);
-  }
-
-  /**
-   * @see VFS::ls()
-   * @see Core::_doVFS()
-   */
-  public static function readdir($argv) {
-    $path    = $argv['path'];
-    $ignores = isset($argv['ignore']) ? $argv['ignore'] : null;
-    $mime    = isset($argv['mime']) ? ($argv['mime'] ? $argv['mime'] : Array()) : Array();
-    return self::ls($path, $ignores, $mime);
-  }
-
-  /**
-   * @see VFS::mv()
-   * @see Core::_doVFS()
-   */
-  public static function rename($argv) {
-    list($path, $src, $dst) = $argv;
-    return self::mv($path, $src, $dst);
-  }
-
-  /**
-   * @see VFS::rm()
-   * @see Core::_doVFS()
-   */
-  public static function delete($argv) {
-    return self::rm($argv);
-  }
-
-  /**
-   * @see VFS::readPDFPage()
-   * @see Core::_doVFS()
-   */
-  public static function readpdf($argv) {
-    $tmp  = explode(":", $argv);
-    $pdf  = $tmp[0];
-    $page = isset($tmp[1]) ? $tmp[1] : -1;
-    return self::readPDFPage($pdf, $page);
-  }
-
-  /**
-   * @see VFS::file_info()
-   * @see Core::_doVFS()
-   */
-  public static function fileinfo($argv) {
-    return self::file_info($argv);
-  }
-
-  /**
-   * @see VFS::_secure()
-   * @see Core::_doVFS()
-   */
-  public static function realpath($argv) {
-    if ( $res = self::_secure($argv, null, true) ) {
-      return sprintf("%s/%s", $res["path"], $res["filename"]);
-    }
-
-    return false;
-  }
-
-  /////////////////////////////////////////////////////////////////////////////
-  // PUBLIC METHODS
-  /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Upload a file
-   * @param   String   $path     Upload path
-   * @retrun  Mixed
-   */
-  public static function upload($file, $path) {
-    if ( ($res = self::_secure($file["name"], $path, false, self::ATTR_RW)) !== false ) {
-      if ( $result = move_uploaded_file($file["tmp_name"], $res["destination"]) ) {
-        self::_permissions($res["destination"]);
-
-        list($mime, $fmime) = self::GetMIME($res["destination"]);
-
-        return Array("result" => $result, "mime" => $fmime);
-      }
-    }
-
-    return false;
-  }
-
-  /**
-   * Create a directory
-   * @param   String   $path     Directory path name
-   * @retrun  bool
-   */
-  public static function mkdir($argv) {
-    if ( $res = self::_secure($argv, null, false, self::ATTR_RW) ) {
-      if ( !is_dir($res["destination"]) ) {
-        if ( mkdir($res["destination"]) ) {
-          self::_permissions($res["destination"], true);
-
-          return basename($res["destination"]);
-        }
-      }
-    }
-
-    return false;
-  }
-
-  /**
-   * Check if file/dir exists
-   * @param  String   $argv     Argument
-   * @return Mixed
-   */
-  public static function exists($argv, $ret_name = false) {
-    if ( $res = self::_secure($argv, null, true) ) {
-      if ( file_exists($res["destination"]) ) {
-        return $ret_name ? $res["destination"] : true;
-      }
-    }
-
-    return false;
-  }
-
-  /**
-   * File Information
-   * @param  String   $argv     Argument
-   * @return Mixed
-   */
-  public static function file_info($argv) {
-    if ( $res = self::_secure($argv, null, true) ) {
-      if ( file_exists($res["destination"]) ) {
-        $base = PATH_MEDIA;
-
-        // Read MIME info
-        $file = basename($res["destination"]);
-        $expl = explode(".", $file);
-        $ext = end($expl);
-        list($mime, $fmime) = self::GetMIME($res["destination"]);
-        $fmmime = trim(strstr($fmime, "/", true));
-        $info   = null;
-
-        switch ( $fmmime ) {
-          case "image" :
-            $info = VFS::mediaInfo($res["destination"], false);
-          break;
-          case "audio" :
-            $info = VFS::mediaInfo($res["destination"], false);
-          break;
-          case "video" :
-            $info = VFS::mediaInfo($res["destination"], false);
-          break;
-        }
-
-        if ( !($loc = str_replace($base, "", $res["location"])) ) {
-          $loc = "/";
-        }
-
-        return Array(
-          "filename" => $res["filename"],
-          "path"     => $loc,
-          "size"     => filesize($res["destination"]),
-          "mime"     => $fmime,
-          "info"     => $info
-        );
-      }
-    }
-
-    return false;
-  }
-
-  /**
-   * Read a file (cat)
-   * @param  String   $argv     Argument
-   * @return String
-   */
-  public static function cat($argv) {
-    if ( $res = self::_secure($argv, null, true) ) {
-      return file_get_contents($res["destination"]);
-    }
-
-    return false;
-  }
-
-  /**
-   * Write a file (put)
-   * @param  String   $argv         Argument
-   * @param  bool     $overwrite    Overwrite existing file
-   * @return bool
-   */
-  public static function put($argv, $overwrite = true) {
-    if ( $res = self::_secure($argv['file'], null, false, self::ATTR_RW) ) {
-      $encoding = isset($argv['encoding']) ? $argv['encoding'] : null;
-      $content  = $argv['content'];
-
-      if ( $encoding === "data:image/png;base64" ) {
-        $content = base64_decode(str_replace(Array("{$encoding},", " "), Array("", "+"), $content));
-      }
-
-      if ( $overwrite || !file_exists($res["destination"]) ) {
-        if ( file_put_contents($res["destination"], $content) ) {
-          return true;
-        }
-      } else {
-        throw new ExceptionVFS(ExceptionVFS::ALREADY_EXISTS, Array($argv['file']));
-      }
-    }
-
-    return false;
-  }
-
-  /**
-   * Touch a file (touch)
-   * @param   String    $argv     Path
-   * @return  bool
-   */
-  public static function touch($argv) {
-    if ( $res = self::_secure($argv, null, false, self::ATTR_RW) ) {
-      if ( !file_exists($res["destination"]) ) {
-        if ( touch($res["destination"]) ) {
-          return true;
-        }
-      }
-
-      throw new ExceptionVFS(ExceptionVFS::ALREADY_EXISTS, Array($argv));
-    }
-
-    return false;
-  }
-
-  /**
-   * Delete a file (rm)
-   * @param  String   $path     Path
-   * @return bool
-   */
-  public static function rm($path) {
-    if ( $res = self::_secure($path, null, true, self::ATTR_RW) ) {
-      if ( is_file($res["destination"]) || is_link($res["destination"]) ) {
-        return unlink($res["destination"]);
-      } else if ( is_dir($res["destination"]) ) {
-        return rmdir($res["destination"]);
-      }
-    }
-
-    return false;
-
-
-  }
-
-  /**
-   * Move/Rename a file (mv)
-   * @param  String   $path     Path
-   * @param  String   $src      Source filename
-   * @param  String   $dest     Destination filename
-   * @return bool
-   */
-  public static function mv($path, $src, $dest) {
-    $dir = dirname($path);
-    if ( $res_src = self::_secure($src, $dir, true, self::ATTR_RW) ) {
-      if ( $res_dest = self::_secure($dest, $dir, false, self::ATTR_RW) ) {
-        if ( !file_exists($res_dest["destination"]) ) {
-          return rename($res_src["destination"], $res_dest["destination"]);
-        }
-      }
-    }
-
-    return false;
-  }
-
-  /**
-   * Extract an archive file
-   * @param  String   $arch   Archive filename
-   * @param  String   $dest   Extract path
-   * @return Mixed
-   */
-  public static function extract_archive($arch, $dest) {
-    if ( $res_a = self::_secure($arch, null, true) ) {
-      if ( $res_d = self::_secure("foo", $dest, false, self::ATTR_RW) ) {
-        require PATH_LIB . "/Archive.php";
-        if ( $a = Archive::open($res_a["destination"]) ) {
-          return $a->extract(dirname($res_d["destination"]));
-        }
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Read a archive file
-   * @param  String   $arch   Archive filename
-   * @param  String   $path   Archive path (default /)
-   * @return Array
-   */
-  public static function ls_archive($arch, $path = "/") {
-    require PATH_LIB . "/Archive.php";
-
-    $result = Array("dir" => Array(), "file" => Array());
-
-    if ( ($tmp = self::_secure($arch, $path, true)) === false ) {
-      return false;
-    }
-
-    $apath = $tmp["destination"];
-    unset($tmp);
-
-    try {
-      if ( $a = Archive::open($apath) ) {
-        foreach ( $a->read() as $f ) {
-          $file  = trim($f['name']);
-          $size  = $f['size_real'];
-          $type  = substr($file, -1) == "/" ? "dir" : "file";
-          $mime  = $type == "file" ? "application/octet-stream" : "";
-          $icon  = $type == "file" ? "mimetypes/binary.png" : "places/folder.png";
-          $fname = "/{$file}";
-
-          $result[$type][$file] = Array(
-            "path"       => $fname,
-            "size"       => $size,
-            "mime"       => $mime,
-            "icon"       => $icon,
-            "type"       => $type,
-            "protected"  => 0
-          );
-
-        }
-      }
-    } catch ( Exception $e ) {
-      $result = false;
-    }
-
-    if ( $result ) {
-      ksort($result["dir"]);
-      ksort($result["file"]);
-
-      return array_merge($result["dir"], $result["file"]);
-    }
-
-    return false;
-  }
-
-
-  /**
-   * Read a directory (ls)
-   * @param  String     $path     Directory path
-   * @param  Array      $ignores  Ignore these file(s)
-   * @param  Array      $mimes    Only show these MIME(s)
-   * @return Array
-   */
-  public static function ls($path, Array $ignores = null, Array $mimes = Array()) {
-    $uid = 0;
-    if ( !(($user = Core::get()->getUser()) && ($uid = $user->id)) ) {
-      return false;
-    }
-
-    if ( $ignores === null ) {
-      $ignores = Array(".", "..", ".gitignore", ".git", ".cvs");
-    }
-
-    $base     = PATH_MEDIA;
-    $absolute = "{$base}{$path}";
-    $apps     = false;
-    $chroot   = false;
-    $uchroot  = false;
-
-    foreach ( self::$VirtualDirs as $k => $v ) {
-      if ( startsWith($path, $k) ) {
-        if ( $v['type'] == "system_packages" ) {
-          $apps = 1;
-        } else if ( $v['type'] == "user_packages" ) {
-          $apps = 2;
-        } else if ( $v['type'] == "chroot" ) {
-          $chroot = true;
-        } else if ( $v['type'] == "user" ) {
-          $uchroot = true;
-        }
-        break;
-      }
-    }
-
-    // If we are browsing apps folder
-    if ( $apps ) {
-      $items = Array();
-      $xpath = explode("/", $path);
-      array_pop($xpath);
-      $fpath = implode("/", $xpath);
-
-      $items[".."] = Array(
-          "path"       => $fpath,
-          "size"       => 0,
-          "mime"       => "",
-          "icon"       => "status/folder-visiting.png",
-          "type"       => "dir",
-          "protected"  => 1
-      );
-
-      if ( $apps == 1 ) {
-        if ( $packages = PackageManager::GetSystemPackages() ) {
-          foreach ( $packages as $c => $opts ) {
-            $items["{$opts['title']} ($c)"] = Array(
-              "path"       => "{$path}/{$c}",
-              "size"       => 0,
-              "mime"       => "OSjs/{$opts["type"]}",
-              "icon"       => $opts['icon'],
-              "type"       => "file",
-              "protected"  => 1,
-            );
-          }
-        }
-      } else if ( $apps == 2 ) {
-        if ( $packages = PackageManager::GetUserPackages(Core::get()->getUser()) ) {
-          foreach ( $packages as $c => $opts ) {
-            $items["{$opts['title']} ($c)"] = Array(
-              "path"       => "{$path}/{$c}",
-              "size"       => 0,
-              "mime"       => "OSjs/{$opts["type"]}",
-              "icon"       => $opts['icon'],
-              "type"       => "file",
-              "protected"  => 1,
-            );
-          }
-        }
-      }
-
-      return $items;
-    } else if ( $chroot ) {
-      $absolute = sprintf("%s/%d", PATH_VFS, $uid);
-    } else if ( $uchroot ) {
-      $absolute = sprintf("%s/%d%s", PATH_VFS, $uid, preg_replace("/^\/+?User/", "", $path));
-    }
-
-    $absolute = preg_replace("/\/+/", "/", $absolute);
-
-    // Read directory
-    if ( is_dir($absolute) && $handle = opendir($absolute)) {
-      $items = Array("dir" => Array(), "file" => Array());
-      while (false !== ($file = readdir($handle))) {
-        if ( in_array($file, $ignores) ) {
-          continue;
-        }
-
-        $icon      = "places/folder.png";
-        $type      = "dir";
-        $fsize     = 0;
-        $mime      = "";
-        $protected = false;
-
-        if ( $file == ".." ) {
-          $xpath = explode("/", $path);
-          array_pop($xpath);
-          $fpath = implode("/", $xpath);
-          if ( !$fpath ) {
-            $fpath = "/";
-          }
-          $icon = "status/folder-visiting.png";
-          $protected = true;
-        } else {
-          $abs_path = "{$absolute}/{$file}";
-          $rel_path = "{$path}/{$file}";
-
-          $expl = explode(".", $file);
-          $ext = end($expl);
-
-          if ( is_file($abs_path) || is_link($abs_path) ) {
-            $type  = "file";
-
-            // Read MIME info
-
-            //$fi = new finfo(FILEINFO_MIME, MIME_MAGIC);
-            $fi = new finfo(FILEINFO_MIME);
-            $finfo = $fi->file($abs_path);
-            $mime  = explode("; charset=", $finfo);
-            $mime  = trim(reset($mime));
-            $mmime = trim(strstr($mime, "/", true));
-            unset($fi);
-
-
-            // FIX Unknown mime types
-            $fmime  = self::_fixMIME($mime, $ext);
-            $fmmime = trim(strstr($fmime, "/", true));
-
-            $add = sizeof($mimes) ? false : true;
-            foreach ( $mimes as $m ) {
-              $m = trim($m);
-
-              if ( preg_match("/\/\*$/", $m) ) {
-                if ( strstr($m, "/", true) == $fmmime ) {
-                  $add = true;
-                  break;
-                }
-              } else {
-                if ( $fmime == $m ) {
-                  $add = true;
-                  break;
-                }
-              }
-            }
-
-            if ( !$add ) {
-              continue;
-            }
-
-            $fsize = filesize($abs_path);
-            $icon  = self::getFileIcon($mmime, $mime, $ext);
-            $mime  = $fmime;
-          } else if ( is_dir($abs_path) ) {
-            $tpath = preg_replace("/\/+/", "/", $rel_path);
-            if ( isset(self::$VirtualDirs[$tpath]) ) {
-              $icon = self::$VirtualDirs[$tpath]['icon'];
-            }
-          } else {
-            continue;
-          }
-
-          $fpath = $rel_path;
-        }
-
-        $fpath = preg_replace("/\/+/", "/", $fpath);
-        $tmp_path = dirname($fpath);
-
-        // FIXME: The regex is a temporary fix for the NOTE downstairs
-        if ( $tmp_path == "/" || preg_match("/\/System/", $tmp_path) ) {
-          $protected = true;
-        } else {
-          foreach ( self::$VirtualDirs as $k => $v ) {
-            if ( startsWith($fpath, $k) ) {
-              if ( !(((int)$v["attr"]) & self::ATTR_RW) ) { // FIXME NOTE
-                $protected = true;
-              }
-              break;
-            }
-          }
-        }
-
-        $items[$type][$file] =  Array(
-          "path"       => $fpath,
-          "size"       => $fsize,
-          "mime"       => $mime,
-          "icon"       => $icon,
-          "type"       => $type,
-          "protected"  => $protected ? 1 : 0
-        );
-
-      }
-
-      ksort($items["dir"]);
-      ksort($items["file"]);
-
-      closedir($handle);
-
-      return array_merge($items["dir"], $items["file"]);
-    }
-
-    return false;
   }
 
   /**
@@ -996,63 +479,417 @@ abstract class VFS
     return $icon;
   }
 
+  /////////////////////////////////////////////////////////////////////////////
+  // METHODS
+  /////////////////////////////////////////////////////////////////////////////
+
   /**
-   * Fix unknown MIME by using file extension
-   * @param  String   $mime   MIME Type
-   * @param  String   $ext    File Extenstion
-   * @return String
+   * ListDirectory() -- List directory contents
+   * @param  Array    $argv     Arguments
+   * @return Mixed
    */
-  protected final static function _fixMIME($mime, $ext) {
-    if ( $mime == "application/octet-stream"  ) {
-      switch ( strtolower($ext) ) {
-        case "webm" :
-          $mime = "video/webm";
-        break;
-        case "ogv" :
-          $mime = "video/ogg";
-        break;
-        case "ogg" :
-          $mime = "audio/ogg";
-        break;
-      }
-    } else if ( $mime == "application/ogg" ) {
-      switch ( strtolower($ext) ) {
-        case "ogv" :
-          $mime = "video/ogg";
-        break;
-        case "ogg" :
-          $mime = "audio/ogg";
+  public static function ListDirectory($argv) {
+    $path    = $argv['path'];
+    $ignores = isset($argv['ignore']) ? $argv['ignore'] : null;
+    $mimes   = isset($argv['mime']) ? ($argv['mime'] ? $argv['mime'] : Array()) : Array();
+    $uid     = 0;
+
+    if ( !(($user = Core::get()->getUser()) && ($uid = $user->id)) ) {
+      return false;
+    }
+
+    if ( $ignores === null ) {
+      $ignores = self::$_ignores;
+    }
+
+    $base     = PATH_MEDIA;
+    $absolute = "{$base}{$path}";
+    $apps     = false;
+    $chroot   = false;
+    $uchroot  = false;
+
+    foreach ( self::$VirtualDirs as $k => $v ) {
+      if ( startsWith($path, $k) ) {
+        if ( $v['type'] == "system_packages" ) {
+          $apps = 1;
+        } else if ( $v['type'] == "user_packages" ) {
+          $apps = 2;
+        } else if ( $v['type'] == "chroot" ) {
+          $chroot = true;
+        } else if ( $v['type'] == "user" ) {
+          $uchroot = true;
+        }
         break;
       }
     }
 
-    return $mime;
+    // If we are browsing apps folder
+    if ( $apps ) {
+      $items = Array();
+      $xpath = explode("/", $path);
+      array_pop($xpath);
+      $fpath = implode("/", $xpath);
+
+      $items[".."] = Array(
+          "path"       => $fpath,
+          "size"       => 0,
+          "mime"       => "",
+          "icon"       => "status/folder-visiting.png",
+          "type"       => "dir",
+          "protected"  => 1
+      );
+
+      if ( $apps == 1 ) {
+        if ( $packages = PackageManager::GetSystemPackages() ) {
+          foreach ( $packages as $c => $opts ) {
+            $items["{$opts['title']} ($c)"] = Array(
+              "path"       => "{$path}/{$c}",
+              "size"       => 0,
+              "mime"       => "OSjs/{$opts["type"]}",
+              "icon"       => $opts['icon'],
+              "type"       => "file",
+              "protected"  => 1,
+            );
+          }
+        }
+      } else if ( $apps == 2 ) {
+        if ( $packages = PackageManager::GetUserPackages(Core::get()->getUser()) ) {
+          foreach ( $packages as $c => $opts ) {
+            $items["{$opts['title']} ($c)"] = Array(
+              "path"       => "{$path}/{$c}",
+              "size"       => 0,
+              "mime"       => "OSjs/{$opts["type"]}",
+              "icon"       => $opts['icon'],
+              "type"       => "file",
+              "protected"  => 1,
+            );
+          }
+        }
+      }
+
+      return $items;
+    } else if ( $chroot ) {
+      $absolute = sprintf("%s/%d", PATH_VFS, $uid);
+    } else if ( $uchroot ) {
+      $absolute = sprintf("%s/%d%s", PATH_VFS, $uid, preg_replace("/^\/+?User/", "", $path));
+    }
+
+    $absolute = preg_replace("/\/+/", "/", $absolute);
+
+    // Read directory
+    if ( is_dir($absolute) && $handle = opendir($absolute)) {
+      $items = Array("dir" => Array(), "file" => Array());
+      while (false !== ($file = readdir($handle))) {
+        if ( in_array($file, $ignores) ) {
+          continue;
+        }
+
+        $icon      = "places/folder.png";
+        $type      = "dir";
+        $fsize     = 0;
+        $mime      = "";
+        $protected = false;
+
+        if ( $file == ".." ) {
+          $xpath = explode("/", $path);
+          array_pop($xpath);
+          $fpath = implode("/", $xpath);
+          if ( !$fpath ) {
+            $fpath = "/";
+          }
+          $icon = "status/folder-visiting.png";
+          $protected = true;
+        } else {
+          $abs_path = "{$absolute}/{$file}";
+          $rel_path = "{$path}/{$file}";
+
+          $expl = explode(".", $file);
+          $ext = end($expl);
+
+          if ( is_file($abs_path) || is_link($abs_path) ) {
+            // Read MIME info
+            $type  = "file";
+            $add   = sizeof($mimes) ? false : true;
+            list($mime, $mmime) = self::GetMIME($abs_path);
+            $fmime = strstr($mime, "/", true);
+
+            foreach ( $mimes as $m ) {
+              $m = trim($m);
+
+              if ( preg_match("/\/\*$/", $m) ) {
+                if ( strstr($m, "/", true) == $fmime ) {
+                  $add = true;
+                  break;
+                }
+              } else {
+                if ( $mime == $m ) {
+                  $add = true;
+                  break;
+                }
+              }
+            }
+
+            if ( !$add ) {
+              continue;
+            }
+
+            $fsize = filesize($abs_path);
+            $icon  = self::getFileIcon($mmime, $mime, $ext);
+            $mime  = $mmime;
+          } else if ( is_dir($abs_path) ) {
+            $tpath = preg_replace("/\/+/", "/", $rel_path);
+            if ( isset(self::$VirtualDirs[$tpath]) ) {
+              $icon = self::$VirtualDirs[$tpath]['icon'];
+            }
+          } else {
+            continue;
+          }
+
+          $fpath = $rel_path;
+        }
+
+        $fpath = preg_replace("/\/+/", "/", $fpath);
+        $tmp_path = dirname($fpath);
+
+        // FIXME: This is some temporary stuff
+        if ( $tmp_path == "/" || preg_match("/\/System/", $tmp_path) ) {
+          $protected = true;
+        } else {
+          foreach ( self::$VirtualDirs as $k => $v ) {
+            if ( startsWith($fpath, $k) ) {
+              if ( !(((int)$v["attr"]) & self::ATTR_RW) ) { // FIXME NOTE
+                $protected = true;
+              }
+              break;
+            }
+          }
+        }
+
+        $items[$type][$file] =  Array(
+          "path"       => $fpath,
+          "size"       => $fsize,
+          "mime"       => $mime,
+          "icon"       => $icon,
+          "type"       => $type,
+          "protected"  => $protected ? 1 : 0
+        );
+
+      }
+
+      ksort($items["dir"]);
+      ksort($items["file"]);
+
+      closedir($handle);
+
+      return array_merge($items["dir"], $items["file"]);
+    }
+
+    return false;
+    return false;
   }
 
   /**
-   * Get file MIME
-   * @return String
+   * ListArchive() -- Read a archive file
+   * @param  String   $arch   Archive filename
+   * @param  String   $path   Archive path (default /)
+   * @return Mixed
    */
-  public static function GetMIME($path) {
-    $expl = explode(".", $path);
-    $ext = end($expl);
+  public static function ListArchive($arch, $path = "/") {
+    $src = self::buildPath($arch);
+    if ( $src["perm"] && file_exists($src["root"]) ) {
+      require_once PATH_LIB . "/Archive.php";
 
-    $fi = new finfo(FILEINFO_MIME);
-    $finfo = $fi->file($path);
-    //$mime  = explode("; charset=", $finfo);
-    $mime  = explode(";", $finfo);
-    $mime  = trim(reset($mime));
-    $fmime = self::_fixMIME($mime, $ext);
-    return Array($mime, $fmime);
+      $result = Array("dir" => Array(), "file" => Array());
+
+      try {
+        if ( $a = Archive::open($src["root"]) ) {
+          foreach ( $a->read() as $f ) {
+            $file  = trim($f['name']);
+            $size  = $f['size_real'];
+            $type  = substr($file, -1) == "/" ? "dir" : "file";
+            $mime  = $type == "file" ? "application/octet-stream" : "";
+            $icon  = $type == "file" ? "mimetypes/binary.png" : "places/folder.png";
+            $fname = "/{$file}";
+
+            $result[$type][$file] = Array(
+              "path"       => $fname,
+              "size"       => $size,
+              "mime"       => $mime,
+              "icon"       => $icon,
+              "type"       => $type,
+              "protected"  => 0
+            );
+
+          }
+        }
+      } catch ( Exception $e ) {
+        $result = false;
+      }
+
+      if ( $result ) {
+        ksort($result["dir"]);
+        ksort($result["file"]);
+
+        return array_merge($result["dir"], $result["file"]);
+      }
+    }
+
+    return false;
   }
 
   /**
-   * Read an URL
-   * @param  String   $url        URL to read
-   * @param  int      $timeout    Read timeout (default 30s)
-   * @return String
+   * ExtractArchive() -- Extract archive file
+   * @param  String   $arch   Archive filename
+   * @param  String   $path   Archive path (default /)
+   * @return Mixed
    */
-  public static function readurl($url, $timeout = 30) {
+  public static function ExtractArchive($arch, $dest) {
+    $src  = self::buildPath($arch);
+    $dest = self::buildPath($dest, self::ATTR_WRITE);
+
+    if ( $src["perm"] && $dest["perm"] ) {
+      if ( file_exists($src["root"]) && is_dir($dest["root"]) ) {
+        require_once PATH_LIB . "/Archive.php";
+        if ( $a = Archive::open($src["root"]) ) {
+          return $a->extract($dest["root"]);
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Copy() -- Copy a file
+   * @param  String   $src    Source
+   * @param  String   $dest   Destination
+   * @return bool
+   */
+  public static function Copy($src, $dest) {
+    $src  = self::buildPath($src);
+    $dest = self::buildPath($dest, self::ATTR_WRITE);
+
+    if ( $src["perm"] && $dest["perm"] ) {
+      if ( file_exists($src["root"]) ) {
+        $check = false;
+        $dest = $dest["root"];
+        if ( is_dir($dest) ) {
+          if ( is_file($src["root"]) ) {
+            $fname = basename($src["root"]);
+            if ( !preg_match(sprintf("/%s$/", preg_quote($fname, "/")), $dest) ) {
+              $dest = sprintf("%s/%s", $dest, $fname);
+            }
+          } else {
+            $tmp   = explode("/", $src);
+            $fname = end($tmp);
+            if ( !preg_match(sprintf("/%s$/", preg_quote($fname, "/")), $dest) ) {
+              $dest = sprintf("%s/%s", $dest, $fname);
+            }
+
+            @recurse_copy($src["root"], $dest);
+            $check = $dest;
+          }
+        }
+
+        if ( $check ) {
+          return file_exists($check);
+        }
+        return @copy($src["root"], $dest);
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Move() -- Move a file
+   * @param  String   $src    Source
+   * @param  String   $name   New name
+   * @return bool
+   */
+  public static function Move($src, $name) {
+    $tmp   = explode("/", $src);
+    $fname = end($tmp);
+    $re    = sprintf("/\/%s$/", preg_quote($fname, "/"));
+    $rep   = sprintf("/%s", $name);
+    $dest  = preg_replace($re, $rep, $src);
+
+    $src   = self::buildPath($src);
+    $dest  = self::buildPath($dest, self::ATTR_WRITE);
+    if ( $src["perm"] && $dest["perm"] ) {
+      if ( file_exists($src["root"]) && !(file_exists($dest["root"]) || is_dir($dest["root"])) ) {
+        return @rename($src["root"], $dest["root"]);
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Delete() -- Delete a file/directory
+   * @param  String   $dest   Destination
+   * @return bool
+   */
+  public static function Delete($dest) {
+    $dest = self::buildPath($dest, self::ATTR_WRITE);
+    if ( $dest["perm"] ) {
+      if ( file_exists($dest["root"]) ) {
+        if ( is_file($dest["root"]) ) {
+          return @unlink($dest["root"]);
+        } else if ( is_dir($dest["root"]) ) {
+          @rrmdir($dest["root"]);
+          @rmdir($dest["root"]);
+          return file_exists($dest["root"]) ? false : true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * ReadFile() -- Read contents of a file
+   * @param  String   $dest   Destination
+   * @return bool
+   */
+  public static function ReadFile($dest) {
+    $dest = self::buildPath($dest);
+    if ( $dest["perm"] ) {
+      if ( file_exists($dest["root"]) && is_file($dest["root"]) ) {
+        return file_get_contents($dest["root"]);
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * WriteFile() -- Write contents to a file
+   * @param  String   $dest     Destination
+   * @param  Mixed    $content  Contents
+   * @param  String   $encoding File encoding
+   * @return bool
+   */
+  public static function WriteFile($dest, $content, $encoding = false) {
+    $dest = self::buildPath($dest, self::ATTR_WRITE);
+    if ( $dest["perm"] ) {
+      if ( $encoding === "data:image/png;base64" ) {
+        $content = base64_decode(str_replace(Array("{$encoding},", " "), Array("", "+"), $content));
+      }
+
+      return @file_put_contents($dest["root"], $content);
+    }
+
+    return false;
+  }
+
+  /**
+   * ReadURL() -- Read contents of an URL
+   * @param  String   $url        Destination
+   * @param  int      $timeout    Timeout in seconds
+   * @return bool
+   */
+  public static function ReadURL($url, $timeout = 30) {
     $ch = curl_init();
     curl_setopt($ch,CURLOPT_URL,$url);
     curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
@@ -1063,39 +900,18 @@ abstract class VFS
   }
 
   /**
-   * Get Media-file information
-   * @param  String   $fname      Audio-file path
-   * @return Mixed
+   * CreateDirectory() -- Create a directory
+   * @param  String   $dest   Destination
+   * @return bool
    */
-  public static function mediaInfo($fname, $exists = true) {
-    if ( !$exists || $path = VFS::exists($fname, true) ) {
-      if ( !$exists ) {
-        $path = $fname;
-      }
-
-      $pcmd   = escapeshellarg($path);
-      $result = exec("exiftool -j {$pcmd}", $outval, $retval);
-      if ( $retval == 0 && $result ) {
-        try {
-          $json = (array) JSON::decode(implode("", $outval));
-          $json = (array) reset($json);
-        } catch ( Exception $e ) {
-          $json = Array();
+  public static function CreateDirectory($dest) {
+    $dest = self::buildPath($dest, self::ATTR_WRITE);
+    if ( $dest["perm"] ) {
+      if ( !(file_exists($dest["root"]) || is_dir($dest["root"])) ) {
+        if ( $result = @mkdir($dest["root"]) ) {
+          self::_permissions($dest["root"], true);
         }
-      }
-
-      if ( isset($json["SourceFile"]) ) {
-        unset($json["SourceFile"]);
-      }
-      if ( isset($json["ExifToolVersion"]) ) {
-        unset($json["ExifToolVersion"]);
-      }
-      if ( isset($json["Directory"]) ) {
-        unset($json["Directory"]);
-      }
-
-      if ( $json ) {
-        return $json;
+        return $result;
       }
     }
 
@@ -1103,19 +919,103 @@ abstract class VFS
   }
 
   /**
-   * Read PDF File
-   * @param   String      $fname      Relative file name
-   * @see     PDF
-   * @return  Mixed
+   * Exists() -- Check if file/dir exists
+   * @param  String   $dest   Destination
+   * @return bool
    */
-  public static function readPDFPage($fname, $page = -1) {
-    if ( $path = VFS::exists($fname, true) ) {
-      require PATH_LIB . "/PDF.class.php";
-      if ( $ret = PDF::PDFtoSVG($path, $page) ) {
+  public static function Exists($dest) {
+    $dest = self::buildPath($dest);
+    if ( (file_exists($dest["root"]) || is_dir($dest["root"])) ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * FileInformation() -- Get information about a file
+   * @param  String   $dest   Destination
+   * @return Mixed
+   */
+  public static function FileInformation($dest) {
+    $dest = self::buildPath($dest);
+    if ( $dest["perm"] ) {
+      if ( file_exists($dest["root"]) ) {
+        // Read MIME info
+        $file = basename($dest["root"]);
+        $expl = explode(".", $file);
+        $ext = end($expl);
+        list($mime, $fmime) = self::GetMIME($dest["root"]);
+        $fmmime = trim(strstr($fmime, "/", true));
+        $info   = null;
+
+        switch ( $fmmime ) {
+          case "image" :
+          case "audio" :
+          case "video" :
+            $info = self::MediaInformation($dest["root"], false);
+          break;
+        }
+
+        if ( !($loc = str_replace($base, "", $dest["location"])) ) {
+          $loc = "/";
+        }
+
         return Array(
-          "info" => PDF::PDFInfo($path),
+          "filename" => basename($dest["path"]),
+          "path"     => $loc,
+          "size"     => filesize($dest["root"]),
+          "mime"     => $fmime,
+          "info"     => $info
+        );
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * ReadPDF() -- Read a PDF document
+   * @param  String   $argv   The PDF Document path+page
+   * @return Mixed
+   */
+  public static function ReadPDF($argv) {
+    $tmp  = explode(":", $argv);
+    $pdf  = $tmp[0];
+    $page = isset($tmp[1]) ? $tmp[1] : -1;
+    $dest = self::buildPath($pdf);
+
+    if ( file_exists($dest["root"]) ) {
+      require PATH_LIB . "/PDF.class.php";
+      if ( $ret = PDF::PDFtoSVG($dest["root"], $page) ) {
+        return Array(
+          "info" => PDF::PDFInfo($dest["root"]),
           "document" => $ret
         );
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Upload() -- Upload a file
+   * @param  String   $src    File Source
+   * @param  String   $dest   Destination
+   * @return bool
+   */
+  public static function Upload($src, $dest) {
+    $dest  = self::buildPath($dest, self::ATTR_WRITE);
+    $ndest = self::buildPath(sprintf("%s/%s", $dest["path"], $src["name"]), self::ATTR_WRITE);
+    if ( $ndest["perm"] && $dest["perm"] ) {
+      if ( file_exists($dest["root"]) && is_dir($dest["root"]) ) {
+        if ( $result = @move_uploaded_file($src["tmp_name"], $ndest["root"]) ) {
+          self::_permissions($ndest["root"]);
+
+          list($mime, $fmime) = self::GetMIME($ndest["root"]);
+
+          return Array("result" => $result, "mime" => $fmime);
+        }
       }
     }
 

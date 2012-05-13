@@ -797,18 +797,14 @@ class Core
     $method = $args['method'];
     $argv   = $args['args'];
 
-    if ( method_exists("VFS", $method) ) {
-      try {
-        $json['result']  = call_user_func_array(Array("VFS", $method), Array($argv));
-        if ( ($json['result']) !== false ) {
-          $json['success'] = true;
-        } else {
-          throw new ExceptionVFS(ExceptionVFS::GENERIC, Array($argv));
-        }
-      } catch ( ExceptionVFS $e ) {
-        $json['success'] = false;
-        $json['error'] = $e->getMessage();
+    try {
+      $json['result']  = call_user_func_array(Array("VFS", $method), Array($argv));
+      if ( ($json['result']) !== false ) {
+        $json['success'] = true;
       }
+    } catch ( Exception $e ) {
+      $json['result'] = false;
+      $json['error']  = $e->getMessage();
     }
   }
 

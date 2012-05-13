@@ -4,7 +4,6 @@
 # @Revision:    0.0
 
 echo "Core:"
-echo -n "  JS Misc:       "; cat public_html/js/utils.js | wc -l
 echo -n "  JS Base:       "; cat src/javascript/*.js | wc -l
 echo -n "  CSS Base:      "; cat src/javascript/*.css | wc -l
 echo -n "  PHP Sources:   "; cat src/*.php | wc -l
@@ -13,7 +12,7 @@ echo -n "  PHP Public:    "; cat header.php public_html/*.php | wc -l
 
 echo ""
 
-TOTAL=`cat src/javascript/*.js src/javascript/*.css src/*.php lib/*.php header.php public_html/*.php public_html/js/utils.js | wc -l`
+TOTAL=`cat src/javascript/*.js src/javascript/*.css src/*.php lib/*.php header.php public_html/*.php | wc -l`
 echo "Total: $TOTAL (Excluding Vendor files)"
 
 echo ""

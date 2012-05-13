@@ -1,25 +1,24 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG]  Package Metadata schema property can be linked to HTML
-[HIG]  Handle _SessionValid and result.exception in DoPost() (_HasCrashed)
-[HIG]  Manifest and Cache: http://updates.html5rocks.com/2012/04/Taking-an-Entire-Page-Offline-using-the-HTML5-FileSystem-API
-[HIG]  Rewrite VFS PHP Scripts (Merge from branch)
-[HIG]  Rewrite Glade/GTK (Merge from branch)
+[HIG] Package Metadata schema property can be linked to HTML
+[HIG] Handle _SessionValid and result.exception in DoPost() (_HasCrashed)
+[HIG] Manifest and Cache: http://updates.html5rocks.com/2012/04/Taking-an-Entire-Page-Offline-using-the-HTML5-FileSystem-API
+[HIG] Rewrite Glade/GTK (Merge from branch)
 
-[LOG]  WindowManager effect configuration
-[LOW]  Panel setting: Background
-[LOW]  Core::_doUserOperation (User manipulation, backend)
-[LOW]  APP ControlPanel: _doUserOperation (User manipulation, frontend)
-[LOW]  Implement MenuNew in GtkMenu
-[LOW]  Add/Remove Panel
-[LOW]  Remove the global resize event and make a poll ?!
-       This would increase the performance of panel redraws etc.
+[LOG] WindowManager effect configuration
+[LOW] Panel setting: Background
+[LOW] Core::_doUserOperation (User manipulation, backend)
+[LOW] APP ControlPanel: _doUserOperation (User manipulation, frontend)
+[LOW] Implement MenuNew in GtkMenu
+[LOW] Add/Remove Panel
+[LOW] Remove the global resize event and make a poll ?!
+      This would increase the performance of panel redraws etc.
 
-[BIN]  Finish up the Installer
-[BIN]  Finish up Console
+[BIN] Finish up the Installer
+[BIN] Finish up Console
 
-[NUR]  Remove jQuery dependency, write custom library
-[NUR]  Remove jQuery UI dependency, write custom library
+[NUR] Remove jQuery dependency, write custom library
+[NUR] Remove jQuery UI dependency, write custom library
 
 BUGS:
 -------------------------------------------------------------------------------

@@ -126,10 +126,8 @@ Directories and Files:
   Application.class.php     Package > Application Class
   BackgroundService.cl...   Package > Background Service Class
   Core.class.php            Core, Main Class
-  Dialog.class.php          Frontend Dialog Class
   Package.class.php         Package Main Class
   PackageManager.class.php  Package Managment Class
-  Panel.class.php           Frontend Panel Class
   PanelItem.class.php       Frontend Panel Item Class
   ResourceManager.class.php Resource Managment Class
   Session.class.php         User Session Handling Class

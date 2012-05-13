@@ -507,8 +507,8 @@
             errors = ["<unknown>"];
           }
 
-          for ( var a in app_args ) {
-            eargs.push(app_args[a]);
+          for ( var a in args ) {
+            eargs.push(args[a]);
           }
 
           CrashApplication(name, {
@@ -1275,25 +1275,25 @@
           return _Settings.getOptions(k);
         },
 
-        'package_uninstall' : function(p, callback) {
+        'package_uninstall' : function(p, callback, reterror) {
           callback = callback || function() {};
 
           console.group("=== API OPERATION ===");
           console.log("Method", "API.user.settings.package_uninstall");
-          console.log("Arguments", p, callback);
+          console.log("Arguments", p, reterror);
           console.groupEnd();
 
-          _PackMan.uninstall(p, callback);
+          _PackMan.uninstall(p, callback, reterror);
         },
-        'package_install' : function(p, callback) {
+        'package_install' : function(p, callback, reterror) {
           callback = callback || function() {};
 
           console.group("=== API OPERATION ===");
           console.log("Method", "API.user.settings.package_install");
-          console.log("Arguments", p, callback);
+          console.log("Arguments", p, reterror);
           console.groupEnd();
 
-          _PackMan.install(p, callback);
+          _PackMan.install(p, callback, reterror);
         },
 
         'packages' : function(icons, apps, pitems, sitems) {
@@ -3611,13 +3611,18 @@
      * PackageManager::install() -- Install Package from Archive
      * @param  String   p           Package Archive Path
      * @param  Function callback    Callback function
+     * @param  bool     reterror    Callback on error instead of alert
      * @return void
      */
-    install : function(p, callback) {
+    install : function(p, callback, reterror) {
       var self = this;
       DoPost({'action' : 'package', 'operation' : 'install', 'archive' : p}, function(res) {
         if ( res.error ) {
-          MessageBox(res.error);
+          if ( reterror ) {
+            callback(false, res.error);
+          } else {
+            MessageBox(res.error);
+          }
         } else {
           _PackMan.setPackages(null, function() {
             callback(res);
@@ -3630,13 +3635,18 @@
      * PackageManager::uninstall() -- Uninstall Package(s)
      * @param  Array    p           Package list
      * @param  Function callback    Callback function
+     * @param  bool     reterror    Callback on error instead of alert
      * @return void
      */
-    uninstall : function(p, callback) {
+    uninstall : function(p, callback, reterror) {
       var self = this;
       DoPost({'action' : 'package', 'operation' : 'uninstall', 'package' : p}, function(res) {
         if ( res.error ) {
-          MessageBox(res.error);
+          if ( reterror ) {
+            callback(false, res.error);
+          } else {
+            MessageBox(res.error);
+          }
         } else {
           _PackMan.setPackages(null, function() {
             callback(res);
