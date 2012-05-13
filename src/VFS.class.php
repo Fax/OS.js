@@ -804,15 +804,17 @@ abstract class VFS
   /**
    * Move() -- Move a file
    * @param  String   $src    Source
-   * @param  String   $name   New name
+   * @param  String   $name   New name or path
    * @return bool
    */
   public static function Move($src, $name) {
-    $tmp   = explode("/", $src);
-    $fname = end($tmp);
-    $re    = sprintf("/\/%s$/", preg_quote($fname, "/"));
-    $rep   = sprintf("/%s", $name);
-    $dest  = preg_replace($re, $rep, $src);
+    if ( !preg_match("/^\/(.*)/", $name) ) {
+      $tmp   = explode("/", $src);
+      $fname = end($tmp);
+      $re    = sprintf("/\/%s$/", preg_quote($fname, "/"));
+      $rep   = sprintf("/%s", $name);
+      $dest  = preg_replace($re, $rep, $src);
+    }
 
     $src   = self::buildPath($src);
     $dest  = self::buildPath($dest, self::ATTR_WRITE);
