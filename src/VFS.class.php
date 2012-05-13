@@ -314,6 +314,8 @@ abstract class VFS
     }
 
     if ( $json ) {
+      list($mime, $fmime) = self::GetMIME($path);
+      $json["MIMEType"] = $fmime;
       return $json;
     }
 
