@@ -267,6 +267,10 @@ abstract class VFS
           $mime = "audio/ogg";
         break;
       }
+    } else if ( $mime == "text/plain" ) {
+      if ( strtolower($ext) == "m3u" ) {
+        $mime = "application/x-winamp-playlist";
+      }
     }
 
     return $mime;
@@ -275,11 +279,21 @@ abstract class VFS
   /**
    * MediaInformation() -- Get information about a media file
    * @param  String   $path   Destination
+   * @param  bool     $bpath  Build Path?
    * @return Mixed
    */
-  public static function MediaInformation($path) {
+  public static function MediaInformation($path, $bpath = false) {
+    if ( $bpath ) {
+      $tmp = self::buildPath($path);
+      if ( !$tmp["perm"] ) {
+        return false;
+      }
+      $path = $tmp["root"];
+    }
     $pcmd   = escapeshellarg($path);
     $result = exec("exiftool -j {$pcmd}", $outval, $retval);
+    $json   = Array();
+
     if ( $retval == 0 && $result ) {
       try {
         $json = (array) JSON::decode(implode("", $outval));
@@ -622,7 +636,7 @@ abstract class VFS
                   break;
                 }
               } else {
-                if ( $mime == $m ) {
+                if ( $mmime == $m ) {
                   $add = true;
                   break;
                 }
@@ -958,13 +972,9 @@ abstract class VFS
           break;
         }
 
-        if ( !($loc = str_replace($base, "", $dest["location"])) ) {
-          $loc = "/";
-        }
-
         return Array(
           "filename" => basename($dest["path"]),
-          "path"     => $loc,
+          "path"     => $dest["path"],
           "size"     => filesize($dest["root"]),
           "mime"     => $fmime,
           "info"     => $info
