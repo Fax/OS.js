@@ -102,11 +102,7 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
                 if ( result.hasOwnProperty(f) ) {
                   var o = result[f];
                   var el = $("<li><img alt=\"\" src=\"/img/blank.gif\" /><span></span></li>");
-                  if ( o.icon.match(/^\//) ) {
-                    el.find("img").attr("src", o.icon);
-                  } else {
-                    el.find("img").attr("src", "/img/icons/16x16/" + o.icon);
-                  }
+                  el.find("img").attr("src", API.ui.getIcon(o.icon, "16x16", o.mime.match(/^OSjs\/(Application|PanelItem|Backround?Service)/) ? basename(o['path']) : null));
                   el.find("span").html(f);
                   el.addClass(i % 2 ? "odd" : "even");
                   if ( o['protected'] == "1" ) {
