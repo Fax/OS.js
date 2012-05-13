@@ -36,24 +36,11 @@ Sources will be released when reaching version `1.0-rc1` (Summer 2012).
 
 The full list is in the `ChangeLog` file.
 
-## 0.7.095
-* Core: VFS - Bugfix for unreachable files
-* core.js: Window Gravitate syntax error fixes
-* Core: Packages - Now minimized upon install
-* Core: User - Fixed ENV_DEMO bug for fetching user information
-* Core: User - Fixed 'created_at' timestamp
-* Updated Documentation
-
-## 0.7.090
-* Feature: HTML5 FullScreen API Added
-* Core: ResourceManager now has complete list of resources
-* `bin/update-compression`: Using new ResourceManager method
-* classes.js: Added VFS - Not done
-* Core: Removed classes Dialog and Panel. Moved code to ResourceManager
-* Users can now create login in initial login screen
-* Login Screen Fixes and additions
-* Core: Metadata generator now looks up "enabled" property again
-* core.js: Focus default button in dialogs
-* Template: Fixed copyright notices
-* Demo sites now working again
-* Updated Locales, Documentation
+## 0.7.100
+* Core: New VFS
+* core.js: Save default applications on change
+* core.js: Used wrong variable in application crash handling
+* core.js: PackMan can now accept 'reterror' for custom error handling
+* Template: New demo notice
+* Template: Loading bar fix
+* Updated documentation

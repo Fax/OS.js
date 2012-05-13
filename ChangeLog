@@ -1,3 +1,13 @@
+## 0.7.100
+
+* Core: New VFS
+* core.js: Save default applications on change
+* core.js: Used wrong variable in application crash handling
+* core.js: PackMan can now accept 'reterror' for custom error handling
+* Template: New demo notice
+* Template: Loading bar fix
+* Updated documentation
+
 ## 0.7.095
 * Core: VFS - Bugfix for unreachable files
 * core.js: Window Gravitate syntax error fixes
