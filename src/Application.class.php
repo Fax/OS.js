@@ -60,6 +60,7 @@ abstract class Application
     $iter_icon     = Application::APPLICATION_ICON;
     $iter_titles   = Array();
     $iter_category = (string) $iter['category'];
+    $iter_schema   = (string) $iter['schema'];
 
     foreach ( $iter->property as $prop ) {
       switch ( (string) $prop['name'] ) {
@@ -101,6 +102,7 @@ abstract class Application
     return Array(
       "type"        => (string) $iter['type'],
       "packagename" => (string) $iter['packagename'],
+      "schema"      => $iter_schema,
       "name"        => $iter_name,
       "title"       => $iter_title,
       "titles"      => $iter_titles,

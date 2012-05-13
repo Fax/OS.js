@@ -486,7 +486,7 @@ abstract class VFS
   /**
    * ListDirectory() -- List directory contents
    * @param  Array    $argv     Arguments
-   * @return Mixed
+   * @return Array
    */
   public static function ListDirectory($argv) {
     $path    = $argv['path'];
@@ -684,8 +684,7 @@ abstract class VFS
       return array_merge($items["dir"], $items["file"]);
     }
 
-    return false;
-    return false;
+    return Array();
   }
 
   /**

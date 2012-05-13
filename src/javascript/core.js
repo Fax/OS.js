@@ -2487,13 +2487,6 @@
 
         bar.progressbar({value : 85});
 
-        var do_restore = _Settings._get("user.session.autorestore");
-        if ( do_restore === true || do_restore === "true" ) {
-          _Core.setSession(session);
-        }
-
-        bar.progressbar({value : 90});
-
         // >>> Finished
         setTimeout(function() {
           setTimeout(function() {
@@ -2510,6 +2503,14 @@
           }, 125);
 
         }, 250); // <<< Finished
+
+        // Restore session
+        setTimeout(function() {
+          var do_restore = _Settings._get("user.session.autorestore");
+          if ( do_restore === true || do_restore === "true" ) {
+            _Core.setSession(session);
+          }
+        }, 500);
 
       }, 500);
     },
