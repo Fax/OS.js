@@ -189,7 +189,7 @@ input.Disabled {
     font-size : 85%;
     width : 400px;
     position : absolute;
-    top : -40px;
+    top : -50px;
   }
   #LoginDemoNotice p {
     margin : 0;

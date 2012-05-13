@@ -153,7 +153,7 @@ if ( $locale = Core::get()->getLocale() ) {
   <div id="LoadingLogin">
     <div id="LoginDemoNotice" style="display:<?php print ENV_DEMO ? "block" : "none"; ?>">
         <p>
-          <b>NOTE:</b> This is a demonstration version.
+          <b>NOTE:</b> This is a demonstration version. Not all features are available.
           If any errors occur, please clear the browser cache and try again before reporting any bugs.
           You can also try to create a new user.
         </p>
