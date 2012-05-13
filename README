@@ -27,10 +27,23 @@ Sources will be released when reaching version `1.0-rc1` (Summer 2012).
 * VFS (Virtual Filesystem) supporting physical paths and devices/streams
 * TCP Connections via a WebSocket wrapper
 * User sessions, User settings registry, Application settings storage
+* Drag and Drop support
 * Session/Registry/Storage snapshot features
 * Resource lazy-loading for increased performance
 * Comes with common dialogs (File-, Color-, Font-operations etc.)
 * Comes (alternatively) with a collection of Packages
+
+# Default Packages
+* Panel Items: Clock, Launcher, Menu, Separator, Weather, Window List
+* Services: Noop (Empty)
+* Utilities: About, Logout, Process Viewer, Control Panel
+* Games: Arkanoid, Tick-Tack-Toe
+* Graphics: Image Viewer, Drawing Application
+* Office: PDF Viewer, Textpad
+* Internet: HTML Browser/Viewer
+* Multimedia: Video Player, Music Player
+* Utilities: Terminal Emulator, Clock, File Browser
+* Other: WebWorker and Canvas Mandelbrot test application
 
 # ChangeLog
 
