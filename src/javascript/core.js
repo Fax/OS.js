@@ -2238,7 +2238,7 @@
 
       $("#LoginUsername").val(username);
       $("#LoginPassword").val(password);
-      $("#LoginButton").focus();
+      $("#LoginUsername").focus();
 
       if ( AUTOMATIC_LOGIN ) {
         $("#LoginButton").click();
