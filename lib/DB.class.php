@@ -171,7 +171,7 @@ class DB
    * @param   String    $dsn          DSN Name (Default = none)
    * @return Mixed
    */
-  public final static function Select($table, $what = "*", Array $where, $limit = null, $dsn = null) {
+  public final static function Select($table, $what = "*", Array $where = Array(), $limit = null, $dsn = null) {
     $results = Array();
 
     if ( $inst = self::get($dsn) ) {
@@ -199,7 +199,12 @@ class DB
           $values[$k] = $v;
         }
 
-        $query  = sprintf("SELECT %s FROM `%s` WHERE %s %s;", implode(", ", $query_select), $table, implode(" AND ", $query_where), $query_limit);
+        $wherez = "";
+        if ( $query_where ) {
+          $wherez = "WHERE " . implode(" AND ", $query_where);
+        }
+
+        $query  = sprintf("SELECT %s FROM `%s` %s %s;", implode(", ", $query_select), $table, $wherez, $query_limit);
         if ( $sth = $db->prepare($query) ) {
           if ( $res = $sth->execute($values) ) {
             if ( $sqlr = $sth->fetchAll(PDO::FETCH_ASSOC) ) {
