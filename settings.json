@@ -120,7 +120,26 @@
         "launch":"API::CompabilityDialog",
         "arguments":null,
         "protected":true
+      },
+      {
+        "title":"README",
+        "icon":"mimetypes/empty.png",
+        "launch":"ApplicationTextpad",
+        "arguments":{
+          "path":"\/System\/Docs\/README"
+        },
+        "protected":false
+      },
+      {
+        "title":"AUTHORS",
+        "icon":"mimetypes/empty.png",
+        "launch":"ApplicationTextpad",
+        "arguments":{
+          "path":"\/System\/Docs\/AUTHORS"
+        },
+        "protected":false
       }
+
     ]
   },
   "user.autorun":{
