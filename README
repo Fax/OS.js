@@ -15,6 +15,9 @@ Please note that this site may be down at times. To access this demo you need to
 
 Sources will be released when reaching version `1.0-rc1` (Summer 2012).
 
+Only WebKit and Gecko based browsers are fully supported. Opera works with some minor limitations.
+There is currently no maintainence for Internet Explorer. Mobile Android and iOS is in-progress.
+
 # Features:
 * BSD Licensed
 * Multi-user web-based desktop environment
