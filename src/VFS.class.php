@@ -195,6 +195,12 @@ abstract class VFS
   public static function checkVirtual($path, $method = self::ATTR_READ) {
     $result = true;
 
+    if ( sizeof(explode("/", $path)) == 2 ) {
+      if ( dirname($path) == "/" && ($method = self::ATTR_WRITE) ) {
+        return false;
+      }
+    }
+
     foreach ( self::$VirtualDirs as $k => $v ) {
       if ( startsWith($path, $k) ) {
         $attr = (int)$v['attr'];
@@ -928,7 +934,7 @@ abstract class VFS
         if ( $result = @mkdir($dest["root"]) ) {
           self::_permissions($dest["root"], true);
         }
-        return $result;
+        return $result ? true : false;
       }
     }
 
