@@ -1275,6 +1275,20 @@
           return _Settings.getOptions(k);
         },
 
+        'user_admin' : function(argv, callback) {
+          callback = callback || function() {};
+          argv = argv || {};
+          argv.action = "user";
+
+          DoPost(argv, function(data) {
+            if ( data.success ) {
+              callback(true, data.result);
+            } else {
+              callback(false, data.error);
+            }
+          });
+        },
+
         'package_uninstall' : function(p, callback, reterror) {
           callback = callback || function() {};
 

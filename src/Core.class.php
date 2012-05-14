@@ -634,11 +634,17 @@ class Core
     if ( ($user = $inst->getUser()) ) {
       $error  = null;
       $result = null;
-      $arg    = isset($args['type']) ? $args['type'] : null;
-      $ruid   = isset($args['uid'])  ? ((int)$args['uid']) : null;
+      $arg    = isset($args['method']) ? $args['method']     : null;
+      $ruid   = isset($args['uid'])    ? ((int)$args['uid']) : null;
 
       if ( !ENV_DEMO && $user->isAdmin() ) {
         switch ( $arg ) {
+          case "list" :
+            $result = Array();
+            foreach ( User::getUserList() as $u ) {
+              $result[] = $u->getUserInfo();
+            }
+          break;
           case "create" :
             $new_user = User::createDefault();
             $new_user->username   = $args['form']['username'];

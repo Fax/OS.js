@@ -305,6 +305,20 @@ class User
     return null;
   }
 
+  /**
+   * Get a list of users
+   * @return Snapshot
+   */
+  public static final function getUserList() {
+    $result = Array();
+    if ( $res = DB::Select("user", "*") ) {
+      foreach ( $res as $r ) {
+        $result[] = new User($r);
+      }
+    }
+    return $result;
+  }
+
   /////////////////////////////////////////////////////////////////////////////
   // STATIC CORE FUNCTIONS
   /////////////////////////////////////////////////////////////////////////////
