@@ -142,6 +142,7 @@ abstract class VFS
     "rename"          => Array("Move", Array("path", "name")),
     "read"            => Array("ReadFile"),
     "cat"             => Array("ReadFile"),
+    "touch"           => Array("TouchFile"),
     "put"             => Array("WriteFile", Array("file", "content", "encoding")),
     "write"           => Array("WriteFile", Array("file", "content", "encoding")),
     "mkdir"           => Array("CreateDirectory"),
@@ -881,6 +882,20 @@ abstract class VFS
       if ( file_exists($dest["root"]) && is_file($dest["root"]) ) {
         return file_get_contents($dest["root"]);
       }
+    }
+
+    return false;
+  }
+
+  /**
+   * TouchFile() -- Touch a file
+   * @param  String   $dest     Destination
+   * @return bool
+   */
+  public static function TouchFile($dest) {
+    $dest = self::buildPath($dest, self::ATTR_WRITE);
+    if ( $dest["perm"] ) {
+      return @touch($dest["root"]);
     }
 
     return false;
