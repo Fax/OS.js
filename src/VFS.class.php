@@ -942,7 +942,7 @@ abstract class VFS
    */
   public static function Exists($dest) {
     $dest = self::buildPath($dest);
-    if ( (file_exists($dest["root"]) || is_dir($dest["root"])) ) {
+    if ( (file_exists($dest["root"])) ) {
       return true;
     }
 
