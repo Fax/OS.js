@@ -226,6 +226,14 @@ abstract class CoreSettings
   }
 
   /**
+   * setRegistry() -- Set the default registry
+   * @return void
+   */
+  public static function setRegistry(Array $reg) {
+    self::$_Registry = $reg;
+  }
+
+  /**
    * getPreload() -- Get preload items
    * @return Array
    */
