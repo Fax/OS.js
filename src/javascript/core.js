@@ -64,10 +64,10 @@
   var LOGIN_WAIT             = 1000;                //!< Wait after login
   var SESSION_KEY            = "PHPSESSID";         //!< The Server session cookie-key
   var TIMEOUT_CSS            = (1000 * 10);         //!< CSS loading timeout
-  var DEFAULT_USERNAME       = "";                  //!< Default User Username
-  var DEFAULT_PASSWORD       = "";                  //!< Default User Password
-  var AUTOMATIC_LOGIN        = false;               //!< Wherever to turn on automatic login
-  var SESSION_CONFIRM        = true;                //!< Wherever to turn on confirmation of session collision
+  var DEFAULT_USERNAME       = "anders";                  //!< Default User Username
+  var DEFAULT_PASSWORD       = "abc123";                  //!< Default User Password
+  var AUTOMATIC_LOGIN        = true;               //!< Wherever to turn on automatic login
+  var SESSION_CONFIRM        = false;                //!< Wherever to turn on confirmation of session collision
   var ENV_CACHE              = undefined;           //!< Server-side cache enabled state
   var ENV_PRODUCTION         = undefined;           //!< Server-side production env. state
   var ENV_DEMO               = undefined;           //!< Server-side demo env. state

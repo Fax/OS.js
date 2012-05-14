@@ -1,3 +1,16 @@
+## 0.7.200
+
+* VFS: Bugfixes and Improvments
+* VFS: Fixed MIME problems
+* Core: Moved default registry to 'settings.js'
+* Core: doUserOperation fixes for non-admins
+* Core: Added CoreConfiguration class
+* Core: Added configurable ENABLE_REGISTRATION - enable user reg.
+* DB: Fixed SELECT query bugs
+* core.js: Login now focuses textarea
+* core.js: Bugfix for panelitem restore
+* core.js: Fixed icons in dialog.files.js
+
 ## 0.7.100
 
 * Core: New VFS

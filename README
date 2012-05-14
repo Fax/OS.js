@@ -49,11 +49,14 @@ Sources will be released when reaching version `1.0-rc1` (Summer 2012).
 
 The full list is in the `ChangeLog` file.
 
-## 0.7.100
-* Core: New VFS
-* core.js: Save default applications on change
-* core.js: Used wrong variable in application crash handling
-* core.js: PackMan can now accept 'reterror' for custom error handling
-* Template: New demo notice
-* Template: Loading bar fix
-* Updated documentation
+## 0.7.200
+* VFS: Bugfixes and Improvments
+* VFS: Fixed MIME problems
+* Core: Moved default registry to 'settings.js'
+* Core: doUserOperation fixes for non-admins
+* Core: Added CoreConfiguration class
+* Core: Added configurable ENABLE_REGISTRATION - enable user reg.
+* DB: Fixed SELECT query bugs
+* core.js: Login now focuses textarea
+* core.js: Bugfix for panelitem restore
+* core.js: Fixed icons in dialog.files.js
