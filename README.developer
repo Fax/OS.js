@@ -140,6 +140,5 @@ Directories and Files:
 header.php                Configuration, Bootstrap and main init script
 config.php                YOUR CONFIGURATION (see example)
 config.example.php        Example configuration
-settings.json             Default Settings registry
 
 * = Frontend URI

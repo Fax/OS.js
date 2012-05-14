@@ -56,6 +56,160 @@ abstract class CoreSettings
   );
 
   /**
+   * @var Default Registry
+   */
+  protected static $_Registry = Array(
+    "desktop.panels"=>Array(
+      "items"=>Array(
+        Array(
+          "name"=>"Default",
+          "index"=>0,
+          "items"=>Array(
+            Array(
+              "index"=>0,
+              "name"=>"PanelItemMenu",
+              "opts"=>Array(
+
+              ),
+              "align"=>"left",
+              "position"=>0
+            ),
+            Array(
+              "index"=>1,
+              "name"=>"PanelItemSeparator",
+              "opts"=>Array(
+
+              ),
+              "align"=>"left",
+              "position"=>38
+            ),
+            Array(
+              "index"=>2,
+              "name"=>"PanelItemWindowList",
+              "opts"=>Array(
+
+              ),
+              "align"=>"left",
+              "position"=>48
+            ),
+            Array(
+              "index"=>3,
+              "name"=>"PanelItemClock",
+              "opts"=>Array(
+
+              ),
+              "align"=>"right",
+              "position"=>0
+            ),
+            Array(
+              "index"=>4,
+              "name"=>"PanelItemSeparator",
+              "opts"=>Array(
+
+              ),
+              "align"=>"right",
+              "position"=>115
+            ),
+            Array(
+              "index"=>5,
+              "name"=>"PanelItemDock",
+              "opts"=>Array(
+                Array(
+                  Array(
+                    "title"=>"About",
+                    "icon"=>"actions\/gtk-about.png",
+                    "launch"=>"SystemAbout"
+                  ),
+                  Array(
+                    "title"=>"Control Panel",
+                    "icon"=>"categories\/preferences-system.png",
+                    "launch"=>"SystemControlPanel"
+                  ),
+                  Array(
+                    "title"=>"Save and Quit",
+                    "icon"=>"actions\/gnome-logout.png",
+                    "launch"=>"SystemLogout"
+                  )
+                )
+              ),
+              "align"=>"right",
+              "position"=>120
+            ),
+            Array(
+              "index"=>6,
+              "name"=>"PanelItemSeparator",
+              "opts"=>Array(
+
+              ),
+              "align"=>"right",
+              "position"=>205
+            ),
+            Array(
+              "index"=>7,
+              "name"=>"PanelItemWeather",
+              "opts"=>Array(
+
+              ),
+              "align"=>"right",
+              "position"=>215
+            )
+          ),
+          "position"=>"top",
+          "style"=>Array(
+            "type"=>"default",
+            "background"=>null,
+            "opacity"=>"default"
+          )
+        )
+      )
+    ),
+    "desktop.grid"=>Array(
+      "items"=>Array(
+        Array(
+          "title"=>"Home",
+          "icon"=>"places\/user-home.png",
+          "launch"=>"ApplicationFileManager",
+          "arguments"=>Array(
+            "path"=>"\/User\/Documents"
+          ),
+          "protected"=>true
+        ),
+        Array(
+          "title"=>"Browser Compability",
+          "icon"=>"status\/software-update-urgent.png",
+          "launch"=>"API::CompabilityDialog",
+          "arguments"=>null,
+          "protected"=>true
+        ),
+        Array(
+          "title"=>"README",
+          "icon"=>"mimetypes/empty.png",
+          "launch"=>"ApplicationTextpad",
+          "arguments"=>Array(
+            "path"=>"\/System\/Docs\/README"
+          ),
+          "protected"=>false
+        ),
+        Array(
+          "title"=>"AUTHORS",
+          "icon"=>"mimetypes/empty.png",
+          "launch"=>"ApplicationTextpad",
+          "arguments"=>Array(
+            "path"=>"\/System\/Docs\/AUTHORS"
+          ),
+          "protected"=>false
+        )
+
+      )
+    ),
+    "user.autorun"=>Array(
+      "items"=>Array(
+        "ServiceNoop"
+      )
+    )
+  );
+
+  /**
    * addPreload() -- Add a preload item
    * @return void
    */
@@ -77,6 +231,14 @@ abstract class CoreSettings
    */
   public static function getPreload() {
     return self::$_Preloads;
+  }
+
+  /**
+   * getRegistry() -- Get registry
+   * @return Array
+   */
+  public static function getRegistry() {
+    return self::$_Registry;
   }
 }
 

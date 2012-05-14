@@ -338,7 +338,7 @@ class User
    * @return Array
    */
   public static function getDefaultRegistry($values = false) {
-    $merge = json_decode(file_get_contents(SETTINGS_JSON), true);
+    $merge = CoreSettings::getRegistry();
     $merge["system.locale.location"] = Array(
       "options" => DateTimeZone::listIdentifiers()
     );

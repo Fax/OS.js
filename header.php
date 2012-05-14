@@ -125,7 +125,6 @@ define("URI_VFS_USER_PACKAGES", "/VFS/%d/Packages");
 //
 
 define("SETTINGS_CONFIG",      PATH         . "/config.php");
-define("SETTINGS_JSON",        PATH         . "/settings.json");
 define("MINIMIZE_CACHE",       PATH_BUILD   . "/minimize.cache");
 define("FONT_CACHE",           PATH_BUILD   . "/fontcache.xml");
 define("PACKAGE_BUILD",        PATH_BUILD   . "/packages.xml");
