@@ -100,10 +100,19 @@ if ( $locale = Core::get()->getLocale() ) {
   <link rel="stylesheet" type="text/css" href="/vendor/jquery-ui-theme.css" />
 
   <!-- Vendor libraries -->
-  <script type="text/javascript" src="/vendor/json.js"></script>
-  <script type="text/javascript" src="/vendor/sprintf.js"></script>
-  <script type="text/javascript" src="/vendor/jquery.js"></script>
-  <script type="text/javascript" src="/vendor/jquery-ui.js"></script>
+<?php
+foreach ( CoreSettings::getPreload() as $key => $links ) {
+  if ( $key == "code" ) {
+    foreach ( $links as $code ) {
+      print sprintf("  <script type=\"text/javascript\">\n%s\n  </script>\n", $code);
+    }
+  } else {
+    foreach ( $links as $l ) {
+      print sprintf("  <script type=\"text/javascript\" src=\"/%s/%s\"></script>\n", $key, $l);
+    }
+  }
+}
+?>
 
   <!-- OS.js libraries -->
   <script type="text/javascript" src="/VFS/resource/utils.js"></script>
@@ -169,7 +178,9 @@ if ( $locale = Core::get()->getLocale() ) {
       </div>
       <div class="Row">
         <div id="LoginButtonContainer">
+          <?php if ( ENABLE_REGISTRATION ) { ?>
           <button id="CreateLoginButton">Create User</button>
+          <? } ?>
           <button id="LoginButton">Login</button>
         </div>
       </div>

@@ -35,40 +35,55 @@
 
 abstract class CoreObject {}
 
-class ExceptionVFS
-  extends Exception
+/**
+ * CoreSettings -- Core Settings
+ * @class
+ */
+abstract class CoreSettings
 {
-  const DOES_NOT_EXIST    = 1;
-  const ALREADY_EXISTS    = 2;
-  const PERMISSION_DENIED = 3;
-  const GENERIC           = 254;
+  /**
+   * @var Preload items
+   */
+  protected static $_Preloads = Array(
+    "vendor" => Array(
+      "json.js",
+      "sprintf.js",
+      "jquery.js",
+      "jquery-ui.js"
+    ),
+    "code" => Array(
+    )
+  );
 
-  public function __construct($type, Array $args = Array()) {
-    $message = _("Unknown VFS Error occured");
-
-    switch ( $type ) {
-      case self::DOES_NOT_EXIST :
-        $message = vsprintf(_("The file '%s' does not exist!"), $args);
-      break;
-      case self::ALREADY_EXISTS :
-        $message = vsprintf(_("The file '%s' already exists!"), $args);
-      break;
-      case self::PERMISSION_DENIED :
-        $message = vsprintf(_("You do not have permission to '%s'!"), $args);
-      break;
-      case self::GENERIC :
-        $tmp = reset($args);
-        if ( $tmp && is_array($tmp) ) {
-          $args = Array(isset($tmp['file']) ? $tmp['file'] : (isset($tmp['path']) ? $tmp['path'] : current($tmp)));
+  /**
+   * addPreload() -- Add a preload item
+   * @return void
+   */
+  public static function addPreload($key, $value, $content = null) {
+    if ( isset(self::$_Preloads[$key]) ) {
+      if ( $content !== null ) {
+        self::$_Preloads[$key][] = $content;
+      } else {
+        if ( !in_array($value, self::$_Preloads[$key]) ) {
+          self::$_Preloads[$key][] = $value;
         }
-        $message = vsprintf(_("Failed to handle '%s'. Make sure you have permissions in this directory!"), $args);
-      break;
+      }
     }
+  }
 
-    parent::__construct($message);
+  /**
+   * getPreload() -- Get preload items
+   * @return Array
+   */
+  public static function getPreload() {
+    return self::$_Preloads;
   }
 }
 
+/**
+ * ExceptionPackage -- Package Exception
+ * @class
+ */
 class ExceptionPackage
   extends Exception
 {

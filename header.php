@@ -134,6 +134,17 @@ define("MIME_MAGIC",           PATH_VENDOR  . "/mime.mgc");
 define("VFS_TEMPLATE",         PATH_VFS     . "/0");
 
 ///////////////////////////////////////////////////////////////////////////////
+// DEPENDENCIES
+///////////////////////////////////////////////////////////////////////////////
+
+require "lib/Misc.php";
+require "lib/Functions.php";
+require "lib/JSON.class.php";
+require "lib/Logger.class.php";
+require "lib/DB.class.php";
+require "lib/Browser.class.php";
+
+///////////////////////////////////////////////////////////////////////////////
 // CONFIGURATION - LOCAL DEFINITIONS
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -149,6 +160,8 @@ if ( !defined("DEFAULT_LANGUAGE") )
   define("DEFAULT_LANGUAGE",    "en_US");
 if ( !defined("GETTEXT_DOMAIN") )
   define("GETTEXT_DOMAIN",      "messages");
+if ( !defined("ENABLE_REGISTRATION") )
+  define("ENABLE_REGISTRATION", true);
 
 if ( !defined("BIN_YUI") )
   define("BIN_YUI",             sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_BIN, PATH_VENDOR));
@@ -158,17 +171,6 @@ if ( ENV_PRODUCTION || ENV_DEMO ) {
   error_reporting(-1);
   ini_set("display_errors", "off");
 }
-
-///////////////////////////////////////////////////////////////////////////////
-// DEPENDENCIES
-///////////////////////////////////////////////////////////////////////////////
-
-require "lib/Misc.php";
-require "lib/Functions.php";
-require "lib/JSON.class.php";
-require "lib/Logger.class.php";
-require "lib/DB.class.php";
-require "lib/Browser.class.php";
 
 ///////////////////////////////////////////////////////////////////////////////
 // MAIN
