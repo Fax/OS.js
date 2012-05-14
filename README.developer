@@ -134,6 +134,7 @@ Directories and Files:
   SettingsManager.class.php User Settings Handling Class
   User.class.php            User Main Handling Class
   VFS.class.php             Virtual File System Main Class
+  Misc.php                  Misc functions and classes
 /vendor/                  Vendor Libraries
 /VFS/                     Virtual File System for Users
   /0/                       VFS User template

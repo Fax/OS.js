@@ -136,12 +136,12 @@ define("VFS_TEMPLATE",         PATH_VFS     . "/0");
 // DEPENDENCIES
 ///////////////////////////////////////////////////////////////////////////////
 
-require "lib/Misc.php";
 require "lib/Functions.php";
 require "lib/JSON.class.php";
 require "lib/Logger.class.php";
 require "lib/DB.class.php";
 require "lib/Browser.class.php";
+require "src/Misc.php";
 
 ///////////////////////////////////////////////////////////////////////////////
 // CONFIGURATION - LOCAL DEFINITIONS

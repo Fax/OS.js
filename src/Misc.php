@@ -33,6 +33,10 @@
  * @created 2012-04-30
  */
 
+/**
+ * CoreObject -- Namespace
+ * @class
+ */
 abstract class CoreObject {}
 
 /**
@@ -40,6 +44,7 @@ abstract class CoreObject {}
  * @class
  */
 abstract class CoreSettings
+  extends CoreObject
 {
   /**
    * @var Preload items
