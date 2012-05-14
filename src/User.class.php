@@ -324,6 +324,7 @@ class User
    * @return Array
    */
   public static function getDefaultRegistry($values = false) {
+    /*
     $merge = Array();
 
     // Panel(s)
@@ -448,7 +449,9 @@ class User
         "ServiceNoop"
       )
     );
+     */
 
+    $merge = json_decode(file_get_contents(SETTINGS_JSON), true);
     $settings = SettingsManager::getSettings($merge);
     if ( $values ) {
       $values = Array();

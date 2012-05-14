@@ -124,6 +124,8 @@ define("URI_VFS_USER_PACKAGES", "/VFS/%d/Packages");
 // Misc. files
 //
 
+define("SETTINGS_CONFIG",      PATH         . "/config.php");
+define("SETTINGS_JSON",        PATH         . "/settings.json");
 define("MINIMIZE_CACHE",       PATH_BUILD   . "/minimize.cache");
 define("FONT_CACHE",           PATH_BUILD   . "/fontcache.xml");
 define("PACKAGE_BUILD",        PATH_BUILD   . "/packages.xml");
@@ -135,7 +137,7 @@ define("VFS_TEMPLATE",         PATH_VFS     . "/0");
 // CONFIGURATION - LOCAL DEFINITIONS
 ///////////////////////////////////////////////////////////////////////////////
 
-require "config.php";
+require SETTINGS_CONFIG;
 
 if ( !defined("ENV_PRODUCTION") )
   define("ENV_PRODUCTION",      false);
