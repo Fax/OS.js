@@ -122,8 +122,11 @@ Directories and Files:
     /xx_XX/
       /LC_MESSAGES/
         messages.po
+  /templates/               Frontend/Script misc templates
+    ...
   /packages/                Frontend packages (Applications etc)
   Application.class.php     Package > Application Class
+    ...
   BackgroundService.cl...   Package > Background Service Class
   Core.class.php            Core, Main Class
   Package.class.php         Package Main Class

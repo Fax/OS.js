@@ -94,43 +94,9 @@ $opts     = Array(
 // TEMPLATES
 ///////////////////////////////////////////////////////////////////////////////
 
-$template_application = <<<EOXML
-<?xml version="1.0" encoding="UTF-8"?>
-<package type="Application" name="%name%" schema="%schema%" category="%category%">
-  <property name="enabled">true</property>
-  <property name="title">%title%</property>
-  <property name="icon">%icon%</property>
-  <property name="system">false</property>
-
-  <resource>main.css</resource>
-  <resource>main.js</resource>
-</package>
-EOXML;
-
-$template_panelitem = <<<EOXML
-<?xml version="1.0" encoding="UTF-8"?>
-<package type="PanelItem" name="Clock">
-  <property name="enabled">true</property>
-  <property name="title">%title%</property>
-  <property name="description">%description%</property>
-  <property name="icon">%icon%</property>
-
-  <resource>main.css</resource>
-  <resource>main.js</resource>
-</panelitem>
-EOXML;
-
-$template_service = <<<EOXML
-<?xml version="1.0" encoding="UTF-8"?>
-<package type="Service" name="%name%">
-  <property name="enabled">true</property>
-  <property name="title">%title%</property>
-  <property name="description">%description%</property>
-  <property name="icon">%icon%</property>
-
-  <resource>main.js</resource>
-</package>
-EOXML;
+$template_application = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "package.application.xml"));
+$template_panelitem   = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "package.panelitem.xml"));
+$template_service     = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "package.service.xml"));
 
 ///////////////////////////////////////////////////////////////////////////////
 // MAIN

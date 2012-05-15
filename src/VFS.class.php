@@ -193,6 +193,13 @@ abstract class VFS
   // HELPERS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Check the VFS for permission
+   * @param  String     $path         The relative path
+   * @param  int        $method       Requested Attribute
+   * @see    VFS::buildPath()
+   * @return bool
+   */
   public static function checkVirtual($path, $method = self::ATTR_READ) {
     $result = true;
 
@@ -226,6 +233,12 @@ abstract class VFS
     return $result;
   }
 
+  /**
+   * Build a absolute path and check permissions in VFS
+   * @param  String     $path         The relative path
+   * @param  int        $method       Requested Attribute
+   * @return Array
+   */
   public static function buildPath($path, $method = self::ATTR_READ) {
     $blacklist = array("?", "[", "]", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
     $path      = preg_replace("/\/$/", "", str_replace($blacklist, "", $path));

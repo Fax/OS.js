@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package type="PanelItem" name="Clock">
+  <property name="enabled">true</property>
+  <property name="title">%title%</property>
+  <property name="description">%description%</property>
+  <property name="icon">%icon%</property>
+
+  <resource>main.css</resource>
+  <resource>main.js</resource>
+</panelitem>

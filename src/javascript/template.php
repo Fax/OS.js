@@ -157,116 +157,19 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
   <!-- Loaded content will appear here -->
 </div>
 
-<!-- Loading / Login -->
-<div id="Loading">
-  <div id="LoadingLogin">
-    <div id="LoginDemoNotice" style="display:<?php print ENV_DEMO ? "block" : "none"; ?>">
-        <p>
-          <b>NOTE:</b> This is a demonstration version. Not all features are available.
-          If any errors occur, please clear the browser cache and try again before reporting any bugs.
-          You can also try to create a new user.
-        </p>
-    </div>
-    <form method="post" action="javascript:void(0);" id="LoginForm">
-      <div class="Row">
-        <label for="LoginUsername">Username</label>
-        <input type="text" id="LoginUsername" value="" name="username" placeholder="Username" />
-      </div>
-      <div class="Row">
-        <label for="LoginPassword">Password</label>
-        <input type="password" id="LoginPassword" value="" name="password" placeholder="Password" />
-      </div>
-      <div class="Row">
-        <div id="LoginButtonContainer">
-          <?php if ( ENABLE_REGISTRATION ) { ?>
-          <button id="CreateLoginButton">Create User</button>
-          <? } ?>
-          <button id="LoginButton">Login</button>
-        </div>
-      </div>
-    </form>
-  </div>
-  <div id="LoadingVersion"><?php print PROJECT_VERSION; ?></div>
-  <div id="LoadingBarContainer">
-    <div id="LoadingBar"></div>
-  </div>
-</div>
-
 <!-- Templates -->
 
-<div id="Window" style="display:none">
-  <div class="Window">
-    <div class="WindowTop">
-      <div class="WindowTopInner">
-        <img alt="" src="/img/icons/16x16/emblems/emblem-unreadable.png" />
-        <span></span>
-      </div>
-      <div class="WindowTopControllers">
-        <div class="WindowTopController">
-          <div class="ActionMinimize">&nbsp;</div>
-        </div>
-        <div class="WindowTopController">
-          <div class="ActionMaximize">&nbsp;</div>
-        </div>
-        <div class="WindowTopController">
-          <div class="ActionClose">&nbsp;</div>
-        </div>
-      </div>
-    </div>
-    <div class="WindowContent">
-      <div class="WindowContentInner">
-      </div>
-    </div>
-  </div>
-</div>
+<?php require PATH_TEMPLATES . "/Login.php"; ?>
 
-<div id="Dialog" style="display:none">
-  <div class="Window Dialog">
-    <div class="WindowTop">
-      <div class="WindowTopInner">
-        <img alt="" src="/img/blank.gif" />
-        <span></span>
-      </div>
-      <div class="WindowTopControllers">
-        <div class="WindowTopController ActionClose">
-          <span>x</span>
-        </div>
-      </div>
-    </div>
-    <div class="WindowContent">
-      <div class="WindowContentInner">
-        <div class="DialogContent">
-          This is a dialog!
-        </div>
-        <div class="DialogButtons">
-          <button class="Choose" style="display:none;">Choose</button>
-          <button class="Ok" style="display:none;">Ok</button>
-          <button class="Close">Close</button>
-          <button class="Cancel" style="display:none;">Cancel</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+<?php require PATH_TEMPLATES . "/Window.php"; ?>
+
+<?php require PATH_TEMPLATES . "/Dialog.php"; ?>
 
 <!-- Version Stamp -->
 <div id="Version">
   OS.js <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)<br />
   &copy; <?php print htmlspecialchars(PROJECT_COPYRIGHT); ?>
 </div>
-
-<!-- Google -->
-
-<!--
-<g:plusone size="small" annotation="inline"></g:plusone>
-<script type="text/javascript">
-  (function() {
-    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-    po.src = 'https://apis.google.com/js/plusone.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-  })();
-</script>
--->
 
 </body>
 </html>

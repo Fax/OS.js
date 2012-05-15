@@ -88,6 +88,7 @@ define("PATH_LOCALE",          PATH . "/src/locale");
 define("PATH_LOG",             PATH . "/logs");
 define("PATH_LOG_FILE",        PATH . "/logs/messages");
 define("PATH_PACKAGES",        PATH . "/src/packages");
+define("PATH_TEMPLATES",       PATH . "/src/templates");
 define("PATH_JSBASE",          PATH . "/src/javascript");
 define("PATH_JSLOCALE",        PATH . "/src/javascript/locale");
 define("PATH_MEDIA",           PATH . "/public_html/media");

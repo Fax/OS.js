@@ -133,6 +133,7 @@
   var _SessionValid    = true;                            //!< Session is valid
   var _HasCrashed      = false;                           //!< If system has crashed
   var _IsFullscreen    = false;                           //!< If we are in fullscreen mode
+  var _OnLine          = true;                            //!< If we are on-line
 
   /**
    * Language
@@ -161,13 +162,22 @@
     callback        = callback        || function() {};
     callback_error  = callback_error  || function() {};
 
-    // TODO
-    if ( !_SessionValid ) {
-      _HasCrashed = true;
+    if ( !_OnLine ) {
+      callback({
+        error     : "Cannot perform this operation when off-line!", // FIXME: Locale ?
+        success   : false,
+        result    : false
+      });
+      return;
     }
 
     // TODO
-    if ( _HasCrashed ) {
+    if ( _HasCrashed || !_SessionValid ) {
+      callback({
+        error     : "Session error. Cannot perform this operation!", // FIXME: Locale ?
+        success   : false,
+        result    : false
+      });
       return;
     }
 
@@ -1938,7 +1948,6 @@
    */
   var Core = Process.extend({
 
-    online  : false,        //!< We are online, are we ?
     running : false,        //!< If core is running
     olint   : null,         //!< On-line checker interval
     cuint   : null,         //!< Cache update interval
@@ -1951,7 +1960,6 @@
     init : function() {
       var self = this;
 
-      this.online  = false;
       this.running = false;
 
       this._super("(Core)", "status/computer-fail.png", true);
@@ -2379,8 +2387,6 @@
         alert("A network error occured while initializing OS.js: " + thrownError);
         throw("Initialization error: " + thrownError);
       });
-
-      this.online = true;
     },
 
     /**
@@ -2565,20 +2571,20 @@
      */
     global_offline : function(ev, state) {
       if ( !state ) { // Offline
-        if ( this.online ) {
-          this.online = false;
+        if ( _OnLine ) {
+          _OnLine = false;
 
           API.system.notification("Warning", OSjs.Labels.WentOffline); // FIXME: Language title
 
-          console.log("Core::global_offline()", this.online);
+          console.log("Core::global_offline()", _OnLine);
         }
       } else { // Online
-        if ( !this.online ) {
-          this.online = true;
+        if ( !_OnLine ) {
+          _OnLine = true;
 
           API.system.notification("Information", OSjs.Labels.WentOnline); // FIXME: Language title
 
-          console.log("Core::global_offline()", this.online);
+          console.log("Core::global_offline()", _OnLine);
         }
       }
     },
