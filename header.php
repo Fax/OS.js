@@ -163,6 +163,8 @@ if ( !defined("GETTEXT_DOMAIN") )
   define("GETTEXT_DOMAIN",      "messages");
 if ( !defined("ENABLE_REGISTRATION") )
   define("ENABLE_REGISTRATION", true);
+if ( !defined("ENABLE_CACHE") )
+  define("ENABLE_CACHE",        ENV_PRODUCTION);
 
 if ( !defined("AUTOLOGIN_ENABLE") )
   define("AUTOLOGIN_ENABLE",    false);
@@ -172,6 +174,54 @@ if ( !defined("AUTOLOGIN_PASSWORD") )
   define("AUTOLOGIN_PASSWORD",  "");
 if ( !defined("AUTOLOGIN_CONFIRMATION") )
   define("AUTOLOGIN_CONFIRMATION", true);
+
+if ( !defined("VFS_SET_PERM") )
+  define("VFS_SET_PERM",        false);
+if ( !defined("VFS_USER") )
+  define("VFS_USER",            "www-data");
+if ( !defined("VFS_GROUP") )
+  define("VFS_GROUP",           "www-data");
+if ( !defined("VFS_FPERM") )
+  define("VFS_FPERM",           "0555");
+if ( !defined("VFS_DPERM") )
+  define("VFS_DPERM",           "0555");
+if ( !defined("VFS_UMASK") )
+  define("VFS_UMASK",           "");
+
+//
+// Server
+//
+
+if ( !defined("SERVER_HOST") )
+  define("SERVER_HOST",         "0.0.0.0");
+if ( !defined("SERVER_PORT") )
+  define("SERVER_PORT",         8888);
+if ( !defined("SERVER_BACKLOG") )
+  define("SERVER_BACKLOG",      20);
+if ( !defined("SERVER_NONBLOCK") )
+  define("SERVER_NONBLOCK",     false); // TODO
+
+//
+// Database
+//
+
+if ( !defined("DATABASE_HOST") )
+  define("DATABASE_HOST",       "localhost");
+if ( !defined("DATABASE_DSN") )
+  define("DATABASE_DSN",        "mysql:dbname=osjs;host=localhost");
+if ( !defined("DATABASE_USER") )
+  define("DATABASE_USER",       "osjs");
+if ( !defined("DATABASE_PASS") )
+  define("DATABASE_PASS",       "IeDici7AhghaeG4athobas");
+
+//
+// External Services
+//
+
+if ( !defined("GA_ENABLE") )
+  define("GA_ENABLE",         ENV_PRODUCTION);    // Google Analytics enable
+if ( !defined("GA_ACCOUNT_ID") )
+  define("GA_ACCOUNT_ID",     "UA-26635797-1");   // Google Analytics account id
 
 if ( !defined("BIN_YUI") )
   define("BIN_YUI",             sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_BIN, PATH_VENDOR));
