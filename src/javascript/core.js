@@ -1035,7 +1035,7 @@
         var launch_application = false;
         if ( !app_name.match(/^API\:\:/) ) {
           // If application is orphan, do not launch
-          var wins = _WM.stack;
+          var wins = _WM ? _WM.stack : [];
           for ( var i = 0; i < wins.length; i++ ) {
             if ( wins[i].app && wins[i].app._name == app_name ) {
               if ( wins[i]._is_orphan ) {
@@ -4415,11 +4415,14 @@
      * @return  void
      */
     addWindow : function(win) {
-      var w = _WM.addWindow(win);
-      if ( w ) {
-        this._addWindow(win);
+      if ( _WM ) {
+        var w = _WM.addWindow(win);
+        if ( w ) {
+          this._addWindow(win);
+        }
+        return w ? w : false;
       }
-      return w ? w : false;
+      return false;
     },
 
     /**
@@ -5609,7 +5612,8 @@
       pfd._gravity = "center";
       pfd.icon = "categories/applications-utilities.png";
 
-      _WM.addWindow(pfd);
+      if ( _WM )
+        _WM.addWindow(pfd);
     },
 
     /**
@@ -6230,7 +6234,8 @@
         pitem._gravity = "center";
         pitem.icon = "categories/applications-utilities.png";
 
-        _WM.addWindow(pitem);
+        if ( _WM )
+          _WM.addWindow(pitem);
       };
 
       if ( this.pos == "bottom" ) {
@@ -6805,7 +6810,7 @@
       callback = callback || function() {};
       callback_ok = callback_ok || function() {};
 
-      if ( this._configurable ) {
+      if ( (this._configurable) && _WM ) {
         _WM.addWindow(new OSjs.Dialogs.PanelItemOperationDialog(OperationDialog, API, [this, function(diag) {
           callback(diag);
 
@@ -7245,7 +7250,8 @@
         }
 
         // Insert into DOM
-        _WM.insertWindow(el);
+        if ( _WM )
+          _WM.insertWindow(el);
 
         //
         // Apply sizes, dimensions etc.
@@ -7257,9 +7263,11 @@
           this._left = (($(document).width() / 2) - ($(el).width() / 2));
         } else {
           // Find free space for new windows
-          var _ws = _WM.getWindowSpace();
-          this._top = _ws.y;
-          this._left = _ws.x;
+          if ( _WM ) {
+            var _ws = _WM.getWindowSpace();
+            this._top = _ws.y;
+            this._left = _ws.x;
+          }
         }
 
         // Check if window has any saved attributes for override (session restore etc)
@@ -7507,7 +7515,9 @@
      */
     show : function() {
       if ( !this._showing ) {
-        _WM.addWindow(this);
+        if ( _WM ) {
+          _WM.addWindow(this);
+        }
 
         this._showing = true;
       }
@@ -7520,7 +7530,9 @@
      */
     close : function() {
       if ( this._showing ) {
-        _WM.removeWindow(this, true);
+        if ( _WM ) {
+          _WM.removeWindow(this, true);
+        }
 
         this._showing = false;
       }
@@ -7532,7 +7544,8 @@
      * @return void
      */
     focus : function() {
-      _WM.focusWindow(this);
+      if ( _WM )
+        _WM.focusWindow(this);
     },
 
     /**
@@ -7541,7 +7554,8 @@
      * @return void
      */
     blur : function() {
-      _WM.blurWindow(this);
+      if ( _WM )
+        _WM.blurWindow(this);
     },
 
     /**
@@ -7553,7 +7567,9 @@
       if ( t != this._title ) {
         this._title = t;
         this.$element.find(".WindowTopInner span").html(this._title);
-        _WM.updateWindow(this);
+
+        if ( _WM )
+          _WM.updateWindow(this);
       }
     },
 
@@ -7677,19 +7693,22 @@
         var self = this;
         if ( this._is_minimized ) {
           this.$element.animate({opacity: 'show', height: 'show'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
-            _WM.restoreWindow(self);
+            if ( _WM )
+              _WM.restoreWindow(self);
           }});
 
           this._is_minimized = false;
         } else {
           this.$element.animate({opacity: 'hide', height: 'hide'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
-            _WM.minimizeWindow(self);
+            if ( _WM )
+              _WM.minimizeWindow(self);
           }});
 
           this._is_minimized = true;
 
           if ( this._current ) {
-            _WM.blurWindow(self);
+            if ( _WM )
+              _WM.blurWindow(self);
           }
         }
 
@@ -7737,11 +7756,13 @@
             'height' : this.$element.height()
           };
 
-          var free      = _WM.getWindowSpace();
-          this._left    = free.x;
-          this._top     = free.y;
-          this._width   = free.w;
-          this._height  = free.h;
+          if ( _WM ) {
+            var free      = _WM.getWindowSpace();
+            this._left    = free.x;
+            this._top     = free.y;
+            this._width   = free.w;
+            this._height  = free.h;
+          }
 
           this.$element.css({
             'top'    : (this._top) + 'px',
@@ -7752,7 +7773,8 @@
           }, {'duration' : ANIMATION_SPEED, 'complete' : function() {
             self._call("resize");
           }}, function() {
-            _WM.maximizeWindow(self);
+            if ( _WM )
+              _WM.maximizeWindow(self);
           });
 
           this.$element.find(".ActionMaximize").parent().addClass("Active");
