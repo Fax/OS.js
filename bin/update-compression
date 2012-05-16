@@ -37,6 +37,38 @@
 define("NODB", true);
 require "header.php";
 
+$verbose = false;
+$force   = false;
+
+$cmd_short = "vfh";
+$cmd_long = Array("verbose", "force", "help");
+if ( $options = getopt($cmd_short, $cmd_long) ) {
+  foreach ( $options as $k => $v ) {
+    switch ( $k ) {
+      case "v" :
+      case "verbose" :
+        $verbose = true;
+      break;
+      case "f" :
+      case "force" :
+        $force = true;
+      break;
+      case "h" :
+      case "help" :
+        print <<<EOTXT
+Usage - Additional parameters:
+-f  --force     Force Update
+-v  --verbose   Verbose output (show validation)
+-h  --help      Help
+
+
+EOTXT;
+        exit;
+      break;
+    }
+  }
+}
+
 $size_before      = 0;
 $size_after       = 0;
 $size_result      = 0;
@@ -66,9 +98,23 @@ if ( $resources = ResourceManager::getAllResources() ) {
       $timestamps[$res] = $fp;
 
       // Minimize if file changed
-      if ( $changed ) {
+      if ( $changed || $force ) {
+        $v = "";
+        if ( $verbose ) {
+          if ( preg_match("/\.js$/", $name) ) {
+            $v = "(" . trim((@exec(sprintf("jsl %s", escapeshellcmd($res))))) . ")";
+            if ( !$v ) {
+              $v = "(jslint error)";
+            }
+          }
+        }
+
         if ( $r = ResourceManager::MinimizeFile(dirname($res), basename($res)) ) {
-          print sprintf("  MINIMIZED: %s\n", $name);
+          if ( $force ) {
+            print sprintf("  FORCED:    %s %s\n", $name, $v);
+          } else {
+            print sprintf("  MINIMIZED: %s %s\n", $name, $v);
+          }
           $size_before += $r['before'];
           $size_after  += $r['after'];
 
