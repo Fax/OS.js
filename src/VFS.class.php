@@ -1036,17 +1036,17 @@ abstract class VFS
    * @return Mixed
    */
   public static function ReadPDF($argv) {
-    $tmp  = explode(":", $argv);
+    $tmp  = explode(":", $argv, 2);
     $pdf  = $tmp[0];
     $page = isset($tmp[1]) ? $tmp[1] : -1;
     $dest = self::buildPath($pdf);
 
     if ( file_exists($dest["root"]) ) {
-      require PATH_LIB . "/PDF.class.php";
+      require_once PATH_LIB . "/PDF.class.php";
       if ( $ret = PDF::PDFtoSVG($dest["root"], $page) ) {
         return Array(
-          "info" => PDF::PDFInfo($dest["root"]),
-          "document" => $ret
+          "info"      => PDF::PDFInfo($dest["root"]),
+          "document"  => $ret
         );
       }
     }
@@ -1056,11 +1056,11 @@ abstract class VFS
 
   /**
    * Upload() -- Upload a file
-   * @param  String   $src    File Source
+   * @param  Array    $src    File Source (<file /> input or similar)
    * @param  String   $dest   Destination
    * @return bool
    */
-  public static function Upload($src, $dest) {
+  public static function Upload(Array $src, $dest) {
     $dest  = self::buildPath($dest, self::ATTR_WRITE);
     $ndest = self::buildPath(sprintf("%s/%s", $dest["path"], $src["name"]), self::ATTR_WRITE);
     if ( $ndest["perm"] && $dest["perm"] ) {
