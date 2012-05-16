@@ -5064,7 +5064,9 @@
       // Remove panel
       if ( this.panels ) {
         for ( var i = 0; i < this.panels.length; i++ ) {
-          this.panels[i].destroy();
+          if ( this.panels[i] instanceof Panel ) {
+            this.panels[i].destroy();
+          }
           this.panels[i] = null;
         }
       }
@@ -5380,9 +5382,11 @@
      */
     defaultHandler : function(ev, eargs) {
       var redrawPanels = function(panels, e, ee) {
-        if ( panels.length ) {
+        if ( panels && panels.length ) {
           for ( var i = 0; i < panels.length; i++ ) {
-            panels[i].redraw(e, ee);
+            if ( panels[i] instanceof Panel ) {
+              panels[i].redraw(e, ee);
+            }
           }
           return true;
         }
