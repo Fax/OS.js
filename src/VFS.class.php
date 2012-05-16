@@ -164,7 +164,7 @@ abstract class VFS
    * @var Default Ignore files
    */
   protected static $_ignores = Array(
-    ".", "..", ".gitignore", ".git", ".cvs"
+    ".gitignore", ".git", ".cvs"
   );
 
   /////////////////////////////////////////////////////////////////////////////
@@ -626,6 +626,11 @@ abstract class VFS
       $items = Array("dir" => Array(), "file" => Array());
       while (false !== ($file = readdir($handle))) {
         if ( in_array($file, $ignores) ) {
+          continue;
+        }
+
+        // Remove relatives
+        if ( $path == "/" && in_array($file, Array("..")) ) {
           continue;
         }
 
