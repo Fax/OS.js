@@ -52,14 +52,16 @@ There is currently no maintainence for Internet Explorer. Mobile Android and iOS
 
 The full list is in the `ChangeLog` file.
 
-## 0.7.200
-* VFS: Bugfixes and Improvments
-* VFS: Fixed MIME problems
-* Core: Moved default registry to 'settings.js'
-* Core: doUserOperation fixes for non-admins
-* Core: Added CoreConfiguration class
-* Core: Added configurable ENABLE_REGISTRATION - enable user reg.
-* DB: Fixed SELECT query bugs
-* core.js: Login now focuses textarea
-* core.js: Bugfix for panelitem restore
-* core.js: Fixed icons in dialog.files.js
+## 0.7.250
+* Core: Added 'API' class, moved methods from Core
+* Core: Added 'CoreSettings' class
+* Core: Removed 'settings.json', moved to CoreSettings
+* Core: Moved 'lib/Misc.php' to 'src/Misc.php'
+* Core: Automatic login via 'config.php'
+* Core: API: VFS: extract_archive
+* Core: PackageManager now sorts packages by name
+* core.js: Added forced removal of 'user.installed.packages'
+* bin/fix-permissions bugfix
+* bin/update-compression now accepts arguments --verbose, --force and --help
+* All templates now in 'src/templates' removed from individual files
+* Updated documentation

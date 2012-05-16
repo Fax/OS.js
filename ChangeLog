@@ -1,3 +1,18 @@
+## 0.7.250
+
+* Core: Added 'API' class, moved methods from Core
+* Core: Added 'CoreSettings' class
+* Core: Removed 'settings.json', moved to CoreSettings
+* Core: Moved 'lib/Misc.php' to 'src/Misc.php'
+* Core: Automatic login via 'config.php'
+* Core: API: VFS: extract_archive
+* Core: PackageManager now sorts packages by name
+* core.js: Added forced removal of 'user.installed.packages'
+* bin/fix-permissions bugfix
+* bin/update-compression now accepts arguments --verbose, --force and --help
+* All templates now in 'src/templates' removed from individual files
+* Updated documentation
+
 ## 0.7.200
 
 * VFS: Bugfixes and Improvments
