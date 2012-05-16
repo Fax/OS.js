@@ -1,3 +1,5 @@
+Full developer documentation is in the OS.js wiki
+
 General:
 -------------------------------------------------------------------------------
 This project was developed using Vim with formatting:
@@ -43,16 +45,6 @@ Packages - Notes:
 WebSocket - TCP/IP Tunnel:
 -------------------------------------------------------------------------------
 Start the server with 'php bin/socket-server'
-
-VFS - Troubleshooting:
--------------------------------------------------------------------------------
-- Uploading does not work.
-  First test fixing permissions with './bin/fix-permissions live'.
-
-  Make sure the 'VFS' folder and 'public_html/media' folder has Apache
-  uid and gid set with read and write permissions.
-
-  For security remove the write permissions to 'public_html/media/System'.
 
 Locales - Notes:
 -------------------------------------------------------------------------------
