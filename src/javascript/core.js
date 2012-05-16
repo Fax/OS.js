@@ -3190,6 +3190,7 @@
       localStorage.removeItem("system.installed.panelitem");
       localStorage.removeItem("system.installed.packages");
       localStorage.removeItem("user.installed.applications");
+      localStorage.removeItem("user.installed.packages");
       localStorage.removeItem("desktop.panel.items");
       localStorage.removeItem("desktop.panel.position");
       localStorage.removeItem("applications");
@@ -3716,7 +3717,6 @@
 
     /**
      * PackageManager::getUserPackages() -- Get user packages
-     * Uses the settings registry to check for states and user installed packages
      * @param  bool   icons       Enumerate Icons
      * @param  bool   apps        Enumerate Application items
      * @param  bool   pitems      Enumerate PanelItem items
