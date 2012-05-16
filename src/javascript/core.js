@@ -884,6 +884,13 @@
         return GetIcon(name, size, pkg);
       },
 
+      'getWindowSpace' : function() {
+        if ( _WM ) {
+          return _WM.getWindowSpace();
+        }
+        return false;
+      },
+
       'windows' : {
         'tile' : function() {
           if ( !_WM ) {

@@ -157,7 +157,7 @@ abstract class VFS
     "copy"            => Array("Copy", Array("source", "destination")),
     "upload"          => Array("Upload", Array("file", "path")),
     "ls_archive"      => Array("ListArchive"),
-    "extract_archive" => Array("ExtractArchive")
+    "extract_archive" => Array("ExtractArchive", Array("archive", "destination"))
   );
 
   /**
