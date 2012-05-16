@@ -129,7 +129,7 @@ class Session
    * @return void
    */
   public static final function initSession() {
-    session_start();
+    @session_start();
   }
 
   /**
