@@ -40,6 +40,7 @@ ini_set("session.upload_progress.enabled",  true);
 ini_set("post_max_size",                    "256M");
 ini_set("upload_max_filesize",              "256M");
 ini_set("expose_php",                       "off");
+//ini_set("session.gc_probability",           0);
 //ini_set("session.upload-progress.name",     "OSjs");
 
 ///////////////////////////////////////////////////////////////////////////////
