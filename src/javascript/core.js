@@ -53,7 +53,6 @@
    */
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
-  var TOOLTIP_TIMEOUT        = 300;                 //!< Tooltip timeout in ms
   var NOTIFICATION_TIMEOUT   = 5000;                //!< Desktop notification timeout
   var MAX_PROCESSES          = 50;                  //!< Max processes running (except core procs)
   var WARN_STORAGE_SIZE      = (1024 * 4) * 1000;   //!< Warning localStorage size
@@ -118,7 +117,6 @@
   var _Desktop         = null;                            //!< Desktop instance [not required]
   var _Window          = null;                            //!< Current Window instance [dynamic]
   var _PackMan         = null;                            //!< Current PackageManager instance [dynamic]
-  var _Tooltip         = null;                            //!< Current Tooltip instance [dynamic]
   var _Menu            = null;
   var _Processes       = [];                              //!< Process instance list
   var _TopIndex        = (ZINDEX_WINDOW + 1);             //!< OnTop z-index
@@ -2016,12 +2014,6 @@
         }
       }
 
-      console.group("Shutting down 'Tooltip'");
-      if ( _Tooltip ) {
-        _Tooltip.destroy();
-      }
-      console.groupEnd();
-
       console.group("Shutting down 'Menu'");
       if ( _Menu ) {
         _Menu.destroy();
@@ -2067,8 +2059,7 @@
       _WM         = null;
       _Window     = null;
       _PackMan    = null;
-      _Tooltip    = null;
-      _Menu    = null;
+      _Menu       = null;
       _Processes  = [];
       _TopIndex   = 11;
 
@@ -2435,7 +2426,6 @@
       bar.progressbar({value : 10});
 
       // Initialize desktop etc.
-      _Tooltip = new Tooltip();
       _Desktop = new Desktop();
       _WM      = new WindowManager();
       bar.progressbar({value : 15});
@@ -2656,8 +2646,6 @@
       if ( _Menu ) {
         _Menu.handleGlobalClick(ev);
       }
-
-      _Tooltip.hide();
     },
 
     /**
@@ -5933,125 +5921,6 @@
       return {
         "panels" : panels
       };
-    }
-
-  }); // @endclass
-
-  /////////////////////////////////////////////////////////////////////////////
-  // TOOLTIP
-  /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Tooltip -- Custom Tooltip Class
-   *
-   * @class
-   */
-  var Tooltip = Class.extend({
-
-    $element  :  null,      //!< DOM Elemenent
-    ttimeout  :  null,      //!< Timeout reference
-
-    /**
-     * Tooltip::init() -- Constructor
-     * @constructor
-     */
-    init : function() {
-      this.$element = $("#Tooltip");
-      this.ttimeout = null;
-    },
-
-    /**
-     * Tooltip::destroy() -- Destructor
-     * @destructor
-     */
-    destroy : function() {
-      // Element is in template
-    },
-
-    /**
-     * Tooltip::initRoot() -- Initialize a DOM-root for Tooltips
-     * @param   DOMElement    root    Initialize this root
-     * @return  void
-     */
-    initRoot : function(root) {
-      root.find(".TT").each(function() {
-        var tip = $(this).attr("title");
-        if ( tip ) {
-          $(this).removeAttr("title");
-
-          $(this).hover(function(ev) {
-            _Tooltip.hoverOn(tip, this, ev);
-          }, function(ev) {
-            _Tooltip.hoverOff(this, ev);
-          });
-        }
-      });
-    },
-
-    /**
-     * Tooltip::hoverOn() -- Hover On
-     * @param   String      tip       Tooltip
-     * @param   DOMElement  el        Element
-     * @param   DOMEevent   ev        Event
-     * @return void
-     */
-    hoverOn : function(tip, el, ev) {
-      if ( this.ttimeout ) {
-        clearTimeout(this.ttimeout);
-      }
-
-      this.ttimeout = setTimeout(function() {
-        _Tooltip.show(tip, null, ev);
-      }, TOOLTIP_TIMEOUT);
-    },
-
-    /**
-     * Tooltip::hoverOff() -- Hover Off
-     * @param   DOMElement  el        Element
-     * @param   DOMEevent   ev        Event
-     * @return  void
-     */
-    hoverOff : function(el, ev) {
-      if ( this.ttimeout ) {
-        clearTimeout(this.ttimeout);
-      }
-
-      this.ttimeout = setTimeout(function() {
-        _Tooltip.hide();
-      }, 0);
-    },
-
-    /**
-     * Tooltip::show() -- Show tooltip
-     * @param   String      tip       Tooltip
-     * @param   DOMElement  el        Element
-     * @param   DOMEevent   ev        Event
-     * @return  void
-     */
-    show : function(tip, el, ev) {
-      var posX = 0;
-      var posY = 0;
-
-      if ( ev ) {
-        posX = ev.pageX;
-        posY = ev.pageY;
-      } else if ( el ) {
-        posX = $(el).offset()['left'];
-        posY = $(el).offset()['top'];
-      }
-
-      this.$element.css({
-        "top" : (posY + 10) + "px",
-        "left" : (posX + 10) + "px"
-      }).show().html(tip);
-    },
-
-    /**
-     * Tooltip::hide() -- Hide tooltip
-     * @return void
-     */
-    hide : function() {
-      this.$element.hide();
     }
 
   }); // @endclass
