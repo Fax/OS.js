@@ -258,6 +258,9 @@ abstract class PackageManager
 
         $result[$name] = $type::LoadPackage($iter);
       }
+
+      ksort($result);
+
       return $result;
     }
 
