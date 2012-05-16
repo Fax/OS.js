@@ -64,10 +64,6 @@
   var LOGIN_WAIT             = 1000;                //!< Wait after login
   var SESSION_KEY            = "PHPSESSID";         //!< The Server session cookie-key
   var TIMEOUT_CSS            = (1000 * 10);         //!< CSS loading timeout
-  var DEFAULT_USERNAME       = "";                  //!< Default User Username
-  var DEFAULT_PASSWORD       = "";                  //!< Default User Password
-  var AUTOMATIC_LOGIN        = false;               //!< Wherever to turn on automatic login
-  var SESSION_CONFIRM        = true;                //!< Wherever to turn on confirmation of session collision
   var ENV_CACHE              = undefined;           //!< Server-side cache enabled state
   var ENV_PRODUCTION         = undefined;           //!< Server-side production env. state
   var ENV_DEMO               = undefined;           //!< Server-side demo env. state
@@ -2111,19 +2107,22 @@
       };
 
       DoPost({'action' : 'boot', 'navigator' : nav}, function(response) {
-        ENV_CACHE       = response.result.cache;
-        ENV_PRODUCTION  = response.result.production;
-        ENV_DEMO        = response.result.demo;
+        var data = response.result;
+        var env  = data.environment;
+        ENV_CACHE       = env.cache;
+        ENV_PRODUCTION  = env.production;
+        ENV_DEMO        = env.demo;
 
-        if ( ENV_DEMO ) {
-          AUTOMATIC_LOGIN = false;
+        var auto     = false;
+        var lconfirm = true;
+        var username = "";
+        var password = "";
+        if ( env.autologin.enable ) {
+          username = env.autologin.username;
+          password = env.autologin.password;
+          lconfirm = env.autologin.confirmation;
+          auto     = true;
         }
-        /*
-        if ( !ENV_PRODUCTION ) {
-          DEFAULT_USERNAME = "demo";
-          DEFAULT_PASSWORD = "demo";
-        }
-        */
 
         /*
         $(document).bind("fullscreenchange",        this.global_fullscreen);
@@ -2132,16 +2131,16 @@
         */
 
         // Initialize resources
-        _Resources = new ResourceManager(response.result.preload);
+        _Resources = new ResourceManager(data.preload);
 
         // Initialize settings
-        _Settings = new SettingsManager(response.result.registry);
+        _Settings = new SettingsManager(data.registry);
 
         // Initialize packages
         _PackMan = new PackageManager();
 
         // Login window handling
-        self._login(DEFAULT_USERNAME, DEFAULT_PASSWORD);
+        self._login(username, password, auto, lconfirm);
       }, function(xhr, ajaxOptions, thrownError) {
         alert("A network error occured while booting OS.js: " + thrownError);
         throw("Initialization error: " + thrownError);
@@ -2152,11 +2151,12 @@
      * Core::_login() -- Perform login
      * @param  String     username      Username
      * @param  String     password      Password
-     * @param  Function   callback      Calback function after ajax
+     * @param  bool       auto          Automatic login ?
+     * @param  bool       confirmation  Confirm Session duplicates ?
      * @return void
      * @function
      */
-    _login : function(username, password, callback) {
+    _login : function(username, password, auto, confirmation) {
       var self = this;
 
       var _disableInput = function() {
@@ -2177,7 +2177,7 @@
 
         setTimeout(function() {
           if ( response.duplicate ) {
-            var con = !SESSION_CONFIRM || confirm(OSjs.Labels.LoginConfirm);
+            var con = !confirmation || confirm(OSjs.Labels.LoginConfirm);
             if ( con ) {
               self.login(response);
             } else {
@@ -2262,7 +2262,7 @@
       $("#LoginPassword").val(password);
       $("#LoginUsername").focus();
 
-      if ( AUTOMATIC_LOGIN ) {
+      if ( auto ) {
         $("#LoginButton").click();
         $("#LoginButton").attr("disabled", "disabled");
       }

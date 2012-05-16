@@ -163,6 +163,15 @@ if ( !defined("GETTEXT_DOMAIN") )
 if ( !defined("ENABLE_REGISTRATION") )
   define("ENABLE_REGISTRATION", true);
 
+if ( !defined("AUTOLOGIN_ENABLE") )
+  define("AUTOLOGIN_ENABLE",    false);
+if ( !defined("AUTOLOGIN_USERNAME") )
+  define("AUTOLOGIN_USERNAME",  "");
+if ( !defined("AUTOLOGIN_PASSWORD") )
+  define("AUTOLOGIN_PASSWORD",  "");
+if ( !defined("AUTOLOGIN_CONFIRMATION") )
+  define("AUTOLOGIN_CONFIRMATION", true);
+
 if ( !defined("BIN_YUI") )
   define("BIN_YUI",             sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_BIN, PATH_VENDOR));
 

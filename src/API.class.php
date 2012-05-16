@@ -110,10 +110,18 @@ abstract class API
     return false;
   }
 
+  /**
+   * Check if API method requires a user
+   * @return bool
+   */
   public static final function MethodRequresUser($m) {
     return in_array($m, self::$__POSTEventsSecure);
   }
 
+  /**
+   * Check if given API method exists
+   * @return bool
+   */
   public static final function MethodExists($m) {
     return isset(self::$__POSTEvents[$m]);
   }
@@ -130,9 +138,17 @@ abstract class API
     return Array(
       "success" => true,
       "result" => Array(
-        "production"  => ENV_PRODUCTION,
-        "demo"        => ENV_DEMO,
-        "cache"       => ENABLE_CACHE,
+        "environment" => Array(
+          "production"  => ENV_PRODUCTION,
+          "demo"        => ENV_DEMO,
+          "cache"       => ENABLE_CACHE,
+          "autologin"   => Array(
+            "enable"       => AUTOLOGIN_ENABLE,
+            "username"     => AUTOLOGIN_USERNAME,
+            "password"     => AUTOLOGIN_PASSWORD,
+            "confirmation" => AUTOLOGIN_CONFIRMATION
+          ),
+        ),
         "preload"     => ResourceManager::getAllPreloads("boot"),
         "registry"    => User::getDefaultRegistry()
       )
