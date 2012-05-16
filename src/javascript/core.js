@@ -438,7 +438,7 @@
                 var argv  = args.opts || [];
                 var pref  = args.panel;
                 var psave = args.save === undefined ? false : (args.save ? true : false);
-                var pargs = {
+                var pargs = { // We need only required parameters, make a slim-copy
                   index     : args.index,
                   name      : args.name,
                   align     : args.align,
@@ -6619,7 +6619,6 @@
      * @return void
      */
     run : function() {
-      _Tooltip.initRoot(this.$element);
     },
 
     /**
@@ -7070,8 +7069,6 @@
             ev.preventDefault();
           });
         }
-
-        _Tooltip.initRoot(el.find(".WindowContent"));
 
         //
         // Events
