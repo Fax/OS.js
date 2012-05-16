@@ -54,6 +54,7 @@ else
     sudo chown -R $USR_APACHE:$GRP_APACHE logs
     sudo chown -R $USR_APACHE:$GRP_APACHE VFS
     sudo chmod a-w public_html/media
+    sudo chmod +w public_html/media/Public
   else
     echo "Setting media permissions to $USR_SELF:$USR_SELF"
     sudo chown -R $USR_SELF:$USR_SELF public_html/media
