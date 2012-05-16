@@ -3363,7 +3363,7 @@
     savePanel : function(p) {
       if ( p instanceof Panel ) {
         var session = [];
-        var panels  = _Desktop.getPanels();
+        var panels  = _Desktop ? _Desktop.getPanels() : [];
         for ( var i = 0; i < panels.length; i++ ) {
           session.push(panels[i].getSession());
         }
@@ -5465,22 +5465,24 @@
       var _selected = null;
 
       var __onchange = function(panel, key, value) {
-        panel = _Desktop.getPanel(panel.index);
-        if ( panel ) {
-          var style = panel.getStyle();
-          style[key] = value;
-          panel.setStyle(style, true);
+        if ( _Desktop ) {
+          panel = _Desktop.getPanel(panel.index);
+          if ( panel ) {
+            var style = panel.getStyle();
+            style[key] = value;
+            panel.setStyle(style, true);
 
-          console.log("Desktop::showPanelPreferences()", "__onchange", panel, [key, value], style);
-          var session = [];
-          var panels  = self.getPanels();
-          for ( var i = 0; i < panels.length; i++ ) {
-            session.push(panels[i].getSession());
+            console.log("Desktop::showPanelPreferences()", "__onchange", panel, [key, value], style);
+            var session = [];
+            var panels  = self.getPanels();
+            for ( var i = 0; i < panels.length; i++ ) {
+              session.push(panels[i].getSession());
+            }
+
+            _Settings._apply({"desktop.panels" : session}, function() {
+              // void -- removes message
+            });
           }
-
-          _Settings._apply({"desktop.panels" : session}, function() {
-            // void -- removes message
-          });
         }
       };
 
