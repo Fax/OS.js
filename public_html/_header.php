@@ -40,13 +40,16 @@ if ( !($core = Core::initialize()) ) {
   die("Failed to initialize OS.js Core");
 }
 
-$use_gzip = substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-if ( !$use_gzip || !ob_start("ob_gzhandler") ) {
-  flush();
-  while (ob_get_level()) {
-    ob_end_flush();
+$use_gzip = false;
+if ( isset($_SERVER) && isset($_SERVER["HTTP_ACCEPT_ENCODING"]) ) {
+  $use_gzip = substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+  if ( !$use_gzip || !ob_start("ob_gzhandler") ) {
+    flush();
+    while (ob_get_level()) {
+      ob_end_flush();
+    }
+    ob_start();
   }
-  ob_start();
 }
 
 // This is the default headers, may be overridden in resource.php
