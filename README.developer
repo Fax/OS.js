@@ -125,8 +125,8 @@ Directories and Files:
   /templates/               Frontend/Script misc templates
     ...
   /packages/                Frontend packages (Applications etc)
+  API.class.php             Backend API Methods
   Application.class.php     Package > Application Class
-    ...
   BackgroundService.cl...   Package > Background Service Class
   Core.class.php            Core, Main Class
   Package.class.php         Package Main Class

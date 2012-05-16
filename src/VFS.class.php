@@ -56,7 +56,7 @@ abstract class VFS
   /**
    * @var Virtual Directories
    */
-  protected static $VirtualDirs = Array(
+  protected static $_virtual = Array(
     "/System/Packages" => Array(
       "type" => "system_packages",
       "attr" => self::ATTR_READ,
@@ -131,6 +131,9 @@ abstract class VFS
 
   /**
    * @var Available Function Calls
+   * @desc The 'key' is the called name
+   *       'value' 0 is class method,
+   *       'value' 1 splits arguments from call into method parameters
    */
   protected static $_calls = Array(
     "exists"          => Array("Exists"),
@@ -168,6 +171,12 @@ abstract class VFS
   // MAGICS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Call a static function by name and argument(s)
+   * @param  String     $name       Static Function Name
+   * @param  Mixed      $arguments  Function Call Arguments
+   * @return Mixed
+   */
   public static function __callStatic($name, $arguments) {
     if ( isset(self::$_calls[$name]) ) {
       $iter = self::$_calls[$name];
@@ -209,7 +218,7 @@ abstract class VFS
       }
     }
 
-    foreach ( self::$VirtualDirs as $k => $v ) {
+    foreach ( self::$_virtual as $k => $v ) {
       if ( startsWith($path, $k) ) {
         $attr = (int)$v['attr'];
 
@@ -544,7 +553,7 @@ abstract class VFS
     $chroot   = false;
     $uchroot  = false;
 
-    foreach ( self::$VirtualDirs as $k => $v ) {
+    foreach ( self::$_virtual as $k => $v ) {
       if ( startsWith($path, $k) ) {
         if ( $v['type'] == "system_packages" ) {
           $apps = 1;
@@ -674,8 +683,8 @@ abstract class VFS
             $mime  = $mmime;
           } else if ( is_dir($abs_path) ) {
             $tpath = preg_replace("/\/+/", "/", $rel_path);
-            if ( isset(self::$VirtualDirs[$tpath]) ) {
-              $icon = self::$VirtualDirs[$tpath]['icon'];
+            if ( isset(self::$_virtual[$tpath]) ) {
+              $icon = self::$_virtual[$tpath]['icon'];
             }
           } else {
             continue;
@@ -691,7 +700,7 @@ abstract class VFS
         if ( $tmp_path == "/" || preg_match("/\/System/", $tmp_path) ) {
           $protected = true;
         } else {
-          foreach ( self::$VirtualDirs as $k => $v ) {
+          foreach ( self::$_virtual as $k => $v ) {
             if ( startsWith($fpath, $k) ) {
               if ( !(((int)$v["attr"]) & self::ATTR_RW) ) { // FIXME NOTE
                 $protected = true;
