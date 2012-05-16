@@ -225,7 +225,7 @@ class Core
    * @param   User    $u      User Object (or NULL)
    * @return  void
    */
-  protected function setUser(User $u = null) {
+  public function setUser(User $u = null) {
     $this->_oUser = $u;
   }
 
@@ -234,7 +234,7 @@ class Core
    * @param   Array     $locale       Locale
    * @return  Array
    */
-  protected function setLocale(Array $locale = null) {
+  public function setLocale(Array $locale = null) {
     if ( is_array($locale) ) {
       $this->_aLocale = $locale;
     } else {
