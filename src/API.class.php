@@ -423,8 +423,8 @@ abstract class API
    */
   protected static final function _doUserLogin(Array $args, Core $inst = null) {
     $json   = Array();
-    $uname  = "demo";
-    $upass  = "demo";
+    $uname  = "";
+    $upass  = "";
     $time   = isset($args['time'])   ? $args['time'] : null;
     $create = false;
 
@@ -434,55 +434,51 @@ abstract class API
 
     if ( isset($args['form']) ) {
       if ( isset($args['form']['username']) ) {
-        $uname = $args['form']['username'];
+        $uname = trim($args['form']['username']);
       }
       if ( isset($args['form']['password']) ) {
-        $upass = $args['form']['password'];
+        $upass = trim($args['form']['password']);
       }
     }
 
     $user = null;
     $errored = true;
-    if ( $create ? ($user = User::createNew($uname, $upass)) : ($user = User::getByUsername($uname)) ) {
-      if ( $user->password == $upass ) {
-        $init_language      = "default"; // NOTE: Should be set to user ? used as 'SystemLanguage'
-        $browser_language   = Core::getBrowserLanguage();
-        $resources          = ResourceManager::getAllPreloads("login");
-        $packages           = PackageManager::GetPackages($user);
+    if ( $uname && $upass ) {
+      if ( $create ? ($user = User::createNew($uname, $upass)) : ($user = User::getByUsername($uname)) ) {
+        if ( $user->password == $upass ) {
+          if ( !($registry = $user->last_registry) ) {
+            $registry = User::getDefaultRegistry(true);
+          }
+          if ( !($session = $user->last_session) ) {
+            $session = User::getDefaultSession();
+          }
 
+          $json['success'] = true;
+          $json['result'] = Array(
+            "user"          => $user->getUserInfo(),
+            "registry"      => $registry,
+            "session"       => $session,
+            "packages"      => PackageManager::GetPackages($user),
+            "preload"       => Array(
+              "resources" => ResourceManager::getAllPreloads("login")
+            ),
+            "sid"           => session_id(),
+            "lang_system"   => DEFAULT_LANGUAGE,
+            "lang_user"     => "default", // NOTE: Should be set to user ? used as 'SystemLanguage'
+            "lang_browser"  => Core::getBrowserLanguage(),
+            "duplicate"     => $user->isLoggedIn()
+          );
 
-        if ( !($registry = $user->last_registry) ) {
-          $registry = User::getDefaultRegistry(true);
+          $user->last_login       = new DateTime();
+          $user->last_session_id  = session_id();
+          if ( !$user->isLoggedIn() ) {
+            $user->logged_in      = 1;
+          }
+
+          User::save($user, Array("last_login", "last_session_id", "logged_in"));
+
+          $errored = false;
         }
-        if ( !($session = $user->last_session) ) {
-          $session = User::getDefaultSession();
-        }
-
-        $json['success'] = true;
-        $json['result'] = Array(
-          "user"          => $user->getUserInfo(),
-          "registry"      => $registry,
-          "session"       => $session,
-          "packages"      => $packages,
-          "preload"       => Array(
-            "resources" => $resources
-          ),
-          "sid"           => session_id(),
-          "lang_system"   => DEFAULT_LANGUAGE,
-          "lang_user"     => $init_language,
-          "lang_browser"  => $browser_language,
-          "duplicate"     => $user->isLoggedIn()
-        );
-
-        $user->last_login       = new DateTime();
-        $user->last_session_id  = session_id();
-        if ( !$user->isLoggedIn() ) {
-          $user->logged_in      = 1;
-        }
-
-        User::save($user, Array("last_login", "last_session_id", "logged_in"));
-
-        $errored = false;
       }
     }
 
