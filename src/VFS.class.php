@@ -141,8 +141,8 @@ abstract class VFS
     "ls"              => Array("ListDirectory"),
     "delete"          => Array("Delete"),
     "rm"              => Array("Delete"),
-    "mv"              => Array("Move", Array("path", "name")),
-    "rename"          => Array("Move", Array("path", "name")),
+    "mv"              => Array("Move", Array("path", "file")),
+    "rename"          => Array("Move", Array("path", "file")),
     "read"            => Array("ReadFile"),
     "cat"             => Array("ReadFile"),
     "touch"           => Array("TouchFile"),
@@ -862,11 +862,11 @@ abstract class VFS
       $fname = end($tmp);
       $re    = sprintf("/\/%s$/", preg_quote($fname, "/"));
       $rep   = sprintf("/%s", $name);
-      $dest  = preg_replace($re, $rep, $src);
+      $name  = preg_replace($re, $rep, $src);
     }
 
     $src   = self::buildPath($src);
-    $dest  = self::buildPath($dest, self::ATTR_WRITE);
+    $dest  = self::buildPath($name, self::ATTR_WRITE);
     if ( $src["perm"] && $dest["perm"] ) {
       if ( file_exists($src["root"]) && !(file_exists($dest["root"]) || is_dir($dest["root"])) ) {
         return @rename($src["root"], $dest["root"]);
