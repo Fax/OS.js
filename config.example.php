@@ -35,37 +35,46 @@
 // Environment
 //
 
-define("ENV_PRODUCTION",      false);
-define("ENABLE_CACHE",        false);
-define("ENV_DEMO",            false);
-define("ENABLE_LOGGING",      true);
-define("ENABLE_GETTEXT",      true);
+define("ENV_PRODUCTION",      false);                 // Disable debugging, logging. Enable compression
+define("ENABLE_CACHE",        ENV_PRODUCTION);        // Enable HTTP cache, used for production environments
+define("ENV_DEMO",            false);                 // Enable DEMO environment, changes login and disables some "root" features
+
+define("ENABLE_LOGGING",      true);                  // Enable Backend logging
+define("ENABLE_GETTEXT",      true);                  // Enable Backend locales
+define("ENABLE_GZIP",         true);                  // Enable Gzipped output
+
+// Login
+define("ENABLE_REGISTRATION",     true);              // Enable user registration on login screen
+define("AUTOLOGIN_ENABLE",        false);             // Automatic login
+define("AUTOLOGIN_USERNAME",      "");                // ... username
+define("AUTOLOGIN_PASSWORD",      "");                // ... password
+define("AUTOLOGIN_CONFIRMATION",  !AUTOLOGIN_ENABLE); // Confirmation dialog on session duplicates etc
 
 //
 // VFS Permissions etc.
 //
 
-define("VFS_SET_PERM",        false);
-define("VFS_USER",            "www-data"); //(PROJECT_HOST != "amitop" ? "www-data" : "apache")); // chown() user
-define("VFS_GROUP",           "www-data"); //(PROJECT_HOST != "amitop" ? "www-data" : "apache")); // chown() group
-define("VFS_FPERM",           "0555"/*0644*/); // chmod() for uploaded files
-define("VFS_DPERM",           "0555"/*0644*/); // chmod() for uploaed dirs
-define("VFS_UMASK",           ""); // umask()
+define("VFS_SET_PERM",        false);                 // TODO
+define("VFS_USER",            "www-data");            // Apache/WebServer User
+define("VFS_GROUP",           "www-data");            // Apache/WebServer Group
+define("VFS_FPERM",           "0555");                // Default File permission
+define("VFS_DPERM",           "0555");                // Default Directory permission
+define("VFS_UMASK",           "");                    // TODO
 
 //
 // Server
 //
 
-define("SERVER_HOST",         "0.0.0.0");
-//define("SERVER_HOST",       "localhost");
-define("SERVER_PORT",         8888);
-define("SERVER_BACKLOG",      20);
-define("SERVER_NONBLOCK",     false); // TODO
+define("SERVER_HOST",         "0.0.0.0");             // WebSocket Server Host
+define("SERVER_PORT",         8888);                  // WebSocket Server Port
+define("SERVER_BACKLOG",      20);                    // TODO
+define("SERVER_NONBLOCK",     false);                 // TODO
 
 //
 // Database
 //
 
+// Refer to the PHP PDO Manual
 define("DATABASE_HOST",       "localhost");
 define("DATABASE_DSN",        "mysql:dbname=osjs;host=localhost");
 define("DATABASE_USER",       "osjs");
@@ -75,7 +84,7 @@ define("DATABASE_PASS",       "IeDici7AhghaeG4athobas");
 // External Services
 //
 
-define("GA_ENABLE",         ENV_PRODUCTION);    // Google Analytics enable
-define("GA_ACCOUNT_ID",     "UA-26635797-1");   // Google Analytics account id
+define("GA_ENABLE",         ENV_PRODUCTION);          // Google Analytics enable
+define("GA_ACCOUNT_ID",     "UA-26635797-1");         // Google Analytics account id
 
 ?>

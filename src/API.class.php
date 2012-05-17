@@ -426,7 +426,11 @@ abstract class API
     $uname  = "demo";
     $upass  = "demo";
     $time   = isset($args['time'])   ? $args['time'] : null;
-    $create = isset($args['create']) ? $args['create'] === "true" : false;
+    $create = false;
+
+    if ( ENABLE_REGISTRATION ) {
+      $create = isset($args['create']) ? $args['create'] === "true" : false;
+    }
 
     if ( isset($args['form']) ) {
       if ( isset($args['form']['username']) ) {

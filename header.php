@@ -165,6 +165,8 @@ if ( !defined("ENABLE_REGISTRATION") )
   define("ENABLE_REGISTRATION", true);
 if ( !defined("ENABLE_CACHE") )
   define("ENABLE_CACHE",        ENV_PRODUCTION);
+if ( !defined("ENABLE_GZIP") )
+  define("ENABLE_GZIP",         true);
 
 if ( !defined("AUTOLOGIN_ENABLE") )
   define("AUTOLOGIN_ENABLE",    false);

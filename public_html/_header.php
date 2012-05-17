@@ -34,32 +34,34 @@
  * @created 2012-02-10
  */
 
+// Initialize core
 require "../header.php";
-
 if ( !($core = Core::initialize()) ) {
   die("Failed to initialize OS.js Core");
 }
 
-$use_gzip = false;
-if ( isset($_SERVER) && isset($_SERVER["HTTP_ACCEPT_ENCODING"]) ) {
-  $use_gzip = substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-  if ( !$use_gzip || !ob_start("ob_gzhandler") ) {
-    flush();
-    while (ob_get_level()) {
-      ob_end_flush();
+// Output compression
+if ( ENABLE_GZIP ) {
+  if ( isset($_SERVER) && isset($_SERVER["HTTP_ACCEPT_ENCODING"]) ) {
+    $use_gzip = substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+    if ( !$use_gzip || !ob_start("ob_gzhandler") ) {
+      flush();
+      while (ob_get_level()) {
+        ob_end_flush();
+      }
+      ob_start();
     }
-    ob_start();
   }
 }
 
-// This is the default headers, may be overridden in resource.php
-if ( ENV_PRODUCTION || ENABLE_CACHE ) {
+// Output cache
+if ( ENABLE_CACHE ) {
   $time   = time();
   $now    = ($time + CACHE_EXPIRE_ADD);
   $max    = ($now - $time);
   $stamp  = gmdate('D, d M Y H:i:s', $now);
 
-  header("Expires: $now GMT");
+  header("Expires: $stamp GMT");
   header("Cache-Control: maxage=$max, public");
 } else {
   $now = gmdate( 'D, d M Y H:i:s' );
@@ -69,13 +71,14 @@ if ( ENV_PRODUCTION || ENABLE_CACHE ) {
   header("Pragma: no-cache");
 }
 
-// NOTE: http://www.p3pwriter.com/LRN_111.asp
-//header("P3P: CP=\"IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA\"");
-//header("P3P: CP=\"NOI DSP COR CURa ADMa OUR NOR COM STA\"");
-
+// Misc HTTP headers
 $loc = $core->getLocale();
 header("X-OSjs-Version: " . PROJECT_VERSION);
 header("X-OSjs-Locale: " . $loc["locale_language"]);
+header("X-OSjs-Cache: " . (ENABLE_CACHE ? "true" : "false"));
 header("X-Provider: ObjectCore");
+// NOTE: http://www.p3pwriter.com/LRN_111.asp
+//header("P3P: CP=\"IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA\"");
+//header("P3P: CP=\"NOI DSP COR CURa ADMa OUR NOR COM STA\"");
 
 ?>
