@@ -644,3 +644,26 @@ function FullscreenExit() {
       document.webkitCancelFullScreen();
   }
 }
+
+/**
+ * Sort object by key
+ * @link http://stackoverflow.com/questions/1359761/sorting-a-javascript-object
+ * @return Object
+ */
+function sortObject(o) {
+  var sorted = {},
+      key, a = [];
+
+  for (key in o) {
+    if (o.hasOwnProperty(key)) {
+      a.push(key);
+    }
+  }
+
+  a.sort();
+
+  for (key = 0; key < a.length; key++) {
+    sorted[a[key]] = o[a[key]];
+  }
+  return sorted;
+}
