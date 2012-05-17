@@ -120,29 +120,29 @@ class Logger
   /**
    * @see Logger::log()
    */
-  public function logInfo($msg) {
-    return $this->log($msg, "info");
+  public static function logInfo($msg) {
+    return self::get()->log($msg, "info");
   }
 
   /**
    * @see Logger::log()
    */
-  public function logNotice($msg) {
-    return $this->log($msg, "notice");
+  public static function logNotice($msg) {
+    return self::get()->log($msg, "notice");
   }
 
   /**
    * @see Logger::log()
    */
-  public function logWarning($msg) {
-    return $this->log($msg, "warning");
+  public static function logWarning($msg) {
+    return self::get()->log($msg, "warning");
   }
 
   /**
    * @see Logger::log()
    */
-  public function logError($msg) {
-    return $this->log($msg, "error");
+  public static function logError($msg) {
+    return self::get()->log($msg, "error");
   }
 }
 
