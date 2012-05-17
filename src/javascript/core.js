@@ -3186,6 +3186,7 @@
       localStorage.removeItem("defaults");
       localStorage.removeItem("session");
       localStorage.removeItem("SETTINGS_REVISION");
+      localStorage.removeItem("SETTING_REVISION");
 
       // Create space checking interval
       this._initQuota();
