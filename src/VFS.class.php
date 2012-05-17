@@ -865,7 +865,7 @@ abstract class VFS
       $name  = preg_replace($re, $rep, $src);
     }
 
-    $src   = self::buildPath($src);
+    $src   = self::buildPath($src, self::ATTR_WRITE);
     $dest  = self::buildPath($name, self::ATTR_WRITE);
     if ( $src["perm"] && $dest["perm"] ) {
       if ( file_exists($src["root"]) && !(file_exists($dest["root"]) || is_dir($dest["root"])) ) {
