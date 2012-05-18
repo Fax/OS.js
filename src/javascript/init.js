@@ -85,11 +85,6 @@
     // Internal namespace containers
     Labels       : { /* ... */ },
     Public       : { /* ... */ },
-    Helpers      : {
-      requestFileSystem         : (window.requestFileSystem || window.webkitRequestFileSystem),
-      storageInfo               : (window.storageInfo || window.webkitStorageInfo),
-      resolveLocalFilesystemURL : (window.resolveLocalFileSystemURL || window.webkitResolveLocalFileSystemURL)
-    },
 
     // Dynamic namespace containers
     Applications : { /* ... */ }, // @see core.js,Application.class.php - Dynamic

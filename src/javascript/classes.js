@@ -176,17 +176,24 @@
       callback = callback || function() {};
       quota    = quota    || 5*1024*1024; // 5 MB
 
-      if ( !OSjs.Compabiltiy.SUPPORT_FS )
+      if ( !OSjs.Compability.SUPPORT_FS )
         throw("FileSystem not supported");
 
       this._fs = null;
       this._quota = -1;
 
       var self = this;
-      OSjs.Helpers.storageInfo.requestQuota(type, quota, function(grantedBytes) {
+      var si = (window.storageInfo || window.webkitStorageInfo);
+      var rq = (window.requestFileSystem || window.webkitRequestFileSystem);
+
+      si.requestQuota(type, quota, function(grantedBytes) {
         self._quota = grantedBytes;
 
-        OSjs.Helpers.requestFileSystem(type, quota, function(fs) {
+        console.log("VFS::init()","requestQuota", grantedBytes);
+
+        rq(type, quota, function(fs) {
+          console.log("VFS::init()", "requestFileSystem", fs);
+
           self._fs = fs;
 
           callback();
@@ -233,7 +240,7 @@
       callback = callback || function() {};
       var self = this;
       this._fs.root.getFile(name, {create: true, exclusive: true}, function(fileEntry) {
-        callback();
+        callback(fileEntry);
       }, self.error);
     },
 
@@ -390,6 +397,10 @@
       var dirReader = this._fs.root.createReader();
       var entries = [];
 
+      function toArray(list) {
+        return Array.prototype.slice.call(list || [], 0);
+      }
+
       var readEntries = function() {
         dirReader.readEntries (function(results) {
           if (!results.length) {
@@ -398,7 +409,7 @@
             entries = entries.concat(toArray(results));
             readEntries();
           }
-        }, errorHandler);
+        }, self.error);
       };
 
       readEntries();
@@ -452,7 +463,8 @@
       var self = this;
       callback = callback || function() {};
 
-      OSjs.Helpers.resolveLocalFilesystemURL(name, function(fileEntry) {
+      var resolv = (window.resolveLocalFileSystemURL || window.webkitResolveLocalFileSystemURL);
+      resolv(name, function(fileEntry) {
         callback(fileEntry.toURL());
       });
     },
@@ -485,7 +497,7 @@
           break;
       }
 
-      console.error('Error: ' + msg);
+      console.error('Error: ', msg, e);
     }
   });
 
