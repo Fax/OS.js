@@ -7483,6 +7483,8 @@
       if ( !isNaN(zi) && (zi > 0) ) {
         this.$element.css("z-index", zi);
         this._zindex = zi;
+
+        console.log("Window::_shuffle()", zi);
       }
     },
 
@@ -7492,8 +7494,9 @@
      * @return  void
      */
     _ontop : function(t) {
+      console.group("Window::_ontop()", this, t);
       t = (t === undefined) ? this._is_ontop : t;
-      if ( !t ) {
+      if ( t ) {
         if ( this._oldZindex > 0 ) {
           this._shuffle(this._oldZindex);
         } else {
@@ -7507,6 +7510,9 @@
         this._shuffle(_OnTopIndex, true);
         this._is_ontop = true;
       }
+
+      console.log("state", this._is_ontop);
+      console.groupEnd();
     },
 
     /**
