@@ -167,6 +167,8 @@ if ( !defined("ENABLE_CACHE") )
   define("ENABLE_CACHE",        ENV_PRODUCTION);
 if ( !defined("ENABLE_GZIP") )
   define("ENABLE_GZIP",         true);
+if ( !defined("ENABLE_LOGGING") )
+  define("ENABLE_LOGGING",      !ENV_PRODUCTION);
 
 if ( !defined("AUTOLOGIN_ENABLE") )
   define("AUTOLOGIN_ENABLE",    false);

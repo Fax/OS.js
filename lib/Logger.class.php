@@ -94,25 +94,23 @@ class Logger
    * @return bool
    */
   protected function log($msg, $type = "info") {
-    if ( !defined("ENABLE_LOGGING") || ENABLE_LOGGING === true ) {
-      if ( $res = $this->_oResource ) {
+    if ( $res = $this->_oResource ) {
 
-        if ( is_array($msg) ) {
-          $msg = json_encode($msg);
-        } else if ( is_object($msg) ) {
-          ob_start();
-          var_dump($msg);
-          $msg = ob_get_contents();
-          ob_end_clean();
-        }
+      if ( is_array($msg) ) {
+        $msg = json_encode($msg);
+      } else if ( is_object($msg) ) {
+        ob_start();
+        var_dump($msg);
+        $msg = ob_get_contents();
+        ob_end_clean();
+      }
 
-        $date = new DateTime();
-        $date = $date->format("Y-m-d H:i:s");
-        $line = sprintf("%s [%s] %s\n", $date, strtoupper($type), $msg);
-        //$line = sprintf("%s [%s] %s", $date, strtoupper($type), $msg);
-        if ( fwrite($res, $line) !== false ) {
-          return true;
-        }
+      $date = new DateTime();
+      $date = $date->format("Y-m-d H:i:s");
+      $line = sprintf("%s [%s] %s\n", $date, strtoupper($type), $msg);
+      //$line = sprintf("%s [%s] %s", $date, strtoupper($type), $msg);
+      if ( fwrite($res, $line) !== false ) {
+        return true;
       }
     }
 

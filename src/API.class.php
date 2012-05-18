@@ -101,6 +101,9 @@ abstract class API
 
       // Run method
       if ( $continue && method_exists(__CLASS__, $method) ) {
+        if ( ENABLE_LOGGING )
+          Logger::logInfo(sprintf("%s: %s", __METHOD__, JSON::encode(Array($name, $method, $arguments))));
+
         return self::$method($arguments, Core::get());
       }
 

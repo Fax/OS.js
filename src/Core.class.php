@@ -138,6 +138,7 @@ class Core
 
       // Require a specific parameter to trigger this function
       if ( isset($args['ajax']) ) {
+
         // Default output
         $json = Array(
           "success" => false,
@@ -177,9 +178,13 @@ class Core
             }
           } else {
             $json['error'] = _("Invalid or no action given!"); // FIXME: Locale
+            if ( ENABLE_LOGGING )
+              Logger::logError(sprintf("%s: %s", __METHOD__, JSON::encode(Array($args, $json))));
           }
         } else {
           $json['error'] = _("No action given!");
+          if ( ENABLE_LOGGING )
+            Logger::logError(sprintf("%s: %s", __METHOD__, JSON::encode(Array($args, $json))));
         }
 
         // Remove error if successfull

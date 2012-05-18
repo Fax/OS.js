@@ -39,7 +39,7 @@ define("ENV_PRODUCTION",      false);                 // Disable debugging, logg
 define("ENABLE_CACHE",        ENV_PRODUCTION);        // Enable HTTP cache, used for production environments (AJAX is never cached)
 define("ENV_DEMO",            false);                 // Enable DEMO environment, changes login and disables some "root" features
 
-define("ENABLE_LOGGING",      true);                  // Enable Backend logging
+define("ENABLE_LOGGING",      !ENV_PRODUCTION);       // Enable Backend logging
 define("ENABLE_GETTEXT",      true);                  // Enable Backend locales
 define("ENABLE_GZIP",         true);                  // Enable Gzipped output (Only on supported browsers)
 

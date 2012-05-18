@@ -192,6 +192,9 @@ abstract class VFS
         $arguments = $tmp;
       }
 
+      if ( ENABLE_LOGGING )
+        Logger::logInfo(sprintf("%s: %s", __METHOD__, JSON::encode(Array($name, $func, $arguments))));
+
       return call_user_func_array(Array(__CLASS__, $func), $arguments);
     }
 
@@ -863,6 +866,8 @@ abstract class VFS
       $re    = sprintf("/\/%s$/", preg_quote($fname, "/"));
       $rep   = sprintf("/%s", $name);
       $name  = preg_replace($re, $rep, $src);
+    } else {
+      $name  = preg_replace(sprintf("/%s$/", preg_quote(basename($src))), $name, $src);
     }
 
     $src   = self::buildPath($src, self::ATTR_WRITE);
