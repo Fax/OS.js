@@ -1,6 +1,7 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG] Manifest and Cache: http://updates.html5rocks.com/2012/04/Taking-an-Entire-Page-Offline-using-the-HTML5-FileSystem-API
+[HIG] Manifest and Cache for offline usage: http://updates.html5rocks.com/2012/04/Taking-an-Entire-Page-Offline-using-the-HTML5-FileSystem-API
+[HIG] Finish JS VFS Temporary and Persistent storage
 [HIG] Rewrite Glade/GTK (Merge from branch)
       * Remove the global resize event and make a poll ?!
         This would increase the performance of panel redraws etc.
@@ -8,27 +9,13 @@ CORE TODO:
       * Package Metadata schema property can be linked to HTML
 
 [LOG] WindowManager effect configuration
-[LOW] Panel setting: Background
+[LOW] Panel setting: Background Image
 [LOW] Panels: Add/Remove (Implement multiples in GUI)
 
 [BIN] Finish up the Installer
 [BIN] Finish up Console
 
+[NUR] Application Streaming (VNC-ish)
 [NUR] Remove jQuery dependency, write custom library
 [NUR] Remove jQuery UI dependency, write custom library
 
-BUGS:
--------------------------------------------------------------------------------
-* Maxmimum call-stack size exceed exceptions does not include trace [JS]
-* Somehow re-loading desktop.grid fixes the agrv overwrites
-
-SECURITY:
--------------------------------------------------------------------------------
-* Use session_id to crash OS.js when id has changed (changed computer, interception etc)
-  Also, make sure no more AJAX calls can be made!
-* Use a licence key of some sort to verify on server-side to handle response
-
-SUGGESTIONS:
--------------------------------------------------------------------------------
-* some sort of an application launcher. just an autocomplete search input somewhere in the header bar would be awesome.
-* Actual streaming of applications ?! like VNC
