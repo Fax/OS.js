@@ -221,7 +221,7 @@ abstract class ResourceManager
     $rpath = $compress ? RESOURCE_THEME_MIN : RESOURCE_THEME;
 
     if ( ENABLE_LOGGING )
-      Logger::logInfo(sprintf("%s::%s: %s", __CLASS__, __METHOD__, JSON::encode(Array($theme, $compress))));
+      Logger::logInfo(sprintf("%s: %s", __METHOD__, JSON::encode(Array($theme, $compress))));
 
     if ( file_exists(( $path = sprintf($rpath, $theme) )) ) {
       if ( !($content = file_get_contents($path)) ) {
@@ -243,7 +243,7 @@ abstract class ResourceManager
     $rpath = $compress ? RESOURCE_THEME_MIN : RESOURCE_THEME;
 
     if ( ENABLE_LOGGING )
-      Logger::logInfo(sprintf("%s::%s: %s", __CLASS__, __METHOD__, JSON::encode(Array($theme, $compress))));
+      Logger::logInfo(sprintf("%s: %s", __METHOD__, JSON::encode(Array($theme, $compress))));
 
     if ( file_exists(( $path = sprintf($rpath, $theme) )) ) {
       if ( !($content = file_get_contents($path)) ) {
@@ -266,7 +266,7 @@ abstract class ResourceManager
     $boe    = $font == "Sansation" ? "*/" : "";
 
     if ( ENABLE_LOGGING )
-      Logger::logInfo(sprintf("%s::%s: %s", __CLASS__, __METHOD__, JSON::encode(Array($font, $compress))));
+      Logger::logInfo(sprintf("%s: %s", __METHOD__, JSON::encode(Array($font, $compress))));
 
     $font_name    = addslashes($font);
     $sources      = Array(
@@ -350,7 +350,7 @@ EOCSS;
     $rpath  = $compress ? RESOURCE_LOCALE_MIN : RESOURCE_LOCALE;
 
     if ( ENABLE_LOGGING )
-      Logger::logInfo(sprintf("%s::%s: %s", __CLASS__, __METHOD__, JSON::encode(Array($locale, $compress))));
+      Logger::logInfo(sprintf("%s: %s", __METHOD__, JSON::encode(Array($locale, $compress))));
 
     if ( file_exists(( $path = sprintf($rpath, $locale) )) ) {
       return file_get_contents($path);
@@ -375,7 +375,7 @@ EOCSS;
     $content  = null;
 
     if ( ENABLE_LOGGING )
-      Logger::logInfo(sprintf("%s::%s: %s", __CLASS__, __METHOD__, JSON::encode(Array($file, $package, $compress))));
+      Logger::logInfo(sprintf("%s: %s", __METHOD__, JSON::encode(Array($file, $package, $compress))));
 
     if ( $package ) {
       if ( $result = Package::GetResource($package, $file, $compress) ) {
