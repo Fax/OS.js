@@ -122,17 +122,17 @@ abstract class CoreSettings
                 Array(
                   Array(
                     "title"=>"About",
-                    "icon"=>"actions\/gtk-about.png",
+                    "icon"=>"actions/gtk-about.png",
                     "launch"=>"SystemAbout"
                   ),
                   Array(
                     "title"=>"Control Panel",
-                    "icon"=>"categories\/preferences-system.png",
+                    "icon"=>"categories/preferences-system.png",
                     "launch"=>"SystemControlPanel"
                   ),
                   Array(
                     "title"=>"Save and Quit",
-                    "icon"=>"actions\/gnome-logout.png",
+                    "icon"=>"actions/gnome-logout.png",
                     "launch"=>"SystemLogout"
                   )
                 )
@@ -172,16 +172,16 @@ abstract class CoreSettings
       "items"=>Array(
         Array(
           "title"=>"Home",
-          "icon"=>"places\/user-home.png",
+          "icon"=>"places/user-home.png",
           "launch"=>"ApplicationFileManager",
           "arguments"=>Array(
-            "path"=>"\/User\/Documents"
+            "path"=>"/User/Documents"
           ),
           "protected"=>true
         ),
         Array(
           "title"=>"Browser Compability",
-          "icon"=>"status\/software-update-urgent.png",
+          "icon"=>"status/software-update-urgent.png",
           "launch"=>"API::CompabilityDialog",
           "arguments"=>null,
           "protected"=>true
@@ -191,7 +191,7 @@ abstract class CoreSettings
           "icon"=>"mimetypes/empty.png",
           "launch"=>"ApplicationTextpad",
           "arguments"=>Array(
-            "path"=>"\/System\/Docs\/README"
+            "path"=>"/System/Docs/README"
           ),
           "protected"=>false
         ),
@@ -200,7 +200,7 @@ abstract class CoreSettings
           "icon"=>"mimetypes/empty.png",
           "launch"=>"ApplicationTextpad",
           "arguments"=>Array(
-            "path"=>"\/System\/Docs\/AUTHORS"
+            "path"=>"/System/Docs/AUTHORS"
           ),
           "protected"=>false
         )
