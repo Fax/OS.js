@@ -52,19 +52,11 @@ There is currently no maintainence for Internet Explorer. Mobile Android and iOS
 
 The full list is in the `ChangeLog` file.
 
-## 0.7.300
-* core.js: Bugfixes for missing process references
-* core.js: Removed old Tooltip class
-* core.js: Removal of more old registry keys
-* utils.js: Added sortObject()
-* Core: Fixed header() errors and bugs
-* Core: Session GC debian fixes
-* Core: Added Core Logging
-* Core: New VFS call fixes
-* Core: New VFS path fixes
-* Core: New VFS Move() fix
-* Core: Caching updates, fully working
-* Core: Bugfix - Escaped characters in CoreSettings
-* Config: Updated configurations
-* Config: More settings overrideable
-* Updated Documentation
+## 0.7.400
+* core.js: Added Core::getProcess(pid)
+* core.js: Persistent and Temporary VFS class improvments
+* core.js: Window::ontop() fixes
+* core.js: Removed unused constants
+* Core: Possible to disable gzipping from external script by using DISABLE_GZIP
+* FS: new symlink public_html/img/icons/(16x16|32x32)
+* FS: moved icons out of main tree ^

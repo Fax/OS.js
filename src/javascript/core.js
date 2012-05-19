@@ -1336,9 +1336,6 @@
     //
 
     'session' : {
-      'processes' : function() {
-        return _Core.getProcesses();
-      },
 
       'snapshot_create' : function(name, callback) {
         callback = callback || function() {};
@@ -1418,6 +1415,16 @@
             window.location.reload();
           }
         });
+      },
+
+      /*
+      'getProcess' : function(pid) {
+        return _Core.getProcess(pid, false);
+      },
+      */
+
+      'processes' : function() {
+        return _Core.getProcesses();
       },
 
       'stack' : function() {
@@ -2726,7 +2733,23 @@
     // GETTERS / SETTERS
 
     /**
-     * Core::getProccesses() -- Get all running processes
+     * Core::getProcess() -- Get a running process by id
+     * @param  int      pid       Process ID
+     * @param  bool     root      Give access to "locked" processes ?
+     * @return Process
+     */
+    getProcess : function(pid, root) {
+      pid = parseInt(pid, 10) || 0;
+      if ( (pid >= 0) && _Processes[pid] ) {
+        if ( root || !(_Processes[pid]._locked) ) {
+          return _Processes[pid];
+        }
+      }
+      return null;
+    },
+
+    /**
+     * Core::getProcesses() -- Get all running processes
      * @return Array
      */
     getProcesses : function() {

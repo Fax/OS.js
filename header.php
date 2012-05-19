@@ -61,7 +61,7 @@ ini_set("display_errors", "on");
 
 define("PROJECT_AUTHOR",    "Anders Evenrud");
 define("PROJECT_CONTACT",   "andersevenrud@gmail.com");
-define("PROJECT_VERSION",   "0.7.300");
+define("PROJECT_VERSION",   "0.7.400");
 define("PROJECT_CODENAME",  "Catwalk");
 define("PROJECT_HOST",      (php_uname('n')));
 define("PROJECT_COPYRIGHT", "2012 " . PROJECT_AUTHOR . " <" . PROJECT_CONTACT . ">");

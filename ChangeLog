@@ -1,3 +1,12 @@
+## 0.7.400
+* core.js: Added Core::getProcess(pid)
+* core.js: Persistent and Temporary VFS class improvments
+* core.js: Window::ontop() fixes
+* core.js: Removed unused constants
+* Core: Possible to disable gzipping from external script by using DISABLE_GZIP
+* FS: new symlink public_html/img/icons/(16x16|32x32)
+* FS: moved icons out of main tree ^
+
 ## 0.7.300
 * core.js: Bugfixes for missing process references
 * core.js: Removed old Tooltip class
