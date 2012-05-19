@@ -649,7 +649,7 @@ abstract class API
     }
 
     if ( $result ) {
-      $json['success'] = ($result === true) || is_array($result);
+      $json['success'] = ($result !== false && $result !== null); //($result === true) || is_array($result);
       $json['error']   = $json['success'] ? null : (is_string($result) ? $result : _("Unknown error"));
       $json['result']  = $json['success'] ? $result : null;
     } else {
