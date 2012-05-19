@@ -240,7 +240,7 @@
     }
 
     if ( _WM ) {
-      API.system.dialog(type, msg, callback, misc);
+      API.ui.dialog(type, msg, callback, misc);
     } else {
       if ( type == "confirm" ) {
         return confirm(msg);
@@ -627,7 +627,7 @@
           if ( found.length == 1 ) {
             __run(found[0]);
           } else {
-            API.system.dialog_launch(list, function(mapp, set_default) {
+            API.ui.dialog_launch(list, function(mapp, set_default) {
               __run(mapp);
               if ( set_default ) {
                 SetVFSObjectDefault(mapp, path, mime);
@@ -635,7 +635,7 @@
             });
           }
         } else {
-          API.system.dialog_launch(all_apps, function(mapp, set_default) {
+          API.ui.dialog_launch(all_apps, function(mapp, set_default) {
             __run(mapp);
             if ( set_default ) {
               SetVFSObjectDefault(mapp, path, mime);
@@ -973,7 +973,138 @@
           }
 
         };
-      })()
+      })(),
+
+      'alert' : function(msg, type, callback) {
+        MessageBox(msg, type, null, callback);
+      },
+
+      'dialog' : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
+        if ( !_WM ) {
+          MessageBox(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
+        type = type || "error";
+        message = message || "Unknown error";
+
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.ui.dialog");
+        console.log("Type", type);
+        console.groupEnd();
+
+        return _WM.addWindow(new Dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
+      },
+
+      'dialog_input' : function(value, desc, clb_finish) {
+        if ( !_WM ) {
+          MessageBox(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.ui.dialog_input");
+        console.groupEnd();
+
+        return _WM.addWindow(new OSjs.Dialogs.InputOperationDialog(OperationDialog, API, [value, desc, clb_finish]));
+      },
+
+      'dialog_rename' : function(path, clb_finish) {
+        if ( !_WM ) {
+          MessageBox(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.ui.dialog_rename");
+        console.groupEnd();
+
+        return _WM.addWindow(new OSjs.Dialogs.RenameOperationDialog(OperationDialog, API, [path, clb_finish]));
+      },
+
+      'dialog_upload' : function(path, clb_finish, clb_progress, clb_cancel, opts) {
+        if ( !_WM ) {
+          MessageBox(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.ui.dialog_upload");
+        console.groupEnd();
+
+        return _WM.addWindow(new OSjs.Dialogs.UploadOperationDialog(OperationDialog, API, [UPLOAD_URI, path, clb_finish, clb_progress, clb_cancel, opts]));
+      },
+
+      'dialog_file' : function(clb_finish, mime_filter, type, cur_dir) {
+        if ( !_WM ) {
+          MessageBox(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
+        mime_filter = mime_filter || [];
+        type = type || "open";
+        cur_dir = cur_dir || "/";
+
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.ui.dialog_file");
+        console.groupEnd();
+
+        return _WM.addWindow(new OSjs.Dialogs.FileOperationDialog(OperationDialog, API, [type, mime_filter, clb_finish, cur_dir]));
+      },
+
+      'dialog_launch' : function(list, clb_finish, not_found) {
+        if ( !_WM ) {
+          MessageBox(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.ui.dialog_launch");
+        console.groupEnd();
+
+        return _WM.addWindow(new OSjs.Dialogs.LaunchOperationDialog(OperationDialog, API, [list, clb_finish, not_found]));
+      },
+
+      'dialog_color' : function(start_color, clb_finish) {
+        if ( !_WM ) {
+          MessageBox(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.ui.dialog_color");
+        console.groupEnd();
+
+        return _WM.addWindow(new OSjs.Dialogs.ColorOperationDialog(OperationDialog, API, [start_color, clb_finish]));
+      },
+
+      'dialog_font' : function(current_font, current_size, clb_finish) {
+        if ( !_WM ) {
+          MessageBox(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.ui.dialog_font");
+        console.groupEnd();
+
+        return _WM.addWindow(new OSjs.Dialogs.FontOperationDialog(OperationDialog, API, [current_font, current_size, clb_finish]));
+      },
+
+      'dialog_properties' : function(filename, clb_finish) {
+        if ( !_WM ) {
+          MessageBox(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.ui.dialog_properties");
+        console.groupEnd();
+
+        return _WM.addWindow(new OSjs.Dialogs.FilePropertyOperationDialog(OperationDialog, API, [filename, clb_finish]));
+      }
+
+
     },
 
     //
@@ -1081,151 +1212,7 @@
 
       'post' : function(args, callback) {
         DoPost(args, callback);
-      },
-
-      'alert' : function(msg, type, callback) {
-        MessageBox(msg, type, null, callback);
-      },
-
-      'dialog' : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
-        if ( !_WM ) {
-          MessageBox(OSjs.Labels.WindowManagerMissing);
-          return null;
-        }
-
-        type = type || "error";
-        message = message || "Unknown error";
-
-        console.group("=== API OPERATION ===");
-        console.log("Method", "API.system.dialog");
-        console.log("Type", type);
-        console.groupEnd();
-
-        return _WM.addWindow(new Dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
-      },
-
-      'dialog_input' : function(value, desc, clb_finish) {
-        if ( !_WM ) {
-          MessageBox(OSjs.Labels.WindowManagerMissing);
-          return null;
-        }
-
-        console.group("=== API OPERATION ===");
-        console.log("Method", "API.system.dialog_input");
-        console.groupEnd();
-
-        return _WM.addWindow(new OSjs.Dialogs.InputOperationDialog(OperationDialog, API, [value, desc, clb_finish]));
-      },
-
-      'dialog_rename' : function(path, clb_finish) {
-        if ( !_WM ) {
-          MessageBox(OSjs.Labels.WindowManagerMissing);
-          return null;
-        }
-
-        console.group("=== API OPERATION ===");
-        console.log("Method", "API.system.dialog_rename");
-        console.groupEnd();
-
-        return _WM.addWindow(new OSjs.Dialogs.RenameOperationDialog(OperationDialog, API, [path, clb_finish]));
-      },
-
-      'dialog_upload' : function(path, clb_finish, clb_progress, clb_cancel, opts) {
-        if ( !_WM ) {
-          MessageBox(OSjs.Labels.WindowManagerMissing);
-          return null;
-        }
-
-        console.group("=== API OPERATION ===");
-        console.log("Method", "API.system.dialog_upload");
-        console.groupEnd();
-
-        return _WM.addWindow(new OSjs.Dialogs.UploadOperationDialog(OperationDialog, API, [UPLOAD_URI, path, clb_finish, clb_progress, clb_cancel, opts]));
-      },
-
-      'dialog_file' : function(clb_finish, mime_filter, type, cur_dir) {
-        if ( !_WM ) {
-          MessageBox(OSjs.Labels.WindowManagerMissing);
-          return null;
-        }
-
-        mime_filter = mime_filter || [];
-        type = type || "open";
-        cur_dir = cur_dir || "/";
-
-        console.group("=== API OPERATION ===");
-        console.log("Method", "API.system.dialog_file");
-        console.groupEnd();
-
-        return _WM.addWindow(new OSjs.Dialogs.FileOperationDialog(OperationDialog, API, [type, mime_filter, clb_finish, cur_dir]));
-      },
-
-      'dialog_launch' : function(list, clb_finish, not_found) {
-        if ( !_WM ) {
-          MessageBox(OSjs.Labels.WindowManagerMissing);
-          return null;
-        }
-
-        console.group("=== API OPERATION ===");
-        console.log("Method", "API.system.dialog_launch");
-        console.groupEnd();
-
-        return _WM.addWindow(new OSjs.Dialogs.LaunchOperationDialog(OperationDialog, API, [list, clb_finish, not_found]));
-      },
-
-      'dialog_color' : function(start_color, clb_finish) {
-        if ( !_WM ) {
-          MessageBox(OSjs.Labels.WindowManagerMissing);
-          return null;
-        }
-
-        console.group("=== API OPERATION ===");
-        console.log("Method", "API.system.dialog_color");
-        console.groupEnd();
-
-        return _WM.addWindow(new OSjs.Dialogs.ColorOperationDialog(OperationDialog, API, [start_color, clb_finish]));
-      },
-
-      'dialog_font' : function(current_font, current_size, clb_finish) {
-        if ( !_WM ) {
-          MessageBox(OSjs.Labels.WindowManagerMissing);
-          return null;
-        }
-
-        console.group("=== API OPERATION ===");
-        console.log("Method", "API.system.dialog_font");
-        console.groupEnd();
-
-        return _WM.addWindow(new OSjs.Dialogs.FontOperationDialog(OperationDialog, API, [current_font, current_size, clb_finish]));
-      },
-
-      'dialog_properties' : function(filename, clb_finish) {
-        if ( !_WM ) {
-          MessageBox(OSjs.Labels.WindowManagerMissing);
-          return null;
-        }
-
-        console.group("=== API OPERATION ===");
-        console.log("Method", "API.system.dialog_properties");
-        console.groupEnd();
-
-        return _WM.addWindow(new OSjs.Dialogs.FilePropertyOperationDialog(OperationDialog, API, [filename, clb_finish]));
-      },
-
-      'default_application_menu' : function(ev, el) {
-        return CreateDefaultApplicationMenu(ev, el);
-      },
-
-      'notification' : function(title, message, icon, duration) {
-        if ( _Desktop ) {
-          if ( icon ) {
-            icon = GetIcon(icon, "32x32");
-          }
-
-          _Desktop.createNotification(title, message, icon, duration);
-        }
       }
-
     },
 
     //
@@ -1249,6 +1236,20 @@
         }
 
         return true;
+      },
+
+      'default_application_menu' : function(ev, el) {
+        return CreateDefaultApplicationMenu(ev, el);
+      },
+
+      'notification' : function(title, message, icon, duration) {
+        if ( _Desktop ) {
+          if ( icon ) {
+            icon = GetIcon(icon, "32x32");
+          }
+
+          _Desktop.createNotification(title, message, icon, duration);
+        }
       }
     },
 
@@ -2471,7 +2472,7 @@
           setTimeout(function() {
             var _l = OSjs.Labels.FirstRun;
             var _i = GetIcon("emotes/face-smile-big.png", "32x32");
-            API.system.notification(_l.title, _l.message, _i);
+            API.application.notification(_l.title, _l.message, _i);
           }, 500);
         }
       }
@@ -2547,8 +2548,8 @@
         if ( !sid || (_SessionId != sid) ) {
           var ico = GetIcon("status/network-error.png", "32x32");
           // FIXME
-          //API.system.notification("Error", OSjs.Labels.SessionFailure, ico); // FIXME: Language title
-          API.system.notification("Unexpected Error", "You have lost your server session.<br />This may cause errors, and you should restart!.", ico); // FIXME: Language title
+          //API.application.notification("Error", OSjs.Labels.SessionFailure, ico); // FIXME: Language title
+          API.application.notification("Unexpected Error", "You have lost your server session.<br />This may cause errors, and you should restart!.", ico); // FIXME: Language title
 
           _SessionValid = false;
         }
@@ -2566,7 +2567,7 @@
         if ( _OnLine ) {
           _OnLine = false;
 
-          API.system.notification("Warning", OSjs.Labels.WentOffline); // FIXME: Language title
+          API.application.notification("Warning", OSjs.Labels.WentOffline); // FIXME: Language title
 
           console.log("Core::global_offline()", _OnLine);
         }
@@ -2574,7 +2575,7 @@
         if ( !_OnLine ) {
           _OnLine = true;
 
-          API.system.notification("Information", OSjs.Labels.WentOnline); // FIXME: Language title
+          API.application.notification("Information", OSjs.Labels.WentOnline); // FIXME: Language title
 
           console.log("Core::global_offline()", _OnLine);
         }
@@ -2814,7 +2815,7 @@
         setTimeout(function() {
           var _l = OSjs.Labels.SessionRestore;
           var _i = GetIcon("status/appointment-soon.png", "32x32");
-          API.system.notification(_l.title, _l.message, _i);
+          API.application.notification(_l.title, _l.message, _i);
         }, 500);
       }
     }
@@ -3278,7 +3279,7 @@
         var size = self.getStorageUsage()['localStorage'];
         if ( size >= WARN_STORAGE_SIZE ) {
           if ( !warnOpen ) {
-            API.system.alert(sprintf(OSjs.Labels.StorageWarning, size, WARN_STORAGE_SIZE), "warning", function() {
+            API.ui.alert(sprintf(OSjs.Labels.StorageWarning, size, WARN_STORAGE_SIZE), "warning", function() {
               warnOpen = false;
             });
             warnOpen = true;
@@ -3286,7 +3287,7 @@
         }
         if ( size >= MAX_STORAGE_SIZE ) {
           if ( !alertOpen ) {
-            API.system.alert(sprintf(OSjs.Labels.StorageAlert, size, MAX_STORAGE_SIZE), "error", function() {
+            API.ui.alert(sprintf(OSjs.Labels.StorageAlert, size, MAX_STORAGE_SIZE), "error", function() {
               alertOpen = false;
             });
             alertOpen = true;
@@ -3411,18 +3412,18 @@
       DoPost(pargs, function(data) {
         if ( data.error ) {
           if ( internal ) {
-            API.system.notification(OSjs.Labels.SettingsNotifyTitle, OSjs.Labels.SettingsNotifyFailSave, GetIcon("emblems/emblem-important.png", "32x32"));
+            API.application.notification(OSjs.Labels.SettingsNotifyTitle, OSjs.Labels.SettingsNotifyFailSave, GetIcon("emblems/emblem-important.png", "32x32"));
           }
           callback(false);
         } else {
           if ( internal ) {
-            API.system.notification(OSjs.Labels.SettingsNotifyTitle, OSjs.Labels.SettingsNotifySave, GetIcon("emblems/emblem-default.png", "32x32"));
+            API.application.notification(OSjs.Labels.SettingsNotifyTitle, OSjs.Labels.SettingsNotifySave, GetIcon("emblems/emblem-default.png", "32x32"));
           }
           callback(true);
         }
       }, function() {
         if ( internal ) {
-          API.system.notification(OSjs.Labels.SettingsNotifyTitle, OSjs.Labels.SettingsNotifyFailSaveServer, GetIcon("emblems/emblem-important.png", "32x32"));
+          API.application.notification(OSjs.Labels.SettingsNotifyTitle, OSjs.Labels.SettingsNotifyFailSaveServer, GetIcon("emblems/emblem-important.png", "32x32"));
         }
         callback(false);
       });
@@ -4182,97 +4183,97 @@
 
     /**
      * Application::createMessageDialog() -- Create Dialog: Message
-     * @see     API.system.dialog
+     * @see     API.ui.dialog
      * @return  void
      */
     createMessageDialog : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
-      this._addWindow(API.system.dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
+      this._addWindow(API.ui.dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
     },
 
     /**
      * Application::createColorDialog() -- Create Dialog: Color Chooser
-     * @see     API.system.dialog_color
+     * @see     API.ui.dialog_color
      * @return  void
      */
     createColorDialog : function(color, callback) {
-      this._addWindow(API.system.dialog_color(color, function(rgb, hex) {
+      this._addWindow(API.ui.dialog_color(color, function(rgb, hex) {
         callback(rgb, hex);
       }));
     },
 
     /**
      * Application::createFontDialog() -- Create Dialog: Font Chooser
-     * @see     API.system.dialog_font
+     * @see     API.ui.dialog_font
      * @return  void
      */
     createFontDialog : function(font, size, callback) {
-      this._addWindow(API.system.dialog_font(font, size, function(font, size) {
+      this._addWindow(API.ui.dialog_font(font, size, function(font, size) {
         callback(font, size);
       }));
     },
 
     /**
      * Application::createUploadDialog() -- Create Dialog: Upload File
-     * @see     API.system.dialog_upload
+     * @see     API.ui.dialog_upload
      * @return  void
      */
     createUploadDialog : function(dir, callback, callback_progress, callback_cancel, opts) {
-      this._addWindow(API.system.dialog_upload(dir, function(fpath, fmime, response) {
+      this._addWindow(API.ui.dialog_upload(dir, function(fpath, fmime, response) {
         callback(fpath, fmime, response);
       }, callback_progress, callback_cancel, opts));
     },
 
     /**
      * Application::createFileDialog() -- Create Dialog: File Operation Dialog
-     * @see     API.system.dialog_file
+     * @see     API.ui.dialog_file
      * @return  void
      */
     createFileDialog : function(callback, mimes, type, dir) {
-      this._addWindow(API.system.dialog_file(function(file, mime) {
+      this._addWindow(API.ui.dialog_file(function(file, mime) {
         callback(file, mime);
       }, mimes, type, dir));
     },
 
     /**
      * Application::createLaunchDialog() -- Create Dialog: Launch Application
-     * @see     API.system.dialog_launch
+     * @see     API.ui.dialog_launch
      * @return  void
      */
     createLaunchDialog : function(list, callback, udef) {
-      this._addWindow(API.system.dialog_launch(list, function(app, def, udef) {
+      this._addWindow(API.ui.dialog_launch(list, function(app, def, udef) {
         callback(app, def);
       }));
     },
 
     /**
      * Application::createRenameDialog() -- Create Dialog: Rename File
-     * @see     API.system.dialog_rename
+     * @see     API.ui.dialog_rename
      * @return  void
      */
     createRenameDialog : function(dir, callback) {
-      this._addWindow(API.system.dialog_rename(dir, function(fname) {
+      this._addWindow(API.ui.dialog_rename(dir, function(fname) {
         callback(fname);
       }));
     },
 
     /**
      * Application::createInputDialog() -- Create Dialog: Input Box
-     * @see     API.system.dialog_input
+     * @see     API.ui.dialog_input
      * @return  void
      */
     createInputDialog : function(value, desc, callback) {
-      this._addWindow(API.system.dialog_input(value, desc, function(result) {
+      this._addWindow(API.ui.dialog_input(value, desc, function(result) {
         callback(result);
       }));
     },
 
     /**
      * Application::createFilePropertyDialog() -- Create Dialog: File properties
-     * @see     API.system.dialog_properties
+     * @see     API.ui.dialog_properties
      * @return  void
      */
     createFilePropertyDialog : function(filename, callback) {
-      this._addWindow(API.system.dialog_properties(filename, function(result) {
+      this._addWindow(API.ui.dialog_properties(filename, function(result) {
         callback(result);
       }));
     },
@@ -5415,7 +5416,7 @@
           } else {
             dir = "/System/Wallpapers";
           }
-          API.system.dialog_file(function(fname) {
+          API.ui.dialog_file(function(fname) {
             API.user.settings.save({
               "desktop.wallpaper.path" : fname
             });
@@ -6764,7 +6765,7 @@
           self.setAlignment(newpos);
         }},
         {"title" : labels.remove, "method" : function() {
-          API.system.dialog("confirm", OSjs.Labels.PanelItemRemove, null, function() {
+          API.ui.dialog("confirm", OSjs.Labels.PanelItemRemove, null, function() {
             self._panel.removeItem(self, true);
           });
         }}

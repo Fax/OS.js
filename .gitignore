@@ -13,6 +13,9 @@ VFS/*
 !VFS/0
 public_html/media/Public/*
 
+# Misc
+config.php
+
 # Sub-modules
 src/packages
 vendor/*
