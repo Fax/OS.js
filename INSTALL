@@ -92,11 +92,11 @@ The installer is not yet complete. See the next section.
   - Drop into `vendor/`  
   - Symlink JS to `public_html/vendor/json.js` (Should exist)  
 * Download **Gnome Icon Theme**
-  - Drop into `vendor/`
-  - Symlink root directory to `public_html/img/icons/Default` (Should exist)
+  - Drop into `vendor/`  
+  - Symlink 16x16 and 32x32 directories to `public_html/img/icons/*` (Should exist)
 * Download **Freedesktop Sound Theme**
   - Drop into `vendor/`  
-  - Symlink `stereo` directory to `public_html/sounds/Default` (Should exist)  
+  - Symlink `stereo` directory to `public_html/sounds` (Should exist)  
   - Run `./bin/convert-sounds` to create MP3 samples (Optional)
 
 ## Extras
