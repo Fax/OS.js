@@ -64,6 +64,44 @@ abstract class CoreSettings
    * @var Default Registry
    */
   protected static $_Registry = Array(
+    "desktop.font" => Array(
+      "options" => Array("Sansation", "FreeMono", "FreeSans", "FreeSerif"),
+      "value"   => "Sansation"
+    ),
+
+    "desktop.icon.theme" => Array(
+      "options" => Array("Default"),
+      "value"   => "Default"
+    ),
+
+    "desktop.cursor.theme" => Array(
+      "options" => Array("Default", "Experimental"),
+      "value"   => "Default"
+    ),
+
+    "desktop.theme" => Array(
+      "options" => Array("dark", "light"),
+      "value"   => "dark"
+    ),
+
+    "desktop.wallpaper.path" => Array(
+      "value" => "/System/Wallpapers/go2cxpb.png"
+    ),
+
+    "desktop.wallpaper.type" => Array(
+      "options" => Array("Tiled Wallpaper", "Centered Wallpaper", "Stretched Wallpaper", "Color only"),
+      "value"   => "Tiled Wallpaper"
+    ),
+
+    "desktop.background.color" =>  Array(
+      "value" => "#005A77"
+    ),
+
+    "system.sounds.theme" => Array(
+      "options" => Array("Default"/*, "User-Defined"*/),
+      "value"   => "Default"
+    ),
+
     "desktop.panels"=>Array(
       "items"=>Array(
         Array(

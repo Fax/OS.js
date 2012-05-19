@@ -115,39 +115,46 @@ abstract class SettingsManager
     // Desktop
     //
 
-    "desktop.wallpaper.path" => Array(
+    "desktop.wallpaper.path" => Array( // CoreSettings
       "type"  => "filename",
-      "value" => "/System/Wallpapers/go2cxpb.png"
+      "value" => ""
     ),
-    "desktop.wallpaper.type" => Array(
+    "desktop.wallpaper.type" => Array( // CoreSettings
       "type"    => "array",
-      "options" => Array("Tiled Wallpaper", "Centered Wallpaper", "Stretched Wallpaper", "Color only"),
-      "value"   => "Tiled Wallpaper"
+      "options" => Array(),
+      "value"   => ""
     ),
-    "desktop.background.color" =>  Array(
+    "desktop.background.color" =>  Array( // CoreSettings
       "type"  => "string",
-      "value" => "#005A77"
+      "value" => ""
     ),
-    "desktop.theme" => Array(
+    "desktop.theme" => Array( // CoreSettings
       "type"    => "array",
-      "options" => Array("dark", "light"),
-      "value"   => "dark"
+      "options" => Array(),
+      "value"   => ""
     ),
-    "desktop.font" => Array(
+    "desktop.font" => Array( // CoreSettings
       "type"    => "array",
-      "options" => Array("Sansation", "FreeMono", "FreeSans", "FreeSerif"),
-      "value"   => "Sansation"
+      "options" => Array(),
+      "value"   => ""
     ),
-    "desktop.cursor.theme" => Array(
+    "desktop.icon.theme" => Array( // CoreSettings
       "type"    => "array",
-      "options" => Array("Default", "Experimental"),
-      "value"   => "Default"
+      "options" => Array(),
+      "value"   => ""
     ),
-    "desktop.panels" => Array(
+    "desktop.cursor.theme" => Array( // CoreSettings
+      "type"    => "array",
+      "options" => Array(),
+      "value"   => ""
+    ),
+
+    "desktop.panels" => Array( // CoreSettings
       "type" => "list",
       "items" => Array()
     ),
-    "desktop.grid" => Array(
+
+    "desktop.grid" => Array( // CoreSettings
       "type" => "list",
       "items" => Array()
     ),
@@ -188,10 +195,10 @@ abstract class SettingsManager
       "type" => "integer",
       "value" => "100",
     ),
-    "system.sounds.theme" => Array(
+    "system.sounds.theme" => Array( // CoreSettings
       "type"    => "array",
-      "options" => Array("Default"/*, "User-Defined"*/),
-      "value"   => "Default"
+      "options" => Array(),
+      "value"   => ""
     ),
 
     //

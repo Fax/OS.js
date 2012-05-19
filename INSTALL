@@ -91,12 +91,13 @@ The installer is not yet complete. See the next section.
 * Download **JSON2**  
   - Drop into `vendor/`  
   - Symlink JS to `public_html/vendor/json.js` (Should exist)  
-* Copy **Gnome's icon theme** 16x16 and 32x32 folders into `public_html/img/icons/`
+* Download **Gnome Icon Theme**
+  - Drop into `vendor/`
+  - Symlink root directory to `public_html/img/icons/Default` (Should exist)
 * Download **Freedesktop Sound Theme**
   - Drop into `vendor/`  
-  - Symlink `stere` directory to `public_html/sounds` (Should exist)  
+  - Symlink `stereo` directory to `public_html/sounds/Default` (Should exist)  
   - Run `./bin/convert-sounds` to create MP3 samples (Optional)
-
 
 ## Extras
 * Clone the "OSjs-Packages" repository into `src/packages`  

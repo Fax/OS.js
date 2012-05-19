@@ -94,8 +94,15 @@ Directories and Files:
   messages                  Backend Logging
 /public_html/             Main Apache Root
   /img/                     Frontend images
+    /icons/                   Frontend Icon Theme
+      ...
+    ...
   /media/                   Virtual File System root
-  vendor/                   Frontend Vendor Libraries (Symlinks)
+    ...
+  /sounds/                  Frontend Sound Files
+    ...
+  /vendor/                  Frontend Vendor Libraries (Symlinks)
+    ...
   _header.php               * Header file for scripts below
   download.php              * Download files
   index.php                 * Main script
