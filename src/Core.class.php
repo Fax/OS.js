@@ -146,6 +146,12 @@ class Core
           "result"  => null
         );
 
+        if ( ENABLE_DEBUGGING ) {
+          $json["debug"] = Array(
+            "input" => $args,
+          );
+        }
+
         // Set heartbeat timestamp
         $uid        = 0;
         $user       = null;
@@ -155,6 +161,10 @@ class Core
           User::save($user, Array("heartbeat_at"));
 
           $logged_in = 1;
+        }
+
+        if ( ENABLE_DEBUGGING ) {
+          $json["debug"]["uid"] = $uid;
         }
 
         // Map actions to methods

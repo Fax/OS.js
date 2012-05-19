@@ -652,6 +652,13 @@ abstract class API
       $json['success'] = ($result !== false && $result !== null); //($result === true) || is_array($result);
       $json['error']   = $json['success'] ? null : (is_string($result) ? $result : _("Unknown error"));
       $json['result']  = $json['success'] ? $result : null;
+
+      if ( ENABLE_DEBUGGING ) {
+        $json['debug'] = Array(
+          "input"  => $args,
+          "result" => $result
+        );
+      }
     } else {
       $json['error'] = _("Failed to handle application");
     }
