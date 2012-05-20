@@ -1078,7 +1078,12 @@ abstract class VFS
   public static function Upload(Array $src, $dest) {
     $dest  = self::buildPath($dest, self::ATTR_WRITE);
     $ndest = self::buildPath(sprintf("%s/%s", $dest["path"], $src["name"]), self::ATTR_WRITE);
-    if ( $ndest["perm"] && $dest["perm"] ) {
+
+    if ( ENABLE_LOGGING && ENABLE_DEBUGGING ) {
+      Logger::logInfo(sprintf("%s: %s", __METHOD__, JSON::encode(Array($dest, $src))));
+    }
+
+    if ( $ndest["perm"]/* && $dest["perm"]*/ ) {
       if ( file_exists($dest["root"]) && is_dir($dest["root"]) ) {
         if ( $result = @move_uploaded_file($src["tmp_name"], $ndest["root"]) ) {
           self::_permissions($ndest["root"]);
