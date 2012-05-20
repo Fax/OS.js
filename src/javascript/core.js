@@ -2045,7 +2045,7 @@
     run : function(username, password, auto, confirmation) {
       LoginManager.confirmation = confirmation;
 
-      $("#Loading").show(); // This actually is the login window FIXME
+      $("#LoginWindow").show();
 
       $("#LoginButton").click(function() {
         LoginManager.postLogin({
@@ -2088,6 +2088,16 @@
         $("#LoginButton").click();
         $("#LoginButton").attr("disabled", "disabled");
       }
+    },
+
+    /**
+     * LoginManager::hide() -- Hide and destroy login window
+     * @return void
+     */
+    hide : function() {
+      $("#LoginWindow").fadeOut(ANIMATION_SPEED, function() {
+        $("#LoginWindow").remove();
+      });
     }
 
   };
@@ -2138,6 +2148,7 @@
       if ( this.running ) {
         console.log("Unbinding events...");
 
+        //$(window).unbind("offline",                   this.global_offline);
         $(document).unbind("keydown",                 this.global_keydown);
         $(document).unbind("mousedown",               this.global_mousedown);
         $(document).unbind("mouseup",                 this.global_mouseup);
@@ -2145,16 +2156,10 @@
         $(document).unbind("click",                   this.global_click);
         $(document).unbind("dblclick",                this.global_dblclick);
         $(document).unbind("contextmenu",             this.global_contextmenu);
-        /*
-        $(document).unbind("fullscreenchange",        this.global_fullscreen);
-        $(document).unbind("mozfullscreenchange",     this.global_fullscreen);
-        $(document).unbind("webkitfullscreenchange",  this.global_fullscreen);
-        */
+        //$(document).unbind("fullscreenchange",        this.global_fullscreen);
+        //$(document).unbind("mozfullscreenchange",     this.global_fullscreen);
+        //$(document).unbind("webkitfullscreenchange",  this.global_fullscreen);
 
-        /*window.removeEventListener('offline', function(ev) {
-          self.global_offline(ev, !(navigator.onLine === false));
-        }, true);
-        */
         if ( this.olint ) {
           clearInterval(this.olint);
           this.olint = null;
@@ -2406,37 +2411,31 @@
      */
     run : function(session) {
       var self = this;
+      var bar  = $("#LoadingBar");
 
       if ( this.running ) {
         return;
       }
 
-      // Register confirm leave page thingy
-      window.onbeforeunload = function(ev) {
-        return self.leaving(ev);
-      };
-
       _Running = true; // GLOBAL
 
-      var load    = $("#Loading");
-      var bar     = $("#LoadingBar");
-
-      bar.progressbar({value : 5});
-
-      /*
-      $(document).bind("fullscreenchange",        this.global_fullscreen);
-      $(document).bind("mozfullscreenchange",     this.global_fullscreen);
-      $(document).bind("webkitfullscreenchange",  this.global_fullscreen);
-      */
-
-      /*window.addEventListener('offline', function(ev) {
-        self.global_offline(ev, !(navigator.onLine === false));
-      }, true);*/
+      // Bind global events
+      $(window).bind("beforeunload",  this.leaving);
+      //$(window).bind("offline",       this.global_offline);
+      $(document).bind("keydown",     this.global_keydown);
+      $(document).bind("mousedown",   this.global_mousedown);
+      $(document).bind("mouseup",     this.global_mouseup);
+      $(document).bind("mousemove",   this.global_mousemove);
+      $(document).bind("click",       this.global_click);
+      $(document).bind("dblclick",    this.global_dblclick);
+      $(document).bind("contextmenu", this.global_contextmenu);
+      //$(document).bind("fullscreenchange",        this.global_fullscreen);
+      //$(document).bind("mozfullscreenchange",     this.global_fullscreen);
+      //$(document).bind("webkitfullscreenchange",  this.global_fullscreen);
 
       this.olint = setInterval(function(ev) {
         self.global_offline(ev, !(navigator.onLine === false));
       }, ONLINECHK_FREQ);
-
       this.sclint = setInterval(function(ev) {
         self.global_endsession(ev, GetCookie(SESSION_KEY));
       }, SESSION_CHECK);
@@ -2445,11 +2444,12 @@
 
       // Initialize desktop etc.
       _Desktop = new Desktop();
-      _WM      = new WindowManager();
       bar.progressbar({value : 15});
 
+      _WM      = new WindowManager();
+      bar.progressbar({value : 20});
+
       // >>> Window Manager
-      bar.progressbar({value : 30});
       try {
         _WM.run();
       } catch ( exception ) {
@@ -2499,15 +2499,6 @@
         }
       }
 
-      // Bind global events
-      $(document).bind("keydown",     this.global_keydown);
-      $(document).bind("mousedown",   this.global_mousedown);
-      $(document).bind("mouseup",     this.global_mouseup);
-      $(document).bind("mousemove",   this.global_mousemove);
-      $(document).bind("click",       this.global_click);
-      $(document).bind("dblclick",    this.global_dblclick);
-      $(document).bind("contextmenu", this.global_contextmenu);
-
       // Session
       setTimeout(function() {
         bar.progressbar({value : 80});
@@ -2520,22 +2511,18 @@
           }
         }
 
-        bar.progressbar({value : 85});
+        bar.progressbar({value : 100});
 
         // >>> Finished
         setTimeout(function() {
-          setTimeout(function() {
-            load.fadeOut(ANIMATION_SPEED);
+          LoginManager.hide();
 
-            // NOTE: Fixes global_keydown "not responding upon init" issues
-            $(document).focus();
+          // NOTE: Fixes global_keydown "not responding upon init" issues
+          $(document).focus();
 
-            bar.progressbar({value : 100});
+          self.running = true;
 
-            self.running = true;
-
-            PlaySound("service-login");
-          }, 125);
+          PlaySound("service-login");
 
         }, 250); // <<< Finished
 
@@ -8546,7 +8533,7 @@
         delete OSjs;
       } catch (e) {}
 
-      window.onbeforeunload = null; // NOTE: Required!
+      $(window).unbind("beforeunload"); // NOTE: Required!
     }
 
     return true;

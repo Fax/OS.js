@@ -84,16 +84,7 @@ input.Disabled {
   padding : 5px;
 }
 
-/* Desktop */
-
-#Desktop {
-  position : relative;
-  margin : 0;
-  padding : 0;
-  height : 100%;
-}
-
-#Loading {
+#LoginWindow {
   width : 500px;
   height : 330px;
   position : absolute;
@@ -107,49 +98,51 @@ input.Disabled {
   background : #fff url('/img/logo.png') no-repeat center 20px;
   display : none;
 }
-#LoadingVersion {
-  position : absolute;
-  top : 5px;
-  right : 5px;
-  font-size : 8px;
-}
-#LoadingBarContainer {
-  position : absolute;
-  width : 400px;
-  height : 22px;
-  margin : 0;
-  padding : 0;
-  left : 50%;
-  top : 150px;
-  margin-left : -199px;
-}
-#LoadingBar {
-  height : 22px;
-  border : 0 none;
-}
-#LoadingBar * {
-  height : 22px;
-  border : 0 none;
-}
-#LoadingLogin {
+  #LoginVersionStamp {
+    position : absolute;
+    top : 5px;
+    right : 5px;
+    font-size : 8px;
+  }
+
+  #LoadingBarContainer {
+    position : absolute;
+    width : 400px;
+    height : 22px;
+    margin : 0;
+    padding : 0;
+    left : 50%;
+    top : 150px;
+    margin-left : -199px;
+  }
+  #LoadingBar {
+    height : 22px;
+    border : 0 none;
+  }
+  #LoadingBar * {
+    height : 22px;
+    border : 0 none;
+  }
+
+#Login {
   width : 400px;
   position : absolute;
   left : 50%;
   margin-left : -200px;
   bottom : 10px;
 }
-  #LoadingLogin .Row {
+  #Login .Row {
     margin-bottom : 5px;
   }
-  #LoadingLogin .Row input,
-  #LoadingLogin .Row label {
+  #Login .Row input,
+  #Login .Row label {
     width : 386px; /* - border */
     margin : 0;
     padding : 0;
     border : 0 none;
     margin-bottom : 5px;
   }
-  #LoadingLogin .Row input {
+  #Login .Row input {
     display : block;
     color : #999;
     border : 1px solid #ccc;
@@ -158,25 +151,25 @@ input.Disabled {
     padding-right : 5px;
     background : #fff url('/img/blank.gif') no-repeat 99% center;
   }
-  #LoadingLogin .Row input.loading {
+  #Login .Row input.loading {
     background : #fff url('/img/ajaxload_snake_trans.gif') no-repeat 99% center;
   }
-  #LoadingLogin .Row input:focus,
-  #LoadingLogin .Row input:active {
+  #Login .Row input:focus,
+  #Login .Row input:active {
     color : #111;
   }
-  #LoadingLogin .Row label {
+  #Login .Row label {
     display : block;
     font-weight : bold;
   }
-  #LoadingLogin .Row {
+  #Login .Row {
   }
-  #LoginButtonContainer {
+  #LoginButtons {
     text-align : right;
     position : relative;
     padding-top : 5px;
   }
-  #LoginButtonContainer button {
+  #LoginButtons button {
     margin : 0;
     padding : 2px;
     padding-left : 5px;
@@ -195,10 +188,15 @@ input.Disabled {
     margin : 0;
     padding : 0;
   }
-/*
-#Loading .ui-progressbar-value {
+
+/* Desktop */
+
+#Desktop {
+  position : relative;
+  margin : 0;
+  padding : 0;
+  height : 100%;
 }
-  */
 
 
 #DesktopGrid {
@@ -209,72 +207,63 @@ input.Disabled {
   bottom : 0px;
   z-index : 5;
 }
-/*#DesktopGrid .GtkIconView {
-  background : transparent;
-  position : absolute;
-  top : 0px;
-  left : 0px;
-  right : 0px;
-  bottom : 0px;
-}
-*/
-#DesktopGrid.top {
-  top : 40px;
-  bottom : 0px;
-}
-#DesktopGrid.bottom {
-  top : 0px;
-  bottom : 40px;
-}
-#DesktopGrid ul {
-  margin : 0;
-  padding : 0;
-  list-style-type : none;
-  margin-left : 10px;
-  margin-right : 10px;
-  /*
-  position : absolute;
-  display : block;
-  top : 0px;
-  left : 10px;
-  right : 10px;
-  bottom : 0px;
-  */
-}
-#DesktopGrid li {
-  margin : 10px;
-  padding : 0;
-  text-align : center;
-  display : inline-block;
-}
-#DesktopGrid li .inner {
-  overflow : visible;
-}
-#DesktopGrid li .icon {
-}
-#DesktopGrid li .icon img {
-  width : 32px;
-  height : 32px;
-  padding : 2px;
-}
-#DesktopGrid li .label {
-  white-space : nowrap;
-  margin : 0;
-  padding : 0;
-  padding-left : 5px;
-  padding-right : 5px;
-  height : 18px;
-  line-height : 18px;
-  vertical-align : middle;
-}
-#DesktopGrid li .label span {
-  vertical-align : middle;
-}
-#DesktopGrid li.current {
-}
+  #DesktopGrid.top {
+    top : 40px;
+    bottom : 0px;
+  }
+  #DesktopGrid.bottom {
+    top : 0px;
+    bottom : 40px;
+  }
+  #DesktopGrid ul {
+    margin : 0;
+    padding : 0;
+    list-style-type : none;
+    margin-left : 10px;
+    margin-right : 10px;
+    /*
+    position : absolute;
+    display : block;
+    top : 0px;
+    left : 10px;
+    right : 10px;
+    bottom : 0px;
+    */
+  }
+  #DesktopGrid li {
+    margin : 10px;
+    padding : 0;
+    text-align : center;
+    display : inline-block;
+  }
+  #DesktopGrid li .inner {
+    overflow : visible;
+  }
+  #DesktopGrid li .icon {
+  }
+  #DesktopGrid li .icon img {
+    width : 32px;
+    height : 32px;
+    padding : 2px;
+  }
+  #DesktopGrid li .label {
+    white-space : nowrap;
+    margin : 0;
+    padding : 0;
+    padding-left : 5px;
+    padding-right : 5px;
+    height : 18px;
+    line-height : 18px;
+    vertical-align : middle;
+  }
+  #DesktopGrid li .label span {
+    vertical-align : middle;
+  }
+  #DesktopGrid li.current {
+  }
 
-#DesktopGrid li.current .label {
-}
+  #DesktopGrid li.current .label {
+  }
 
 /* Panel */
 
