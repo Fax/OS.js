@@ -187,7 +187,7 @@ class Core
               $json = array_merge($json, $result);
             }
           } else {
-            $json['error'] = _("Invalid or no action given!"); // FIXME: Locale
+            $json['error'] = _("Invalid or no action given!");
             if ( ENABLE_LOGGING )
               Logger::logError(sprintf("%s: %s", __METHOD__, JSON::encode(Array($args, $json))));
           }
