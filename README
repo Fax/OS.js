@@ -48,15 +48,3 @@ There is currently no maintainence for Internet Explorer. Mobile Android and iOS
 * Utilities: Terminal Emulator, Clock, File Browser
 * Other: WebWorker and Canvas Mandelbrot test application
 
-# ChangeLog
-
-The full list is in the `ChangeLog` file.
-
-## 0.7.400
-* core.js: Added Core::getProcess(pid)
-* core.js: Persistent and Temporary VFS class improvments
-* core.js: Window::ontop() fixes
-* core.js: Removed unused constants
-* Core: Possible to disable gzipping from external script by using DISABLE_GZIP
-* FS: new symlink public_html/img/icons/(16x16|32x32)
-* FS: moved icons out of main tree ^

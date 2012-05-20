@@ -2,7 +2,7 @@
   <div class="Window">
     <div class="WindowTop">
       <div class="WindowTopInner">
-        <img alt="" src="/img/icons/16x16/emblems/emblem-unreadable.png" />
+        <img alt="" src="/img/blank.gif" />
         <span></span>
       </div>
       <div class="WindowTopControllers">

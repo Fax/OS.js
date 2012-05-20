@@ -71,7 +71,7 @@
   /**
    * @constants URIs
    */
-  var WEBSOCKET_URI    = "localhost:8888";          //!< WebSocket URI // FIXME: From server configuration
+  var WEBSOCKET_URI    = "localhost:8888";          //!< WebSocket URI (Dynamic)
   var AJAX_URI         = "/";                       //!< AJAX URI (POST)
   var RESOURCE_URI     = "/VFS/resource/";          //!< Resource loading URI (GET)
   var THEME_URI        = "/VFS/theme/";             //!< Themes loading URI (GET)
@@ -79,8 +79,8 @@
   var CURSOR_URI       = "/VFS/cursor/";            //!< Cursor loading URI (GET)
   var LANGUAGE_URI     = "/VFS/language/";          //!< Language loading URI (GET)
   var UPLOAD_URI       = "/API/upload";             //!< File upload URI (POST)
-  var ICON_URI         = "/img/icons/%s/%s";        //!< Icons URI (GET)
-  var SOUND_URI        = "/sounds/%s.%s";           //!< Sound URI (GET)
+  var ICON_URI         = "/img/icons/%s/%s/%s";     //!< Icons URI (GET)
+  var SOUND_URI        = "/sounds/%s/%s.%s";        //!< Sound URI (GET)
   var PKG_RES_URI      = RESOURCE_URI + "%s/%s";    //!< Package Resource URI (GET)
   // @endconstants
 
@@ -775,22 +775,25 @@
     var loaded = 0;
     var errors = 0;
     var total  = list.length;
-
-    var i = 0;
-    for ( i; i < total; i++ ) {
-      creator(list[i], function() {
-        loaded++;
-        var totals = (loaded + errors);
-        if ( totals >= total ) {
-          callback(true, totals, loaded, errors);
-        }
-      }, function() {
-        errors++;
-        var totals = (loaded + errors);
-        if ( totals >= total ) {
-          callback(false, totals, loaded, errors);
-        }
-      });
+    if ( total ) {
+      var i = 0;
+      for ( i; i < total; i++ ) {
+        creator(list[i], function() {
+          loaded++;
+          var totals = (loaded + errors);
+          if ( totals >= total ) {
+            callback(true, totals, loaded, errors);
+          }
+        }, function() {
+          errors++;
+          var totals = (loaded + errors);
+          if ( totals >= total ) {
+            callback(false, totals, loaded, errors);
+          }
+        });
+      }
+    } else {
+      callback(true, 0, loaded, errors);
     }
   }
 
@@ -827,7 +830,7 @@
       if ( src ) {
         var aud           = new Audio();
         aud.preload       = "auto";
-        aud.src           = sprintf(SOUND_URI, src, filetype);
+        aud.src           = sprintf(SOUND_URI, "Default", src, filetype); // FIXME: Theme
         aud.volume        = (sv / 100);
         //aud.currentTime   = 0;
         aud.play();
@@ -850,7 +853,7 @@
       if ( pkg && !name.match(/(.*)\/(.*)/) ) {
         return sprintf(PKG_RES_URI, pkg, name);
       } else {
-        return sprintf(ICON_URI, size, name);
+        return sprintf(ICON_URI, "Default", size, name); // FIXME: Theme
       }
     }
 
@@ -2113,6 +2116,7 @@
         ENV_CACHE       = env.cache;
         ENV_PRODUCTION  = env.production;
         ENV_DEMO        = env.demo;
+        WEBSOCKET_URI   = env.server;
 
         var auto     = false;
         var lconfirm = true;
@@ -2130,15 +2134,6 @@
         $(document).bind("mozfullscreenchange",     this.global_fullscreen);
         $(document).bind("webkitfullscreenchange",  this.global_fullscreen);
         */
-
-        // Initialize resources
-        _Resources = new ResourceManager(data.preload);
-
-        // Initialize settings
-        _Settings = new SettingsManager(data.registry);
-
-        // Initialize packages
-        _PackMan = new PackageManager();
 
         // Login window handling
         self._login(username, password, auto, lconfirm);
@@ -2285,18 +2280,17 @@
       _BrowserLanguage  = response.lang_browser;
       _SystemLanguage   = response.lang_user;
 
-      _Settings.run(response.registry);
-      _PackMan.run(response.packages);
+      // Initialize base classes
+      _Settings   = new SettingsManager(response.registry.tree);
+      _Resources  = new ResourceManager();
+      _PackMan    = new PackageManager();
 
-      if ( response.preload ) {
-        _Resources.addResources(response.preload.resources, null, function(error) {
-          if ( !error ) {
-            self._run(response.session);
-          } // FIXME: ERROR
-        });
-      } else {
-        this._run();
-      }
+      // Now fire them up
+      _Settings.run(response.registry.stored);
+      _PackMan.run(response.packages);
+      _Resources.run(response.preload, function() {
+        self._run(response.session);
+      });
     },
 
     /**
@@ -2865,11 +2859,10 @@
      * ResourceManager::init() -- Constructor
      * @constructor
      */
-    init : function(preload) {
+    init : function() {
       var self = this;
 
       console.group("ResourceManager::init()");
-      console.log("Preload", preload);
 
       this.resources  = [];
       this.links      = [];
@@ -2877,22 +2870,44 @@
       console.groupEnd();
 
       this._super("(ResourceManager)", "apps/system-software-install.png", true);
+    },
 
-      if ( preload ) {
-        console.log("Preloading", preload);
-        console.groupEnd();
 
-        // Preload images
+    /**
+     * ResourceManager::destroy() -- Destructor
+     * @destructor
+     */
+    destroy : function() {
+      forEach(this.links, function(i, el) {
+        $(el).remove();
+      });
+
+      this.resources = null;
+      this.links = null;
+
+      this._super();
+    },
+
+    /**
+     * ResourceManager::run() -- Start instance
+     * @return void
+     */
+    run : function(preload, callback) {
+      var self = this;
+
+      var _preloadImages = function(clb) {
         PreloadResourceList(preload.images, function(src, onload, onerror) {
           var img     = new Image();
           img.onload  = onload;
           img.onerror = onerror;
           img.src     = GetIcon(src, "16x16");
         }, function(result, total, loaded, failed) {
-          console.log("ResourceManager::init() Preloaded", loaded, "of", total, "image(s) (" + failed + " failures)");
+          console.log("ResourceManager::run() Preloaded", loaded, "of", total, "image(s) (" + failed + " failures)");
+          clb();
         });
+      };
 
-        // Preload sounds
+      var _preloadSounds = function(clb) {
         if ( OSjs.Compability.SUPPORT_AUDIO ) {
           var filetype = "oga";
           if ( !OSjs.Compability.SUPPORT_AUDIO_OGG && OSjs.Compability.SUPPORT_AUDIO_MP3 ) {
@@ -2910,29 +2925,34 @@
             }, false );
             aud.onerror       = onerror;
             aud.preload       = "auto";
-            aud.src           = sprintf(SOUND_URI, src, filetype);
+            aud.src           = sprintf(SOUND_URI, "Default", src, filetype); // FIXME: Theme
             aud.load();
           }, function(result, total, loaded, failed) {
-            console.log("ResourceManager::init() Preloaded", loaded, "of", total, "sound(s) (" + failed + " failures)");
+            console.log("ResourceManager::run() Preloaded", loaded, "of", total, "sound(s) (" + failed + " failures)");
+            clb();
           });
+        } else {
+          clb();
         }
-      }
-    },
+      };
 
+      var _preloadResources = function(clb) {
+        self.addResources(preload.resources, null, function(error) {
+          console.log("ResourceManager::run() Preloaded", preload.resources.length, "resources");
+          clb();
+        });
+      };
 
-    /**
-     * ResourceManager::destroy() -- Destructor
-     * @destructor
-     */
-    destroy : function() {
-      forEach(this.links, function(i, el) {
-        $(el).remove();
+      // Load all resources
+      _preloadImages(function() {
+        _preloadSounds(function() {
+          _preloadResources(function() {
+            console.log(">>> ResourceManager::run()", "FINISHED PRELOADING...");
+            callback();
+          });
+        });
       });
 
-      this.resources = null;
-      this.links = null;
-
-      this._super();
     },
 
     /**
@@ -3238,7 +3258,9 @@
      * @return void
      */
     run : function(user_registry) {
+      console.group("SettingManager::run()");
       this._applyUserRegistry(user_registry);
+      console.groupEnd();
     },
 
     /**
@@ -7378,6 +7400,24 @@
         if ( fresh ) {
           this._gravitate();
         }
+
+        //
+        // Fixes
+        //
+
+        el.find("img").each(function(ind, elm) {
+          elm = $(elm);
+          if ( elm.attr("src").match(/^\/img\/icons\/(\d+x\d+)/) ) {
+            var tmp = elm.attr("src").split("/img/icons/").pop().split("/");
+            var size = tmp.shift();
+            var name = tmp.join("/");
+            elm.attr("src", GetIcon(name, size));
+          }
+        });
+
+        //
+        // Finish
+        //
 
         this._created = true;
 

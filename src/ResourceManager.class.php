@@ -412,18 +412,13 @@ EOCSS;
 
   /**
    * Get all preload resources
-   * @param  String   $mode       Preload mode (boot/login)
    * @return Array
    */
-  public static function getAllPreloads($mode = 'boot') {
-    $result = Array();
-    if ( $mode == "boot" ) {
-      $result = self::$Preload;
-    } else if ( $mode == "login" ) {
-      foreach ( self::$ModuleResources as $name => $opts ) {
-        foreach ( $opts["resources"] as $res ) {
-          $result[] = $res;
-        }
+  public static function getPreloads() {
+    $result = self::$Preload;
+    foreach ( self::$ModuleResources as $name => $opts ) {
+      foreach ( $opts["resources"] as $res ) {
+        $result["resources"][] = $res;
       }
     }
     return $result;

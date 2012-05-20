@@ -145,15 +145,14 @@ abstract class API
           "production"  => ENV_PRODUCTION,
           "demo"        => ENV_DEMO,
           "cache"       => ENABLE_CACHE,
+          "server"      => sprintf("%s:%s", SERVER_HOST, SERVER_PORT),
           "autologin"   => Array(
             "enable"       => AUTOLOGIN_ENABLE,
             "username"     => AUTOLOGIN_USERNAME,
             "password"     => AUTOLOGIN_PASSWORD,
             "confirmation" => AUTOLOGIN_CONFIRMATION
           ),
-        ),
-        "preload"     => ResourceManager::getAllPreloads("boot"),
-        "registry"    => User::getDefaultRegistry()
+        )
       )
     );
   }
@@ -459,12 +458,13 @@ abstract class API
           $json['success'] = true;
           $json['result'] = Array(
             "user"          => $user->getUserInfo(),
-            "registry"      => $registry,
+            "registry"      => Array(
+              "tree"    => User::getDefaultRegistry(),
+              "stored"  => $registry
+            ),
             "session"       => $session,
             "packages"      => PackageManager::GetPackages($user),
-            "preload"       => Array(
-              "resources" => ResourceManager::getAllPreloads("login")
-            ),
+            "preload"       => ResourceManager::getPreloads(),
             "sid"           => session_id(),
             "lang_system"   => DEFAULT_LANGUAGE,
             "lang_user"     => "default", // NOTE: Should be set to user ? used as 'SystemLanguage'
