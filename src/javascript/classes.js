@@ -1816,7 +1816,13 @@
      * @return void
      */
     uploadComplete : function(evt) {
-      var jsn = JSON.parse(evt.target.responseText);
+      var jsn;
+      try {
+        jsn = JSON.parse(evt.target.responseText);
+      } catch ( eee ) {
+        jsn = null;
+      }
+
       if ( jsn instanceof Object ) {
         this.callback_finished(jsn);
       } else {
