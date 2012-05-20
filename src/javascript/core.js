@@ -847,7 +847,7 @@
       if ( pkg && !name.match(/(.*)\/(.*)/) ) {
         return sprintf(PKG_RES_URI, pkg, name);
       } else {
-        var theme = _Settings._get("system.sounds.theme") || "Default";
+        var theme = "Default"; //_Settings._get("system.sounds.theme") || "Default";
         return sprintf(ICON_URI, theme, size, name);
       }
     }
@@ -865,7 +865,7 @@
    * @function
    */
   function GetSound(src, filetype, onerror, onloaded) {
-    var theme     = _Settings._get("system.sounds.theme") || "Default";
+    var theme     = "Default"; //_Settings._get("system.sounds.theme") || "Default";
     var aud       = new Audio();
 
     if ( onerror ) {
