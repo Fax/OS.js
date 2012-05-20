@@ -159,29 +159,5 @@
     "Web Workers"      : OSjs.Compability.SUPPORT_WORKER
   };
 
-  // File-extension => MIME types
-  OSjs.Public.FileExtensions = { // TODO
-    "avi" : "video/avi",
-    "mp4" : "video/mp4",
-    "webm": "video/webm",
-    "ogv" : "video/ogg",
-    "mpg" : "video/mpeg",
-    "mpeg": "video/mpeg",
-    "flv" : "video/flv",
-    "mkv" : "video/matroska",
-
-    "mp3" : "audio/mp3",
-    "ogg" : "audio/ogg",
-    "wav" : "audio/wav",
-    "flac": "audio/flac",
-    "aac" : "audio/aac",
-
-    "png" : "image/png",
-    "jpg" : "image/jpg",
-    "jpeg": "image/jpeg",
-    "bmp" : "image/bmp",
-    "svg" : "image/svg"
-  };
-
 })($);
 
