@@ -6254,7 +6254,6 @@
 
       $("#Desktop").append(this.$element);
 
-      this.$element.show();
       this.running = true;
 
       var self = this;
