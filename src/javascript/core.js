@@ -1944,6 +1944,155 @@
   }); // @endclass
 
   /////////////////////////////////////////////////////////////////////////////
+  // LOGIN
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * LoginManager -- Login Manager
+   * @class
+   */
+  var LoginManager = {
+
+    confirmation : null, // set in show()
+
+    /**
+     * LoginManager::disableInputs() -- Disable Input Buttons
+     * @return void
+     */
+    disableInputs : function() {
+      $("#LoginButton").attr("disabled", "disabled");
+      $("#CreateLoginButton").attr("disabled", "disabled");
+      $("#LoginUsername").attr("disabled", "disabled").addClass("loading");
+      $("#LoginPassword").attr("disabled", "disabled").addClass("loading");
+    },
+
+    /**
+     * LoginManager::enableInputs() -- Enable Input Buttons
+     * @return void
+     */
+    enableInputs : function() {
+      $("#LoginButton").removeAttr("disabled");
+      $("#CreateLoginButton").removeAttr("disabled");
+      $("#LoginUsername").removeAttr("disabled").removeClass("loading");
+      $("#LoginPassword").removeAttr("disabled").removeClass("loadiCOREng");
+    },
+
+    /**
+     * LoginManager::handleLogin() -- Handle a login POST result
+     * @return void
+     */
+    handleLogin : function(response, dcallback) {
+      dcallback = dcallback || function() {};
+
+      setTimeout(function() {
+        if ( response.duplicate ) {
+          var con = !LoginManager.confirmation || confirm(OSjs.Labels.LoginConfirm);
+          if ( con ) {
+            _Core.login(response);
+          } else {
+            dcallback();
+          }
+        } else {
+          _Core.login(response);
+        }
+      }, LOGIN_WAIT);
+    },
+
+    /**
+     * LoginManager::postLogin() -- POST a login form
+     * @return void
+     */
+    postLogin : function(form, create) {
+      LoginManager.disableInputs();
+
+      console.group("Core::_login()");
+      console.log("Login data:", form);
+      console.log("Create login:", create);
+      console.groupEnd();
+
+      DoPost({'action' : 'login', 'form' : form, 'create' : create}, function(data) {
+        console.log("Login success:", data.success);
+        console.log("Login result:", data.result);
+
+        if ( data.success ) {
+          $("#LoginForm").get(0).onsubmit = null;
+          LoginManager.handleLogin(data.result, function() {
+            LoginManager.enableInputs();
+          });
+        } else {
+          LoginManager.enableInputs();
+          if ( create ) {
+            MessageBox(sprintf(OSjs.Labels.CreateLoginFailure, data.error));
+          } else {
+            MessageBox(sprintf(OSjs.Labels.LoginFailure, data.error));
+          }
+        }
+
+      }, function() {
+        if ( create ) {
+          MessageBox(OSjs.Labels.CreateLoginFailureOther);
+        } else {
+          MessageBox(OSjs.Labels.LoginFailureOther);
+        }
+        LoginManager.enableInputs();
+      });
+    },
+
+    /**
+     * LoginManager::run() -- Init the Login
+     * @return void
+     */
+    run : function(username, password, auto, confirmation) {
+      LoginManager.confirmation = confirmation;
+
+      $("#Loading").show(); // This actually is the login window FIXME
+
+      $("#LoginButton").click(function() {
+        LoginManager.postLogin({
+          "username" : $("#LoginUsername").val(),
+          "password" : $("#LoginPassword").val()
+        }, false);
+      });
+      $("#CreateLoginButton").click(function() {
+        LoginManager.postLogin({
+          "username" : $("#LoginUsername").val(),
+          "password" : $("#LoginPassword").val()
+        }, true);
+      });
+
+      $("#LoginUsername").keydown(function(ev) {
+        var key = ev.keyCode || ev.which;
+        if ( key == 13 ) {
+          $("#LoginPassword").focus();
+          ev.preventDefault();
+          ev.stopPropagation();
+        }
+      });
+
+      $("#LoginPassword").keydown(function(ev) {
+        var key = ev.keyCode || ev.which;
+        if ( key == 13 ) {
+          $("#LoginButton").click();
+          ev.preventDefault();
+          ev.stopPropagation();
+        }
+      });
+
+      LoginManager.enableInputs();
+
+      $("#LoginUsername").val(username);
+      $("#LoginPassword").val(password);
+      $("#LoginUsername").focus();
+
+      if ( auto ) {
+        $("#LoginButton").click();
+        $("#LoginButton").attr("disabled", "disabled");
+      }
+    }
+
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
   // CORE
   /////////////////////////////////////////////////////////////////////////////
 
@@ -2091,8 +2240,6 @@
         return;
       }
 
-      $("#Loading").show();
-
       var nav = {
         appName     : window.navigator.appName,
         appVersion  : window.navigator.appVersion,
@@ -2111,32 +2258,20 @@
       };
 
       DoPost({'action' : 'boot', 'navigator' : nav}, function(response) {
-        var data = response.result;
-        var env  = data.environment;
+        var data    = response.result;
+        var env     = data.environment;
+        var alogin  = env.autologin;
+
         ENV_CACHE       = env.cache;
         ENV_PRODUCTION  = env.production;
         ENV_DEMO        = env.demo;
         WEBSOCKET_URI   = env.server;
 
-        var auto     = false;
-        var lconfirm = true;
-        var username = "";
-        var password = "";
-        if ( env.autologin.enable ) {
-          username = env.autologin.username;
-          password = env.autologin.password;
-          lconfirm = env.autologin.confirmation;
-          auto     = true;
+        if ( alogin.enable ) {
+          LoginManager.run(alogin.username, alogin.password, true, alogin.confirmation);
+        } else {
+          LoginManager.run("", "", false, true);
         }
-
-        /*
-        $(document).bind("fullscreenchange",        this.global_fullscreen);
-        $(document).bind("mozfullscreenchange",     this.global_fullscreen);
-        $(document).bind("webkitfullscreenchange",  this.global_fullscreen);
-        */
-
-        // Login window handling
-        self._login(username, password, auto, lconfirm);
       }, function(xhr, ajaxOptions, thrownError) {
         alert("A network error occured while booting OS.js: " + thrownError);
         throw("Initialization error: " + thrownError);
@@ -2144,129 +2279,9 @@
     },
 
     /**
-     * Core::_login() -- Perform login
-     * @param  String     username      Username
-     * @param  String     password      Password
-     * @param  bool       auto          Automatic login ?
-     * @param  bool       confirmation  Confirm Session duplicates ?
-     * @return void
-     * @function
-     */
-    _login : function(username, password, auto, confirmation) {
-      var self = this;
-
-      var _disableInput = function() {
-        $("#LoginButton").attr("disabled", "disabled");
-        $("#CreateLoginButton").attr("disabled", "disabled");
-        $("#LoginUsername").attr("disabled", "disabled").addClass("loading");
-        $("#LoginPassword").attr("disabled", "disabled").addClass("loading");
-      };
-      var _enableInput = function() {
-        $("#LoginButton").removeAttr("disabled");
-        $("#CreateLoginButton").removeAttr("disabled");
-        $("#LoginUsername").removeAttr("disabled").removeClass("loading");
-        $("#LoginPassword").removeAttr("disabled").removeClass("loading");
-      };
-
-      var _doLogin = function(response, dcallback) {
-        dcallback = dcallback || function() {};
-
-        setTimeout(function() {
-          if ( response.duplicate ) {
-            var con = !confirmation || confirm(OSjs.Labels.LoginConfirm);
-            if ( con ) {
-              self.login(response);
-            } else {
-              dcallback();
-            }
-          } else {
-            self.login(response);
-          }
-        }, LOGIN_WAIT);
-      };
-
-      var _loginPost = function(form, create) {
-        _disableInput();
-
-        console.group("Core::_login()");
-        console.log("Login data:", form);
-        console.log("Create login:", create);
-        console.groupEnd();
-
-        DoPost({'action' : 'login', 'form' : form, 'create' : create}, function(data) {
-          console.log("Login success:", data.success);
-          console.log("Login result:", data.result);
-
-          if ( data.success ) {
-            $("#LoginForm").get(0).onsubmit = null;
-            _doLogin(data.result, function() {
-              _enableInput();
-            });
-          } else {
-            _enableInput(false);
-            if ( create ) {
-              MessageBox(sprintf(OSjs.Labels.CreateLoginFailure, data.error));
-            } else {
-              MessageBox(sprintf(OSjs.Labels.LoginFailure, data.error));
-            }
-          }
-
-        }, function() {
-          if ( create ) {
-            MessageBox(OSjs.Labels.CreateLoginFailureOther);
-          } else {
-            MessageBox(OSjs.Labels.LoginFailureOther);
-          }
-          _enableInput();
-        });
-      };
-
-      $("#LoginButton").click(function() {
-        _loginPost({
-          "username" : $("#LoginUsername").val(),
-          "password" : $("#LoginPassword").val()
-        }, false);
-      });
-      $("#CreateLoginButton").click(function() {
-        _loginPost({
-          "username" : $("#LoginUsername").val(),
-          "password" : $("#LoginPassword").val()
-        }, true);
-      });
-
-      $("#LoginUsername").keydown(function(ev) {
-        var key = ev.keyCode || ev.which;
-        if ( key == 13 ) {
-          $("#LoginPassword").focus();
-          ev.preventDefault();
-          ev.stopPropagation();
-        }
-      });
-
-      $("#LoginPassword").keydown(function(ev) {
-        var key = ev.keyCode || ev.which;
-        if ( key == 13 ) {
-          $("#LoginButton").click();
-          ev.preventDefault();
-          ev.stopPropagation();
-        }
-      });
-
-      _enableInput();
-
-      $("#LoginUsername").val(username);
-      $("#LoginPassword").val(password);
-      $("#LoginUsername").focus();
-
-      if ( auto ) {
-        $("#LoginButton").click();
-        $("#LoginButton").attr("disabled", "disabled");
-      }
-    },
-
-    /**
      * Core::login() -- Main login procedure
-     * @param  Object   response      _login response
+     * @param  Object   response      Response from LoginManager
+     * @see LoginManager
      * @return void
      */
     login : function(response) {
@@ -2407,6 +2422,12 @@
       var bar     = $("#LoadingBar");
 
       bar.progressbar({value : 5});
+
+      /*
+      $(document).bind("fullscreenchange",        this.global_fullscreen);
+      $(document).bind("mozfullscreenchange",     this.global_fullscreen);
+      $(document).bind("webkitfullscreenchange",  this.global_fullscreen);
+      */
 
       /*window.addEventListener('offline', function(ev) {
         self.global_offline(ev, !(navigator.onLine === false));
