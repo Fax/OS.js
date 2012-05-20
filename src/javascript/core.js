@@ -79,8 +79,8 @@
   var CURSOR_URI       = "/VFS/cursor/";            //!< Cursor loading URI (GET)
   var LANGUAGE_URI     = "/VFS/language/";          //!< Language loading URI (GET)
   var UPLOAD_URI       = "/API/upload";             //!< File upload URI (POST)
-  var ICON_URI         = "/img/icons/%s/%s/%s";     //!< Icons URI (GET)
-  var SOUND_URI        = "/sounds/%s/%s.%s";        //!< Sound URI (GET)
+  var ICON_URI         = "/UI/icon/%s/%s/%s";       //!< Icons URI (GET)
+  var SOUND_URI        = "/UI/sound/%s/%s.%s";      //!< Sound URI (GET)
   var PKG_RES_URI      = RESOURCE_URI + "%s/%s";    //!< Package Resource URI (GET)
   // @endconstants
 
@@ -826,11 +826,8 @@
       }
 
       if ( src ) {
-        var aud           = new Audio();
-        aud.preload       = "auto";
-        aud.src           = sprintf(SOUND_URI, "Default", src, filetype); // FIXME: Theme
-        aud.volume        = (sv / 100);
-        //aud.currentTime   = 0;
+        var aud     = GetSound(src, filetype);
+        aud.volume  = (sv / 100);
         aud.play();
       }
     }
@@ -851,11 +848,43 @@
       if ( pkg && !name.match(/(.*)\/(.*)/) ) {
         return sprintf(PKG_RES_URI, pkg, name);
       } else {
-        return sprintf(ICON_URI, "Default", size, name); // FIXME: Theme
+        var theme = _Settings._get("system.sounds.theme") || "Default";
+        return sprintf(ICON_URI, theme, size, name);
       }
     }
 
     return null;
+  }
+
+  /**
+   * GetSound() -- Get a Audio clip by name
+   * @param   String    src       Sound Source Path
+   * @param   String    filetype  Sound Type (Extension)
+   * @param   Function  onerror   Error callback
+   * @param   Function  onloaded  Loaded callback
+   * @return  Audio
+   * @function
+   */
+  function GetSound(src, filetype, onerror, onloaded) {
+    var theme     = _Settings._get("system.sounds.theme") || "Default";
+    var aud       = new Audio();
+
+    if ( onerror ) {
+      aud.onerror = onerror;
+    }
+
+    if ( onloaded ) {
+      aud.addEventListener('canplaythrough', function(ev) {
+        onloaded();
+        aud.removeEventListener('canplaythrough', function(ev) {
+          onloaded();
+        }, false );
+      }, false );
+    }
+
+    aud.preload   = "auto";
+    aud.src       = sprintf(SOUND_URI, theme, src, filetype);
+    return aud;
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -2938,22 +2967,13 @@
       var _preloadSounds = function(clb) {
         if ( OSjs.Compability.SUPPORT_AUDIO ) {
           var filetype = "oga";
+          var theme    = _Settings._get("system.sounds.theme") || "Default";
           if ( !OSjs.Compability.SUPPORT_AUDIO_OGG && OSjs.Compability.SUPPORT_AUDIO_MP3 ) {
             filetype = "mp3";
           }
 
           PreloadResourceList(preload.sounds, function(src, onload, onerror) {
-            var aud           = new Audio();
-            aud.addEventListener('canplaythrough', function(ev) {
-              onload();
-
-              aud.removeEventListener('canplaythrough', function(ev) {
-                onload();
-              }, false );
-            }, false );
-            aud.onerror       = onerror;
-            aud.preload       = "auto";
-            aud.src           = sprintf(SOUND_URI, "Default", src, filetype); // FIXME: Theme
+            var aud = GetSound(src, filetype, onerror, onload);
             aud.load();
           }, function(result, total, loaded, failed) {
             console.log("ResourceManager::run() Preloaded", loaded, "of", total, "sound(s) (" + failed + " failures)");
