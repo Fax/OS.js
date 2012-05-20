@@ -1972,7 +1972,7 @@
       $("#LoginButton").removeAttr("disabled");
       $("#CreateLoginButton").removeAttr("disabled");
       $("#LoginUsername").removeAttr("disabled").removeClass("loading");
-      $("#LoginPassword").removeAttr("disabled").removeClass("loadiCOREng");
+      $("#LoginPassword").removeAttr("disabled").removeClass("loading");
     },
 
     /**
