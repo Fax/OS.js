@@ -77,7 +77,7 @@ OSjs.Dialogs.InputOperationDialog = (function($, undefined) {
         this.$element.find(".DialogButtons .Ok").show().click(function() {
           var val = txt.val();
           if ( !val ) {
-            API.system.alert(LABELS.missing_value);
+            API.ui.alert(LABELS.missing_value);
             return;
           }
           self.clb_finish(val);

@@ -160,9 +160,9 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
 
                         if ( is_save ) {
                           if ( vo['protected'] == "1" ) {
-                            API.system.alert(LABELS.protected_file);
+                            API.ui.alert(LABELS.protected_file);
                           } else {
-                            API.system.dialog("confirm", LABELS.overwrite, null, function() {
+                            API.ui.dialog("confirm", LABELS.overwrite, null, function() {
                               _doSelect();
                             });
                           }

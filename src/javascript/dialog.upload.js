@@ -120,7 +120,7 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
           }, function(error) {
             sbar.html(sprintf("%s %s", LABELS.failed, fname));
 
-            API.system.alert(sprintf("%s %s: %s", LABELS.failed_str, fname, error));
+            API.ui.alert(sprintf("%s %s: %s", LABELS.failed_str, fname, error));
 
             self.clb_cancel(fname, error);
           });
@@ -146,7 +146,7 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
             if ( fname ) {
               u.upload(self.$element.find("form"));
             } else {
-              API.system.alert(LABELS.choose_file);
+              API.ui.alert(LABELS.choose_file);
             }
             return false;
           };
@@ -155,7 +155,7 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
 
           this.uploader = u;
         } catch ( eee ) {
-          API.system.alert(sprintf(LABELS.error, eee));
+          API.ui.alert(sprintf(LABELS.error, eee));
         }
       },
 

@@ -72,7 +72,7 @@ OSjs.Dialogs.RenameOperationDialog = (function($, undefined) {
         this.$element.find(".DialogButtons .Ok").show().click(function() {
           var val = txt.val();
           if ( !val ) {
-            API.system.alert(LABELS_EMPTY);
+            API.ui.alert(LABELS_EMPTY);
             return;
           }
           self.clb_finish(val);
