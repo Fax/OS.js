@@ -156,17 +156,16 @@
 
     if ( !_OnLine ) {
       callback({
-        error     : "Cannot perform this operation when off-line!", // FIXME: Locale ?
+        error     : OSjs.Labels.DoPostOffline,
         success   : false,
         result    : false
       });
       return;
     }
 
-    // TODO
     if ( _HasCrashed || !_SessionValid ) {
       callback({
-        error     : "Session error. Cannot perform this operation!", // FIXME: Locale ?
+        error     : OSjs.Labels.DoPostInvalid,
         success   : false,
         result    : false
       });
@@ -2605,9 +2604,9 @@
       if ( _SessionValid ) {
         if ( !sid || (_SessionId != sid) ) {
           var ico = GetIcon("status/network-error.png", "32x32");
-          // FIXME
-          //API.application.notification("Error", OSjs.Labels.SessionFailure, ico); // FIXME: Language title
-          API.application.notification("Unexpected Error", "You have lost your server session.<br />This may cause errors, and you should restart!.", ico); // FIXME: Language title
+          var title = OSjs.Labels.GlobalOfflineTitle;
+          var msg = OSjs.Labels.GlobalOfflineMessage;
+          API.application.notification(title, msg, ico);
 
           _SessionValid = false;
         }
@@ -2624,16 +2623,14 @@
       if ( !state ) { // Offline
         if ( _OnLine ) {
           _OnLine = false;
-
-          API.application.notification("Warning", OSjs.Labels.WentOffline); // FIXME: Language title
+          API.application.notification(OSjs.Labels.GlobalOfflineWarningTitle, OSjs.Labels.WentOffline);
 
           console.log("Core::global_offline()", _OnLine);
         }
       } else { // Online
         if ( !_OnLine ) {
           _OnLine = true;
-
-          API.application.notification("Information", OSjs.Labels.WentOnline); // FIXME: Language title
+          API.application.notification(OSjs.Labels.GlobalOfflineInfoTitle, OSjs.Labels.WentOnline);
 
           console.log("Core::global_offline()", _OnLine);
         }
@@ -6562,7 +6559,7 @@
      * @return String
      */
     getHeight : function() {
-      return 35; // FIXME
+      return this.$element.height();
     },
 
     /**

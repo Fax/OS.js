@@ -40,6 +40,12 @@
       "title"   : "Session change",
       "message" : "A previous session was restored"
     },
+    "DoPostOffline"                       : "Cannot perform this operation when off-line!",
+    "DoPostInvalid"                       : "Session error. Cannot perform this operation!",
+    "GlobalOfflineTitle"                  : "Unexpected Error",
+    "GlobalOfflineMessage"                : "You have lost your server session.<br />This may cause errors, and you should restart!.",
+    "GlobalOfflineWarningTitle"           : "Warning",
+    "GlobalOfflineInfoTitle"              : "Information",
     "LoginConfirm"                        : "You are already logged in, are you sure you want to continue?",
     "LoginFailure"                        : "Failed to log in: %s",
     "LoginFailureOther"                   : "A system error occured while logging in, please try again.",

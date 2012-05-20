@@ -40,6 +40,12 @@
       "title"   : "Sessjons-endring",
       "message" : "En tidligere sessjon har blitt lastet"
     },
+    "DoPostOffline"                       : "Kan ikke utføre denne operasjonen når du ikke er tilkoblet internett!",
+    "DoPostInvalid"                       : "Sessjons-feil. Kan ikke utføre denne operasjonen!",
+    "GlobalOfflineTitle"                  : "Uventet Feil",
+    "GlobalOfflineMessage"                : "Du har mistet server-sessjonen.<br />Dette kan forårsake feil. Omstart er kanskje nødvendig!.",
+    "GlobalOfflineWarningTitle"           : "Advarsel",
+    "GlobalOfflineInfoTitle"              : "Informasjon",
     "LoginConfirm"                        : "Du er allerede innlogget, er du sikker på at du vil fortsette?",
     "LoginFailure"                        : "Klarte ikke logge inn: %s",
     "LoginFailureOther"                   : "Det hendte en feil i systemet under innlogging, vennligst prøv igjen.",
