@@ -395,11 +395,13 @@
    * @param   String    name      Package name
    * @param   String    type      Package type
    * @param   Object    args      Arguments to send
+   * @param   Function  callback  Callback When launched/failed
    * @return  void
    * @function
    */
-  function LaunchProcess(name, type, args) {
+  function LaunchProcess(name, type, args, callback) {
     args = args || {};
+    callback = callback || function() {};
 
     var process = InitLaunch(name, type);
 
@@ -411,122 +413,118 @@
     console.groupEnd();
 
     if ( !process ) {
-      if ( args && args.callback ) {
-        args.callback(false);
-      }
+      callback(false);
+      return;
     }
 
-    if ( process ) {
+    API.ui.cursor("wait");
 
-      API.ui.cursor("wait");
+    var resources = process.resources;
+    _Resources.addResources(resources, name, function(error) {
+      if ( !error ) {
+        var ref, obj;
+        var crashed   = false;
+        var runnable  = false;
 
-      var resources = process.resources;
-      _Resources.addResources(resources, name, function(error) {
-        if ( !error ) {
-          var ref, obj;
-          var crashed   = false;
-          var runnable  = false;
+        console.log("LaunchProcess()", name, ">", "Launching...");
 
-          console.log("LaunchProcess()", name, ">", "Launching...");
+        switch ( type ) {
+          case "PanelItem" :
+            ref = OSjs.PanelItems[name];
+            try {
+              var argv  = args.opts || [];
+              var pref  = args.panel;
+              var psave = args.save === undefined ? false : (args.save ? true : false);
+              var pargs = { // We need only required parameters, make a slim-copy
+                index     : args.index,
+                name      : args.name,
+                align     : args.align,
+                position  : args.position
+              };
 
-          switch ( type ) {
-            case "PanelItem" :
-              ref = OSjs.PanelItems[name];
+              obj = new OSjs.PanelItems[name](PanelItem, pref, API, argv || {});
+              pref.addItem(obj, pargs, psave);
+            } catch ( ex ) {
+              CrashApplication(name, obj, ex);
+              obj = null;
+              crashed = true;
+            }
+          break;
+
+          case "Service"           :
+          case "BackgroundService" :
+            ref = OSjs.Services[name];
+            try {
+              obj = new OSjs.Services[name](BackgroundService, API, args.argv || {});
+              runnable = true;
+            } catch ( ex ) {
+              CrashApplication(name, obj, ex);
+              crashed = true;
+            }
+          break;
+
+          default :
+            ref = OSjs.Applications[name];
+            if ( ref ) {
               try {
-                var argv  = args.opts || [];
-                var pref  = args.panel;
-                var psave = args.save === undefined ? false : (args.save ? true : false);
-                var pargs = { // We need only required parameters, make a slim-copy
-                  index     : args.index,
-                  name      : args.name,
-                  align     : args.align,
-                  position  : args.position
-                };
-
-                obj = new OSjs.PanelItems[name](PanelItem, pref, API, argv || {});
-                pref.addItem(obj, pargs, psave);
-              } catch ( ex ) {
-                CrashApplication(name, obj, ex);
-                obj = null;
-                crashed = true;
-              }
-            break;
-
-            case "Service"           :
-            case "BackgroundService" :
-              ref = OSjs.Services[name];
-              try {
-                obj = new OSjs.Services[name](BackgroundService, API, args.argv || {});
+                obj = new ref(GtkWindow, Application, API, args.argv || {}, args.restore || []);
+                obj._checkCompability();
                 runnable = true;
               } catch ( ex ) {
                 CrashApplication(name, obj, ex);
                 crashed = true;
               }
-            break;
-
-            default :
-              ref = OSjs.Applications[name];
-              if ( ref ) {
-                try {
-                  obj = new ref(GtkWindow, Application, API, args.argv || {}, args.restore || []);
-                  obj._checkCompability();
-                  runnable = true;
-                } catch ( ex ) {
-                  CrashApplication(name, obj, ex);
-                  crashed = true;
-                }
-              }
-            break;
-          }
-
-          if ( !crashed ) {
-            console.log("LaunchProcess()", name, ">", "Launched!");
-            if ( runnable ) {
-              setTimeout(function() {
-                try {
-                  obj.run();
-                } catch ( ex ) {
-                  CrashApplication(name, obj, ex);
-                }
-              }, 50);
             }
-          }
-
-          if ( args && args.callback ) {
-            args.callback(!crashed);
-          }
-        } else {
-          console.log("LaunchProcess()", name, "<", "ERROR");
-
-          var extra   = "\n\n" + OSjs.Labels.CrashProcessResource;
-          var errors  = [];
-          var eargs   = [];
-          for ( var x in resources ) {
-            errors.push(resources[x]);
-          }
-
-          if ( !errors.length ) {
-            errors = ["<unknown>"];
-          }
-
-          for ( var a in args ) {
-            eargs.push(args[a]);
-          }
-
-          CrashApplication(name, {
-            _name : name
-          }, {
-            message : sprintf(OSjs.Labels.CrashLaunchResourceMessage, errors.join(", ") + extra),
-            stack   : sprintf(OSjs.Labels.CrashLaunchResourceStack, "LaunchProcess", name, eargs.join(", "))
-          });
+          break;
         }
 
-        setTimeout(function() {
-          API.ui.cursor("default");
-        }, 50);
+        if ( !crashed ) {
+          console.log("LaunchProcess()", name, ">", "Launched!");
+          if ( runnable ) {
+            setTimeout(function() {
+              try {
+                obj.run();
+              } catch ( ex ) {
+                CrashApplication(name, obj, ex);
+              }
+            }, 50);
+          }
+        }
+      } else {
+        console.log("LaunchProcess()", name, "<", "ERROR");
 
+        var extra   = "\n\n" + OSjs.Labels.CrashProcessResource;
+        var errors  = [];
+        var eargs   = [];
+        for ( var x in resources ) {
+          errors.push(resources[x]);
+        }
+
+        if ( !errors.length ) {
+          errors = ["<unknown>"];
+        }
+
+        for ( var a in args ) {
+          eargs.push(args[a]);
+        }
+
+        CrashApplication(name, {
+          _name : name
+        }, {
+          message : sprintf(OSjs.Labels.CrashLaunchResourceMessage, errors.join(", ") + extra),
+          stack   : sprintf(OSjs.Labels.CrashLaunchResourceStack, "LaunchProcess", name, eargs.join(", "))
+        });
+      }
+
+      setTimeout(function() {
+        API.ui.cursor("default");
+      }, 50);
+
+      setTimeout(function() {
+        callback(!error);
       });
-    }
+
+    });
   } // @endfunction
 
   /**
@@ -2442,14 +2440,42 @@
 
       bar.progressbar({value : 10});
 
-      // Initialize desktop etc.
-      _Desktop = new Desktop();
-      bar.progressbar({value : 15});
+      // Initialize session
+      var drunned = false;
+      this._initializeWindowManager(bar);
+      this._initializeDesktop(bar, function() {
+        if ( drunned )
+          return;
+        drunned = true;
 
+        self._initializeSession(session, bar);
+
+        setTimeout(function() {
+          // NOTE: Fixes global_keydown "not responding upon init" issues
+          $(document).focus();
+
+          self.running = true;
+
+          PlaySound("service-login");
+
+          bar.progressbar({value : 100});
+          LoginManager.hide();
+
+        }, 100);
+      });
+    },
+
+    //
+    // SESSIONS
+    //
+
+    /**
+     * Core::_initializeWindowManager() -- Initialize Window Manager
+     * @return void
+     */
+    _initializeWindowManager : function(bar) {
       _WM      = new WindowManager();
-      bar.progressbar({value : 20});
 
-      // >>> Window Manager
       try {
         _WM.run();
       } catch ( exception ) {
@@ -2465,10 +2491,18 @@
         alert(sprintf(OSjs.Labels.CrashCoreRunService, "WindowManager", exception));
       }
 
-      // >>> Desktop
-      bar.progressbar({value : 40});
+      bar.progressbar({value : 20});
+    },
+
+    /**
+     * Core::_initializeDesktop() -- Initialize Desktop
+     * @return void
+     */
+    _initializeDesktop : function(bar, callback) {
+      _Desktop = new Desktop();
+
       try {
-        _Desktop.run();
+        _Desktop.run(callback);
       } catch ( exception ) {
         _Desktop.destroy(); // DESTROY IF FAILED
 
@@ -2482,10 +2516,35 @@
           console.groupEnd();
           throw exception;
         }
+
+        callback();
       }
 
-      // >>> Compability
-      bar.progressbar({value : 70});
+      bar.progressbar({value : 30});
+    },
+
+    /**
+     * Core::_initializeSession() -- Initialize User Session
+     * @return void
+     */
+    _initializeSession : function(session, bar) {
+      // Run user-defined processes
+      var autostarters = _Settings._get("user.autorun", true);
+      if ( autostarters ) {
+        var ai = 0, al = autostarters.length;
+        for ( ai; ai < al; ai++ ) {
+          LaunchProcess(autostarters[ai], "BackgroundService");
+        }
+      }
+      bar.progressbar({value : 40});
+
+      // Restore Previous Session
+      if ( _Settings._get("user.session.autorestore") === "true" ) {
+        _Core.setSession(session);
+      }
+      bar.progressbar({value : 50});
+
+      // Show compability dialog on first run
       if ( _Settings._get("user.first-run") === "true" ) {
         LaunchString("API::CompabilityDialog");
         _Settings._set("user.first-run", "false");
@@ -2498,48 +2557,9 @@
           }, 500);
         }
       }
-
-      // Session
-      setTimeout(function() {
-        bar.progressbar({value : 80});
-
-        var autostarters = _Settings._get("user.autorun", true);
-        if ( autostarters ) {
-          var ai = 0, al = autostarters.length;
-          for ( ai; ai < al; ai++ ) {
-            LaunchProcess(autostarters[ai], "BackgroundService");
-          }
-        }
-
-        bar.progressbar({value : 100});
-
-        // >>> Finished
-        setTimeout(function() {
-          LoginManager.hide();
-
-          // NOTE: Fixes global_keydown "not responding upon init" issues
-          $(document).focus();
-
-          self.running = true;
-
-          PlaySound("service-login");
-
-        }, 250); // <<< Finished
-
-        // Restore session
-        setTimeout(function() {
-          var do_restore = _Settings._get("user.session.autorestore");
-          if ( do_restore === true || do_restore === "true" ) {
-            _Core.setSession(session);
-          }
-        }, 500);
-
-      }, 500);
+      bar.progressbar({value : 60});
     },
 
-    //
-    // SESSIONS
-    //
 
     //
     // EVENTS
@@ -5134,13 +5154,18 @@
 
     /**
      * Desktop::run() -- Run DOM operations etc.
-     * @return void
+     * @param   Function    finished_callback     Call when done
+     * @return  void
      */
-    run : function() {
+    run : function(finished_callback) {
+      finished_callback = finished_callback || function() {};
+
       var self = this;
       if ( this.running ) {
         return;
       }
+
+      var finished = true;
 
       console.group("Desktop::run()");
 
@@ -5350,7 +5375,8 @@
           var additem = function(index) {
             var el      = items[index];
             el.panel    = panel;
-            el.callback = function() {
+
+            LaunchProcess(el.name, "PanelItem", el, function() {
               current++;
 
               if ( current < size ) {
@@ -5365,9 +5391,7 @@
 
                 callback(panel);
               }
-            };
-
-            LaunchProcess(el.name, "PanelItem", el);
+            });
           };
 
           if ( size > 0 ) {
@@ -5378,11 +5402,21 @@
 
         if ( panels ) {
           var panel;
-          for ( var x = 0; x < panels.length; x++ ) {
-            panel = new Panel(panels[x].index, panels[x].name, panels[x].position, panels[x].style);
-            additems(panel, panels[x].items, function(pref) {
-              self.addPanel(pref);
-            });
+          if ( panels.length ) {
+            finished = false;
+            for ( var x = 0; x < panels.length; x++ ) {
+              panel = new Panel(panels[x].index, panels[x].name, panels[x].position, panels[x].style);
+              additems(panel, panels[x].items, function(pref) {
+                self.addPanel(pref);
+
+                if ( !finished ) {
+                  if ( x >= panels.length ) {
+                    finished_callback();
+                    finished = true;
+                  }
+                }
+              });
+            }
           }
         }
 
@@ -5406,6 +5440,10 @@
 
       console.log("...done...");
       console.groupEnd();
+
+      if ( !finished ) {
+        finished_callback();
+      }
 
       setTimeout(function() {
         self.resize();
