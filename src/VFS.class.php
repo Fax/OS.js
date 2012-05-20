@@ -126,6 +126,11 @@ abstract class VFS
       "type" => "public",
       "attr" => self::ATTR_RW,
       "icon" => "places/folder-publicshare.png"
+    ),
+    "/Shared" => Array(
+      "type" => "core",
+      "attr" => self::ATTR_READ,
+      "icon" => "places/folder-templates.png"
     )
   );
 
