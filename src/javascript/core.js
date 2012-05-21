@@ -1356,7 +1356,7 @@
         console.log("Method", "API.user.logout");
         console.groupEnd();
 
-        API.session.shutdown(save);
+        return _Core.shutdown(save);
       }
     },
 
@@ -2263,6 +2263,11 @@
 
     /**
      * Core::boot() -- Main booting procedure
+     *
+     * Sends browser information to the backend. The response
+     * is the base configuration. After environment is set-up
+     * the LoginManager is run.
+     *
      * @return void
      */
     boot : function() {
@@ -2311,6 +2316,13 @@
 
     /**
      * Core::login() -- Main login procedure
+     *
+     * This function is called after the backend has sucessfully
+     * registered the user into session. The response is the
+     * session data tree.
+     *
+     * All base instances are created and initialized here.
+     *
      * @param  Object   response      Response from LoginManager
      * @see LoginManager
      * @return void
@@ -2341,7 +2353,11 @@
 
     /**
      * Core::shutdown() -- Main shutdown procedure
-     * @param bool  save    Save session ?
+     *
+     * Logs out the user and kills all running processes.
+     *
+     * @param  bool  save    Save session ?
+     * @see    Core::destroy()
      * @return void
      */
     shutdown : function(save) {
@@ -2403,7 +2419,13 @@
 
     /**
      * Core::run() -- Main startup procedure wrapper
+     *
+     * This function is called when all base instances are running,
+     * resources fully loaded and the used has logged in.
+     * The session is from the login response.
+     *
      * @param  Object   session       Session to restore (if any)
+     * @see    Core::login()
      * @return void
      */
     run : function(session) {
@@ -2915,6 +2937,9 @@
 
     /**
      * ResourceManager::run() -- Start instance
+     *
+     * Handles preloading of resources.
+     *
      * @return void
      */
     run : function(preload, callback) {
@@ -4029,6 +4054,11 @@
 
     /**
      * Application::run() -- Run application
+     *
+     * Final process in the initialization. Restores any previous
+     * stored [application-specific] settings, and binds the given
+     * window to the running process so it can shutdown cleanly.
+     *
      * @param   Window    root_window   Bind a Window as main Window
      * @return  void
      */
@@ -4536,6 +4566,7 @@
 
     /**
      * Application::_event() -- Perform Application Event (AJAX-call to Server-Side)
+     *
      * @param   String    ev          The AJAX action to perform
      * @param   Mixed     args        The AJAX action argument(s)
      * @param   Function  callback    Callback to function when done
