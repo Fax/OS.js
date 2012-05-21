@@ -2335,7 +2335,7 @@
       _Settings.run(response.registry.stored);
       _PackMan.run(response.packages);
       _Resources.run(response.preload, function() {
-        self._run(response.session);
+        self.run(response.session);
       });
     },
 
@@ -2399,35 +2399,6 @@
       }
 
       return true;
-    },
-
-    /**
-     * Core::_run() -- Main startup
-     * @param  Object   session       Session to restore (if any)
-     * @return void
-     */
-    _run : function(session) {
-      var self = this;
-
-      if ( this.running ) {
-        return;
-      }
-
-      console.group("Core::run()");
-
-      // Load initial data
-      DoPost({'action' : 'init'}, function(data) {
-        if ( data.success ) {
-          self.run(session);
-        } else {
-          MessageBox(data.error);
-        }
-
-        console.groupEnd();
-      }, function(xhr, ajaxOptions, thrownError) {
-        alert("A network error occured while initializing OS.js: " + thrownError);
-        throw("Initialization error: " + thrownError);
-      });
     },
 
     /**

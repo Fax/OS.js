@@ -45,7 +45,6 @@ abstract class API
     "snapshotLoad"      => "doSnapshotLoad",
     "snapshotDelete"    => "doSnapshotDelete",
     "updateCache"       => "doCacheUpdate",
-    "init"              => "doInit",
     "settings"          => "doSettings",
     "login"             => "doUserLogin",
     "logout"            => "doUserLogout",
@@ -158,40 +157,6 @@ abstract class API
   }
 
   /**
-   * Do a 'Package Operation' AJAX Call
-   * @return Array
-   */
-  protected static final function _doPackageOperation(Array $args, Core $inst = null) {
-    $json = Array();
-    if ( ($user = $inst->getUser()) && ($user->isInGroup(User::GROUP_PACKAGES)) ) {
-      if ( $args['operation'] == "install" ) {
-        $archive = $args['archive'];
-        if ( $result = PackageManager::InstallPackage($archive, $user, true) ) {
-          $json['success'] = true;
-          $json['result']  = true;
-        } else {
-          $json['error'] = sprintf(_("Failed to install '%s'. Archive, Permission or Duplicate error!"), basename($archive));
-        }
-      } else if ( $args['operation'] == "uninstall" ) {
-        $package = $args['package']['name'];
-        if ( $result = Package::FindPackage($package, $user) ) {
-          if ( $result["found"] && $result["user"] ) {
-            if ( PackageManager::UninstallPackage($package, $user, true) ) {
-              $json['success'] = true;
-              $json['result']  = true;
-            } else {
-              $json['error'] = sprintf(_("Failed to uninstall '%s'. Package or permission error!"), $package);
-            }
-          } else {
-            $json['error'] = sprintf(_("Failed to uninstall '%s'. Package not found!"), $package);
-          }
-        }
-      }
-    }
-    return $json;
-  }
-
-  /**
    * Do a 'Core Cache Update' AJAX Call
    * @return Array
    */
@@ -205,17 +170,6 @@ abstract class API
       );
     }
     return false;
-  }
-
-  /**
-   * Do a 'Core Init' AJAX Call
-   * @return Array
-   */
-  protected static final function _doInit(Array $args, Core $inst = null) {
-    return Array(
-      "success" => true,
-      "result"  => true
-    );
   }
 
   /**
@@ -285,6 +239,140 @@ abstract class API
 
     Session::clearSession();
     return false;
+  }
+
+  /**
+   * Do a 'User Login' AJAX Call
+   * @return Array
+   */
+  protected static final function _doUserLogin(Array $args, Core $inst = null) {
+    $json   = Array();
+    $uname  = "";
+    $upass  = "";
+    $time   = isset($args['time'])   ? $args['time'] : null;
+    $create = false;
+
+    if ( ENABLE_REGISTRATION ) {
+      $create = isset($args['create']) ? $args['create'] === "true" : false;
+    }
+
+    if ( isset($args['form']) ) {
+      if ( isset($args['form']['username']) ) {
+        $uname = trim($args['form']['username']);
+      }
+      if ( isset($args['form']['password']) ) {
+        $upass = trim($args['form']['password']);
+      }
+    }
+
+    $user = null;
+    $errored = true;
+    if ( $uname && $upass ) {
+      if ( $create ? ($user = User::createNew($uname, $upass)) : ($user = User::getByUsername($uname)) ) {
+        if ( $user->password == $upass ) {
+          if ( !($registry = $user->last_registry) ) {
+            $registry = User::getDefaultRegistry(true);
+          }
+          if ( !($session = $user->last_session) ) {
+            $session = User::getDefaultSession();
+          }
+
+          $json['success'] = true;
+          $json['result'] = Array(
+            "user"          => $user->getUserInfo(),
+            "registry"      => Array(
+              "tree"    => User::getDefaultRegistry(),
+              "stored"  => $registry
+            ),
+            "session"       => $session,
+            "packages"      => PackageManager::GetPackages($user),
+            "preload"       => ResourceManager::getPreloads(),
+            "sid"           => session_id(),
+            "lang_system"   => DEFAULT_LANGUAGE,
+            "lang_user"     => "default", // NOTE: Should be set to user ? used as 'SystemLanguage'
+            "lang_browser"  => Core::getBrowserLanguage(),
+            "duplicate"     => $user->isLoggedIn()
+          );
+
+          $user->last_login       = new DateTime();
+          $user->last_session_id  = session_id();
+          if ( !$user->isLoggedIn() ) {
+            $user->logged_in      = 1;
+          }
+
+          User::save($user, Array("last_login", "last_session_id", "logged_in"));
+
+          $errored = false;
+        }
+      }
+    }
+
+    if (  $errored ) {
+      if ( $create ) {
+        $json['error'] = _("The username already exists!");
+      } else {
+        $json['error'] = _("Check username and password!");
+      }
+    }
+
+    Session::setUser(($user && ($user instanceof User)) ? $user : null);
+
+    return $json;
+  }
+
+  /**
+   * Do a 'User Logout' AJAX Call
+   * @return Array
+   */
+  protected static final function _doUserLogout(Array $args, Core $inst = null) {
+    $json = Array();
+    if ( ($user = $inst->getUser()) ) {
+      $user->last_logout = new DateTime();
+      $user->logged_in   = 0;
+
+      if ( User::save($user, Array("last_logout", "logged_in")) ) {
+        $json['success']  = true;
+      } else {
+        $json['error'] = _("Failed to save user!");
+      }
+
+      //Session::clearSession();
+    }
+    return $json;
+  }
+
+  /**
+   * Do a 'Package Operation' AJAX Call
+   * @return Array
+   */
+  protected static final function _doPackageOperation(Array $args, Core $inst = null) {
+    $json = Array();
+    if ( ($user = $inst->getUser()) && ($user->isInGroup(User::GROUP_PACKAGES)) ) {
+      if ( $args['operation'] == "install" ) {
+        $archive = $args['archive'];
+        if ( $result = PackageManager::InstallPackage($archive, $user, true) ) {
+          $json['success'] = true;
+          $json['result']  = true;
+        } else {
+          $json['error'] = sprintf(_("Failed to install '%s'. Archive, Permission or Duplicate error!"), basename($archive));
+        }
+      } else if ( $args['operation'] == "uninstall" ) {
+        $package = $args['package']['name'];
+        if ( $result = Package::FindPackage($package, $user) ) {
+          if ( $result["found"] && $result["user"] ) {
+            if ( PackageManager::UninstallPackage($package, $user, true) ) {
+              $json['success'] = true;
+              $json['result']  = true;
+            } else {
+              $json['error'] = sprintf(_("Failed to uninstall '%s'. Package or permission error!"), $package);
+            }
+          } else {
+            $json['error'] = sprintf(_("Failed to uninstall '%s'. Package not found!"), $package);
+          }
+        }
+      }
+    }
+    return $json;
   }
 
   /**
@@ -420,106 +508,6 @@ abstract class API
   }
 
   /**
-   * Do a 'User Login' AJAX Call
-   * @return Array
-   */
-  protected static final function _doUserLogin(Array $args, Core $inst = null) {
-    $json   = Array();
-    $uname  = "";
-    $upass  = "";
-    $time   = isset($args['time'])   ? $args['time'] : null;
-    $create = false;
-
-    if ( ENABLE_REGISTRATION ) {
-      $create = isset($args['create']) ? $args['create'] === "true" : false;
-    }
-
-    if ( isset($args['form']) ) {
-      if ( isset($args['form']['username']) ) {
-        $uname = trim($args['form']['username']);
-      }
-      if ( isset($args['form']['password']) ) {
-        $upass = trim($args['form']['password']);
-      }
-    }
-
-    $user = null;
-    $errored = true;
-    if ( $uname && $upass ) {
-      if ( $create ? ($user = User::createNew($uname, $upass)) : ($user = User::getByUsername($uname)) ) {
-        if ( $user->password == $upass ) {
-          if ( !($registry = $user->last_registry) ) {
-            $registry = User::getDefaultRegistry(true);
-          }
-          if ( !($session = $user->last_session) ) {
-            $session = User::getDefaultSession();
-          }
-
-          $json['success'] = true;
-          $json['result'] = Array(
-            "user"          => $user->getUserInfo(),
-            "registry"      => Array(
-              "tree"    => User::getDefaultRegistry(),
-              "stored"  => $registry
-            ),
-            "session"       => $session,
-            "packages"      => PackageManager::GetPackages($user),
-            "preload"       => ResourceManager::getPreloads(),
-            "sid"           => session_id(),
-            "lang_system"   => DEFAULT_LANGUAGE,
-            "lang_user"     => "default", // NOTE: Should be set to user ? used as 'SystemLanguage'
-            "lang_browser"  => Core::getBrowserLanguage(),
-            "duplicate"     => $user->isLoggedIn()
-          );
-
-          $user->last_login       = new DateTime();
-          $user->last_session_id  = session_id();
-          if ( !$user->isLoggedIn() ) {
-            $user->logged_in      = 1;
-          }
-
-          User::save($user, Array("last_login", "last_session_id", "logged_in"));
-
-          $errored = false;
-        }
-      }
-    }
-
-    if (  $errored ) {
-      if ( $create ) {
-        $json['error'] = _("The username already exists!");
-      } else {
-        $json['error'] = _("Check username and password!");
-      }
-    }
-
-    Session::setUser(($user && ($user instanceof User)) ? $user : null);
-
-    return $json;
-  }
-
-  /**
-   * Do a 'User Logout' AJAX Call
-   * @return Array
-   */
-  protected static final function _doUserLogout(Array $args, Core $inst = null) {
-    $json = Array();
-    if ( ($user = $inst->getUser()) ) {
-      $user->last_logout = new DateTime();
-      $user->logged_in   = 0;
-
-      if ( User::save($user, Array("last_logout", "logged_in")) ) {
-        $json['success']  = true;
-      } else {
-        $json['error'] = _("Failed to save user!");
-      }
-
-      //Session::clearSession();
-    }
-    return $json;
-  }
-
-  /**
    * Do a 'User Operation' AJAX Call
    * @return Array
    */
@@ -619,6 +607,10 @@ abstract class API
     return $json;
   }
 
+  /////////////////////////////////////////////////////////////////////////////
+  // PACKAGE AJAX FUNCTIONS
+  /////////////////////////////////////////////////////////////////////////////
+
   /**
    * Do a 'Application Event' AJAX Call
    * @return Array
@@ -666,6 +658,10 @@ abstract class API
     return $json;
   }
 
+  /////////////////////////////////////////////////////////////////////////////
+  // SERVICE AJAX FUNCTIONS
+  /////////////////////////////////////////////////////////////////////////////
+
   /**
    * Do a 'Service' AJAX Call
    * @return Array
@@ -701,6 +697,10 @@ abstract class API
     return $json;
   }
 
+  /////////////////////////////////////////////////////////////////////////////
+  // WRAPPERS
+  /////////////////////////////////////////////////////////////////////////////
+
   /**
    * Do a 'VFS' AJAX Call
    * @return Array
@@ -722,10 +722,6 @@ abstract class API
 
     return $json;
   }
-
-  /////////////////////////////////////////////////////////////////////////////
-  // MISC API FUNCTIONS
-  /////////////////////////////////////////////////////////////////////////////
 
 }
 
