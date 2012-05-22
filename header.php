@@ -205,11 +205,10 @@ if ( !defined("DATABASE_PASS") )
 // External Services
 //
 
-// FIXME: Remove definition-values on final
 if ( !defined("GA_ENABLE") )
-  define("GA_ENABLE",         ENV_PRODUCTION);    // Google Analytics enable
+  define("GA_ENABLE",         false);     // Google Analytics enable
 if ( !defined("GA_ACCOUNT_ID") )
-  define("GA_ACCOUNT_ID",     "UA-26635797-1");   // Google Analytics account id
+  define("GA_ACCOUNT_ID",     "");        // Google Analytics account id
 
 if ( !defined("BIN_YUI") )
   define("BIN_YUI",             sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_BIN, PATH_VENDOR));
