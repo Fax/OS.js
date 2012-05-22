@@ -127,53 +127,55 @@ require "src/Misc.php";
 require SETTINGS_CONFIG;
 
 if ( !defined("ENV_PRODUCTION") )
-  define("ENV_PRODUCTION",      false);
+  define("ENV_PRODUCTION",      false); // Disable logging and debugging, enables compressed resources
 if ( !defined("ENV_DEMO") )
-  define("ENV_DEMO",            false);
+  define("ENV_DEMO",            false); // Disable root features, display notice on login
+
 if ( !defined("DEFAULT_TIMEZONE") )
-  define("DEFAULT_TIMEZONE",    "UTC");
+  define("DEFAULT_TIMEZONE",    "UTC"); // TODO
 if ( !defined("DEFAULT_LANGUAGE") )
-  define("DEFAULT_LANGUAGE",    "en_US");
+  define("DEFAULT_LANGUAGE",    "en_US"); // src/locale/<locale>
 if ( !defined("GETTEXT_DOMAIN") )
-  define("GETTEXT_DOMAIN",      "messages");
+  define("GETTEXT_DOMAIN",      "messages"); // src/locale/<locale>/<domain>.po
+
 if ( !defined("ENABLE_REGISTRATION") )
-  define("ENABLE_REGISTRATION", true);
+  define("ENABLE_REGISTRATION", true); // Enable user registration
 if ( !defined("ENABLE_CACHE") )
-  define("ENABLE_CACHE",        ENV_PRODUCTION);
+  define("ENABLE_CACHE",        ENV_PRODUCTION);    // Enable cache for all resources except AJAX POST
 if ( !defined("ENABLE_GZIP") )
-  define("ENABLE_GZIP",         true);
+  define("ENABLE_GZIP",         true); // Enable gzipping of all resources (only if browser supports)
 if ( !defined("ENABLE_LOGGING") )
-  define("ENABLE_LOGGING",      !ENV_PRODUCTION);
+  define("ENABLE_LOGGING",      !ENV_PRODUCTION); // Enable core logging
 if ( !defined("ENABLE_DEBUGGING") )
-  define("ENABLE_DEBUGGING",    !ENV_PRODUCTION);
+  define("ENABLE_DEBUGGING",    !ENV_PRODUCTION); // Enable core verbose debugging on logging
 
 if ( !defined("AUTOLOGIN_ENABLE") )
-  define("AUTOLOGIN_ENABLE",    false);
+  define("AUTOLOGIN_ENABLE",          false); // Automatically log in with credentials
 if ( !defined("AUTOLOGIN_USERNAME") )
-  define("AUTOLOGIN_USERNAME",  "");
+  define("AUTOLOGIN_USERNAME",        "");
 if ( !defined("AUTOLOGIN_PASSWORD") )
-  define("AUTOLOGIN_PASSWORD",  "");
+  define("AUTOLOGIN_PASSWORD",        "");
 if ( !defined("AUTOLOGIN_CONFIRMATION") )
-  define("AUTOLOGIN_CONFIRMATION", true);
+  define("AUTOLOGIN_CONFIRMATION",    true); // Enable confirmation dialog on session warnings
 
 if ( !defined("VFS_SET_PERM") )
-  define("VFS_SET_PERM",        false);
+  define("VFS_SET_PERM",        false); // See src/VFS.class.php
 if ( !defined("VFS_USER") )
-  define("VFS_USER",            "www-data");
+  define("VFS_USER",            "www-data"); // See bin/fix-permissions
 if ( !defined("VFS_GROUP") )
-  define("VFS_GROUP",           "www-data");
+  define("VFS_GROUP",           "www-data"); // See bin/fix-permissions
 if ( !defined("VFS_FPERM") )
-  define("VFS_FPERM",           "0555");
+  define("VFS_FPERM",           "0555"); // TODO
 if ( !defined("VFS_DPERM") )
-  define("VFS_DPERM",           "0555");
+  define("VFS_DPERM",           "0555"); // TODO
 if ( !defined("VFS_UMASK") )
-  define("VFS_UMASK",           "");
+  define("VFS_UMASK",           ""); // TODO
 
 if ( !defined("CACHE_EXPIRE_ADD") )
-  define("CACHE_EXPIRE_ADD",    60);
+  define("CACHE_EXPIRE_ADD",    60); // See public_html/_header.php
 
 //
-// Server
+// WebSocket Server (lib/Server.class.php)
 //
 
 if ( !defined("SERVER_HOST") )
@@ -186,7 +188,7 @@ if ( !defined("SERVER_NONBLOCK") )
   define("SERVER_NONBLOCK",     false); // TODO
 
 //
-// Database
+// Database (lib/DB.class.php)
 //
 
 if ( !defined("DATABASE_HOST") )
@@ -199,7 +201,7 @@ if ( !defined("DATABASE_PASS") )
   define("DATABASE_PASS",       "osjs");
 
 //
-// External Services
+// External Services (src/javascript/template.php)
 //
 
 if ( !defined("GA_ENABLE") )
