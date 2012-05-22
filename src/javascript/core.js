@@ -323,7 +323,7 @@
 
       try {
         application._running = true; // NOTE: Workaround
-        application.kill();
+        application._kill();
       } catch ( eee ) {
         console.error(">>>>>>>>>>", "ooopsie", app_name, application);
       }
@@ -1528,10 +1528,10 @@
     },
 
     /**
-     * Process::kill() -- Kill process
+     * Process::_kill() -- Kill process
      * @return bool
      */
-    kill : function() {
+    _kill : function() {
       if ( !this._locked ) {
         console.log("Process::kill()", this);
 
@@ -2829,7 +2829,7 @@
           if ( p !== undefined ) {
             var ckill = (function(pp) {
               return function() {
-                return pp.kill();
+                return pp._kill();
               };
             })(p);
 
