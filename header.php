@@ -35,10 +35,7 @@
 // CONFIGURATION - CORE
 ///////////////////////////////////////////////////////////////////////////////
 
-//
-// Project
-//
-
+// Information
 define("PROJECT_AUTHOR",        "Anders Evenrud");
 define("PROJECT_CONTACT",       "andersevenrud@gmail.com");
 define("PROJECT_VERSION",       "0.7.500");
@@ -48,10 +45,7 @@ define("PROJECT_COPYRIGHT",     "2012 " . PROJECT_AUTHOR . " <" . PROJECT_CONTAC
 define("PROJECT_BUILD",         "1edb5a8");
 define("PROJECT_MODIFIED",      "1335991259");
 
-//
-// Paths
-//
-
+// Core Paths
 define("PATH",                       dirname(__FILE__));
 define("PATH_DOC",                   PATH . "/doc");
 define("PATH_BIN",                   PATH . "/bin");
@@ -72,10 +66,7 @@ define("PATH_VFS",                   PATH . "/VFS");
 define("PATH_VFS_USER",              PATH . "/VFS/%d");
 define("PATH_VFS_PACKAGES",          PATH_VFS_USER . "/Packages");
 
-//
-// Resources (Core, Package, etc.)
-//
-
+// Resource Paths
 define("RESOURCE_CORE",             PATH_JSBASE       . "/%s");
 define("RESOURCE_CORE_MIN",         PATH_JSBASE       . "/_min/%s");
 define("RESOURCE_PACKAGE",          PATH_PACKAGES     . "/%s/%s");
@@ -89,6 +80,7 @@ define("RESOURCE_CURSOR_MIN",       PATH_JSBASE       . "/_min/%s");
 define("RESOURCE_VFS_PACKAGE",      PATH_VFS_PACKAGES . "/%s/%s");
 define("RESOURCE_VFS_PACKAGE_MIN",  PATH_VFS_PACKAGES . "/%s/_min/%s");
 
+// Short-hands for frontend
 define("URI_SOUND",             "/sounds/%s");
 define("URI_FONT",              "/media/System/Fonts");
 define("URI_API_OPERATION",     "/API/%s");
@@ -97,10 +89,7 @@ define("URI_VFS_USER",          "/VFS/%d");
 define("URI_VFS_USER_METADATA", "/VFS/%d/packages.xml");
 define("URI_VFS_USER_PACKAGES", "/VFS/%d/Packages");
 
-//
-// Misc. files
-//
-
+// External configuration- and build-files
 define("SETTINGS_CONFIG",      PATH         . "/config.php");
 define("MINIMIZE_CACHE",       PATH_BUILD   . "/minimize.cache");
 define("FONT_CACHE",           PATH_BUILD   . "/fontcache.xml");
@@ -113,12 +102,18 @@ define("VFS_TEMPLATE",         PATH_VFS     . "/0");
 // DEPENDENCIES
 ///////////////////////////////////////////////////////////////////////////////
 
+// Libraries
 require "lib/Functions.php";
 require "lib/JSON.class.php";
 require "lib/Logger.class.php";
 require "lib/DB.class.php";
 require "lib/Browser.class.php";
+
+// Sources
 require "src/Misc.php";
+
+// User defined
+// -- Put in SETTINGS_CONFIG
 
 ///////////////////////////////////////////////////////////////////////////////
 // CONFIGURATION - INSTANCE
@@ -126,20 +121,30 @@ require "src/Misc.php";
 
 require SETTINGS_CONFIG;
 
+//
+// Environment
+//
+
 if ( !defined("ENV_PRODUCTION") )
   define("ENV_PRODUCTION",      false); // Disable logging and debugging, enables compressed resources
 if ( !defined("ENV_DEMO") )
   define("ENV_DEMO",            false); // Disable root features, display notice on login
 
-if ( !defined("DEFAULT_TIMEZONE") )
-  define("DEFAULT_TIMEZONE",    "UTC"); // TODO
-if ( !defined("DEFAULT_LANGUAGE") )
-  define("DEFAULT_LANGUAGE",    "en_US"); // src/locale/<locale>
-if ( !defined("GETTEXT_DOMAIN") )
-  define("GETTEXT_DOMAIN",      "messages"); // src/locale/<locale>/<domain>.po
+//
+// Backend defaults (src/locale/<locale>/<domain>)
+//
 
-if ( !defined("ENABLE_REGISTRATION") )
-  define("ENABLE_REGISTRATION", true); // Enable user registration
+if ( !defined("DEFAULT_TIMEZONE") )
+  define("DEFAULT_TIMEZONE",    "UTC"); // Used as default for initialization, user can define this in sessions
+if ( !defined("DEFAULT_LANGUAGE") )
+  define("DEFAULT_LANGUAGE",    "en_US");
+if ( !defined("GETTEXT_DOMAIN") )
+  define("GETTEXT_DOMAIN",      "messages");
+
+//
+// Backend features
+//
+
 if ( !defined("ENABLE_CACHE") )
   define("ENABLE_CACHE",        ENV_PRODUCTION);    // Enable cache for all resources except AJAX POST
 if ( !defined("ENABLE_GZIP") )
@@ -149,8 +154,19 @@ if ( !defined("ENABLE_LOGGING") )
 if ( !defined("ENABLE_DEBUGGING") )
   define("ENABLE_DEBUGGING",    !ENV_PRODUCTION); // Enable core verbose debugging on logging
 
+//
+// Frontend features
+//
+
+if ( !defined("ENABLE_REGISTRATION") )
+  define("ENABLE_REGISTRATION", true); // Enable user registration
+
+//
+// Automatic login
+//
+
 if ( !defined("AUTOLOGIN_ENABLE") )
-  define("AUTOLOGIN_ENABLE",          false); // Automatically log in with credentials
+  define("AUTOLOGIN_ENABLE",          false);
 if ( !defined("AUTOLOGIN_USERNAME") )
   define("AUTOLOGIN_USERNAME",        "");
 if ( !defined("AUTOLOGIN_PASSWORD") )
@@ -158,12 +174,16 @@ if ( !defined("AUTOLOGIN_PASSWORD") )
 if ( !defined("AUTOLOGIN_CONFIRMATION") )
   define("AUTOLOGIN_CONFIRMATION",    true); // Enable confirmation dialog on session warnings
 
+//
+// Backend VFS (src/VFS.class.php bin/fix-permissions)
+//
+
 if ( !defined("VFS_SET_PERM") )
-  define("VFS_SET_PERM",        false); // See src/VFS.class.php
+  define("VFS_SET_PERM",        false);
 if ( !defined("VFS_USER") )
-  define("VFS_USER",            "www-data"); // See bin/fix-permissions
+  define("VFS_USER",            "www-data");
 if ( !defined("VFS_GROUP") )
-  define("VFS_GROUP",           "www-data"); // See bin/fix-permissions
+  define("VFS_GROUP",           "www-data");
 if ( !defined("VFS_FPERM") )
   define("VFS_FPERM",           "0555"); // TODO
 if ( !defined("VFS_DPERM") )
@@ -171,8 +191,12 @@ if ( !defined("VFS_DPERM") )
 if ( !defined("VFS_UMASK") )
   define("VFS_UMASK",           ""); // TODO
 
+//
+// Caching (public_html/_header.php)
+//
+
 if ( !defined("CACHE_EXPIRE_ADD") )
-  define("CACHE_EXPIRE_ADD",    60); // See public_html/_header.php
+  define("CACHE_EXPIRE_ADD",    60);
 
 //
 // WebSocket Server (lib/Server.class.php)
@@ -208,6 +232,10 @@ if ( !defined("GA_ENABLE") )
   define("GA_ENABLE",         false);     // Google Analytics enable
 if ( !defined("GA_ACCOUNT_ID") )
   define("GA_ACCOUNT_ID",     "");        // Google Analytics account id
+
+//
+// Included Utils
+//
 
 if ( !defined("BIN_YUI") )
   define("BIN_YUI",             sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_BIN, PATH_VENDOR));
