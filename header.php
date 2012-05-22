@@ -226,8 +226,7 @@ if ( ENV_PRODUCTION || ENV_DEMO ) {
 
 // Internal Automatic loading of source classes
 spl_autoload_register(function($cn) {
-  if ( !class_exists($cn) )
-    require PATH_SRC . "/{$cn}.class.php";
+  require_once PATH_SRC . "/{$cn}.class.php";
 });
 
 // Locales
