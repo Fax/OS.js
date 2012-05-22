@@ -4300,7 +4300,7 @@
      * @return  void
      */
     createMessageDialog : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
-      this._addWindow(API.ui.dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
+      this.__addWindow(API.ui.dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
     },
 
     /**
@@ -4309,7 +4309,7 @@
      * @return  void
      */
     createColorDialog : function(color, callback) {
-      this._addWindow(API.ui.dialog_color(color, function(rgb, hex) {
+      this.__addWindow(API.ui.dialog_color(color, function(rgb, hex) {
         callback(rgb, hex);
       }));
     },
@@ -4320,7 +4320,7 @@
      * @return  void
      */
     createFontDialog : function(font, size, callback) {
-      this._addWindow(API.ui.dialog_font(font, size, function(font, size) {
+      this.__addWindow(API.ui.dialog_font(font, size, function(font, size) {
         callback(font, size);
       }));
     },
@@ -4331,7 +4331,7 @@
      * @return  void
      */
     createUploadDialog : function(dir, callback, callback_progress, callback_cancel, opts) {
-      this._addWindow(API.ui.dialog_upload(dir, function(fpath, fmime, response) {
+      this.__addWindow(API.ui.dialog_upload(dir, function(fpath, fmime, response) {
         callback(fpath, fmime, response);
       }, callback_progress, callback_cancel, opts));
     },
@@ -4342,7 +4342,7 @@
      * @return  void
      */
     createFileDialog : function(callback, mimes, type, dir) {
-      this._addWindow(API.ui.dialog_file(function(file, mime) {
+      this.__addWindow(API.ui.dialog_file(function(file, mime) {
         callback(file, mime);
       }, mimes, type, dir));
     },
@@ -4353,7 +4353,7 @@
      * @return  void
      */
     createLaunchDialog : function(list, callback, udef) {
-      this._addWindow(API.ui.dialog_launch(list, function(app, def, udef) {
+      this.__addWindow(API.ui.dialog_launch(list, function(app, def, udef) {
         callback(app, def);
       }));
     },
@@ -4364,7 +4364,7 @@
      * @return  void
      */
     createRenameDialog : function(dir, callback) {
-      this._addWindow(API.ui.dialog_rename(dir, function(fname) {
+      this.__addWindow(API.ui.dialog_rename(dir, function(fname) {
         callback(fname);
       }));
     },
@@ -4375,7 +4375,7 @@
      * @return  void
      */
     createInputDialog : function(value, desc, callback) {
-      this._addWindow(API.ui.dialog_input(value, desc, function(result) {
+      this.__addWindow(API.ui.dialog_input(value, desc, function(result) {
         callback(result);
       }));
     },
@@ -4386,7 +4386,7 @@
      * @return  void
      */
     createFilePropertyDialog : function(filename, callback) {
-      this._addWindow(API.ui.dialog_properties(filename, function(result) {
+      this.__addWindow(API.ui.dialog_properties(filename, function(result) {
         callback(result);
       }));
     },
@@ -4508,15 +4508,15 @@
     })(),
 
     /**
-     * Application::addWindow() -- Add a new window to application
+     * Application::_addWindow() -- Add a new window to application
      * @param   Window    win     Window to add
      * @return  void
      */
-    addWindow : function(win) {
+    _addWindow : function(win) {
       if ( _WM ) {
         var w = _WM.addWindow(win);
         if ( w ) {
-          this._addWindow(win);
+          this.__addWindow(win);
         }
         return w ? w : false;
       }
@@ -4524,11 +4524,11 @@
     },
 
     /**
-     * Application::_addWindow() -- Add a new window to application (internal)
+     * Application::__addWindow() -- Add a new window to application (internal)
      * @param   Window    win     Window to add
      * @return  void
      */
-    _addWindow : function(win) {
+    __addWindow : function(win) {
       this._windows.push(win);
     },
 

@@ -201,6 +201,22 @@ abstract class SettingsManager
       "value"   => ""
     ),
 
+    // Package managment
+    /*
+    "system.pm.repositories" => Array(
+      "type" => "list",
+      "items" => Array("localhost")
+    ),
+    "system.pm.updates.enable" => Array(
+      "type" => "bool",
+      "value" => true
+    ),
+    "system.pm.updates.interval" => Array(
+      "type" => "integer",
+      "value" => 1209600
+    ),
+     */
+
     //
     // USER
     //

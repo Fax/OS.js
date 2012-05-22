@@ -55,6 +55,8 @@ if ( ENABLE_GZIP && !defined("DISABLE_GZIP") ) {
 }
 
 // Output cache
+// NOTE: This may be overridden in scripts that include this header file.
+//       Mostly in AJAX POST scripts where no cache is available/working.
 if ( ENABLE_CACHE ) {
   $time   = time();
   $now    = ($time + CACHE_EXPIRE_ADD);
@@ -71,12 +73,13 @@ if ( ENABLE_CACHE ) {
   header("Pragma: no-cache");
 }
 
-// Misc HTTP headers
+// Custom HTTP response headers
 $loc = $core->getLocale();
 header("X-OSjs-Version: " . PROJECT_VERSION);
-header("X-OSjs-Locale: " . $loc["locale_language"]);
-header("X-OSjs-Cache: " . (ENABLE_CACHE ? "true" : "false"));
+header("X-OSjs-Locale: "  . $loc["locale_language"]);
+header("X-OSjs-Cache: "   . (ENABLE_CACHE ? "true" : "false"));
 header("X-Provider: ObjectCore");
+
 // NOTE: http://www.p3pwriter.com/LRN_111.asp
 //header("P3P: CP=\"IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA\"");
 //header("P3P: CP=\"NOI DSP COR CURa ADMa OUR NOR COM STA\"");
