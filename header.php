@@ -124,9 +124,6 @@ require "src/Misc.php";
 // CONFIGURATION - INSTANCE
 ///////////////////////////////////////////////////////////////////////////////
 
-error_reporting(E_ALL | E_STRICT); 
-ini_set("display_errors", "on"); // see lower section
-
 require SETTINGS_CONFIG;
 
 if ( !defined("ENV_PRODUCTION") )
@@ -213,15 +210,18 @@ if ( !defined("GA_ACCOUNT_ID") )
 if ( !defined("BIN_YUI") )
   define("BIN_YUI",             sprintf("%s/yui.sh %s/yuicompressor-2.4.6.jar", PATH_BIN, PATH_VENDOR));
 
-// ERROR REPORTING
-if ( ENV_PRODUCTION || ENV_DEMO ) {
-  error_reporting(-1);
-  ini_set("display_errors", "off");
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // MAIN
 ///////////////////////////////////////////////////////////////////////////////
+
+// Error reporting
+if ( ENV_PRODUCTION || ENV_DEMO ) {
+  error_reporting(-1);
+  ini_set("display_errors", "off");
+} else {
+  error_reporting(E_ALL | E_STRICT); 
+  ini_set("display_errors", "on");
+}
 
 // Internal Automatic loading of source classes
 spl_autoload_register(function($cn) {
