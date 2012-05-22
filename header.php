@@ -196,7 +196,7 @@ if ( !defined("VFS_UMASK") )
 //
 
 if ( !defined("CACHE_EXPIRE_ADD") )
-  define("CACHE_EXPIRE_ADD",    60);
+  define("CACHE_EXPIRE_ADD",    (60 * 60 * 24)); // in seconds
 
 //
 // WebSocket Server (lib/Server.class.php)

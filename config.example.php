@@ -46,6 +46,8 @@ define("ENABLE_GZIP",         true);                  // Enable Gzipped output (
 define("DEFAULT_TIMEZONE",    "UTC");                 // Locale: Timezone
 define("DEFAULT_LANGUAGE",    "en_US");               // Locale: Language
 
+define("CACHE_EXPIRE_ADD",    60);                    // Cache: Expiration date forward in time - in seconds
+
 // Login
 define("ENABLE_REGISTRATION",     true);              // Enable user registration on login screen
 define("AUTOLOGIN_ENABLE",        false);             // Automatic login
