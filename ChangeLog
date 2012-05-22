@@ -1,3 +1,20 @@
+## 0.7.500
+* Core: API POST now report unsuccessive only if response is false/null
+* Core: Added ENABLE_DEBUGGING constant for verbose logging
+* Core: API For sound and icon theme complete
+* core.js: Application and Window method name changes -- STABLE
+* core.js: Custom error handling, overriding browser
+* core.js: LoginManager class
+* core.js: Boot changec
+- First call only contains config
+- Registry and preload on 'login'
+- Removed 'init' AJAX call, deprecated
+* core.js: Refactor of misc. Core class code
+* core.js: Removal of Panel CSS, deprecated
+* Template: Rename of DOM elements
+* VFS: Fixed uploading bugs
+* Updated core.js document headers
+
 ## 0.7.400
 * core.js: Added Core::getProcess(pid)
 * core.js: Persistent and Temporary VFS class improvments
