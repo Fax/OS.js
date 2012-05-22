@@ -199,7 +199,7 @@ if ( !defined("DATABASE_DSN") )
 if ( !defined("DATABASE_USER") )
   define("DATABASE_USER",       "osjs");
 if ( !defined("DATABASE_PASS") )
-  define("DATABASE_PASS",       "IeDici7AhghaeG4athobas");
+  define("DATABASE_PASS",       "osjs");
 
 //
 // External Services
