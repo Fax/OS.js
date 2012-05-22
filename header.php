@@ -32,70 +32,45 @@
  */
 
 ///////////////////////////////////////////////////////////////////////////////
-// CONFIGURATION - PHP [INI] SETTINGS
-///////////////////////////////////////////////////////////////////////////////
-
-// For the rest see vhost
-ini_set("session.upload_progress.enabled",  true);
-ini_set("post_max_size",                    "256M");
-ini_set("upload_max_filesize",              "256M");
-ini_set("expose_php",                       "off");
-//ini_set("session.gc_probability",           0);
-//ini_set("session.upload-progress.name",     "OSjs");
-
-///////////////////////////////////////////////////////////////////////////////
-// CONFIGURATION - GLOBAL DEFINITIONS
-///////////////////////////////////////////////////////////////////////////////
-
-// Modified after including config.php
-error_reporting(E_ALL | E_STRICT); 
-ini_set("display_errors", "on");
-
-///////////////////////////////////////////////////////////////////////////////
-// CONFIGURATION - GLOBAL DEFINITIONS
+// CONFIGURATION - CORE
 ///////////////////////////////////////////////////////////////////////////////
 
 //
 // Project
 //
 
-define("PROJECT_AUTHOR",    "Anders Evenrud");
-define("PROJECT_CONTACT",   "andersevenrud@gmail.com");
-define("PROJECT_VERSION",   "0.7.500");
-define("PROJECT_CODENAME",  "Catwalk");
-define("PROJECT_HOST",      (php_uname('n')));
-define("PROJECT_COPYRIGHT", "2012 " . PROJECT_AUTHOR . " <" . PROJECT_CONTACT . ">");
-define("PROJECT_BUILD",     "1edb5a8");
-define("PROJECT_MODIFIED",  "1335991259");
-
-//
-// Cache (Production)
-//
-define("CACHE_EXPIRE_ADD",    60); // FIXME
+define("PROJECT_AUTHOR",        "Anders Evenrud");
+define("PROJECT_CONTACT",       "andersevenrud@gmail.com");
+define("PROJECT_VERSION",       "0.7.500");
+define("PROJECT_CODENAME",      "Catwalk");
+define("PROJECT_HOST",          (php_uname('n')));
+define("PROJECT_COPYRIGHT",     "2012 " . PROJECT_AUTHOR . " <" . PROJECT_CONTACT . ">");
+define("PROJECT_BUILD",         "1edb5a8");
+define("PROJECT_MODIFIED",      "1335991259");
 
 //
 // Paths
 //
 
-define("PATH",                 dirname(__FILE__));
-define("PATH_DOC",             PATH . "/doc");
-define("PATH_BIN",             PATH . "/bin");
-define("PATH_SRC",             PATH . "/src");
-define("PATH_LIB",             PATH . "/lib");
-define("PATH_VENDOR",          PATH . "/vendor");
-define("PATH_HTML",            PATH . "/public_html");
-define("PATH_BUILD",           PATH . "/src/build");
-define("PATH_LOCALE",          PATH . "/src/locale");
-define("PATH_LOG",             PATH . "/logs");
-define("PATH_LOG_FILE",        PATH . "/logs/messages");
-define("PATH_PACKAGES",        PATH . "/src/packages");
-define("PATH_TEMPLATES",       PATH . "/src/templates");
-define("PATH_JSBASE",          PATH . "/src/javascript");
-define("PATH_JSLOCALE",        PATH . "/src/javascript/locale");
-define("PATH_MEDIA",           PATH . "/public_html/media");
-define("PATH_VFS",             PATH . "/VFS");
-define("PATH_VFS_USER",        PATH . "/VFS/%d");
-define("PATH_VFS_PACKAGES",    PATH_VFS_USER . "/Packages");
+define("PATH",                       dirname(__FILE__));
+define("PATH_DOC",                   PATH . "/doc");
+define("PATH_BIN",                   PATH . "/bin");
+define("PATH_SRC",                   PATH . "/src");
+define("PATH_LIB",                   PATH . "/lib");
+define("PATH_VENDOR",                PATH . "/vendor");
+define("PATH_HTML",                  PATH . "/public_html");
+define("PATH_BUILD",                 PATH . "/src/build");
+define("PATH_LOCALE",                PATH . "/src/locale");
+define("PATH_LOG",                   PATH . "/logs");
+define("PATH_LOG_FILE",              PATH . "/logs/messages");
+define("PATH_PACKAGES",              PATH . "/src/packages");
+define("PATH_TEMPLATES",             PATH . "/src/templates");
+define("PATH_JSBASE",                PATH . "/src/javascript");
+define("PATH_JSLOCALE",              PATH . "/src/javascript/locale");
+define("PATH_MEDIA",                 PATH . "/public_html/media");
+define("PATH_VFS",                   PATH . "/VFS");
+define("PATH_VFS_USER",              PATH . "/VFS/%d");
+define("PATH_VFS_PACKAGES",          PATH_VFS_USER . "/Packages");
 
 //
 // Resources (Core, Package, etc.)
@@ -146,8 +121,11 @@ require "lib/Browser.class.php";
 require "src/Misc.php";
 
 ///////////////////////////////////////////////////////////////////////////////
-// CONFIGURATION - LOCAL DEFINITIONS
+// CONFIGURATION - INSTANCE
 ///////////////////////////////////////////////////////////////////////////////
+
+error_reporting(E_ALL | E_STRICT); 
+ini_set("display_errors", "on"); // see lower section
 
 require SETTINGS_CONFIG;
 
@@ -194,6 +172,9 @@ if ( !defined("VFS_DPERM") )
 if ( !defined("VFS_UMASK") )
   define("VFS_UMASK",           "");
 
+if ( !defined("CACHE_EXPIRE_ADD") )
+  define("CACHE_EXPIRE_ADD",    60);
+
 //
 // Server
 //
@@ -224,6 +205,7 @@ if ( !defined("DATABASE_PASS") )
 // External Services
 //
 
+// FIXME: Remove definition-values on final
 if ( !defined("GA_ENABLE") )
   define("GA_ENABLE",         ENV_PRODUCTION);    // Google Analytics enable
 if ( !defined("GA_ACCOUNT_ID") )
