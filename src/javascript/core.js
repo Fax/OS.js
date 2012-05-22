@@ -4134,23 +4134,23 @@
     },
 
     /**
-     * Application::createSocket() -- Create a new Socket instance
+     * Application::_createSocket() -- Create a new Socket instance
      * @see     Socket
      * @return  Socket
      */
-    createSocket : function(name, uri) {
+    _createSocket : function(name, uri) {
       var s = new Socket(this._name, uri);
-      this.removeSocket(name);
+      this._removeSocket(name);
       this._sockets[name] = s;
       return s;
     },
 
     /**
-     * Application::removeSocket() -- Remove a Socket
+     * Application::_removeSocket() -- Remove a Socket
      * @param   String    name      Socket name
      * @return  bool
      */
-    removeSocket : function(name) {
+    _removeSocket : function(name) {
       if ( this._sockets[name] !== undefined ) {
         this._sockets[name].destroy();
         delete this._sockets[name];
@@ -4392,7 +4392,7 @@
     },
 
     /**
-     * Application::addWorker() -- Create a WebWorker
+     * Application::_addWorker() -- Create a WebWorker
      * @param   String    name        Worker name
      * @param   String    resource    Worker resource name (worker.NAME.js)
      * @param   Function  mcallback   Process callback function
@@ -4400,7 +4400,7 @@
      * @see     WebWorker
      * @return  WebWorker
      */
-    addWorker : function(name, resource, mcallback, ecallback) {
+    _addWorker : function(name, resource, mcallback, ecallback) {
       if ( !this._workers[name] ) {
         var w = new WebWorker(RESOURCE_URI + sprintf("%s/%s", this._name, resource), mcallback, ecallback);
         this._workers[name] = w;
@@ -4411,12 +4411,12 @@
     },
 
     /**
-     * Application::removeWorker() -- Remove a WebWorker
+     * Application::_removeWorker() -- Remove a WebWorker
      * @param   String  name      Worker name
      * @see     WebWorker
      * @return  bool
      */
-    removeWorker : function(name) {
+    _removeWorker : function(name) {
       var self = this;
       if ( this._workers[name] ) {
         this._workers[name].destroy();
@@ -4689,7 +4689,7 @@
     _getSessionData : function() {
       if ( this._root_window ) {
         var wname = this._root_window._name;
-        var win   = this._root_window.getAttributes();
+        var win   = this._root_window._getAttributes();
 
         var windows = {};
         windows[wname] = win;
@@ -5078,9 +5078,9 @@
       var stack = [];
       for ( var i = 0; i < this.stack.length; i++ ) {
         stack.push({
-          id    : this.stack[i].getWindowId(),
-          title : this.stack[i].getTitle(),
-          icon  : this.stack[i].getIcon(),
+          id    : this.stack[i]._getWindowId(),
+          title : this.stack[i]._getTitle(),
+          icon  : this.stack[i]._getIcon(),
           focus : (function(w) {
             return function() {
               w.focus();
@@ -7165,7 +7165,7 @@
             }
           }
         } else {
-          el.find(".WindowTopInner img").attr("src", this.getIcon());
+          el.find(".WindowTopInner img").attr("src", this._getIcon());
           el.find(".WindowContentInner").html(this._content);
 
           el.find(".WindowTopInner img").click(function(ev) {
@@ -7571,38 +7571,6 @@
         _WM.blurWindow(this);
     },
 
-    /**
-     * Window::setTitle() -- Set Window title
-     * @param   String    t         Title
-     * @return  void
-     */
-    setTitle : function(t) {
-      if ( t != this._title ) {
-        this._title = t;
-        this.$element.find(".WindowTopInner span").html(this._title);
-
-        if ( _WM )
-          _WM.updateWindow(this);
-      }
-    },
-
-    /**
-     * Window::getTitle() -- Get Window title
-     * @return String
-     */
-    getTitle : function() {
-      return this._title;
-    },
-
-    /**
-     * Window::getIcon() -- Get Window full icon path
-     * @param   String    size      Size (default = 16x16)
-     * @return  String
-     */
-    getIcon : function(size) {
-      return GetIcon(this._icon, size || "16x16");
-    },
-
     //
     // INTERNAL METHODS
     //
@@ -7879,18 +7847,50 @@
     },
 
     /**
-     * Window::getWindowId() -- Get Window Id
+     * Window::_setTitle() -- Set Window title
+     * @param   String    t         Title
+     * @return  void
+     */
+    _setTitle : function(t) {
+      if ( t != this._title ) {
+        this._title = t;
+        this.$element.find(".WindowTopInner span").html(this._title);
+
+        if ( _WM )
+          _WM.updateWindow(this);
+      }
+    },
+
+    /**
+     * Window::_getTitle() -- Get Window title
      * @return String
      */
-    getWindowId : function() {
+    _getTitle : function() {
+      return this._title;
+    },
+
+    /**
+     * Window::_getIcon() -- Get Window full icon path
+     * @param   String    size      Size (default = 16x16)
+     * @return  String
+     */
+    _getIcon : function(size) {
+      return GetIcon(this._icon, size || "16x16");
+    },
+
+    /**
+     * Window::_getWindowId() -- Get Window Id
+     * @return String
+     */
+    _getWindowId : function() {
       return this.$element.attr("id");
     },
 
     /**
-     * Window::getAttributes() -- Get current Window attributes
+     * Window::_getAttributes() -- Get current Window attributes
      * @return Object
      */
-    getAttributes : function() {
+    _getAttributes : function() {
       if ( this._is_sessionable ) {
         return {
           is_maximized : this._is_maximized,
