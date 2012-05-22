@@ -60,7 +60,11 @@ OSjs.Dialogs.CrashDialog = (function($, undefined) {
        * @constructor
        */
       init : function(title, error, trace, alternative) {
-        title = sprintf(LABELS.title_proc, title);
+        if ( title.match(/^_/) ) {
+          title = title.replace(/^_/, "");
+        } else {
+          title = sprintf(LABELS.title_proc, title);
+        }
 
         this._super("Crash", false);
         this._content = "<div class=\"Crash\"><span>" + title + "</span><div class=\"error\"><div><b>Error</b></div><textarea></textarea></div><div class=\"trace\"><div><b>Trace</b></div><textarea></textarea></div></div>";

@@ -126,6 +126,7 @@
   var _HasCrashed      = false;                           //!< If system has crashed
   var _IsFullscreen    = false;                           //!< If we are in fullscreen mode
   var _OnLine          = true;                            //!< If we are on-line
+  var _OldErrorHandler = undefined;                       //!< window.onerror backup reference
 
   /**
    * Language
@@ -2168,6 +2169,7 @@
      * @destructor
      */
     destroy : function() {
+      var self = this;
       console.group("Core::destroy()");
 
       // Unbind global events
@@ -2255,6 +2257,9 @@
         $("*").unbind();
         $("*").die();
       } catch ( eee ) { }
+
+      // Unbind the current eventhandler
+      window.onerror = _OldErrorHandler;
 
       console.groupEnd();
 
@@ -2475,6 +2480,10 @@
           // NOTE: Fixes global_keydown "not responding upon init" issues
           $(document).focus();
 
+          // New error handler
+          _OldErrorHandler = window.onerror;
+          window.onerror = self.global_error;
+
           self.running = true;
 
           PlaySound("service-login");
@@ -2585,6 +2594,19 @@
     //
     // EVENTS
     //
+
+    /**
+     * Core::global_error() -- The Window error handler. Overrides default browser handler
+     * @param   String    msg     
+     * @param   String    url
+     * @param   int       lno
+     * @return  bool
+     */
+    global_error : function(msg, url, lno) {
+      var title = msg.split(":", 1).shift();
+      CrashCustom("_" + title, msg, sprintf("in %s on line %d", url, lno));
+      return false; // Bubble down
+    },
 
     /**
      * Core::global_endsession() -- The Browser 'session cache clear' event handler
@@ -3829,7 +3851,7 @@
                   locked  : cat == "System",
                   icon    : (icons ? GetIcon(item.icon, icons, iter) : item.icon)
                 });
-              } else if ( item.type == "Service" && sitems ) {
+              } else if ( (item.type == "Service" || item.type == "BackgroundService") && sitems ) {
                 result.push({
                   name    : iter,
                   label   : item.title,
@@ -7620,13 +7642,12 @@
           _TopIndex++;
           this._shuffle(_TopIndex);
         }
-
-        this._is_ontop = false;
       } else {
         _OnTopIndex++;
         this._shuffle(_OnTopIndex, true);
-        this._is_ontop = true;
       }
+
+      this._is_ontop = t;
 
       console.log("state", this._is_ontop);
       console.groupEnd();
