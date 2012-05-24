@@ -65,6 +65,6 @@ if ( !($json = $core->doPOST($_POST)) === false ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 header("Content-Type: text/html; charset=utf-8");
-require PATH_JSBASE . "/template.php";
+require PATH_TEMPLATES . "/index.php";
 
 ?>

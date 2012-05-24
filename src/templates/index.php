@@ -88,6 +88,7 @@ if ( $locale = Core::get()->getLocale() ) {
 
   <!-- OS.js stylesheets -->
   <link rel="stylesheet" type="text/css" href="/VFS/resource/main.css" />
+  <link rel="stylesheet" type="text/css" href="/VFS/resource/dialogs.css" />
   <link rel="stylesheet" type="text/css" href="/VFS/resource/glade.css" />
   <link rel="stylesheet" type="text/css" href="/VFS/resource/pimp.css" />
 
