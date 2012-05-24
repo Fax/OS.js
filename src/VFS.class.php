@@ -837,7 +837,7 @@ abstract class VFS
               $dest = sprintf("%s/%s", $dest, $fname);
             }
           } else {
-            $tmp   = explode("/", $src);
+            $tmp   = explode("/", $src["root"]);
             $fname = end($tmp);
             if ( !preg_match(sprintf("/%s$/", preg_quote($fname, "/")), $dest) ) {
               $dest = sprintf("%s/%s", $dest, $fname);
