@@ -67,7 +67,6 @@ Directories and Files:
   update-documentation      Update/Generate Backend Documentation
   update-fontcache          Update/Generate Font cache
   update-locale             Update/Generate Backend Locales
-  yui.sh                    Yahoo Compressor shell wrapper
 /doc/                     Documentation
   /api/                     Backend Documentation
   /javascript/              Frontend Documentation
