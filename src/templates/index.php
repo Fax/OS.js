@@ -77,8 +77,6 @@ if ( $locale = Core::get()->getLocale() ) {
 
   <!-- Compability -->
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <!--<meta http-equiv="X-UA-Compatible" content="IE=9" />
-  <meta http-equiv="Content-Style-Type" content="text/css; charset=utf-8" />-->
 
   <!-- SEO -->
   <meta name="keywords" content="OS.js, JavaScript Operating System, Web Desktop" />
