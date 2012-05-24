@@ -652,22 +652,26 @@ input.Disabled {
   text-decoration : underline;
 }
 
-.OperationDialogPanelItemAdd ul.Panels {
-  padding : 0;
+.OperationDialogPanel {
 }
-.OperationDialogPanelItemAdd ul.Panels .Header {
+.OperationDialogPanel ul {
+  margin : 0;
+  padding : 0;
+  list-style-type : none;
+}
+.OperationDialogPanel ul .Header {
   font-weight : bold;
   font-size : 120%;
 }
-.OperationDialogPanelItemAdd ul.Panels .Label {
+.OperationDialogPanel ul .Label {
   font-weight : bold;
 }
-.OperationDialogPanelItemAdd ul.Panels .Option {
+.OperationDialogPanel ul .Option {
 }
-.OperationDialogPanelItemAdd ul.Panels .Option select {
+.OperationDialogPanel ul .Option select {
   width : 100%;
 }
-.OperationDialogPanelItemAdd ul.Panels .Option .Slider {
+.OperationDialogPanel ul .Option .Slider {
   margin : 5px;
 }
 

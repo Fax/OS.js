@@ -5575,163 +5575,30 @@
      */
     showPanelPreferences : function() {
       var self = this;
+      if ( _WM ) {
+        var win = new OSjs.Dialogs.PanelPreferencesOperationDialog(OperationDialog, API, [function(panel, key, value) {
+          if ( _Desktop ) {
+            panel = _Desktop.getPanel(panel.index);
+            if ( panel ) {
+              var style = panel.getStyle();
+              style[key] = value;
+              panel.setStyle(style, true);
 
-      var _panels   = [];
-      var _size     = 0;
-      var _current  = -1;
-      var _selected = null;
+              console.log("Desktop::showPanelPreferences()", "__onchange", panel, [key, value], style);
+              var session = [];
+              var panels  = self.getPanels();
+              for ( var i = 0; i < panels.length; i++ ) {
+                session.push(panels[i].getSession());
+              }
 
-      var __onchange = function(panel, key, value) {
-        if ( _Desktop ) {
-          panel = _Desktop.getPanel(panel.index);
-          if ( panel ) {
-            var style = panel.getStyle();
-            style[key] = value;
-            panel.setStyle(style, true);
-
-            console.log("Desktop::showPanelPreferences()", "__onchange", panel, [key, value], style);
-            var session = [];
-            var panels  = self.getPanels();
-            for ( var i = 0; i < panels.length; i++ ) {
-              session.push(panels[i].getSession());
+              _Settings._apply({"desktop.panels" : session}, function() {
+                // void -- removes message
+              });
             }
-
-            _Settings._apply({"desktop.panels" : session}, function() {
-              // void -- removes message
-            });
           }
-        }
-      };
-
-      var _selectItem = function(item) {
-        if ( _selected )
-          _selected.removeClass("Selected");
-
-        item.addClass("Selected");
-        _selected = item;
-      };
-
-      var _createPrefs = function(el, panel) {
-        var opa  = 100;
-        var type = "solid";
-        var opt  = null;
-        var lbl  = OSjs.Labels.PanelPreferences;
-
-        if ( panel.style && panel.style.opacity ) {
-          if ( panel.style.opacity != "default" ) {
-            opa = panel.style.opacity;
-          }
-        }
-        if ( panel.style && panel.style.type ) {
-          if ( panel.style.type != "default" ) {
-            type = panel.style.type;
-          }
-        }
-        if ( panel.style && panel.style.background ) {
-          opt = panel.style.background;
-        }
-
-        el.append(sprintf("<div class=\"PType\"><div class=\"Label\">%s</div><div class=\"Option\"><select></select></div></div>", lbl.type));
-        //el.append(sprintf("<div class=\"POption\"><div class=\"Label\">%s</div><div class=\"Option\"></div></div>", lbl.opt));
-        el.append(sprintf("<div class=\"POpacity\"><div class=\"Label\">%s</div><div class=\"Option\"><div class=\"Slider\"></div></div></div>", lbl.opacity));
-
-        el.find(".PType select").append(sprintf("<option value=\"solid\">%s</option>", lbl.solid));
-        //el.find(".PType select").append(sprintf("<option value=\"image\">%s</option>", lbl.background));
-        el.find(".PType select").append(sprintf("<option value=\"transparent\">%s</option>", lbl.transparent));
-
-        // Type
-        el.find(".PType select").change(function() {
-          __onchange(panel, "type", $(this).val());
-        });
-        el.find(".PType select").val(type);
-
-        // Background
-        /*
-        el.find(".POption select").change(function() {
-          __onchange(panel, "background", $(this).val());
-        });
-        el.find(".POption .Option").html(opt || "None");
-        */
-
-        // Opacity
-        var stimeout = null;
-
-        el.find(".POpacity .Slider").slider({
-          min   : 1,
-          max   : 100,
-          value : opa,
-          slide : function() {
-            if ( stimeout ) {
-              clearTimeout(stimeout);
-              stimeout = null;
-            }
-            stimeout = setTimeout((function(slider) {
-              return function() {
-                __onchange(panel, "opacity", slider.slider("value"));
-              };
-            })($(this)), 100);
-          }
-        });
-      };
-
-      var _refreshList = function(list) {
-        list.empty();
-
-        _panels   = _Settings._get("desktop.panels", true);
-        _size     = 0;
-        _current  = -1;
-
-        var pp = 0, li;
-        for ( pp; pp < _panels.length; pp++ ) {
-          li = $(sprintf("<li><!--<div class=\"Header\">Panel %d</div>--><div class=\"Prefs\"></div></li>", parseInt(_panels[pp].index, 10) + 1));
-
-          _createPrefs(li.find(".Prefs"), _panels[pp]);
-
-          li.click((function(i) {
-            return function() {
-              _current = i;
-            };
-          })(_size));
-
-          _size++;
-          list.append(li);
-        }
-      };
-
-      var pfd = new OSjs.Dialogs.PanelItemOperationDialog(OperationDialog, API, [this, function(diag) {
-        var list = diag.$element.find(".DialogContent ul");
-        var buttons = diag.$element.find(".DialogButtons");
-        list.addClass("Panels");
-
-        _refreshList(list);
-
-        buttons.find(".DialogButtons .Close").show();
-        buttons.find(".DialogButtons .Ok").hide();
-
-        /*
-        var add_btn = $(sprintf("<button class=\"AddPanel\">%s</button>", "+"));
-        var rem_btn = $(sprintf("<button class=\"RemovePanel\">%s</button>", "-"));
-
-        add_btn.click(function() {
-          _refreshList(list);
-        });
-        rem_btn.click(function() {
-          if ( _size > 1 ) {
-            _refreshList(list);
-          }
-        });
-
-        buttons.append(add_btn, rem_btn);
-        */
-
-      }, function() {}, OSjs.Labels.ContextMenuDesktop.panels, true]);
-
-      pfd.height = 300;
-      pfd._gravity = "center";
-      pfd.icon = "categories/applications-utilities.png";
-
-      if ( _WM )
-        _WM.addWindow(pfd);
+        }]);
+        _WM.addWindow(win);
+      }
     },
 
     /**
