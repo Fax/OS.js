@@ -38,7 +38,7 @@ OSjs.Dialogs.PanelItemOperationDialog = (function($, undefined) {
       "title"     : "Configure"
     },
     "nb_NO" : {
-      "title"     : "Konfigurer"
+      "title"     : "Konfigurér"
     }
   };
 
@@ -48,31 +48,19 @@ OSjs.Dialogs.PanelItemOperationDialog = (function($, undefined) {
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _PanelItemOperationDialog = OperationDialog.extend({
-      init : function(item, clb_create, clb_finish, title, additem) {
+      init : function(item, clb_create, clb_finish) {
         this.item         = item         || null;
-        this.type         = item._named === undefined ? "panel" : "item";
         this.clb_finish   = clb_finish   || function() {};
         this.clb_create   = clb_create   || function() {};
-
-        var content = "";
-        if ( additem ) {
-          content = "<div class=\"OperationDialog OperationDialogPanelItemAdd\">    <div class=\"OperationDialogInner Wrapper\">      <ul>      </ul>    </div>  </div>";
-        } else {
-          content = "<div class=\"OperationDialog OperationDialogPanelItem\">    <div class=\"OperationDialogInner\">    </div>  </div>";
-        }
+        this.type         = "item";
 
         this._super("PanelItem");
-        this._title    = title || LABELS.title + " " + this.type;
-        this._content  = $(content);
+        this._title    = LABELS.title;
+        this._content  = $("<div class=\"OperationDialog OperationDialogPanelItem\"><div class=\"OperationDialogInner\"> </div></div>");
         this._width    = 400;
         this._height   = 340;
         this._gravity  = "center";
-
-        if ( this.type == "panel" ) {
-          this._icon    = "categories/applications-utilities.png";
-        }
       },
-
 
       create : function(id, mcallback) {
         var self = this;

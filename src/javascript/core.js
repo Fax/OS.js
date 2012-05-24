@@ -6053,55 +6053,12 @@
           return;
         }
 
-        var pitem = new OSjs.Dialogs.PanelItemOperationDialog(OperationDialog, API, [this, function(diag) {
-          var items = _PackMan.getPackagesByType("PanelItem");
-          var name, li, current, selected;
-
-          for ( name in items ) {
-            if ( items.hasOwnProperty(name) ) {
-              li = $("<li><img alt=\"/img/blank.gif\" /><div class=\"Inner\"><div class=\"Title\">Title</div><div class=\"Description\">Description</div></div></li>");
-              li.find("img").attr("src", GetIcon(items[name].icon, "32x32"));
-              li.find(".Title").html(items[name].title);
-              li.find(".Description").html(items[name].description);
-
-              (function(litem, iname/*, iitem*/) {
-                litem.click(function() {
-                  if ( current && current != this ) {
-                    $(current).removeClass("Current");
-                  }
-                  $(this).addClass("Current");
-                  current = this;
-                  selected = iname;
-
-                  diag.$element.find(".DialogButtons .Ok").removeAttr("disabled");
-                });
-
-                litem.dblclick(function() {
-                  diag.$element.find(".DialogButtons .Ok").click();
-                });
-              })(li, name, items[name]);
-                diag.$element.find(".DialogContent ul").append(li);
-              }
-            }
-
-            diag.$element.find(".DialogButtons .Close").show();
-            diag.$element.find(".DialogButtons .Ok").show().click(function() {
-              if ( selected ) {
-                var pos = pos_ev.pageX;
-                LaunchProcess(selected, "PanelItem", {"index" : self.items.length, "argv" : [], "align" : "left", "position" : pos, "panel" : self, "save" : true});
-              }
-            }).attr("disabled", "disabled");
-
-          }, function() {
-            self.reload();
-        }, OSjs.Labels.AddPanelItem, true]);
-
-        pitem.height = 300;
-        pitem._gravity = "center";
-        pitem.icon = "categories/applications-utilities.png";
-
-        if ( _WM )
-          _WM.addWindow(pitem);
+        var items = _PackMan.getPackagesByType("PanelItem");
+        var win = new OSjs.Dialogs.PanelAddItemOperationDialog(OperationDialog, API, [this, items, function(selected) {
+          var pos = pos_ev.pageX;
+          LaunchProcess(selected, "PanelItem", {"index" : self.items.length, "argv" : [], "align" : "left", "position" : pos, "panel" : self, "save" : true});
+        }]);
+        _WM.addWindow(win);
       };
 
       if ( this.pos == "bottom" ) {

@@ -84,7 +84,6 @@
     "SettingsNotifyFailSaveServer"        : "Failed to save settings (server error)",
     "DesktopGridHeader"                   : "Pinned Item",
     "DesktopGridRemove"                   : "Remove",
-    "AddPanelItem"                        : "Add new panel item",
     "PanelPreferences"                    : {
       "type"          : "Background Type",
       "opt"           : "Background Option",

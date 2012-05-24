@@ -84,7 +84,6 @@
     "SettingsNotifyFailSaveServer"        : "Klarte ikke lagre instillinger (server feil)",
     "DesktopGridHeader"                   : "Stiftet ikon",
     "DesktopGridRemove"                   : "Fjern",
-    "AddPanelItem"                        : "Legg til panel-objekt",
     "PanelPreferences"                    : {
       "type"          : "Bakgrunnstype",
       "opt"           : "Bunkgrunns-instillinger",

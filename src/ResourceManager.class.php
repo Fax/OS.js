@@ -104,6 +104,9 @@ abstract class ResourceManager
     "PanelPreferencesOperationDialog" => Array(
       "resources" => Array("dialog.panel.js")
     ),
+    "PanelAddItemOperationDialog" => Array(
+      "resources" => Array("dialog.panel.additem.js")
+    ),
     "RenameOperationDialog" => Array(
       "resources" => Array("dialog.rename.js")
     ),
