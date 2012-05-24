@@ -66,6 +66,7 @@ abstract class ResourceManager
     "theme.light.css",
     "cursor.default.css",
     "main.css",
+    "dialogs.css",
     "pimp.css",
     "glade.css",
     "init.js",

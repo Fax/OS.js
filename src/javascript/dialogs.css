@@ -1,0 +1,265 @@
+@charset "UTF-8";
+/*!
+ * OS.js - JavaScript Operating System - Dialog CSS Stylesheet
+ *
+ * This stylesheet contains default styles for main components.
+ *
+ * - Color schemes are found in theme.*
+ * - Advanced CSS features is in pimp.css
+ * - Glade styles are in glade.css
+ * - Fonts are defined in /?font=
+ * - Cursors are defined in /?cursor=
+ *
+ *
+ * Copyright (c) 2011-2012, Anders Evenrud <andersevenrud@gmail.com>
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met: 
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer. 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution. 
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @package OSjs.Styles
+ * @author Anders Evenrud <andersevenrud@gmail.com>
+ * @licence Simplified BSD License
+ */
+
+/*
+ * General
+ */
+.OperationDialog h1 {
+  margin : 0;
+  padding : 0;
+  font-size : 120%;
+}
+
+.OperationDialog p {
+  margin : 0;
+  padding : 0;
+}
+.OperationDialogInner {
+  margin-top : 10px;
+}
+
+.OperationDialog .ProgressBar,
+.OperationDialog .ProgressBar * {
+  height : 22px;
+}
+
+.OperationDialog .FileChooser {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 40px;
+  overflow : auto;
+}
+.OperationDialog .FileChooser ul {
+  margin : 0;
+  padding : 0;
+  list-style-type : none;
+}
+.OperationDialog .FileChooser li {
+  padding : 5px;
+}
+.OperationDialog .FileChooser li img {
+  vertical-align : middle;
+  margin-right : 10px;
+}
+/*
+.OperationDialog .FileChooser li {
+}
+.OperationDialog .FileChooser li:hover {
+}
+.OperationDialog .FileChooser li.current {
+}
+  */
+.OperationDialog .FileChooserInput {
+  position : absolute;
+  left : 0px;
+  right : 0px;
+  bottom : 10px;
+  height : 20px;
+}
+.OperationDialog .FileChooserInput input {
+  width : 100%;
+}
+
+/*
+.OperationDialog li.even {
+}
+.OperationDialog li.odd {
+}
+.OperationDialog li.Disabled {
+}
+  */
+
+/*
+ * Dialogs
+ */
+
+.OperationDialogColor .ColorPalette {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+}
+.OperationDialogColor .Sliders {
+  position : absolute;
+  top : 0px;
+  left : 210px;
+  right : 5px;
+}
+.OperationDialogColor .CurrentColorDesc {
+  position : absolute;
+  top : 150px;
+  left : 205px;
+  right : 5px;
+  padding : 4px;
+}
+.OperationDialogColor .CurrentColor {
+  position : absolute;
+  top : 177px;
+  left : 205px;
+  right : 5px;
+  height : 20px;
+}
+
+.OperationDialogColor .Slider {
+  margin : 5px;
+  margin-bottom : 15px;
+}
+
+.OperationDialogPanelItemAdd {
+}
+.OperationDialogPanelItemAdd .Wrapper {
+  height : 240px;
+  overflow : auto;
+}
+.OperationDialogPanelItemAdd ul {
+  margin : 0;
+  padding : 0;
+  list-style-type : none;
+}
+.OperationDialogPanelItemAdd li {
+  margin : 0;
+  padding : 10px;
+  position : relative;
+  height : 40px;
+}
+/*
+.OperationDialogPanelItemAdd li.Current {
+}
+*/
+.OperationDialogPanelItemAdd li .Inner {
+  position : absolute;
+  left : 32px;
+  margin-left : 20px;
+
+}
+.OperationDialogPanelItemAdd li .Title {
+  font-weight : bold;
+}
+.OperationDialogPanelItemAdd li img {
+  position : absolute;
+}
+.OperationDialogPanelItemAdd li:Hover .Title {
+  text-decoration : underline;
+}
+
+.OperationDialogPanel {
+}
+.OperationDialogPanel ul {
+  margin : 0;
+  padding : 0;
+  list-style-type : none;
+}
+.OperationDialogPanel ul .Header {
+  font-weight : bold;
+  font-size : 120%;
+}
+.OperationDialogPanel ul .Label {
+  font-weight : bold;
+}
+.OperationDialogPanel ul .Option {
+}
+.OperationDialogPanel ul .Option select {
+  width : 100%;
+}
+.OperationDialogPanel ul .Option .Slider {
+  margin : 5px;
+}
+.OperationDialogFileProperties table {
+  width : 382px;
+}
+
+.OperationDialogFileProperties td.pri {
+  font-weight : bold;
+  width : 70px;
+}
+
+.OperationDialogFileProperties td {
+  vertical-align : top;
+}
+
+.OperationDialogFileProperties .InfoBox {
+  height : 245px;
+  width : 300px;
+  overflow:auto;
+  background:#fff;
+}
+.OperationDialogFileProperties .InfoBox pre {
+  margin : 0;
+  padding : 0;
+}
+
+.OperationDialogFont {
+}
+.OperationDialogFontList {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  bottom : 10px;
+  width : 140px;
+  background : #fff;
+  border : 0 none;
+  margin : 0;
+  padding : 0;
+}
+.OperationDialogFontSize {
+  position : absolute;
+  top : 0px;
+  left : 150px;
+  bottom : 10px;
+  width : 40px;
+  background : #fff;
+  border : 0 none;
+  margin : 0;
+  padding : 0;
+}
+.OperationDialogFontPreview {
+  position : absolute;
+  top : 0px;
+  right : 0px;
+  bottom : 10px;
+  width : 140px;
+  background : #fff;
+  border : 0 none;
+  margin : 0;
+  padding : 0;
+}
+

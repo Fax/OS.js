@@ -54,6 +54,10 @@ body {
   position : fixed;
 }
 
+/****************************************************************
+                           GENERIC
+ ****************************************************************/
+
 .TableCellWrap {
   position : relative;
   width : 100%;
@@ -70,19 +74,9 @@ ul.CompactList li {
   margin : 0;
 }
 
-
-/*
-input.Disabled {
-}
-*/
-
-#Version {
-  position : absolute;
-  bottom : 0px;
-  right : 0px;
-  text-align : right;
-  padding : 5px;
-}
+/****************************************************************
+                         LOGIN/LOADING 
+ ****************************************************************/
 
 #LoginWindow {
   width : 500px;
@@ -189,7 +183,9 @@ input.Disabled {
     padding : 0;
   }
 
-/* Desktop */
+/****************************************************************
+                          DESKTOP
+ ****************************************************************/
 
 #Desktop {
   position : relative;
@@ -265,16 +261,13 @@ input.Disabled {
   #DesktopGrid li.current .label {
   }
 
-/* Panel */
+/****************************************************************
+                           PANELS
+ ****************************************************************/
 
 .DesktopPanel {
   position : absolute;
   top : 0px;
-  /*
-  left : 50%;
-  margin-left : -450px;
-  width : 900px;
-  */
   left : 0px;
   right : 0px;
   height : 30px;
@@ -290,65 +283,51 @@ input.Disabled {
   right : 0px;
   height : 30px;
 }
-.DesktopPanel ul {
-  margin : 0;
-  padding : 0;
-  height : 30px;
-  list-style-type : none;
-  position : relative;
-}
-.DesktopPanel li { /* .PanelItem */
-  /*margin : 0;
-  padding : 0;*/
-}
-.DesktopPanel ul ul {
-  height : auto;
-}
+  .DesktopPanel ul {
+    margin : 0;
+    padding : 0;
+    height : 30px;
+    list-style-type : none;
+    position : relative;
+  }
+    .DesktopPanel li { /* .PanelItem */
+      /*margin : 0;
+      padding : 0;*/
+    }
+      .DesktopPanel ul ul {
+        height : auto;
+      }
+  .DesktopPanel .Ghost {
+    height : 20px;
+    line-height : 20px;
+    margin : 5px;
+    padding : 0;
+    display : block;
+    position : absolute;
+    top : 0px;
+    left : 0px;
+  }
 
-
-/*
-.PanelButton {
-
-}
-*/
 
 .PanelItem {
   height : 20px;
   line-height : 20px;
   margin : 5px;
   padding : 0;
-  /*
-  float : left;
-  position : relative;
-  */
   display : block;
   position : absolute;
   top : 0px;
   left : 0px;
 }
-.DesktopPanel .Ghost {
-  height : 20px;
-  line-height : 20px;
-  margin : 5px;
-  padding : 0;
-  display : block;
-  position : absolute;
-  top : 0px;
-  left : 0px;
-}
-
 .PanelItem.Padded {
   padding-left : 5px;
   padding-right : 5px;
 }
+.PanelItem.AlignRight {}
 
-.PanelItem.AlignRight {
-  /*
-  float : right;
-  */
-}
-
-/* Menus */
+/****************************************************************
+                            MENUS
+ ****************************************************************/
 
 .Menu {
   position : absolute;
@@ -362,28 +341,114 @@ input.Disabled {
   white-space : nowrap;
 }
 
-.Menu li {
-  padding : 5px;
-}
-.Menu li.separator {
-  padding-top : 0;
-  padding-bottom : 0;
-}
-/*
-.Menu li.Disabled {
-}
-.Menu li:hover {
-}
-  */
+  .Menu li {
+    padding : 5px;
+  }
+  .Menu li.separator {
+    padding-top : 0;
+    padding-bottom : 0;
+  }
+    .Menu li img {
+      vertical-align : middle;
+      margin-right : 5px;
+    }
+  /*.Menu li.Disabled {}*/
+  /*.Menu li:hover {}*/
+  /*.Menu li.checked {}*/
 
-.Menu li img {
-  vertical-align : middle;
-  margin-right : 5px;
+
+/****************************************************************
+                            WINDOWS
+ ****************************************************************/
+
+.Window {
+  min-width : 100px;
+  min-height : 100px;
+  width : 500px; /* Dynamic */
+  height : 300px; /* Dynamic */
+  position : absolute !important;
+  z-index : 10;
+  overflow : hidden;
 }
-/*
-.Menu li.checked {
+#Desktop .Window {
+  position : absolute;
 }
-  */
+/*.Window.Dragging {}*/
+  .WindowTop {
+    height : 28px;
+    text-align : center;
+  }
+    .WindowTopInner {
+      height : 28px;
+      line-height : 28px;
+    }
+    .WindowTopInner span {
+    }
+    .WindowTop img {
+      float : left;
+      padding : 5px;
+    }
+    .WindowTopControllers {
+      position : absolute;
+      top : 0px;
+      right : 0px;
+    }
+    .WindowTopController {
+      width : 27px;
+      height : 28px;
+      line-height : 28px;
+      text-align : center;
+      float : left;
+    }
+    /*.WindowTopController:hover, .WindowTopController.Active {}*/
+
+  .WindowContent {
+    overflow : auto;
+    position : absolute;
+    top : 28px;
+    left : 0px;
+    right : 0px;
+    bottom : 0px;
+  }
+    .WindowContentInner {
+    }
+
+  .Window .ui-tabs-panel {
+    padding : 10px;
+  }
+
+/****************************************************************
+                            DIALOGS
+ ****************************************************************/
+
+.DialogContent {
+  position : absolute;
+  top : 5px;
+  bottom : 25px;
+  right : 5px;
+  left : 5px;
+}
+.DialogContent.Message {
+  padding : 10px;
+}
+  .DialogButtons {
+    position : absolute;
+    bottom : 10px;
+    right : 0px;
+    left : 0px;
+    height : 20px;
+    text-align : center;
+  }
+
+/****************************************************************
+                        OPERATION DIALOGS
+ ****************************************************************/
+
+/* @see dialogs.css */
+
+/****************************************************************
+                          MISC UI
+ ****************************************************************/
 
 /* Temp */
 .TempDnD {
@@ -397,284 +462,6 @@ input.Disabled {
   z-index : 9999999999;
 }
 
-/* Window */
-
-.Window {
-  min-width : 100px;
-  min-height : 100px;
-  width : 500px; /* PHP */
-  height : 300px; /* PHP */
-  position : absolute !important;
-  z-index : 10;
-  overflow : hidden;
-}
-#Desktop .Window {
-  position : absolute;
-}
-/*
-.Window.Dragging {
-}
-*/
-.WindowTop {
-  height : 28px;
-  text-align : center;
-}
-.WindowTopInner {
-  height : 28px;
-  line-height : 28px;
-}
-.WindowTopInner span {
-}
-.WindowTop img {
-  float : left;
-  padding : 5px;
-}
-.WindowTopControllers {
-  position : absolute;
-  top : 0px;
-  right : 0px;
-}
-.WindowTopController {
-  width : 27px;
-  height : 28px;
-  line-height : 28px;
-  text-align : center;
-  float : left;
-}
-/*
-.WindowTopController:hover,
-.WindowTopController.Active {
-}
-  */
-
-.WindowContent {
-  overflow : auto;
-  position : absolute;
-  top : 28px;
-  left : 0px;
-  right : 0px;
-  bottom : 0px;
-}
-.WindowContentInner {
-}
-
-/*
-.Window .ui-resizable-handle {
-}
-.Window .ui-resizable-n {
-}
-.Window .ui-resizable-ne {
-}
-.Window .ui-resizable-nw {
-}
-.Window .ui-resizable-s {
-}
-.Window .ui-resizable-e {
-}
-.Window .ui-resizable-se {
-}
-.Window .ui-resizable-w {
-}
-.Window .ui-resizable-sw {
-}
-*/
-
-/*
-.Dialog {
-
-
-}
-  */
-.DialogContent {
-  position : absolute;
-  top : 5px;
-  bottom : 25px;
-  right : 5px;
-  left : 5px;
-}
-.DialogContent.Message {
-  padding : 10px;
-}
-/*
-.DialogContent.error {
-}
-  */
-.DialogButtons {
-  position : absolute;
-  bottom : 10px;
-  right : 0px;
-  left : 0px;
-  height : 20px;
-  text-align : center;
-}
-/*
-.DialogButtons button {
-  display : inline-block;
-  padding : 0;
-  margin : 0;
-}
-  */
-
-/*
-.OperationDialog {
-
-}
-  */
-.OperationDialog h1 {
-  margin : 0;
-  padding : 0;
-}
-.OperationDialog p {
-  margin : 0;
-  padding : 0;
-}
-.OperationDialogInner {
-  margin-top : 10px;
-}
-.OperationDialog .ProgressBar,
-.OperationDialog .ProgressBar * {
-  height : 22px;
-}
-
-.OperationDialog .FileChooser {
-  position : absolute;
-  top : 0px;
-  left : 0px;
-  right : 0px;
-  bottom : 40px;
-  overflow : auto;
-}
-.OperationDialog .FileChooser ul {
-  margin : 0;
-  padding : 0;
-  list-style-type : none;
-}
-.OperationDialog .FileChooser li {
-  padding : 5px;
-}
-.OperationDialog .FileChooser li img {
-  vertical-align : middle;
-  margin-right : 10px;
-}
-/*
-.OperationDialog .FileChooser li {
-}
-.OperationDialog .FileChooser li:hover {
-}
-.OperationDialog .FileChooser li.current {
-}
-  */
-.OperationDialog .FileChooserInput {
-  position : absolute;
-  left : 0px;
-  right : 0px;
-  bottom : 10px;
-  height : 20px;
-}
-.OperationDialog .FileChooserInput input {
-  width : 100%;
-}
-
-/*
-.OperationDialog li.even {
-}
-.OperationDialog li.odd {
-}
-.OperationDialog li.Disabled {
-}
-  */
-
-.OperationDialogColor .ColorPalette {
-  position : absolute;
-  top : 0px;
-  left : 0px;
-}
-.OperationDialogColor .Sliders {
-  position : absolute;
-  top : 0px;
-  left : 210px;
-  right : 5px;
-}
-.OperationDialogColor .CurrentColorDesc {
-  position : absolute;
-  top : 150px;
-  left : 205px;
-  right : 5px;
-  padding : 4px;
-}
-.OperationDialogColor .CurrentColor {
-  position : absolute;
-  top : 177px;
-  left : 205px;
-  right : 5px;
-  height : 20px;
-}
-
-.OperationDialogColor .Slider {
-  margin : 5px;
-  margin-bottom : 15px;
-}
-
-.OperationDialogPanelItemAdd {
-}
-.OperationDialogPanelItemAdd .Wrapper {
-  height : 240px;
-  overflow : auto;
-}
-.OperationDialogPanelItemAdd ul {
-  margin : 0;
-  padding : 0;
-  list-style-type : none;
-}
-.OperationDialogPanelItemAdd li {
-  margin : 0;
-  padding : 10px;
-  position : relative;
-  height : 40px;
-}
-/*
-.OperationDialogPanelItemAdd li.Current {
-}
-*/
-.OperationDialogPanelItemAdd li .Inner {
-  position : absolute;
-  left : 32px;
-  margin-left : 20px;
-
-}
-.OperationDialogPanelItemAdd li .Title {
-  font-weight : bold;
-}
-.OperationDialogPanelItemAdd li img {
-  position : absolute;
-}
-.OperationDialogPanelItemAdd li:Hover .Title {
-  text-decoration : underline;
-}
-
-.OperationDialogPanel {
-}
-.OperationDialogPanel ul {
-  margin : 0;
-  padding : 0;
-  list-style-type : none;
-}
-.OperationDialogPanel ul .Header {
-  font-weight : bold;
-  font-size : 120%;
-}
-.OperationDialogPanel ul .Label {
-  font-weight : bold;
-}
-.OperationDialogPanel ul .Option {
-}
-.OperationDialogPanel ul .Option select {
-  width : 100%;
-}
-.OperationDialogPanel ul .Option .Slider {
-  margin : 5px;
-}
-
 #ContextMenu {
   position : absolute;
   top : 0;
@@ -682,10 +469,10 @@ input.Disabled {
   z-index : 100000000;
   display : none;
 }
-#ContextMenu .Menu {
-  position : relative;
-  display : block;
-}
+  #ContextMenu .Menu {
+    position : relative;
+    display : block;
+  }
 
 #Tooltip {
   position : absolute;
@@ -707,30 +494,6 @@ input.Disabled {
   z-index : 100000000;
   padding : 0;
 
-}
-
-/*
-.Window .ui-tabs,
-.Window .ui-tabs-panel,
-.Window .ui-tabs-nav {
-}
-*/
-.Window .ui-tabs-panel {
-  padding : 10px;
-}
-/*
-.Window .ui-tabs li {
-}
-.Window .ui-tabs li a {
-}
-.Window .ui-tabs li.ui-tabs-selected a {
-}
-*/
-
-.OperationDialog h1 {
-  margin : 0;
-  padding : 0;
-  font-size : 120%;
 }
 
 #DesktopNotifications {
@@ -769,66 +532,17 @@ input.Disabled {
   right : 5px;
 }
 
-.OperationDialogFileProperties table {
-  width : 382px;
-}
-
-.OperationDialogFileProperties td.pri {
-  font-weight : bold;
-  width : 70px;
-}
-
-.OperationDialogFileProperties td {
-  vertical-align : top;
-}
-
-.OperationDialogFileProperties .InfoBox {
-  height : 245px;
-  width : 300px;
-  overflow:auto;
-  background:#fff;
-}
-.OperationDialogFileProperties .InfoBox pre {
-  margin : 0;
-  padding : 0;
-}
-
-.OperationDialogFont {
-}
-.OperationDialogFontList {
+#Version {
   position : absolute;
-  top : 0px;
-  left : 0px;
-  bottom : 10px;
-  width : 140px;
-  background : #fff;
-  border : 0 none;
-  margin : 0;
-  padding : 0;
-}
-.OperationDialogFontSize {
-  position : absolute;
-  top : 0px;
-  left : 150px;
-  bottom : 10px;
-  width : 40px;
-  background : #fff;
-  border : 0 none;
-  margin : 0;
-  padding : 0;
-}
-.OperationDialogFontPreview {
-  position : absolute;
-  top : 0px;
+  bottom : 0px;
   right : 0px;
-  bottom : 10px;
-  width : 140px;
-  background : #fff;
-  border : 0 none;
-  margin : 0;
-  padding : 0;
+  text-align : right;
+  padding : 5px;
 }
 
+/****************************************************************
+                          CLASSES.JS
+ ****************************************************************/
 
 .GUICheckList {
 }
