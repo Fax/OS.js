@@ -160,7 +160,6 @@ abstract class ResourceManager
    */
   public static function MinimizeFile($base, $filename) {
     $mindir       = sprintf("%s/_min", $base);
-    $cmd          = BIN_YUI;
     $type         = preg_match("/\.js$/", $filename) ? "js" : "css";
     $path         = sprintf("%s/%s", $base, $filename);
     $destination  = sprintf("%s/%s", $mindir, $filename);
@@ -177,18 +176,34 @@ abstract class ResourceManager
       unset($content);
 
       // Create and execute command
+      $noout = false;
       if ( strtolower($type) == "js" ) {
-        $args = sprintf("--preserve-semi --type js --charset UTF-8 %s", escapeshellarg($tmp_path));
+        if ( BIN_CC_ENABLE ) {
+          $args = sprintf("--js=%s --js_output_file=%s", escapeshellarg($tmp_path), escapeshellarg($destination));
+          $exec = sprintf("%s %s 2>&1", BIN_CC, $args);
+          $noout = true;
+        } else {
+          $args = sprintf("--preserve-semi --type js --charset UTF-8 %s", escapeshellarg($tmp_path));
+          $exec = sprintf("%s %s 2>&1", BIN_YUI, $args);
+        }
       } else {
         $args = sprintf("--preserve-semi --type css --charset UTF-8 %s", escapeshellarg($tmp_path));
+        $exec = sprintf("%s %s 2>&1", BIN_YUI, $args);
       }
 
-      $exec = sprintf("%s %s 2>&1", $cmd, $args);
-
-      if ( !($content = shell_exec($exec)) ) {
-        $content = "/* FAILED TO GET CONTENTS */";
+      if ( !$noout ) {
+        if ( !($content = shell_exec($exec)) ) {
+          $content = "/* FAILED TO GET CONTENTS */";
+        }
+        $size_after = strlen($content);
+      } else {
+        shell_exec($exec);
+        if ( ($content = @file_get_contents($destination)) ) {
+          $size_after = strlen($content);
+        } else {
+          $size_after = 0;
+        }
       }
-      $size_after = strlen($content);
 
       // Create the '_min' directory
       if ( !is_dir($mindir) ) {
@@ -196,7 +211,7 @@ abstract class ResourceManager
       }
 
       // Save minimized file
-      if ( file_put_contents($destination, $content) ) {
+      if ( $noout ? file_exists($destination) : file_put_contents($destination, $content) ) {
         $result = Array(
           "filename" => $filename,
           "before"   => $size_before,
