@@ -1441,8 +1441,7 @@
 
         DoPost({'action' : 'logout'}, function(data) {
           if ( data.success ) {
-            window.onbeforeunload = null;
-            window.location.reload();
+            __CoreReboot__();
           }
         });
       },
@@ -2380,7 +2379,7 @@
 
             PlaySound("service-logout");
 
-            __CoreShutdown();
+            __CoreShutdown__();
           } else {
             MessageBox(data.error);
           }
@@ -8379,11 +8378,7 @@
    * @return bool
    * @function
    */
-  var __CoreBoot = function() {
-    if ( !OSjs.Compability.SUPPORT_LSTORAGE ) {
-      alert(OSjs.Labels.CannotStart);
-      return false;
-    }
+  var __CoreBoot__ = function() {
 
     console.log("                                                                               ");
     console.log("                        ____      ____                                         ");
@@ -8411,11 +8406,22 @@
   }; // @endfunction
 
   /**
+   * Restart OS.js
+   * @return void
+   * @function
+   */
+  var __CoreReboot__ = function() {
+    window.onbeforeunload = null;
+    $(window).unbind("beforeunload"); // NOTE: Required!
+    window.location.reload();
+  }; // @endfunction
+
+  /**
    * Stop OS.js
    * @return bool
    * @function
    */
-  var __CoreShutdown = function() {
+  var __CoreShutdown__ = function() {
     if ( _Running && _Core ) {
       _Core.destroy();
       _Core     = null;
@@ -8425,6 +8431,7 @@
         delete OSjs;
       } catch (e) {}
 
+      window.onbeforeunload = null;
       $(window).unbind("beforeunload"); // NOTE: Required!
     }
 
@@ -8433,22 +8440,24 @@
 
   /**
    * window::unload() -- Browser event: Unload
-   * @see    core.js
-   * @return bool
+   * @see __CoreShutdown__()
    * @function
    */
   $(window).unload(function() {
-    return __CoreShutdown();
+    return __CoreShutdown__();
   });
 
   /**
    * window::ready() -- Browser event: Content loaded
-   * @see    core.js
-   * @return bool
+   * @see __CoreBoot__()
    * @function
    */
   $(document).ready(function() {
-    return __CoreBoot();
+    if ( !OSjs.Compability.SUPPORT_LSTORAGE ) {
+      alert(OSjs.Labels.CannotStart);
+      return false;
+    }
+    return __CoreBoot__();
   });
 
 })($);
