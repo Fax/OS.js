@@ -72,7 +72,6 @@ abstract class ResourceManager
     "init.js",
     "classes.js",
     "core.js",
-    "main.js",
     "utils.js"
   );
 

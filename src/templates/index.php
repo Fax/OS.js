@@ -119,7 +119,6 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
   <script type="text/javascript" src="/VFS/language/<?php print $current_locale; ?>" id="LanguageFile"></script>
   <script type="text/javascript" src="/VFS/resource/classes.js"></script>
   <script type="text/javascript" src="/VFS/resource/core.js"></script>
-  <script type="text/javascript" src="/VFS/resource/main.js"></script>
 
   <!-- Google Analytics -->
 <?php if ( GA_ENABLE ) { ?>

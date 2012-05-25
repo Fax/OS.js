@@ -2380,7 +2380,7 @@
 
             PlaySound("service-logout");
 
-            OSjs.__Stop();
+            __CoreShutdown();
           } else {
             MessageBox(data.error);
           }
@@ -8379,7 +8379,7 @@
    * @return bool
    * @function
    */
-  OSjs.__Run = function() {
+  var __CoreBoot = function() {
     if ( !OSjs.Compability.SUPPORT_LSTORAGE ) {
       alert(OSjs.Labels.CannotStart);
       return false;
@@ -8407,10 +8407,6 @@
     _StartStamp = ((new Date()).getTime());
     _Core       = new Core();
 
-    try {
-      delete OSjs.__Run;
-    } catch (e) {}
-
     return true;
   }; // @endfunction
 
@@ -8419,15 +8415,11 @@
    * @return bool
    * @function
    */
-  OSjs.__Stop = function() {
+  var __CoreShutdown = function() {
     if ( _Running && _Core ) {
       _Core.destroy();
       _Core     = null;
       _Running  = false;
-
-      try {
-        delete OSjs.__Stop;
-      } catch (e) {}
 
       try {
         delete OSjs;
@@ -8440,12 +8432,23 @@
   }; // @endfunction
 
   /**
-   * Leave OS.js
-   * @param   DOMEvent  ev    Event
-   * @return  bool
+   * window::unload() -- Browser event: Unload
+   * @see    core.js
+   * @return bool
    * @function
    */
-  OSjs.__Leave = function(ev) {
-  }; // @endfunction
+  $(window).unload(function() {
+    return __CoreShutdown();
+  });
+
+  /**
+   * window::ready() -- Browser event: Content loaded
+   * @see    core.js
+   * @return bool
+   * @function
+   */
+  $(document).ready(function() {
+    return __CoreBoot();
+  });
 
 })($);
