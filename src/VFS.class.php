@@ -36,103 +36,97 @@
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package OSjs.Sources.Core
+ * @see     CoreSettings
  * @class
  */
-abstract class VFS
-  extends CoreObject
+abstract class VFS extends CoreObject
 {
-  const ATTR_READ     = 1;
-  const ATTR_WRITE    = 2;
-  const ATTR_SPECIAL  = 4;
-
-  const ATTR_RW       = 3;
-  const ATTR_RS       = 5;
-  const ATTR_RWS      = 7;
 
   /////////////////////////////////////////////////////////////////////////////
   // VARIABLES
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * @var Virtual Directories
+   * @var Icons from MIME (Primary method for getting icons)
    */
-  protected static $_virtual = Array(
-    "/System/Packages" => Array(
-      "type" => "system_packages",
-      "attr" => self::ATTR_READ,
-      "icon" => "places/user-bookmarks.png"
+  protected static $_MimeIcons = Array(
+    "application" => Array(
+      "application/ogg" => Array(
+        "ogv" => "mimetypes/video-x-generic.png",
+        "_"   => "mimetypes/audio-x-generic.png"
+      ),
+      "application/pdf"       => "mimetypes/gnome-mime-application-pdf.png",
+      "application/x-dosexec" => "mimetypes/binary.png",
+      "application/xml"       => "mimetypes/text-x-opml+xml.png",
+      "application/zip"       => "mimetypes/folder_tar.png",
+      "application/x-tar"     => "mimetypes/folder_tar.png",
+      "application/x-bzip2"   => "mimetypes/folder_tar.png",
+      "application/x-bzip"    => "mimetypes/folder_tar.png",
+      "application/x-gzip"    => "mimetypes/folder_tar.png",
+      "application/x-rar"     => "mimetypes/folder_tar.png"
     ),
-    "/System/Docs" => Array(
-      "type" => "core",
-      "attr" => self::ATTR_READ,
-      "icon" => "places/folder-documents.png"
-    ),
-    "/System/Wallpapers" => Array(
-      "type" => "core",
-      "attr" => self::ATTR_READ,
-      "icon" => "places/folder-pictures.png"
-    ),
-    "/System/Fonts" => Array(
-      "type" => "core",
-      "attr" => self::ATTR_READ,
-      "icon" => "places/user-desktop.png"
-    ),
-    "/System/Sounds" => Array(
-      "type" => "core",
-      "attr" => self::ATTR_READ,
-      "icon" => "places/folder-music.png"
-    ),
-    "/System/Templates" => Array(
-      "type" => "core",
-      "attr" => self::ATTR_READ,
-      "icon" => "places/folder-templates.png"
-    ),
-    "/System/Themes" => Array(
-      "type" => "core",
-      "attr" => self::ATTR_READ,
-      "icon" => "places/user-bookmarks.png"
-    ),
-    "/System" => Array(
-      "type" => "core",
-      "attr" => self::ATTR_READ,
-      "icon" => "places/folder-templates.png"
-    ),
-    "/User/Temp" => Array(
-      "type" => "user",
-      "attr" => self::ATTR_RW,
-      "icon" => "places/folder-templates.png"
-    ),
-    "/User/Packages" => Array(
-      "type" => "user_packages",
-      "attr" => self::ATTR_RS,
-      "icon" => "places/folder-download.png"
-    ),
-    "/User/Documents" => Array(
-      "type" => "user",
-      "attr" => self::ATTR_RW,
-      "icon" => "places/folder-documents.png"
-    ),
-    "/User/Desktop" => Array(
-      "type" => "user",
-      "attr" => self::ATTR_RW,
-      "icon" => "places/user-desktop.png"
-    ),
-    "/User" => Array(
-      "type" => "chroot",
-      "attr" => self::ATTR_READ,
-      "icon" => "places/folder_home.png"
-    ),
-    "/Public" => Array(
-      "type" => "public",
-      "attr" => self::ATTR_RW,
-      "icon" => "places/folder-publicshare.png"
-    ),
-    "/Shared" => Array(
-      "type" => "core",
-      "attr" => self::ATTR_READ,
-      "icon" => "places/folder-templates.png"
+
+    "image" => "mimetypes/image-x-generic.png",
+    "video" => "mimetypes/video-x-generic.png",
+    "text"  => Array(
+      "text/html" => "mimetypes/text-html.png",
+      "_" => "mimetypes/text-x-generic.png"
     )
   );
+
+  /**
+   * @var Icons from Extension (Overrides _MimeIcons)
+   */
+  protected static $_IconsExt = Array(
+    "mp3"    => "mimetypes/audio-x-generic.png",
+    "ogg"    => "mimetypes/audio-x-generic.png",
+    "flac"   => "mimetypes/audio-x-generic.png",
+    "aac"    => "mimetypes/audio-x-generic.png",
+    "vorbis" => "mimetypes/audio-x-generic.png",
+    "mp4"    => "mimetypes/video-x-generic.png",
+    "mpeg"   => "mimetypes/video-x-generic.png",
+    "avi"    => "mimetypes/video-x-generic.png",
+    "3gp"    => "mimetypes/video-x-generic.png",
+    "flv"    => "mimetypes/video-x-generic.png",
+    "mkv"    => "mimetypes/video-x-generic.png",
+    "webm"   => "mimetypes/video-x-generic.png",
+    "ogv"    => "mimetypes/video-x-generic.png",
+    "bmp"    => "mimetypes/image-x-generic.png",
+    "jpeg"   => "mimetypes/image-x-generic.png",
+    "jpg"    => "mimetypes/image-x-generic.png",
+    "gif"    => "mimetypes/image-x-generic.png",
+    "png"    => "mimetypes/image-x-generic.png",
+    "zip"    => "mimetypes/folder_tar.png",
+    "rar"    => "mimetypes/folder_tar.png",
+    "gz"     => "mimetypes/folder_tar.png",
+    "bz2"    => "mimetypes/folder_tar.png",
+    "bz"     => "mimetypes/folder_tar.png",
+    "tar"    => "mimetypes/folder_tar.png",
+    "xml"    => "mimetypes/text-x-opml+xml.png"
+  );
+
+  /**
+   * @var MIME Fixes for specific extensions
+   * @desc Used during MIME identification of a specific file
+   */
+  protected static $_MimeFixes = Array(
+    "application/octet-stream" => Array(
+      "webm"  => "video/webm",
+      "ogv"   => "video/ogg",
+      "ogg"   => "video/ogg"
+    ),
+    "application/ogg" => Array(
+      "ogv"   => "video/ogg",
+      "ogg"   => "video/ogg"
+    ),
+    "text/plain" => Array(
+      "m3u"   => "application/x-winamp-playlist"
+    )
+  );
+
+  /////////////////////////////////////////////////////////////////////////////
+  // AJAX STUFF
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
    * @var Available Function Calls
@@ -217,25 +211,29 @@ abstract class VFS
    * @see    VFS::buildPath()
    * @return bool
    */
-  public static function checkVirtual($path, $method = self::ATTR_READ) {
-    $result = true;
-
-    if ( sizeof(explode("/", $path)) == 2 ) {
-      if ( dirname($path) == "/" && ($method = self::ATTR_WRITE) ) {
+  public static function checkVirtual($path, $method = VFS_ATTR_READ) {
+    // Skip root directory if we are doing a write operation
+    if ( ($method & VFS_ATTR_WRITE) ) {
+      if ( $path == "/" ) {
+        if ( ENABLE_LOGGING && ENABLE_DEBUGGING ) {
+          Logger::logInfo(sprintf("%s: %s", __METHOD__, "Skipping directory '$path', root or system dir"));
+        }
         return false;
       }
     }
 
-    foreach ( self::$_virtual as $k => $v ) {
+    $result = true;
+    $virtual = CoreSettings::getVFSMeta();
+    foreach ( $virtual as $k => $v ) {
       if ( startsWith($path, $k) ) {
+        // Check given permission against virtual folder
         $attr = (int)$v['attr'];
-
-
-        if ( ($attr < self::ATTR_READ) || (($attr == self::ATTR_READ) && ($method != self::ATTR_READ)) || !($attr & $method) ) {
+        if ( ($attr < VFS_ATTR_READ) || (($attr == VFS_ATTR_READ) && ($method != VFS_ATTR_READ)) || !($attr & $method) ) {
           $result = false;
           break;
         }
 
+        // User directories requires a user
         if ( ($v['type'] == "chroot") || ($v['type'] == "user") ) {
           if ( Core::get() && !(($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
             $result = false;
@@ -256,23 +254,32 @@ abstract class VFS
    * @param  int        $method       Requested Attribute
    * @return Array
    */
-  public static function buildPath($path, $method = self::ATTR_READ) {
-    $blacklist = array("?", "[", "]", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
-    $path      = preg_replace("/\/$/", "", str_replace($blacklist, "", $path));
-    $root      = sprintf("%s%s", PATH_MEDIA, $path);
+  public static function buildPath($path, $method = VFS_ATTR_READ) {
+    $blacklist  = array("?", "[", "]", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
+    $path       = preg_replace("/\/+/", "/", preg_replace("/\/$/", "", str_replace($blacklist, "", $path)));
+    $permission = false;
 
+    // Create and validate absoulte path
     if ( preg_match("/^\/User/", $path) ) {
       $uid = 0;
       if ( (Core::get()) && ($user = Core::get()->getUser()) ) {
         $uid = $user->id;
       }
-      $root = sprintf("%s%s", sprintf(PATH_VFS_USER, $uid), preg_replace("/^\/User/", "", $path));
+      $root = sprintf(PATH_VFS_USER, $uid);
+      $path = preg_replace("/\/+/", "/", preg_replace("/^\/User/", "/", $path));
+    } else {
+      $root = PATH_MEDIA;
+    }
+
+    $abs = get_absolute_path(sprintf("%s%s", $root, $path));
+    if ( preg_match(sprintf("/^%s/", preg_quote($root, "/")) , $abs) ) {
+      $permission = self::checkVirtual($path, $method);
     }
 
     return Array(
       "path" => $path,
-      "root" => $root,
-      "perm" => self::checkVirtual($path, $method)
+      "root" => $abs,
+      "perm" => $permission
     );
   }
 
@@ -283,33 +290,12 @@ abstract class VFS
    * @return String
    */
   protected final static function _fixMIME($mime, $ext) {
-    if ( $mime == "application/octet-stream"  ) {
-      switch ( strtolower($ext) ) {
-        case "webm" :
-          $mime = "video/webm";
-        break;
-        case "ogv" :
-          $mime = "video/ogg";
-        break;
-        case "ogg" :
-          $mime = "audio/ogg";
-        break;
-      }
-    } else if ( $mime == "application/ogg" ) {
-      switch ( strtolower($ext) ) {
-        case "ogv" :
-          $mime = "video/ogg";
-        break;
-        case "ogg" :
-          $mime = "audio/ogg";
-        break;
-      }
-    } else if ( $mime == "text/plain" ) {
-      if ( strtolower($ext) == "m3u" ) {
-        $mime = "application/x-winamp-playlist";
+    $ext = strtolower($ext);
+    if ( isset(self::$_MimeFixes[$mime]) ) {
+      if ( isset(self::$_MimeFixes[$mime][$ext]) ) {
+        return self::$_MimeFixes[$mime][$ext];
       }
     }
-
     return $mime;
   }
 
@@ -404,129 +390,45 @@ abstract class VFS
   }
 
   /**
-   * Get File Icon from:
+   * Get file icon from MIME and Extension
    * @param  String   $mmime      Mime base type
    * @param  String   $mime       Full mime type
    * @param  String   $ext        File-extension
+   * @param  String   $icon       Default icon
+   * @see    VFS::_$MimeIcons
+   * @see    VFS::_$IconsExt
    * @return String
    */
-  public final static function getFileIcon($mmime, $mime, $ext) {
-    $icon  = "mimetypes/binary.png";
+  public final static function getFileIcon($mmime, $mime, $ext, $icon = "mimetypes/binary.png") {
+    $ext  = strtolower($ext);
 
-    switch ( $mmime ) {
-      case "application" :
-        switch ( $mime ) {
-          case "application/ogg" :
-            $icon = "mimetypes/audio-x-generic.png";
-            if ( $ext == "ogv" ) {
-              $icon = "mimetypes/video-x-generic.png";
+    if ( isset(self::$_MimeIcons[$mmime]) ) {
+      $iter = self::$_MimeIcons[$mmime];
+      if ( is_string($iter) ) {
+        $icon = $iter;
+      } else {
+        if ( isset($iter[$mime]) ) {
+          if ( is_string($iter[$mime]) ) {
+            $icon = $iter[$mime];
+          } else {
+            if ( isset($iter[$mime][$ext]) ) {
+              $icon = $iter[$mime][$ext];
+            } else {
+              if ( isset($iter[$mime]["_"]) ) {
+                $icon = $iter[$mime]["_"];
+              }
             }
-          break;
-
-          case "application/pdf" :
-            $icon = "mimetypes/gnome-mime-application-pdf.png";
-          break;
-
-          case "application/x-dosexec" :
-            $icon = "mimetypes/binary.png";
-          break;
-
-          case "application/xml" :
-            $icon = "mimetypes/text-x-opml+xml.png";
-          break;
-
-          case "application/zip" :
-          case "application/x-tar" :
-          case "application/x-bzip2" :
-          case "application/x-bzip" :
-          case "application/x-gzip" :
-          case "application/x-rar" :
-            $icon = "mimetypes/folder_tar.png";
-          break;
-
-          case "application/octet-stream" :
-            $icon = self::_getFileIcon($ext);
-          break;
+          }
+        } else {
+          if ( isset($iter["_"]) ) {
+            $icon = $iter["_"];
+          }
         }
-      break;
-
-      case "image" :
-        $icon = "mimetypes/image-x-generic.png";
-      break;
-
-      case "video" :
-        $icon = "mimetypes/video-x-generic.png";
-      break;
-
-      case "audio" :
-        $icon = "mimetypes/audio-x-generic.png";
-      break;
-
-      case "text" :
-        $icon = "mimetypes/text-x-generic.png";
-        switch ( $mime ) {
-          case "text/html" :
-            $icon = "mimetypes/text-html.png";
-          break;
-        }
-      break;
-
-      default :
-        $icon = self::_getFileIcon($ext);
-      break;
+      }
     }
 
-    return $icon;
-  }
-
-  /**
-   * Get file icon only from extension
-   * @see VFS::getFileIcon
-   * @return String
-   */
-  protected final static function _getFileIcon($ext) {
-    $icon  = "mimetypes/binary.png";
-
-    switch ( strtolower($ext) ) {
-      case "mp3"    :
-      case "ogg"    :
-      case "flac"   :
-      case "aac"    :
-      case "vorbis" :
-        $icon = "mimetypes/audio-x-generic.png";
-      break;
-
-      case "mp4"  :
-      case "mpeg" :
-      case "avi"  :
-      case "3gp"  :
-      case "flv"  :
-      case "mkv"  :
-      case "webm" :
-      case "ogv"  :
-        $icon = "mimetypes/video-x-generic.png";
-      break;
-
-      case "bmp"  :
-      case "jpeg" :
-      case "jpg"  :
-      case "gif"  :
-      case "png"  :
-        $icon = "mimetypes/image-x-generic.png";
-      break;
-
-      case "zip" :
-      case "rar" :
-      case "gz"  :
-      case "bz2" :
-      case "bz"  :
-      case "tar" :
-        $icon = "mimetypes/folder_tar.png";
-      break;
-
-      case "xml" :
-        $icon = "mimetypes/text-x-opml+xml.png";
-      break;
+    if ( isset(self::$_IconsExt[$ext]) ) {
+      $icon = self::$_IconsExt[$ext];
     }
 
     return $icon;
@@ -561,7 +463,8 @@ abstract class VFS
     $chroot   = false;
     $uchroot  = false;
 
-    foreach ( self::$_virtual as $k => $v ) {
+    $virtual = CoreSettings::getVFSMeta();
+    foreach ( $virtual as $k => $v ) {
       if ( startsWith($path, $k) ) {
         if ( $v['type'] == "system_packages" ) {
           $apps = 1;
@@ -696,8 +599,8 @@ abstract class VFS
             $mime  = $mmime;
           } else if ( is_dir($abs_path) ) {
             $tpath = preg_replace("/\/+/", "/", $rel_path);
-            if ( isset(self::$_virtual[$tpath]) ) {
-              $icon = self::$_virtual[$tpath]['icon'];
+            if ( isset($virtual[$tpath]) ) {
+              $icon = $virtual[$tpath]['icon'];
             }
           } else {
             continue;
@@ -713,9 +616,9 @@ abstract class VFS
         if ( $tmp_path == "/" || preg_match("/\/System/", $tmp_path) ) {
           $protected = true;
         } else {
-          foreach ( self::$_virtual as $k => $v ) {
+          foreach ( $virtual as $k => $v ) {
             if ( startsWith($fpath, $k) ) {
-              if ( !(((int)$v["attr"]) & self::ATTR_RW) ) { // FIXME NOTE
+              if ( !(((int)$v["attr"]) & VFS_ATTR_RW) ) { // FIXME NOTE
                 $protected = true;
               }
               break;
@@ -802,7 +705,7 @@ abstract class VFS
    */
   public static function ExtractArchive($arch, $dest) {
     $src  = self::buildPath($arch);
-    $dest = self::buildPath($dest, self::ATTR_WRITE);
+    $dest = self::buildPath($dest, VFS_ATTR_WRITE);
 
     if ( $src["perm"] && $dest["perm"] ) {
       if ( file_exists($src["root"]) && is_dir($dest["root"]) ) {
@@ -824,7 +727,7 @@ abstract class VFS
    */
   public static function Copy($src, $dest) {
     $src  = self::buildPath($src);
-    $dest = self::buildPath($dest, self::ATTR_WRITE);
+    $dest = self::buildPath($dest, VFS_ATTR_WRITE);
 
     if ( $src["perm"] && $dest["perm"] ) {
       if ( file_exists($src["root"]) ) {
@@ -875,8 +778,8 @@ abstract class VFS
       $name  = preg_replace(sprintf("/%s$/", preg_quote(basename($src))), $name, $src);
     }
 
-    $src   = self::buildPath($src, self::ATTR_WRITE);
-    $dest  = self::buildPath($name, self::ATTR_WRITE);
+    $src   = self::buildPath($src, VFS_ATTR_WRITE);
+    $dest  = self::buildPath($name, VFS_ATTR_WRITE);
     if ( $src["perm"] && $dest["perm"] ) {
       if ( file_exists($src["root"]) && !(file_exists($dest["root"]) || is_dir($dest["root"])) ) {
         return @rename($src["root"], $dest["root"]);
@@ -892,7 +795,7 @@ abstract class VFS
    * @return bool
    */
   public static function Delete($dest) {
-    $dest = self::buildPath($dest, self::ATTR_WRITE);
+    $dest = self::buildPath($dest, VFS_ATTR_WRITE);
     if ( $dest["perm"] ) {
       if ( file_exists($dest["root"]) ) {
         if ( is_file($dest["root"]) ) {
@@ -930,7 +833,7 @@ abstract class VFS
    * @return bool
    */
   public static function TouchFile($dest) {
-    $dest = self::buildPath($dest, self::ATTR_WRITE);
+    $dest = self::buildPath($dest, VFS_ATTR_WRITE);
     if ( $dest["perm"] ) {
       return @touch($dest["root"]);
     }
@@ -946,7 +849,7 @@ abstract class VFS
    * @return bool
    */
   public static function WriteFile($dest, $content, $encoding = false) {
-    $dest = self::buildPath($dest, self::ATTR_WRITE);
+    $dest = self::buildPath($dest, VFS_ATTR_WRITE);
     if ( $dest["perm"] ) {
       if ( $encoding === "data:image/png;base64" ) {
         $content = base64_decode(str_replace(Array("{$encoding},", " "), Array("", "+"), $content));
@@ -980,7 +883,7 @@ abstract class VFS
    * @return bool
    */
   public static function CreateDirectory($dest) {
-    $dest = self::buildPath($dest, self::ATTR_WRITE);
+    $dest = self::buildPath($dest, VFS_ATTR_WRITE);
     if ( $dest["perm"] ) {
       if ( !(file_exists($dest["root"]) || is_dir($dest["root"])) ) {
         if ( $result = @mkdir($dest["root"]) ) {
@@ -1072,15 +975,15 @@ abstract class VFS
   /**
    * Upload() -- Upload a file
    * @param  Array    $src    File Source (<file /> input or similar)
-   * @param  String   $dest   Destination
+   * @param  String   $destp  Destination Path
    * @return bool
    */
-  public static function Upload(Array $src, $dest) {
-    $dest  = self::buildPath($dest, self::ATTR_WRITE);
-    $ndest = self::buildPath(sprintf("%s/%s", $dest["path"], $src["name"]), self::ATTR_WRITE);
+  public static function Upload(Array $src, $destp) {
+    $dest  = self::buildPath($destp, VFS_ATTR_WRITE);
+    $ndest = self::buildPath(sprintf("%s/%s", $destp, $src["name"]), VFS_ATTR_WRITE);
 
     if ( ENABLE_LOGGING && ENABLE_DEBUGGING ) {
-      Logger::logInfo(sprintf("%s: %s", __METHOD__, JSON::encode(Array($dest, $src))));
+      Logger::logInfo(sprintf("%s: %s", __METHOD__, JSON::encode(Array($src, $destp, $dest, $ndest))));
     }
 
     if ( $ndest["perm"]/* && $dest["perm"]*/ ) {

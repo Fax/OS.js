@@ -34,6 +34,16 @@
  */
 
 /**
+ * @define VFS Operation Attributes
+ */
+define("VFS_ATTR_READ",     1);
+define("VFS_ATTR_WRITE",    2);
+define("VFS_ATTR_SPECIAL",  4);
+define("VFS_ATTR_RW",       3);
+define("VFS_ATTR_RS",       5);
+define("VFS_ATTR_RWS",      7);
+
+/**
  * CoreObject -- Namespace
  * @class
  */
@@ -46,19 +56,10 @@ abstract class CoreObject {}
 abstract class CoreSettings
   extends CoreObject
 {
-  /**
-   * @var Preload items
-   */
-  protected static $_Preloads = Array(
-    "vendor" => Array(
-      "json.js",
-      "sprintf.js",
-      "jquery.js",
-      "jquery-ui.js"
-    ),
-    "code" => Array(
-    )
-  );
+
+  /////////////////////////////////////////////////////////////////////////////
+  // SETTINGS
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
    * @var Default Registry
@@ -253,6 +254,201 @@ abstract class CoreSettings
   );
 
   /**
+   * @var VFS Directory Meta
+   */
+  protected static $_VFSMeta = Array(
+    "/System/Packages" => Array(
+      "type" => "system_packages",
+      "attr" => VFS_ATTR_READ,
+      "icon" => "places/user-bookmarks.png"
+    ),
+    "/System/Docs" => Array(
+      "type" => "core",
+      "attr" => VFS_ATTR_READ,
+      "icon" => "places/folder-documents.png"
+    ),
+    "/System/Wallpapers" => Array(
+      "type" => "core",
+      "attr" => VFS_ATTR_READ,
+      "icon" => "places/folder-pictures.png"
+    ),
+    "/System/Fonts" => Array(
+      "type" => "core",
+      "attr" => VFS_ATTR_READ,
+      "icon" => "places/user-desktop.png"
+    ),
+    "/System/Sounds" => Array(
+      "type" => "core",
+      "attr" => VFS_ATTR_READ,
+      "icon" => "places/folder-music.png"
+    ),
+    "/System/Templates" => Array(
+      "type" => "core",
+      "attr" => VFS_ATTR_READ,
+      "icon" => "places/folder-templates.png"
+    ),
+    "/System/Themes" => Array(
+      "type" => "core",
+      "attr" => VFS_ATTR_READ,
+      "icon" => "places/user-bookmarks.png"
+    ),
+    "/System" => Array(
+      "type" => "core",
+      "attr" => VFS_ATTR_READ,
+      "icon" => "places/folder-templates.png"
+    ),
+    "/User/Temp" => Array(
+      "type" => "user",
+      "attr" => VFS_ATTR_RW,
+      "icon" => "places/folder-templates.png"
+    ),
+    "/User/Packages" => Array(
+      "type" => "user_packages",
+      "attr" => VFS_ATTR_RS,
+      "icon" => "places/folder-download.png"
+    ),
+    "/User/Documents" => Array(
+      "type" => "user",
+      "attr" => VFS_ATTR_RW,
+      "icon" => "places/folder-documents.png"
+    ),
+    "/User/Desktop" => Array(
+      "type" => "user",
+      "attr" => VFS_ATTR_RW,
+      "icon" => "places/user-desktop.png"
+    ),
+    "/User" => Array(
+      "type" => "chroot",
+      "attr" => VFS_ATTR_READ,
+      "icon" => "places/folder_home.png"
+    ),
+    "/Public" => Array(
+      "type" => "public",
+      "attr" => VFS_ATTR_RW,
+      "icon" => "places/folder-publicshare.png"
+    ),
+    "/Shared" => Array(
+      "type" => "core",
+      "attr" => VFS_ATTR_READ,
+      "icon" => "places/folder-templates.png"
+    )
+  );
+
+  /**
+   * @var Frontend Module Resources
+   * @desc Used for preloading and file compression lists
+   */
+  protected static $_ModuleResources = Array(
+    "ColorOperationDialog" => Array(
+      "resources" => Array("dialog.color.js")
+    ),
+    "FontOperationDialog" => Array(
+      "resources" => Array("dialog.font.js")
+    ),
+    "CopyOperationDialog" => Array(
+      "resources" => Array("dialog.copy.js")
+    ),
+    "FileOperationDialog" => Array(
+      "resources" => Array("dialog.file.js")
+    ),
+    "InputOperationDialog" => Array(
+      "resources" => Array("dialog.input.js")
+    ),
+    "LaunchOperationDialog" => Array(
+      "resources" => Array("dialog.launch.js")
+    ),
+    "PanelItemOperationDialog" => Array(
+      "resources" => Array("dialog.panelitem.js")
+    ),
+    "PanelPreferencesOperationDialog" => Array(
+      "resources" => Array("dialog.panel.js")
+    ),
+    "PanelAddItemOperationDialog" => Array(
+      "resources" => Array("dialog.panel.additem.js")
+    ),
+    "RenameOperationDialog" => Array(
+      "resources" => Array("dialog.rename.js")
+    ),
+    "UploadOperationDialog" => Array(
+      "resources" => Array("dialog.upload.js")
+    ),
+    "FilePropertyOperationDialog" => Array(
+      "resources" => Array("dialog.properties.js")
+    ),
+    "CompabilityDialog" => Array(
+      "resources" => Array("dialog.compability.js")
+    ),
+    "CrashDialog" => Array(
+      "resources" => Array("dialog.crash.js")
+    )
+  );
+
+  /**
+   * @var Core Static Preloads
+   */
+  protected static $_Preloads = Array(
+    "vendor" => Array(
+      "json.js",
+      "sprintf.js",
+      "jquery.js",
+      "jquery-ui.js"
+    ),
+    "code" => Array(
+    )
+  );
+
+  /**
+   * @var Core ASync Preload
+   */
+  protected static $_CorePreloads = Array(
+    "sounds" => Array(
+      // Extension applied in frontend
+      "bell", "complete", "message", "service-login", "service-logout", "dialog-information", "dialog-warning"
+    ),
+    "images" => Array(
+      "categories/applications-development.png", "categories/applications-games.png", "categories/applications-graphics.png", "categories/applications-office.png", "categories/applications-internet.png", "categories/applications-multimedia.png", "categories/applications-system.png", "categories/applications-utilities.png", "categories/gnome-other.png",
+      "actions/window_fullscreen.png", "actions/zoom-original.png", "actions/window_nofullscreen.png", "actions/window-close.png",
+      "actions/gtk-execute.png", "mimetypes/exec.png", "devices/network-wireless.png", "status/computer-fail.png","apps/system-software-install.png", "apps/system-software-update.png", "apps/xfwm4.png", "places/desktop.png",
+      "status/gtk-dialog-error.png", "status/gtk-dialog-info.png", "status/gtk-dialog-question.png", "status/gtk-dialog-warning.png",
+      "status/error.png", "emblems/emblem-unreadable.png"
+    ),
+    "resources" => Array(
+      // Other core resources
+    )
+  );
+
+  /**
+   * @var Frontend Main Resources
+   * @desc Used mainly for file compression lists
+   */
+  protected static $_CoreResources = Array(
+    "theme.default.css",
+    "theme.dark.css",
+    "theme.light.css",
+    "cursor.default.css",
+    "main.css",
+    "dialogs.css",
+    "pimp.css",
+    "glade.css",
+    "init.js",
+    "classes.js",
+    "core.js",
+    "utils.js"
+  );
+
+  /**
+   * @var Frontend Locales
+   * @desc Used mainly for file compression lists
+   */
+  protected static $_LocaleResources = Array(
+    "en_US.js", "nb_NO.js"
+  );
+
+  /////////////////////////////////////////////////////////////////////////////
+  // SETTERS
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
    * addPreload() -- Add a preload item
    * @return void
    */
@@ -277,6 +473,18 @@ abstract class CoreSettings
   }
 
   /**
+   * setVFSMeta() -- Set the default VFS directory Metadata
+   * @return void
+   */
+  public static function setVFSMeta(Array $meta) {
+    self::$_VFSMeta = $meta;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // GETTERS
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
    * getPreload() -- Get preload items
    * @return Array
    */
@@ -291,6 +499,47 @@ abstract class CoreSettings
   public static function getRegistry() {
     return self::$_Registry;
   }
+
+  /**
+   * getVFSMeta() -- Get VFS Directory meta
+   * @return Array
+   */
+  public static function getVFSMeta() {
+    return self::$_VFSMeta;
+  }
+
+  /**
+   * getModuleResources() -- Get all module resources
+   * @return Array
+   */
+  public static function getModuleResources() {
+    return self::$_ModuleResources;
+  }
+
+  /**
+   * getCorePreloads() -- Get all module preload resources
+   * @return Array
+   */
+  public static function getCorePreloads() {
+    return self::$_CorePreloads;
+  }
+
+  /**
+   * getCoreResources() -- Get all core resources
+   * @return Array
+   */
+  public static function getCoreResources() {
+    return self::$_CoreResources;
+  }
+
+  /**
+   * getLocaleResources() -- Get all locale resources
+   * @return Array
+   */
+  public static function getLocaleResources() {
+    return self::$_LocaleResources;
+  }
+
 }
 
 /**

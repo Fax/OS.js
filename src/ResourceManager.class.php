@@ -38,114 +38,12 @@
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package OSjs.Sources.Core
+ * @see     CoreSettings
  * @class
  */
 abstract class ResourceManager
   extends CoreObject
 {
-
-  /////////////////////////////////////////////////////////////////////////////
-  // CORE RESOURCE REGISTRY
-  /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * @var Frontend Locales
-   * @desc Used mainly for file compression lists
-   */
-  public static $Locales = Array(
-    "en_US.js", "nb_NO.js"
-  );
-
-  /**
-   * @var Frontend Main Resources
-   * @desc Used mainly for file compression lists
-   */
-  public static $Resources = Array(
-    "theme.default.css",
-    "theme.dark.css",
-    "theme.light.css",
-    "cursor.default.css",
-    "main.css",
-    "dialogs.css",
-    "pimp.css",
-    "glade.css",
-    "init.js",
-    "classes.js",
-    "core.js",
-    "utils.js"
-  );
-
-  /**
-   * @var Frontend Module Resources
-   * @desc Used for preloading and file compression lists
-   */
-  public static $ModuleResources = Array(
-    "ColorOperationDialog" => Array(
-      "resources" => Array("dialog.color.js")
-    ),
-    "FontOperationDialog" => Array(
-      "resources" => Array("dialog.font.js")
-    ),
-    "CopyOperationDialog" => Array(
-      "resources" => Array("dialog.copy.js")
-    ),
-    "FileOperationDialog" => Array(
-      "resources" => Array("dialog.file.js")
-    ),
-    "InputOperationDialog" => Array(
-      "resources" => Array("dialog.input.js")
-    ),
-    "LaunchOperationDialog" => Array(
-      "resources" => Array("dialog.launch.js")
-    ),
-    "PanelItemOperationDialog" => Array(
-      "resources" => Array("dialog.panelitem.js")
-    ),
-    "PanelPreferencesOperationDialog" => Array(
-      "resources" => Array("dialog.panel.js")
-    ),
-    "PanelAddItemOperationDialog" => Array(
-      "resources" => Array("dialog.panel.additem.js")
-    ),
-    "RenameOperationDialog" => Array(
-      "resources" => Array("dialog.rename.js")
-    ),
-    "UploadOperationDialog" => Array(
-      "resources" => Array("dialog.upload.js")
-    ),
-    "FilePropertyOperationDialog" => Array(
-      "resources" => Array("dialog.properties.js")
-    ),
-    "CompabilityDialog" => Array(
-      "resources" => Array("dialog.compability.js")
-    ),
-    "CrashDialog" => Array(
-      "resources" => Array("dialog.crash.js")
-    )
-  );
-
-  /////////////////////////////////////////////////////////////////////////////
-  // PRELOADING REGISTRY
-  /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * @var Frontend Preloads
-   */
-  public static $Preload = Array(
-    "sounds" => Array(
-      "bell", "complete", "message", "service-login", "service-logout", "dialog-information", "dialog-warning"
-    ),
-    "images" => Array(
-      "categories/applications-development.png", "categories/applications-games.png", "categories/applications-graphics.png", "categories/applications-office.png", "categories/applications-internet.png", "categories/applications-multimedia.png", "categories/applications-system.png", "categories/applications-utilities.png", "categories/gnome-other.png",
-      "actions/window_fullscreen.png", "actions/zoom-original.png", "actions/window_nofullscreen.png", "actions/window-close.png",
-      "actions/gtk-execute.png", "mimetypes/exec.png", "devices/network-wireless.png", "status/computer-fail.png","apps/system-software-install.png", "apps/system-software-update.png", "apps/xfwm4.png", "places/desktop.png",
-      "status/gtk-dialog-error.png", "status/gtk-dialog-info.png", "status/gtk-dialog-question.png", "status/gtk-dialog-warning.png",
-      "status/error.png", "emblems/emblem-unreadable.png"
-    ),
-    "resources" => Array(
-      // Other core resources
-    )
-  );
 
   /////////////////////////////////////////////////////////////////////////////
   // CACHE, COMPRESSION ETC
@@ -436,8 +334,9 @@ EOCSS;
    * @return Array
    */
   public static function getPreloads() {
-    $result = self::$Preload;
-    foreach ( self::$ModuleResources as $name => $opts ) {
+    $result  = CoreSettings::getCorePreloads();
+    $modules = CoreSettings::getModuleResources();
+    foreach ( $modules as $name => $opts ) {
       foreach ( $opts["resources"] as $res ) {
         $result["resources"][] = $res;
       }
@@ -458,17 +357,17 @@ EOCSS;
     );
 
     // Locales
-    foreach ( self::$Locales as $locale ) {
+    foreach ( CoreSettings::getLocaleResources() as $locale ) {
       $result['locales'][] = sprintf("%s/%s", PATH_JSLOCALE, $locale);
     }
 
     // Main Resources
-    foreach ( self::$Resources as $res ) {
+    foreach ( CoreSettings::getCoreResources() as $res ) {
       $result['resources'][] = sprintf("%s/%s", PATH_JSBASE, $res);
     }
 
     // Dialogs
-    foreach ( self::$ModuleResources as $name => $opts ) {
+    foreach ( CoreSettings::getModuleResources() as $name => $opts ) {
       foreach ( $opts["resources"] as $res ) {
         $result['resources'][] = sprintf("%s/%s", PATH_JSBASE, $res);
       }

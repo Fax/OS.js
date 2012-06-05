@@ -31,8 +31,18 @@
  * @created 2012-05-15
  */
 
-abstract class API
-  extends CoreObject {
+/**
+ * API -- Core API Class
+ *
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @package OSjs.Sources.Core
+ * @class
+ */
+abstract class API extends CoreObject {
+
+  /////////////////////////////////////////////////////////////////////////////
+  // VARIABLES
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
    * @var doPOST 'action' argument method mapping

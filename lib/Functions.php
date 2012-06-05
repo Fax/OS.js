@@ -147,6 +147,31 @@ function recurse_copy($src,$dst) {
     } 
   } 
   closedir($dir); 
-} 
+}
+
+/**
+ * realpath() except for virtual files/directories
+ * @param   String  $path     Check path
+ * @param   String  $ds       Directory Separator (defaults to PHP defined)
+ * @return  String
+ */
+function get_absolute_path($path, $ds = DIRECTORY_SEPARATOR) {
+  $path = str_replace(array('/', '\\'), $ds, $path);
+  $parts = array_filter(explode($ds, $path), 'strlen');
+  $absolutes = array();
+  foreach ($parts as $part) {
+    if ('.' == $part) continue;
+    if ('..' == $part) {
+      array_pop($absolutes);
+    } else {
+      $absolutes[] = $part;
+    }
+  }
+  $abs = implode($ds, $absolutes);
+  if ( substr($abs, 0, 1) != "/" ) {
+    $abs = "/{$abs}";
+  }
+  return $abs;
+}
 
 ?>
