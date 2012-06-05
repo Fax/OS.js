@@ -98,6 +98,16 @@ define("PACKAGE_USER_BUILD",   PATH_VFS     . "/%d/packages.xml");
 define("MIME_MAGIC",           PATH_VENDOR  . "/mime.mgc");
 define("VFS_TEMPLATE",         PATH_VFS     . "/0");
 
+/**
+ * @define VFS Operation Attributes
+ */
+define("VFS_ATTR_READ",     1);
+define("VFS_ATTR_WRITE",    2);
+define("VFS_ATTR_SPECIAL",  4);
+define("VFS_ATTR_RW",       3);
+define("VFS_ATTR_RS",       5);
+define("VFS_ATTR_RWS",      7);
+
 ///////////////////////////////////////////////////////////////////////////////
 // DEPENDENCIES
 ///////////////////////////////////////////////////////////////////////////////
@@ -109,11 +119,10 @@ require "lib/Logger.class.php";
 require "lib/DB.class.php";
 require "lib/Browser.class.php";
 
-// Sources
-require "src/Misc.php";
-
-// User defined
-// -- Put in SETTINGS_CONFIG
+// Internal Automatic loading of source classes
+spl_autoload_register(function($cn) {
+  require PATH_SRC . "/{$cn}.class.php";
+});
 
 ///////////////////////////////////////////////////////////////////////////////
 // CONFIGURATION - INSTANCE
@@ -256,11 +265,6 @@ if ( ENV_PRODUCTION || ENV_DEMO ) {
   error_reporting(E_ALL | E_STRICT); 
   ini_set("display_errors", "on");
 }
-
-// Internal Automatic loading of source classes
-spl_autoload_register(function($cn) {
-  require PATH_SRC . "/{$cn}.class.php";
-});
 
 // Locales
 date_default_timezone_set(DEFAULT_TIMEZONE);

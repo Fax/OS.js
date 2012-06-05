@@ -39,7 +39,7 @@
  * @see     CoreSettings
  * @class
  */
-abstract class VFS extends CoreObject
+abstract class VFS
 {
 
   /////////////////////////////////////////////////////////////////////////////

@@ -39,7 +39,7 @@
  * @class
  */
 class User
-  extends CoreObject {
+{
 
   const GROUP_NONE        = 0;
   const GROUP_GUEST       = 1;

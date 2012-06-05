@@ -39,7 +39,6 @@
  * @class
  */
 abstract class SettingsManager
-  extends CoreObject
 {
   /**
    * @var Default Settings

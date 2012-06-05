@@ -39,7 +39,6 @@
  * @class
  */
 abstract class Package
-  extends CoreObject
 {
   const TYPE_APPLICATION  = 1;
   const TYPE_PANELITEM    = 2;
@@ -124,7 +123,7 @@ abstract class Package
    * Create a new Package Archive from Project path
    * @param  String     $project      Project absolute path
    * @param  String     $dst_path     Absolute destination path (Default = use internal)
-   * @throws ExceptionPackage
+   * @throws PackageException
    * @return bool
    */
   public static function CreateArchive($project, $dst_path) {
@@ -163,7 +162,7 @@ abstract class Package
           $store = Array();
           foreach ( $resources as $r ) {
             if ( !in_array($r, $items) ) {
-              throw new ExceptionPackage(ExceptionPackage::MISSING_FILE, Array($name, $r));
+              throw new PackageException(PackageException::MISSING_FILE, Array($name, $r));
             }
             $store[$r] = file_get_contents(sprintf("%s/%s", $project, $r));
           }
@@ -182,16 +181,16 @@ abstract class Package
               return true;
             }
           } else {
-            throw new ExceptionPackage(ExceptionPackage::FAILED_CREATE, Array($name, $dest, $ret));
+            throw new PackageException(PackageException::FAILED_CREATE, Array($name, $dest, $ret));
           }
         } else {
-          throw new ExceptionPackage(ExceptionPackage::INVALID_METADATA, Array($name));
+          throw new PackageException(PackageException::INVALID_METADATA, Array($name));
         }
       } else {
-        throw new ExceptionPackage(ExceptionPackage::INVALID_METADATA, Array($name));
+        throw new PackageException(PackageException::INVALID_METADATA, Array($name));
       }
     } else {
-      throw new ExceptionPackage(ExceptionPackage::MISSING_METADATA, Array($name));
+      throw new PackageException(PackageException::MISSING_METADATA, Array($name));
     }
 
     return false;
@@ -201,7 +200,7 @@ abstract class Package
    * Extract a Package Archive to project directory
    * @param  String   $package      Absolute package path (zip-file)
    * @param  String   $dst_path     Absolute destination path
-   * @throws ExceptionPackage
+   * @throws PackageException
    * @return bool
    */
   public static function ExtractArchive($package, $dst_path) {
@@ -210,12 +209,12 @@ abstract class Package
 
     // Check if source exists
     if ( !file_exists($package) ) {
-      throw new ExceptionPackage(ExceptionPackage::PACKAGE_NOT_EXISTS, Array($package));
+      throw new PackageException(PackageException::PACKAGE_NOT_EXISTS, Array($package));
     }
 
     // Check if target exists
     if ( !is_dir($dst_path) || is_dir($dest) ) {
-      throw new ExceptionPackage(ExceptionPackage::INVALID_DESTINATION, Array($dest));
+      throw new PackageException(PackageException::INVALID_DESTINATION, Array($dest));
     }
 
     $zip = new ZipArchive();
@@ -231,7 +230,7 @@ abstract class Package
 
       // Read metadata resources
       if ( !in_array("metadata.xml", $packaged) ) {
-        throw new ExceptionPackage(ExceptionPackage::MISSING_METADATA, Array($package));
+        throw new PackageException(PackageException::MISSING_METADATA, Array($package));
       }
 
       $mread = false;
@@ -259,13 +258,13 @@ abstract class Package
 
       // Make sure metadata was read
       if ( !$mread ) {
-        throw new ExceptionPackage(ExceptionPackage::INVALID_METADATA, Array($package));
+        throw new PackageException(PackageException::INVALID_METADATA, Array($package));
       }
 
       // Check that all files are in the archive
       foreach ( $resources as $r ) {
         if ( !in_array($r, $packaged) ) {
-          throw new ExceptionPackage(ExceptionPackage::MISSING_FILE, Array($name, $r));
+          throw new PackageException(PackageException::MISSING_FILE, Array($name, $r));
           break;
         }
       }
@@ -275,7 +274,7 @@ abstract class Package
 
       // Create destination
       if ( !mkdir($dest) ) {
-        throw new ExceptionPackage(ExceptionPackage::FAILED_CREATE_DEST, Array($dest));
+        throw new PackageException(PackageException::FAILED_CREATE_DEST, Array($dest));
       }
 
       // Extract
@@ -288,7 +287,7 @@ abstract class Package
 
       return $result;
     } else {
-      throw new ExceptionPackage(ExceptionPackage::FAILED_OPEN, Array($name, $package, $ret));
+      throw new PackageException(PackageException::FAILED_OPEN, Array($name, $package, $ret));
     }
 
     return false;

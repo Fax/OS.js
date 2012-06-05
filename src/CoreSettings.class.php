@@ -1,9 +1,9 @@
 <?php
 /*!
  * @file
- * OS.js - JavaScript Operating System - Misc.php
+ * OS.js - JavaScript Operating System - CoreSettings.class.php
  *
- * Misc OS.js library stuff
+ * Main OS.js Core Settings Managment
  *
  * Copyright (c) 2011-2012, Anders Evenrud <andersevenrud@gmail.com>
  * All rights reserved.
@@ -34,27 +34,13 @@
  */
 
 /**
- * @define VFS Operation Attributes
- */
-define("VFS_ATTR_READ",     1);
-define("VFS_ATTR_WRITE",    2);
-define("VFS_ATTR_SPECIAL",  4);
-define("VFS_ATTR_RW",       3);
-define("VFS_ATTR_RS",       5);
-define("VFS_ATTR_RWS",      7);
-
-/**
- * CoreObject -- Namespace
- * @class
- */
-abstract class CoreObject {}
-
-/**
- * CoreSettings -- Core Settings
+ * CoreSettings -- Core Environment Settings Manager
+ *
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @package OSjs.Sources.Core
  * @class
  */
 abstract class CoreSettings
-  extends CoreObject
 {
 
   /////////////////////////////////////////////////////////////////////////////
@@ -657,65 +643,6 @@ abstract class CoreSettings
     return self::$_IgnoreFiles;
   }
 
-}
-
-/**
- * ExceptionPackage -- Package Exception
- * @class
- */
-class ExceptionPackage
-  extends Exception
-{
-  const PACKAGE_NOT_EXISTS    = 0;
-  const PACKAGE_EXISTS        = 1;
-  const MISSING_METADATA      = 2;
-  const INVALID_METADATA      = 3;
-  const MISSING_FILE          = 4;
-  const FAILED_CREATE         = 5;
-  const FAILED_OPEN           = 6;
-  const INVALID_DESTINATION   = 7;
-  const FAILED_CREATE_DEST    = 8;
-
-  const INVALID               = 255;
-
-  public function __construct($type, Array $args = Array()) {
-    $message = _("Unknown Package Error occured");
-
-    switch ( $type ) {
-      case self::PACKAGE_NOT_EXISTS :
-        $message = vsprintf(_("The package archive '%s' does not exist!"), $args);
-      break;
-      case self::PACKAGE_EXISTS :
-        $message = vsprintf(_("The package already exists in '%s'!"), $args);
-      break;
-      case self::MISSING_METADATA :
-        $message = vsprintf(_("'%s' is missing metadata.xml!"), $args);
-      break;
-      case self::INVALID_METADATA :
-        $message = vsprintf(_("'%s' has invalid metadata.xml!"), $args);
-      break;
-      case self::MISSING_FILE :
-        $message = vsprintf(_("'%s' is missing the file '%s'!"), $args);
-      break;
-      case self::FAILED_CREATE :
-        $message = vsprintf(_("Failed to create archive for project '%s' in '%s' (%d)!"), $args);
-      break;
-      case self::FAILED_OPEN :
-        $message = vsprintf(_("Failed to open archive for project '%s' in '%s' (%d)!"), $args);
-      break;
-      case self::INVALID_DESTINATION :
-        $message = vsprintf(_("The destination '%s' is invalid!"), $args);
-      break;
-      case self::FAILED_CREATE_DEST :
-        $message = vsprintf(_("The destination '%s' cannot be created!"), $args);
-      break;
-      case self::INVALID :
-        $message = vsprintf(_("The package archive '%s' is invalid!"), $args);
-      break;
-    }
-
-    parent::__construct($message);
-  }
 }
 
 ?>
