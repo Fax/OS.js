@@ -254,6 +254,91 @@ abstract class CoreSettings
   );
 
   /**
+   * @var Icons from MIME (Primary method for getting icons)
+   */
+  protected static $_MimeIcons = Array(
+    "application" => Array(
+      "application/ogg" => Array(
+        "ogv" => "mimetypes/video-x-generic.png",
+        "_"   => "mimetypes/audio-x-generic.png"
+      ),
+      "application/pdf"       => "mimetypes/gnome-mime-application-pdf.png",
+      "application/x-dosexec" => "mimetypes/binary.png",
+      "application/xml"       => "mimetypes/text-x-opml+xml.png",
+      "application/zip"       => "mimetypes/folder_tar.png",
+      "application/x-tar"     => "mimetypes/folder_tar.png",
+      "application/x-bzip2"   => "mimetypes/folder_tar.png",
+      "application/x-bzip"    => "mimetypes/folder_tar.png",
+      "application/x-gzip"    => "mimetypes/folder_tar.png",
+      "application/x-rar"     => "mimetypes/folder_tar.png"
+    ),
+
+    "image" => "mimetypes/image-x-generic.png",
+    "video" => "mimetypes/video-x-generic.png",
+    "text"  => Array(
+      "text/html" => "mimetypes/text-html.png",
+      "_" => "mimetypes/text-x-generic.png"
+    )
+  );
+
+  /**
+   * @var Icons from Extension (Overrides _MimeIcons)
+   */
+  protected static $_IconsExt = Array(
+    "mp3"    => "mimetypes/audio-x-generic.png",
+    "ogg"    => "mimetypes/audio-x-generic.png",
+    "flac"   => "mimetypes/audio-x-generic.png",
+    "aac"    => "mimetypes/audio-x-generic.png",
+    "vorbis" => "mimetypes/audio-x-generic.png",
+    "mp4"    => "mimetypes/video-x-generic.png",
+    "mpeg"   => "mimetypes/video-x-generic.png",
+    "avi"    => "mimetypes/video-x-generic.png",
+    "3gp"    => "mimetypes/video-x-generic.png",
+    "flv"    => "mimetypes/video-x-generic.png",
+    "mkv"    => "mimetypes/video-x-generic.png",
+    "webm"   => "mimetypes/video-x-generic.png",
+    "ogv"    => "mimetypes/video-x-generic.png",
+    "bmp"    => "mimetypes/image-x-generic.png",
+    "jpeg"   => "mimetypes/image-x-generic.png",
+    "jpg"    => "mimetypes/image-x-generic.png",
+    "gif"    => "mimetypes/image-x-generic.png",
+    "png"    => "mimetypes/image-x-generic.png",
+    "zip"    => "mimetypes/folder_tar.png",
+    "rar"    => "mimetypes/folder_tar.png",
+    "gz"     => "mimetypes/folder_tar.png",
+    "bz2"    => "mimetypes/folder_tar.png",
+    "bz"     => "mimetypes/folder_tar.png",
+    "tar"    => "mimetypes/folder_tar.png",
+    "xml"    => "mimetypes/text-x-opml+xml.png"
+  );
+
+  /**
+   * @var MIME Fixes for specific extensions
+   * @desc Used during MIME identification of a specific file
+   */
+  protected static $_MimeFixes = Array(
+    "application/octet-stream" => Array(
+      "webm"  => "video/webm",
+      "ogv"   => "video/ogg",
+      "ogg"   => "video/ogg"
+    ),
+    "application/ogg" => Array(
+      "ogv"   => "video/ogg",
+      "ogg"   => "video/ogg"
+    ),
+    "text/plain" => Array(
+      "m3u"   => "application/x-winamp-playlist"
+    )
+  );
+
+  /**
+   * @var Default files to ignore
+   */
+  protected static $_IgnoreFiles = Array(
+    ".gitignore", ".git", ".cvs"
+  );
+
+  /**
    * @var VFS Directory Meta
    */
   protected static $_VFSMeta = Array(
@@ -538,6 +623,38 @@ abstract class CoreSettings
    */
   public static function getLocaleResources() {
     return self::$_LocaleResources;
+  }
+
+  /**
+   * getMimeIcons() -- Get icons mapping array for MIME
+   * @return Array
+   */
+  public static function getMimeIcons() {
+    return self::$_MimeIcons;
+  }
+
+  /**
+   * getExtIcons() -- Get icon mapping array for extensions
+   * @return Array
+   */
+  public static function getExtIcons() {
+    return self::$_IconsExt;
+  }
+
+  /**
+   * getMimeFixes() -- Get MIME fixes map array
+   * @return Array
+   */
+  public static function getMimeFixes() {
+    return self::$_MimeFixes;
+  }
+
+  /**
+   * getIgnoreFiles() -- Get file ignore list
+   * @return Array
+   */
+  public static function getIgnoreFiles() {
+    return self::$_IgnoreFiles;
   }
 
 }

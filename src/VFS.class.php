@@ -43,88 +43,6 @@ abstract class VFS extends CoreObject
 {
 
   /////////////////////////////////////////////////////////////////////////////
-  // VARIABLES
-  /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * @var Icons from MIME (Primary method for getting icons)
-   */
-  protected static $_MimeIcons = Array(
-    "application" => Array(
-      "application/ogg" => Array(
-        "ogv" => "mimetypes/video-x-generic.png",
-        "_"   => "mimetypes/audio-x-generic.png"
-      ),
-      "application/pdf"       => "mimetypes/gnome-mime-application-pdf.png",
-      "application/x-dosexec" => "mimetypes/binary.png",
-      "application/xml"       => "mimetypes/text-x-opml+xml.png",
-      "application/zip"       => "mimetypes/folder_tar.png",
-      "application/x-tar"     => "mimetypes/folder_tar.png",
-      "application/x-bzip2"   => "mimetypes/folder_tar.png",
-      "application/x-bzip"    => "mimetypes/folder_tar.png",
-      "application/x-gzip"    => "mimetypes/folder_tar.png",
-      "application/x-rar"     => "mimetypes/folder_tar.png"
-    ),
-
-    "image" => "mimetypes/image-x-generic.png",
-    "video" => "mimetypes/video-x-generic.png",
-    "text"  => Array(
-      "text/html" => "mimetypes/text-html.png",
-      "_" => "mimetypes/text-x-generic.png"
-    )
-  );
-
-  /**
-   * @var Icons from Extension (Overrides _MimeIcons)
-   */
-  protected static $_IconsExt = Array(
-    "mp3"    => "mimetypes/audio-x-generic.png",
-    "ogg"    => "mimetypes/audio-x-generic.png",
-    "flac"   => "mimetypes/audio-x-generic.png",
-    "aac"    => "mimetypes/audio-x-generic.png",
-    "vorbis" => "mimetypes/audio-x-generic.png",
-    "mp4"    => "mimetypes/video-x-generic.png",
-    "mpeg"   => "mimetypes/video-x-generic.png",
-    "avi"    => "mimetypes/video-x-generic.png",
-    "3gp"    => "mimetypes/video-x-generic.png",
-    "flv"    => "mimetypes/video-x-generic.png",
-    "mkv"    => "mimetypes/video-x-generic.png",
-    "webm"   => "mimetypes/video-x-generic.png",
-    "ogv"    => "mimetypes/video-x-generic.png",
-    "bmp"    => "mimetypes/image-x-generic.png",
-    "jpeg"   => "mimetypes/image-x-generic.png",
-    "jpg"    => "mimetypes/image-x-generic.png",
-    "gif"    => "mimetypes/image-x-generic.png",
-    "png"    => "mimetypes/image-x-generic.png",
-    "zip"    => "mimetypes/folder_tar.png",
-    "rar"    => "mimetypes/folder_tar.png",
-    "gz"     => "mimetypes/folder_tar.png",
-    "bz2"    => "mimetypes/folder_tar.png",
-    "bz"     => "mimetypes/folder_tar.png",
-    "tar"    => "mimetypes/folder_tar.png",
-    "xml"    => "mimetypes/text-x-opml+xml.png"
-  );
-
-  /**
-   * @var MIME Fixes for specific extensions
-   * @desc Used during MIME identification of a specific file
-   */
-  protected static $_MimeFixes = Array(
-    "application/octet-stream" => Array(
-      "webm"  => "video/webm",
-      "ogv"   => "video/ogg",
-      "ogg"   => "video/ogg"
-    ),
-    "application/ogg" => Array(
-      "ogv"   => "video/ogg",
-      "ogg"   => "video/ogg"
-    ),
-    "text/plain" => Array(
-      "m3u"   => "application/x-winamp-playlist"
-    )
-  );
-
-  /////////////////////////////////////////////////////////////////////////////
   // AJAX STUFF
   /////////////////////////////////////////////////////////////////////////////
 
@@ -157,13 +75,6 @@ abstract class VFS extends CoreObject
     "upload"          => Array("Upload", Array("file", "path")),
     "ls_archive"      => Array("ListArchive"),
     "extract_archive" => Array("ExtractArchive", Array("archive", "destination"))
-  );
-
-  /**
-   * @var Default Ignore files
-   */
-  protected static $_ignores = Array(
-    ".gitignore", ".git", ".cvs"
   );
 
   /////////////////////////////////////////////////////////////////////////////
@@ -291,9 +202,10 @@ abstract class VFS extends CoreObject
    */
   protected final static function _fixMIME($mime, $ext) {
     $ext = strtolower($ext);
-    if ( isset(self::$_MimeFixes[$mime]) ) {
-      if ( isset(self::$_MimeFixes[$mime][$ext]) ) {
-        return self::$_MimeFixes[$mime][$ext];
+    $fixes = CoreSettings::getMimeFixes();
+    if ( isset($fixes[$mime]) ) {
+      if ( isset($fixes[$mime][$ext]) ) {
+        return $fixes[$mime][$ext];
       }
     }
     return $mime;
@@ -400,10 +312,12 @@ abstract class VFS extends CoreObject
    * @return String
    */
   public final static function getFileIcon($mmime, $mime, $ext, $icon = "mimetypes/binary.png") {
-    $ext  = strtolower($ext);
+    $ext    = strtolower($ext);
+    $micons = CoreSettings::getMimeIcons();
+    $ecions = CoreSettings::getExtIcons();
 
-    if ( isset(self::$_MimeIcons[$mmime]) ) {
-      $iter = self::$_MimeIcons[$mmime];
+    if ( isset($micons[$mmime]) ) {
+      $iter = $micons[$mmime];
       if ( is_string($iter) ) {
         $icon = $iter;
       } else {
@@ -427,8 +341,8 @@ abstract class VFS extends CoreObject
       }
     }
 
-    if ( isset(self::$_IconsExt[$ext]) ) {
-      $icon = self::$_IconsExt[$ext];
+    if ( isset($ecions[$ext]) ) {
+      $icon = $ecions[$ext];
     }
 
     return $icon;
@@ -454,7 +368,7 @@ abstract class VFS extends CoreObject
     }
 
     if ( $ignores === null ) {
-      $ignores = self::$_ignores;
+      $ignores = CoreSettings::getIgnoreFiles();
     }
 
     $base     = PATH_MEDIA;
