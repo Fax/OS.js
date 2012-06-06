@@ -147,6 +147,10 @@ abstract class API
    * @return Array
    */
   protected static final function _doBoot(Array $args, Core $inst = null) {
+    if ( isset($args['compability']) && (is_array($args['compability'])) ) {
+      Session::setCompabilityFlags($args['compability']);
+    }
+
     return Array(
       "success" => true,
       "result" => Array(
@@ -238,6 +242,8 @@ abstract class API
 
       $json = Array();
       if ( User::save($user, $only) ) {
+        Session::clearSession();
+
         $json['success'] = true;
       } else {
         $json['result']  = false;
@@ -247,7 +253,6 @@ abstract class API
       return $json;
     }
 
-    Session::clearSession();
     return false;
   }
 
@@ -346,7 +351,7 @@ abstract class API
         $json['error'] = _("Failed to save user!");
       }
 
-      //Session::clearSession();
+      Session::clearSession();
     }
     return $json;
   }

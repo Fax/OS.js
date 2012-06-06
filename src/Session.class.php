@@ -139,6 +139,24 @@ class Session
   public static final function clearSession() {
     //$_SESSION['user']        = null;
     //$_SESSION['locale']      = null;
+    unset($_SESSION['compability']);
+  }
+
+  /**
+   * Set Session browser compability flags
+   * @param  Array    $flags      Compability map
+   * @return void
+   */
+  public static final function setCompabilityFlags(Array $flags) {
+    $_SESSION['compability'] = $flags;
+  }
+
+  /**
+   * Get Session browser compability flags
+   * @return Array
+   */
+  public static final function getCompabilityFlags() {
+    return (isset($_SESSION['compability']) ? $_SESSION['compability'] : Array());
   }
 
   /////////////////////////////////////////////////////////////////////////////

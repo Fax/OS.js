@@ -2297,7 +2297,7 @@
         }
       };
 
-      DoPost({'action' : 'boot', 'navigator' : nav}, function(response) {
+      DoPost({'action' : 'boot', 'navigator' : nav, 'compability' : OSjs.Compability}, function(response) {
         var data    = response.result;
         var env     = data.environment;
         var alogin  = env.autologin;
