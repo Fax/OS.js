@@ -94,6 +94,7 @@ Directories and Files:
   Glade.class.php           Glade/GTK+ XML to JS/PHP/XML Class
   JSON.class.php            JSON Wrapper Class
   Logger.class.php          Logging Handling Class
+  MediaFile.class.php       Media File Handling Class
   PDF.class.php             PDF Document Handling Class
   Server.class.php          WebSocket Server Main Class
   ServerUser.class.php      WebSocket Server User Class

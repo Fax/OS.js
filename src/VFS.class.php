@@ -218,6 +218,7 @@ abstract class VFS
    * @return Mixed
    */
   public static function MediaInformation($path, $bpath = false) {
+    require_once PATH_LIB . "/MediaFile.class.php";
     if ( $bpath ) {
       $tmp = self::buildPath($path);
       if ( !$tmp["perm"] ) {
@@ -225,30 +226,8 @@ abstract class VFS
       }
       $path = $tmp["root"];
     }
-    $pcmd   = escapeshellarg($path);
-    $result = exec("exiftool -j {$pcmd}", $outval, $retval);
-    $json   = Array();
 
-    if ( $retval == 0 && $result ) {
-      try {
-        $json = (array) JSON::decode(implode("", $outval));
-        $json = (array) reset($json);
-      } catch ( Exception $e ) {
-        $json = Array();
-      }
-    }
-
-    if ( isset($json["SourceFile"]) ) {
-      unset($json["SourceFile"]);
-    }
-    if ( isset($json["ExifToolVersion"]) ) {
-      unset($json["ExifToolVersion"]);
-    }
-    if ( isset($json["Directory"]) ) {
-      unset($json["Directory"]);
-    }
-
-    if ( $json ) {
+    if ( ($json = MediaFile::GetInfo($path)) ) {
       list($mime, $fmime) = self::GetMIME($path);
       $json["MIMEType"] = $fmime;
       return $json;
