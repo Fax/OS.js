@@ -57,18 +57,10 @@ abstract class MediaFile
       }
     }
 
-    if ( isset($json["FilePermissions"]) ) {
-      unset($json["FilePermissions"]);
-    }
-    if ( isset($json["SourceFile"]) ) {
-      unset($json["SourceFile"]);
-    }
-    if ( isset($json["ExifToolVersion"]) ) {
-      unset($json["ExifToolVersion"]);
-    }
-    if ( isset($json["Directory"]) ) {
-      unset($json["Directory"]);
-    }
+    unset($json["FilePermissions"]);
+    unset($json["SourceFile"]);
+    unset($json["ExifToolVersion"]);
+    unset($json["Directory"]);
 
     return $json;
   }
