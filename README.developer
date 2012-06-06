@@ -16,6 +16,12 @@ Please note that performance is noticably slower in development mode, beacause:
 
 All resources are Gzipped by default (if browser has native support).
 
+Standalone Executable:
+-------------------------------------------------------------------------------
+Start 'bin/session-server' and launch with 'bin/session-launch'. This work
+is highly experimental and under heavy development. Don't expect it to work
+for now.
+
 Committing changes:
 -------------------------------------------------------------------------------
 Just run './bin/git-commit' wrapper (works just like normal `git commit`)
