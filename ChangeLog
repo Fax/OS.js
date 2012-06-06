@@ -1,3 +1,23 @@
+## 0.7.600
+* Configuration: Moved PHP.ini values to vhost
+* Bootstrap: Cleanups, Documentation, Refactor
+* Configuration: Cache updates
+* VFS: Copy() bugfix solved
+* core.js: Moved panel preferences dialogs to custom files
+* Core: CSS Cleanups, Added custom dialog css
+* Core: Removed Internet Explorer stuff
+* Core: Compability with Google Compiler (added to bootstrap config)
+* Core: Removed 'main.js', smaller global namespace
+* Core: Moved configs from VFS/API class to CoreSettings
+* Core: Refactoring after settings movement
+* Core: VFS WriteFile() now acceps all mimes/encodings
+* Core: Moved static MIME types to constants in header.php
+* Core: Compability flags now sendt to server on boot, stored in _SESSION
+* Core: Misc.php split into files (CoreSettings, PackageException)
+* Core: Removed CoreObject inheritance (Deprecated)
+* Templates: Moved index.php HTML to src/templates/
+* Updated Documentation and Locales
+
 ## 0.7.500
 * Core: API POST now report unsuccessive only if response is false/null
 * Core: Added ENABLE_DEBUGGING constant for verbose logging
