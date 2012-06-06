@@ -1729,19 +1729,22 @@
     _on_message : function(ev, data) {
       console.group("Socket::message()");
       console.log(this._uri);
-      console.log(data);
-      console.groupEnd();
+      console.log("Recieved", data);
 
       var js = null;
       var err = null;
       try {
-        if ( data.substr(0, 1) !== "{" ) {
+        var tmp = data.substr(0, 1);
+        if ( tmp !== "{" ) {
           data = data.substr(1, data.length);
         }
         js = JSON.parse(data);
       } catch ( e ) {
         err = e;
       } // FIXME
+
+      console.log("Data", js);
+      console.groupEnd();
 
       this.on_message(ev, js, data, err);
     },
@@ -2313,9 +2316,9 @@
           _Connection = new Socket("CorePlatform");
           _Connection.connect();
           _Connection.on_message = function(ev, js) {
-            console.log(js);
           };
           _Connection.on_open = function(ev) {
+            _Connection.send(JSON.stringify({"method" : "GetCPUInfo", "arguments" : {}}));
             _Connection.send(JSON.stringify({"method" : "GetBatteryStatus", "arguments" : {}}));
           };
         } else {

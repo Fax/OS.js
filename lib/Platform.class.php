@@ -74,6 +74,38 @@ abstract class Platform
     return false;
   }
 
+  public static function GetCPUInfo() {
+    // Only avail. on Linux clients
+    if ( ($nav = Session::getBrowserFlags()) && (isset($nav["platform"])) ) {
+      if ( !preg_match("/^linux/", strtolower($nav["platform"])) ) {
+        return false;
+      }
+    }
+
+    $response = Array();
+    $sys      = "/proc/cpuinfo";
+
+    if ( ($content = file_get_contents($sys)) && ($lines = explode("\n", $content)) ) {
+      $id = 0;
+      foreach ( $lines as $i ) {
+        if ( trim($i) ) {
+          if ( !isset($response[$id]) ) {
+            $response[$id] = Array();
+          }
+
+          $data = explode(" : ", preg_replace("/\s+/", " ", $i), 2);
+          if ( sizeof($data) == 2 ) {
+            $response[$id][trim($data[0])] = trim($data[1]);
+          }
+        } else {
+          $id++;
+        }
+      }
+    }
+
+    return $response;
+  }
+
   /**
    * Get Battery Status from OS
    * @return Mixed
