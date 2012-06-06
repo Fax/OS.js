@@ -82,7 +82,8 @@ class Server
    * @return  Server
    */
   public final static function run($host, $port) {
-    $server = new self($host, $port);
+    $cname = get_called_class();
+    $server = new $cname($host, $port);
 
     if ( !$server->_master || !$server->_sockets ) {
       throw new Exception("Master socket was not created!");
@@ -388,14 +389,13 @@ class Server
    * @return  void
    */
   protected function _process($user, $data, $external = false) {
-    $response = null;
     print "Server: Processing message (" . strlen($data) . ")\n";
+    $msg = null;
     if ( $external ) {
       //print "< EXT: ---\n";
-      $response = Array("response" => "$data");
+      $this->_send($user->type, $user->socket, json_encode(Array("response" => "$data")));
     } else {
       // Unwrap message
-      $msg = null;
       if ( $user->type == "hybi-00" ) {
         $msg = substr($data,1,strlen($data)-2);
       } else {
@@ -434,61 +434,9 @@ class Server
 
         $msg = $decodedData;
       }
-
-
-      // Then validate JSON
-      $json = null;
-      try {
-        $json = (array) json_decode($msg);
-      } catch ( Exception $e ) {
-      }
-
-      if ( $json !== null && sizeof($json) ) {
-        $args = $json['arguments'];
-        switch ( $json['method'] ) {
-
-          // Open TCP Connection
-          case "tcp_open":
-            if ( $s = $user->connect($args[0], $args[1]) ) {
-              $this->_sockets[] = $s;
-              $user->tcp_index = sizeof($this->_sockets) - 1;
-              $response = Array("method" => $json['method'], "result" => true);
-            } else {
-              $response = Array("method" => $json['method'], "result" => false, "error" => true);
-            }
-            break;
-
-          // Send data over TCP Connection
-          case "tcp_send":
-            $err = "no socket";
-            $t   = $user->send($args[0]);
-            if ( !$t || $err = socket_last_error($t)  ) {
-              $response = Array("method" => $json['method'], "result" => false, "error" => $err);
-            } else {
-              $response = Array("method" => $json['method'], "result" => true);
-            }
-            break;
-
-          // Close TCP Connection
-          case "tcp_close":
-            if ( $ind = $user->tcp_index ) {
-              $user->disconnect();
-              array_splice($this->_sockets, $ind, 1);
-
-              $response = Array("method" => $json['method'], "result" => true);
-            } else {
-              $response = Array("method" => $json['method'], "result" => false, "error" => true);
-            }
-            break;
-        }
-
-        /*
-        print "< JSON: $msg\n";
-      } else {
-        print "< '$msg'\n";*/
-      }
     }
-    $this->_send($user->type, $user->socket, json_encode($response));
+
+    return $msg;
   }
 
   /////////////////////////////////////////////////////////////////////////////
