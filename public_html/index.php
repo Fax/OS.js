@@ -42,7 +42,7 @@ require "_header.php";
 
 // GET operations
 if ( !($json = $core->doGET($_GET)) === false ) {
-  header("Content-Type: application/json");
+  header("Content-Type: " . MIME_JSON);
   die($json);
 }
 
@@ -56,7 +56,7 @@ if ( !($json = $core->doPOST($_POST)) === false ) {
   header("Cache-Control: maxage=1, no-cache, no-store, must-revalidate, post-check=0, pre-check=0");
   header("Pragma: no-cache");
 
-  header("Content-Type: application/json");
+  header("Content-Type: " . MIME_JSON);
   die($json);
 }
 
@@ -64,7 +64,7 @@ if ( !($json = $core->doPOST($_POST)) === false ) {
 // HTML
 ///////////////////////////////////////////////////////////////////////////////
 
-header("Content-Type: text/html; charset=utf-8");
+header(sprintf("Content-Type: %s; charset=utf-8", MIME_HTML));
 require PATH_TEMPLATES . "/index.php";
 
 ?>

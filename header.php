@@ -106,6 +106,16 @@ define("VFS_ATTR_RW",       3);
 define("VFS_ATTR_RS",       5);
 define("VFS_ATTR_RWS",      7);
 
+// Misc MIME stuff
+define("MIME_OCTET",        "application/octet-stream");
+define("MIME_TEXT",         "text/plain");
+define("MIME_CSS",          "text/css");
+define("MIME_JAVASCRIPT",   "application/x-javascript");
+define("MIME_TTF",          "application/x-font-ttf");
+define("MIME_JSON",         "application/json");
+define("MIME_HTML",         "text/html");
+define("MIME_XML",          "text/xml");
+
 ///////////////////////////////////////////////////////////////////////////////
 // DEPENDENCIES
 ///////////////////////////////////////////////////////////////////////////////

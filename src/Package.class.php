@@ -73,7 +73,7 @@ abstract class Package
    * @return Object
    */
   public static function GetResource($package, $filename, $compress = false) {
-    $mime     = "text/plain";
+    $mime     = MIME_TEXT;
     $content  = "/* ERROR 500  */";
     $script   = preg_match("/\.js$/", $filename) || preg_match("/\.css$/", $filename);
     $user     = Core::get()->getUser();
@@ -92,10 +92,10 @@ abstract class Package
           $type = null;
           if ( preg_match("/\.js$/", $filename) ) {
             $type = "javascript";
-            $mime = "application/x-javascript";
+            $mime = MIME_JAVASCRIPT;
           } else if ( preg_match("/\.css$/", $filename) ) {
             $type = "stylesheet";
-            $mime = "text/css";
+            $mime = MIME_CSS;
           } else {
             try {
               if ( $m = VFS::GetMIME($path) ) {

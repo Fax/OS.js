@@ -581,7 +581,7 @@ abstract class VFS
             $file  = trim($f['name']);
             $size  = $f['size_real'];
             $type  = substr($file, -1) == "/" ? "dir" : "file";
-            $mime  = $type == "file" ? "application/octet-stream" : "";
+            $mime  = $type == "file" ? MIME_OCTET : "";
             $icon  = $type == "file" ? "mimetypes/binary.png" : "places/folder.png";
             $fname = "/{$file}";
 

@@ -208,7 +208,7 @@ abstract class ResourceManager
         $filename = basename($rpath);
         foreach ( $bdocument as $bn ) {
           if ( ((string)$bn['name']) == $filename ) {
-            $sources[$face] = sprintf("data:application/x-font-ttf;base64,%s", (string)$bn);
+            $sources[$face] = sprintf("data:%s;base64,%s", MIME_TTF, (string)$bn);
             break;
           }
         }
@@ -289,7 +289,7 @@ EOCSS;
   public static function getResource($file, $package, $compress) {
     $file     = preg_replace("/\.+/", ".", preg_replace("/[^a-zA-Z0-9\.\-\_]/", "", $file));
     $package  = $package ? preg_replace("/[^a-zA-Z0-9\-\_]/", "", $package) : null;
-    $mime     = "text/plain";
+    $mime     = MIME_TEXT;
     $content  = null;
 
     if ( ENABLE_LOGGING )
@@ -312,7 +312,7 @@ EOCSS;
       $path   = sprintf($rpath, $file);
 
       if ( file_exists($path) ) {
-        $mime = ($type == "javascript") ? "application/x-javascript" : "text/css";
+        $mime = ($type == "javascript") ? MIME_JAVASCRIPT : MIME_CSS;
         if ( !($content = file_get_contents($path)) ) {
           $content = "/* ERROR 204 */";
         }

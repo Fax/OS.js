@@ -41,7 +41,7 @@ require "_header.php";
 ///////////////////////////////////////////////////////////////////////////////
 
 if ( isset($_GET['font']) && !empty($_GET['font']) ) {
-  header("Content-Type: text/css; charset=utf-8");
+  header(sprintf("Content-Type: %s; charset=utf-8", MIME_CSS));
   print ResourceManager::getFont($_GET['font'], ENV_PRODUCTION);
   exit;
 }
@@ -52,7 +52,7 @@ if ( isset($_GET['theme']) && !empty($_GET['theme']) ) {
     exit;
   }
 
-  header("Content-Type: text/css; charset=utf-8");
+  header(sprintf("Content-Type: %s; charset=utf-8", MIME_CSS));
   print $content;
   exit;
 }
@@ -63,7 +63,7 @@ if ( isset($_GET['cursor']) && !empty($_GET['cursor']) ) {
     exit;
   }
 
-  header("Content-Type: text/css; charset=utf-8");
+  header(sprintf("Content-Type: %s; charset=utf-8", MIME_CSS));
   print $content;
   exit;
 }
@@ -89,7 +89,7 @@ if ( isset($_GET['resource']) && !empty($_GET['resource']) ) {
     exit;
   }
 
-  header("Content-Type: application/x-javascript; charset=utf-8");
+  header(sprintf("Content-Type: %s; charset=utf-8", MIME_JAVASCRIPT));
   print $content;
   exit;
 }
