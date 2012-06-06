@@ -18,6 +18,9 @@ Sources will be released when reaching version `1.0-rc1` (Summer 2012).
 Only WebKit and Gecko based browsers are fully supported. Opera works with some minor limitations.
 There is currently no maintainence for Internet Explorer. Mobile Android and iOS is in-progress.
 
+OS.js also comes with a standalone executable (Using Python GTK+ and WebKit bindings) that
+can be deployed on a Linux distrubution.
+
 # Features:
 * BSD Licensed
 * Multi-user web-based desktop environment
