@@ -74,6 +74,10 @@ abstract class Platform
     return false;
   }
 
+  /**
+   * Get CPU Information from OS
+   * @return Mixed
+   */
   public static function GetCPUInfo() {
     // Only avail. on Linux clients
     if ( ($nav = Session::getBrowserFlags()) && (isset($nav["platform"])) ) {
