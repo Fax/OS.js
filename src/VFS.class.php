@@ -765,7 +765,8 @@ abstract class VFS
   public static function WriteFile($dest, $content, $encoding = false) {
     $dest = self::buildPath($dest, VFS_ATTR_WRITE);
     if ( $dest["perm"] ) {
-      if ( $encoding === "data:image/png;base64" ) {
+      //if ( $encoding === "data:image/png;base64" ) {
+      if ( preg_match("/^data\:((.*)\/(.*));base64$/", $encoding) ) {
         $content = base64_decode(str_replace(Array("{$encoding},", " "), Array("", "+"), $content));
       }
 

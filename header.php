@@ -98,9 +98,7 @@ define("PACKAGE_USER_BUILD",   PATH_VFS     . "/%d/packages.xml");
 define("MIME_MAGIC",           PATH_VENDOR  . "/mime.mgc");
 define("VFS_TEMPLATE",         PATH_VFS     . "/0");
 
-/**
- * @define VFS Operation Attributes
- */
+// VFS Operation Attributes
 define("VFS_ATTR_READ",     1);
 define("VFS_ATTR_WRITE",    2);
 define("VFS_ATTR_SPECIAL",  4);
