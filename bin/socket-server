@@ -2,7 +2,7 @@
 <?php
 /*!
  * @file
- * server.php
+ * socket-server -- TCP/IP WebSocket Wrapper Server
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @licence Simplified BSD License
  * @created 2011-06-03

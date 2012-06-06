@@ -67,6 +67,9 @@ Directories and Files:
   update-documentation      Update/Generate Backend Documentation
   update-fontcache          Update/Generate Font cache
   update-locale             Update/Generate Backend Locales
+  socket-server             WebSocket TCP/IP Wrapper Server
+  session-server            WebSocket Core Wrapper Server **
+  session-launch            GTK+WebKit Core Launcher **
 /doc/                     Documentation
   /api/                     Backend Documentation
   /javascript/              Frontend Documentation
@@ -80,6 +83,7 @@ Directories and Files:
   Browser.class.php         Browser Information Class
   Compiler.class.php        Package/Project Compiler Class
   Daemon.class.php          Daemon Process Class
+  Platform.class.php        Platform Specific API Class
   DB.class.php              Database connection and handling Class
   Glade.class.php           Glade/GTK+ XML to JS/PHP/XML Class
   JSON.class.php            JSON Wrapper Class
@@ -127,7 +131,9 @@ Directories and Files:
   Application.class.php     Package > Application Class
   BackgroundService.cl...   Package > Background Service Class
   Core.class.php            Core, Main Class
+  CoreSettings.class.php    Core Settings Managment Class
   Package.class.php         Package Main Class
+  PackageException.cla...   Package Exception Class
   PackageManager.class.php  Package Managment Class
   PanelItem.class.php       Frontend Panel Item Class
   ResourceManager.class.php Resource Managment Class
@@ -144,3 +150,4 @@ config.php                YOUR CONFIGURATION (see example)
 config.example.php        Example configuration
 
 * = Frontend URI
+** = Frontend Standalone Platform

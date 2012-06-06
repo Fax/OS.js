@@ -108,6 +108,7 @@
   /**
    * Local references
    */
+  var _Connection      = null;                            //!< Main Socket Connection instance (For standalone)
   var _Core            = null;                            //!< Core instance [dependency]
   var _Resources       = null;                            //!< ResourceManager instance [dependency]
   var _Settings        = null;                            //!< SettingsManager instance [dependency]
@@ -2307,10 +2308,22 @@
         ENV_DEMO        = env.demo;
         WEBSOCKET_URI   = env.server;
 
-        if ( alogin.enable ) {
-          LoginManager.run(alogin.username, alogin.password, true, alogin.confirmation);
+        if ( env.connection ) {
+          // TODO
+          _Connection = new Socket("CorePlatform");
+          _Connection.connect();
+          _Connection.on_message = function(ev, js) {
+            console.log(js);
+          };
+          _Connection.on_open = function(ev) {
+            _Connection.send(JSON.stringify({"method" : "GetBatteryStatus", "arguments" : {}}));
+          };
         } else {
-          LoginManager.run("", "", false, true);
+          if ( alogin.enable ) {
+            LoginManager.run(alogin.username, alogin.password, true, alogin.confirmation);
+          } else {
+            LoginManager.run("", "", false, true);
+          }
         }
       }, function(xhr, ajaxOptions, thrownError) {
         alert("A network error occured while booting OS.js: " + thrownError);

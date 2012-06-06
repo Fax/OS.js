@@ -159,6 +159,7 @@ abstract class API
           "demo"        => ENV_DEMO,
           "cache"       => ENABLE_CACHE,
           "server"      => sprintf("%s:%s", SERVER_HOST, SERVER_PORT),
+          "connection"  => false,
           "autologin"   => Array(
             "enable"       => AUTOLOGIN_ENABLE,
             "username"     => AUTOLOGIN_USERNAME,
@@ -682,9 +683,7 @@ abstract class API
    * @return Array
    */
   protected static final function _doService(Array $args, Core $inst = null) {
-    if ( !class_exists("Service") ) {
-      require PATH_LIB . "/Services.php";
-    }
+    require_once PATH_LIB . "/Services.php";
 
     $json  = Array();
     $iargs = $args['arguments'];
