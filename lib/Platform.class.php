@@ -46,6 +46,35 @@ abstract class Platform
 {
 
   /**
+   * Authenticate User via LDAP
+   *
+   * @param   String    $host       Connection Hostname
+   * @param   int       $port       Connection Port
+   * @param   String    $dsn        Connection Base DN
+   * @param   Mixed     $uid        User Identification
+   * @param   Mixed     $pwd        User Password
+   * @return  bool
+   */
+  public static function AuthenticateLDAP($host, $port, $dsn, $uid, $pwd) {
+    $uid = addslashes(trim($uid));
+    $pwd = addslashes(trim($pwd));
+
+    if ( $ds = ldap_connect($host, $port) ) {
+      if ( $r = ldap_search($ds, $dsn, "uid=$uid") ) {
+        if ( $result = ldap_get_entries( $ds, $r) ) {
+          if ( isset($result[0]) && !empty($result[0]) ) {
+            if ( ldap_bind( $ds, $result[0]['dn'], $pwd) ) {
+              return ($result[0] ? true : false);
+            }
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * Get Battery Status from OS
    * @return Mixed
    */
