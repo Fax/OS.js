@@ -140,6 +140,7 @@ class Session
     //$_SESSION['user']        = null;
     //$_SESSION['locale']      = null;
     unset($_SESSION['compability']);
+    unset($_SESSION['navigator']);
   }
 
   /**
@@ -157,6 +158,23 @@ class Session
    */
   public static final function getCompabilityFlags() {
     return (isset($_SESSION['compability']) ? $_SESSION['compability'] : Array());
+  }
+
+  /**
+   * Set Session browser navigator flags
+   * @param  Array    $flags      Browser map
+   * @return void
+   */
+  public static final function setBrowserFlags(Array $flags) {
+    $_SESSION['navigator'] = $flags;
+  }
+
+  /**
+   * Get Session browser navigator flags
+   * @return Array
+   */
+  public static final function getBrowserFlags() {
+    return (isset($_SESSION['navigator']) ? $_SESSION['navigator'] : Array());
   }
 
   /////////////////////////////////////////////////////////////////////////////

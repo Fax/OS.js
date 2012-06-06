@@ -150,6 +150,9 @@ abstract class API
     if ( isset($args['compability']) && (is_array($args['compability'])) ) {
       Session::setCompabilityFlags($args['compability']);
     }
+    if ( isset($args['navigator']) && (is_array($args['navigator'])) ) {
+      Session::setBrowserFlags($args['navigator']);
+    }
 
     return Array(
       "success" => true,

@@ -34,19 +34,34 @@
 /**
  * Platform -- The Platform API Class
  *
+ * TODO
+ *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package OSjs.Libraries
+ * @see     bin/session-server
+ * @see     bin/session-launch
  * @class
  */
 abstract class Platform
 {
 
+  /**
+   * Get Battery Status from OS
+   * @return Mixed
+   */
   public static function GetBatteryStatus() {
-    $response = Array();
+    // Only avail. on Linux clients
+    if ( ($nav = Session::getBrowserFlags()) && (isset($nav["platform"])) ) {
+      if ( !preg_match("/^linux/", strtolower($nav["platform"])) ) {
+        return false;
+      }
+    }
 
-    $sys    = "/sys/class/power_supply/BAT*/energy_*";
-    $cmd    = "/sys/class/power_supply/BAT%d/%s";
-    $match  = "/^\/sys\/class\/power_supply\/BAT(\d+)\/(.*)$/";
+    $response = Array();
+    $sys      = "/sys/class/power_supply/BAT*/energy_*";
+    $cmd      = "/sys/class/power_supply/BAT%d/%s";
+    $match    = "/^\/sys\/class\/power_supply\/BAT(\d+)\/(.*)$/";
+
     foreach ( glob($sys) as $filename ) {
       if ( preg_match($match, $filename, $matches) && sizeof($matches) ) {
         $id = (int) $matches[1];
@@ -66,5 +81,4 @@ abstract class Platform
 
 }
 
-var_dump(Platform::GetBatteryStatus());
 ?>
