@@ -146,6 +146,8 @@ if ( !defined("ENV_PRODUCTION") )
   define("ENV_PRODUCTION",      false); // Disable logging and debugging, enables compressed resources
 if ( !defined("ENV_DEMO") )
   define("ENV_DEMO",            false); // Disable root features, display notice on login
+if ( !defined("ENV_PLATFORM") )
+  define("ENV_PLATFORM",        false); // Enable Platform Specific Features
 
 //
 // Backend defaults (src/locale/<locale>/<domain>)

@@ -2137,6 +2137,74 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
+   * CoreConnection -- Core Connection Process
+   *
+   * @extends Socket
+   * @class
+   */
+  var CoreConnection = Socket.extend({
+
+    _connected : false,   //!< Connection state
+
+    /**
+     * CoreConnection::init() -- Initialize Main Socket
+     * @constructor
+     */
+    init : function(callback) {
+      callback = callback || function() {};
+
+      this._super("(CorePlatformConnection)");
+
+      var self = this;
+      this.on_message = function(ev, js) {
+        if ( self._connected ) {
+          self._handle(js);
+        }
+      };
+      this.on_close = function(ev) {
+        if ( !self._connected ) {
+          callback(false);
+        }
+        self._connected = false;
+      };
+      this.on_open = function(ev) {
+        if ( !self._connected ) {
+          callback(true);
+        }
+
+        self._connected = true;
+      };
+
+      this.connect();
+    },
+
+    /**
+     * CoreConnection::call() -- Call a backend Platfor Method
+     * @param   String    m           Method Name
+     * @param   Mixed     m           Method Argument(s)
+     * @return  void
+     */
+    call : function(m, a) {
+      if ( this._connected ) {
+        var s = {
+          "method"    : m,
+          "arguments" : a
+        };
+        this.send(JSON.stringify(s));
+      }
+    },
+
+    /**
+     * CoreConnection::_handle() -- Handle a message recieved
+     * @param   JSON      j         Data
+     * @return  void
+     */
+    _handle : function(j) {
+      console.log("CoreConnection::_handle()", j);
+    }
+  }); // @endclass
+
+  /**
    * Core -- Main Process
    *
    * @extends Process
@@ -2241,8 +2309,17 @@
       }
       console.groupEnd();
 
+      if ( _Connection ) {
+        console.group("Shutting down 'CorePlatformConnection'");
+        try {
+          _Connection.destroy();
+        } catch ( eee ) {}
+        console.groupEnd();
+      }
+
       console.log("Nulling instance...");
 
+      _Connection = null;
       _Core       = null;
       _Resources  = null;
       _Settings   = null;
@@ -2301,6 +2378,14 @@
         }
       };
 
+      var login = function(alogin) {
+        if ( alogin.enable ) {
+          LoginManager.run(alogin.username, alogin.password, true, alogin.confirmation);
+        } else {
+          LoginManager.run("", "", false, true);
+        }
+      };
+
       DoPost({'action' : 'boot', 'navigator' : nav, 'compability' : OSjs.Compability}, function(response) {
         var data    = response.result;
         var env     = data.environment;
@@ -2312,21 +2397,15 @@
         WEBSOCKET_URI   = env.server;
 
         if ( env.connection ) {
-          // TODO
-          _Connection = new Socket("CorePlatform");
-          _Connection.connect();
-          _Connection.on_message = function(ev, js) {
-          };
-          _Connection.on_open = function(ev) {
-            _Connection.send(JSON.stringify({"method" : "GetCPUInfo", "arguments" : {}}));
-            _Connection.send(JSON.stringify({"method" : "GetBatteryStatus", "arguments" : {}}));
-          };
+          _Connection = new CoreConnection(function(result) {
+            if ( result ) {
+              login(alogin);
+            } else {
+              alert("Failed to establish socket!"); // FIXME: Locale
+            }
+          });
         } else {
-          if ( alogin.enable ) {
-            LoginManager.run(alogin.username, alogin.password, true, alogin.confirmation);
-          } else {
-            LoginManager.run("", "", false, true);
-          }
+          login(alogin);
         }
       }, function(xhr, ajaxOptions, thrownError) {
         alert("A network error occured while booting OS.js: " + thrownError);

@@ -162,7 +162,7 @@ abstract class API
           "demo"        => ENV_DEMO,
           "cache"       => ENABLE_CACHE,
           "server"      => sprintf("%s:%s", SERVER_HOST, SERVER_PORT),
-          "connection"  => false,
+          "connection"  => ENV_PLATFORM,
           "autologin"   => Array(
             "enable"       => AUTOLOGIN_ENABLE,
             "username"     => AUTOLOGIN_USERNAME,
