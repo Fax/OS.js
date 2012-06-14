@@ -2181,12 +2181,15 @@
     /**
      * CoreConnection::call() -- Call a backend Platfor Method
      * @param   String    m           Method Name
-     * @param   Mixed     m           Method Argument(s)
+     * @param   Mixed     a           Method Argument(s)
+     * @param   String    c           Class Name (Default: Platform)
      * @return  void
      */
-    call : function(m, a) {
+    call : function(m, a, c) {
+      c = c || "Platform";
       if ( this._connected ) {
         var s = {
+          "class"     : c,
           "method"    : m,
           "arguments" : a
         };

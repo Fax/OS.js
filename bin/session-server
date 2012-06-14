@@ -79,9 +79,9 @@ class _SessionServer
    * Handle Platform Specific calls
    * @return void
    */
-  protected final function _processPlatform($method, $args, &$response, $user) {
+  protected final function _processPlatform($class, $method, $args, &$response, $user) {
     try {
-      if ( $result = call_user_func_array(Array("Platform", $method), Array($args)) ) {
+      if ( $result = call_user_func_array(Array($class, $method), Array($args)) ) {
         $response["error"]   = false;
         $response["success"] = true;
         $response["result"]  = $result;
@@ -111,15 +111,16 @@ class _SessionServer
       } catch ( Exception $e ) {}
 
       if ( $json !== null && is_array($json) ) {
-        $_method = $json['method'];
-        $_args   = $json['arguments'];
+        $_class   = $json['class'];
+        $_method  = $json['method'];
+        $_args    = $json['arguments'];
 
-        $response["method"] = $_method;
+        $response["method"] = "{$_class}::{$_method}";
 
         // First handle TCP Connections
         if ( !$this->_processTCP($_method, $_args, $response, $user) ) {
           // Then other
-          $this->_processPlatform($_method, $_args, $response, $user);
+          $this->_processPlatform($_class, $_method, $_args, $response, $user);
         }
       }
 

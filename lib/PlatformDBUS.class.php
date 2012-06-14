@@ -1,7 +1,7 @@
 <?php
 /*!
  * @file
- * OS.js - JavaScript Operating System - Contains Platform API Class
+ * OS.js - JavaScript Operating System - Contains Platform DBUS API Class
  *
  * Copyright (c) 2011-2012, Anders Evenrud <andersevenrud@gmail.com>
  * All rights reserved.
@@ -32,15 +32,64 @@
  */
 
 /**
- * Platform -- The Platform API Class
+ * PlatformDBUS -- The Platform DBUS API Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package OSjs.Libraries
+ * @link    http://pecl.php.net/package/DBus
  * @class
  */
-abstract class Platform
+abstract class PlatformDBUS extends Platform
 {
+  protected $_dbus = null; //!< Connection
 
+  /**
+   * Create a new DBUS Instance
+   * @constructor
+   */
+  protected function __construct(Dbus $dbus) {
+    $this->_dbus = $dbus;
+  }
+
+  /**
+   * Create a DBUS Connection
+   * @return <PlatformDBUS>
+   */
+  public static function Connect($type = Dbus::BUS_SESSION) {
+    $dbus   = new Dbus($type);
+    $class  = get_called_class();
+    return new $class($dbus);
+  }
+
+  /**
+   * Create a new DBUS Instance
+   * @return <PlatformDBUS>
+   */
+  public static function Create($name = "org.OSjs.Core", $path = "/org/OSjs/Core", $type = Dbus::BUS_SESSION) {
+    $dbus   = new Dbus($type, true);
+    $class  = get_called_class();
+    $dbus->requestName($name);
+    $dbus->registerObject($path, NULL, $class);
+
+    return new $class($dbus);
+  }
+
+  /**
+   * Main loop
+   * @return void
+   */
+  public function loop() {
+    $s = $this->_dbus->waitLoop(1000);
+  }
+
+  /**
+   * Perform introspection on a connection
+   * @return Object
+   */
+  public function getIntrospect($conn, $obj) {
+    $proxy = $this->_dbus->createProxy($conn, $obj, "org.freedesktop.DBus.Introspectable");
+    return $proxy->Introspect();
+  }
 }
 
 ?>

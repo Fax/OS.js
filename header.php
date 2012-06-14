@@ -51,6 +51,7 @@ define("PATH_DOC",                   PATH . "/doc");
 define("PATH_BIN",                   PATH . "/bin");
 define("PATH_SRC",                   PATH . "/src");
 define("PATH_LIB",                   PATH . "/lib");
+define("PATH_LIB_PLATFORM",          PATH . "/lib/platform");
 define("PATH_VENDOR",                PATH . "/vendor");
 define("PATH_HTML",                  PATH . "/public_html");
 define("PATH_BUILD",                 PATH . "/src/build");
