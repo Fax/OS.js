@@ -50,6 +50,12 @@ abstract class Package
 
   private $_iType = -1;               //!< Package Type Identifier
 
+  public static $PackageTypes = Array(
+    self::TYPE_APPLICATION  => "Application",
+    self::TYPE_PANELITEM    => "Panel Item",
+    self::TYPE_SERVICE      => "Background Service"
+  );
+
   /////////////////////////////////////////////////////////////////////////////
   // MAGICS
   /////////////////////////////////////////////////////////////////////////////

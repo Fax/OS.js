@@ -11,12 +11,12 @@
  * %CLASSNAME% Class
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
- * @package OSjs.Applications
+ * @package OSjs.%PACKAGETYPE%
  * @licence Simplified BSD License
  * @class
  */
 class %CLASSNAME%
-  extends Application
+  extends %PACKAGETYPE%
 {
 
   /**

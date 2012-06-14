@@ -1,5 +1,7 @@
 CORE TODO:
 -------------------------------------------------------------------------------
+[HIG] Compiler abstraction
+[HIG] Compiler: Service
 [HIG] Finish Standalone Platform
 [HIG] Refactor class constructs with tuples
 [HIG] Manifest and Cache for offline usage: http://updates.html5rocks.com/2012/04/Taking-an-Entire-Page-Offline-using-the-HTML5-FileSystem-API

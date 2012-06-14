@@ -108,7 +108,7 @@ if ( $options = getopt($cmd_short, $cmd_long) ) {
       case "v" :
       case "variant":
         $variant = (int) $v;
-        if ( in_array($variant, array_keys(Package::$PackageRegister)) ) {
+        if ( in_array($variant, array_keys(Package::$PackageTypes)) ) {
           $opts["variant"] = $variant;
         }
       break;

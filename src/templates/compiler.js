@@ -7,7 +7,6 @@
  * @class
  */
 OSjs.Applications.%CLASSNAME% = (function($, undefined) {
-  "$:nomunge";
 
   var _LINGUAS = %LINGUAS%;
 
@@ -19,7 +18,6 @@ OSjs.Applications.%CLASSNAME% = (function($, undefined) {
    * @param Array         windows              Application windows from session (restoration)
    */
   return function(GtkWindow, Application, API, argv, windows) {
-    "GtkWindow:nomunge, Application:nomunge, API:nomunge, argv:nomunge, windows:nomunge";
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS["%DEFAULT_LANGUAGE%"];
 

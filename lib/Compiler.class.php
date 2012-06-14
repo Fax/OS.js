@@ -51,7 +51,9 @@ class Compiler
 
   public static $TemplatePHP;             //!< text/plain PHP Template
   public static $TemplateCSS;             //!< text/plain CSS Template
-  public static $TemplateJS;              //!< text/plain JS Template
+  public static $TemplateJS;              //!< text/plain Application JS Template
+  public static $TemplateJSPI;            //!< text/plain PanelItem JS Template
+  public static $TemplateJSBS;            //!< text/plain BackgroundService JS Template
   public static $TemplateJSWindow;        //!< text/plain Glade Template
 
   /////////////////////////////////////////////////////////////////////////////
@@ -78,7 +80,107 @@ class Compiler
   protected function compilePanelItem($class_name, $metadata_path, $dry_run = false) {
     if ( $xml = new SimpleXmlElement(file_get_contents($metadata_path)) ) {
       print "Compiling from '$metadata_path'\n";
-      print "\tDONE!\n";
+
+      // Generic variables
+      $project_name         = ((string) $xml['name']);
+      $project_enabled      = true;
+      $project_title        = PanelItem::PANELITEM_TITLE;
+      $project_titles       = Array();
+      $project_icon         = PanelItem::PANELITEM_TITLE;
+      $project_desc         = PanelItem::PANELITEM_DESC;
+      $project_descs        = Array();
+      $timestamp            = strftime("%F");
+      $js_linguas           = Array(DEFAULT_LANGUAGE => Array());
+
+      $out_css      = PATH_BUILD . "/apps/{$class_name}.css";
+      $out_php      = PATH_BUILD . "/apps/{$class_name}.class.php";
+      $out_js       = PATH_BUILD . "/apps/{$class_name}.js";
+
+      // Parse general attributes
+      foreach ( $xml->property as $p ) {
+        $val = ((string) $p);
+        switch ( $p['name'] ) {
+          case "enabled" :
+            if ( $val == "false" ) {
+              $project_enabled = false;
+              break;
+            }
+            break;
+          case "title" :
+            if ( $val ) {
+              if ( isset($p['language']) && !empty($p['language']) ) {
+                $lang = ((string)$p['language']);
+                $project_titles[$lang] = $val;
+                if ( $lang == DEFAULT_LANGUAGE ) {
+                  $project_title = $val;
+                }
+              } else {
+                $project_tiles[DEFAULT_LANGUAGE] = $val;
+                $project_title = $val;
+              }
+            }
+            break;
+          case "icon" :
+            if ( $val ) {
+              $project_icon = $val;
+            }
+            break;
+        }
+      }
+
+      // Skip application
+      if ( ENV_PRODUCTION ) {
+        if ( !$project_enabled ) {
+          print "\tNot enabled...skipping...!\n";
+          return -1;
+        }
+      }
+
+      // ...
+      if ( !isset($project_titles[DEFAULT_LANGUAGE]) ) {
+        $project_titles[DEFAULT_LANGUAGE] = $project_title;
+      }
+      foreach ( $project_titles as $tk => $tv ) {
+        $js_linguas[$tk]["title"] = $tv;
+      }
+      $js_linguas[DEFAULT_LANGUAGE]["title"] = $project_title;
+
+      $js_linguas     = json_encode($js_linguas);
+
+      // Generate files
+      $rep_php = Array(
+        "%PACKAGETYPE%"   => "PanelItem", //FIXME
+        "%CLASSNAME%"     => $class_name,
+        "%TIMESTAMP%"     => $timestamp
+      );
+      $rep_css = Array(
+        "%PACKAGETYPE%"   => "PanelItem", //FIXME
+        "%CLASSNAME%"     => $class_name
+      );
+      $rep_js = Array(
+        "%CLASSNAME%"         => $class_name,
+        "%LINGUAS%"           => $js_linguas,
+        "%DEFAULT_LANGUAGE%"  => DEFAULT_LANGUAGE,
+      );
+
+      $content_css  = str_replace(array_keys($rep_css),
+                                  array_values($rep_css),
+                                  self::$TemplateCSS);
+      $content_php  = str_replace(array_keys($rep_php),
+                                  array_values($rep_php),
+                                  self::$TemplatePHP);
+      $content_js   = str_replace(array_keys($rep_js),
+                                  array_values($rep_js),
+                                  self::$TemplateJSPI);
+
+
+      if ( !$dry_run ) {
+        file_put_contents($out_php,   $content_php);
+        file_put_contents($out_css,   $content_css);
+        file_put_contents($out_js,    $content_js);
+      }
+
+      print sprintf("\tDONE [%s]...\n", implode(",", Array("css", "php", "js")));
 
       return true;
     }
@@ -96,6 +198,7 @@ class Compiler
   protected function compileService($class_name, $metadata_path, $dry_run = false) {
     if ( $xml = new SimpleXmlElement(file_get_contents($metadata_path)) ) {
       print "Compiling from '$metadata_path'\n";
+      // TODO
       print "\tDONE!\n";
 
       return true;
@@ -233,13 +336,16 @@ class Compiler
       $js_glade       = implode("\n", $glade_windows);
 
       $rep_php = Array(
+        "%PACKAGETYPE%"   => "Application", //FIXME
         "%CLASSNAME%"     => $class_name,
         "%TIMESTAMP%"     => $timestamp
       );
       $rep_css = Array(
+        "%PACKAGETYPE%"   => "Application", //FIXME
         "%CLASSNAME%"     => $class_name
       );
       $rep_js = Array(
+        "%PACKAGETYPE%"       => "Application", //FIXME
         "%CLASSNAME%"         => $class_name,
         "%COMPABILITY%"       => $js_compability,
         "%CODE_GLADE%"        => $js_glade,
@@ -580,6 +686,8 @@ EOJAVASCRIPT;
 Compiler::$TemplatePHP      = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.php"));
 Compiler::$TemplateCSS      = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.css"));
 Compiler::$TemplateJS       = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.js"));
+Compiler::$TemplateJSPI     = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.panelitem.js"));
+Compiler::$TemplateJSBS     = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.service.js"));
 Compiler::$TemplateJSWindow = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.window.js"));
 
 ?>
