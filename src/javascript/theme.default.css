@@ -68,6 +68,25 @@ textarea {
   white-space : nowrap;
 }
 
+
+#WindowToggler {
+  border : 1px solid #000;
+  background : #fff;
+}
+#WindowTogglerTitle {
+  font-weight : bold;
+}
+#WindowTogglerList li {
+  border : 1px solid transparent;
+}
+#WindowTogglerList li.Current {
+  border : 1px solid #000;
+}
+#WindowTogglerRect {
+  border : 2px solid #000;
+  margin : -2px;
+}
+
 .DesktopPanel {
   background : #e6e6e6;
 }

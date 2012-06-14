@@ -2252,6 +2252,8 @@
 
         //$(window).unbind("offline",                   this.global_offline);
         $(document).unbind("keydown",                 this.global_keydown);
+        //$(document).unbind("keypress",                this.global_keypress);
+        $(document).unbind("keyup",                   this.global_keyup);
         $(document).unbind("mousedown",               this.global_mousedown);
         $(document).unbind("mouseup",                 this.global_mouseup);
         $(document).unbind("mousemove",               this.global_mousemove);
@@ -2544,6 +2546,8 @@
       $(window).bind("beforeunload",  this.leaving);
       //$(window).bind("offline",       this.global_offline);
       $(document).bind("keydown",     this.global_keydown);
+      //$(document).bind("keypress",    this.global_keypress);
+      $(document).bind("keyup",       this.global_keyup);
       $(document).bind("mousedown",   this.global_mousedown);
       $(document).bind("mouseup",     this.global_mouseup);
       $(document).bind("mousemove",   this.global_mousemove);
@@ -2750,6 +2754,38 @@
     },
 
     /**
+     * Core::global_keyup() -- Global Event Handler: keyup
+     * @param   DOMEvent    ev      DOM Event
+     * @return  bool
+     */
+    global_keyup : function(ev) {
+      var key = ev.keyCode || ev.which;
+
+      if ( key == 17 ) {
+        KEY_CTRL = false;
+      } else if ( key == 18 ) {
+        KEY_ALT = false;
+        if ( _WM ) {
+          _WM.toggleWindow(false);
+        }
+        ret = false;
+      } else if ( key == 16 ) {
+        KEY_SHIFT = false;
+      }
+
+      return true;
+    },
+
+    /**
+     * Core::global_keypress() -- Global Event Handler: keypress
+     * @param   DOMEvent    ev      DOM Event
+     * @return  bool
+    global_keypress : function(ev) {
+      return true;
+    },
+     */
+
+    /**
      * Core::global_keydown() -- Global Event Handler: keydown
      * @param   DOMEvent    ev      DOM Event
      * @return  bool
@@ -2757,17 +2793,27 @@
     global_keydown : function(ev) {
       var key = ev.keyCode || ev.which;
       var target = ev.target || ev.srcElement;
-
-      KEY_CTRL  = false;
-      KEY_ALT   = false;
-      KEY_SHIFT = false;
+      var ret = true;
 
       if ( key == 17 ) {
         KEY_CTRL = true;
       } else if ( key == 18 ) {
         KEY_ALT = true;
+        ret = false;
       } else if ( key == 16 ) {
         KEY_SHIFT = true;
+      }
+
+
+      if ( KEY_ALT && KEY_SHIFT ) {
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        if ( _WM ) {
+          _WM.toggleWindow();
+        }
+
+        return false;
       }
 
       // ESC cancels dialogs
@@ -2795,7 +2841,7 @@
         }
       }
 
-      return true;
+      return ret;
     },
 
     /**
@@ -5031,6 +5077,105 @@
         _Window = win;
       }
     },
+
+    /**
+     * WindowManager::togleWindow() -- Handle window switching via keyboard shortcut
+     * @param   Mixed     arg   Swithing argument
+     * @return  void
+     */
+    toggleWindow : (function() {
+
+      var _t = -1;
+      var _l = null;
+      var _m = 0;
+      var _last = -1;
+
+      function _createList() {
+        _l = _WM.getStack();
+        _m = _l.length - 1;
+
+        var r = $("#WindowTogglerList ul");
+        var e;
+        for ( var i = 0; i < _l.length; i++ ) {
+          e = $(sprintf("<li><img alt=\"%s\" src=\"%s\" /></li>", _l[i].title, _l[i].icon));
+          r.append(e);
+        }
+      }
+
+      function _toggleRect() {
+        $("#WindowTogglerList ul li").removeClass("Current");
+        if ( _l[_t] ) {
+          var item = $($("#WindowTogglerList ul li").get(_t));
+          item.addClass("Current");
+          $("#WindowTogglerTitle span").html(item.find("img").attr("alt"));
+
+          var win = $("#" + _l[_t].id);
+
+          $("#WindowTogglerRect").css({
+            "top" : win.css("top"),
+            "left" : win.css("left"),
+            "width" : win.css("width"),
+            "height" : win.css("height")
+          }).show();
+
+          console.log(win, $("WindowTogglerRect"));
+        }
+      }
+
+      function _focus() {
+        if ( _t >= 0 ) {
+          if ( _l[_t] ) {
+            _l[_t].focus();
+          }
+        }
+      }
+
+      return function(arg) {
+        console.group("WindowManager::toggleWindow()", arg);
+        if ( arg === false ) {
+          _focus();
+
+          $("#WindowTogglerRect").hide();
+          $("#WindowTogglerList ul").empty();
+          $("#WindowTogglerTitle span").html("Empty");
+
+          _l = null;
+          _t = -1;
+
+          $("#WindowToggler").hide();
+        } else {
+
+          if ( _l === null ) {
+            _createList();
+            _t = -1;
+          }
+
+          if ( _l && _l.length ) {
+            // Next
+            _t++;
+            if ( _t > _m ) {
+              _t = 0;
+            }
+
+            // Now select current item
+            _toggleRect();
+
+            console.log("Selected", _t);
+
+            _last = _t;
+          } else {
+            $("#WindowTogglerTitle span").html("Empty");
+
+            console.log("Empty");
+          }
+
+          $("#WindowToggler").show();
+        }
+
+        console.groupEnd();
+      };
+
+    })(),
 
     /**
      * WindowManager::restoreWindow() -- Perform 'restore' on Window
