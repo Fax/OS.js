@@ -19,6 +19,7 @@ config.php
 # Sub-modules
 src/packages
 vendor/*
+!vendor/launcher
 
 # Build files
 src/build/minimize.cache
