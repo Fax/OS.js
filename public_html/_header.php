@@ -41,15 +41,17 @@ if ( !($core = Core::initialize()) ) {
 }
 
 // Output compression
-if ( ENABLE_GZIP && !defined("DISABLE_GZIP") ) {
-  if ( isset($_SERVER) && isset($_SERVER["HTTP_ACCEPT_ENCODING"]) ) {
-    $use_gzip = substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
-    if ( !$use_gzip || !@ob_start("ob_gzhandler") ) { // FIXME: Conflicts with zlib.output.compression INI
-      flush();
-      while (ob_get_level()) {
-        ob_end_flush();
+if ( in_array(strtolower((string)ini_get("zlib.output.compression")), Array("false", "0", "off")) ) {
+  if ( ENABLE_GZIP && !defined("DISABLE_GZIP") ) {
+    if ( isset($_SERVER) && isset($_SERVER["HTTP_ACCEPT_ENCODING"]) ) {
+      $use_gzip = substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip');
+      if ( !$use_gzip || !ob_start("ob_gzhandler") ) { // FIXME: Conflicts with  INI
+        flush();
+        while (ob_get_level()) {
+          ob_end_flush();
+        }
+        ob_start();
       }
-      ob_start();
     }
   }
 }
