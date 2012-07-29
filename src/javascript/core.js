@@ -156,6 +156,7 @@
     callback        = callback        || function() {};
     callback_error  = callback_error  || function() {};
 
+
     if ( !_OnLine ) {
       callback({
         error     : OSjs.Labels.DoPostOffline,
@@ -181,21 +182,31 @@
       }
     }
 
-    $.ajax({
-      type      : "POST",
-      url       : AJAX_URI,
-      data      : ajax_args,
-      success   : function(data) {
-        callback(data);
-
-        if ( data && data.error && data.exception ) {
-          _HasCrashed = true;
-        }
-      },
-      error     : function (xhr, ajaxOptions, thrownError){
-        callback_error(xhr, ajaxOptions, thrownError);
+    // Callback wrapper
+    var _callback = function(data) {
+      callback(data);
+      if ( data && data.error && data.exception ) {
+        _HasCrashed = true;
       }
-    });
+    };
+
+    if ( _Connection ) {
+      _Connection.call(ajax_args, function(data) {
+        _callback(data);
+      });
+    } else {
+      $.ajax({
+        type      : "POST",
+        url       : AJAX_URI,
+        data      : ajax_args,
+        success   : function(data) {
+          _callback(data);
+        },
+        error     : function (xhr, ajaxOptions, thrownError){
+          callback_error(xhr, ajaxOptions, thrownError);
+        }
+      });
+    }
 
   } // @endfunction
 
@@ -2145,6 +2156,7 @@
   var CoreConnection = Socket.extend({
 
     _connected : false,   //!< Connection state
+    _callbacks : {},      //!< Callbacks
 
     /**
      * CoreConnection::init() -- Initialize Main Socket
@@ -2180,20 +2192,21 @@
 
     /**
      * CoreConnection::call() -- Call a backend Platfor Method
-     * @param   String    m           Method Name
-     * @param   Mixed     a           Method Argument(s)
-     * @param   String    c           Class Name (Default: Platform)
+     * @param   Mixed     data        Data
      * @return  void
      */
-    call : function(m, a, c) {
-      c = c || "Platform";
+    call : function(data) {
       if ( this._connected ) {
-        var s = {
-          "class"     : c,
-          "method"    : m,
-          "arguments" : a
-        };
-        this.send(JSON.stringify(s));
+        var s = null;
+        try {
+          s = JSON.stringify(data);
+        } catch ( e ) {
+          s = "" + data;
+        }
+
+        console.log("CoreConnection::call()", s);
+
+        this.send(s);
       }
     },
 
@@ -2204,6 +2217,19 @@
      */
     _handle : function(j) {
       console.log("CoreConnection::_handle()", j);
+      if ( data.id !== undefined && data.data !== undefined ) {
+        if ( this._callbacks[data.id] ) {
+          this._callbacks[data.id](data.data);
+
+          var self = this;
+          setTimeout(function() {
+            try {
+              self._callbacks[data.id] = null;
+              delete self._callbacks[data.id];
+            } catch ( eee ) {}
+          }, 0);
+        }
+      }
     }
   }); // @endclass
 
@@ -2717,14 +2743,16 @@
      */
     global_endsession : function(ev, sid) {
       //console.info("Session valid", _SessionValid, "Registered", _SessionId, "Current", sid);
-      if ( _SessionValid ) {
-        if ( !sid || (_SessionId != sid) ) {
-          var ico = GetIcon("status/network-error.png", "32x32");
-          var title = OSjs.Labels.GlobalOfflineTitle;
-          var msg = OSjs.Labels.GlobalOfflineMessage;
-          API.application.notification(title, msg, ico);
+      if ( !_Connection ) {
+        if ( _SessionValid ) {
+          if ( !sid || (_SessionId != sid) ) {
+            var ico = GetIcon("status/network-error.png", "32x32");
+            var title = OSjs.Labels.GlobalOfflineTitle;
+            var msg = OSjs.Labels.GlobalOfflineMessage;
+            API.application.notification(title, msg, ico);
 
-          _SessionValid = false;
+            _SessionValid = false;
+          }
         }
       }
     },

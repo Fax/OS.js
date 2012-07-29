@@ -40,12 +40,6 @@ require "_header.php";
 // AJAX
 ///////////////////////////////////////////////////////////////////////////////
 
-// GET operations
-if ( !($json = $core->doGET($_GET)) === false ) {
-  header("Content-Type: " . MIME_JSON);
-  die($json);
-}
-
 // POST operations
 //if ( !($json = $core->doPOST(file_get_contents('php://input'), true)) === false ) {
 if ( !($json = $core->doPOST($_POST)) === false ) {

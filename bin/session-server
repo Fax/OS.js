@@ -12,7 +12,7 @@ require "header.php";
 require "lib/ServerUser.class.php";
 require "lib/Server.class.php";
 //require "lib/Daemon.class.php";
-require "lib/Platform.class.php";
+//require "lib/Platform.class.php";
 
 set_time_limit(0);
 ob_implicit_flush();
@@ -23,7 +23,6 @@ class _SessionServer
   /**
    * Handle TCP/IP Connections
    * @return bool
-   */
   protected final function _processTCP($method, $args, &$response, $user) {
     switch ( $method ) {
 
@@ -74,11 +73,11 @@ class _SessionServer
 
     return false;
   }
+   */
 
   /**
    * Handle Platform Specific calls
    * @return void
-   */
   protected final function _processPlatform($class, $method, $args, &$response, $user) {
     try {
       if ( $result = call_user_func_array(Array($class, $method), Array($args)) ) {
@@ -90,12 +89,12 @@ class _SessionServer
       $response["error"] = $e->getMessage();
     }
   }
+   */
 
   /**
    * Handle a Message
    * @return void
    * @override
-   */
   protected function _process($user, $data, $external = false) {
     if ( $msg = parent::_process($user, $data, $external) ) {
       $json     = null;
@@ -122,6 +121,29 @@ class _SessionServer
           // Then other
           $this->_processPlatform($_class, $_method, $_args, $response, $user);
         }
+      }
+
+      $this->_send($user->type, $user->socket, JSON::encode($response));
+    }
+  }
+   */
+  protected function _process($user, $data, $external = false) {
+    if ( $msg = parent::_process($user, $data, $external) ) {
+      $response = false;
+
+      try {
+        $json = @((array) JSON::decode($msg));
+      } catch ( Exception $e ) {
+        $json = null;
+      }
+
+      print $json;
+
+      if ( $json !== null && is_array($json) ) {
+        $response = Array(
+          "id"    => $json["id"],
+          "data"  => $core->doPOST($json["data"])
+        );
       }
 
       $this->_send($user->type, $user->socket, JSON::encode($response));

@@ -107,15 +107,6 @@ class Core
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Do a GET request
-   * @param  Array    $args   Argument list
-   * @return Mixed
-   */
-  public function doGET(Array $args) {
-    return false;
-  }
-
-  /**
    * Do a POST request
    * @param  String    $args    Argument list (raw data)
    * @param  bool      $is_raw  Format if raw data
