@@ -58,6 +58,22 @@ body {
                            GENERIC
  ****************************************************************/
 
+button {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+  display: inline-block;
+  padding : 2px;
+  padding-left : 5px;
+  padding-right : 5px;
+  margin: 0;
+  text-decoration: none;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+  zoom: 1;
+}
+
 .TableCellWrap {
   position : relative;
   width : 100%;
@@ -162,14 +178,9 @@ ul.CompactList li {
     text-align : right;
     position : relative;
     padding-top : 5px;
+    padding-right : 2px;
   }
   #LoginButtons button {
-    margin : 0;
-    padding : 2px;
-    padding-left : 5px;
-    padding-right : 5px;
-    border : 1px solid #ccc;
-    background : #fff;
     cursor : pointer;
   }
   #LoginDemoNotice {
@@ -668,4 +679,32 @@ ul.CompactList li {
 }
 .GUIMenu .HasChildren span {
   padding-right : 16px;
+}
+
+.GUIProgress {
+  height: 20px;
+  background: #EBEBEB;
+  border-radius: 10px;
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
+}
+
+.GUIProgress > span {
+  position: relative;
+  float: left;
+  margin: 0 -1px;
+  min-width: 30px;
+  height: 18px;
+  line-height: 16px;
+  text-align: right;
+  border-radius: 5px;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.GUIProgress > span > span {
+  padding : 2px;
+  padding-right : 5px;
+  font-weight: bold;
+  display : inline-block;
 }

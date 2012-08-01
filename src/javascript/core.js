@@ -2566,6 +2566,8 @@
         return;
       }
 
+      OSjs.Classes.ProgressBar(bar, 1);
+
       _Running = true; // GLOBAL
 
       // Bind global events
@@ -2591,7 +2593,7 @@
         self.global_endsession(ev, GetCookie(SESSION_KEY));
       }, SESSION_CHECK);
 
-      bar.progressbar({value : 10});
+      OSjs.Classes.ProgressBar(bar, 10);
 
       // Initialize session
       var drunned = false;
@@ -2615,7 +2617,7 @@
 
           PlaySound("service-login");
 
-          bar.progressbar({value : 100});
+          OSjs.Classes.ProgressBar(bar, 100);
           LoginManager.hide();
 
         }, 100);
@@ -2648,7 +2650,7 @@
         alert(sprintf(OSjs.Labels.CrashCoreRunService, "WindowManager", exception));
       }
 
-      bar.progressbar({value : 20});
+      OSjs.Classes.ProgressBar(bar, 20);
     },
 
     /**
@@ -2677,7 +2679,7 @@
         callback();
       }
 
-      bar.progressbar({value : 30});
+      OSjs.Classes.ProgressBar(bar, 30);
     },
 
     /**
@@ -2693,13 +2695,13 @@
           LaunchProcess(autostarters[ai], "BackgroundService");
         }
       }
-      bar.progressbar({value : 40});
+      OSjs.Classes.ProgressBar(bar, 40);
 
       // Restore Previous Session
       if ( _Settings._get("user.session.autorestore") === "true" ) {
         _Core.setSession(session);
       }
-      bar.progressbar({value : 50});
+      OSjs.Classes.ProgressBar(bar, 50);
 
       // Show compability dialog on first run
       if ( _Settings._get("user.first-run") === "true" ) {
@@ -2714,7 +2716,7 @@
           }, 500);
         }
       }
-      bar.progressbar({value : 60});
+      OSjs.Classes.ProgressBar(bar, 60);
     },
 
 
