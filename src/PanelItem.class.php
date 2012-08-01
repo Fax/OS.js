@@ -58,6 +58,7 @@ class       PanelItem
   public static function LoadPackage($iter) {
     $iter_name          = (string) $iter['name'];
     $iter_title         = PanelItem::PANELITEM_TITLE;
+    $iter_titles        = Array();
     $iter_description   = PanelItem::PANELITEM_DESC;
     $iter_descriptions  = Array();
     $iter_icon          = PanelItem::PANELITEM_ICON;
