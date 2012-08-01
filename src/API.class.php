@@ -163,6 +163,11 @@ abstract class API
           "cache"       => ENABLE_CACHE,
           "server"      => sprintf("%s:%s", SERVER_HOST, SERVER_PORT),
           "connection"  => ENV_PLATFORM,
+          "hosts"       => Array(
+            "frontend"  => HOST_FRONTEND,
+            "api"       => HOST_API
+          ),
+          "api_format"  => API_FORMAT,
           "autologin"   => Array(
             "enable"       => AUTOLOGIN_ENABLE,
             "username"     => AUTOLOGIN_USERNAME,

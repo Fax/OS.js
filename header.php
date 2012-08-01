@@ -150,6 +150,19 @@ if ( !defined("ENV_DEMO") )
 if ( !defined("ENV_PLATFORM") )
   define("ENV_PLATFORM",        false); // Enable Platform Specific Features
 
+if ( !defined("HOST_FRONTEND") )
+  define("HOST_FRONTEND",       "osjs.local");
+if ( !defined("HOST_API") )
+  define("HOST_API",            "api.osjs.local");
+
+//
+// API Backend (Separate Host)
+//
+
+if ( !defined("API_FORMAT") )
+  define("API_FORMAT",          "1.0/%s.%s?%s");
+
+
 //
 // Backend defaults (src/locale/<locale>/<domain>)
 //
