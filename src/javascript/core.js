@@ -2562,10 +2562,12 @@
       var self = this;
       var bar  = $("#LoadingBar");
 
+
       if ( this.running ) {
         return;
       }
 
+      $("#LoadingBarContainer").show();
       OSjs.Classes.ProgressBar(bar, 1);
 
       _Running = true; // GLOBAL

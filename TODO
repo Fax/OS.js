@@ -12,6 +12,7 @@ CORE TODO:
       * Implement MenuNew in GtkMenu
       * Package Metadata schema property can be linked to HTML
 
+[MED] Fix bin/create-package ?!
 [MED] Redesign panel preferences
       - Fix panel dock
 [MED] Finish JS VFS

@@ -95,58 +95,44 @@ ul.CompactList li {
  ****************************************************************/
 
 #LoginWindow {
-  width : 500px;
-  height : 330px;
+  width : 450px;
+  height : 130px;
   position : absolute;
   top : 50%;
   left : 50%;
   margin : 0;
-  margin-left : -250px;
-  margin-top : -165px;
+  margin-left : -225px;
+  margin-top : -65px;
   padding : 0;
   z-index : 1000100;
-  background : #fff url('/img/logo.png') no-repeat center 20px;
   display : none;
+  background : #fff;
 }
-  #LoginVersionStamp {
-    position : absolute;
-    top : 5px;
-    right : 5px;
-    font-size : 8px;
-  }
 
   #LoadingBarContainer {
     position : absolute;
-    width : 400px;
+    width : 410px;
     height : 22px;
-    margin : 0;
+    margin : -5px;
     padding : 0;
-    left : 50%;
-    top : 150px;
-    margin-left : -199px;
-  }
-  #LoadingBar {
-    height : 22px;
-    border : 0 none;
-  }
-  #LoadingBar * {
-    height : 22px;
-    border : 0 none;
+    bottom : 15px;
+    left : 20px;
+    z-index : 100;
+    border : 5px solid #fff;
+    display : none;
   }
 
 #Login {
-  width : 400px;
   position : absolute;
-  left : 50%;
-  margin-left : -200px;
-  bottom : 10px;
+  top : 20px;
+  left : 20px;
 }
   #Login .Row {
-    margin-bottom : 5px;
+    margin-bottom : 10px;
   }
   #Login .Row input,
   #Login .Row label {
-    width : 386px; /* - border */
+    width : 400px; /* - border */
     margin : 0;
     padding : 0;
     border : 0 none;
@@ -182,17 +168,21 @@ ul.CompactList li {
   }
   #LoginButtons button {
     cursor : pointer;
+    margin-left : 5px;
   }
-  #LoginDemoNotice {
-    font-size : 85%;
-    width : 400px;
-    position : absolute;
-    top : -50px;
-  }
-  #LoginDemoNotice p {
-    margin : 0;
-    padding : 0;
-  }
+
+#LoginDemoNotice {
+  font-size : 85%;
+  width : 400px;
+  position : absolute;
+  bottom : 10px;
+  left : 10px;
+}
+#LoginDemoNotice p {
+  margin : 0;
+  padding : 0;
+  color : #fff;
+}
 
 /****************************************************************
                           DESKTOP
@@ -683,8 +673,6 @@ ul.CompactList li {
 
 .GUIProgress {
   height: 20px;
-  background: #EBEBEB;
-  border-radius: 10px;
   border-left: 1px solid transparent;
   border-right: 1px solid transparent;
 }
@@ -695,9 +683,8 @@ ul.CompactList li {
   margin: 0 -1px;
   min-width: 30px;
   height: 18px;
-  line-height: 16px;
+  line-height: 15px;
   text-align: right;
-  border-radius: 5px;
   border-width: 1px;
   border-style: solid;
 }
@@ -707,4 +694,14 @@ ul.CompactList li {
   padding-right : 5px;
   font-weight: bold;
   display : inline-block;
+}
+.GUIProgress > span::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  height: 18px;
 }

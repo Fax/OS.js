@@ -350,6 +350,10 @@ button[disabled="disabled"]:active {
 }
 
 
+.GUIProgress {
+  background: #EBEBEB;
+}
+
 .GUIProgress > span{
   border-color: #BFBFBF #B3B3B3 #9E9E9E;
   background-color: #CCC;
@@ -364,7 +368,6 @@ button[disabled="disabled"]:active {
 }
 
 .GUIProgress span.default {
-  /*
   border-color: #459FD6 #3094D2 #277DB2;
   background-color: #5AAADB;
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #AED5ED), color-stop(70%, #7BBBE2), color-stop(100%, #5AAADB));
@@ -373,7 +376,6 @@ button[disabled="disabled"]:active {
   background-image: -ms-linear-gradient(top, #AED5ED 0%, #7BBBE2 70%, #5AAADB 100%);
   background-image: -o-linear-gradient(top, #AED5ED 0%, #7BBBE2 70%, #5AAADB 100%);
   background-image: linear-gradient(top, #AED5ED 0%, #7BBBE2 70%, #5AAADB 100%);
-  */
 }
 
 .GUIProgress > span > span {
@@ -381,16 +383,11 @@ button[disabled="disabled"]:active {
   color: #888;
   text-shadow: 0 1px rgba(255, 255, 255, 0.4);
 }
+.GUIProgress span.default > span {
+  color : #fff;
+  text-shadow: 0 1px rgba(128, 128, 128, 0.4);
+}
 
 .GUIProgress > span::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-  height: 18px;
-  border-radius: 10px;
   background: url("/img/progress.png") 0 0 repeat-x;
 }
