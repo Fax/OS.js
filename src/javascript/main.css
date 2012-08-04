@@ -96,30 +96,32 @@ ul.CompactList li {
 
 #LoginWindow {
   width : 450px;
-  height : 130px;
+  height : 120px;
   position : absolute;
   top : 50%;
   left : 50%;
   margin : 0;
   margin-left : -225px;
-  margin-top : -65px;
+  margin-top : -60px;
   padding : 0;
   z-index : 1000100;
   display : none;
   background : #fff;
+  border : 0 none;
 }
 
   #LoadingBarContainer {
     position : absolute;
-    width : 410px;
-    height : 22px;
-    margin : -5px;
+    width : 412px;
+    height : 20px;
     padding : 0;
-    bottom : 15px;
+    bottom : 12px;
     left : 20px;
     z-index : 100;
-    border : 5px solid #fff;
     display : none;
+    background : #fff;
+    padding : 5px;
+    margin : -5px;
   }
 
 #Login {
@@ -130,22 +132,20 @@ ul.CompactList li {
   #Login .Row {
     margin-bottom : 10px;
   }
-  #Login .Row input,
-  #Login .Row label {
+  #Login .Row input {
     width : 400px; /* - border */
     margin : 0;
     padding : 0;
     border : 0 none;
     margin-bottom : 5px;
-  }
-  #Login .Row input {
-    display : block;
-    color : #999;
-    border : 1px solid #ccc;
     padding : 2px;
     padding-left : 5px;
     padding-right : 5px;
+    display : block;
+    color : #999;
+    border : 1px solid #ccc;
     background : #fff url('/img/blank.gif') no-repeat 99% center;
+    height : 18px;
   }
   #Login .Row input.loading {
     background : #fff url('/img/ajaxload_snake_trans.gif') no-repeat 99% center;
@@ -163,8 +163,6 @@ ul.CompactList li {
   #LoginButtons {
     text-align : right;
     position : relative;
-    padding-top : 5px;
-    padding-right : 2px;
   }
   #LoginButtons button {
     cursor : pointer;

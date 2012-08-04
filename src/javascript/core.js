@@ -2463,6 +2463,9 @@
         return;
       }
 
+      $("#LoadingBarContainer").show();
+      OSjs.Classes.ProgressBar($("#LoadingBar"), 1);
+
       // Globals
       _SessionId        = response.sid;
       _BrowserLanguage  = response.lang_browser;
@@ -2559,16 +2562,10 @@
      * @return void
      */
     run : function(session) {
-      var self = this;
-      var bar  = $("#LoadingBar");
-
-
       if ( this.running ) {
         return;
       }
-
-      $("#LoadingBarContainer").show();
-      OSjs.Classes.ProgressBar(bar, 1);
+      var self = this;
 
       _Running = true; // GLOBAL
 
@@ -2595,17 +2592,17 @@
         self.global_endsession(ev, GetCookie(SESSION_KEY));
       }, SESSION_CHECK);
 
-      OSjs.Classes.ProgressBar(bar, 10);
+      OSjs.Classes.ProgressBar($("#LoadingBar"), 10);
 
       // Initialize session
       var drunned = false;
-      this._initializeWindowManager(bar);
-      this._initializeDesktop(bar, function() {
+      this._initializeWindowManager();
+      this._initializeDesktop(function() {
         if ( drunned )
           return;
         drunned = true;
 
-        self._initializeSession(session, bar);
+        self._initializeSession(session);
 
         setTimeout(function() {
           // NOTE: Fixes global_keydown "not responding upon init" issues
@@ -2619,7 +2616,7 @@
 
           PlaySound("service-login");
 
-          OSjs.Classes.ProgressBar(bar, 100);
+          OSjs.Classes.ProgressBar($("#LoadingBar"), 100);
           LoginManager.hide();
 
         }, 100);
@@ -2634,7 +2631,7 @@
      * Core::_initializeWindowManager() -- Initialize Window Manager
      * @return void
      */
-    _initializeWindowManager : function(bar) {
+    _initializeWindowManager : function() {
       _WM      = new WindowManager();
 
       try {
@@ -2652,14 +2649,14 @@
         alert(sprintf(OSjs.Labels.CrashCoreRunService, "WindowManager", exception));
       }
 
-      OSjs.Classes.ProgressBar(bar, 20);
+      OSjs.Classes.ProgressBar($("#LoadingBar"), 20);
     },
 
     /**
      * Core::_initializeDesktop() -- Initialize Desktop
      * @return void
      */
-    _initializeDesktop : function(bar, callback) {
+    _initializeDesktop : function(callback) {
       _Desktop = new Desktop();
 
       try {
@@ -2681,14 +2678,14 @@
         callback();
       }
 
-      OSjs.Classes.ProgressBar(bar, 30);
+      OSjs.Classes.ProgressBar($("#LoadingBar"), 30);
     },
 
     /**
      * Core::_initializeSession() -- Initialize User Session
      * @return void
      */
-    _initializeSession : function(session, bar) {
+    _initializeSession : function(session) {
       // Run user-defined processes
       var autostarters = _Settings._get("user.autorun", true);
       if ( autostarters ) {
@@ -2697,13 +2694,13 @@
           LaunchProcess(autostarters[ai], "BackgroundService");
         }
       }
-      OSjs.Classes.ProgressBar(bar, 40);
+      OSjs.Classes.ProgressBar($("#LoadingBar"), 40);
 
       // Restore Previous Session
       if ( _Settings._get("user.session.autorestore") === "true" ) {
         _Core.setSession(session);
       }
-      OSjs.Classes.ProgressBar(bar, 50);
+      OSjs.Classes.ProgressBar($("#LoadingBar"), 50);
 
       // Show compability dialog on first run
       if ( _Settings._get("user.first-run") === "true" ) {
@@ -2718,7 +2715,7 @@
           }, 500);
         }
       }
-      OSjs.Classes.ProgressBar(bar, 60);
+      OSjs.Classes.ProgressBar($("#LoadingBar"), 60);
     },
 
 
