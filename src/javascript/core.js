@@ -8062,6 +8062,11 @@
       var self = this;
 
       if ( el ) {
+        if ( this.app ) {
+          if ( !el.hasClass(this.app._name) ) {
+            el.find(".WindowContentInner").addClass(this.app._name);
+          }
+        }
 
         //
         // Menus
@@ -8219,40 +8224,9 @@
           }
         }
 
-        //
-        // Box factors (LAST!)
-        //
-
-        setTimeout(function() {
-          self.__calculateExpansion();
-        }, 0);
-
-        /*this._bind("resize", function() {
-          self.__calculateExpansion();
-        });*/
       }
 
       return el;
-    },
-
-    /**
-     * GtkWindow::__calculateExpansion() -- Do GTK+ Expansions
-     * @return void
-     */
-    __calculateExpansion : function() {
-      this.$element.find("td.Fill").each(function() {
-        if ( !$(this).hasClass("Expand") ) {
-          //var height = parseInt($(this).css("height"), 10);
-          //if ( !height || isNaN(height) ) {
-          //}
-          var first = $(this).find(".TableCellWrap :first-child");
-          var height = parseInt(first.height(), 10);
-          if ( !isNaN(height) && height ) {
-            $(this).parent().css("height", height + "px");
-            //$(this).css("height", height + "px");
-          }
-        }
-      });
     }
 
   }); // @endclass

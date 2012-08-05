@@ -430,6 +430,7 @@ ul.CompactList li {
 #Desktop .Window {
   position : absolute;
 }
+
 /*.Window.Dragging {}*/
   .WindowTop {
     height : 28px;
@@ -468,7 +469,34 @@ ul.CompactList li {
     bottom : 0px;
   }
     .WindowContentInner {
+      height : 100%;
+      position : absolute;
+      top : 0px;
+      left : 0px;
+      bottom : 0px;
+      right : 0px;
     }
+
+/*
+.Window .ui-resizable-handle {
+}
+.Window .ui-resizable-n {
+}
+.Window .ui-resizable-ne {
+}
+.Window .ui-resizable-nw {
+}
+.Window .ui-resizable-s {
+}
+.Window .ui-resizable-e {
+}
+.Window .ui-resizable-se {
+}
+.Window .ui-resizable-w {
+}
+.Window .ui-resizable-sw {
+}
+*/
 
   .Window .ui-tabs-panel {
     padding : 10px;

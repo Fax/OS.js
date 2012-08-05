@@ -30,59 +30,107 @@
  * @licence Simplified BSD License
  */
 
-/* GtkObject : Custom */
-.GtkObject {
+.WindowContentInner {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-flex : 1;
 }
 
 /* GtkWindow GtkDialog */
 .GtkWindow,
 .GtkDialog {
   position : absolute;
-  top : 5px;
-  left : 5px;
-  right : 5px;
-  bottom : 5px;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 0px;
+  /*
+
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-pack : center;
+  -webkit-box-flex : 1;
+
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-pack : center;
+  -moz-box-flex : 1;
+
+  display: box;
+  box-orient: horizontal;
+  box-pack : center;
+  box-flex : 1;
+  */
 }
 
-  /* Gtk[Object] Sizing */
-  .GtkWindow .Fill,
-  .GtkDialog .Fill {
-  }
-  .GtkWindow .Expand,
-  .GtkDialog .Expand {
-  }
-    .GtkWindow .Expand.Fill,
-    .GtkDialog .Expand.Fill {
-    }
-
-    .GtkWindow .Fill .GtkBox,
-    .GtkWindow .Expand .GtkBox,
-    .GtkDialog .Fill .GtkBox,
-    .GtkDialog .Expand .GtkBox {
-      
-    }
-
-    .GtkWindow .Fill .GtkObject,
-    .GtkWindow .Expand .GtkObject,
-    .GtkDialog .Fill .GtkObject,
-    .GtkDialog .Expand .GtkObject {
-      position : absolute;
-      top : 0px;
-      left : 0px;
-      right : 0px;
-      bottom : 0px;
-    }
-    .GtkWindow .Expand .GtkObject,
-    .GtkDialog .Expand .GtkObject {
-      /*height : auto;*/
-    }
 
 /* GtkBox */
 .GtkBox {
   width : 100%;
   height : 100%;
-  border-collapse : collapse;
-  border : 0 none;
+  display : relative;
+
+  display: -webkit-box;
+  -webkit-box-align: stretch;
+  -webkit-box-pack : start;
+  -webkit-box-lines : multiple;
+  -webkit-box-direction : normal;
+  -webkit-box-flex : 1;
+
+  display: -moz-box;
+  -moz-box-align: stretch;
+  -moz-box-pack : start;
+  -moz-box-lines : multiple;
+  -moz-box-direction : normal;
+  -moz-box-flex : 1;
+
+  display: box;
+  box-align: stretch;
+  box-pack : start;
+  box-lines : multiple;
+  box-direction : normal;
+  box-flex : 1;
+}
+.GtkBoxHorizontal {
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  box-orient: horizontal;
+}
+.GtkBoxVertical {
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  box-orient: vertical;
+}
+
+.GtkBoxPackage {
+  display: -webkit-box;
+  -webkit-box-flex : 0;
+  display: -moz-box;
+  -moz-box-flex : 0;
+  display: box;
+  box-flex : 0;
+
+  position : relative;
+  min-width : 10px;
+  min-height : 10px;
+}
+.GtkBoxPackage.Fill {
+  overflow : hidden;
+  -webkit-box-flex : 1;
+  -moz-box-flex : 1;
+  box-flex : 1;
+}
+.GtkBoxPackage > * {
+  /*
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 0px;
+  */
+  -webkit-box-flex : 1;
+  -moz-box-flex : 1;
+  box-flex : 1;
 }
 
 .GtkBox .GtkTab {
@@ -122,14 +170,7 @@
   margin : 0;
   padding : 0;
   text-align : right;
-  margin-top : 10px;
 }
-
-  .GtkButtonBox li {
-    display : inline-block;
-    margin : 0;
-    padding : 0;
-  }
 
 /* GtkLabel */
 .GtkLabel {
@@ -193,13 +234,6 @@
   }
 
   .GtkIconView {
-    /*
-    position : absolute;
-    top : 2px;
-    left : 2px;
-    right : 2px;
-    bottom : 2px;
-    */
     background : #fff;
     overflow : auto;
   }
@@ -271,9 +305,11 @@
 
 /* GtkStatusbar */
 .GtkStatusbar {
-  height : 10px;
+  height : 15px;
+  width : 100%;
   padding : 5px;
   border-top : 1px solid #d1d4d7;
+  background : #e6e6e6;
 }
 
 /* GtkCheckButton */
@@ -299,6 +335,12 @@
 .GtkSeparator {
 }
 
+/* GtkSeparatorToolItem */
+.GtkSeparatorToolItem {
+  width : 1px;
+  height : 20px;
+}
+
 /* GtkViewport */
 .GtkViewport {
   overflow : auto;
@@ -311,30 +353,41 @@
 
 /* GtkDrawingArea */
 .GtkDrawingArea {
+  min-width : 100px;
+  min-height : 100px;
   position : relative;
 }
 
 /* GtkToolbar */
 .GtkToolbar {
-  height : 20px;
-  margin : -5px;
-  padding : 5px;
+  height : 35px;
+  width : 100%;
+  margin : 0;
+  padding : 0;
   list-style-type : none;
+  white-space : nowrap;
 }
 
   .GtkToolbar li {
     float : left;
-    margin : 0;
+    overflow : hidden;
+    height : 25px;
     padding : 5px;
+    position : relative;
   }
 
   .GtkToolbar .Checked button {
     border-style : inset;
   }
 
+  /*
+  .GtkToolbar .GtkToolButton {
+    height : 20px;
+  }
   .GtkToolbar .GtkToggleToolButton {
     height : 20px;
   }
+  */
 
   .GtkToolbar .GtkToolItem {
     height : 20px;
@@ -362,7 +415,7 @@
   position : relative;
 }
 
-  .GtkFixed .GtkObject {
+  .GtkFixed > * {
     position : absolute;
   }
 
@@ -374,27 +427,35 @@
 
 /* GtkMenuBar > GtkMenu */
 .GtkMenuBar {
-  height : 30px;
-  margin : -5px;
+  margin : 0;
   padding : 0;
   padding-left : 5px;
   padding-right : 5px;
-  margin-bottom : 0;
+  height : 30px;
+  width : 100%;
   list-style-type : none;
+  white-space : nowrap;
   font-size : 90%;
   background : #4f4f4f;
 }
 .GtkCustomMenu .GtkMenu { /* Custom */
   color : #222;
 }
+
+.GtkMenuBar .GtkMenuItemInner {
+  display : inline-block;
+}
+.GtkMenuBar .GtkMenu .GtkMenuItemInner {
+  display : block;
+}
+
   .GtkMenuBar li,
   .GtkCustomMenu li { /* Custom */
-    display : inline-block;
     position : relative;
     padding : 5px;
     height : 20px;
     line-height : 20px;
-    white-space : nowrap;
+    float : left;
   }
   .GtkCustomMenu li { /* Custom */
     display : block;
@@ -408,6 +469,7 @@
       position : absolute;
       min-width : 100px;
       display : none;
+      overflow : none;
       z-index : 100000000;
 
       background : #e6e6e6;

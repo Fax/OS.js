@@ -32,3 +32,29 @@ IDEAS ETC:
 [NUR] Application Streaming (VNC-ish)
 [NUR] Remove jQuery dependency, write custom library
 [NUR] Remove jQuery UI dependency, write custom library
+
+NEW GLADE TRANSFORMATION:
+-------------------------------------------------------------------------------
+ApplicationArchiver/          X
+ApplicationArkanoid/          -
+ApplicationBrowser/           -
+ApplicationClock/             -
+ApplicationDraw/
+ApplicationFileManager/       X
+ApplicationIDE/               X
+ApplicationIRC/
+ApplicationMail/
+ApplicationMusicPlayer/       X
+ApplicationPDF/               X
+ApplicationServerStatus/      -
+ApplicationTerminal/          -
+ApplicationTest/              -
+ApplicationTextpad/           X
+ApplicationTickTackToe/       X
+ApplicationVideoPlayer/       X
+ApplicationViewer/            X
+ApplicationWriter/            X
+SystemAbout/                  -
+SystemControlPanel/           -
+SystemLogout/                 -
+SystemProcesses/              -

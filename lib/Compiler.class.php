@@ -312,15 +312,13 @@ class Compiler
 
       // Generate code for Glade Schema
       if ( $schema_path ) {
-        if ( $glade = Glade::parse($schema_path) ) {
-          print "\tParsing Glade...\n";
-          if ( $result = self::_parseGlade($glade, $project_mimes, $project_title, $project_icon) ) {
-            extract($result, EXTR_OVERWRITE);
+        print "\tParsing Glade...\n";
+        if ( $result = self::_parseGlade($schema_path, $project_mimes, $project_title, $project_icon) ) {
+          extract($result, EXTR_OVERWRITE);
 
-            $temp_windows[$window_id] = $window_properties;
-            unset($window_id);
-            unset($window_properties);
-          }
+          $temp_windows[$window_id] = $window_properties;
+          unset($window_id);
+          unset($window_properties);
         }
       }
 
@@ -439,13 +437,13 @@ class Compiler
 
   /**
    * Parse a Glade file
-   * @param   Glade   $glade              Glade Class instance
+   * @param   String  $schema             Glade Schema
    * @param   Array   $mimes              Project MIMEs
    * @param   String  $project_title      Project Title
    * @param   String  $project_icon       Project Icon
    * @return  Array
    */
-  protected static function _parseGlade(Glade $glade, Array $project_mimes, $project_title, $project_icon) {
+  protected static function _parseGlade($schema, Array $project_mimes, $project_title, $project_icon) {
     $mimes              = json_encode($project_mimes);
     $js_prepend         = "";
     $js_append          = "";
@@ -459,7 +457,7 @@ class Compiler
     $glade_windows      = Array();
     $found_root         = false;
 
-    if ( $windows = $glade->getWindows() ) {
+    if ( $windows = Glade::Parse($schema) ) {
       foreach ( $windows as $id => $window ) {
         // Property overrides
         if ( !$window['properties']['title'] ) {
