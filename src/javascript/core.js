@@ -5468,6 +5468,7 @@
       this.setWallpaper(null);
       this.setWallpaperType(null);
       this.setBackgroundColor(null);
+      this.setCursorTheme(null);
       this.setTheme(null);
       this.setFont(null);
 
