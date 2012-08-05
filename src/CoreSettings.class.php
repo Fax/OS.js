@@ -182,7 +182,7 @@ abstract class CoreSettings
               ),
               "align"=>"right",
               "position"=>215
-            ),
+            )/*,
             Array(
               "index"=>7,
               "name"=>"PanelItemNotificationArea",
@@ -191,7 +191,7 @@ abstract class CoreSettings
               ),
               "align"=>"right",
               "position"=>340
-            )
+            )*/
           ),
           "position"=>"top",
           "style"=>Array(

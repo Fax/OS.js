@@ -33,9 +33,12 @@
  */
 
 body {
-  background : #666;
   font-size : 12px;
 }
+
+/****************************************************************
+                           GENERIC
+ ****************************************************************/
 
 input.Disabled {
   background : #e6e6e6;
@@ -74,15 +77,16 @@ button[disabled="disabled"]:active {
   color: #ddd;
 }
 
-/*
-#Loading {
-  background : #222;
+/****************************************************************
+                          MISC UI
+ ****************************************************************/
+
+#Version {
   color : #fff;
+  font-size : 10px;
+  font-weight : bold;
+  line-height : 15px;
 }
-#LoadingBar {
-  background : #555;
-}
-*/
 
 #ContextRectangle {
   margin : -1px;
@@ -95,7 +99,6 @@ button[disabled="disabled"]:active {
   background : #e6e6e6;
   white-space : nowrap;
 }
-
 
 #WindowToggler {
   border : 1px solid #000;
@@ -115,8 +118,24 @@ button[disabled="disabled"]:active {
   margin : -2px;
 }
 
+/****************************************************************
+                          DESKTOP
+ ****************************************************************/
+
 .DesktopPanel {
   background : #e6e6e6;
+}
+
+#DesktopGrid {
+  font-size : 90%;
+}
+
+#DesktopGrid .label {
+  color : #000;
+  background-color : #aaa;
+}
+#DesktopGrid .current .label {
+  background-color : #fff;
 }
 
 /*
@@ -128,6 +147,10 @@ button[disabled="disabled"]:active {
 .PanelItemWindow.Current {
   font-weight : bold;
 }
+
+/****************************************************************
+                            WINDOWS
+ ****************************************************************/
 
 .Window {
   background : #e6e6e6;
@@ -194,6 +217,9 @@ button[disabled="disabled"]:active {
 }
   */
 
+/****************************************************************
+                            MENUS
+ ****************************************************************/
 
 .Menu {
   background : #e6e6e6;
@@ -222,6 +248,15 @@ button[disabled="disabled"]:active {
 .Menu li.header span {
   display : none;
 }
+/*
+.GtkWindow .GtkMenu li {
+  cursor : pointer;
+}
+  */
+
+/****************************************************************
+                            DIALOGS
+ ****************************************************************/
 
 .DialogContent.error {
   color : #ff0000;
@@ -297,20 +332,10 @@ button[disabled="disabled"]:active {
   color : #fff;
 }
 
-#Version {
-  color : #fff;
-  font-size : 10px;
-  font-family : Arial;
-  font-weight : bold;
-}
+/****************************************************************
+                          DESKTOP
+ ****************************************************************/
 
-/* Glade */
-
-/*
-.GtkWindow .GtkMenu li {
-  cursor : pointer;
-}
-  */
 .DesktopNotification {
   background : #3c3c3d;
   color : #fff;
@@ -327,13 +352,17 @@ button[disabled="disabled"]:active {
   color : #fff;
 }
 
+
+/****************************************************************
+                          CLASSES.JS
+ ****************************************************************/
+
 .GUICheckList li.even {
   background : #fff;
 }
 .GUICheckList li.odd {
   background : #e6e6e6;
 }
-
 
 .GUIMenu {
   background : #e6e6e6;
@@ -354,7 +383,7 @@ button[disabled="disabled"]:active {
   background: #EBEBEB;
 }
 
-.GUIProgress > span{
+.GUIProgress > span {
   border-color: #BFBFBF #B3B3B3 #9E9E9E;
   background-color: #CCC;
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #F0F0F0), color-stop(70%, #DBDBDB), color-stop(100%, #CCC));
@@ -391,3 +420,4 @@ button[disabled="disabled"]:active {
 .GUIProgress > span::before {
   background: url("/img/progress.png") 0 0 repeat-x;
 }
+

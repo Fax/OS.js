@@ -1,11 +1,3 @@
-<div id="LoginDemoNotice" style="display:<?php print ENV_DEMO ? "block" : "none"; ?>">
-    <p>
-      <b>NOTE:</b> This is a demonstration version. Not all features are available.
-      If any errors occur, please clear the browser cache and try again before reporting any bugs.
-      You can also try to create a new user.
-    </p>
-</div>
-
 <div id="LoginWindow">
   <div id="Login">
     <form method="post" action="javascript:void(0);" id="LoginForm">

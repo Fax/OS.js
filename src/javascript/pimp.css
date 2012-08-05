@@ -30,36 +30,9 @@
  * @licence Simplified BSD License
  */
 
-body:before {
-          content: "";
-          position: fixed;
-          top: -10px;
-          left: 0;
-          width: 100%;
-          height: 10px;
-
-          -webkit-box-shadow: 0px 0px 10px rgba(0,0,0,.8);
-              -moz-box-shadow: 0px 0px 10px rgba(0,0,0,.8);
-                         box-shadow: 0px 0px 10px rgba(0,0,0,.8);
-
-          z-index: 100;
-}
-
-/*
-@font-face {
-  font-family : DefaultFont;
-  src: url('/media/System/Fonts/Sansation_Regular.ttf');
-}
-@font-face {
-  font-family : DefaultFont;
-  font-weight : bold;
-  src: url('/media/System/Fonts/Sansation_Bold.ttf');
-}
-
-body {
-  font-family : DefaultFont, Arial;
-}
-*/
+/****************************************************************
+                           GENERIC
+ ****************************************************************/
 
 /* DnD */
 [draggable] {
@@ -85,13 +58,19 @@ body {
   display: none;
 }
 
-/* Misc */
+/****************************************************************
+                          MISC UI
+ ****************************************************************/
 
+#LoginWindow:before {
+  content: "";
+  position : fixed;
+  width : 450px;
+  height : 125px;
+  border : 5px solid rgba(255, 255, 255, 0.5);
+  margin : -5px;
+}
 #LoginWindow {
-  -moz-border-radius: 10px;
-  -webkit-border-radius: 10px;
-  border-radius: 10px;
-
   -moz-box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
   -webkit-box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
   box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -110,15 +89,27 @@ body {
   opacity: 0.50;           /* fx, safari, opera */
 }
 
+#Version {
+  -moz-text-shadow: 0px 0px 2px #444;
+  -webkit-text-shadow: 0px 0px 2px #444;
+  text-shadow: 0px 0px 2px #444;
+}
+
+#WindowToggler {
+  -moz-box-shadow: 0px 0px 10px #000;
+  -webkit-box-shadow: 0px 0px 10px #000;
+  box-shadow: 0px 0px 10px #000;
+}
+
+/****************************************************************
+                          DESKTOP
+ ****************************************************************/
+
 .DesktopPanel {
   -moz-box-shadow: 0px 0px 10px #000;
   -webkit-box-shadow: 0px 0px 10px #000;
   box-shadow: 0px 0px 10px #000;
 
-  /* OVERFLOW BUG
-  filter: alpha(opacity=98); / * internet explorer * /
-  -ms-filter:'progid:DXImageTransform.Microsoft.Alpha(opacity=98)';
-  */
   -khtml-opacity: 0.98;      /* khtml, old safari */
   -moz-opacity: 0.98;       /* mozilla, netscape */
   opacity: 0.98;           /* fx, safari, opera */
@@ -135,13 +126,7 @@ body {
   opacity: 0.50;           /* fx, safari, opera */
 }
 
-#DesktopGrid {
-  font-size : 90%;
-}
 #DesktopGrid .label {
-  color : #000;
-  background-color : #aaa;
-
   -moz-border-radius: 10px; /* Firefox */
   -webkit-border-radius: 10px; /* Safari, Chrome */
   border-radius: 10px; /* CSS3 */
@@ -150,9 +135,6 @@ body {
   -khtml-opacity: 0.90;      /* khtml, old safari */
   -moz-opacity: 0.90;       /* mozilla, netscape */
   opacity: 0.90;           /* fx, safari, opera */
-}
-#DesktopGrid .current .label {
-  background-color : #fff;
 }
 
 .DesktopPanel, .PanelItem {
@@ -171,29 +153,21 @@ body {
   opacity: 0.50;           /* fx, safari, opera */
 }
 
-.PanelItemWindow {
+.DesktopNotification {
+  -moz-box-shadow: 0px 0px 10px #000;
+  -webkit-box-shadow: 0px 0px 10px #000;
+  box-shadow: 0px 0px 10px #000;
 }
-.PanelItemWindow.Current {
-}
+
+/****************************************************************
+                            WINDOWS
+ ****************************************************************/
 
 .Window {
   -moz-box-shadow: 0px 0px 10px #000;
   -webkit-box-shadow: 0px 0px 10px #000;
   box-shadow: 0px 0px 10px #000;
 }
-
-/*
-.PanelItemWindow {
-  -moz-text-shadow: 0px 0px 2px #222;
-  -webkit-text-shadow: 0px 0px 2px #222;
-  text-shadow: 0px 0px 2px #222;
-}
-.PanelItemWindow.Current {
-  -moz-text-shadow: 0px 0px 2px #444;
-  -webkit-text-shadow: 0px 0px 2px #444;
-  text-shadow: 0px 0px 2px #444;
-}
-  */
 
 .WindowTopInner span {
   -moz-text-shadow: 0px 0px 2px #888;
@@ -206,29 +180,16 @@ body {
   text-shadow: 0px 0px 2px #aaa;
 }
 
-/*
-.WindowTopController {
-  -moz-text-shadow: 0px 0px 2px #444;
-  -webkit-text-shadow: 0px 0px 2px #444;
-  text-shadow: 0px 0px 2px #444;
-}
-.WindowTopController:hover,
-.WindowTopController.Active {
-  color : #fff;
-  -moz-text-shadow: 0px 0px 2px #eee;
-  -webkit-text-shadow: 0px 0px 2px #eee;
-  text-shadow: 0px 0px 2px #eee;
-}
-.WindowTopController.Active {
-}
-  */
-
 .Window.Blend {
   filter: alpha(opacity=50); /* internet explorer */
   -khtml-opacity: 0.5;      /* khtml, old safari */
   -moz-opacity: 0.5;       /* mozilla, netscape */
   opacity: 0.5;           /* fx, safari, opera */
 }
+
+/****************************************************************
+                            MENUS
+ ****************************************************************/
 
 .Menu,
 .GUIMenu,
@@ -239,23 +200,9 @@ body {
   box-shadow: 0px 0px 10px #000;
 }
 
-#Version {
-  -moz-text-shadow: 0px 0px 2px #444;
-  -webkit-text-shadow: 0px 0px 2px #444;
-  text-shadow: 0px 0px 2px #444;
-}
-
-.DesktopNotification {
-  -moz-box-shadow: 0px 0px 10px #000;
-  -webkit-box-shadow: 0px 0px 10px #000;
-  box-shadow: 0px 0px 10px #000;
-}
-
-#WindowToggler {
-  -moz-box-shadow: 0px 0px 10px #000;
-  -webkit-box-shadow: 0px 0px 10px #000;
-  box-shadow: 0px 0px 10px #000;
-}
+/****************************************************************
+                          CLASSES.JS
+ ****************************************************************/
 
 /*
 .GUIProgress {

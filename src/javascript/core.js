@@ -101,6 +101,18 @@
   var KEY_SHIFT = false;
   var KEY_CTRL  = false;
 
+  /**
+   * @constants Key Codes
+   */
+  var KEYCODES = {
+    ctrl  : 17,
+    alt   : 18,
+    shift : 16,
+    esc   : 27,
+    tab   : 9,
+    enter : 13
+  };
+
   /////////////////////////////////////////////////////////////////////////////
   // PRIVATE VARIABLES
   /////////////////////////////////////////////////////////////////////////////
@@ -2103,7 +2115,7 @@
 
       $("#LoginUsername").keydown(function(ev) {
         var key = ev.keyCode || ev.which;
-        if ( key == 13 ) {
+        if ( key == KEYCODES.enter ) {
           $("#LoginPassword").focus();
           ev.preventDefault();
           ev.stopPropagation();
@@ -2112,7 +2124,7 @@
 
       $("#LoginPassword").keydown(function(ev) {
         var key = ev.keyCode || ev.which;
-        if ( key == 13 ) {
+        if ( key == KEYCODES.enter ) {
           $("#LoginButton").click();
           ev.preventDefault();
           ev.stopPropagation();
@@ -2463,6 +2475,7 @@
         return;
       }
 
+      $("#LoginDemoNotice").hide();
       $("#LoadingBarContainer").show();
       OSjs.Classes.ProgressBar($("#LoadingBar"), 1);
 
@@ -2790,15 +2803,15 @@
     global_keyup : function(ev) {
       var key = ev.keyCode || ev.which;
 
-      if ( key == 17 ) {
+      if ( key == KEYCODES.ctrl ) {
         KEY_CTRL = false;
-      } else if ( key == 18 ) {
+      } else if ( key == KEYCODES.alt ) {
         KEY_ALT = false;
         if ( _WM ) {
           _WM.toggleWindow(false);
         }
         ret = false;
-      } else if ( key == 16 ) {
+      } else if ( key == KEYCODES.shift ) {
         KEY_SHIFT = false;
       }
 
@@ -2824,12 +2837,12 @@
       var target = ev.target || ev.srcElement;
       var ret = true;
 
-      if ( key == 17 ) {
+      if ( key == KEYCODES.ctrl ) {
         KEY_CTRL = true;
-      } else if ( key == 18 ) {
+      } else if ( key == KEYCODES.alt ) {
         KEY_ALT = true;
         ret = false;
-      } else if ( key == 16 ) {
+      } else if ( key == KEYCODES.shift ) {
         KEY_SHIFT = true;
       }
 
@@ -2846,7 +2859,7 @@
       }
 
       // ESC cancels dialogs
-      if ( key === 27 ) {
+      if ( key === KEYCODES.esc ) {
         if ( _Window && _Window._is_dialog ) {
           _Window.$element.find(".ActionClose").click();
           return false;
@@ -2855,7 +2868,7 @@
 
       if ( target ) {
         // TAB key only in textareas
-        if ( key === 9 ) {
+        if ( key === KEYCODES.tab ) {
           if ( target.tagName.toLowerCase() == "textarea" ) {
             var cc = getCaret(target);
             var val = $(target).val();

@@ -91,7 +91,7 @@ if ( $locale = Core::get()->getLocale() ) {
   <link rel="stylesheet" type="text/css" href="/VFS/resource/pimp.css" />
 
   <link rel="stylesheet" type="text/css" href="/VFS/theme/default" id="ThemeBase" />
-  <link rel="stylesheet" type="text/css" href="/VFS/theme/dark" id="ThemeFace" />
+  <link rel="stylesheet" type="text/css" href="/VFS/theme/none" id="ThemeFace" />
   <link rel="stylesheet" type="text/css" href="/VFS/cursor/default" id="CursorFace" />
   <link rel="stylesheet" type="text/css" href="/VFS/font/Sansation" id="FontFace" />
 
@@ -157,6 +157,14 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
     <div id="WindowTogglerTitle"><span>Empty</span></div>
   </div>
 
+  <div id="LoginDemoNotice" style="display:<?php print ENV_DEMO ? "block" : "none"; ?>">
+      <p>
+        <b>NOTE:</b> This is a demonstration version. Not all features are available.
+        If any errors occur, please clear the browser cache and try again before reporting any bugs.
+        You can also try to create a new user.
+      </p>
+  </div>
+
   <!-- Loaded content will appear here -->
 </div>
 
@@ -170,7 +178,7 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
 
 <!-- Version Stamp -->
 <div id="Version">
-  OS.js <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)<br />
+  OS.js version <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)<br />
   &copy; <?php print htmlspecialchars(PROJECT_COPYRIGHT); ?>
 </div>
 
