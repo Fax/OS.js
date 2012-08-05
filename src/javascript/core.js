@@ -5466,6 +5466,10 @@
 
       // Reset settings
       this.setWallpaper(null);
+      this.setWallpaperType(null);
+      this.setBackgroundColor(null);
+      this.setTheme(null);
+      this.setFont(null);
 
       this.running = false;
       this._rtimeout = null;
@@ -5997,7 +6001,8 @@
       if ( wp ) {
         $("body").css("background-image", "url('/media" + wp + "')");
       } else {
-        $("body").css("background-image", "url('/img/blank.gif')");
+        $("body").css("background-image", "");
+        //$("body").css("background-image", "url('/img/blank.gif')");
       }
     },
 
@@ -6007,6 +6012,12 @@
      * @return  void
      */
     setWallpaperType : function(t) {
+      if ( !t ) {
+        $("body").css("background-repeat",    "");
+        $("body").css("background-position",  "");
+        $("body").css("background-size",      "");
+        return;
+      }
 
       switch ( t ) {
         case "Tiled Wallpaper" :
@@ -6050,9 +6061,9 @@
      * @return  void
      */
     setBackgroundColor : function(c) {
-      if ( c ) {
-        $("body").css("background-color", c);
-      }
+      c = c || "inherit";
+
+      $("body").css("background-color", c);
     },
 
     /**
@@ -6061,12 +6072,12 @@
      * @return  void
      */
     setTheme : function(theme) {
-      if ( theme ) {
-        var css = $("#ThemeFace");
-        var href = THEME_URI + theme.toLowerCase();
-        if ( $(css).attr("href") != href ) {
-          $(css).attr("href", href);
-        }
+      theme = theme || "none";
+
+      var css = $("#ThemeFace");
+      var href = THEME_URI + theme.toLowerCase();
+      if ( $(css).attr("href") != href ) {
+        $(css).attr("href", href);
       }
     },
 
