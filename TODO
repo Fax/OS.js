@@ -2,29 +2,33 @@ CORE TODO:
 -------------------------------------------------------------------------------
 [HIG] Compiler abstraction
 [HIG] Compiler: Service
-[HIG] Finish Standalone Platform
 [HIG] Refactor class constructs with tuples
-[HIG] Manifest and Cache for offline usage: http://updates.html5rocks.com/2012/04/Taking-an-Entire-Page-Offline-using-the-HTML5-FileSystem-API
-[HIG] Finish JS VFS Temporary and Persistent storage
+
+[MED] Fix bin/create-package ?!
+[MED] Redesign panel preferences
+      - Fix panel dock
+[MED] Finish JS VFS (Temporary / Persistent)
+
+[LOW] Panel setting: Background Image
+[LOW] Panels: Add/Remove (Implement multiples in GUI)
+[LOG] WindowManager effect configuration
+
+MISC TODO:
+-------------------------------------------------------------------------------
+[HIG] Finish Standalone Platform
+[HIG] Manifest and Cache for offline usage
+      http://updates.html5rocks.com/2012/04/Taking-an-Entire-Page-Offline-using-the-HTML5-FileSystem-API
 [HIG] Rewrite Glade/GTK (Merge from branch)
       * Remove the global resize event and make a poll ?!
         This would increase the performance of panel redraws etc.
       * Implement MenuNew in GtkMenu
       * Package Metadata schema property can be linked to HTML
 
-[MED] Fix bin/create-package ?!
-[MED] Redesign panel preferences
-      - Fix panel dock
-[MED] Finish JS VFS
-
-[LOW] Panel setting: Background Image
-[LOW] Panels: Add/Remove (Implement multiples in GUI)
-[LOG] WindowManager effect configuration
-
 [BIN] Finish up the Installer
 [BIN] Finish up Console
 
+IDEAS ETC:
+-------------------------------------------------------------------------------
 [NUR] Application Streaming (VNC-ish)
 [NUR] Remove jQuery dependency, write custom library
 [NUR] Remove jQuery UI dependency, write custom library
-
