@@ -2,59 +2,31 @@ CORE TODO:
 -------------------------------------------------------------------------------
 [HIG] Compiler abstraction
 [HIG] Compiler: Service
-[HIG] Refactor class constructs with tuples
-
+[HIG] Compiler: Metadata - schema can be linked to HTML
+[HIG] Core: Refactor class constructs with tuples
 [MED] Fix bin/create-package ?!
-[MED] Redesign panel preferences
-      - Fix panel dock
-[MED] Finish JS VFS (Temporary / Persistent)
+[MED] Panel: Redesign preferences
+[MED] Panel: Fix dock ?!
+[MED] VFS: Finish JS Class (Temporary / Persistent)
+[LOW] Panel: Settings - Background Image
+[LOW] Panel: Finish up multiples
+[LOW] WindowManager: Effect(s) configuration
 
-[LOW] Panel setting: Background Image
-[LOW] Panels: Add/Remove (Implement multiples in GUI)
-[LOG] WindowManager effect configuration
+FLEXBOX CONVERSION:
+-------------------------------------------------------------------------------
+ApplicationDraw/
+ApplicationIRC/
+ApplicationMail/
 
 MISC TODO:
 -------------------------------------------------------------------------------
 [HIG] Finish Standalone Platform
-[HIG] Manifest and Cache for offline usage
-      http://updates.html5rocks.com/2012/04/Taking-an-Entire-Page-Offline-using-the-HTML5-FileSystem-API
-[HIG] Rewrite Glade/GTK (Merge from branch)
-      * Remove the global resize event and make a poll ?!
-        This would increase the performance of panel redraws etc.
-      * Implement MenuNew in GtkMenu
-      * Package Metadata schema property can be linked to HTML
-
-[BIN] Finish up the Installer
-[BIN] Finish up Console
+[LOW] Manifest and Cache for offline usage
+[LOW] Finish up the Installer
+[LOW] Finish up Console
 
 IDEAS ETC:
 -------------------------------------------------------------------------------
-[NUR] Application Streaming (VNC-ish)
-[NUR] Remove jQuery dependency, write custom library
-[NUR] Remove jQuery UI dependency, write custom library
-
-NEW GLADE TRANSFORMATION:
--------------------------------------------------------------------------------
-ApplicationArchiver/          X
-ApplicationArkanoid/          -
-ApplicationBrowser/           -
-ApplicationClock/             -
-ApplicationDraw/
-ApplicationFileManager/       X
-ApplicationIDE/               X
-ApplicationIRC/
-ApplicationMail/
-ApplicationMusicPlayer/       X
-ApplicationPDF/               X
-ApplicationServerStatus/      -
-ApplicationTerminal/          -
-ApplicationTest/              -
-ApplicationTextpad/           X
-ApplicationTickTackToe/       X
-ApplicationVideoPlayer/       X
-ApplicationViewer/            X
-ApplicationWriter/            X
-SystemAbout/                  -
-SystemControlPanel/           -
-SystemLogout/                 -
-SystemProcesses/              -
+* Application Streaming (VNC-ish)
+* Remove jQuery dependency, write custom library
+* Remove jQuery UI dependency, write custom library
