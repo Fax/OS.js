@@ -453,16 +453,17 @@
   display : block;
 }
 
+  .GtkMenuBar > li,
+  .GtkCustomMenu > li { /* Custom */
+    float : left;
+  }
   .GtkMenuBar li,
   .GtkCustomMenu li { /* Custom */
+    display : block;
     position : relative;
     padding : 5px;
     height : 20px;
     line-height : 20px;
-    float : left;
-  }
-  .GtkCustomMenu li { /* Custom */
-    display : block;
   }
 
     .GtkMenuBar ul,
