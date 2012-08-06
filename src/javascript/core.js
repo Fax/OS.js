@@ -8041,6 +8041,8 @@
    */
   var GtkWindow = Window.extend({
 
+    app : null, //!< Application reference (see constructor)
+
     /**
      * GtkWindow::init() -- Constructor
      * @see Window::init()

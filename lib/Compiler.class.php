@@ -46,9 +46,6 @@ class Compiler
   // VARIABLES
   /////////////////////////////////////////////////////////////////////////////
 
-  private $_oDocument;                    //!< XML Document
-  private $_oRoot;                        //!< XML Document Root node
-
   public static $TemplatePHP;             //!< text/plain PHP Template
   public static $TemplateCSS;             //!< text/plain CSS Template
   public static $TemplateJS;              //!< text/plain Application JS Template
@@ -57,431 +54,22 @@ class Compiler
   public static $TemplateJSWindow;        //!< text/plain Glade Template
 
   /////////////////////////////////////////////////////////////////////////////
-  // MAGICS
-  /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * @constructor
-   */
-  protected function __construct() {
-  }
-
-  /////////////////////////////////////////////////////////////////////////////
-  // METHODS
-  /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * Compile a PanelItem by Metadata file
-   * @param   String    $class_name         Class name
-   * @param   String    $metadata_path      Metadata XML file path
-   * @param   bool      $dry_run            Dry-run (Default = false)
-   * @return Mixed
-   */
-  protected function compilePanelItem($class_name, $metadata_path, $dry_run = false) {
-    if ( $xml = new SimpleXmlElement(file_get_contents($metadata_path)) ) {
-      print "Compiling from '$metadata_path'\n";
-
-      // Generic variables
-      $project_name         = ((string) $xml['name']);
-      $project_enabled      = true;
-      $project_title        = PanelItem::PANELITEM_TITLE;
-      $project_titles       = Array();
-      $project_icon         = PanelItem::PANELITEM_TITLE;
-      $project_desc         = PanelItem::PANELITEM_DESC;
-      $project_descs        = Array();
-      $timestamp            = strftime("%F");
-      $js_linguas           = Array(DEFAULT_LANGUAGE => Array());
-
-      $out_css      = PATH_BUILD . "/apps/{$class_name}.css";
-      $out_php      = PATH_BUILD . "/apps/{$class_name}.class.php";
-      $out_js       = PATH_BUILD . "/apps/{$class_name}.js";
-
-      // Parse general attributes
-      foreach ( $xml->property as $p ) {
-        $val = ((string) $p);
-        switch ( $p['name'] ) {
-          case "enabled" :
-            if ( $val == "false" ) {
-              $project_enabled = false;
-              break;
-            }
-            break;
-          case "title" :
-            if ( $val ) {
-              if ( isset($p['language']) && !empty($p['language']) ) {
-                $lang = ((string)$p['language']);
-                $project_titles[$lang] = $val;
-                if ( $lang == DEFAULT_LANGUAGE ) {
-                  $project_title = $val;
-                }
-              } else {
-                $project_tiles[DEFAULT_LANGUAGE] = $val;
-                $project_title = $val;
-              }
-            }
-            break;
-          case "icon" :
-            if ( $val ) {
-              $project_icon = $val;
-            }
-            break;
-        }
-      }
-
-      // Skip application
-      if ( ENV_PRODUCTION ) {
-        if ( !$project_enabled ) {
-          print "\tNot enabled...skipping...!\n";
-          return -1;
-        }
-      }
-
-      // ...
-      if ( !isset($project_titles[DEFAULT_LANGUAGE]) ) {
-        $project_titles[DEFAULT_LANGUAGE] = $project_title;
-      }
-      foreach ( $project_titles as $tk => $tv ) {
-        $js_linguas[$tk]["title"] = $tv;
-      }
-      $js_linguas[DEFAULT_LANGUAGE]["title"] = $project_title;
-
-      $js_linguas     = json_encode($js_linguas);
-
-      // Generate files
-      $rep_php = Array(
-        "%PACKAGETYPE%"   => "PanelItem", //FIXME
-        "%CLASSNAME%"     => $class_name,
-        "%TIMESTAMP%"     => $timestamp
-      );
-      $rep_css = Array(
-        "%PACKAGETYPE%"   => "PanelItem", //FIXME
-        "%CLASSNAME%"     => $class_name
-      );
-      $rep_js = Array(
-        "%CLASSNAME%"         => $class_name,
-        "%LINGUAS%"           => $js_linguas,
-        "%DEFAULT_LANGUAGE%"  => DEFAULT_LANGUAGE,
-      );
-
-      $content_css  = str_replace(array_keys($rep_css),
-                                  array_values($rep_css),
-                                  self::$TemplateCSS);
-      $content_php  = str_replace(array_keys($rep_php),
-                                  array_values($rep_php),
-                                  self::$TemplatePHP);
-      $content_js   = str_replace(array_keys($rep_js),
-                                  array_values($rep_js),
-                                  self::$TemplateJSPI);
-
-
-      if ( !$dry_run ) {
-        file_put_contents($out_php,   $content_php);
-        file_put_contents($out_css,   $content_css);
-        file_put_contents($out_js,    $content_js);
-      }
-
-      print sprintf("\tDONE [%s]...\n", implode(",", Array("css", "php", "js")));
-
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
-   * Compile a BackgroundService by Metadata file
-   * @param   String    $class_name         Class name
-   * @param   String    $metadata_path      Metadata XML file path
-   * @param   bool      $dry_run            Dry-run (Default = false)
-   * @return Mixed
-   */
-  protected function compileService($class_name, $metadata_path, $dry_run = false) {
-    if ( $xml = new SimpleXmlElement(file_get_contents($metadata_path)) ) {
-      print "Compiling from '$metadata_path'\n";
-
-      // Generic variables
-      $project_name         = ((string) $xml['name']);
-      $project_enabled      = true;
-      $project_title        = BackgroundService::SERVICE_TITLE;
-      $project_titles       = Array();
-      $project_icon         = BackgroundService::SERVICE_TITLE;
-      $project_desc         = BackgroundService::SERVICE_DESC;
-      $project_descs        = Array();
-      $timestamp            = strftime("%F");
-      $js_linguas           = Array(DEFAULT_LANGUAGE => Array());
-
-      $out_php      = PATH_BUILD . "/apps/{$class_name}.class.php";
-      $out_js       = PATH_BUILD . "/apps/{$class_name}.js";
-
-      // Parse general attributes
-      foreach ( $xml->property as $p ) {
-        $val = ((string) $p);
-        switch ( $p['name'] ) {
-          case "enabled" :
-            if ( $val == "false" ) {
-              $project_enabled = false;
-              break;
-            }
-            break;
-          case "title" :
-            if ( $val ) {
-              if ( isset($p['language']) && !empty($p['language']) ) {
-                $lang = ((string)$p['language']);
-                $project_titles[$lang] = $val;
-                if ( $lang == DEFAULT_LANGUAGE ) {
-                  $project_title = $val;
-                }
-              } else {
-                $project_tiles[DEFAULT_LANGUAGE] = $val;
-                $project_title = $val;
-              }
-            }
-            break;
-          case "icon" :
-            if ( $val ) {
-              $project_icon = $val;
-            }
-            break;
-        }
-      }
-
-      // Skip application
-      if ( ENV_PRODUCTION ) {
-        if ( !$project_enabled ) {
-          print "\tNot enabled...skipping...!\n";
-          return -1;
-        }
-      }
-
-      // ...
-      if ( !isset($project_titles[DEFAULT_LANGUAGE]) ) {
-        $project_titles[DEFAULT_LANGUAGE] = $project_title;
-      }
-      foreach ( $project_titles as $tk => $tv ) {
-        $js_linguas[$tk]["title"] = $tv;
-      }
-      $js_linguas[DEFAULT_LANGUAGE]["title"] = $project_title;
-
-      $js_linguas     = json_encode($js_linguas);
-
-      // Generate files
-      $rep_php = Array(
-        "%PACKAGETYPE%"   => "BackgroundService", //FIXME
-        "%CLASSNAME%"     => $class_name,
-        "%TIMESTAMP%"     => $timestamp
-      );
-      $rep_js = Array(
-        "%CLASSNAME%"         => $class_name,
-        "%LINGUAS%"           => $js_linguas,
-        "%DEFAULT_LANGUAGE%"  => DEFAULT_LANGUAGE,
-      );
-
-      $content_php  = str_replace(array_keys($rep_php),
-                                  array_values($rep_php),
-                                  self::$TemplatePHP);
-      $content_js   = str_replace(array_keys($rep_js),
-                                  array_values($rep_js),
-                                  self::$TemplateJSBS);
-
-
-      if ( !$dry_run ) {
-        file_put_contents($out_php,   $content_php);
-        file_put_contents($out_js,    $content_js);
-      }
-
-      print sprintf("\tDONE [%s]...\n", implode(",", Array("php", "js")));
-
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
-   * Compile a project by Metadata file
-   * @param   String    $class_name         Class name
-   * @param   String    $metadata_path      Metadata XML file path
-   * @param   bool      $dry_run            Dry-run (Default = false)
-   * @return  Mixed
-   */
-  protected function compileProject($class_name, $metadata_path, $dry_run = false) {
-    if ( $xml = new SimpleXmlElement(file_get_contents($metadata_path)) ) {
-      print "Compiling from '$metadata_path'\n";
-
-      // Generic variables
-      $project_name         = ((string) $xml['name']);
-      $project_enabled      = true;
-      $project_title        = Application::APPLICATION_TITLE;
-      $project_titles       = Array();
-      $project_icon         = Application::APPLICATION_ICON;
-      $project_compability  = Array();
-      $project_mimes        = Array();
-      $timestamp            = strftime("%F");
-
-      // Paths
-      $out_css      = PATH_BUILD . "/apps/{$class_name}.css";
-      $out_php      = PATH_BUILD . "/apps/{$class_name}.class.php";
-      $out_js       = PATH_BUILD . "/apps/{$class_name}.js";
-      $out_html     = PATH_BUILD . "/apps/{$class_name}.html";
-      $schema_path  = null;
-
-      if ( ($schema = ((string) $xml['schema'])) ) {
-        $schema_path = str_replace("metadata.xml", $schema, $metadata_path);
-        if ( !file_exists($schema_path) ) {
-          $schema_path = null;
-        }
-      }
-
-      // Temporary variables
-      $temp_windows   = Array();
-      $glade_windows  = Array();
-      $glade_html     = Array();
-      $js_prepend     = "";
-      $js_append      = "";
-      $js_compability = "";
-      $js_glade       = "";
-      $js_root_window = "";
-      $js_linguas     = Array(DEFAULT_LANGUAGE => Array());
-
-      // Parse general attributes
-      foreach ( $xml->property as $p ) {
-        $val = ((string) $p);
-        switch ( $p['name'] ) {
-          case "enabled" :
-            if ( $val == "false" ) {
-              $project_enabled = false;
-              break;
-            }
-            break;
-          case "title" :
-            if ( $val ) {
-              if ( isset($p['language']) && !empty($p['language']) ) {
-                $lang = ((string)$p['language']);
-                $project_titles[$lang] = $val;
-                if ( $lang == DEFAULT_LANGUAGE ) {
-                  $project_title = $val;
-                }
-              } else {
-                $project_tiles[DEFAULT_LANGUAGE] = $val;
-                $project_title = $val;
-              }
-            }
-            break;
-          case "icon" :
-            if ( $val ) {
-              $project_icon = $val;
-            }
-            break;
-        }
-      }
-
-      if ( !isset($project_titles[DEFAULT_LANGUAGE]) ) {
-        $project_titles[DEFAULT_LANGUAGE] = $project_title;
-      }
-
-      // Skip application
-      if ( ENV_PRODUCTION ) {
-        if ( !$project_enabled ) {
-          print "\tNot enabled...skipping...!\n";
-          return -1;
-        }
-      }
-
-      // Parse other nodes
-      if ( isset($xml->compability) ) {
-        foreach ( $xml->compability as $c ) {
-          $project_compability[] = (string) $c;
-        }
-      }
-
-      if ( isset($xml->mime) ) {
-        foreach ( $xml->mime as $m ) {
-          $project_mimes[] = (string) $m;
-        }
-      }
-
-      // Generate code for Glade Schema
-      if ( $schema_path ) {
-        print "\tParsing Glade...\n";
-        if ( $result = self::_parseGlade($schema_path, $project_mimes, $project_title, $project_icon) ) {
-          extract($result, EXTR_OVERWRITE);
-
-          $temp_windows[$window_id] = $window_properties;
-          unset($window_id);
-          unset($window_properties);
-        }
-      }
-
-      // ...
-      foreach ( $project_titles as $tk => $tv ) {
-        $js_linguas[$tk]["title"] = $tv;
-      }
-      $js_linguas[DEFAULT_LANGUAGE]["title"] = $project_title;
-
-      // Generate files
-      $js_compability = json_encode($project_compability);
-      $js_linguas     = json_encode($js_linguas);
-      $js_glade       = implode("\n", $glade_windows);
-
-      $rep_php = Array(
-        "%PACKAGETYPE%"   => "Application", //FIXME
-        "%CLASSNAME%"     => $class_name,
-        "%TIMESTAMP%"     => $timestamp
-      );
-      $rep_css = Array(
-        "%PACKAGETYPE%"   => "Application", //FIXME
-        "%CLASSNAME%"     => $class_name
-      );
-      $rep_js = Array(
-        "%PACKAGETYPE%"       => "Application", //FIXME
-        "%CLASSNAME%"         => $class_name,
-        "%COMPABILITY%"       => $js_compability,
-        "%CODE_GLADE%"        => $js_glade,
-        "%CODE_PREPEND%"      => $js_prepend,
-        "%CODE_APPEND%"       => $js_append,
-        "%ROOT_WINDOW%"       => $js_root_window,
-        "%LINGUAS%"           => $js_linguas,
-        "%DEFAULT_LANGUAGE%"  => DEFAULT_LANGUAGE
-      );
-
-      $content_css  = str_replace(array_keys($rep_css), array_values($rep_css), self::$TemplateCSS);
-      $content_php  = str_replace(array_keys($rep_php), array_values($rep_php), self::$TemplatePHP);
-      $content_js   = str_replace(array_keys($rep_js), array_values($rep_js), self::$TemplateJS);
-      $content_html = implode("\n", $glade_html);
-
-      // Write data
-      if ( !$dry_run ) {
-        file_put_contents($out_php,   $content_php);
-        file_put_contents($out_css,   $content_css);
-        file_put_contents($out_js,    $content_js);
-        file_put_contents($out_html,  $content_html);
-      }
-
-      print sprintf("\tDONE [%s]...\n", implode(",", Array("css", "php", "js", "html")));
-
-      return true;
-    }
-
-    return false;
-  }
-
-  /////////////////////////////////////////////////////////////////////////////
   // PUBLIC METHODS
   /////////////////////////////////////////////////////////////////////////////
 
   public static function compile($project_name, $dry_run = false, $root = null) {
     $root = ($root ? $root : PATH_PACKAGES);
-    $compiler = new self();
-
     $path = "{$root}/{$project_name}/metadata.xml";
+
     if ( file_exists($path) ) {
-      if ( preg_match("/^(Application|System)(.*)$/", $project_name) ) {
-        return $compiler->compileProject($project_name, $path, $dry_run);
-      } else if ( preg_match("/^PanelItem(.*)$/", $project_name) ) {
-        return $compiler->compilePanelItem($project_name, $path, $dry_run);
+      $type = "Application";
+      if ( preg_match("/^PanelItem(.*)$/", $project_name) ) {
+        $type = "PanelItem";
       } else if ( preg_match("/^Service(.*)$/", $project_name) ) {
-        return $compiler->compileService($project_name, $path, $dry_run);
+        $type = "Service";
       }
+
+      return Compiler::_CompilePackage($type, $project_name, $path, $dry_run);
     }
 
     return false;
@@ -494,29 +82,10 @@ class Compiler
    * @return  bool
    */
   public static function compileAll($dry_run = false, $root = null) {
-    $root   = ($root ? $root : PATH_PACKAGES);
-
+    $root = ($root ? $root : PATH_PACKAGES);
     if ( $dh  = opendir($root) ) {
-      $compiler = new self();
-
       while (false !== ($filename = readdir($dh))) {
-        $path = "{$root}/{$filename}/metadata.xml";
-        if ( file_exists($path) ) {
-          if ( ($xml = file_get_contents($path)) && ($data = new SimpleXmlElement($xml)) ) {
-            switch ( ((string) $data['type']) ) {
-              case "Application" :
-                $compiler->compileProject($filename, $path, $dry_run);
-              break;
-              case "PanelItem" :
-                $compiler->compilePanelItem($filename, $path, $dry_run);
-              break;
-              case "Service" :
-              case "BackgroundService" :
-                $compiler->compileService($filename, $path, $dry_run);
-              break;
-            }
-          }
-        }
+        Compiler::compile($filename, $dry_run, $root);
       }
 
       return true;
@@ -524,6 +93,10 @@ class Compiler
 
     return false;
   }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // PROTECTED METHODS
+  /////////////////////////////////////////////////////////////////////////////
 
   /**
    * Parse a Glade file
@@ -533,7 +106,7 @@ class Compiler
    * @param   String  $project_icon       Project Icon
    * @return  Array
    */
-  protected static function _parseGlade($schema, Array $project_mimes, $project_title, $project_icon) {
+  protected static function _ParseGlade($schema, Array $project_mimes, $project_title, $project_icon) {
     $mimes              = json_encode($project_mimes);
     $js_prepend         = "";
     $js_append          = "";
@@ -763,6 +336,225 @@ EOJAVASCRIPT;
       "window_id"         => $window_id
     );
 
+  }
+
+  protected static function _CompilePackage($classType, $className, $metadataFile, $dryRun = false) {
+    if ( !($xml = new SimpleXmlElement(file_get_contents($metadataFile))) ) {
+      return false;
+    }
+
+    print "Compiling '$className' from '$metadataFile'\n";
+
+    $contentFile  = "";
+    $templateJS   = "";
+    $timestamp    = strftime("%F");
+    $data         = Array(
+      "name"        => ((string) $xml['name']),
+      "enabled"     => true,
+      "title"       => "",
+      "titles"      => Array(),
+      "icon"        => "",
+      "desc"        => "",
+      "descs"       => Array(),
+      "compability" => Array(),
+      "mimes"       => Array()
+    );
+
+    // Set defaults
+    if ( $classType == "BackgroundService" || $classType == "Service" ) {
+      $templateJS = self::$TemplateJSBS;
+      $data["title"] = BackgroundService::SERVICE_TITLE;
+      $data["icon"]  = BackgroundService::SERVICE_ICON;
+      $data["desc"]  = BackgroundService::SERVICE_DESC;
+    } else if ( $classType == "PanelItem" ) {
+      $templateJS = self::$TemplateJSPI;
+      $data["title"] = PanelItem::PANELITEM_TITLE;
+      $data["icon"]  = PanelItem::PANELITEM_ICON;
+      $data["desc"]  = PanelItem::PANELITEM_DESC;
+    } else if ( $classType == "Application" ) {
+      $templateJS = self::$TemplateJS;
+      $data["title"] = Application::APPLICATION_TITLE;
+      $data["icon"]  = Application::APPLICATION_ICON;
+    } else {
+      return false;
+    }
+
+    // Check for linked content
+    if ( ($schema = ((string) $xml['schema'])) ) {
+      $contentFile = str_replace("metadata.xml", $schema, $metadataFile);
+      if ( !file_exists($contentFile) ) {
+        $contentFile = null;
+      }
+    }
+
+    // Parse general attributes
+    foreach ( $xml->property as $p ) {
+      $val = ((string) $p);
+      switch ( $p['name'] ) {
+        case "enabled" :
+          if ( $val == "false" ) {
+            $data["enabled"] = false;
+            break;
+          }
+          break;
+        case "title" :
+          if ( $val ) {
+            if ( isset($p['language']) && !empty($p['language']) ) {
+              $lang = ((string)$p['language']);
+              $data["titles"][$lang] = $val;
+              if ( $lang == DEFAULT_LANGUAGE ) {
+                $data["title"] = $val;
+              }
+            } else {
+              $data["titles"][DEFAULT_LANGUAGE] = $val;
+              $data["title"] = $val;
+            }
+          }
+          break;
+        case "icon" :
+          if ( $val ) {
+            $data["icon"] = $val;
+          }
+          break;
+      }
+    }
+
+    if ( ENV_PRODUCTION ) {
+      if ( !$data["enabled"] ) {
+        print "\tNot enabled...skipping...!\n";
+        return -1;
+      }
+    }
+
+    // Parse other nodes
+    if ( isset($xml->compability) ) {
+      foreach ( $xml->compability as $c ) {
+        $data["compability"][] = (string) $c;
+      }
+    }
+
+    if ( isset($xml->mime) ) {
+      foreach ( $xml->mime as $m ) {
+        $data["mimes"][] = (string) $m;
+      }
+    }
+
+    // Create JS stuff
+    $temp_windows   = Array();
+    $glade_windows  = Array();
+    $glade_html     = Array();
+    $js_prepend     = "";
+    $js_append      = "";
+    $js_glade       = "";
+    $js_root_window = "";
+    $js_linguas     = Array(DEFAULT_LANGUAGE => Array());
+
+    if ( !isset($data["titles"][DEFAULT_LANGUAGE]) ) {
+      $data["titles"][DEFAULT_LANGUAGE] = $data["title"];
+    }
+    foreach ( $data["titles"] as $tk => $tv ) {
+      $js_linguas[$tk]["title"] = $tv;
+    }
+    $js_linguas[DEFAULT_LANGUAGE]["title"] = $data["title"];
+
+    // Generate code from linked file(s)
+    if ( $contentFile ) {
+      print "\tParsing Glade...\n";
+      if ( $result = self::_ParseGlade($contentFile, $data["mimes"], $data["title"], $data["icon"]) ) {
+        extract($result, EXTR_OVERWRITE);
+
+        $temp_windows[$window_id] = $window_properties;
+        unset($window_id);
+        unset($window_properties);
+      }
+    }
+
+    // Now create metadata for file generation
+    $files = Array(
+      "js" => Array(
+        "path"      => PATH_BUILD_COMPILER . "/{$className}.js",
+        "template"  => $templateJS,
+        "content"   => "",
+        "replace"   => Array(
+          "%PACKAGETYPE%"       => $classType,
+          "%CLASSNAME%"         => $className,
+          "%LINGUAS%"           => json_encode($js_linguas),
+          "%DEFAULT_LANGUAGE%"  => DEFAULT_LANGUAGE,
+        )
+      ),
+
+      "css" => Array(
+        "path"      => PATH_BUILD_COMPILER . "/{$className}.css",
+        "template"  => self::$TemplateCSS,
+        "content"   => "",
+        "replace"   => Array(
+          "%PACKAGETYPE%"   => $classType,
+          "%CLASSNAME%"     => $className
+        )
+      ),
+
+      "html" => Array(
+        "path"      => PATH_BUILD_COMPILER . "/{$className}.html",
+        "template"  => false,
+        "content"   => "",
+        "replace"   => false
+      ),
+
+      "php" => Array(
+        "path"      => PATH_BUILD_COMPILER . "/{$className}.class.php",
+        "template"  => self::$TemplatePHP,
+        "content"   => "",
+        "replace"   => Array(
+          "%PACKAGETYPE%"   => $classType,
+          "%CLASSNAME%"     => $className,
+          "%TIMESTAMP%"     => $timestamp
+        )
+      )
+    );
+
+    // Override on specific types
+    if ( $classType == "Application" ) {
+      $files["js"]["replace"] = Array(
+        "%PACKAGETYPE%"       => $classType,
+        "%CLASSNAME%"         => $className,
+        "%COMPABILITY%"       => json_encode($data["compability"]),
+        "%CODE_GLADE%"        => $js_glade,
+        "%CODE_PREPEND%"      => $js_prepend,
+        "%CODE_APPEND%"       => $js_append,
+        "%ROOT_WINDOW%"       => $js_root_window,
+        "%LINGUAS%"           => json_encode($js_linguas),
+        "%DEFAULT_LANGUAGE%"  => DEFAULT_LANGUAGE
+      );
+
+      $files["html"]["content"] = implode("\n", $glade_html);
+    } else {
+      if ( !preg_match("/Service$/", $classType) ) {
+        unset($files["css"]);
+      }
+      unset($files["html"]);
+    }
+
+    // Create content
+    foreach ( $files as $t => $d ) {
+      if ( $d["replace"] ) {
+        $files[$t]["content"] = str_replace(
+          array_keys($d["replace"]),
+          array_values($d["replace"]),
+          $d["template"]
+        );
+      }
+    }
+
+    // Create files
+    if ( !$dryRun ) {
+      foreach ( $files as $t => $d ) {
+        file_put_contents($d["path"], $d["content"]);
+      }
+    }
+
+    print sprintf("\tDONE [%s]...\n", implode(",", array_keys($files)));
+
+    return true;
   }
 
 }

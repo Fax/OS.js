@@ -355,7 +355,7 @@ abstract class Package
   }
 
   /**
-   * Load (a) Package(s)
+   * Load Package(s)
    * @param  Array     $iter     SimpleXML Iter
    * @see    Application
    * @see    PanelItem
@@ -363,6 +363,7 @@ abstract class Package
    * @return Mixed
    */
   public static function LoadPackage($iter) {
+    // Implemented in extended classes
     return false;
   }
 
@@ -374,6 +375,7 @@ abstract class Package
    * @return Mixed
    */
   public static function Event($action, Array $args) {
+    // Implemented in extended classes
     return Array();
   }
 
