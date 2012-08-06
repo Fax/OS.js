@@ -1,7 +1,6 @@
 CORE TODO:
 -------------------------------------------------------------------------------
 [HIG] Compiler: Abstraction for Package types
-[HIG] Compiler: Service
 [HIG] Compiler: Metadata - schema can be linked to HTML
 [HIG] Core: Refactor class constructs with tuples
 [MED] Fix bin/create-package ?!

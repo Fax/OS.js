@@ -198,8 +198,98 @@ class Compiler
   protected function compileService($class_name, $metadata_path, $dry_run = false) {
     if ( $xml = new SimpleXmlElement(file_get_contents($metadata_path)) ) {
       print "Compiling from '$metadata_path'\n";
-      // TODO
-      print "\tDONE!\n";
+
+      // Generic variables
+      $project_name         = ((string) $xml['name']);
+      $project_enabled      = true;
+      $project_title        = BackgroundService::SERVICE_TITLE;
+      $project_titles       = Array();
+      $project_icon         = BackgroundService::SERVICE_TITLE;
+      $project_desc         = BackgroundService::SERVICE_DESC;
+      $project_descs        = Array();
+      $timestamp            = strftime("%F");
+      $js_linguas           = Array(DEFAULT_LANGUAGE => Array());
+
+      $out_php      = PATH_BUILD . "/apps/{$class_name}.class.php";
+      $out_js       = PATH_BUILD . "/apps/{$class_name}.js";
+
+      // Parse general attributes
+      foreach ( $xml->property as $p ) {
+        $val = ((string) $p);
+        switch ( $p['name'] ) {
+          case "enabled" :
+            if ( $val == "false" ) {
+              $project_enabled = false;
+              break;
+            }
+            break;
+          case "title" :
+            if ( $val ) {
+              if ( isset($p['language']) && !empty($p['language']) ) {
+                $lang = ((string)$p['language']);
+                $project_titles[$lang] = $val;
+                if ( $lang == DEFAULT_LANGUAGE ) {
+                  $project_title = $val;
+                }
+              } else {
+                $project_tiles[DEFAULT_LANGUAGE] = $val;
+                $project_title = $val;
+              }
+            }
+            break;
+          case "icon" :
+            if ( $val ) {
+              $project_icon = $val;
+            }
+            break;
+        }
+      }
+
+      // Skip application
+      if ( ENV_PRODUCTION ) {
+        if ( !$project_enabled ) {
+          print "\tNot enabled...skipping...!\n";
+          return -1;
+        }
+      }
+
+      // ...
+      if ( !isset($project_titles[DEFAULT_LANGUAGE]) ) {
+        $project_titles[DEFAULT_LANGUAGE] = $project_title;
+      }
+      foreach ( $project_titles as $tk => $tv ) {
+        $js_linguas[$tk]["title"] = $tv;
+      }
+      $js_linguas[DEFAULT_LANGUAGE]["title"] = $project_title;
+
+      $js_linguas     = json_encode($js_linguas);
+
+      // Generate files
+      $rep_php = Array(
+        "%PACKAGETYPE%"   => "BackgroundService", //FIXME
+        "%CLASSNAME%"     => $class_name,
+        "%TIMESTAMP%"     => $timestamp
+      );
+      $rep_js = Array(
+        "%CLASSNAME%"         => $class_name,
+        "%LINGUAS%"           => $js_linguas,
+        "%DEFAULT_LANGUAGE%"  => DEFAULT_LANGUAGE,
+      );
+
+      $content_php  = str_replace(array_keys($rep_php),
+                                  array_values($rep_php),
+                                  self::$TemplatePHP);
+      $content_js   = str_replace(array_keys($rep_js),
+                                  array_values($rep_js),
+                                  self::$TemplateJSBS);
+
+
+      if ( !$dry_run ) {
+        file_put_contents($out_php,   $content_php);
+        file_put_contents($out_js,    $content_js);
+      }
+
+      print sprintf("\tDONE [%s]...\n", implode(",", Array("php", "js")));
 
       return true;
     }
