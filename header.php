@@ -39,6 +39,7 @@
 define("PROJECT_AUTHOR",        "Anders Evenrud");
 define("PROJECT_CONTACT",       "andersevenrud@gmail.com");
 define("PROJECT_VERSION",       "0.7.600");
+//define("PROJECT_VERSION",       "0.8.0");
 define("PROJECT_CODENAME",      "Catwalk");
 define("PROJECT_HOST",          (php_uname('n')));
 define("PROJECT_COPYRIGHT",     "2012 " . PROJECT_AUTHOR . " <" . PROJECT_CONTACT . ">");
@@ -55,6 +56,7 @@ define("PATH_LIB_PLATFORM",          PATH . "/lib/platform");
 define("PATH_VENDOR",                PATH . "/vendor");
 define("PATH_HTML",                  PATH . "/public_html");
 define("PATH_BUILD",                 PATH . "/src/build");
+define("PATH_BUILD_COMPILER",        PATH . "/src/build/packages");
 define("PATH_LOCALE",                PATH . "/src/locale");
 define("PATH_LOG",                   PATH . "/logs");
 define("PATH_LOG_FILE",              PATH . "/logs/messages");

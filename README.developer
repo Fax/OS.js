@@ -122,7 +122,7 @@ Directories and Files:
   crossdomain.xml           Flash helper
 /src/                     Main Sources
   /build/                   Build files, cache and temporary files
-    /apps/                    Package build output
+    /packages/                Package build output
     fontcache.xml             Font cache
     packages.xml              Package registry
   /javascript/              Frontend scripts etc.
