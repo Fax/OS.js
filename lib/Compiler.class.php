@@ -494,7 +494,7 @@ EOJAVASCRIPT;
       print "* Parsing linked content\n";
       print "    <<< $contentFile\n";
 
-      if ( preg_match("/\.xml$/", $contentFile) ) {
+      if ( preg_match("/\.xml|glade$/", $contentFile) ) {
         $contentType = "glade";
         if ( $result = self::_ParseGlade($contentFile, $data["mimes"], $data["title"], $data["icon"]) ) {
           extract($result, EXTR_OVERWRITE);
@@ -502,6 +502,8 @@ EOJAVASCRIPT;
           $temp_windows[$window_id] = $window_properties;
           unset($window_id);
           unset($window_properties);
+
+          $js_glade = implode("\n", $glade_windows);
         }
       } else {
         $contentType = "other";
