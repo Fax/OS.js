@@ -376,6 +376,7 @@ EOJAVASCRIPT;
     print "--- $classType: $className\n";
 
     $contentFile  = "";
+    $contentType  = "";
     $templateJS   = "";
     $timestamp    = strftime("%F");
     $data         = Array(
@@ -492,12 +493,19 @@ EOJAVASCRIPT;
     if ( $contentFile ) {
       print "* Parsing linked content\n";
       print "    <<< $contentFile\n";
-      if ( $result = self::_ParseGlade($contentFile, $data["mimes"], $data["title"], $data["icon"]) ) {
-        extract($result, EXTR_OVERWRITE);
 
-        $temp_windows[$window_id] = $window_properties;
-        unset($window_id);
-        unset($window_properties);
+      if ( preg_match("/\.xml$/", $contentFile) ) {
+        $contentType = "glade";
+        if ( $result = self::_ParseGlade($contentFile, $data["mimes"], $data["title"], $data["icon"]) ) {
+          extract($result, EXTR_OVERWRITE);
+
+          $temp_windows[$window_id] = $window_properties;
+          unset($window_id);
+          unset($window_properties);
+        }
+      } else {
+        $contentType = "other";
+        $js_glade = file_get_contents($contentFile);
       }
     }
 
