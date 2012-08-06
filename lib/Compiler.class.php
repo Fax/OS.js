@@ -34,7 +34,12 @@
 require_once "Glade.class.php";
 
 /**
- * Compiler -- Application Compiler main Class
+ * Compiler -- Package Compiler main Class
+ *
+ * This is the Package compiler for OS.js.
+ * It creates script files for use in a Project from a
+ * Metadata file and alternatively linked content for HTML
+ * in applications (Glade/Gtk, HTML, etc.).
  *
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @package OSjs.Libraries
@@ -57,6 +62,14 @@ class Compiler
   // PUBLIC METHODS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Compile Package given by name
+   *
+   * @param   String    $project_name   Project Name
+   * @param   bool      $dry_run        Don't write any files (Default = false)
+   * @param   String    $root           Search folder (Default = called script)
+   * @return  bool
+   */
   public static function compile($project_name, $dry_run = false, $root = null) {
     $root = ($root ? $root : PATH_PACKAGES);
     $path = "{$root}/{$project_name}/metadata.xml";
@@ -76,15 +89,22 @@ class Compiler
   }
 
   /**
-   * Compile all Applications found in folder
-   * @param   bool      $dry_run  Dry-run (Default = false)
+   * Compile all Packages found in folder
+   *
+   * @param   bool      $dry_run  Don't write any files (Default = false)
    * @param   String    $root     Search folder (Default = called script)
    * @return  bool
    */
   public static function compileAll($dry_run = false, $root = null) {
     $root = ($root ? $root : PATH_PACKAGES);
     if ( $dh  = opendir($root) ) {
+      $files = Array();
       while (false !== ($filename = readdir($dh))) {
+        $files[] = $filename;
+      }
+      sort($files);
+
+      foreach ( $files as $filename ) {
         Compiler::compile($filename, $dry_run, $root);
       }
 
@@ -100,6 +120,7 @@ class Compiler
 
   /**
    * Parse a Glade file
+   *
    * @param   String  $schema             Glade Schema
    * @param   Array   $mimes              Project MIMEs
    * @param   String  $project_title      Project Title
@@ -338,12 +359,21 @@ EOJAVASCRIPT;
 
   }
 
+  /**
+   * Compile a package, for internal usage
+   *
+   * @param   String      $classType      The class base name
+   * @param   String      $className      The class instance name (package name)
+   * @param   String      $metadataFile   Metadata file path
+   * @param   bool        $dryRun         Don't write any data
+   * @return  bool
+   */
   protected static function _CompilePackage($classType, $className, $metadataFile, $dryRun = false) {
     if ( !($xml = new SimpleXmlElement(file_get_contents($metadataFile))) ) {
       return false;
     }
 
-    print "Compiling '$className' from '$metadataFile'\n";
+    print "--- $classType: $className\n";
 
     $contentFile  = "";
     $templateJS   = "";
@@ -419,10 +449,11 @@ EOJAVASCRIPT;
       }
     }
 
+
     if ( ENV_PRODUCTION ) {
       if ( !$data["enabled"] ) {
-        print "\tNot enabled...skipping...!\n";
-        return -1;
+        print "!!! Not enabled...skipping...!\n\n";
+        return true;
       }
     }
 
@@ -459,7 +490,8 @@ EOJAVASCRIPT;
 
     // Generate code from linked file(s)
     if ( $contentFile ) {
-      print "\tParsing Glade...\n";
+      print "* Parsing linked content\n";
+      print "    <<< $contentFile\n";
       if ( $result = self::_ParseGlade($contentFile, $data["mimes"], $data["title"], $data["icon"]) ) {
         extract($result, EXTR_OVERWRITE);
 
@@ -528,31 +560,30 @@ EOJAVASCRIPT;
 
       $files["html"]["content"] = implode("\n", $glade_html);
     } else {
-      if ( !preg_match("/Service$/", $classType) ) {
+      if ( preg_match("/Service$/", $classType) ) {
         unset($files["css"]);
       }
       unset($files["html"]);
     }
 
     // Create content
-    foreach ( $files as $t => $d ) {
+    foreach ( $files as $t => &$d ) {
       if ( $d["replace"] ) {
-        $files[$t]["content"] = str_replace(
+        print "* Generating $t\n";
+        $d["content"] = str_replace(
           array_keys($d["replace"]),
           array_values($d["replace"]),
           $d["template"]
         );
       }
-    }
 
-    // Create files
-    if ( !$dryRun ) {
-      foreach ( $files as $t => $d ) {
+      if ( !$dryRun ) {
+        print "    >>> {$d["path"]}\n";
         file_put_contents($d["path"], $d["content"]);
       }
     }
 
-    print sprintf("\tDONE [%s]...\n", implode(",", array_keys($files)));
+    print "\n";
 
     return true;
   }
