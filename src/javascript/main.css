@@ -380,40 +380,10 @@ ul.CompactList li {
   line-height : 20px;
   margin : 5px;
   padding : 0;
-
-  /*
   display : block;
   position : absolute;
   top : 0px;
   left : 0px;
-  */
-
-  position : relative;
-
-  display: -webkit-box;
-  -webkit-box-align: stretch;
-  -webkit-box-pack : start;
-  -webkit-box-lines : multiple;
-  -webkit-box-direction : normal;
-  -webkit-box-flex : 1;
-
-  display: -moz-box;
-  -moz-box-align: stretch;
-  -moz-box-pack : start;
-  -moz-box-lines : multiple;
-  -moz-box-direction : normal;
-  -moz-box-flex : 1;
-
-  display: box;
-  box-align: stretch;
-  box-pack : start;
-  box-lines : multiple;
-  box-direction : normal;
-  box-flex : 1;
-
-  -webkit-box-orient: horizontal;
-  -moz-box-orient: horizontal;
-  box-orient: horizontal;
 }
 .PanelItem.Padded {
   padding-left : 5px;
