@@ -578,8 +578,9 @@ EOJAVASCRIPT;
 
     // Create content
     foreach ( $files as $t => &$d ) {
+      print "* Generating $t\n";
+
       if ( $d["replace"] ) {
-        print "* Generating $t\n";
         $d["content"] = str_replace(
           array_keys($d["replace"]),
           array_values($d["replace"]),

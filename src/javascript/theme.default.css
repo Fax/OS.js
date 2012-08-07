@@ -123,6 +123,8 @@ button[disabled="disabled"]:active {
  ****************************************************************/
 
 .DesktopPanel {
+}
+.DesktopPanel .Background {
   background : #e6e6e6;
 }
 

@@ -44,11 +44,11 @@ body {
 }
 */
 
-.DesktopPanel {
+.DesktopPanel .Background {
   background : #a2a4a5;
   border-bottom : 1px solid #8f9191;
 }
-.DesktopPanel.Transparent {
+.DesktopPanel.Transparent .Background {
   background : transparent;
   border : 0 none;
 }

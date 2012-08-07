@@ -1,18 +1,15 @@
 CORE TODO:
 -------------------------------------------------------------------------------
+[HIG] Core: Refactor config/header with array and loop
 [HIG] Core: Refactor class constructs with tuples
 [MED] Fix bin/create-package ?!
+[HIG] Panel: Panel flex-box model!
 [MED] Panel: Redesign preferences
 [MED] Panel: Fix dock ?!
 [MED] VFS: Finish JS Class (Temporary / Persistent)
 [LOW] Panel: Settings - Background Image
 [LOW] Panel: Finish up multiples
 [LOW] WindowManager: Effect(s) configuration
-
-FLEXBOX CONVERSION:
--------------------------------------------------------------------------------
-ApplicationIRC/
-ApplicationMail/
 
 MISC TODO:
 -------------------------------------------------------------------------------

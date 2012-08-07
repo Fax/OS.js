@@ -6254,7 +6254,7 @@
       console.log("Name", name);
       console.log("Position", pos);
 
-      this.$element     = $('<div class="DesktopPanel"><ul></ul></div>');
+      this.$element     = $('<div class="DesktopPanel"><div class=\"Background\"></div><ul></ul></div>');
       this.pos          = pos;
       this.items        = [];
       this.running      = false;
