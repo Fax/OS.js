@@ -410,6 +410,12 @@ class Glade
       if ( isset($props['height']) ) {
         $styles[] = "height:{$props['height']}px";
       }
+      if ( isset($props["width_request"]) ) {
+        $styles[] = "width:{$props['width_request']}px";
+      }
+      if ( isset($props["height_request"]) ) {
+        $styles[] = "height:{$props['height_request']}px";
+      }
 
       // Positioning
       // FIXME: Move to packing ?!
@@ -493,18 +499,30 @@ class Glade
       case "GtkSeparator" :
         $node = $dom->createElement("hr");
       break;
-      case "GtkColorButton"   :
-        $node = $dom->createElement("div");
-      break;
       case "GtkIconView"   :
         $node = $dom->createElement("div");
       break;
       case "GtkScale"   :
         $node = $dom->createElement("div");
+
+        $inner = $dom->createElement("div");
+        $inner->appendChild(new DomText(""));
+        $node->appendChild($inner);
       break;
+
       case "GtkButton"   :
         $node = $dom->createElement("button");
         $this->_stock($dom, $node, null, $props, true);
+      break;
+
+      case "GtkColorButton" :
+        $node = $dom->createElement("button");
+
+        // We need some children here
+        $inner = $dom->createElement("span");
+        $inner->setAttribute("class", "{$class}Color");
+        $inner->appendChild(new DomText(""));
+        $node->appendChild($inner);
       break;
 
       //
@@ -524,6 +542,7 @@ class Glade
 
       case "GtkToolButton" :
       case "GtkToggleToolButton" :
+      case "GtkToolItemGroup" :
         $node = $dom->createElement("button");
         $this->_stock($dom, $node, null, $props, true);
       break;

@@ -379,13 +379,13 @@
 
   .GtkToolbar li {
     float : left;
-    overflow : hidden;
+    /*overflow : hidden;*/
     height : 25px;
     padding : 5px;
     position : relative;
   }
 
-  .GtkToolbar .Checked button {
+  .GtkToolbar .GtkToggleToolButton.Checked {
     border-style : inset;
   }
 
@@ -401,22 +401,13 @@
   .GtkToolbar .GtkToolItem {
     height : 20px;
     min-width : 100px;
-    overflow : hidden;
+    /*overflow : hidden;*/
   }
 
   .GtkToolbar .GtkToolItem .GtkBox {
     width : 100%;
     height : 100%;
     margin : 3px !important;
-  }
-  .GtkToolbar .GtkToolItem .GtkBox,
-  .GtkToolbar .GtkToolItem .GtkBox tbody,
-  .GtkToolbar .GtkToolItem .GtkBox tr,
-  .GtkToolbar .GtkToolItem .GtkBox td {
-    vertical-align : middle;
-    margin : 0;
-    padding : 0;
-    border-collapse : collapse;
   }
 
 /* GtkFixed */

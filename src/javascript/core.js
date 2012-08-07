@@ -8140,7 +8140,7 @@
         //
 
         // Slider
-        el.find(".GtkScale").slider();
+        el.find(".GtkScale div").slider();
 
         // Item Groups
         el.find(".GtkToolItemGroup").click(function() {
@@ -8154,11 +8154,11 @@
         });
 
         // Toggle buttons
-        el.find(".GtkToggleToolButton button").click(function() {
-          if ( $(this).parent().hasClass("Checked") ) {
-            $(this).parent().removeClass("Checked");
+        el.find(".GtkToggleToolButton").click(function() {
+          if ( $(this).hasClass("Checked") ) {
+            $(this).removeClass("Checked");
           } else {
-            $(this).parent().addClass("Checked");
+            $(this).addClass("Checked");
           }
         });
 
