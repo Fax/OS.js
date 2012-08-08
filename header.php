@@ -38,8 +38,7 @@
 // Information
 define("PROJECT_AUTHOR",        "Anders Evenrud");
 define("PROJECT_CONTACT",       "andersevenrud@gmail.com");
-define("PROJECT_VERSION",       "0.7.600");
-//define("PROJECT_VERSION",       "0.8.0");
+define("PROJECT_VERSION",       "0.8.0");
 define("PROJECT_CODENAME",      "Catwalk");
 define("PROJECT_HOST",          (php_uname('n')));
 define("PROJECT_COPYRIGHT",     "2012 " . PROJECT_AUTHOR . " <" . PROJECT_CONTACT . ">");
