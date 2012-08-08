@@ -505,6 +505,7 @@ abstract class CoreSettings
     "theme.default.css",
     "theme.dark.css",
     "theme.light.css",
+    "theme.none.css",
     "cursor.default.css",
     "main.css",
     "dialogs.css",
