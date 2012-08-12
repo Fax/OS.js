@@ -973,6 +973,7 @@
         // NOTE: Your 'mouseup' event must fire on global document object!!!
         return {
           'init' : function(ev, c) {
+
             if ( !rect ) {
               $("#ContextRectangle").css({
                 'top'    : '-1000px',

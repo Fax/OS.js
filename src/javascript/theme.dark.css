@@ -133,22 +133,20 @@ body {
 /* SCROLLBARS */
 
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 12px;
   background : #f4f4f4;
-}
-::-webkit-scrollbar-button {
 }
 ::-webkit-scrollbar-track {
   background : #f4f4f4;
   border : 0 none;
 }
-::-webkit-scrollbar-track-piece {
-}
 ::-webkit-scrollbar-thumb {
   background : #41454d;
   border : 0 none;
 }
-::-webkit-scrollbar-corner {
+::-webkit-scrollbar-thumb:vertical {
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #41454d), color-stop(100%, #31363d));
 }
-::-webkit-scrollbar-resizer {
+::-webkit-scrollbar-thumb:horizontal {
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #41454d), color-stop(100%, #31363d));
 }
