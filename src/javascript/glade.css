@@ -142,29 +142,14 @@
   width : auto;
 }
 
-  .GtkBox tr,
-  .GtkBox td {
-    position : relative;
-    vertical-align: top;
-  }
-  .GtkBox td.Expand.Fill {
-    height : 100%;
-  }
+/*
   .GtkBox.Vertical {
   }
   .GtkBox.Horizontal {
   }
   .GtkBox .GtkBoxPosition {
   }
-
-  .GtkBox,
-  .GtkBox tbody,
-  .GtkBox tr,
-  .GtkBox td {
-    border : 0 none;
-    margin : 0;
-    padding : 0;
-  }
+*/
 
 /* GtkButtonBox */
 .GtkButtonBox {
@@ -230,6 +215,14 @@
   }
   .GtkIconView table td {
     vertical-align : middle;
+  }
+  .GtkIconView tbody,
+  .GtkIconView tr,
+  .GtkIconView td {
+    border : 0 none;
+    margin : 0;
+    padding : 0;
+    vertical-align: top;
   }
 
   /*
