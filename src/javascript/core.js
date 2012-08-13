@@ -8069,6 +8069,8 @@
       var self = this;
 
       if ( el ) {
+        //el.addClass(this._name);
+
         if ( this.app ) {
           if ( !el.hasClass(this.app._name) ) {
             el.find(".WindowContentInner").addClass(this.app._name);
