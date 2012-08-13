@@ -7,7 +7,7 @@
 
       init : function(app) {
         this._super("Window_%WINDOW_NAME%", %IS_DIALOG%, app, windows);
-        this._content = $("%CONTENT%").html();
+        this._content = $("%CONTENT%");
 %CODE_INIT%
       },
 
