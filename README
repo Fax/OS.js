@@ -1,43 +1,28 @@
 # About OS.js:
 OS.js is a simple, yet powerful Web Desktop platform.
 
-You can find more information on these pages:
-* Homepage    http://andersevenrud.github.com/OS.js/
-* YouTube     https://www.youtube.com/playlist?list=PL74DE0E481419C259
-* GitHub      https://github.com/andersevenrud/OS.js
-* Wiki        https://github.com/andersevenrud/OS.js/wiki
-* Wordpress   http://anderse.wordpress.com/os-js/
-* Google+     https://plus.google.com/b/113399210633478618934/113399210633478618934/posts
-* Facebook    https://www.facebook.com/pages/OSjs/226644300734574
-
 A live demonstration is available on http://OSjs.0o.no
 Please note that this site may be down at times. To access this demo you need to register a user.
 
 Sources will be released when reaching version `1.0-rc1` (Summer 2012).
 
-Only WebKit and Gecko based browsers are fully supported. Opera works with some minor limitations.
-There is currently no maintainence for Internet Explorer. Mobile Android and iOS is in-progress.
+Only WebKit and Gecko based browsers fully support Glade/Gtk+ due to incomplete implementation of various
+CSS features.
 
-OS.js also comes with a standalone executable (Using Python GTK+ and WebKit bindings) that
-can be deployed on a Linux distrubution.
+OS.js also comes with a standalone executable that can be deployed on a Linux distrubution running on top
+of X11.
 
 # Features:
 * BSD Licensed
-* Multi-user web-based desktop environment
-* Uses latest HTML and CSS features
-* Minimalistic, light-weight, fast and easy to extend
-* Simple Desktop Environment and Window Manager (inspired by Xfce)
-* Package Managment and Compiler (Project creation)
-* Package Compiler (Project Creation. Glade Interface Designer is supported.)
-* Large API on both client-/server-side
-* VFS (Virtual Filesystem) supporting physical paths and devices/streams
-* TCP Connections via a WebSocket wrapper
-* User sessions, User settings registry, Application settings storage
-* Drag and Drop support
-* Session/Registry/Storage snapshot features
-* Resource lazy-loading for increased performance
-* Comes with common dialogs (File-, Color-, Font-operations etc.)
-* Comes (alternatively) with a collection of Packages
+* Minimalistic, light-weight multi-user Web Desktop Platform
+* Package Managment (System- and User-installable applications/services/panel-items)
+* Session Managment (Settings registry, snapshots)
+* Resource Managment (Resource (pre-)loading, compression, caching)
+* Simple Desktop Environment and Window Manager (With latest HTML/CSS features)
+* TCP/IP Connections via WebSocket wrapper
+* Virtual Filesystem (VFS) via Browser and/or Server
+* Glade/Gtk+ support (Create UIs in Glade Interface Designer)
+* Package generator and compiler
 
 # Default Packages
 * Panel Items: Clock, Launcher, Menu, Separator, Weather, Window List
@@ -51,3 +36,11 @@ can be deployed on a Linux distrubution.
 * Utilities: Terminal Emulator, Clock, File Browser
 * Other: WebWorker and Canvas Mandelbrot test application
 
+# Links
+* Homepage    http://andersevenrud.github.com/OS.js/
+* YouTube     https://www.youtube.com/playlist?list=PL74DE0E481419C259
+* GitHub      https://github.com/andersevenrud/OS.js
+* Wiki        https://github.com/andersevenrud/OS.js/wiki
+* Wordpress   http://anderse.wordpress.com/os-js/
+* Google+     https://plus.google.com/b/113399210633478618934/113399210633478618934/posts
+* Facebook    https://www.facebook.com/pages/OSjs/226644300734574
