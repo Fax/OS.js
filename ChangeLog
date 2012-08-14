@@ -1,3 +1,44 @@
+## 0.8.0
+
+WARNING: Breaks compability with Gtk CSS in applications. All applications in the default
+repository has been updated (there are some exceptions, see TOOD).
+
+NOTE: Opera Glade/Gtk CSS support dropped since there is no support for the flexbox model.
+
+* Core
+- API: Removed _GET handling
+- API: Now sends hosts on boot
+- JS: Desktop now clears all settings correctly on destroy()
+- JS: A new default theme ("none") is used on init
+- Added lib/MediaFile.class.php
+- Added support and executables for standalone session without a browser ("platform")
+
+* UI
+- Implemented new Gtk CSS (flexbox) [merged]
+- Window switching with ALT+SHIFT
+- Panel now has support for alternative backgrounds
+- New button styles
+- New login screen
+
+* Compiler
+- Added support for PanelItem
+- Added support for BackgroundService
+- Added support for linking custom files other than Glade for JavaScript
+- Moved temporary build directory
+- Rewritten script builder, one method to rule them all
+
+* Bugfixes
+- Download page errors
+- php_ini warnings
+- bzip compression failures in _header
+- Login template PHP start-tag syntax-error
+- File permission fixes
+
+* Misc
+- Updated documentation
+- Bugfixes and cleanups
+- Performance enhancments
+
 ## 0.7.600
 * Configuration: Moved PHP.ini values to vhost
 * Bootstrap: Cleanups, Documentation, Refactor
