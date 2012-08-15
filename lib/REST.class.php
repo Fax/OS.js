@@ -98,6 +98,8 @@ abstract class REST
         } else if ( $mime === "application/xml" ) {
           return SimpleXMLElement($res);
         }
+
+        return $res;
       }
 
       return null;

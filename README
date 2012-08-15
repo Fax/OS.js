@@ -12,7 +12,7 @@ CSS features.
 OS.js also comes with a standalone executable that can be deployed on a Linux distrubution running on top
 of X11.
 
-# Features:
+# Features
 * BSD Licensed
 * Minimalistic, light-weight multi-user Web Desktop Platform
 * Package Managment (System- and User-installable applications/services/panel-items)
@@ -41,6 +41,11 @@ of X11.
 * YouTube     https://www.youtube.com/playlist?list=PL74DE0E481419C259
 * GitHub      https://github.com/andersevenrud/OS.js
 * Wiki        https://github.com/andersevenrud/OS.js/wiki
+* Packages    https://github.com/andersevenrud/OS.js-Packages
 * Wordpress   http://anderse.wordpress.com/os-js/
 * Google+     https://plus.google.com/b/113399210633478618934/113399210633478618934/posts
 * Facebook    https://www.facebook.com/pages/OSjs/226644300734574
+
+# Contact
+If you have any Questions, suggestions or bug-requests please contact me at
+andersevenrud@gmail.com
