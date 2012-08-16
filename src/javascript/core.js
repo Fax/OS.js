@@ -7111,15 +7111,15 @@
      *
      * @param String   name       Name of window
      * @param String   dialog     Dialog type if any
-     * @param Object   attrs      Extra win attributes (used to restore from sleep etc)
+     * @param Object   largv      Extra win attributes (used to restore from sleep etc)
      * @constructor
      */
-    init : function(name, dialog, attrs) {
+    init : function(name, dialog, largv) {
       // Check if we are restoring a window
       var restore = null;
-      if ( attrs instanceof Object ) {
-        if ( attrs[name] !== undefined ) {
-          restore = attrs[name];
+      if ( largv instanceof Object ) {
+        if ( largv[name] !== undefined ) {
+          restore = largv[name];
         }
       }
 
@@ -7169,7 +7169,11 @@
         "resize" : []
       };
 
-      console.log("Window::" + name + "::init()");
+      console.group("Window::init()");
+      console.log("Name", name);
+      console.log("Dialog", dialog);
+      console.log("Argv", largv);
+      console.groupEnd();
     },
 
     /**
@@ -8681,6 +8685,17 @@
 
     _StartStamp = ((new Date()).getTime());
     _Core       = new Core();
+
+
+    /*
+    var v = new OSjs.Classes.VFSPersistent(function() {
+      v.ls("/", function(result) {
+        console.log("ls", "/", result);
+      });
+    });
+    console.log("Instance", v);
+    */
+
 
     return true;
   }; // @endfunction

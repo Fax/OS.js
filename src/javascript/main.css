@@ -58,22 +58,6 @@ body {
                            GENERIC
  ****************************************************************/
 
-button {
-  position: relative;
-  z-index: 1;
-  overflow: visible;
-  display: inline-block;
-  padding : 2px;
-  padding-left : 5px;
-  padding-right : 5px;
-  margin: 0;
-  text-decoration: none;
-  text-align: center;
-  white-space: nowrap;
-  cursor: pointer;
-  zoom: 1;
-}
-
 .TableCellWrap {
   position : relative;
   width : 100%;
@@ -784,4 +768,65 @@ ul.CompactList li {
   bottom: 0;
   z-index: 1;
   height: 18px;
+}
+
+/****************************************************************
+                         COMPABILITY
+ ****************************************************************/
+
+html {
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+a:focus {
+  outline: thin dotted;
+}
+a:active, a:hover {
+  outline: 0;
+}
+
+b, strong {
+  font-weight: bold;
+}
+
+img {
+  border : 0 none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+button {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+  display: inline-block;
+  padding : 2px;
+  padding-left : 5px;
+  padding-right : 5px;
+  margin: 0;
+  text-decoration: none;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+  zoom: 1;
+}
+
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+
+[hidden] {
+  display: none;
+}
+
+audio, canvas, video {
+  display: inline-block;
+ *display: inline;
+ *zoom: 1;
 }
