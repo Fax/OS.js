@@ -1878,6 +1878,9 @@
    * TODO: Error handling in formatting
    * TODO: Browser compabilities
    *
+   * @link  https://developer.mozilla.org/en-US/docs/Rich-Text_Editing_in_Mozilla
+   * @link  http://www.geekpedia.com/Samples/RTB/Editor.html
+   *
    * @class
    */
   OSjs.Classes.RichtextEditor = Class.extend({
@@ -1908,10 +1911,7 @@
 
       // Prepare design mode
       this.enable();
-
-      this._doc.open();
-      this._doc.write('<head><style type="text/css">body{background:#fff;font-family:arial;font-size:12px;}</style></head>');
-      this._doc.close();
+      this.setContent("");
     },
 
     /**
@@ -1947,6 +1947,15 @@
     },
 
     /**
+     * RichtextEditor::focus() -- Focus document element
+     * @return  void
+     */
+    focus : function() {
+      if ( this._win )
+        this._win.focus();
+    },
+
+    /**
      * RichtextEditor::edit() -- Change current edit mode
      * @param   String      key     What command to send
      * @param   String      value   Value (not required)
@@ -1960,7 +1969,7 @@
 
         var self = this;
         setTimeout(function() {
-          self._win.focus();
+          self.focus();
         }, 0);
       }
     },
@@ -2226,6 +2235,37 @@
 
       if ( background )
         this.edit("backColor", background);
+    },
+
+    //
+    // FS
+    //
+
+    /**
+     * RichtextEditor::setContent() -- Set the HTML content of document
+     *
+     * This function clears the document entirely
+     *
+     * @param   String    content     The content
+     * @return  void
+     */
+    setContent : function(content) {
+      content = content || "";
+
+      this._frame.src = "about:blank";
+      this._doc.open();
+      this._doc.write('<head><style type="text/css">body{background:#fff;font-family:arial;font-size:12px;}</style></head>' + content);
+      this._doc.close();
+    },
+
+    /**
+     * RichtextEditor::getContent() -- Get the contents of document in HTML format
+     * @return  String
+     */
+    getContent : function() {
+      if ( this._frame )
+        return this._doc.body.innerHTML;
+      return "";
     }
 
   });

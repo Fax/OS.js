@@ -118,7 +118,8 @@ body {
 }
 
 .Menu,
-.GtkWindow .GtkMenuBar .GtkMenuItem ul, .GUIMenu {
+.GtkMenuBar .GtkMenuItem ul,
+.GUIMenu {
   border : 1px solid #30353d;
   background : #eeeeee;
   color : #222;
