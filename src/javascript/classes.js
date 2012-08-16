@@ -1865,4 +1865,369 @@
 
   });
 
+  /////////////////////////////////////////////////////////////////////////////
+  // RICHTEXT
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * RichtextEditor -- Richt-text editor
+   *
+   * Extend this class and manipulate HTML template
+   * in the init() method.
+   *
+   * TODO: Error handling in formatting
+   * TODO: Browser compabilities
+   *
+   * @class
+   */
+  OSjs.Classes.RichtextEditor = Class.extend({
+
+    _frame : null,    //!< HTML Document iframe
+    _doc   : null,    //!< HTML Document reference
+    _win   : null,    //!< HTML Window reference
+
+    /**
+     * RichtextEditor::init() -- Constructor
+     * @constructor
+     */
+    init : function(area) {
+      this._frame = $(area).get(0);
+
+      if ( this._frame.contentDocument ) {
+        this._win   = this._frame.contentWindow;
+        this._doc   = this._frame.contentWindow.document;
+      } else {
+        this._win   = this._frame.window;
+        this._doc   = this._frame.document;
+      }
+
+      console.log("RichtextEditor::init()", this._frame);
+
+      if ( !this._doc || !this._win )
+        throw "Failed to initialize Richtext IFrame";
+
+      // Prepare design mode
+      this.enable();
+
+      this._doc.open();
+      this._doc.write('<head><style type="text/css">body{background:#fff;font-family:arial;font-size:12px;}</style></head>');
+      this._doc.close();
+    },
+
+    /**
+     * RichtextEditor::destroy() -- Destructor
+     * @destructor
+     */
+    destroy : function() {
+      this._frame = null;
+      this._doc   = null;
+      this._win   = null;
+    },
+
+    //
+    // CONTROLLER
+    //
+
+    /**
+     * RichtextEditor::enable() -- Enable editing
+     * @return  void
+     */
+    enable : function() {
+      if ( this._doc )
+        this._doc.designMode = "on";
+    },
+
+    /**
+     * RichtextEditor::disable() -- Disable editing
+     * @return  void
+     */
+    disable : function() {
+      if ( this._doc )
+        this._doc.designMode = "off";
+    },
+
+    /**
+     * RichtextEditor::edit() -- Change current edit mode
+     * @param   String      key     What command to send
+     * @param   String      value   Value (not required)
+     * @return  void
+     */
+    edit : function(key, val) {
+      if ( this._frame ) {
+        console.log("RichtextEditor::edit()", key, val);
+
+        this._doc.execCommand(key, "", val);
+
+        var self = this;
+        setTimeout(function() {
+          self._win.focus();
+        }, 0);
+      }
+    },
+
+    //
+    // EDITING
+    //
+
+    /**
+     * RichtextEditor::undo() -- Undo last change
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    undo : function() {
+      this.edit("undo");
+    },
+
+    /**
+     * RichtextEditor::redo() -- Redo last change
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    redo : function() {
+      this.edit("redo");
+    },
+
+    /**
+     * RichtextEditor::selectAll() -- Select all content
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    selectAll : function() {
+      this.edit("selectAll");
+    },
+
+    /**
+     * RichtextEditor::cut() -- Cut selection
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    cut : function() {
+      this.edit("cut");
+    },
+
+    /**
+     * RichtextEditor::copy() -- Copy selection
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    copy : function() {
+      this.edit("copy");
+    },
+
+    /**
+     * RichtextEditor::paste() -- Paste into selection/position
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    paste : function() {
+      this.edit("paste");
+    },
+
+    /**
+     * RichtextEditor::remove() -- Delete selection
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    remove : function() {
+      this.edit("delete");
+    },
+
+    /**
+     * RichtextEditor::outdent() -- Outdent the selected text/block
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    outdent : function() {
+      this.edit("outdent");
+    },
+
+    /**
+     * RichtextEditor::indent() -- Indent the selected text/block
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    indent : function() {
+      this.edit("indent");
+    },
+
+    //
+    // FORMAT
+    //
+
+    /**
+     * RichtextEditor::heading() -- Set a HTML heading (H1-H6)
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    heading : function(h) {
+      this.edit("heading", h);
+    },
+
+    /**
+     * RichtextEditor::formatBlock() -- Surround selection with given block-type
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    formatBlock : function(el) {
+      this.edit("formatBlock", el);
+    },
+
+    /**
+     * RichtextEditor::removeFormat() -- Remove formatting on selection
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    removeFormat : function() {
+      this.edit("removeFormat");
+    },
+
+    /**
+     * RichtextEditor::insertHTML() -- Insert HTML
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    insertHTML : function(html) {
+      this.edit("insertHTML", html);
+    },
+
+    /**
+     * RichtextEditor::insertImage() -- Insert image from URL
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    insertImage : function(src) {
+      this.edit("insertImage", src);
+    },
+
+    /**
+     * RichtextEditor::insertList() -- Insert a List
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    insertList : function(type) {
+      if ( type == "ul" ) {
+        this.edit("insertUnorderedList");
+      } else if ( type == "ol" ) {
+        this.edit("insertOrderedList");
+      }
+    },
+
+    /**
+     * RichtextEditor::insertParagraph() -- Insert paragraph here
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    insertParagraph : function() {
+      this.edit("insertParagraph");
+    },
+
+    /**
+     * RichtextEditor::insertLink() -- Add a linked href to selection
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    insertLink : function(uri) {
+      this.edit("createLink", uri);
+    },
+
+    /**
+     * RichtextEditor::removeLink() -- Remove linked href
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    removeLink : function() {
+      this.edit("unlink");
+    },
+
+    //
+    // STYLES
+    //
+
+    /**
+     * RichtextEditor::toggleJustification() -- Set font justification
+     *
+     * Values: Center/Full/Left/Right
+     *
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    toggleJustification : function(val) {
+      this.edit("justify" + val);
+    },
+
+    /**
+     * RichtextEditor::toggleBold() -- Set bold text
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    toggleBold : function() {
+      this.edit("bold");
+    },
+
+    /**
+     * RichtextEditor::toggleItalic() -- Set italic text
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    toggleItalic : function() {
+      this.edit("italic");
+    },
+
+    /**
+     * RichtextEditor::toggleUnderline() -- Set underline text
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    toggleUnderline : function() {
+      this.edit("underline");
+    },
+
+    /**
+     * RichtextEditor::toggleStrikeThrough() -- Set underline text
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    toggleStrikeThrough : function() {
+      this.edit("strikeThrough");
+    },
+
+    /**
+     * RichtextEditor::toggleSubscript() -- Set subscript text
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    toggleSubscript : function() {
+      this.edit("subscript");
+    },
+
+    /**
+     * RichtextEditor::toggleSuperscript() -- Set superscript text
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    toggleSuperscript : function() {
+      this.edit("superscript");
+    },
+
+    /**
+     * RichtextEditor::toggleFont() -- toggle font style
+     * @see     RichtextEditor::edit()
+     * @return  void
+     */
+    toggleFontStyle : function(name, size, color, background) {
+      if ( name )
+        this.edit("fontName", name);
+
+      if ( size )
+        this.edit("fontSize", size);
+
+      if ( color )
+        this.edit("foreColor", color);
+
+      if ( background )
+        this.edit("backColor", background);
+    }
+
+  });
+
 })($);
