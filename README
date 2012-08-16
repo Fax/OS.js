@@ -16,7 +16,7 @@ of X11.
 * BSD Licensed
 * Minimalistic, light-weight multi-user Web Desktop Platform
 * Package Managment (System- and User-installable applications/services/panel-items)
-* Session Managment (Settings registry, snapshots)
+* Session Managment (Settings registry, application storage, snapshots)
 * Resource Managment (Resource (pre-)loading, compression, caching)
 * Simple Desktop Environment and Window Manager (With latest HTML/CSS features)
 * TCP/IP Connections via WebSocket wrapper
