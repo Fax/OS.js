@@ -35,10 +35,12 @@ OSjs.Dialogs.FontOperationDialog = (function($, undefined) {
 
   var _LINGUAS = {
     "en_US" : {
-      "title"   : "Font dialog"
+      "title"   : "Font dialog",
+      "text"    : "The quick brown fox jumps over the lazy dog"
     },
     "nb_NO" : {
-      "title"   : "Skriftype dialog"
+      "title"   : "Skriftype dialog",
+      "text"    : "The quick brown fox jumps over the lazy dog"
     }
   };
 
@@ -47,27 +49,66 @@ OSjs.Dialogs.FontOperationDialog = (function($, undefined) {
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
-    function UpdatePreview(el, size, font) {
-      $(el).html("The quick brown fox jumps over the lazy dog");
-      if ( font !== undefined ) {
-        $(el).css("fontFamily", font);
-      }
+    function UpdatePreview(el, size, font, unit) {
+
+      var doc     = el.get(0).contentWindow.document;
+      var content = sprintf('<font size="%s">%s</font>', (size + unit), LABELS.text);
+      var css     = "font-family : " + font + ";";
+
+      /*
       if ( size !== undefined ) {
-        $(el).css("fontSize", size + "px");
+        css += "font-size : " + size + unit + ";";
       }
+      */
+
+      el.attr("src", "about:blank");
+      doc.open();
+      doc.write('<head><link rel="stylesheet" type="text/css" href="/VFS/resource/iframe.css" /><style type="text/css">body {' + css + '}</style></head><body>' + content + '</body>');
+      doc.close();
     }
 
     var _FontOperationDialog = OperationDialog.extend({
       init : function(font, size, clb_finish) {
-        this.font         = font || "Arial";
-        this.size         = size || 12;
         this.clb_finish   = clb_finish   || function() {};
+
+        if ( font instanceof Object ) {
+          this.font         = font.name || "Arial";
+          this.list         = font.list || [];
+          this.unit         = font.unit || "px";
+        } else {
+          this.font         = font || "Arial";
+          this.unit         = "px";
+          this.list = [
+            "Arial",
+            "Arial Black",
+            "Comic Sans MS",
+            "Courier New",
+            "Georgia",
+            "Impact",
+            "Times New Roman",
+            "Trebuchet MS",
+            "Verdana",
+            "Symbol",
+            "Webdings"
+          ];
+        }
+
+        if ( size instanceof Object ) {
+          this.size         = size.cur || 12;
+          this.sizeRangeX   = size.min || 8;
+          this.sizeRangeY   = size.max || 20;
+        } else {
+          this.size         = size || 12;
+          this.sizeRangeX   = 8;
+          this.sizeRangeY   = 20;
+        }
 
         this._super("Font");
         this._title    = LABELS.title;
-        this._content  = $("<div class=\"OperationDialog OperationDialogFont\">    <div class=\"OperationDialogInner\">      <select class=\"OperationDialogFontList\" multiple=\"false\" height=\"10\"></select>      <select class=\"OperationDialogFontSize\" multiple=\"false\" height=\"10\"></select>      <div class=\"OperationDialogFontPreview\">      </div>    </div>  </div>");
+        this._content  = $("<div class=\"OperationDialog OperationDialogFont\">    <div class=\"OperationDialogInner\">      <select class=\"OperationDialogFontList\" multiple=\"false\" height=\"10\"></select>      <select class=\"OperationDialogFontSize\" multiple=\"false\" height=\"10\"></select>      <div class=\"OperationDialogFontPreview\"><iframe src=\"about:blank;\"></iframe></div>    </div>  </div>");
         this._width    = 350;
         this._height   = 250;
+
       },
 
 
@@ -75,67 +116,58 @@ OSjs.Dialogs.FontOperationDialog = (function($, undefined) {
         var self = this;
         this._super(id, mcallback);
 
-        var font = this.$element.find(".OperationDialogFontList");
-        var size = this.$element.find(".OperationDialogFontSize");
-        var prev = this.$element.find(".OperationDialogFontPreview");
+        var font   = this.$element.find(".OperationDialogFontList");
+        var size   = this.$element.find(".OperationDialogFontSize");
+        var prev   = this.$element.find(".OperationDialogFontPreview");
+        var iframe = prev.find("iframe");
 
-        var list = [
-          "Arial",
-          "Arial Black",
-          "Comic Sans MS",
-          "Courier New",
-          "Georgia",
-          "Impact",
-          "Times New Roman",
-          "Trebuchet MS",
-          "Verdana",
-          "Symbol",
-          "Webdings"
-        ];
-
-        // Change font select
-        font.change(function() {
-          var s = $(this).val();
-
-          self.font = s;
-
-          UpdatePreview(prev, self.size, s);
+        iframe.css({
+          "border" : "0 none",
+          "margin" : "0",
+          "padding" : "0",
+          "width" : "100%",
+          "height" : "100%"
+        });
+        iframe.attr({
+          "frameborder" : "0",
+          "border" : "0",
+          "cellspacing" : "0"
         });
 
-        // Change size select
-        size.change(function() {
-          var s = parseInt($(this).val(), 10);
-
-          self.size = s;
-
-          console.log(s);
-
-          UpdatePreview(prev, s, self.font);
-        });
-
-        // Init
+        // Fill lists
         var i, el;
-        for ( i in list ) {
-          if ( list.hasOwnProperty(i) ) {
-            el = $(sprintf('<option>%s</option>', list[i]));
+        for ( i in self.list ) {
+          if ( self.list.hasOwnProperty(i) ) {
+            el = $(sprintf('<option>%s</option>', self.list[i]));
             font.append(el);
-            if ( this.font == list[i] ) {
-              font.val(list[i]);
-            }
-          }
-        }
-        for ( i = 8; i < 20; i++ ) {
-          el = $(sprintf('<option>%s</option>', i));
-          size.append(el);
-          if ( this.size == i ) {
-            size.val(i);
           }
         }
 
-        UpdatePreview(prev, this.size, this.font);
+        for ( i = self.sizeRangeX; i <= self.sizeRangeY; i++ ) {
+          size.append($(sprintf('<option>%s</option>', i)));
+        }
+
+        console.log("FontOperationDialog::init()", this.font, this.size, [font, size, iframe]);
+
+
+        // Set and run
+        size.val(this.size);
+        font.val(this.font);
+
+        UpdatePreview(iframe, this.size, this.font, this.unit);
 
         this.$element.find(".DialogButtons .Ok").show().click(function() {
           self.clb_finish(self.font, self.size);
+        });
+
+        font.change(function() {
+          self.font = $(this).val();
+          UpdatePreview(iframe, self.size, self.font, self.unit);
+        });
+
+        size.change(function() {
+          self.size = parseInt($(this).val(), 10);
+          UpdatePreview(iframe, self.size, self.font, self.unit);
         });
       }
     });

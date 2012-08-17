@@ -2254,7 +2254,7 @@
 
       this._frame.src = "about:blank";
       this._doc.open();
-      this._doc.write('<head><style type="text/css">body{background:#fff;font-family:arial;font-size:12px;}</style></head>' + content);
+      this._doc.write('<head><link rel="stylesheet" type="text/css" href="/VFS/resource/iframe.css" /></head><body>' + content + '</body>');
       this._doc.close();
     },
 
