@@ -1137,7 +1137,7 @@
         return _WM.addWindow(new OSjs.Dialogs.ColorOperationDialog(OperationDialog, API, [start_color, clb_finish]));
       },
 
-      'dialog_font' : function(current_font, current_size, clb_finish) {
+      'dialog_font' : function(args) {
         if ( !_WM ) {
           MessageBox(OSjs.Labels.WindowManagerMissing);
           return null;
@@ -1147,7 +1147,7 @@
         console.log("Method", "API.ui.dialog_font");
         console.groupEnd();
 
-        return _WM.addWindow(new OSjs.Dialogs.FontOperationDialog(OperationDialog, API, [current_font, current_size, clb_finish]));
+        return _WM.addWindow(new OSjs.Dialogs.FontOperationDialog(OperationDialog, API, [args]));
       },
 
       'dialog_properties' : function(filename, clb_finish) {
@@ -4509,10 +4509,14 @@
      * @see     API.ui.dialog_font
      * @return  void
      */
-    createFontDialog : function(font, size, callback) {
-      this.__addWindow(API.ui.dialog_font(font, size, function(font, size) {
+    createFontDialog : function(args) {
+      this.__addWindow(API.ui.dialog_font(args));
+
+      /*
+      font, size, function(font, size) {
         callback(font, size);
       }));
+      */
     },
 
     /**
