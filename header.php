@@ -92,13 +92,13 @@ define("URI_VFS_USER_METADATA", "/VFS/%d/packages.xml");
 define("URI_VFS_USER_PACKAGES", "/VFS/%d/Packages");
 
 // External configuration- and build-files
-define("SETTINGS_CONFIG",      PATH         . "/config.php");
-define("MINIMIZE_CACHE",       PATH_BUILD   . "/minimize.cache");
-define("FONT_CACHE",           PATH_BUILD   . "/fontcache.xml");
-define("PACKAGE_BUILD",        PATH_BUILD   . "/packages.xml");
-define("PACKAGE_USER_BUILD",   PATH_VFS     . "/%d/packages.xml");
-define("MIME_MAGIC",           PATH_VENDOR  . "/mime.mgc");
-define("VFS_TEMPLATE",         PATH_VFS     . "/0");
+define("SETTINGS_CONFIG",      PATH             . "/config.php");
+define("MINIMIZE_CACHE",       PATH_BUILD       . "/minimize.cache");
+define("FONT_CACHE",           PATH_BUILD       . "/fontcache.xml");
+define("PACKAGE_BUILD",        PATH_BUILD       . "/packages.xml");
+define("PACKAGE_USER_BUILD",   PATH_VFS         . "/%d/packages.xml");
+define("MIME_MAGIC",           PATH_VENDOR      . "/mime.mgc");
+define("VFS_TEMPLATE",         PATH_TEMPLATES   . "/vfs-user");
 
 // VFS Operation Attributes
 define("VFS_ATTR_READ",     1);
