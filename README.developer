@@ -89,13 +89,13 @@ Directories and Files:
   Browser.class.php         Browser Information Class
   Compiler.class.php        Package/Project Compiler Class
   Daemon.class.php          Daemon Process Class
-  Platform.class.php        Platform Specific API Class
   DB.class.php              Database connection and handling Class
   Glade.class.php           Glade/GTK+ XML to JS/PHP/XML Class
   JSON.class.php            JSON Wrapper Class
   Logger.class.php          Logging Handling Class
   MediaFile.class.php       Media File Handling Class
   PDF.class.php             PDF Document Handling Class
+  REST.class.php            HTTP REST API Class
   Server.class.php          WebSocket Server Main Class
   ServerUser.class.php      WebSocket Server User Class
 /logs/                    Logs
@@ -151,7 +151,6 @@ Directories and Files:
   Misc.php                  Misc functions and classes
 /vendor/                  Vendor Libraries
 /VFS/                     Virtual File System for Users
-  /0/                       VFS User template
 header.php                Configuration, Bootstrap and main init script
 config.php                YOUR CONFIGURATION (see example)
 config.example.php        Example configuration
