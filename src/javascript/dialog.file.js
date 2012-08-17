@@ -53,6 +53,13 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
+    /**
+     * Arguments:
+     * type       Dialog type (open/save)
+     * cwd        Current working directory
+     * mime       MIME Filter list
+     * on_apply   Callback function
+     */
     var _FileOperationDialog = OperationDialog.extend({
       init : function(args) {
 

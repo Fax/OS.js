@@ -49,6 +49,11 @@ OSjs.Dialogs.RenameOperationDialog = (function($, undefined) {
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
+    /**
+     * Arguments:
+     * path       Path to rename
+     * on_apply   Callback function
+     */
     var _RenameOperationDialog = OperationDialog.extend({
       init : function(args) {
         this.src          = args.path       || null;

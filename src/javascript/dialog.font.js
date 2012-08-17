@@ -81,6 +81,16 @@ OSjs.Dialogs.FontOperationDialog = (function($, undefined) {
       doc.close();
     }
 
+    /**
+     * Arguments:
+     * font_name  Current font name
+     * font_list  Font names list
+     * font_size  Current font size
+     * size_unit  Size measure unit
+     * size_min   Minimum font size
+     * size_max   Maximum font size
+     * on_apply   Callback function
+     */
     var _FontOperationDialog = OperationDialog.extend({
       init : function(args) {
         this.clb_finish   = args.on_apply  || function() {};

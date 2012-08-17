@@ -49,6 +49,12 @@ OSjs.Dialogs.InputOperationDialog = (function($, undefined) {
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
+    /**
+     * Arguments:
+     * value      Current value
+     * desc       Dialog message
+     * on_apply   Callback function
+     */
     var _InputOperationDialog = OperationDialog.extend({
       init : function(args) {
         this.value        = args.value      || null;

@@ -49,6 +49,11 @@ OSjs.Dialogs.FilePropertyOperationDialog = (function($, undefined) {
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
+    /**
+     * Arguments:
+     * path         File path
+     * on_apply     Callback function
+     */
     var _FilePropertyOperationDialog = OperationDialog.extend({
       init : function(args) {
         this.filename      = args.path;
