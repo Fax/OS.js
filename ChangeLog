@@ -1,3 +1,25 @@
+## 0.8.5
+
+WARNING: BREAKS APPLICATION DIALOG CONSTRUCTS
+
+Bugfixes, etc:
+* Fixed preloading errors
+* CSS: Cleanups
+* Compiler: Fixed Gtk JS Template errors
+* Updated docs
+* Removed unused and deprecated files
+
+UI:
+* New scrollbar styles
+* Added iframe CSS for IFrame resources
+
+JS:
+* Added Richtext-editor
+* Refactored Application/API Dialog launcher constructs
+
+Lib:
+* Added REST API Class
+
 ## 0.8.0
 
 WARNING: Breaks compability with Gtk CSS in applications. All applications in the default
