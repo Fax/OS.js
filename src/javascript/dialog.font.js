@@ -44,6 +44,20 @@ OSjs.Dialogs.FontOperationDialog = (function($, undefined) {
     }
   };
 
+  var DEFAULT_FONTS = [
+    "Arial",
+    "Arial Black",
+    "Comic Sans MS",
+    "Courier New",
+    "Georgia",
+    "Impact",
+    "Times New Roman",
+    "Trebuchet MS",
+    "Verdana",
+    "Symbol",
+    "Webdings"
+  ];
+
   return function(OperationDialog, API, argv) {
     "OperationDialog:nomunge, API:nomunge, argv:nomunge";
 
@@ -68,49 +82,21 @@ OSjs.Dialogs.FontOperationDialog = (function($, undefined) {
     }
 
     var _FontOperationDialog = OperationDialog.extend({
-      init : function(font, size, clb_finish) {
-        this.clb_finish   = clb_finish   || function() {};
-
-        if ( font instanceof Object ) {
-          this.font         = font.name || "Arial";
-          this.list         = font.list || [];
-          this.unit         = font.unit || "px";
-        } else {
-          this.font         = font || "Arial";
-          this.unit         = "px";
-          this.list = [
-            "Arial",
-            "Arial Black",
-            "Comic Sans MS",
-            "Courier New",
-            "Georgia",
-            "Impact",
-            "Times New Roman",
-            "Trebuchet MS",
-            "Verdana",
-            "Symbol",
-            "Webdings"
-          ];
-        }
-
-        if ( size instanceof Object ) {
-          this.size         = size.cur || 12;
-          this.sizeRangeX   = size.min || 8;
-          this.sizeRangeY   = size.max || 20;
-        } else {
-          this.size         = size || 12;
-          this.sizeRangeX   = 8;
-          this.sizeRangeY   = 20;
-        }
+      init : function(args) {
+        this.clb_finish   = args.on_apply  || function() {};
+        this.font         = args.font_name || "Arial";
+        this.list         = args.font_list || DEFAULT_FONTS;
+        this.size         = args.font_size || 12;
+        this.unit         = args.size_unit || "px";
+        this.sizeRangeX   = args.size_min  || 8;
+        this.sizeRangeY   = args.size_max  || 20;
 
         this._super("Font");
         this._title    = LABELS.title;
         this._content  = $("<div class=\"OperationDialog OperationDialogFont\">    <div class=\"OperationDialogInner\">      <select class=\"OperationDialogFontList\" multiple=\"false\" height=\"10\"></select>      <select class=\"OperationDialogFontSize\" multiple=\"false\" height=\"10\"></select>      <div class=\"OperationDialogFontPreview\"><iframe src=\"about:blank;\"></iframe></div>    </div>  </div>");
         this._width    = 350;
         this._height   = 250;
-
       },
-
 
       create : function(id, mcallback) {
         var self = this;
