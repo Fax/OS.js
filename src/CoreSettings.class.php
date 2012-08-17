@@ -511,6 +511,7 @@ abstract class CoreSettings
     "dialogs.css",
     "pimp.css",
     "glade.css",
+    "iframe.css",
     "init.js",
     "classes.js",
     "core.js",
