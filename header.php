@@ -36,87 +36,87 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // Information
-define("PROJECT_AUTHOR",        "Anders Evenrud");
-define("PROJECT_CONTACT",       "andersevenrud@gmail.com");
-define("PROJECT_VERSION",       "0.8.5");
-define("PROJECT_CODENAME",      "Catwalk");
-define("PROJECT_HOST",          (php_uname('n')));
-define("PROJECT_COPYRIGHT",     "2012 " . PROJECT_AUTHOR . " <" . PROJECT_CONTACT . ">");
-define("PROJECT_BUILD",         "1edb5a8");
-define("PROJECT_MODIFIED",      "1335991259");
+define("PROJECT_AUTHOR",              "Anders Evenrud");
+define("PROJECT_CONTACT",             "andersevenrud@gmail.com");
+define("PROJECT_VERSION",             "0.8.5");
+define("PROJECT_CODENAME",            "Catwalk");
+define("PROJECT_HOST",                (php_uname('n')));
+define("PROJECT_COPYRIGHT",           "2012 " . PROJECT_AUTHOR . " <" . PROJECT_CONTACT . ">");
+define("PROJECT_BUILD",               "1edb5a8");
+define("PROJECT_MODIFIED",            "1335991259");
 
 // Core Paths
-define("PATH",                       dirname(__FILE__));
-define("PATH_DOC",                   PATH . "/doc");
-define("PATH_BIN",                   PATH . "/bin");
-define("PATH_SRC",                   PATH . "/src");
-define("PATH_LIB",                   PATH . "/lib");
-define("PATH_LIB_PLATFORM",          PATH . "/lib/platform");
-define("PATH_VENDOR",                PATH . "/vendor");
-define("PATH_HTML",                  PATH . "/public_html");
-define("PATH_BUILD",                 PATH . "/src/build");
-define("PATH_BUILD_COMPILER",        PATH . "/src/build/packages");
-define("PATH_LOCALE",                PATH . "/src/locale");
-define("PATH_LOG",                   PATH . "/logs");
-define("PATH_LOG_FILE",              PATH . "/logs/messages");
-define("PATH_PACKAGES",              PATH . "/src/packages");
-define("PATH_TEMPLATES",             PATH . "/src/templates");
-define("PATH_JSBASE",                PATH . "/src/javascript");
-define("PATH_JSLOCALE",              PATH . "/src/javascript/locale");
-define("PATH_MEDIA",                 PATH . "/public_html/media");
-define("PATH_VFS",                   PATH . "/VFS");
-define("PATH_VFS_USER",              PATH . "/VFS/%d");
-define("PATH_VFS_PACKAGES",          PATH_VFS_USER . "/Packages");
+define("PATH",                        dirname(__FILE__));
+define("PATH_DOC",                    PATH          . "/doc");
+define("PATH_BIN",                    PATH          . "/bin");
+define("PATH_SRC",                    PATH          . "/src");
+define("PATH_LIB",                    PATH          . "/lib");
+define("PATH_LIB_PLATFORM",           PATH          . "/lib/platform");
+define("PATH_VENDOR",                 PATH          . "/vendor");
+define("PATH_HTML",                   PATH          . "/public_html");
+define("PATH_BUILD",                  PATH          . "/src/build");
+define("PATH_BUILD_COMPILER",         PATH          . "/src/build/packages");
+define("PATH_LOCALE",                 PATH          . "/src/locale");
+define("PATH_LOG",                    PATH          . "/logs");
+define("PATH_LOG_FILE",               PATH          . "/logs/messages");
+define("PATH_PACKAGES",               PATH          . "/src/packages");
+define("PATH_TEMPLATES",              PATH          . "/src/templates");
+define("PATH_JSBASE",                 PATH          . "/src/javascript");
+define("PATH_JSLOCALE",               PATH          . "/src/javascript/locale");
+define("PATH_MEDIA",                  PATH          . "/public_html/media");
+define("PATH_VFS",                    PATH          . "/VFS");
+define("PATH_VFS_USER",               PATH          . "/VFS/%d");
+define("PATH_VFS_PACKAGES",           PATH_VFS_USER . "/Packages");
 
 // Resource Paths
-define("RESOURCE_CORE",             PATH_JSBASE       . "/%s");
-define("RESOURCE_CORE_MIN",         PATH_JSBASE       . "/_min/%s");
-define("RESOURCE_PACKAGE",          PATH_PACKAGES     . "/%s/%s");
-define("RESOURCE_PACKAGE_MIN",      PATH_PACKAGES     . "/%s/_min/%s");
-define("RESOURCE_LOCALE",           PATH_JSLOCALE     . "/%s");
-define("RESOURCE_LOCALE_MIN",       PATH_JSLOCALE     . "/_min/%s");
-define("RESOURCE_THEME",            PATH_JSBASE       . "/%s");
-define("RESOURCE_THEME_MIN",        PATH_JSBASE       . "/_min/%s");
-define("RESOURCE_CURSOR",           PATH_JSBASE       . "/%s");
-define("RESOURCE_CURSOR_MIN",       PATH_JSBASE       . "/_min/%s");
-define("RESOURCE_VFS_PACKAGE",      PATH_VFS_PACKAGES . "/%s/%s");
-define("RESOURCE_VFS_PACKAGE_MIN",  PATH_VFS_PACKAGES . "/%s/_min/%s");
+define("RESOURCE_CORE",               PATH_JSBASE       . "/%s");
+define("RESOURCE_CORE_MIN",           PATH_JSBASE       . "/_min/%s");
+define("RESOURCE_PACKAGE",            PATH_PACKAGES     . "/%s/%s");
+define("RESOURCE_PACKAGE_MIN",        PATH_PACKAGES     . "/%s/_min/%s");
+define("RESOURCE_LOCALE",             PATH_JSLOCALE     . "/%s");
+define("RESOURCE_LOCALE_MIN",         PATH_JSLOCALE     . "/_min/%s");
+define("RESOURCE_THEME",              PATH_JSBASE       . "/%s");
+define("RESOURCE_THEME_MIN",          PATH_JSBASE       . "/_min/%s");
+define("RESOURCE_CURSOR",             PATH_JSBASE       . "/%s");
+define("RESOURCE_CURSOR_MIN",         PATH_JSBASE       . "/_min/%s");
+define("RESOURCE_VFS_PACKAGE",        PATH_VFS_PACKAGES . "/%s/%s");
+define("RESOURCE_VFS_PACKAGE_MIN",    PATH_VFS_PACKAGES . "/%s/_min/%s");
 
 // Short-hands for frontend
-define("URI_SOUND",             "/sounds/%s");
-define("URI_FONT",              "/media/System/Fonts");
-define("URI_API_OPERATION",     "/API/%s");
-define("URI_PACKAGE_RESOURCE",  "/VFS/resource/%s/%s");
-define("URI_VFS_USER",          "/VFS/%d");
-define("URI_VFS_USER_METADATA", "/VFS/%d/packages.xml");
-define("URI_VFS_USER_PACKAGES", "/VFS/%d/Packages");
+define("URI_SOUND",                   "/sounds/%s");
+define("URI_FONT",                    "/media/System/Fonts");
+define("URI_API_OPERATION",           "/API/%s");
+define("URI_PACKAGE_RESOURCE",        "/VFS/resource/%s/%s");
+define("URI_VFS_USER",                "/VFS/%d");
+define("URI_VFS_USER_METADATA",       "/VFS/%d/packages.xml");
+define("URI_VFS_USER_PACKAGES",       "/VFS/%d/Packages");
 
 // External configuration- and build-files
-define("SETTINGS_CONFIG",      PATH             . "/config.php");
-define("MINIMIZE_CACHE",       PATH_BUILD       . "/minimize.cache");
-define("FONT_CACHE",           PATH_BUILD       . "/fontcache.xml");
-define("PACKAGE_BUILD",        PATH_BUILD       . "/packages.xml");
-define("PACKAGE_USER_BUILD",   PATH_VFS         . "/%d/packages.xml");
-define("MIME_MAGIC",           PATH_VENDOR      . "/mime.mgc");
-define("VFS_TEMPLATE",         PATH_TEMPLATES   . "/vfs-user");
+define("SETTINGS_CONFIG",             PATH             . "/config.php");
+define("MINIMIZE_CACHE",              PATH_BUILD       . "/minimize.cache");
+define("FONT_CACHE",                  PATH_BUILD       . "/fontcache.xml");
+define("PACKAGE_BUILD",               PATH_BUILD       . "/packages.xml");
+define("PACKAGE_USER_BUILD",          PATH_VFS         . "/%d/packages.xml");
+define("MIME_MAGIC",                  PATH_VENDOR      . "/mime.mgc");
+define("VFS_TEMPLATE",                PATH_TEMPLATES   . "/vfs-user");
 
 // VFS Operation Attributes
-define("VFS_ATTR_READ",     1);
-define("VFS_ATTR_WRITE",    2);
-define("VFS_ATTR_SPECIAL",  4);
-define("VFS_ATTR_RW",       3);
-define("VFS_ATTR_RS",       5);
-define("VFS_ATTR_RWS",      7);
+define("VFS_ATTR_READ",               1);
+define("VFS_ATTR_WRITE",              2);
+define("VFS_ATTR_SPECIAL",            4);
+define("VFS_ATTR_RW",                 3);
+define("VFS_ATTR_RS",                 5);
+define("VFS_ATTR_RWS",                7);
 
 // Misc MIME stuff
-define("MIME_OCTET",        "application/octet-stream");
-define("MIME_TEXT",         "text/plain");
-define("MIME_CSS",          "text/css");
-define("MIME_JAVASCRIPT",   "application/x-javascript");
-define("MIME_TTF",          "application/x-font-ttf");
-define("MIME_JSON",         "application/json");
-define("MIME_HTML",         "text/html");
-define("MIME_XML",          "text/xml");
+define("MIME_OCTET",                  "application/octet-stream");
+define("MIME_TEXT",                   "text/plain");
+define("MIME_CSS",                    "text/css");
+define("MIME_JAVASCRIPT",             "application/x-javascript");
+define("MIME_TTF",                    "application/x-font-ttf");
+define("MIME_JSON",                   "application/json");
+define("MIME_HTML",                   "text/html");
+define("MIME_XML",                    "text/xml");
 
 ///////////////////////////////////////////////////////////////////////////////
 // DEPENDENCIES
