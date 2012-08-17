@@ -59,6 +59,14 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
+    /**
+     * Arguments:
+     * path         Upload path
+     * options      Options list
+     * on_success   Callback - On success
+     * on_progress  Callback - On progression
+     * on_cancel    Callback - On cancellation
+     */
     var _UploadOperationDialog = OperationDialog.extend({
       init : function(uri, args) {
 

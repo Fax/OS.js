@@ -53,6 +53,12 @@ OSjs.Dialogs.LaunchOperationDialog = (function($, undefined) {
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
+    /**
+     * Arguments:
+     * list       Application list
+     * not_fonud  Was application found, or is this a custom list?
+     * on_apply   Callback function
+     */
     var _LaunchOperationDialog = OperationDialog.extend({
       init : function(args) {
         this.list         = args.list         || [];

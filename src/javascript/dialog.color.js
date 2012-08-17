@@ -47,6 +47,11 @@ OSjs.Dialogs.ColorOperationDialog = (function($, undefined) {
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
+    /**
+     * Arguments:
+     * color      Current color (HEX String)
+     * on_apply   Callback function
+     */
     var _ColorOperationDialog = OperationDialog.extend({
       init : function(args) {
         var start_color = args.color;

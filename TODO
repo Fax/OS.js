@@ -1,6 +1,5 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[DOC] Add documentation to dialog.*.js files
 [MED] Fix bin/create-package ?!
 [MED] VFS: Finish JS Class (Temporary / Persistent)
 [MED] Panel: Redesign preferences
