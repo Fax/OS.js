@@ -50,9 +50,9 @@ OSjs.Dialogs.FilePropertyOperationDialog = (function($, undefined) {
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _FilePropertyOperationDialog = OperationDialog.extend({
-      init : function(filename, clb_finish) {
-        this.filename      = filename;
-        this.clb_finish    = clb_finish   || function() {};
+      init : function(args) {
+        this.filename      = args.path;
+        this.clb_finish    = args.on_apply   || function() {};
 
         this._super("FileProperties");
         this._title        = LABELS.title;
