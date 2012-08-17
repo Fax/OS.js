@@ -60,14 +60,15 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _UploadOperationDialog = OperationDialog.extend({
-      init : function(uri, path, clb_finish, clb_progress, clb_cancel, opts) {
+      init : function(uri, args) {
+
         this.upload_uri   = uri;
         this.uploader     = null;
-        this.upload_path  = path;
-        this.clb_finish   = clb_finish   || function() {};
-        this.clb_progress = clb_progress || function() {};
-        this.clb_cancel   = clb_cancel   || function() {};
-        this.init_opts    = opts || {};
+        this.upload_path  = args.path;
+        this.clb_finish   = args.on_success  || function() {};
+        this.clb_progress = args.on_progress || function() {};
+        this.clb_cancel   = args.on_cancel   || function() {};
+        this.init_opts    = args.options || {};
 
         this._super("Upload");
         this._title    = LABELS.title;

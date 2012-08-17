@@ -1081,7 +1081,7 @@
         return _WM.addWindow(new OSjs.Dialogs.RenameOperationDialog(OperationDialog, API, [path, clb_finish]));
       },
 
-      'dialog_upload' : function(path, clb_finish, clb_progress, clb_cancel, opts) {
+      'dialog_upload' : function(args) {
         if ( !_WM ) {
           MessageBox(OSjs.Labels.WindowManagerMissing);
           return null;
@@ -1091,7 +1091,7 @@
         console.log("Method", "API.ui.dialog_upload");
         console.groupEnd();
 
-        return _WM.addWindow(new OSjs.Dialogs.UploadOperationDialog(OperationDialog, API, [UPLOAD_URI, path, clb_finish, clb_progress, clb_cancel, opts]));
+        return _WM.addWindow(new OSjs.Dialogs.UploadOperationDialog(OperationDialog, API, [UPLOAD_URI, args]));
       },
 
       'dialog_file' : function(clb_finish, mime_filter, type, cur_dir) {
@@ -4372,10 +4372,10 @@
     defaultFileUpload : function(dir, callback, opts) {
       var self = this;
 
-      this.createUploadDialog(dir, function(dir, fmime, response) {
+      this.createUploadDialog({'path' : dir, 'on_success' : function(dir, fmime, response) {
         VFSEvent("update", {'file' : dir, 'mime' : fmime}, self);
         callback(dir, fmime, response);
-      }, null, null, opts);
+      }, 'options' : opts});
     },
 
     /**
@@ -4516,10 +4516,8 @@
      * @see     API.ui.dialog_upload
      * @return  void
      */
-    createUploadDialog : function(dir, callback, callback_progress, callback_cancel, opts) {
-      this.__addWindow(API.ui.dialog_upload(dir, function(fpath, fmime, response) {
-        callback(fpath, fmime, response);
-      }, callback_progress, callback_cancel, opts));
+    createUploadDialog : function(args) {
+      this.__addWindow(API.ui.dialog_upload(args));
     },
 
     /**
