@@ -54,10 +54,10 @@ OSjs.Dialogs.LaunchOperationDialog = (function($, undefined) {
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _LaunchOperationDialog = OperationDialog.extend({
-      init : function(items, clb_finish, not_found) {
-        this.list         = items        || [];
-        this.clb_finish   = clb_finish   || function() {};
-        this.not_found    = not_found === undefined ? false : not_found;
+      init : function(args) {
+        this.list         = args.list         || [];
+        this.clb_finish   = args.on_apply     || function() {};
+        this.not_found    = args.not_found === undefined ? false : args.not_found;
 
         this._super("Launch");
         this._title    = LABELS.title;
