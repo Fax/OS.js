@@ -54,12 +54,17 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _FileOperationDialog = OperationDialog.extend({
-      init : function(type, argv, clb_finish, cur_dir) {
-        this.aargv         = argv         || {};
-        this.atype         = type         || "open";
-        this.clb_finish    = clb_finish   || function() {};
+      init : function(args) {
+
+        var type        = args.type || "open";
+        var cur_dir     = args.cwd  || "/";
+        var mime_filter = args.mime || [];
+
+        this.aargv         = mime_filter;
+        this.atype         = type;
+        this.init_dir      = cur_dir;
         this.selected_file = null;
-        this.init_dir      = cur_dir      || "/";
+        this.clb_finish    = args.on_apply   || function() {};
 
         this._super("File");
         this._title        = type == "save" ? LABELS.title_saveas : LABELS.title_open;

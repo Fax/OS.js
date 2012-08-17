@@ -1094,21 +1094,17 @@
         return _WM.addWindow(new OSjs.Dialogs.UploadOperationDialog(OperationDialog, API, [UPLOAD_URI, args]));
       },
 
-      'dialog_file' : function(clb_finish, mime_filter, type, cur_dir) {
+      'dialog_file' : function(args) {
         if ( !_WM ) {
           MessageBox(OSjs.Labels.WindowManagerMissing);
           return null;
         }
 
-        mime_filter = mime_filter || [];
-        type = type || "open";
-        cur_dir = cur_dir || "/";
-
         console.group("=== API OPERATION ===");
         console.log("Method", "API.ui.dialog_file");
         console.groupEnd();
 
-        return _WM.addWindow(new OSjs.Dialogs.FileOperationDialog(OperationDialog, API, [type, mime_filter, clb_finish, cur_dir]));
+        return _WM.addWindow(new OSjs.Dialogs.FileOperationDialog(OperationDialog, API, [args]));
       },
 
       'dialog_launch' : function(args) {
@@ -4395,7 +4391,7 @@
         dir = dirname(file);
       }
 
-      this.createFileDialog(function(fname, mime) {
+      this.createFileDialog({'on_apply' : function(fname, mime) {
         var cont = true;
         if ( check_mime ) {
           if ( mime && mimes && mimes.length ) {
@@ -4419,7 +4415,7 @@
         } else {
           MessageBox(sprintf(OSjs.Labels.CrashApplicationOpen, basename(fname), mime));
         }
-      }, mimes, "open", dir);
+      }, 'mime' : mimes, 'type' : "open", 'cwd' : dir});
     },
 
     /**
@@ -4464,9 +4460,9 @@
       };
 
       if ( saveas ) {
-        this.createFileDialog(function(file, mime) {
+        this.createFileDialog({'on_apply' : function(file, mime) {
           _func(file, mime);
-        }, mimes, "save", dir);
+        }, 'mime' : mimes, type : "save", 'cwd' : dir});
       } else {
         _func(file);
       }
@@ -4525,10 +4521,8 @@
      * @see     API.ui.dialog_file
      * @return  void
      */
-    createFileDialog : function(callback, mimes, type, dir) {
-      this.__addWindow(API.ui.dialog_file(function(file, mime) {
-        callback(file, mime);
-      }, mimes, type, dir));
+    createFileDialog : function(args) {
+      this.__addWindow(API.ui.dialog_file(args));
     },
 
     /**
@@ -5828,11 +5822,11 @@
           } else {
             dir = "/System/Wallpapers";
           }
-          API.ui.dialog_file(function(fname) {
+          API.ui.dialog_file({'on_apply' : function(fname) {
             API.user.settings.save({
               "desktop.wallpaper.path" : fname
             });
-          }, ["image/*"], "open", dir);
+          }, 'mime' : ["image/*"], 'type' : "open", 'cwd' : dir});
         }},
         {"title" : labels.sort, "method" : function() {
           API.ui.windows.tile();
