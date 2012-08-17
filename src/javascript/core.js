@@ -1124,7 +1124,7 @@
         return _WM.addWindow(new OSjs.Dialogs.LaunchOperationDialog(OperationDialog, API, [args]));
       },
 
-      'dialog_color' : function(start_color, clb_finish) {
+      'dialog_color' : function(args) {
         if ( !_WM ) {
           MessageBox(OSjs.Labels.WindowManagerMissing);
           return null;
@@ -1134,7 +1134,7 @@
         console.log("Method", "API.ui.dialog_color");
         console.groupEnd();
 
-        return _WM.addWindow(new OSjs.Dialogs.ColorOperationDialog(OperationDialog, API, [start_color, clb_finish]));
+        return _WM.addWindow(new OSjs.Dialogs.ColorOperationDialog(OperationDialog, API, [args]));
       },
 
       'dialog_font' : function(args) {
@@ -4498,10 +4498,8 @@
      * @see     API.ui.dialog_color
      * @return  void
      */
-    createColorDialog : function(color, callback) {
-      this.__addWindow(API.ui.dialog_color(color, function(rgb, hex) {
-        callback(rgb, hex);
-      }));
+    createColorDialog : function(args) {
+      this.__addWindow(API.ui.dialog_color(args));
     },
 
     /**
