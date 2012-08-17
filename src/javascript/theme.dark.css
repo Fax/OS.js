@@ -151,3 +151,8 @@ body {
 ::-webkit-scrollbar-thumb:horizontal {
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #41454d), color-stop(100%, #31363d));
 }
+
+
+.GtkSeparatorToolItem {
+  background-color : #30353d;
+}

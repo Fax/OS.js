@@ -157,3 +157,6 @@ body .GtkMenuBar {
 ::-webkit-scrollbar-resizer {
 }
 
+.GtkSeparatorToolItem {
+  background-color : #30353d;
+}
