@@ -48,8 +48,9 @@ OSjs.Dialogs.ColorOperationDialog = (function($, undefined) {
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _ColorOperationDialog = OperationDialog.extend({
-      init : function(start_color, clb_finish) {
-        this.clb_finish = clb_finish   || function() {};
+      init : function(args) {
+        var start_color = args.color;
+        this.clb_finish = args.on_apply   || function() {};
 
         if ( start_color.match(/^rgba?/) ) {
           this.colorObj   = IntFromRGBstr(start_color  || "rgb(255,255,255)");
