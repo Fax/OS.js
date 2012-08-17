@@ -50,10 +50,10 @@ OSjs.Dialogs.InputOperationDialog = (function($, undefined) {
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _InputOperationDialog = OperationDialog.extend({
-      init : function(value, desc, clb_finish) {
-        this.value        = value        || null;
-        this.desc         = desc         || "Input";
-        this.clb_finish   = clb_finish   || function() {};
+      init : function(args) {
+        this.value        = args.value      || null;
+        this.desc         = args.desc       || "Input";
+        this.clb_finish   = args.on_apply   || function() {};
 
         this._super("Input");
         this._title    = LABELS.title;

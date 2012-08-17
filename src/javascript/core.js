@@ -1055,7 +1055,7 @@
         return _WM.addWindow(new Dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
       },
 
-      'dialog_input' : function(value, desc, clb_finish) {
+      'dialog_input' : function(args) {
         if ( !_WM ) {
           MessageBox(OSjs.Labels.WindowManagerMissing);
           return null;
@@ -1065,7 +1065,7 @@
         console.log("Method", "API.ui.dialog_input");
         console.groupEnd();
 
-        return _WM.addWindow(new OSjs.Dialogs.InputOperationDialog(OperationDialog, API, [value, desc, clb_finish]));
+        return _WM.addWindow(new OSjs.Dialogs.InputOperationDialog(OperationDialog, API, [args]));
       },
 
       'dialog_rename' : function(path, clb_finish) {
@@ -4509,12 +4509,6 @@
      */
     createFontDialog : function(args) {
       this.__addWindow(API.ui.dialog_font(args));
-
-      /*
-      font, size, function(font, size) {
-        callback(font, size);
-      }));
-      */
     },
 
     /**
@@ -4564,10 +4558,8 @@
      * @see     API.ui.dialog_input
      * @return  void
      */
-    createInputDialog : function(value, desc, callback) {
-      this.__addWindow(API.ui.dialog_input(value, desc, function(result) {
-        callback(result);
-      }));
+    createInputDialog : function(args) {
+      this.__addWindow(API.ui.dialog_input(args));
     },
 
     /**
