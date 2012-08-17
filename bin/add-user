@@ -139,11 +139,11 @@ $args  = Array(
 
 if ( ($res = DB::Insert($table, $args)) !== false ) {
   print "User '$username' was inserted into DB.\n";
-  print "You should now run 'cp -rf VFS/0 VFS/$res'";
-  print "PS: Make sure to set the correct permissions to this directory, se INSTALL";
+  print sprintf("You should now run 'cp -rf %s VFS/$res'\n", str_replace(PATH, "", VFS_TEMPLATE));
+  print "PS: Make sure to set the correct permissions to this directory, se INSTALL\n\n";
   exit(0);
 } else {
-  print "Failed to insert user into database!";
+  print "Failed to insert user into database!\n\n";
   exit(1);
 }
 
