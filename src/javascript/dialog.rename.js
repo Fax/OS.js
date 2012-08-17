@@ -50,9 +50,9 @@ OSjs.Dialogs.RenameOperationDialog = (function($, undefined) {
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _RenameOperationDialog = OperationDialog.extend({
-      init : function(src, clb_finish) {
-        this.src          = src          || null;
-        this.clb_finish   = clb_finish   || function() {};
+      init : function(args) {
+        this.src          = args.path       || null;
+        this.clb_finish   = args.on_apply   || function() {};
 
         this._super("Rename");
         this._title    = LABELS.title;

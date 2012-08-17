@@ -1068,7 +1068,7 @@
         return _WM.addWindow(new OSjs.Dialogs.InputOperationDialog(OperationDialog, API, [args]));
       },
 
-      'dialog_rename' : function(path, clb_finish) {
+      'dialog_rename' : function(args) {
         if ( !_WM ) {
           MessageBox(OSjs.Labels.WindowManagerMissing);
           return null;
@@ -1078,7 +1078,7 @@
         console.log("Method", "API.ui.dialog_rename");
         console.groupEnd();
 
-        return _WM.addWindow(new OSjs.Dialogs.RenameOperationDialog(OperationDialog, API, [path, clb_finish]));
+        return _WM.addWindow(new OSjs.Dialogs.RenameOperationDialog(OperationDialog, API, [args]));
       },
 
       'dialog_upload' : function(args) {
@@ -4545,10 +4545,8 @@
      * @see     API.ui.dialog_rename
      * @return  void
      */
-    createRenameDialog : function(dir, callback) {
-      this.__addWindow(API.ui.dialog_rename(dir, function(fname) {
-        callback(fname);
-      }));
+    createRenameDialog : function(args) {
+      this.__addWindow(API.ui.dialog_rename(args));
     },
 
     /**
