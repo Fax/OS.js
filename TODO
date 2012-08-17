@@ -1,6 +1,5 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG] Core: Refactor class constructs with tuples
 [MED] Fix bin/create-package ?!
 [MED] VFS: Finish JS Class (Temporary / Persistent)
 [MED] Panel: Redesign preferences
