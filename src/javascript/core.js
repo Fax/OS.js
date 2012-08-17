@@ -1150,7 +1150,7 @@
         return _WM.addWindow(new OSjs.Dialogs.FontOperationDialog(OperationDialog, API, [args]));
       },
 
-      'dialog_properties' : function(filename, clb_finish) {
+      'dialog_properties' : function(args) {
         if ( !_WM ) {
           MessageBox(OSjs.Labels.WindowManagerMissing);
           return null;
@@ -1160,7 +1160,7 @@
         console.log("Method", "API.ui.dialog_properties");
         console.groupEnd();
 
-        return _WM.addWindow(new OSjs.Dialogs.FilePropertyOperationDialog(OperationDialog, API, [filename, clb_finish]));
+        return _WM.addWindow(new OSjs.Dialogs.FilePropertyOperationDialog(OperationDialog, API, [args]));
       }
 
 
@@ -4577,10 +4577,8 @@
      * @see     API.ui.dialog_properties
      * @return  void
      */
-    createFilePropertyDialog : function(filename, callback) {
-      this.__addWindow(API.ui.dialog_properties(filename, function(result) {
-        callback(result);
-      }));
+    createFilePropertyDialog : function(args) {
+      this.__addWindow(API.ui.dialog_properties(args));
     },
 
     /**
