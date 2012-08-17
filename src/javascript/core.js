@@ -4485,8 +4485,8 @@
      * @see     API.ui.dialog
      * @return  void
      */
-    createMessageDialog : function(type, message, cmd_close, cmd_ok, cmd_cancel) {
-      this.__addWindow(API.ui.dialog(type, message, cmd_close, cmd_ok, cmd_cancel));
+    createMessageDialog : function(args) {
+      this.__addWindow(API.ui.dialog(args.type, args.message, args.on_close, args.on_ok, args.on_cancel));
     },
 
     /**
