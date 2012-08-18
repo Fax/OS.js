@@ -38,6 +38,30 @@ define("NODB", true);
 require "header.php";
 require "lib/Compiler.class.php";
 
+/**
+ *
+ * @return Array
+ */
+function mygetopt($short, $long) {
+  global $argv;
+
+  $options  = Array();
+  if ( isset($argv) ) {
+    $argc = sizeof($argv);
+    for ( $i = 1; $i < $argc; $i++ ) {
+      $key = preg_replace("/^\-*/", "", $argv[$i]);
+      $val = null;
+
+      if ( $i < $argc )
+        $val = $argv[++$i];
+
+      $options[$key] = $val;
+    }
+  }
+
+  return $options;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // CONFIG
 ///////////////////////////////////////////////////////////////////////////////
@@ -102,7 +126,7 @@ $template_service     = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "pack
 // MAIN
 ///////////////////////////////////////////////////////////////////////////////
 
-if ( $options = getopt($cmd_short, $cmd_long) ) {
+if ( $options = mygetopt($cmd_short, $cmd_long) ) {
   foreach ( $options as $k => $v ) {
     switch ( $k ) {
       case "v" :
@@ -144,6 +168,7 @@ if ( $options = getopt($cmd_short, $cmd_long) ) {
   print $help;
   exit(1);
 }
+exit;
 
 // Defaults
 if ( !$opts["title"] && $opts["name"] ) {
@@ -186,6 +211,10 @@ foreach ( $opts as $k => $v ) {
 $unique = uniqid();
 $folder .= $opts["name"];
 $root   = sprintf("%s/%s", PATH_PACKAGES, $folder);
+
+var_dump($template, $opts);
+
+exit;
 
 if ( is_dir($root) ) {
   print "This package already exist ($root)!\n";
