@@ -212,10 +212,6 @@ $unique = uniqid();
 $folder .= $opts["name"];
 $root   = sprintf("%s/%s", PATH_PACKAGES, $folder);
 
-var_dump($template, $opts);
-
-exit;
-
 if ( is_dir($root) ) {
   print "This package already exist ($root)!\n";
   exit(1);
