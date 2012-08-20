@@ -3730,18 +3730,20 @@
      * @return  void
      */
     _set : function(k, v) {
+      if ( (typeof v === "boolean") || (v instanceof Boolean) ) {
+        v = (v ? "true" : "false");
+      } else if ( (v instanceof Object || v instanceof Array) ) {
+        v = JSON.stringify(v);
+      }
+      localStorage.setItem(k, v);
+        /*
       try {
-        if ( (typeof v === "boolean") || (v instanceof Boolean) ) {
-          v = (v ? "true" : "false");
-        } else if ( (v instanceof Object || v instanceof Array) ) {
-          v = JSON.stringify(v);
-        }
-        localStorage.setItem(k, v);
       } catch ( e ) {
         // Caught by interval!
         //  if ( e == QUOTA_EXCEEDED_ERR ) {
         //    (function() {})();
       }
+      */
     },
 
     /**
@@ -4188,17 +4190,18 @@
    */
   var Application = Process.extend({
 
-    _argv         : {},           //!< Application staring arguments (argv)
-    _name         : "",           //!< Application name
-    _running      : false,        //!< Application running state
-    _root_window  : null,         //!< Application root Window
-    _windows      : [],           //!< Application Window list
-    _storage      : {},           //!< Application Storage
-    _storage_on   : false,        //!< Application Storage enabled state
-    _compability  : [],           //!< Application compability list
-    _workers      : {},           //!< Application WebWorker(s)
-    _sockets      : {},           //!< Applicaiton Socket(s)
-    _bindings     : {},           //!< Application Binding(s)
+    _argv             : {},           //!< Application staring arguments (argv)
+    _name             : "",           //!< Application name
+    _running          : false,        //!< Application running state
+    _root_window      : null,         //!< Application root Window
+    _windows          : [],           //!< Application Window list
+    _storage          : {},           //!< Application Storage
+    _storage_on       : false,        //!< Application Storage enabled state
+    _storage_restore  : true,         //!< Application Storage Restore enabled
+    _compability      : [],           //!< Application compability list
+    _workers          : {},           //!< Application WebWorker(s)
+    _sockets          : {},           //!< Applicaiton Socket(s)
+    _bindings         : {},           //!< Application Binding(s)
 
     /**
      * Application::init() -- Constructor
@@ -4207,17 +4210,18 @@
      * @constructor
      */
     init : function(name, argv) {
-      this._argv        = argv || {};
-      this._name        = name;
-      this._running     = false;
-      this._root_window = null;
-      this._windows     = [];
-      this._storage     = {};
-      this._storage_on  = false;
-      this._compability = [];
-      this._workers     = {};
-      this._sockets     = {};
-      this._bindings    = {
+      this._argv            = argv || {};
+      this._name            = name;
+      this._running         = false;
+      this._root_window     = null;
+      this._windows         = [];
+      this._storage         = {};
+      this._storage_on      = false;
+      this._storage_restore = true;
+      this._compability     = [];
+      this._workers         = {};
+      this._sockets         = {};
+      this._bindings        = {
         "vfs" : [],
         "dnd" : []
       };
@@ -4728,10 +4732,10 @@
 
     /**
      * Application::_restoreStorage() -- Load Application Storage
-     * @return void
+     * @return Mixed
      */
     _restoreStorage : function() {
-      if ( this._name && this._storage_on ) {
+      if ( this._name && this._storage_on && this._storage_restore ) {
         var s = _Settings.loadPackageStorage(this._name);
         if ( s !== false ) {
           this._storage = s;
@@ -4742,6 +4746,8 @@
       console.log(this._name);
       console.log("Result", this._storage);
       console.groupEnd();
+
+      return this._storage;
     },
 
     /**

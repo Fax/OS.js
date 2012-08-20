@@ -775,6 +775,9 @@
      */
     resize : function() {
       var self = this;
+      if ( !this.$element )
+        return;
+
       if ( this.type == ICONVIEW_LIST ) {
         this.$element.find(".TableHead td").each(function(ind, el) {
           var pel = self.$element.find(".TableBody tr:first-child td").get(ind);
@@ -2269,5 +2272,6 @@
     }
 
   });
+
 
 })($);
