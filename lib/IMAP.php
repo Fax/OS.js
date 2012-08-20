@@ -154,8 +154,8 @@ class IMAP
     $this->_host    = $host;
     $this->_folder  = $folder;
 
-    $auth = sprintf("{%s/imap/ssl/novalidate-cert/norsh}%s", $host, $folder);
-    //$auth = sprintf("{%s/imap/ssl/novalidate-cert}%s", $host, $folder);
+    //$auth = sprintf("{%s/imap/ssl/novalidate-cert/norsh}%s", $host, $folder);
+    $auth = sprintf("{%s/imap/ssl/novalidate-cert}%s", $host, $folder);
     //$auth = sprintf("{%s/imap/ssl}%s", $host, $folder);
     $this->_socket = @imap_open($auth, $username, $password);
     if ( ($errors = imap_errors()) !== false ) {
@@ -269,24 +269,54 @@ class IMAP
   }
 
   public function getMessages($filter = 'ALL', $body = false) {
-
-    error_log($filter);
-
     $result = Array();
     if ( $inbox = $this->_socket ) {
-      if ( $emails = imap_search($inbox, $filter) ) {
+      $mc = imap_check($inbox);
+      if ( $emails = imap_fetch_overview($inbox, "1:{$mc->Nmsgs}", 0) ) {
+        foreach ( $emails as $overview ) {
+          rsort($emails);
+          try {
+            $timestamp = new DateTime($overview->date);
+            $date = $timestamp->format("Y/m/d h:i:s");
+          } catch ( Exception $e ) {
+            $date = $overview->date;
+          }
+
+          $message  = $body ? imap_fetchbody($inbox, $overview->message_id, 2) : null;
+          $result[] = Array(
+            "id"      => $overview->message_id,
+            "uid"     => $overview->uid,
+            "msgno"   => $overview->msgno,
+            "status"  => $overview->seen ? "read" : "unread",
+            "subject" => isset($overview->subject) ? $overview->subject : "",
+            "sender"  => $overview->from,
+            "size"    => $overview->size,
+            "date"    => $date,
+            "body"    => $message ? $message : null,
+            "flags"   => Array(
+              "recent"    => $overview->recent,
+              "flagged"   => $overview->flagged,
+              "answered"  => $overview->answered,
+              "deleted"   => $overview->deleted,
+              "seen"      => $overview->seen,
+              "draft"     => $overview->draft
+            )
+          );
+        }
+      }
+
+      /*
+      if ( $emails = imap_search($inbox, $filter, SE_UID) ) {
         rsort($emails);
         foreach ( $emails as $email_number ) {
-          $overview = imap_fetch_overview($inbox,$email_number,0);
-          $message  = $body ? imap_fetchbody($inbox,$email_number,2) : null;
-
           try {
             $timestamp = new DateTime($overview[0]->date);
             $date = $timestamp->format("Y/m/d h:i:s");
           } catch ( Exception $e ) {
             $date = $overview[0]->date;
           }
-
+          $overview = imap_fetch_overview($inbox,$email_number,0);
+          $message  = $body ? imap_fetchbody($inbox,$email_number,2) : null;
           $result[] = Array(
             "id"      => $overview[0]->message_id,
             "uid"     => $overview[0]->uid,
@@ -308,6 +338,7 @@ class IMAP
           );
         }
       }
+       */
     }
     return $result;
   }
