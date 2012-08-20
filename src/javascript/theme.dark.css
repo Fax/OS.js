@@ -153,6 +153,7 @@ body {
 }
 
 
-.GtkSeparatorToolItem {
-  background-color : #30353d;
+.GtkSeparatorToolItem,
+.GtkSeparatorMenuItem {
+  background-color : #b0b3b7;
 }

@@ -8206,6 +8206,7 @@
 
         // Misc
         el.find("input").attr("autocomplete", "off");
+        el.find(".GtkSeparatorMenuItem").parent().addClass("Separator");
 
         //
         // Translation
