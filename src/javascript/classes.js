@@ -2250,14 +2250,16 @@
      * This function clears the document entirely
      *
      * @param   String    content     The content
+     * @param   String    css         Extra CSS (optional)
      * @return  void
      */
-    setContent : function(content) {
+    setContent : function(content, css) {
       content = content || "";
+      css     = css || "";
 
       this._frame.src = "about:blank";
       this._doc.open();
-      this._doc.write('<head><link rel="stylesheet" type="text/css" href="/VFS/resource/iframe.css" /></head><body>' + content + '</body>');
+      this._doc.write('<head><link rel="stylesheet" type="text/css" href="/VFS/resource/iframe.css" /><style type="text/css">' + css + '</style></head><body>' + content + '</body>');
       this._doc.close();
     },
 
