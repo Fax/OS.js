@@ -132,7 +132,7 @@ class IMAPMail
    * @return void
    */
   protected function parse($mbox, $mid, $part, $pid) {
-    $data         = null;
+    $data = null;
 
     // Data
     if ( $pid ) {
@@ -474,8 +474,6 @@ class IMAP
       if ( $filter == null ) {
         $filter = "1:{$mc->Nmsgs}";
       }
-
-      error_log($filter);
 
       if ( $emails = imap_fetch_overview($inbox, $filter, 0) ) {
         foreach ( $emails as $overview ) {
