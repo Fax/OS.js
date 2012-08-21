@@ -129,6 +129,11 @@ body {
   color : #fff;
   background : #4f4f4f;
 }
+.Menu li.Disabled,
+.GtkMenuBar li.Disabled,
+.GUIMenu li.Disabled {
+  color : #b0b3b7;
+}
 
 body .GtkMenuBar {
   background : #bababa;
