@@ -594,6 +594,11 @@ class Glade
         $classes[] = sprintf("GtkBox%s", ucfirst($orientation));
       break;
 
+      case "GtkGrid" :
+        $node = $dom->createElement("div");
+        $packed = true;
+      break;
+
       default :
         $node = $dom->createElement("div");
       break;
