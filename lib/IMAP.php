@@ -31,23 +31,106 @@
  * @created 2011-06-04
  */
 
+/*
+Outgoing Mail (SMTP) Server (requires TLS)
+ - smtp.gmail.com
+ - Use Authentication: Yes
+ - Use STARTTLS: Yes (some clients call this SSL)
+ - Port: 465 or 587
+Account Name:   your full email address (including @gmail.com)
+Email Address:  your email address (username@gmail.com)
+Password:     your Gmail password
+*/
 
+/**
+ * IMAPMail -- An IMAP/SMTP Mail Message
+ *
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @package OSjs.Libraries
+ * @class
+ */
 class IMAPMail
 {
-  private $_html        = "";
-  private $_plain       = "";
-  private $_charset     = "";
-  private $_attachments = Array();
 
+  /////////////////////////////////////////////////////////////////////////////
+  // VARIABLES
+  /////////////////////////////////////////////////////////////////////////////
+
+  private $_sFrom         = "";         //!< FROM user
+  private $_sTo           = "";         //!< TO user
+  private $_sSubject      = "";         //!< Message subject
+  private $_sBodyPlain    = "";         //!< text/plain data
+  private $_sBodyHTML     = "";         //!< text/html data
+  private $_aAttachments  = Array();    //!< Attachments if any
+  private $_sCharset      = "";         //!< Charset of message
+
+  /////////////////////////////////////////////////////////////////////////////
+  // MAGICS
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Create a new instance
+   * @param   String    $from     From X
+   * @param   String    $to       To Y
+   * @param   String    $subject  Message subject
+   * @constructor
+   */
+  public function __construct($from, $to, $subject) {
+    $this->_sFrom         = $from;
+    $this->_sTo           = $to;
+    $this->_sSubject      = $subject;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // SET
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Set the message contents
+   * @param   String      $plain      The text/plain body
+   * @param   String      $html       The text/html body
+   * @return  void
+   */
+  public function setBody($plain = null, $html = null) {
+    if ( $plain )
+      $this->_sBodyPlain = $plain;
+    if ( $html )
+      $this->_sBodyHTML  = $html;
+  }
+
+  /**
+   * Set the message attachments
+   * @param   Array       $a        Attachments array
+   * @return  void
+   */
+  public function setAttachments(Array $a = Array()) {
+    $this->_aAttachments = $a;
+  }
+
+  /**
+   * Get Mail properties as an Array
+   * @return Array
+   */
   public function getArray() {
     return Array(
-      "html"        => $this->_html,
-      "plain"       => $this->_plain,
-      "charset"     => $this->_charset,
-      "attachments" => $this->_attachments
+      "from"        => $this->_sFrom,
+      "to"          => $this->_sTo,
+      "subject"     => $this->_sSubject,
+      "plain"       => $this->_sBodyPlain,
+      "html"        => $this->_sBodyHTML,
+      "charset"     => $this->_sCharset,
+      "attachments" => $this->_aAttachments
     );
   }
 
+  /////////////////////////////////////////////////////////////////////////////
+  // CLASS METHODS
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Parse mail contents (recursively) according to standards
+   * @return void
+   */
   protected function parse($mbox, $mid, $part, $pid) {
     $data         = null;
 
@@ -81,17 +164,17 @@ class IMAPMail
     if ( isset($params['filename']) || isset($params['name']) ) { // Attachments
       $filename = isset($params['filename']) ? $params['filename'] : $params['name'];
 
-      $this->_attachments[$filename] = $data;
+      $this->_aAttachments[$filename] = $data;
     } else if ( $part->type == 0 && $data ) {
       if ( strtolower($part->subtype) == "plain" ) { // Message
-        $this->_plain .= trim($data) . "\n\n";
+        $this->_sBodyPlain .= trim($data) . "\n\n";
       } else {
-        $this->_html  .= $data . "<br><br>";
+        $this->_sBodyHTML  .= $data . "<br><br>";
       }
 
-      $this->_charset = $params['charset'];
+      $this->_sCharset = $params['charset'];
     } else if ( $part->type == 2 && $data ) { // Embedded
-      $this->_plain .= trim($data) . "\n\n";
+      $this->_sBodyPlain .= trim($data) . "\n\n";
     }
 
     // Subpart recursion
@@ -102,13 +185,21 @@ class IMAPMail
     }
   }
 
-  public static function create($mbox, $mid) {
-    $mail   = new self();
+  /////////////////////////////////////////////////////////////////////////////
+  // STATIC METHODS
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Load a mail from given inbox and return contents
+   * @return Array
+   */
+  public static function load($mbox, $mid) {
+    $mail   = new self(null, null, null);
     $result = false;
 
     if ( $s = imap_fetchstructure($mbox, $mid) ) {
       $result  = Array();
-      if ( $s->parts ) { // Multipart
+      if ( isset($s->parts) && $s->parts ) { // Multipart
         foreach ( $s->parts as $pno => $pval ) {
           $mail->parse($mbox, $mid, $pval, ($pno + 1));
         }
@@ -120,6 +211,91 @@ class IMAPMail
     }
 
     return $result;
+  }
+
+  /**
+   * Helper function for constructing a new message from a Tuple
+   * @return  Mixed
+   */
+  public static function compose(Array $args) {
+    $from     = isset($args['from'])    ? $args['from']     : "";
+    $to       = isset($args['to'])      ? $args['to']       : "";
+    $subject  = isset($args['subject']) ? $args['subject']  : "";
+    $plain    = isset($args['plain'])   ? $args['plain']    : "";
+    $html     = isset($args['html'])    ? $args['html']     : "";
+
+    if ( $from && $to ) {
+      $i = new self($from, $to, $subject);
+      $i->setBody($plain, $html);
+      if ( isset($args['attachments']) && (is_array($args['attachments'])) ) {
+        $i->setAttachments($args['attachments']);
+      }
+      return $i;
+    }
+
+    return false;
+  }
+
+}
+
+/**
+ * SMTP -- An SMTP Sending Library
+ *
+ * Depends on PEAR mailing packages
+ *
+ * @author  Anders Evenrud <andersevenrud@gmail.com>
+ * @package OSjs.Libraries
+ * @class
+ */
+class SMTP
+{
+
+  /**
+   * Send a message
+   *
+   * Required PEAR mail functions
+   *
+   * @param   IMAPMail    $m        Message to send
+   *
+   * @throws  Exception
+   * @throws  Error       When PEAR libs are not found
+   * @return  Mixed
+   */
+  public static function send(IMAPMail $m, $config) {
+    require_once "Mail.php"; // PEAR Package
+
+    if ( preg_match("/^(.*)\:\/\//", $config['host']) ) {
+      $tmp = explode(":", $config['host']);
+      $host = "{$tmp[0]}:{$tmp[1]}";
+      $port = $tmp[2];
+    } else {
+      list($host, $port) = explode(":", $config['host']);
+    }
+
+    $a = $m->getArray();
+    $body = $a['plain'] . $a['html'];
+
+    $headers = array(
+      "From"    => $a['from'],
+      "To"      => $a['to'],
+      "Subject" => $a['subject']
+    );
+
+    $smtp = @Mail::factory('smtp',array (
+      'host'     => $host,
+      'port'     => $port,
+      'username' => $config['username'],
+      'password' => $config['password'],
+      'auth'     => true
+    ));
+
+    if ( $smtp ) {
+      if ( $mail = @$smtp->send($a['to'], $headers, $body) ) {
+        return true;
+      }
+    }
+
+    return true;
   }
 
 }
@@ -138,10 +314,10 @@ class IMAP
   // VARIABLES
   /////////////////////////////////////////////////////////////////////////////
 
-  protected $_host;
-  protected $_socket;
-  protected $_folder;
-  protected $_errors = Array();
+  protected $_host;       //!< Host string
+  protected $_socket;     //!< Connection resource
+  protected $_folder;     //!< Current folder
+  protected $_config;     //!< Current configuration parameters
 
   /////////////////////////////////////////////////////////////////////////////
   // MAGICS
@@ -149,20 +325,51 @@ class IMAP
 
   /**
    * Create a new instance
+   *
+   * If no foder is given, no connection is established
+   *
+   * @param   String      $host         Hostname connection string
+   * @param   String      $username     Auth username
+   * @param   String      $password     Auth password
+   * @param   String      $folder       Folder lookup
+   *
+   * @param   Resource    $socket       Connection (If any)
+   *
+   * @throws  Exception
+   * @constructor
    */
   protected function __construct($host, $username, $password, $folder) {
-    $this->_host    = $host;
-    $this->_folder  = $folder;
+    $socket = null;
+    $hostname = null;
 
-    //$auth = sprintf("{%s/imap/ssl/novalidate-cert/norsh}%s", $host, $folder);
-    $auth = sprintf("{%s/imap/ssl/novalidate-cert}%s", $host, $folder);
-    //$auth = sprintf("{%s/imap/ssl}%s", $host, $folder);
-    $this->_socket = @imap_open($auth, $username, $password);
-    if ( ($errors = imap_errors()) !== false ) {
-      $this->_errors = $errors;
+    if ( $folder ) {
+      $socket = @imap_open("{$host}{$folder}", $username, $password);
+      if ( ($errors = imap_errors()) !== false ) {
+        foreach ( $errors as $err ) {
+          throw new Exception($err);
+        }
+      }
+
+      $this->_socket  = $socket;
     }
+
+    if ( preg_match("/\{(.*)\:(\d+)(.*)\}/", $host, $m) ) {
+      $hostname = $m[1];
+    }
+
+    $this->_host    = $hostname;
+    $this->_folder  = $folder;
+    $this->_config  = Array(
+      "host"      => $host,
+      "username"  => $username,
+      "password"  => $password,
+      "folder"    => $folder
+    );
   }
 
+  /**
+   * @destructor
+   */
   public function __destruct() {
     if ( $this->_socket ) {
       imap_errors(); // To supress WARNINGs
@@ -177,9 +384,10 @@ class IMAP
   /**
    * Create a new instance of IMAP
    *
-   * @return IMAP
+   * @throws  Exception
+   * @return  IMAP
    */
-  public final static function create($host, $username, $password, $folder = "INBOX") {
+  public final static function create($host, $username, $password, $folder = "") {
     if ( !function_exists("imap_open") ) {
       throw new Exception("IMAP Is not enabled/supported");
     }
@@ -191,22 +399,25 @@ class IMAP
   // CLASS METHODS
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Read a message by ID
+   * @param   Mixed       $id       Unique ID
+   * @return  IMAPMail
+   */
   public function read($id) {
-    return IMAPMail::create($this->_socket, $id);
+    return IMAPMail::load($this->_socket, $id);
   }
-
-  public function send() {
-    return false;
-  }
-
-  /////////////////////////////////////////////////////////////////////////////
-  // SET
-  /////////////////////////////////////////////////////////////////////////////
 
   /////////////////////////////////////////////////////////////////////////////
   // GET
   /////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Enumerate and return message boxes (folders)
+   *
+   * @throws  Exception
+   * @return  Array
+   */
   public function getMailboxes() {
     $result = Array();
 
@@ -235,46 +446,39 @@ class IMAP
     return $result;
   }
 
-  public function getMessageHeaders() {
-    $result = Array();
-    if ( $con = $this->_socket ) {
-      if ( $headers = imap_headers($con) ) {
-        foreach ( $headers as $h ) {
-
-          if ( !preg_match("/^([A-z\s]+)?(\d+)\)\s+(\d+\-\w+\-\d+) (.*)\s+\((\d+) chars\)$/", trim($h), $matches) ) {
-            $matches = Array();
-          }
-          /*
-          var_dump($h);
-          var_dump($matches);
-          break;
-           */
-
-          if ( sizeof($matches) >= 5 ) {
-            $result[] = Array(
-              "header"  => $h,
-              "flags"   => explode(" ", $matches[1]),
-              "id"      => $matches[2],
-              "date"    => $matches[3],
-              "sender"  => null,
-              "subject" => $matches[4],
-              "chars"   => $matches[5]
-            );
-          }
-        }
-      }
-    }
-
-    return $result;
-  }
-
+  /**
+   * Enumerate and return a list of messages in a folder
+   *
+   * @param   String    $filter       Listing filtering string
+   * @param   bool      $body         Also fetch the bodies (SLOW)
+   * @return  Array
+   */
   public function getMessages($filter = 'ALL', $body = false) {
     $result = Array();
     if ( $inbox = $this->_socket ) {
       $mc = imap_check($inbox);
-      if ( $emails = imap_fetch_overview($inbox, "1:{$mc->Nmsgs}", 0) ) {
+
+      if ( $filter !== 'ALL' ) {
+        $max = (int) $filter;
+        $filter = null;
+
+        if ( $max > 0 ) {
+          if ( $max < ((int)$mc->Nmsgs) ) {
+            $filter = "{$max}:{$mc->Nmsgs}";
+          } else {
+            return Array();
+          }
+        }
+      }
+
+      if ( $filter == null ) {
+        $filter = "1:{$mc->Nmsgs}";
+      }
+
+      error_log($filter);
+
+      if ( $emails = imap_fetch_overview($inbox, $filter, 0) ) {
         foreach ( $emails as $overview ) {
-          rsort($emails);
           try {
             $timestamp = new DateTime($overview->date);
             $date = $timestamp->format("Y/m/d h:i:s");
@@ -304,51 +508,17 @@ class IMAP
           );
         }
       }
-
-      /*
-      if ( $emails = imap_search($inbox, $filter, SE_UID) ) {
-        rsort($emails);
-        foreach ( $emails as $email_number ) {
-          try {
-            $timestamp = new DateTime($overview[0]->date);
-            $date = $timestamp->format("Y/m/d h:i:s");
-          } catch ( Exception $e ) {
-            $date = $overview[0]->date;
-          }
-          $overview = imap_fetch_overview($inbox,$email_number,0);
-          $message  = $body ? imap_fetchbody($inbox,$email_number,2) : null;
-          $result[] = Array(
-            "id"      => $overview[0]->message_id,
-            "uid"     => $overview[0]->uid,
-            "msgno"   => $overview[0]->msgno,
-            "status"  => $overview[0]->seen ? "read" : "unread",
-            "subject" => $overview[0]->subject,
-            "sender"  => $overview[0]->from,
-            "size"    => $overview[0]->size,
-            "date"    => $date,
-            "body"    => $message ? $message : null,
-            "flags"   => Array(
-              "recent"    => $overview[0]->recent,
-              "flagged"   => $overview[0]->flagged,
-              "answered"  => $overview[0]->answered,
-              "deleted"   => $overview[0]->deleted,
-              "seen"      => $overview[0]->seen,
-              "draft"     => $overview[0]->draft
-            )
-          );
-        }
-      }
-       */
     }
+
     return $result;
   }
 
+  /**
+   * Get the current folder
+   * @return  String
+   */
   public function getFolder() {
     return $this->_folder;
-  }
-
-  public function getErrors() {
-    return $this->_errors;
   }
 
 }
