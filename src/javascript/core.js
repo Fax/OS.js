@@ -3835,6 +3835,9 @@
     getRegistry : function() {
       var exp = {};
       for ( var i in this._registry ) {
+        if ( i == "user.session.appstorage" )
+          continue;
+
         exp[i] = this._get(i, in_array(this._registry[i], ["list", "array"]));
       }
       return exp;
