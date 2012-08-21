@@ -1,5 +1,6 @@
 CORE TODO:
 -------------------------------------------------------------------------------
+[HIG] FIX: Orphan windows when sub-window
 [MED] VFS: Finish JS Class (Temporary / Persistent)
 [MED] Panel: Redesign preferences
 [MED] Panel: Fix dock ?!
