@@ -125,6 +125,12 @@ body {
   color : #222;
 }
 
+.Menu li.Disabled,
+.GtkMenuBar li.Disabled,
+.GUIMenu li.Disabled {
+  color : #b0b3b7;
+}
+
 .Menu li.Default:hover,
 .GUIMenu li:hover {
   color : #fff;
