@@ -9,7 +9,7 @@ This has only been tested on these Linux distributions:
 * PHP 5.3 +  
   Modules: ```apache2 mysql sockets xmlreader xmlwriter zip pdo imap mhash mysqli gettext```  
   Suggested Modules: ```curl curlwrappers gd inifile snmp```
-  Optional PEAR modules: mail, Net_SMTP
+  Optional PEAR modules: mail, Net_SMTP, Mail_Mime
 * MySQL 5+  
 * 'msgfmt' (Optional, Locale generation, for localization and translations)  
   ```Included in Linux```

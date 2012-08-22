@@ -215,6 +215,7 @@ class IMAPMail
 
   /**
    * Helper function for constructing a new message from a Tuple
+   * @param   Array     $args         Message elements tuple
    * @return  Mixed
    */
   public static function compose(Array $args) {
@@ -256,13 +257,16 @@ class SMTP
    * Required PEAR mail functions
    *
    * @param   IMAPMail    $m        Message to send
+   * @param   Array       $config   Connection information tuple
+   * @param   Array       $headers  Extra headers to send
    *
    * @throws  Exception
    * @throws  Error       When PEAR libs are not found
    * @return  Mixed
    */
-  public static function send(IMAPMail $m, $config) {
+  public static function send(IMAPMail $m, $config, Array $headers = Array()) {
     require_once "Mail.php"; // PEAR Package
+    require_once "Mail/mime.php"; // PEAR Package
 
     if ( preg_match("/^(.*)\:\/\//", $config['host']) ) {
       $tmp = explode(":", $config['host']);
@@ -272,16 +276,32 @@ class SMTP
       list($host, $port) = explode(":", $config['host']);
     }
 
-    $a = $m->getArray();
-    $body = $a['plain'] . $a['html'];
+    $a    = $m->getArray();
+    $mime = @new Mail_mime("\n");
+    $mime->setTXTBody($a['plain']);
+    $mime->setHTMLBody($a['html']);
+    if ( isset($a['attachments']) ) {
+      foreach ( $a['attachments'] as $att ) {
+        $mime->addAttachment($att['file'], $att['mime']);
+      }
+    }
 
-    $headers = array(
-      "From"    => $a['from'],
-      "To"      => $a['to'],
-      "Subject" => $a['subject']
+    $smtp_headers = array(
+      "From"      => $a['from'],
+      "Reply-To"  => $a['from'],
+      "To"        => $a['to'],
+      "Subject"   => $a['subject']
     );
 
-    $smtp = @Mail::factory('smtp',array (
+    foreach ( $mime->headers($headers) as $k => $v ) {
+      $smtp_headers[$k] = $v;
+    }
+
+    foreach ( $headers as $k => $v ) {
+      $smtp_headers[$k] = $v;
+    }
+
+    $smtp = @Mail::factory('smtp', Array(
       'host'     => $host,
       'port'     => $port,
       'username' => $config['username'],
@@ -290,7 +310,7 @@ class SMTP
     ));
 
     if ( $smtp ) {
-      if ( $mail = @$smtp->send($a['to'], $headers, $body) ) {
+      if ( $mail = @$smtp->send($a['to'], $smtp_headers, $mime->get()) ) {
         return true;
       }
     }
@@ -406,6 +426,14 @@ class IMAP
    */
   public function read($id) {
     return IMAPMail::load($this->_socket, $id);
+  }
+
+  public function deleteMessage($id) {
+    return false;
+  }
+
+  public function toggleMessageRead($id, $state) {
+    return false;
   }
 
   /////////////////////////////////////////////////////////////////////////////
