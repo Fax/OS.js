@@ -392,7 +392,8 @@ class IMAP
    */
   public function __destruct() {
     if ( $this->_socket ) {
-      imap_errors(); // To supress WARNINGs
+      @imap_expunge($this->_socket);
+      @imap_errors(); // To supress WARNINGs
       imap_close($this->_socket);
     }
   }
@@ -428,11 +429,30 @@ class IMAP
     return IMAPMail::load($this->_socket, $id);
   }
 
+  /**
+   * Delete a message by ID
+   * @return  bool
+   */
   public function deleteMessage($id) {
+    if ( $inbox = $this->_socket ) {
+      if ( imap_delete($inbox, $id, ST_UID) ) {
+        return true;
+      }
+    }
     return false;
   }
 
+  /**
+   * Set message "Seen" status by ID
+   * @return  bool
+   */
   public function toggleMessageRead($id, $state) {
+    if ( $inbox = $this->_socket ) {
+      $flag = $state ? '\\Seen' : '\\Unseen';
+      if ( imap_setflag_full($inbox, "$id:$id", $flag, ST_UID) ) {
+        return true;
+      }
+    }
     return false;
   }
 
