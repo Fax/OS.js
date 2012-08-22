@@ -193,9 +193,14 @@ class IMAPMail
    * Load a mail from given inbox and return contents
    * @return Array
    */
-  public static function load($mbox, $mid) {
+  public static function load($res, $mid) {
+    $mbox   = $res->getSocket();
     $mail   = new self(null, null, null);
     $result = false;
+
+    if ( !($res->getMessages("{$mid}:{$mid}")) ) {
+      throw new Exception("Message not found on server!");
+    }
 
     if ( $s = imap_fetchstructure($mbox, $mid) ) {
       $result  = Array();
@@ -426,7 +431,7 @@ class IMAP
    * @return  IMAPMail
    */
   public function read($id) {
-    return IMAPMail::load($this->_socket, $id);
+    return IMAPMail::load($this, $id);
   }
 
   /**
@@ -565,6 +570,14 @@ class IMAP
    */
   public function getFolder() {
     return $this->_folder;
+  }
+
+  /**
+   * Get the socket resource
+   * @return  Resource
+   */
+  public function getSocket() {
+    return $this->_socket;
   }
 
 }
