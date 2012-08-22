@@ -1210,7 +1210,7 @@
         // Check if we are launching an Application
         var launch_application = false;
         if ( !app_name.match(/^API\:\:/) ) {
-          // If application is orphan, do not launch
+          // Check for orphans
           var wins = _WM ? _WM.stack : [];
           for ( var i = 0; i < wins.length; i++ ) {
             if ( wins[i].app && wins[i].app._name == app_name ) {
@@ -4694,6 +4694,21 @@
      */
     _addWindow : function(win) {
       if ( _WM ) {
+
+        // Check for orphans
+        if ( win._is_orphan ) {
+          var x = 0, l = this._windows.length, y = null;
+          for ( x; x < l; x++ ) {
+            y = this._windows[x];
+            if ( y._name == win._name ) {
+              if ( y._is_orphan ) {
+                _WM.focusWindow(y);
+                return false;
+              }
+            }
+          }
+        }
+
         var w = _WM.addWindow(win);
         if ( w ) {
           this.__addWindow(win);
