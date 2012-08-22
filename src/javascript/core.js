@@ -3433,6 +3433,9 @@
       // Make sure registry is up to date
       for ( var j in this._registry ) {
         if ( this._registry.hasOwnProperty(j) ) {
+          if ( j == "user.session.appstorage" && !STORE_APPS )
+            continue;
+
           console.log("> Injecting", j);
           //if ( !localStorage.getItem(j) ) {
             if ( this._registry[j].type == "list" ) {
@@ -3526,6 +3529,9 @@
         if ( registry.hasOwnProperty(i) ) {
           if ( !this._registry[i] )
             continue;
+
+        if ( i == "user.session.appstorage" && !STORE_APPS )
+          continue;
 
           console.log("> ", i, this._registry[i].type, registry[i]);
 
