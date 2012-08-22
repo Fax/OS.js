@@ -69,44 +69,63 @@
 
 
 /* GtkBox, GtkGrid */
-.GtkBox, .GtkGrid {
+.GtkBox/*, .GtkGrid*/ {
   width : 100%;
   height : 100%;
   display : relative;
 
   display: -webkit-box;
-  -webkit-box-align: stretch;
-  -webkit-box-pack : start;
-  -webkit-box-lines : multiple;
-  -webkit-box-direction : normal;
-  -webkit-box-flex : 1;
-
   display: -moz-box;
-  -moz-box-align: stretch;
-  -moz-box-pack : start;
-  -moz-box-lines : multiple;
-  -moz-box-direction : normal;
-  -moz-box-flex : 1;
-
   display: box;
-  box-align: stretch;
-  box-pack : start;
-  box-lines : multiple;
-  box-direction : normal;
-  box-flex : 1;
+
+  -webkit-box-align: stretch;
+     -moz-box-align: stretch;
+          box-align: stretch;
+
+  -webkit-box-pack : start;
+     -moz-box-pack : start;
+          box-pack : start;
+
+  -webkit-box-lines : multiple;
+     -moz-box-lines : multiple;
+          box-lines : multiple;
+
+  -webkit-box-direction : normal;
+     -moz-box-direction : normal;
+          box-direction : normal;
+
+  -webkit-box-flex : 1;
+     -moz-box-flex : 1;
+          box-flex : 1;
 }
 .GtkGrid {
+  /*
+  -webkit-box-align: stretch;
+     -moz-box-align: stretch;
+          box-align: stretch;
+
+  -webkit-box-orient: horizontal;
+     -moz-box-orient: horizontal;
+          box-orient: horizontal;
+          */
+  position : relative;
 }
 .GtkBoxHorizontal {
   -webkit-box-orient: horizontal;
-  -moz-box-orient: horizontal;
-  box-orient: horizontal;
+     -moz-box-orient: horizontal;
+          box-orient: horizontal;
 }
 .GtkBoxVertical {
   -webkit-box-orient: vertical;
-  -moz-box-orient: vertical;
-  box-orient: vertical;
+     -moz-box-orient: vertical;
+          box-orient: vertical;
 }
+
+/*.GtkGrid > .GtkBoxPackage {
+  -webkit-box-flex : 1;
+     -moz-box-flex : 1;
+          box-flex : 1;
+}*/
 
 .GtkBoxPackage {
   display: -webkit-box;

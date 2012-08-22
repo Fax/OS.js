@@ -70,6 +70,7 @@
   var ENV_CACHE              = undefined;           //!< Server-side cache enabled state
   var ENV_PRODUCTION         = undefined;           //!< Server-side production env. state
   var ENV_DEMO               = undefined;           //!< Server-side demo env. state
+  var STORE_APPS             = false;               //!< Always store applicaion data in registry
   // @endconstants
 
   /**
@@ -3835,7 +3836,7 @@
     getRegistry : function() {
       var exp = {};
       for ( var i in this._registry ) {
-        if ( i == "user.session.appstorage" )
+        if ( i == "user.session.appstorage" && !STORE_APPS )
           continue;
 
         exp[i] = this._get(i, in_array(this._registry[i], ["list", "array"]));
