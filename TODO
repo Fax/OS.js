@@ -1,7 +1,9 @@
 CORE TODO:
 -------------------------------------------------------------------------------
+[HIG] FIX: Applications launched before dekstop ?!
 [HIG] FIX: Orphan windows when sub-window
 [MED] VFS: Finish JS Class (Temporary / Persistent)
+[MED] Richtext: Add custom contextmenu
 [MED] Panel: Redesign preferences
 [MED] Panel: Fix dock ?!
 [LOW] Panel: Settings - Background Image
