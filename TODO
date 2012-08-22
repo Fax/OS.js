@@ -1,6 +1,5 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG] FIX: Orphan windows when sub-window
 [MED] VFS: Finish JS Class (Temporary / Persistent)
 [MED] Richtext: Add custom contextmenu
 [MED] Panel: Redesign preferences
