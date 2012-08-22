@@ -5727,23 +5727,33 @@
 
         };
 
-        if ( panels ) {
+        if ( panels && panels.length ) {
+          finished = true;
+
           var panel;
-          if ( panels.length ) {
-            finished = false;
-            for ( var x = 0; x < panels.length; x++ ) {
-              panel = new Panel(panels[x].index, panels[x].name, panels[x].position, panels[x].style);
-              additems(panel, panels[x].items, function(pref) {
+          var all_added = false;
+
+          for ( var x = 0; x < panels.length; x++ ) {
+            panel = new Panel(panels[x].index, panels[x].name, panels[x].position, panels[x].style);
+
+            if ( !panels[x].items.length ) {
+              if ( x >= (panels.length - 1) )
+                finished_callback();
+              return;
+            }
+
+            additems(panel, panels[x].items, (function(_cur, _len) {
+              return function(pref) {
                 self.addPanel(pref);
 
-                if ( !finished ) {
-                  if ( x >= panels.length ) {
+                if ( _cur >= _len ) {
+                  if ( !all_added )
                     finished_callback();
-                    finished = true;
-                  }
+
+                  all_added = true;
                 }
-              });
-            }
+              };
+            })(x, (panels.length - 1)));
           }
         }
 
