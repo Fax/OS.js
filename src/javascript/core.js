@@ -2952,6 +2952,8 @@
      * Core::global_fullscreen() -- Global Event Handler: fullscreen
      * @param   DOMEvent    e       DOM Event
      * @return void
+     */
+    /*
     global_fullscreen : function(e) {
       if ( "fullscreen" in document ) {
         _IsFullscreen = document.fullscreen ? true : false;
@@ -3198,6 +3200,8 @@
     /**
      * ResourceManager::updateManifest() -- Force MANIFEST update
      * @return void
+     */
+    /*
     updateManifest : function() {
       var cache = window.applicationCache;
 

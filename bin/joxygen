@@ -124,21 +124,25 @@ function parse_comments($file) {
 
 function _create_document($results, $filename) {
   $content  = "";
-
+  $lastType = "";
 
   foreach ( $results as $namespace => $comment ) {
 
     $draw_table = false;
     $class = $comment['type'] == "method" ? "" : "top";
-    $content .= "<div class=\"section {$class}\">\n";
+
     if ( preg_match("/^(.*)\:\:(.*)/", $namespace) ) {
       $pre = $comment['stype'] ? "<i>{$comment['stype']}</i>" :  "<u>{$comment['returns']}</u>";
-      $content .= "<h2>{$pre} " . htmlspecialchars($namespace) . "</h2>\n";
+      $content .= "<div class=\"section {$class} {$lastType}\">\n";
+      $content .= "<h2>{$pre} <span>" . htmlspecialchars($namespace) . "</span></h2>\n";
       $draw_table = true;
     } else {
       $nss = str_replace(" ", "", $namespace);
       $type = ucfirst($comment['type']);
-      $content .= "<h1>{$type}: <a name=\"{$nss}\">" . htmlspecialchars($namespace) . "</a></h1>\n";
+      $content .= "<div class=\"section {$class}\">\n";
+      $content .= "<h1>{$type} <a name=\"{$nss}\">" . htmlspecialchars($namespace) . "</a></h1>\n";
+      $lastType = htmlspecialchars($type);
+
       if ( $comment["type"] == "function" ) {
         $draw_table = true;
       }
@@ -279,19 +283,27 @@ function create_document($results, $filename) {
   <title>OS.js Documentation</title>
   <style type="text/css">
   body, html {
-    font-family : Arial;
-    font-size : 1em;
+    font-family : Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size : 14px;
+    color : #777;
   }
   #links {
     text-align : center;
   }
   .section {
-    background : #e6e6e6;
     padding : 10px;
   }
+  .section.Class {
+      padding-left : 30px;
+      margin-left : 10px;
+      margin-bottom : 10px;
+      border-left : 5px #e6e6e6 solid;
+    }
   .section.top {
     margin-top : 10px;
   }
+  .section.top p {
+}
   table {
     border-collapse : collapse;
     width : 100%;
@@ -301,6 +313,7 @@ function create_document($results, $filename) {
     margin : 0;
     padding : 5px;
     background : #f0f0f0;
+    color : #000;
   }
   .size_2 .col_0,
   .size_2 .col_1 {
@@ -323,8 +336,13 @@ function create_document($results, $filename) {
     color : #aa0000;
     background : #ffff00;
   }
-  h1 {
-    border-bottom : 1px solid;
+  h1, h2 {
+    color : #333;
+    font-weight : normal;
+  }
+  h1 a, h2 span {
+    color : #000;
+    font-weight : bold;
   }
   </style>
 </head>
@@ -358,16 +376,6 @@ $results   = parse_comments(PATH_JSBASE . "/{$filename}");
 $classes_html = create_document($results, $filename);
 file_put_contents("doc/javascript/classes.html", $classes_html);
 
-$filename  = "main.js";
-$results   = parse_comments(PATH_JSBASE . "/{$filename}");
-$main_html = create_document($results, $filename);
-file_put_contents("doc/javascript/main.html", $main_html);
-
-$filename  = "init.js";
-$results   = parse_comments(PATH_JSBASE . "/{$filename}");
-$init_html = create_document($results, $filename);
-file_put_contents("doc/javascript/init.html", $init_html);
-
 $index_html = <<<EOHTML
 <!DOCTYPE html>
 <html>
@@ -381,8 +389,6 @@ $index_html = <<<EOHTML
 <ul>
   <li><a href="core.html">core.js</a></li>
   <li><a href="classes.html">classes.js</a></li>
-  <li><a href="main.html">main.js</a></li>
-  <li><a href="init.html">init.js</a></li>
 </ul>
 </body>
 </html>
