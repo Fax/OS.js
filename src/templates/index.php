@@ -138,6 +138,19 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
 </head>
 <body class="env_<?php print (ENV_DEMO ? "demo" : (ENV_PRODUCTION ? "live" : "dev")); ?>">
 
+<div id="HomePage" style="display:none;">
+  <h1>OS.js - JavaScript Web Desktop Environment (Version <?php print PROJECT_VERSION; ?> demo)</h1>
+  <p>
+    This is the demo site for testing OS.js releases.
+  </p>
+  <p>
+    For more information contact the author: Anders Evenrud <a href="mailto:andersevenrud@gmail.com">&lt;andersevenrud@gmail.com&gt;</a>
+  </p>
+  <p>
+    Homepage on <a href="http://andersevenrud.github.com/OS.js/">GitHub</a>
+  </p>
+</div>
+
 <!-- Main Container -->
 <div id="Desktop">
   <!-- IconView -->
