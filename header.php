@@ -38,7 +38,7 @@
 // Information
 define("PROJECT_AUTHOR",              "Anders Evenrud");
 define("PROJECT_CONTACT",             "andersevenrud@gmail.com");
-define("PROJECT_VERSION",             "0.8.5");
+define("PROJECT_VERSION",             "0.8.8");
 define("PROJECT_CODENAME",            "Catwalk");
 define("PROJECT_HOST",                (php_uname('n')));
 define("PROJECT_COPYRIGHT",           "2012 " . PROJECT_AUTHOR . " <" . PROJECT_CONTACT . ">");
@@ -150,11 +150,15 @@ if ( !defined("ENV_DEMO") )
   define("ENV_DEMO",            false); // Disable root features, display notice on login
 if ( !defined("ENV_PLATFORM") )
   define("ENV_PLATFORM",        false); // Enable Platform Specific Features
+if ( !defined("ENV_SSL") )
+  define("ENV_SSL",             false); // Enable HTTPS
 
 if ( !defined("HOST_FRONTEND") )
   define("HOST_FRONTEND",       "osjs.local");
 if ( !defined("HOST_API") )
   define("HOST_API",            "api.osjs.local");
+if ( !defined("HOST_STATIC") )
+  define("HOST_STATIC",         "osjs.local");
 
 //
 // API Backend (Separate Host)

@@ -60,7 +60,6 @@
   var STORAGE_SIZE_FREQ      = 1000;                //!< Storage check usage frequenzy
   var ONLINECHK_FREQ         = 2500;                //!< On-line checking frequenzy
   var SESSION_CHECK          = 5000;                //!< Connection by session check freq
-  var LOGIN_WAIT             = 1000;                //!< Wait after login
   var SESSION_KEY            = "PHPSESSID";         //!< The Server session cookie-key
   var TIMEOUT_CSS            = (1000 * 10);         //!< CSS loading timeout
   var DEFAULT_USERNAME       = "demo";              //!< Default User Username
@@ -77,6 +76,8 @@
    * @constants URIs
    */
   var WEBSOCKET_URI    = "localhost:8888";          //!< WebSocket URI (Dynamic)
+  var ROOT_URL         = "http://osjs.local";       //!< URL: Dynamic content
+  var STATIC_URL       = "http://osjs.local";       //!< URL: Static content
   var AJAX_URI         = "/";                       //!< AJAX URI (POST)
   var RESOURCE_URI     = "/VFS/resource/";          //!< Resource loading URI (GET)
   var THEME_URI        = "/VFS/theme/";             //!< Themes loading URI (GET)
@@ -137,7 +138,6 @@
   var _Processes       = [];                              //!< Process instance list
   var _TopIndex        = (ZINDEX_WINDOW + 1);             //!< OnTop z-index
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);       //!< OnTop instances index
-  var _Running         = false;                           //!< Global running state
   var _StartStamp      = -1;                              //!< Starting timestamp
   var _SessionId       = "";                              //!< Server session id
   var _SessionValid    = true;                            //!< Session is valid
@@ -193,7 +193,8 @@
     }
 
     var ajax_args = {'ajax' : true};
-    for ( var i in args ) {
+    var i;
+    for ( i in args ) {
       if ( args.hasOwnProperty(i) ) {
         ajax_args[i] = args[i];
       }
@@ -525,7 +526,8 @@
         var extra   = "\n\n" + OSjs.Labels.CrashProcessResource;
         var errors  = [];
         var eargs   = [];
-        for ( var x in resources ) {
+        var x, a;
+        for ( x in resources ) {
           errors.push(resources[x]);
         }
 
@@ -533,7 +535,7 @@
           errors = ["<unknown>"];
         }
 
-        for ( var a in args ) {
+        for ( a in args ) {
           eargs.push(args[a]);
         }
 
@@ -546,12 +548,12 @@
       }
 
       setTimeout(function() {
-        API.ui.cursor("default");
-      }, 50);
+        callback(!error);
+      }, 0);
 
       setTimeout(function() {
-        callback(!error);
-      });
+        API.ui.cursor("default");
+      }, 50);
 
     });
   } // @endfunction
@@ -829,9 +831,6 @@
    * @return void
    */
   function PlaySound(type) {
-    if ( !_Running )
-      return;
-
     var se = (_Settings._get("system.sounds.enable") === "true");
     var sv = parseInt(_Settings._get("system.sounds.volume"), 10);
     if ( sv < 0 ) {
@@ -956,8 +955,14 @@
 
       'cursor' : (function() {
         var ccursor = "default";
+        var clocked = false;
 
-        return function(c) {
+        return function(c, l) {
+          if ( l !== undefined )
+            clocked = l;
+          if ( clocked === true )
+            return;
+
           if ( c !== ccursor ) {
             $("body").attr("class", "cursor_" + c);
           }
@@ -1216,15 +1221,17 @@
         if ( !app_name.match(/^API\:\:/) ) {
           // Check for orphans
           var wins = _WM ? _WM.stack : [];
-          for ( var i = 0; i < wins.length; i++ ) {
-            if ( wins[i].app && wins[i].app._name == app_name ) {
-              if ( wins[i]._is_orphan ) {
+          var i = 0, l = wins.length, ref;
+          for ( i; i < l; i++ ) {
+            ref = wins[i];
+            if ( ref.app && ref.app._name == app_name ) {
+              if ( ref._is_orphan ) {
                 console.group("=== API OPERATION ===");
                 console.log("Method", "API.system.launch");
                 console.log("Message", "Launch was denied (is_orphan)");
                 console.groupEnd();
 
-                _WM.focusWindow(wins[i]);
+                _WM.focusWindow(ref);
                 return;
               }
             }
@@ -1300,7 +1307,7 @@
 
       'notification' : function(title, message, icon, duration) {
         if ( _Desktop ) {
-          if ( icon ) {
+          if ( !(icon.match(/^\//) || icon.match(/^(https?)/)) ) {
             icon = GetIcon(icon, "32x32");
           }
 
@@ -2039,18 +2046,16 @@
     handleLogin : function(response, dcallback) {
       dcallback = dcallback || function() {};
 
-      setTimeout(function() {
-        if ( response.duplicate ) {
-          var con = !LoginManager.confirmation || confirm(OSjs.Labels.LoginConfirm);
-          if ( con ) {
-            _Core.login(response);
-          } else {
-            dcallback();
-          }
-        } else {
+      if ( response.duplicate ) {
+        var con = !LoginManager.confirmation || confirm(OSjs.Labels.LoginConfirm);
+        if ( con ) {
           _Core.login(response);
+        } else {
+          dcallback();
         }
-      }, LOGIN_WAIT);
+      } else {
+        _Core.login(response);
+      }
     },
 
     /**
@@ -2439,7 +2444,24 @@
         ENV_CACHE       = env.cache;
         ENV_PRODUCTION  = env.production;
         ENV_DEMO        = env.demo;
-        WEBSOCKET_URI   = env.server;
+
+        WEBSOCKET_URI   = env.hosts.server;
+        ROOT_URL        = (env.ssl ? "https://" : "http://") + env.hosts.frontend;  // FIXME: https
+        STATIC_URL      = (env.ssl ? "https://" : "http://") + env.hosts['static']; // FIXME: https
+
+        /*
+        ICON_URI        = STATIC_URL + ICON_URI;
+        SOUND_URI       = STATIC_URL + SOUND_URI;
+        THEME_URI       = STATIC_URL + THEME_URI;
+        FONT_URI        = STATIC_URL + FONT_URI;
+        CURSOR_URI      = STATIC_URL + CURSOR_URI;
+        LANGUAGE_URI    = STATIC_URL + LANGUAGE_URI;
+        */
+
+        /*
+        RESOURCE_URI    = STATIC_URL + RESOURCE_URI;
+        PKG_RES_URI     = STATIC_URL + PKG_RES_URI;
+        */
 
         if ( env.connection ) {
           _Connection = new CoreConnection(function(result) {
@@ -2479,7 +2501,7 @@
 
       $("#LoginDemoNotice").hide();
       $("#LoadingBarContainer").show();
-      OSjs.Classes.ProgressBar($("#LoadingBar"), 1);
+      OSjs.Classes.ProgressBar($("#LoadingBar"), 10);
 
       // Globals
       _SessionId        = response.sid;
@@ -2497,6 +2519,8 @@
       _Resources.run(response.preload, function() {
         self.run(response.session);
       });
+
+      OSjs.Classes.ProgressBar($("#LoadingBar"), 30);
     },
 
     /**
@@ -2544,12 +2568,13 @@
 
     /**
      * Core::leaving() -- When user leaves the page
+     * NOTE: 'this' is not instance here!
      * @return void
      */
     leaving : function(ev) {
       ev = ev || window.event;
 
-      if ( _Running ) {
+      if ( _Core.running ) {
         ev.cancelBubble = true;
         if ( ev.stopPropagation ) {
           ev.stopPropagation();
@@ -2582,7 +2607,8 @@
       }
       var self = this;
 
-      _Running = true; // GLOBAL
+      API.ui.cursor("wait", true);
+      OSjs.Classes.ProgressBar($("#LoadingBar"), 40);
 
       // Bind global events
       $(window).bind("beforeunload",  this.leaving);
@@ -2607,34 +2633,37 @@
         self.global_endsession(ev, GetCookie(SESSION_KEY));
       }, SESSION_CHECK);
 
-      OSjs.Classes.ProgressBar($("#LoadingBar"), 10);
+      OSjs.Classes.ProgressBar($("#LoadingBar"), 50);
 
       // Initialize session
-      var drunned = false;
-      this._initializeWindowManager();
+      this._initializeWindowManager(function() {
+        OSjs.Classes.ProgressBar($("#LoadingBar"), 60);
+      });
+
       this._initializeDesktop(function() {
-        if ( drunned )
+        if ( self.running )
           return;
-        drunned = true;
+        self.running = true;
+
+        OSjs.Classes.ProgressBar($("#LoadingBar"), 80);
+
+        // NOTE: Fixes global_keydown "not responding upon init" issues
+        $(document).focus();
+
+        // New error handler
+        _OldErrorHandler = window.onerror;
+        window.onerror = self.global_error;
+
+        PlaySound("service-login");
+        API.ui.cursor("default", false);
 
         self._initializeSession(session);
 
+        OSjs.Classes.ProgressBar($("#LoadingBar"), 100);
+
         setTimeout(function() {
-          // NOTE: Fixes global_keydown "not responding upon init" issues
-          $(document).focus();
-
-          // New error handler
-          _OldErrorHandler = window.onerror;
-          window.onerror = self.global_error;
-
-          self.running = true;
-
-          PlaySound("service-login");
-
-          OSjs.Classes.ProgressBar($("#LoadingBar"), 100);
           LoginManager.hide();
-
-        }, 100);
+        }, 50);
       });
     },
 
@@ -2646,7 +2675,7 @@
      * Core::_initializeWindowManager() -- Initialize Window Manager
      * @return void
      */
-    _initializeWindowManager : function() {
+    _initializeWindowManager : function(callback) {
       _WM      = new WindowManager();
 
       try {
@@ -2664,7 +2693,7 @@
         alert(sprintf(OSjs.Labels.CrashCoreRunService, "WindowManager", exception));
       }
 
-      OSjs.Classes.ProgressBar($("#LoadingBar"), 20);
+      callback();
     },
 
     /**
@@ -2692,8 +2721,6 @@
 
         callback();
       }
-
-      OSjs.Classes.ProgressBar($("#LoadingBar"), 30);
     },
 
     /**
@@ -2709,13 +2736,11 @@
           LaunchProcess(autostarters[ai], "BackgroundService");
         }
       }
-      OSjs.Classes.ProgressBar($("#LoadingBar"), 40);
 
       // Restore Previous Session
       if ( _Settings._get("user.session.autorestore") === "true" ) {
         _Core.setSession(session);
       }
-      OSjs.Classes.ProgressBar($("#LoadingBar"), 50);
 
       // Show compability dialog on first run
       if ( _Settings._get("user.first-run") === "true" ) {
@@ -2730,7 +2755,6 @@
           }, 500);
         }
       }
-      OSjs.Classes.ProgressBar($("#LoadingBar"), 60);
     },
 
 
@@ -3435,7 +3459,8 @@
       console.log("Usage", this.getStorageUsage());
 
       // Make sure registry is up to date
-      for ( var j in this._registry ) {
+      var j;
+      for ( j in this._registry ) {
         if ( this._registry.hasOwnProperty(j) ) {
           if ( j == "user.session.appstorage" && !STORE_APPS )
             continue;
@@ -3650,7 +3675,9 @@
       if ( p instanceof Panel ) {
         var session = [];
         var panels  = _Desktop ? _Desktop.getPanels() : [];
-        for ( var i = 0; i < panels.length; i++ ) {
+
+        var i = 0, l = panels.length;
+        for ( i; i < l; i++ ) {
           session.push(panels[i].getSession());
         }
 
@@ -3680,7 +3707,8 @@
       var changed = false;
       callback = callback || function() {};
 
-      for ( var i in settings ) {
+      var i;
+      for ( i in settings ) {
         if ( settings.hasOwnProperty(i) ) {
           this._set(i, settings[i]);
 
@@ -3841,7 +3869,9 @@
      */
     getRegistry : function() {
       var exp = {};
-      for ( var i in this._registry ) {
+      var i;
+
+      for ( i in this._registry ) {
         if ( i == "user.session.appstorage" && !STORE_APPS )
           continue;
 
@@ -3856,8 +3886,9 @@
      */
     getStorageUsage : function() {
       var ls = 0;
+      var l;
 
-      for ( var l in localStorage ) {
+      for ( l in localStorage ) {
         if ( localStorage.hasOwnProperty(l) ) {
           ls += localStorage[l].length;
         }
@@ -4256,7 +4287,8 @@
 
         if ( this._root_window ) {
           setTimeout(function() { // NOTE: Required!
-            for ( var i = 0; i < self._windows.length; i++ ) {
+            var i = 0, l = self._windows.length;
+            for ( i; i < l; i++ ) {
               self._windows[i].close();
             }
 
@@ -4327,7 +4359,8 @@
     _call : function(name, args) {
       args = args || {};
       if ( this._bindings[name] !== undefined ) {
-        for ( var i = 0; i < this._bindings[name].length; i++ ) {
+        var i = 0, l = this._bindings[name].length;
+        for ( i; i < l; i++ ) {
           this._bindings[name][i](args);
         }
       }
@@ -4364,7 +4397,8 @@
      * @return  void
      */
     _clearSockets : function() {
-      for ( var i in this._sockets ) {
+      var i;
+      for (i in this._sockets ) {
         if ( this._sockets.hasOwnProperty(i) ) {
           this._sockets[i].destroy();
         }
@@ -4411,7 +4445,9 @@
           if ( mime && mimes && mimes.length ) {
             var found = false;
             var tspl1 = mime.split("/").shift();
-            for ( var i = 0; i < mimes.length; i++ ) {
+            var i = 0, l = mimes.length;
+
+            for ( i; i < l; i++ ) {
               var tspl2 = mimes[i].split("/");
               if ( mime == mimes[i] || (tspl2[1] == "*" && (tspl1 == tspl2[0])) || (tspl1 == tspl2[0]) ) {
                 found = true;
@@ -4668,7 +4704,8 @@
         if ( key ) {
           error = __check(key);
         } else {
-          for ( var i = 0; i < this._compability.length; i++ ) {
+          var i = 0, l = this._compability.length;
+          for ( i; i < l; i++ ) {
             error = __check(this._compability[i]);
             if ( error ) {
               break;
@@ -4713,12 +4750,11 @@
           }
         }
 
-        var w = _WM.addWindow(win);
-        if ( w ) {
-          this.__addWindow(win);
+        if ( _WM.addWindow(win) ) {
+          return this.__addWindow(win) ? true : false;
         }
-        return w ? w : false;
       }
+
       return false;
     },
 
@@ -4728,7 +4764,7 @@
      * @return  void
      */
     __addWindow : function(win) {
-      this._windows.push(win);
+      return this._windows.push(win);
     },
 
     /**
@@ -4875,7 +4911,9 @@
      */
     _getWorkerCount : function() {
       var c = 0;
-      for ( var i in this._workers ) {
+      var i;
+
+      for ( i in this._workers ) {
         if ( this._workers.hasOwnProperty(i) ) {
           c++;
         }
@@ -5011,7 +5049,8 @@
     call : function(mname, margs) {
       if ( this.bindings && this.bindings[mname] ) {
         //var r;
-        for ( var i = 0; i < this.bindings[mname].length; i++ ) {
+        var i = 0, l = this.bindings[mname].length;
+        for ( i; i < l; i++ ) {
           /*r = */this.bindings[mname][i].call(_Desktop, mname, margs); // FIXME: _Desktop is not this
         }
       }
@@ -5154,7 +5193,9 @@
 
         var r = $("#WindowTogglerList ul");
         var e;
-        for ( var i = 0; i < _l.length; i++ ) {
+        var i = 0, l = _l.length;
+
+        for ( i; i < l; i++ ) {
           e = $(sprintf("<li><img alt=\"%s\" src=\"%s\" /></li>", _l[i].title, _l[i].icon));
           r.append(e);
         }
@@ -5283,7 +5324,9 @@
 
       if ( method == "tile" ) {
         var last;
-        for ( var i = 0; i < this.stack.length; i++ ) {
+        var i = 0, l = this.stack.length;
+
+        for ( i; i  < l; i++ ) {
           last = this.stack[i];
 
           last.$element.css({
@@ -5314,7 +5357,9 @@
 
       var s;
       var c = 0;
-      for ( var i in map ) {
+      var i;
+
+      for ( i in map ) {
         if ( map.hasOwnProperty(i) ) {
           s = _Settings._get(i);
           if ( s ) {
@@ -5376,7 +5421,9 @@
      */
     getStack : function() {
       var stack = [];
-      for ( var i = 0; i < this.stack.length; i++ ) {
+      var i = 0, l = this.stack.length;
+
+      for ( i; i < l; i++ ) {
         stack.push({
           id    : this.stack[i]._getWindowId(),
           title : this.stack[i]._getTitle(),
@@ -5465,7 +5512,10 @@
 
       // Remove panel
       if ( this.panels ) {
-        for ( var i = 0; i < this.panels.length; i++ ) {
+        var i = 0;
+        var l = this.panels.length;
+
+        for ( i; i < l; i++ ) {
           if ( this.panels[i] instanceof Panel ) {
             this.panels[i].destroy();
           }
@@ -5511,7 +5561,7 @@
         return;
       }
 
-      var finished = true;
+      var finished = false;
 
       console.group("Desktop::run()");
 
@@ -5711,68 +5761,72 @@
       console.log("Registering panels...");
       try {
         var panels = _Settings._get("desktop.panels", true);
-
         console.log("Panels", panels);
 
-        var additems = function(panel, items, callback) {
-          var size = items.length;
-          var current = 0;
+        if ( panels && panels.length ) {
 
-          var additem = function(index) {
-            var el      = items[index];
-            el.panel    = panel;
+          // Func: Add panel items
+          var _addPanelItems = function(panel, items, callback) {
+            var size = items.length;
+            var current = 0;
 
-            LaunchProcess(el.name, "PanelItem", el, function() {
-              current++;
+            // Func: Add Panel item (inner)
+            var _addPanelItem = function(index) {
+              var el      = items[index];
+              el.panel    = panel;
 
-              if ( current < size ) {
-                additem(current);
-              } else {
-                try {
-                  panel.run();
-                  self.updatePanelPosition(panel);
-                } catch ( exception ) {
-                  CrashCustom("Panel", error, "Panel.run() in Desktop::run(): " + exception);
+              LaunchProcess(el.name, "PanelItem", el, function() {
+                current++;
+                if ( current < size ) {
+                  _addPanelItem(current);
+                } else {
+                  callback(panel);
                 }
+              });
+            };
 
-                callback(panel);
-              }
-            });
+            if ( size > 0 ) {
+              _addPanelItem(0);
+            }
           };
 
-          if ( size > 0 ) {
-            additem(0);
-          }
-
-        };
-
-        if ( panels && panels.length ) {
-          finished = true;
-
-          var panel;
-          var all_added = false;
-
-          for ( var x = 0; x < panels.length; x++ ) {
-            panel = new Panel(panels[x].index, panels[x].name, panels[x].position, panels[x].style);
-
-            if ( !panels[x].items.length ) {
-              if ( x >= (panels.length - 1) )
+          // Func: Check if panel adding is finished
+          var _checkFinished = function(_cur, _len) {
+            if ( _cur >= _len ) {
+              if ( !finished ) {
+                finished = true;
                 finished_callback();
-              return;
+              }
+            }
+          };
+
+          // Add panels
+          var panel, iter;
+          var x = 0, l = panels.length;
+          for ( x; x < l; x++ ) {
+            iter  = panels[x];
+            panel = new Panel(iter.index, iter.name, iter.position, iter.style);
+
+            if ( !self.addPanel(panel) ) {
+              try {
+                panel.destroy();
+                panel = null;
+              } catch ( eee ) { // TODO Error handling ?!
+              }
+              continue;
             }
 
-            additems(panel, panels[x].items, (function(_cur, _len) {
-              return function(pref) {
-                self.addPanel(pref);
+            // Now add items if any
+            if ( iter.items.length ) {
+              _addPanelItems(panel, iter.items, (function(_cur, _len) {
+                return function(pref) {
+                  _checkFinished(_cur, _len);
+                };
+              })(x, (l - 1)));
+            } else {
+              _checkFinished(x, (l - 1));
+            }
 
-                if ( _cur >= _len ) {
-                  if ( !all_added )
-                    finished_callback();
-
-                  all_added = true;
-                }
-              };
-            })(x, (panels.length - 1)));
           }
         }
 
@@ -5799,6 +5853,7 @@
 
       if ( !finished ) {
         finished_callback();
+        finished = true;
       }
 
       setTimeout(function() {
@@ -5818,7 +5873,9 @@
     defaultHandler : function(ev, eargs) {
       var redrawPanels = function(panels, e, ee) {
         if ( panels && panels.length ) {
-          for ( var i = 0; i < panels.length; i++ ) {
+          var i = 0, l = panels.length;
+
+          for ( i; i < l; i++ ) {
             if ( panels[i] instanceof Panel ) {
               panels[i].redraw(e, ee);
             }
@@ -5902,7 +5959,9 @@
               console.log("Desktop::showPanelPreferences()", "__onchange", panel, [key, value], style);
               var session = [];
               var panels  = self.getPanels();
-              for ( var i = 0; i < panels.length; i++ ) {
+
+              var i = 0, l = panels.length;
+              for ( i; i < l; i++ ) {
                 session.push(panels[i].getSession());
               }
 
@@ -5919,12 +5978,19 @@
     /**
      * Desktop::addPanel() -- Add Panel
      * @param   Panel     p           Panel or null
-     * @return  void
+     * @return  bool
      */
     addPanel : function(p) {
       if ( p instanceof Panel ) {
-        this.panels.push(p);
+        if ( p.run() ) {
+          this.updatePanelPosition(p);
+          this.panels.push(p);
+
+          return true;
+        }
       }
+
+      return false;
     },
 
     /**
@@ -5934,7 +6000,8 @@
      * @return  void
      */
     removePanel : function(p, destroyed) {
-      for ( var i in this.panels ) {
+      var i;
+      for ( i in this.panels ) {
         if ( this.panels.hasOwnProperty(i) ) {
           if ( this.panels[i] === p ) {
             if ( !destroyed ) {
@@ -5993,7 +6060,9 @@
 
       var s;
       var c = 0;
-      for ( var i in map ) {
+      var i;
+
+      for ( i in map ) {
         if ( map.hasOwnProperty(i) ) {
           s = _Settings._get(i);
           if ( s ) {
@@ -6152,7 +6221,6 @@
       title     = title   || "Notification";
       message   = message || "Unknonwn notification";
       icon      = icon    || null;
-
       duration  = parseInt(duration, 10) || NOTIFICATION_TIMEOUT;
 
       console.group("Desktop::createNotification()");
@@ -6231,7 +6299,9 @@
      */
     getSession : function() {
       var panels = [];
-      for ( var i = 0; i < this.panels.length; i++ ) {
+      var i = 0, l = this.panels.length;
+
+      for ( i; i < l; i++ ) {
         panels.push(this.panels[i].getSession());
       }
 
@@ -6401,7 +6471,9 @@
      * @destructor
      */
     destroy : function() {
-      for ( var i = 0; i < this.items.length; i++ ) {
+      var i = 0, l = this.items.length;
+
+      for ( i; i < l; i++ ) {
         this.items[i].destroy();
       }
 
@@ -6431,7 +6503,7 @@
      */
     run : function() {
       if ( this.running )
-        return;
+        return false;
 
       var id = "Panel_" + this.index;
       var ul = this.$element.find("ul").first();
@@ -6448,6 +6520,8 @@
           self._stopItemDrag(ev);
         }
       });
+
+      return true;
     },
 
     /**
@@ -6538,7 +6612,9 @@
     redraw : function(ev, eargs) {
       var pi;
       if ( this.items ) {
-        for ( var i = 0; i < this.items.length; i++ ) {
+        var i = 0, l = this.items.length;
+
+        for ( i; i < l; i++ ) {
           pi = this.items[i];
           if ( pi._redrawable ) {
             pi.redraw(ev, eargs);
@@ -6590,7 +6666,10 @@
      * @return  bool
      */
     removeItem : function(x, save) {
-      for ( var i = 0; i < this.items.length; i++ ) {
+      var i = 0;
+      var l = this.items.length;
+
+      for ( i; i < l; i++ ) {
         if ( this.items[i] === x ) {
           x.destroy();
 
@@ -6758,7 +6837,9 @@
     getSession : function() {
       var self = this;
       var items = [];
-      for ( var i = 0; i < this.items.length; i++ ) {
+
+      var i = 0, l = this.items.length;
+      for ( i; i < l; i++ ) {
         items.push(this.items[i].getSession());
       }
 
@@ -7240,7 +7321,9 @@
       if ( this._bindings && this._showing ) {
         var fs = this._bindings[mname];
         if ( fs ) {
-          for ( var i = 0; i < fs.length; i++ ) {
+          var i = 0, l = fs.length;
+
+          for ( i; i < l; i++ ) {
             fs[i]();
           }
         }
@@ -8485,7 +8568,7 @@
         console.log("Pos", x, "x", y);
         console.log("El", el);
         console.groupEnd();
-      });
+      }, 0);
     },
 
     /**
@@ -8739,10 +8822,9 @@
    * @function
    */
   var __CoreShutdown__ = function() {
-    if ( _Running && _Core ) {
+    if ( _Core && _Core.running ) {
       _Core.destroy();
       _Core     = null;
-      _Running  = false;
 
       try {
         delete OSjs;
