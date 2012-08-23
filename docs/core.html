@@ -1,0 +1,2261 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OS.js Documentation</title>
+  <style type="text/css">
+  body, html {
+    font-family : Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size : 14px;
+    color : #777;
+  }
+  #links {
+    text-align : center;
+  }
+  .section {
+    padding : 10px;
+  }
+  .section.Class {
+      padding-left : 30px;
+      margin-left : 10px;
+      margin-bottom : 10px;
+      border-left : 5px #e6e6e6 solid;
+    }
+  .section.top {
+    margin-top : 10px;
+  }
+  .section.top p {
+}
+  table {
+    border-collapse : collapse;
+    width : 100%;
+  }
+  td {
+    vertical-align : top;
+    margin : 0;
+    padding : 5px;
+    background : #f0f0f0;
+    color : #000;
+  }
+  .size_2 .col_0,
+  .size_2 .col_1 {
+    width : 120px;
+  }
+  .size_2 .col_0,
+  .size_4 .col_0 {
+    background : #fafafa;
+  }
+  .size_4 .col_0,
+  .size_4 .col_1,
+  .size_4 .col_2 {
+    width : 120px;
+  }
+  .size_4 .col_3 {
+    /*width : 500px;*/
+  }
+  span.TODO,
+  span.FIXME {
+    color : #aa0000;
+    background : #ffff00;
+  }
+  h1, h2 {
+    color : #333;
+    font-weight : normal;
+  }
+  h1 a, h2 span {
+    color : #000;
+    font-weight : bold;
+  }
+  </style>
+</head>
+<body>
+<a href="index.html">Home</a> | Filename: core.js | OS.js Documentation
+<hr />
+<div id="links">
+ <a href="#DoPost()">DoPost()</a>  <a href="#GetLanguage()">GetLanguage()</a>  <a href="#MessageBox()">MessageBox()</a>  <a href="#InitLaunch()">InitLaunch()</a>  <a href="#CrashApplication()">CrashApplication()</a>  <a href="#CrashCustom()">CrashCustom()</a>  <a href="#LaunchString()">LaunchString()</a>  <a href="#SetVFSObjectDefault()">SetVFSObjectDefault()</a>  <a href="#LaunchVFSObject()">LaunchVFSObject()</a>  <a href="#VFSEvent()">VFSEvent()</a>  <a href="#CreateDefaultApplicationMenu()">CreateDefaultApplicationMenu()</a>  <a href="#GetIcon()">GetIcon()</a>  <a href="#GetSound()">GetSound()</a>  |  <a href="#GetLanguages()">GetLanguages()</a>  <a href="#PlaySound()">PlaySound()</a>  <a href="#Process">Process</a>  <a href="#ProcessService">ProcessService</a>  <a href="#Service">Service</a>  <a href="#Socket">Socket</a>  <a href="#WebWorker">WebWorker</a>  <a href="#LoginManager">LoginManager</a>  <a href="#CoreConnection">CoreConnection</a>  <a href="#Core">Core</a>  <a href="#ResourceManager">ResourceManager</a>  <a href="#SettingsManager">SettingsManager</a>  <a href="#PackageManager">PackageManager</a>  <a href="#BackgroundService">BackgroundService</a>  <a href="#Application">Application</a>  <a href="#WindowManager">WindowManager</a>  <a href="#Desktop">Desktop</a>  <a href="#Panel">Panel</a>  <a href="#PanelItem">PanelItem</a>  <a href="#Window">Window</a>  <a href="#GtkWindow">GtkWindow</a>  <a href="#Menu">Menu</a>  <a href="#Dialog">Dialog</a>  <a href="#OperationDialog">OperationDialog</a> 
+</div>
+<hr />
+
+<div class="section top">
+<h1>Function <a name="DoPost()">DoPost()</a></h1>
+<p><i>Do a POST call</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>JSON</b></td>
+<td class="col_2">args</td>
+<td class="col_3"><i>Arguments</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Callback function</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Function <a name="GetLanguage()">GetLanguage()</a></h1>
+<p><i>Get Current language</i></p>
+</div>
+<div class="section top">
+<h1>Function <a name="MessageBox()">MessageBox()</a></h1>
+<p><i>Crate a message box (alert)</i></p>
+<p>
+<i>See</i>: API<br />
+</p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">msg</td>
+<td class="col_3"><i>Message to display</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">type</td>
+<td class="col_3"><i>Message type (default=error)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">misc</td>
+<td class="col_3"><i>Message box extra argument</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 4</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Callback on close (optional)</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Function <a name="InitLaunch()">InitLaunch()</a></h1>
+<p><i>Initialize a launching of process</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Name of process to launch</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">type</td>
+<td class="col_3"><i>Package type</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Function <a name="CrashApplication()">CrashApplication()</a></h1>
+<p><i>Application Crash Dialog handler</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">app_name</td>
+<td class="col_3"><i>Application name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Application</b></td>
+<td class="col_2">application</td>
+<td class="col_3"><i>Application instance</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>Exception</b></td>
+<td class="col_2">ex</td>
+<td class="col_3"><i>Exception thrown</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Function <a name="CrashCustom()">CrashCustom()</a></h1>
+<p><i>Show a 'Custom' crash dialog</i></p>
+</div>
+<div class="section top">
+<h1>Function <a name="LaunchString()">LaunchString()</a></h1>
+<p><i>Launch something by string</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">str</td>
+<td class="col_3"><i>The string</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">args</td>
+<td class="col_3"><i>Extra arguments to send</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Function <a name="SetVFSObjectDefault()">SetVFSObjectDefault()</a></h1>
+<p><i>Set default launching application for MIME type</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">app</td>
+<td class="col_3"><i>Application Name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">path</td>
+<td class="col_3"><i>Path</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">mime</td>
+<td class="col_3"><i>MIME Type</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Function <a name="LaunchVFSObject()">LaunchVFSObject()</a></h1>
+<p><i>Launch an application by using a path and mime</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">path</td>
+<td class="col_3"><i>Object path</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">mime</td>
+<td class="col_3"><i>MIME Type</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">udef</td>
+<td class="col_3"><i>Use default defined application</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Function <a name="VFSEvent()">VFSEvent()</a></h1>
+<p><i>Trigger VFS Event</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>Event name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Object</b></td>
+<td class="col_2">params</td>
+<td class="col_3"><i>Event parameters</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>Process</b></td>
+<td class="col_2">instance</td>
+<td class="col_3"><i>Called from this instance</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Function <a name="CreateDefaultApplicationMenu()">CreateDefaultApplicationMenu()</a></h1>
+<p><i>Create default application menu</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEevent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event ref.</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>DOMElement</b></td>
+<td class="col_2">el</td>
+<td class="col_3"><i>DOM Element ref.</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Function <a name="GetIcon()">GetIcon()</a></h1>
+<p><i>Get a icon by name/size/resource</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Icon name (filename)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">size</td>
+<td class="col_3"><i>Icon size (Optional)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">pkg</td>
+<td class="col_3"><i>Package Name (Optional)</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Function <a name="GetSound()">GetSound()</a></h1>
+<p><i>Get a Audio clip by name</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">src</td>
+<td class="col_3"><i>Sound Source Path</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">filetype</td>
+<td class="col_3"><i>Sound Type (Extension)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">onerror</td>
+<td class="col_3"><i>Error callback</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 4</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">onloaded</td>
+<td class="col_3"><i>Loaded callback</i></td>
+</tr></table></div>
+<div class="section top Function">
+<h2><u>undefined</u> <span>window::unload()</span></h2>
+<p><i>Browser event: Unload</i></p>
+<p>
+<i>See</i>: __CoreShutdown__()<br />
+</p>
+</div>
+<div class="section top Function">
+<h2><u>undefined</u> <span>window::ready()</span></h2>
+<p><i>Browser event: Content loaded</i></p>
+<p>
+<i>See</i>: __CoreBoot__()<br />
+</p>
+</div>
+
+
+<div class="section ">
+<h1>Method <a name="GetLanguages()">GetLanguages()</a></h1>
+<p><i>Get all available languages</i></p>
+</div>
+<div class="section ">
+<h1>Method <a name="PlaySound()">PlaySound()</a></h1>
+<p><i>Play a specified sound</i></p>
+</div>
+<div class="section top">
+<h1>Class <a name="Process">Process</a></h1>
+<p><i>Process Class</i></p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>Process::init()</span></h2>
+<p><i>Constructor</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Process Name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">icon</td>
+<td class="col_3"><i>Process Icon</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">locked</td>
+<td class="col_3"><i>Not stoppable by user</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>Process::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>bool</u> <span>Process::_kill()</span></h2>
+<p><i>Kill process</i></p>
+</div>
+<div class="section top">
+<h1>Class <a name="ProcessService">ProcessService</a></h1>
+<p><i>Main Process Service [META] Class</i></p>
+<p>
+<i>Extends</i>: Process<br />
+</p>
+</div>
+<div class="section top">
+<h1>Class <a name="Service">Service</a></h1>
+<p><i>Server-Side Services</i></p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>Service::init()</span></h2>
+<p><i>Constructor</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">type</td>
+<td class="col_3"><i>Service type (default = SERVICE_GET)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>Service::destroy()</span></h2>
+<p><i>Destroy</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Service::call()</span></h2>
+<p><i>Call service</i></p>
+<p>
+<i>See</i>: Server-Side documentation<br />
+</p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">uri</td>
+<td class="col_3"><i>Service URI</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">data</td>
+<td class="col_3"><i>Service Method data/arguments (Array/Tuple depending on service type)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">timeout</td>
+<td class="col_3"><i>Service Timeout in seconds (Not avail. in some services)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 4</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">options</td>
+<td class="col_3"><i>Service Options (Array/Tuple depending on service type)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 5</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Callback function (returns [data, internal_error?])</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Class <a name="Socket">Socket</a></h1>
+<p><i>WebSocket abstraction (w/TCP)</i></p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>Socket::init()</span></h2>
+<p><i>Constructor</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Connection name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">uri</td>
+<td class="col_3"><i>Connection host/ip/uri/string</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>Socket::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Socket::_on_error()</span></h2>
+<p><i>Base onerror event</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>WebSocket Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Socket::_on_open()</span></h2>
+<p><i>Base onopen event</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>WebSocket Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Socket::_on_message()</span></h2>
+<p><i>Base onmessage event</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>WebSocket Event</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">data</td>
+<td class="col_3"><i>WebSocket Data</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Socket::_on_close()</span></h2>
+<p><i>Base onclose event</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>WebSocket Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>bool</u> <span>Socket::connect()</span></h2>
+<p><i>Connect</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Socket::send()</span></h2>
+<p><i>Send message</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">msg</td>
+<td class="col_3"><i>Data to send</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Class <a name="WebWorker">WebWorker</a></h1>
+<p><i>Main Background Worker Class</i></p>
+<p>
+<i>Extends</i>: Service<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>WebWorker::init()</span></h2>
+<p><i>Constructor</i></p>
+<p>
+<i>Throws</i>: Exception<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>WebWorker::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>bool</u> <span>WebWorker::terminate()</span></h2>
+<p><i>Terminate Worker communication</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>WebWorker::process()</span></h2>
+<p><i>Process incoming data</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>WebWorker::error()</span></h2>
+<p><i>error incoming data</i></p>
+</div>
+<div class="section  Class">
+<h2><u>Mixed</u> <span>WebWorker::post()</span></h2>
+<p><i>Post a message</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">message</td>
+<td class="col_3"><i>Message to send</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Class <a name="LoginManager">LoginManager</a></h1>
+<p><i>Login Manager</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>LoginManager::disableInputs()</span></h2>
+<p><i>Disable Input Buttons</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>LoginManager::enableInputs()</span></h2>
+<p><i>Enable Input Buttons</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>LoginManager::handleLogin()</span></h2>
+<p><i>Handle a login POST result</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>LoginManager::postLogin()</span></h2>
+<p><i>POST a login form</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>LoginManager::run()</span></h2>
+<p><i>Init the Login</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>LoginManager::hide()</span></h2>
+<p><i>Hide and destroy login window</i></p>
+</div>
+<div class="section top">
+<h1>Class <a name="CoreConnection">CoreConnection</a></h1>
+<p><i>Core Connection Process</i></p>
+<p>
+<i>Extends</i>: Socket<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>CoreConnection::init()</span></h2>
+<p><i>Initialize Main Socket</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>CoreConnection::call()</span></h2>
+<p><i>Call a backend Platfor Method</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">data</td>
+<td class="col_3"><i>Data</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>CoreConnection::_handle()</span></h2>
+<p><i>Handle a message recieved</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>JSON</b></td>
+<td class="col_2">j</td>
+<td class="col_3"><i>Data</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Class <a name="Core">Core</a></h1>
+<p><i>Main Process</i></p>
+<p>
+<i>Extends</i>: Process<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>Core::init()</span></h2>
+<p><i>Constructor</i></p>
+</div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>Core::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Core::boot()</span></h2>
+<p><i>Main booting procedure</i><br />Sends browser information to the backend. The response<br />is the base configuration. After environment is set-up<br />the LoginManager is run.</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Core::login()</span></h2>
+<p><i>Main login procedure</i><br />This function is called after the backend has sucessfully<br />registered the user into session. The response is the<br />session data tree.<br />All base instances are created and initialized here.</p>
+<p>
+<i>See</i>: LoginManager<br />
+</p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Object</b></td>
+<td class="col_2">response</td>
+<td class="col_3"><i>Response from LoginManager</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Core::shutdown()</span></h2>
+<p><i>Main shutdown procedure</i><br />Logs out the user and kills all running processes.</p>
+<p>
+<i>See</i>: Core::destroy()<br />
+</p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">save</td>
+<td class="col_3"><i>Save session ?</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Core::leaving()</span></h2>
+<p><i>When user leaves the page</i><br />NOTE: 'this' is not instance here!</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Core::run()</span></h2>
+<p><i>Main startup procedure wrapper</i><br />This function is called when all base instances are running,<br />resources fully loaded and the used has logged in.<br />The session is from the login response.</p>
+<p>
+<i>See</i>: Core::login()<br />
+</p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Object</b></td>
+<td class="col_2">session</td>
+<td class="col_3"><i>Session to restore (if any)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Core::_initializeWindowManager()</span></h2>
+<p><i>Initialize Window Manager</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Core::_initializeDesktop()</span></h2>
+<p><i>Initialize Desktop</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Core::_initializeSession()</span></h2>
+<p><i>Initialize User Session</i></p>
+</div>
+<div class="section  Class">
+<h2><u>bool</u> <span>Core::global_error()</span></h2>
+<p><i>The Window error handler. Overrides default browser handler</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">msg</td>
+<td class="col_3"><i>Exception Message</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">url</td>
+<td class="col_3"><i>Exception URL</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">lno</td>
+<td class="col_3"><i>Exception Line Number</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Core::global_endsession()</span></h2>
+<p><i>The Browser 'session cache clear' event handler</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">state</td>
+<td class="col_3"><i>If we went off-line</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Core::global_offline()</span></h2>
+<p><i>The Browser 'offline' event handler</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">state</td>
+<td class="col_3"><i>If we went off-line</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>bool</u> <span>Core::global_keyup()</span></h2>
+<p><i>Global Event Handler: keyup</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>bool</u> <span>Core::global_keypress()</span></h2>
+<p><i>Global Event Handler: keypress</i><br />global_keypress : function(ev) {<br />return true;<br />},</p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>bool</u> <span>Core::global_keydown()</span></h2>
+<p><i>Global Event Handler: keydown</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Core::global_click()</span></h2>
+<p><i>Global Event Handler: click</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Core::global_dblclick()</span></h2>
+<p><i>Global Event Handler: dblclick</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DKM Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>bool</u> <span>Core::global_mousedown()</span></h2>
+<p><i>Global Event Handler: mousedown</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DKM Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Core::global_mouseup()</span></h2>
+<p><i>Global Event Handler: mouseup</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Core::global_mousemove()</span></h2>
+<p><i>Global Event Handler: mousemove</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>bool</u> <span>Core::global_contextmenu()</span></h2>
+<p><i>Global Event Handler: contextmenu</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">e</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Core::global_fullscreen()</span></h2>
+<p><i>Global Event Handler: fullscreen</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">e</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>Process</u> <span>Core::getProcess()</span></h2>
+<p><i>Get a running process by id</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">pid</td>
+<td class="col_3"><i>Process ID</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">root</td>
+<td class="col_3"><i>Give access to "locked" processes ?</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>Array</u> <span>Core::getProcesses()</span></h2>
+<p><i>Get all running processes</i></p>
+</div>
+<div class="section  Class">
+<h2><u>JSON</u> <span>Core::getSession()</span></h2>
+<p><i>Get current Desktop session data</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Core::setSession()</span></h2>
+<p><i>Restore a session</i></p>
+</div>
+<div class="section top">
+<h1>Class <a name="ResourceManager">ResourceManager</a></h1>
+<p><i>Resource Manager</i><br />Takes care of CSS, JavaScript loading etc.</p>
+<p>
+<i>Extends</i>: Process<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>ResourceManager::init()</span></h2>
+<p><i>Constructor</i></p>
+</div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>ResourceManager::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>ResourceManager::run()</span></h2>
+<p><i>Start instance</i><br />Handles preloading of resources.</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>ResourceManager::updateManifest()</span></h2>
+<p><i>Force MANIFEST update</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>ResourceManager::addResources()</span></h2>
+<p><i>Add an array with resources and call-back</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Array</b></td>
+<td class="col_2">res</td>
+<td class="col_3"><i>Resource URI array</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">app</td>
+<td class="col_3"><i>Application Name (if any)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Call when done adding</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Class <a name="SettingsManager">SettingsManager</a></h1>
+<p><i>Settings Manager</i><br />Uses localSettings (WebStorage) to handle session data</p>
+<p>
+<i>Extends</i>: Process<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>SettingsManager::init()</span></h2>
+<p><i>Constructor</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Object</b></td>
+<td class="col_2">registry</td>
+<td class="col_3"><i>Default registry</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>SettingsManager::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>SettingsManager::run()</span></h2>
+<p><i>Run</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Object</b></td>
+<td class="col_2">user_registry</td>
+<td class="col_3"><i>User registry</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>SettingsManager::_applyUserRegistry()</span></h2>
+<p><i>Apply user registry settings</i></p>
+<p>
+<i>See</i>: SettingsManager::run()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>SettingsManager::_initQuota()</span></h2>
+<p><i>Initialize quota checking</i></p>
+</div>
+<div class="section  Class">
+<h2><u>Mixed</u> <span>SettingsManager::savePackageStorage()</span></h2>
+<p><i>Save package data</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Application name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Object</b></td>
+<td class="col_2">props</td>
+<td class="col_3"><i>Application settings</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>JSON</u> <span>SettingsManager::loadPackageStorage()</span></h2>
+<p><i>Load package data</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Application name</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>bool</u> <span>SettingsManager::savePanel()</span></h2>
+<p><i>Save a panel session data</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>SettingsManager::_apply()</span></h2>
+<p><i>Apply a changeset</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Object</b></td>
+<td class="col_2">settings</td>
+<td class="col_3"><i>Settings Array</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Callback function</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>SettingsManager::_save()</span></h2>
+<p><i>Save settings</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>SettingsManager::_set()</span></h2>
+<p><i>Set a storage item by key and value</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">k</td>
+<td class="col_3"><i>Settings Key</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">v</td>
+<td class="col_3"><i>Settings Value</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>Mixed</u> <span>SettingsManager::_get()</span></h2>
+<p><i>Get a storage item by key</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">k</td>
+<td class="col_3"><i>Settings Key</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">json</td>
+<td class="col_3"><i>Parse as JSON</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>Mixed</u> <span>SettingsManager::setDefaultApplication()</span></h2>
+<p><i>Set default application MIME</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">app</td>
+<td class="col_3"><i>Application Name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">mime</td>
+<td class="col_3"><i>MIME Type</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">path</td>
+<td class="col_3"><i>Path (Default = undefined)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>Object</u> <span>SettingsManager::getDefaultApplications()</span></h2>
+<p><i>Get default applications for MIME</i></p>
+</div>
+<div class="section  Class">
+<h2><u>String</u> <span>SettingsManager::getType()</span></h2>
+<p><i>Get storage item type by key</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">key</td>
+<td class="col_3"><i>Settings Key</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>Mixed</u> <span>SettingsManager::getOptions()</span></h2>
+<p><i>Get storage item option by key</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">key</td>
+<td class="col_3"><i>Settings Key</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>JSON</u> <span>SettingsManager::getRegistry()</span></h2>
+<p><i>Get current Storage registry data</i></p>
+</div>
+<div class="section  Class">
+<h2><u>Array</u> <span>SettingsManager::getStorageUsage()</span></h2>
+<p><i>Get storage usage</i></p>
+</div>
+<div class="section top">
+<h1>Class <a name="PackageManager">PackageManager</a></h1>
+<p><i>Package Manager</i></p>
+<p>
+<i>Extends</i>: Process<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>PackageManager::init()</span></h2>
+<p><i>Constructor</i></p>
+</div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>PackageManager::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>PackageManager::reset()</span></h2>
+<p><i>Reset instance</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>PackageManager::run()</span></h2>
+<p><i>Run</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Object</b></td>
+<td class="col_2">packages</td>
+<td class="col_3"><i>Packages</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>PackageManager::install()</span></h2>
+<p><i>Install Package from Archive</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">p</td>
+<td class="col_3"><i>Package Archive Path</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Callback function</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">reterror</td>
+<td class="col_3"><i>Callback on error instead of alert</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>PackageManager::uninstall()</span></h2>
+<p><i>Uninstall Package(s)</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Array</b></td>
+<td class="col_2">p</td>
+<td class="col_3"><i>Package list</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Callback function</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">reterror</td>
+<td class="col_3"><i>Callback on error instead of alert</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>PackageManager::setPackages()</span></h2>
+<p><i>Apply user package settings</i></p>
+<p>
+<i>See</i>: SettingsManager::run()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>Mixed</u> <span>PackageManager::getUserPackages()</span></h2>
+<p><i>Get user packages</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">icons</td>
+<td class="col_3"><i>Enumerate Icons</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">apps</td>
+<td class="col_3"><i>Enumerate Application items</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">pitems</td>
+<td class="col_3"><i>Enumerate PanelItem items</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 4</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">sitems</td>
+<td class="col_3"><i>Enumerate Service items</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>Mixed</u> <span>PackageManager::getPackage()</span></h2>
+<p><i>Get package(s)</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">merged</td>
+<td class="col_3"><i>Get merged object</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>Object</u> <span>PackageManager::getPackagesByType()</span></h2>
+<p><i>Get packages by type</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">type</td>
+<td class="col_3"><i>Package Type</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Class <a name="BackgroundService">BackgroundService</a></h1>
+<p><i>The Panel Item Class</i><br />Basis for a PanelItem</p>
+<p>
+<i>Extends</i>: Process<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>BackgroundService::init()</span></h2>
+<p><i>Constructor</i></p>
+</div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>BackgroundService::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>BackgroundService::run()</span></h2>
+<p><i>Run Service</i></p>
+</div>
+<div class="section top">
+<h1>Class <a name="Application">Application</a></h1>
+<p><i>The base Application class</i><br />Basis for application (empty)<br />Application can store running arguments/parameters<br />via the 'argv' object. This is stored in browser's<br />storage and is applied upon application construction.</p>
+<p>
+<i>See</i>: Window<br />
+<i>Extends</i>: Process<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>Application::init()</span></h2>
+<p><i>Constructor</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Application Name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Array</b></td>
+<td class="col_2">argv</td>
+<td class="col_3"><i>Application Staring arguments (argv)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>Application::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::run()</span></h2>
+<p><i>Run application</i><br />Final process in the initialization. Restores any previous<br />stored [application-specific] settings, and binds the given<br />window to the running process so it can shutdown cleanly.</p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Window</b></td>
+<td class="col_2">root_window</td>
+<td class="col_3"><i>Bind a Window as main Window</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::_bind()</span></h2>
+<p><i>Bind an event</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Binding name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">func</td>
+<td class="col_3"><i>Function callback</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::_call()</span></h2>
+<p><i>Run a bound event</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Binding name</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>Socket</u> <span>Application::_createSocket()</span></h2>
+<p><i>Create a new Socket instance</i></p>
+<p>
+<i>See</i>: Socket<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>bool</u> <span>Application::_removeSocket()</span></h2>
+<p><i>Remove a Socket</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Socket name</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::_clearSockets()</span></h2>
+<p><i>Remove all Sockets</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::defaultFileUpload()</span></h2>
+<p><i>Perform default file-upload (with dialog)</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">dir</td>
+<td class="col_3"><i>Upload directory</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Callback function</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>Object</b></td>
+<td class="col_2">opts</td>
+<td class="col_3"><i>Options</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::defaultFileOpen()</span></h2>
+<p><i>Perform default file-open operation (with dialog)</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Callback when file is opened</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Array</b></td>
+<td class="col_2">mimes</td>
+<td class="col_3"><i>Mime filtering (not required)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">dir</td>
+<td class="col_3"><i>Current directory (not required)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 4</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">file</td>
+<td class="col_3"><i>Current file (not required)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 5</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">check_mime</td>
+<td class="col_3"><i>Check MIME type (Default = true)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::defaultFileSave()</span></h2>
+<p><i>Perform default file-open operation (with dialog)</i><br />Upon success this function triggers an Application binding called "vfs" to perform<br />refreshes along all running applications. This events have to be manually bound.</p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">file</td>
+<td class="col_3"><i>Current file</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">content</td>
+<td class="col_3"><i>Current file content</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Callback when file is saved</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 4</td>
+<td class="col_1"><b>Array</b></td>
+<td class="col_2">mimes</td>
+<td class="col_3"><i>Mime filtering (not required)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 5</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">dir</td>
+<td class="col_3"><i>Current directory (not required)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 6</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">saveas</td>
+<td class="col_3"><i>Perform a "Save As..." operation</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 7</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">encoding</td>
+<td class="col_3"><i>File encoding (not required)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>Service</u> <span>Application::createService()</span></h2>
+<p><i>Create a new Service instance</i></p>
+<p>
+<span class="TODO">TODO</span>: ...<br />
+</p>
+<p>
+<i>See</i>: Service<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::createMessageDialog()</span></h2>
+<p><i>Create Dialog: Message</i></p>
+<p>
+<i>See</i>: API.ui.dialog<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::createColorDialog()</span></h2>
+<p><i>Create Dialog: Color Chooser</i></p>
+<p>
+<i>See</i>: API.ui.dialog_color<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::createFontDialog()</span></h2>
+<p><i>Create Dialog: Font Chooser</i></p>
+<p>
+<i>See</i>: API.ui.dialog_font<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::createUploadDialog()</span></h2>
+<p><i>Create Dialog: Upload File</i></p>
+<p>
+<i>See</i>: API.ui.dialog_upload<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::createFileDialog()</span></h2>
+<p><i>Create Dialog: File Operation Dialog</i></p>
+<p>
+<i>See</i>: API.ui.dialog_file<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::createLaunchDialog()</span></h2>
+<p><i>Create Dialog: Launch Application</i></p>
+<p>
+<i>See</i>: API.ui.dialog_launch<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::createRenameDialog()</span></h2>
+<p><i>Create Dialog: Rename File</i></p>
+<p>
+<i>See</i>: API.ui.dialog_rename<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::createInputDialog()</span></h2>
+<p><i>Create Dialog: Input Box</i></p>
+<p>
+<i>See</i>: API.ui.dialog_input<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::createFilePropertyDialog()</span></h2>
+<p><i>Create Dialog: File properties</i></p>
+<p>
+<i>See</i>: API.ui.dialog_properties<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>WebWorker</u> <span>Application::_addWorker()</span></h2>
+<p><i>Create a WebWorker</i></p>
+<p>
+<i>See</i>: WebWorker<br />
+</p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Worker name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">resource</td>
+<td class="col_3"><i>Worker resource name (worker.NAME.js)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">mcallback</td>
+<td class="col_3"><i>Process callback function</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 4</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">ecallback</td>
+<td class="col_3"><i>Error callback function</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>bool</u> <span>Application::_removeWorker()</span></h2>
+<p><i>Remove a WebWorker</i></p>
+<p>
+<i>See</i>: WebWorker<br />
+</p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Worker name</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::_clearWorkers()</span></h2>
+<p><i>Remove all WebWorkers</i></p>
+<p>
+<i>See</i>: WebWorker<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::_checkCompability()</span></h2>
+<p><i>Check Application compabilty list and throw errors if any</i></p>
+<p>
+<i>See</i>: OSjs.Compability<br />
+<i>Throws</i>: OSjs.Classes.ApplicationException<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::_addWindow()</span></h2>
+<p><i>Add a new window to application</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Window</b></td>
+<td class="col_2">win</td>
+<td class="col_3"><i>Window to add</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::__addWindow()</span></h2>
+<p><i>Add a new window to application (internal)</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Window</b></td>
+<td class="col_2">win</td>
+<td class="col_3"><i>Window to add</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::_stop()</span></h2>
+<p><i>Stop application</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::_saveStorage()</span></h2>
+<p><i>Save Application Storage</i></p>
+</div>
+<div class="section  Class">
+<h2><u>Mixed</u> <span>Application::_restoreStorage()</span></h2>
+<p><i>Load Application Storage</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::_flushStorage()</span></h2>
+<p><i>Clear Application Storage</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::_event()</span></h2>
+<p><i>Perform Application Event (AJAX-call to Server-Side)</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>The AJAX action to perform</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">args</td>
+<td class="col_3"><i>The AJAX action argument(s)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Callback to function when done</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 4</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">show_error</td>
+<td class="col_3"><i>Show a [crash] dialog on error (Default = false)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::_setArgv()</span></h2>
+<p><i>Set stored argument</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">a</td>
+<td class="col_3"><i>Argument name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">v</td>
+<td class="col_3"><i>Value</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Application::_getResourceURL()</span></h2>
+<p><i>Get Package resource URL</i></p>
+</div>
+<div class="section  Class">
+<h2><u>Object</u> <span>Application::_getArgv()</span></h2>
+<p><i>Get stored arguments</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">a</td>
+<td class="col_3"><i>Argument name (Optional)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>Worker</u> <span>Application::_getWorker()</span></h2>
+<p><i>Get a WebWorker</i></p>
+<p>
+<i>See</i>: WebWorker<br />
+</p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Worker name</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>int</u> <span>Application::_getWorkerCount()</span></h2>
+<p><i>Get WebWorker count</i></p>
+</div>
+<div class="section  Class">
+<h2><u>JSON</u> <span>Application::_getSessionData()</span></h2>
+<p><i>Get current Application session data</i></p>
+</div>
+<div class="section top">
+<h1>Class <a name="WindowManager">WindowManager</a></h1>
+<p><i>Main Window Manager Class</i></p>
+<p>
+<i>Extends</i>: Process<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>WindowManager::init()</span></h2>
+<p><i>Constructor</i></p>
+</div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>WindowManager::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>WindowManager::run()</span></h2>
+<p><i>Run window manager</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>WindowManager::bind()</span></h2>
+<p><i>Bind an event by name and callback</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">mname</td>
+<td class="col_3"><i>Binding name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">mfunc</td>
+<td class="col_3"><i>Binding function</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>WindowManager::call()</span></h2>
+<p><i>Call an event by name and arguments</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">mname</td>
+<td class="col_3"><i>Binding name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">margs</td>
+<td class="col_3"><i>Binding arguments</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>WindowManager::insertWindow()</span></h2>
+<p><i>Insert a window into DOM</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMElement</b></td>
+<td class="col_2">el</td>
+<td class="col_3"><i>DOM Element from window</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>Mixed</u> <span>WindowManager::addWindow()</span></h2>
+<p><i>Add a window to the stack (and create)</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Window</b></td>
+<td class="col_2">win</td>
+<td class="col_3"><i>Window to add</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>bool</u> <span>WindowManager::removeWindow()</span></h2>
+<p><i>Remove a window from the stack</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Window</b></td>
+<td class="col_2">win</td>
+<td class="col_3"><i>Window to remove</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">destroy</td>
+<td class="col_3"><i>Destroy window</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>WindowManager::blurWindow()</span></h2>
+<p><i>Perform 'blur' on Window</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Window</b></td>
+<td class="col_2">win</td>
+<td class="col_3"><i>Window to manipulate</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>WindowManager::focusWindow()</span></h2>
+<p><i>Perform 'focus' on Window</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Window</b></td>
+<td class="col_2">win</td>
+<td class="col_3"><i>Window to manipulate</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>WindowManager::togleWindow()</span></h2>
+<p><i>Handle window switching via keyboard shortcut</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">arg</td>
+<td class="col_3"><i>Swithing argument</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>WindowManager::restoreWindow()</span></h2>
+<p><i>Perform 'restore' on Window</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Window</b></td>
+<td class="col_2">win</td>
+<td class="col_3"><i>Window to manipulate</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>WindowManager::maximizeWindow()</span></h2>
+<p><i>Perform 'maximize' on Window</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Window</b></td>
+<td class="col_2">win</td>
+<td class="col_3"><i>Window to manipulate</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>WindowManager::minimizeWindow()</span></h2>
+<p><i>Perform 'minimize' on Window</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Window</b></td>
+<td class="col_2">win</td>
+<td class="col_3"><i>Window to manipulate</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>WindowManager::updateWindow()</span></h2>
+<p><i>Perform 'update' on Window</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Window</b></td>
+<td class="col_2">win</td>
+<td class="col_3"><i>Window to manipulate</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>WindowManager::sortWindows()</span></h2>
+<p><i>Sort windows on desktop (align)</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">method</td>
+<td class="col_3"><i>Sorting method (default = tile)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>WindowManager::applySettings()</span></h2>
+<p><i>Apply changes from ResourceManger</i></p>
+</div>
+<div class="section  Class">
+<h2><u>Object</u> <span>WindowManager::getWindowSpace()</span></h2>
+<p><i>Get free window space rect</i></p>
+</div>
+<div class="section  Class">
+<h2><u>Array</u> <span>WindowManager::getStack()</span></h2>
+<p><i>Get stack of Windows</i></p>
+</div>
+<div class="section top">
+<h1>Class <a name="Desktop">Desktop</a></h1>
+<p><i>Main Desktop Class</i><br />The desktop containing all elements</p>
+<p>
+<i>Extends</i>: Process<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>Desktop::init()</span></h2>
+<p><i>Constructor</i></p>
+</div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>Desktop::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Desktop::run()</span></h2>
+<p><i>Run DOM operations etc.</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">finished_callback</td>
+<td class="col_3"><i>Call when done</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>bool</u> <span>Desktop::defaultHandler()</span></h2>
+<p><i>Default event handler callback</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>Event name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">eargs</td>
+<td class="col_3"><i>Event argument(s)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>bool</u> <span>Desktop::showContextMenu()</span></h2>
+<p><i>Show context menu</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Desktop::showPanelPreferences()</span></h2>
+<p><i>Show Panel preferences dialog</i></p>
+</div>
+<div class="section  Class">
+<h2><u>bool</u> <span>Desktop::addPanel()</span></h2>
+<p><i>Add Panel</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Panel</b></td>
+<td class="col_2">p</td>
+<td class="col_3"><i>Panel or null</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Desktop::removePanel()</span></h2>
+<p><i>Remove Panel</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Panel</b></td>
+<td class="col_2">p</td>
+<td class="col_3"><i>Panel or null</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">destroyed</td>
+<td class="col_3"><i>Set if action comes from Panel::destroy()</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Desktop::updatePanelPosition()</span></h2>
+<p><i>Triggered upon panel position update</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Panel</b></td>
+<td class="col_2">p</td>
+<td class="col_3"><i>Panel or null</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Desktop::resize()</span></h2>
+<p><i>Resize desktop</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Desktop::applySettings()</span></h2>
+<p><i>Apply changes from ResourceManger</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Desktop::setWallpaper()</span></h2>
+<p><i>Set new wallpaper</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">wp</td>
+<td class="col_3"><i>Wallpaper path</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Desktop::setWallpaperType()</span></h2>
+<p><i>Set the wallpaper type</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">t</td>
+<td class="col_3"><i>Wallpaper type</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Desktop::setBackgroundColor()</span></h2>
+<p><i>Set the background-color</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">t</td>
+<td class="col_3"><i>Wallpaper type</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Desktop::setTheme()</span></h2>
+<p><i>Set new theme</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">theme</td>
+<td class="col_3"><i>Theme name</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Desktop::setFont()</span></h2>
+<p><i>Set font</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">font</td>
+<td class="col_3"><i>Font name</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Desktop::setCursorTheme()</span></h2>
+<p><i>Set cursor theme</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">cursor</td>
+<td class="col_3"><i>Theme name</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Desktop::createNotification()</span></h2>
+<p><i>Create a Desktop notification</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">title</td>
+<td class="col_3"><i>Title</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">message</td>
+<td class="col_3"><i>Message</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">icon</td>
+<td class="col_3"><i>Icon (if any)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 4</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">duration</td>
+<td class="col_3"><i>Visibility duration in ms (Default = NOTIFICATION_TIMEOUT)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>Panel</u> <span>Desktop::getPanel()</span></h2>
+<p><i>Get Panel</i></p>
+</div>
+<div class="section  Class">
+<h2><u>Panel</u> <span>Desktop::getPanels()</span></h2>
+<p><i>Get All Panels</i></p>
+</div>
+<div class="section  Class">
+<h2><u>Object</u> <span>Desktop::getSession()</span></h2>
+<p><i>Get the desktop session</i></p>
+</div>
+<div class="section top">
+<h1>Class <a name="Panel">Panel</a></h1>
+<p><i>The Desktop Panel Class</i><br />Panels can be added to desktop. Contains PanelItem(s) or Widgets</p>
+<p>
+<i>Extends</i>: Process<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>Panel::init()</span></h2>
+<p><i>Constructor</i></p>
+</div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>Panel::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Panel::run()</span></h2>
+<p><i>Set panel to running state</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Panel::_startItemDrag()</span></h2>
+<p><i>PanelItem Dragging</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Panel::_stopItemDrag()</span></h2>
+<p><i>PanelItem Dragging</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Panel::_handleItemDrag()</span></h2>
+<p><i>PanelItem Dragging</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Panel::redraw()</span></h2>
+<p><i>Redraw PanelItems</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>Event name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">eargs</td>
+<td class="col_3"><i>Event argument(s)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>Mixed</u> <span>Panel::addItem()</span></h2>
+<p><i>Add a new PanelItem</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>PanelItem</b></td>
+<td class="col_2">i</td>
+<td class="col_3"><i>Item</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Object</b></td>
+<td class="col_2">opts</td>
+<td class="col_3"><i>Item Options</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">save</td>
+<td class="col_3"><i>Save panel (Default = undefined)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>bool</u> <span>Panel::removeItem()</span></h2>
+<p><i>Remove a PanelItem</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>PanelItem</b></td>
+<td class="col_2">x</td>
+<td class="col_3"><i>Item</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">save</td>
+<td class="col_3"><i>Save panel (Default = undefined)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>PanelItem::modifyItem()</span></h2>
+<p><i>A panel item has been modified</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>PanelItem</b></td>
+<td class="col_2">item</td>
+<td class="col_3"><i>Panel Item instance</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">save</td>
+<td class="col_3"><i>Save the operation</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>bool</u> <span>Panel::triggerExpand()</span></h2>
+<p><i>Trigger expanding of items</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>PanelItem</b></td>
+<td class="col_2">x</td>
+<td class="col_3"><i>Item</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Panel::setStyle()</span></h2>
+<p><i>Set panel style</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Object</b></td>
+<td class="col_2">style</td>
+<td class="col_3"><i>Style Object</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">append</td>
+<td class="col_3"><i>Append to DOM</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>String</u> <span>Panel::getHeight()</span></h2>
+<p><i>Get panel height</i></p>
+</div>
+<div class="section  Class">
+<h2><u>String</u> <span>Panel::getPosition()</span></h2>
+<p><i>Get placed position</i></p>
+</div>
+<div class="section  Class">
+<h2><u>Object</u> <span>Panel::getStyle()</span></h2>
+<p><i>Get style</i></p>
+</div>
+<div class="section  Class">
+<h2><u>Object</u> <span>Panel::getSession()</span></h2>
+<p><i>Get the panel session</i></p>
+</div>
+<div class="section top">
+<h1>Class <a name="PanelItem">PanelItem</a></h1>
+<p><i>The Panel Item Class</i><br />Basis for a PanelItem</p>
+<p>
+<i>Extends</i>: Process<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>PanelItem::init()</span></h2>
+<p><i>Constructor</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Panel Item name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">align</td>
+<td class="col_3"><i>Panel Item alignment</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>PanelItem::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>$</u> <span>PanelItem::create()</span></h2>
+<p><i>Create DOM elements etc.</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Object</b></td>
+<td class="col_2">lopts</td>
+<td class="col_3"><i>Item Options</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>PanelItem::run()</span></h2>
+<p><i>Run PanelItem</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>PanelItem::reload()</span></h2>
+<p><i>Reload PanelItem</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>PanelItem::redraw()</span></h2>
+<p><i>Redraw PanelItem</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>PanelItem::expand()</span></h2>
+<p><i>Expand item to max size</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>PanelItem::onRedraw()</span></h2>
+<p><i>Bubble a redraw event down to panel</i><br />This function is called in a panel item when chaning content</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>PanelItem::crash()</span></h2>
+<p><i>Make PanelItem Crash</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">error</td>
+<td class="col_3"><i>Error message</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>PanelItem::configure()</span></h2>
+<p><i>Open Configuration Dialog</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>PanelItem::setPosition()</span></h2>
+<p><i>Set position CSS</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>PanelItem::setAlignment()</span></h2>
+<p><i>Set new alignment</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">align</td>
+<td class="col_3"><i>Alignment</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>JSON</u> <span>PanelItem::getMenu()</span></h2>
+<p><i>Get the ContextMenu</i></p>
+</div>
+<div class="section  Class">
+<h2><u>Object</u> <span>PanelItem::getSession()</span></h2>
+<p><i>Get the session properties</i></p>
+</div>
+<div class="section top">
+<h1>Class <a name="Window">Window</a></h1>
+<p><i>The Main Window Class</i><br />Basis for an Application or Dialog.<br />This class does all the loading</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>Window::init()</span></h2>
+<p><i>Constructor</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Name of window</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">dialog</td>
+<td class="col_3"><i>Dialog type if any</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>Object</b></td>
+<td class="col_2">largv</td>
+<td class="col_3"><i>Extra win attributes (used to restore from sleep etc)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>Window::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Window::_bind()</span></h2>
+<p><i>Bind an event by name and callback</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">mname</td>
+<td class="col_3"><i>Binding name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">mfunc</td>
+<td class="col_3"><i>Binding function</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Window::_call()</span></h2>
+<p><i>Call an event by name and arguments</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">mname</td>
+<td class="col_3"><i>Binding name</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>$</u> <span>Window::create()</span></h2>
+<p><i>Create DOM elemnts etc.</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">id</td>
+<td class="col_3"><i>The ID to give DOM Element</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">mcallback</td>
+<td class="col_3"><i>Callback when done</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Window::show()</span></h2>
+<p><i>Show window (add)</i></p>
+<p>
+<i>See</i>: WidowManager::addWindow()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Window::close()</span></h2>
+<p><i>Close window (remove)</i></p>
+<p>
+<i>See</i>: WindowManager::removeWindow()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Window::focus()</span></h2>
+<p><i>Focus window</i></p>
+<p>
+<i>See</i>: WindowManager::focusWindow()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Window::blur()</span></h2>
+<p><i>Blur window</i></p>
+<p>
+<i>See</i>: WindowManager::blurWindow()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Window::_shuffle()</span></h2>
+<p><i>Shuffle Window (adjust z-index)</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">zi</td>
+<td class="col_3"><i>New z-index</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">old</td>
+<td class="col_3"><i>Old z-index</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Window::_ontop()</span></h2>
+<p><i>Set Window on-top state</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">t</td>
+<td class="col_3"><i>State</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Window::_focus()</span></h2>
+<p><i>Set window to focused state</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Window::_blur()</span></h2>
+<p><i>Set window to blurred state</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Window::_minimize()</span></h2>
+<p><i>Set window to minimized state</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Window::_maximize()</span></h2>
+<p><i>Set window to maximized state</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Window::_gravitate()</span></h2>
+<p><i>Gravitate window</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">dir</td>
+<td class="col_3"><i>Direction/Location</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Window::_move()</span></h2>
+<p><i>Move Window position</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">left</td>
+<td class="col_3"><i>New Left/X Position in px</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">top</td>
+<td class="col_3"><i>New top/Y Position in px</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Window::_resize()</span></h2>
+<p><i>Resize window dimension</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">width</td>
+<td class="col_3"><i>New width in px</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">height</td>
+<td class="col_3"><i>New height in px</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>DOMElement</b></td>
+<td class="col_2">el</td>
+<td class="col_3"><i>Element</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Window::_setTitle()</span></h2>
+<p><i>Set Window title</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">t</td>
+<td class="col_3"><i>Title</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>String</u> <span>Window::_getTitle()</span></h2>
+<p><i>Get Window title</i></p>
+</div>
+<div class="section  Class">
+<h2><u>String</u> <span>Window::_getIcon()</span></h2>
+<p><i>Get Window full icon path</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">size</td>
+<td class="col_3"><i>Size (default = 16x16)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>String</u> <span>Window::_getWindowId()</span></h2>
+<p><i>Get Window Id</i></p>
+</div>
+<div class="section  Class">
+<h2><u>Object</u> <span>Window::_getAttributes()</span></h2>
+<p><i>Get current Window attributes</i></p>
+</div>
+<div class="section top">
+<h1>Class <a name="GtkWindow">GtkWindow</a></h1>
+<p><i>Gtk+ Window Class</i></p>
+<p>
+<i>Extends</i>: Window<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>GtkWindow::init()</span></h2>
+<p><i>Constructor</i></p>
+<p>
+<i>See</i>: Window::init()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>$</u> <span>GtkWindow::create()</span></h2>
+<p><i>Create DOM elements etc.</i></p>
+<p>
+<i>See</i>: Window::create()<br />
+</p>
+</div>
+<div class="section top">
+<h1>Class <a name="Menu">Menu</a></h1>
+<p><i>Menu for Window and Context Class</i></p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>Menu::init()</span></h2>
+<p><i>Constructor</i></p>
+</div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>Menu::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>DOMElement</u> <span>Menu::_createItem()</span></h2>
+<p><i>Create a new Menu Item</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Object</b></td>
+<td class="col_2">iter</td>
+<td class="col_3"><i>Menu Item Iter</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>DOMElement</u> <span>Menu::_createSeparator()</span></h2>
+<p><i>Create a new Menu Separator Item</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Object</b></td>
+<td class="col_2">iter</td>
+<td class="col_3"><i>Menu Item Iter</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>DOMElement</u> <span>Menu::_createMenu()</span></h2>
+<p><i>Create a new Menu</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Array</b></td>
+<td class="col_2">menu</td>
+<td class="col_3"><i>Menu</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>DOMElement</u> <span>Menu::create()</span></h2>
+<p><i>Create a new Menu</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Array</b></td>
+<td class="col_2">menu</td>
+<td class="col_3"><i>Menu</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">show</td>
+<td class="col_3"><i>Show on create</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Menu::show()</span></h2>
+<p><i>Display the menu</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>DOMElement</b></td>
+<td class="col_2">el</td>
+<td class="col_3"><i>DOM Element</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Menu::handleGlobalClick()</span></h2>
+<p><i>Handle Global Click event</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">ev</td>
+<td class="col_3"><i>DOM Event</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Class <a name="Dialog">Dialog</a></h1>
+<p><i>Dialog-Window class</i><br />Used for Alert and Confirm messages etc.</p>
+<p>
+<i>Extends</i>: Window<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>Dialog::init()</span></h2>
+<p><i>Constructor</i></p>
+<p>
+<i>See</i>: Window::init()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>$</u> <span>Dialog::create()</span></h2>
+<p><i>Create DOM elements etc</i></p>
+<p>
+<i>See</i>: Window<br />
+</p>
+</div>
+<div class="section top">
+<h1>Class <a name="OperationDialog">OperationDialog</a></h1>
+<p><i>Misc Operation Dialogs Class</i><br />Basis for extended variant of dialogs with interactions.</p>
+<p>
+<i>Extends</i>: Window<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>OperationDialog::init()</span></h2>
+<p><i>Constructor</i></p>
+</div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>OperationDialog::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>OperationDialog::create()</span></h2>
+<p><i>Create DOM elements etc.</i></p>
+<p>
+<i>See</i>: Window::create()<br />
+</p>
+</div>
+
+
+</body>
+</html>

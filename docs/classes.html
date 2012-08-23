@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OS.js Documentation</title>
+  <style type="text/css">
+  body, html {
+    font-family : Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size : 14px;
+    color : #777;
+  }
+  #links {
+    text-align : center;
+  }
+  .section {
+    padding : 10px;
+  }
+  .section.Class {
+      padding-left : 30px;
+      margin-left : 10px;
+      margin-bottom : 10px;
+      border-left : 5px #e6e6e6 solid;
+    }
+  .section.top {
+    margin-top : 10px;
+  }
+  .section.top p {
+}
+  table {
+    border-collapse : collapse;
+    width : 100%;
+  }
+  td {
+    vertical-align : top;
+    margin : 0;
+    padding : 5px;
+    background : #f0f0f0;
+    color : #000;
+  }
+  .size_2 .col_0,
+  .size_2 .col_1 {
+    width : 120px;
+  }
+  .size_2 .col_0,
+  .size_4 .col_0 {
+    background : #fafafa;
+  }
+  .size_4 .col_0,
+  .size_4 .col_1,
+  .size_4 .col_2 {
+    width : 120px;
+  }
+  .size_4 .col_3 {
+    /*width : 500px;*/
+  }
+  span.TODO,
+  span.FIXME {
+    color : #aa0000;
+    background : #ffff00;
+  }
+  h1, h2 {
+    color : #333;
+    font-weight : normal;
+  }
+  h1 a, h2 span {
+    color : #000;
+    font-weight : bold;
+  }
+  </style>
+</head>
+<body>
+<a href="index.html">Home</a> | Filename: classes.js | OS.js Documentation
+<hr />
+<div id="links">
+ <a href="#OSjsException">OSjsException</a>  <a href="#AJAXException">AJAXException</a>  <a href="#IOException">IOException</a>  <a href="#ProcessException">ProcessException</a>  <a href="#ApplicationException">ApplicationException</a>  <a href="#CoreException">CoreException</a>  <a href="#VFS">VFS</a>  <a href="#VFSTemprary">VFSTemprary</a>  <a href="#VFSPersistent">VFSPersistent</a>  <a href="#CheckList">CheckList</a>  <a href="#IconView">IconView</a>  <a href="#MediaPlayer">MediaPlayer</a>  <a href="#MusicPlayer">MusicPlayer</a>  <a href="#VideoPlayer">VideoPlayer</a>  <a href="#OSjs.Classes.CanvasHelper">OSjs.Classes.CanvasHelper</a>  <a href="#Uploader">Uploader</a>  <a href="#RichtextEditor">RichtextEditor</a>  <a href="#Preloader">Preloader</a> 
+</div>
+<hr />
+
+
+
+<div class="section top">
+<h1>Class <a name="OSjsException">OSjsException</a></h1>
+<p><i>Base Exception</i></p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>OSjsException::init()</span></h2>
+<p><i>Constructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>String</u> <span>OSjsException::toString()</span></h2>
+<p><i>Convert to string</i></p>
+</div>
+<div class="section  Class">
+<h2><u>Mixed</u> <span>OSjsException::getLineNo()</span></h2>
+<p><i>Get Exception Line Number</i></p>
+</div>
+<div class="section  Class">
+<h2><u>Mixed</u> <span>OSjsException::getFilename()</span></h2>
+<p><i>Get File Name</i></p>
+</div>
+<div class="section  Class">
+<h2><u>Mixed</u> <span>OSjsException::getMessage()</span></h2>
+<p><i>Get Exception Message / Stack</i></p>
+</div>
+<div class="section  Class">
+<h2><u>String</u> <span>OSjsException::getStack()</span></h2>
+<p><i>Get the Exception stack</i></p>
+</div>
+<div class="section ">
+<h1>Method <a name="AJAXException">AJAXException</a></h1>
+<p><i>AJAXException Exception</i></p>
+<p>
+<i>Exception</i>: @exception<br />
+</p>
+</div>
+<div class="section ">
+<h1>Method <a name="IOException">IOException</a></h1>
+<p><i>IOException Exception</i></p>
+<p>
+<i>Exception</i>: @exception<br />
+</p>
+</div>
+<div class="section ">
+<h1>Method <a name="ProcessException">ProcessException</a></h1>
+<p><i>ProcessException Exception</i></p>
+<p>
+<i>Exception</i>: @exception<br />
+</p>
+</div>
+<div class="section ">
+<h1>Method <a name="ApplicationException">ApplicationException</a></h1>
+<p><i>ApplicationException Exception</i></p>
+<p>
+<i>Exception</i>: @exception<br />
+</p>
+</div>
+<div class="section ">
+<h1>Method <a name="CoreException">CoreException</a></h1>
+<p><i>CoreException Exception</i></p>
+<p>
+<i>Exception</i>: @exception<br />
+</p>
+</div>
+<div class="section top">
+<h1>Class <a name="VFS">VFS</a></h1>
+<p><i>VFS Storage</i></p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>VFS::init()</span></h2>
+<p><i>Constructor</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Callback function</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">type</td>
+<td class="col_3"><i>VFS Type (PERSISTENT | TEMPORARY)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">quota</td>
+<td class="col_3"><i>Initial quota size request</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>VFS::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>VFS::read()</span></h2>
+<p><i>Read file</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>File name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Async callback</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>VFS::touch()</span></h2>
+<p><i>Create file</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>File name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Async callback</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>VFS::write()</span></h2>
+<p><i>Write file</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>File name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">data</td>
+<td class="col_3"><i>Data to write</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Async callback</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>VFS::append()</span></h2>
+<p><i>Append (Write) file</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>File name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Mixed</b></td>
+<td class="col_2">data</td>
+<td class="col_3"><i>Data to append</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Async callback</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>VFS::writeURL()</span></h2>
+<p><i>Wirte file from URL</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">url</td>
+<td class="col_3"><i>Full URL to load</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Directory name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Async callback</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 4</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">error</td>
+<td class="col_3"><i>XHR Async error callback</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>VFS::mkdir()</span></h2>
+<p><i>Create directory</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Directory name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Async callback</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>VFS::rm()</span></h2>
+<p><i>Remove File</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>File name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Async callback</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>VFS::rmdir()</span></h2>
+<p><i>Remove Directory</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Directory name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Async callback</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>VFS::rrmdir()</span></h2>
+<p><i>Remove Directory Recursivly</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Directory name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Async callback</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>VFS::ls()</span></h2>
+<p><i>List directory contents</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>Directory name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Async callback</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>VFS::cp()</span></h2>
+<p><i>Copy file</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>FileSystem</b></td>
+<td class="col_2">cwd</td>
+<td class="col_3"><i>Current root</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">src</td>
+<td class="col_3"><i>Source name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">dest</td>
+<td class="col_3"><i>Destination name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 4</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Async callback</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>VFS::rename()</span></h2>
+<p><i>Move/Rename file</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>FileSystem</b></td>
+<td class="col_2">cwd</td>
+<td class="col_3"><i>Current root</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">src</td>
+<td class="col_3"><i>Source name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">dest</td>
+<td class="col_3"><i>Destination name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 4</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Async callback</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>VFS::url()</span></h2>
+<p><i>Get URL from entry</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">name</td>
+<td class="col_3"><i>File name</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">callback</td>
+<td class="col_3"><i>Async callback</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>VFS::error()</span></h2>
+<p><i>Handle Error</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMEvent</b></td>
+<td class="col_2">e</td>
+<td class="col_3"><i>Event</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Class <a name="VFSTemprary">VFSTemprary</a></h1>
+<p><i>VFS Temporary Storage</i></p>
+<p>
+<i>See</i>: VFS<br />
+</p>
+</div>
+<div class="section top">
+<h1>Class <a name="VFSPersistent">VFSPersistent</a></h1>
+<p><i>VFS Persistent Storage</i></p>
+<p>
+<i>See</i>: VFS<br />
+</p>
+</div>
+<div class="section top">
+<h1>Class <a name="CheckList">CheckList</a></h1>
+<p><i>GUI Check List</i></p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>CheckList::init()</span></h2>
+<p><i>Create a new instance</i></p>
+</div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>CheckList::destroy()</span></h2>
+<p><i>Destroy instance</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>CheckList::draw()</span></h2>
+<p><i>Draw list</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Object</b></td>
+<td class="col_2">list</td>
+<td class="col_3"><i>List to render</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">onchange</td>
+<td class="col_3"><i>onchange function</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">inner_function</td>
+<td class="col_3"><i>inner element create call</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Class <a name="IconView">IconView</a></h1>
+<p><i>IconView Class</i></p>
+</div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>IconView::init()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>IconView::resize()</span></h2>
+<p><i>Resize event</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>IconView::clear()</span></h2>
+<p><i>Clear event</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>IconView::_clearRoot</span></h2>
+<p><i>Clear the Icon View</i></p>
+</div>
+<div class="section  Class">
+<h2><u>DOMElement</u> <span>IconView::_createRoot()</span></h2>
+<p><i>Create the Icon View roViewot element</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>IconView::_renderList()</span></h2>
+<p><i>Render the list</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>IconView::_activateItem()</span></h2>
+<p><i>Activate an item (internal)</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>IconView::_selectItem()</span></h2>
+<p><i>Select an item (internal)</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>IconView::_toggleItem()</span></h2>
+<p><i>Toggle an item (internal)</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>IconView::selectItem()</span></h2>
+<p><i>Select an item</i></p>
+</div>
+<div class="section  Class">
+<h2><u>Mixed</u> <span>IconView::findItem()</span></h2>
+<p><i>Find an item</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>IconView::renderList()</span></h2>
+<p><i>Render the list</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>IconView::refreshList()</span></h2>
+<p><i>Refresh the list</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>IconView::setListType()</span></h2>
+<p><i>Set the list view type</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>IconView::setList()</span></h2>
+<p><i>Set the list</i></p>
+</div>
+<div class="section top">
+<h1>Class <a name="MediaPlayer">MediaPlayer</a></h1>
+<p><i>Media Player class</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>MediaPlayer::play()</span></h2>
+<p><i>Start playback</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>MediaPlayer::pause()</span></h2>
+<p><i>Pause playback</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>MediaPlayer::stop()</span></h2>
+<p><i>Stop playback</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>MediaPlayer::setSource()</span></h2>
+<p><i>Set media source</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">src</td>
+<td class="col_3"><i>Media source</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>bool</b></td>
+<td class="col_2">play</td>
+<td class="col_3"><i>Start playback (Default = true)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>MediaPlayer::setVolume()</span></h2>
+<p><i>Set playback volume</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">volume</td>
+<td class="col_3"><i>Volume (0 - 100)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>MediaPlayer::setSeek()</span></h2>
+<p><i>Set playback time</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">seconds</td>
+<td class="col_3"><i>Seek time in seconds</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>int</u> <span>MediaPlayer::getStartTime()</span></h2>
+<p><i>Get current media starting time</i></p>
+</div>
+<div class="section  Class">
+<h2><u>int</u> <span>MediaPlayer::getCurrentTime()</span></h2>
+<p><i>Get current media playing time</i></p>
+</div>
+<div class="section  Class">
+<h2><u>int</u> <span>MediaPlayer::getEndTime()</span></h2>
+<p><i>Get current media ending time</i></p>
+</div>
+<div class="section  Class">
+<h2><u>int</u> <span>MediaPlayer::getWidth()</span></h2>
+<p><i>Get player width in pixels</i></p>
+</div>
+<div class="section  Class">
+<h2><u>int</u> <span>MediaPlayer::getHeight()</span></h2>
+<p><i>Get player height in pixels</i></p>
+</div>
+<div class="section  Class">
+<h2><u>String</u> <span>MediaPlayer::getTimestamps()</span></h2>
+<p><i>Get current timestamps</i><br />FIXME: Locale</p>
+</div>
+<div class="section top">
+<h1>Class <a name="MusicPlayer">MusicPlayer</a></h1>
+<p><i>Music Player class</i></p>
+</div>
+<div class="section top">
+<h1>Class <a name="VideoPlayer">VideoPlayer</a></h1>
+<p><i>Video Player class</i></p>
+</div>
+<div class="section top">
+<h1>Class <a name="OSjs.Classes.CanvasHelper">OSjs.Classes.CanvasHelper</a></h1>
+<p><i>HTML5 Canvas Helper library</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>CanvasHelper::clear()</span></h2>
+<p><i>Clear context</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">fill</td>
+<td class="col_3"><i>Fill color</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>CanvasHelper::rect()</span></h2>
+<p><i>Draw a rectangle</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">x</td>
+<td class="col_3"><i>X Position</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">y</td>
+<td class="col_3"><i>Y Position</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">w</td>
+<td class="col_3"><i>Width</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 4</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">h</td>
+<td class="col_3"><i>Height</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 5</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">fill</td>
+<td class="col_3"><i>Fill color</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 6</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">stroke</td>
+<td class="col_3"><i>Stroke color</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>CanvasHelper::roudRect()</span></h2>
+<p><i>Draw a rounded rectangle</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">x</td>
+<td class="col_3"><i>X Position</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">y</td>
+<td class="col_3"><i>Y Position</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">w</td>
+<td class="col_3"><i>Width</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 4</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">h</td>
+<td class="col_3"><i>Height</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 5</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">radius</td>
+<td class="col_3"><i>Radius</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 6</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">fill</td>
+<td class="col_3"><i>Fill color</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 7</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">stroke</td>
+<td class="col_3"><i>Stroke color</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>CanvasHelper::circle()</span></h2>
+<p><i>Draw a circle</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">x</td>
+<td class="col_3"><i>X Position</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">y</td>
+<td class="col_3"><i>Y Position</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">r</td>
+<td class="col_3"><i>Radius</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 4</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">fill</td>
+<td class="col_3"><i>Fill color</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 5</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">stroke</td>
+<td class="col_3"><i>Stroke color</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>CanvasHelper::text()</span></h2>
+<p><i>Draw text string</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">txt</td>
+<td class="col_3"><i>Text string</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">x</td>
+<td class="col_3"><i>X Position</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">y</td>
+<td class="col_3"><i>Y Position</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>LinearGradient</u> <span>CanvasHelper::createLinearGradient()</span></h2>
+<p><i>Create a linear gradient pattern</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">sx</td>
+<td class="col_3"><i>Source X</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">sy</td>
+<td class="col_3"><i>Source Y</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">dx</td>
+<td class="col_3"><i>Destination X</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 4</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">dy</td>
+<td class="col_3"><i>Destination Y</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 5</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">steps</td>
+<td class="col_3"><i>Step count</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>CanvasHelper::_fill()</span></h2>
+<p><i>Fill the canvas</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">fill</td>
+<td class="col_3"><i>Color</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>CanvasHelper::_apply()</span></h2>
+<p><i>Fill the canvase</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">fill</td>
+<td class="col_3"><i>Fill Color</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">stroke</td>
+<td class="col_3"><i>Stroke color</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Class <a name="Uploader">Uploader</a></h1>
+<p><i>Uploader class</i></p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>Uploader::init()</span></h2>
+<p><i>Constructor</i></p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>Uploader::destroy()</span></h2>
+<p><i>Constructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Uploader::run()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Uploader::upload()</span></h2>
+<p><i>Upload A file</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>DOMElement</b></td>
+<td class="col_2">form</td>
+<td class="col_3"><i>DOM Form Element</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Object</b></td>
+<td class="col_2">file</td>
+<td class="col_3"><i>... or a File</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Uploader::fileSelected()</span></h2>
+<p><i>Constructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Uploader::uploadProgress()</span></h2>
+<p><i>Upload Progress Update</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Event</b></td>
+<td class="col_2">evt</td>
+<td class="col_3"><i>Browser Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Uploader::uploadComplete()</span></h2>
+<p><i>Constructor</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Event</b></td>
+<td class="col_2">evt</td>
+<td class="col_3"><i>Browser Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Uploader::uploadFailed()</span></h2>
+<p><i>Constructor</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Event</b></td>
+<td class="col_2">evt</td>
+<td class="col_3"><i>Browser Event</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Uploader::uploadCanceled()</span></h2>
+<p><i>Constructor</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Event</b></td>
+<td class="col_2">evt</td>
+<td class="col_3"><i>Browser Event</i></td>
+</tr></table></div>
+<div class="section top">
+<h1>Class <a name="RichtextEditor">RichtextEditor</a></h1>
+<p><i>Richt-text editor</i><br />Extend this class and manipulate HTML template<br />in the init() method.<br />TODO: Error handling in formatting<br />TODO: Browser compabilities</p>
+<p>
+<i>Link</i>: https://developer.mozilla.org/en-US/docs/Rich-Text_Editing_in_Mozilla<br />
+<i>Link</i>: http://www.geekpedia.com/Samples/RTB/Editor.html<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>RichtextEditor::init()</span></h2>
+<p><i>Constructor</i></p>
+</div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>RichtextEditor::destroy()</span></h2>
+<p><i>Destructor</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::enable()</span></h2>
+<p><i>Enable editing</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::disable()</span></h2>
+<p><i>Disable editing</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::focus()</span></h2>
+<p><i>Focus document element</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::edit()</span></h2>
+<p><i>Change current edit mode</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">key</td>
+<td class="col_3"><i>What command to send</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">value</td>
+<td class="col_3"><i>Value (not required)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::undo()</span></h2>
+<p><i>Undo last change</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::redo()</span></h2>
+<p><i>Redo last change</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::selectAll()</span></h2>
+<p><i>Select all content</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::cut()</span></h2>
+<p><i>Cut selection</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::copy()</span></h2>
+<p><i>Copy selection</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::paste()</span></h2>
+<p><i>Paste into selection/position</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::remove()</span></h2>
+<p><i>Delete selection</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::outdent()</span></h2>
+<p><i>Outdent the selected text/block</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::indent()</span></h2>
+<p><i>Indent the selected text/block</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::heading()</span></h2>
+<p><i>Set a HTML heading (H1-H6)</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::formatBlock()</span></h2>
+<p><i>Surround selection with given block-type</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::removeFormat()</span></h2>
+<p><i>Remove formatting on selection</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::insertHTML()</span></h2>
+<p><i>Insert HTML</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::insertImage()</span></h2>
+<p><i>Insert image from URL</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::insertList()</span></h2>
+<p><i>Insert a List</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::insertParagraph()</span></h2>
+<p><i>Insert paragraph here</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::insertLink()</span></h2>
+<p><i>Add a linked href to selection</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::removeLink()</span></h2>
+<p><i>Remove linked href</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::toggleJustification()</span></h2>
+<p><i>Set font justification</i><br />Values: Center/Full/Left/Right</p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::toggleBold()</span></h2>
+<p><i>Set bold text</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::toggleItalic()</span></h2>
+<p><i>Set italic text</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::toggleUnderline()</span></h2>
+<p><i>Set underline text</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::toggleStrikeThrough()</span></h2>
+<p><i>Set underline text</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::toggleSubscript()</span></h2>
+<p><i>Set subscript text</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::toggleSuperscript()</span></h2>
+<p><i>Set superscript text</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::toggleFont()</span></h2>
+<p><i>toggle font style</i></p>
+<p>
+<i>See</i>: RichtextEditor::edit()<br />
+</p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>RichtextEditor::setContent()</span></h2>
+<p><i>Set the HTML content of document</i><br />This function clears the document entirely</p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">content</td>
+<td class="col_3"><i>The content</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">css</td>
+<td class="col_3"><i>Extra CSS (optional)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>String</u> <span>RichtextEditor::getContent()</span></h2>
+<p><i>Get the contents of document in HTML format</i></p>
+</div>
+<div class="section top">
+<h1>Class <a name="Preloader">Preloader</a></h1>
+<p><i>Handles preloading/lazy-loading of resources</i><br />Errors will not stop iteration.</p>
+</div>
+<div class="section  Class">
+<h2><i>constructor</i> <span>Preloader::init()</span></h2>
+<p><i>Construct a new Preloader</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>Array</b></td>
+<td class="col_2">list</td>
+<td class="col_3"><i>List of resources</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">onFinished</td>
+<td class="col_3"><i>When done loading all resources in queue</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">onSuccess</td>
+<td class="col_3"><i>When resource successfully loaded</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 4</td>
+<td class="col_1"><b>Function</b></td>
+<td class="col_2">onError</td>
+<td class="col_3"><i>When resource fails to load</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><i>destructor</i> <span>Preloader::destroy()</span></h2>
+<p><i>Destroy current instance</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Preloader::run()</span></h2>
+<p><i>Start loading</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Preloader::_checkQueue()</span></h2>
+<p><i>Check the Queue for items to load</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Preloader::_cleanResource()</span></h2>
+<p><i>Handle safe destruction of DOM objects etc.</i></p>
+</div>
+<div class="section  Class">
+<h2><u>void</u> <span>Preload::_loadImage()</span></h2>
+<p><i>Handle loading of Images</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">src</td>
+<td class="col_3"><i>Absolute path to resource</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Preload::_loadVideo()</span></h2>
+<p><i>Handle loading of Video</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">src</td>
+<td class="col_3"><i>Absolute path to resource</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Preload::_loadAudio()</span></h2>
+<p><i>Handle loading of Audio</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">src</td>
+<td class="col_3"><i>Absolute path to resource</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Preload::_loadCSS()</span></h2>
+<p><i>Handle loading of CSS Stylesheet</i><br />There currently are no onload() an onerror() event<br />for <link /> items. IE has document.createStyleSheet(), W3C only has<br />DOM.<br />In IE, we assume the stylesheet is added. Otherwise we use an interval<br />to check if the</p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">src</td>
+<td class="col_3"><i>Absolute path to resource</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 2</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">interval</td>
+<td class="col_3"><i>Interval (in ms)</i></td>
+</tr><tr class="size_4"><td class="col_0">Parameter 3</td>
+<td class="col_1"><b>int</b></td>
+<td class="col_2">timeout</td>
+<td class="col_3"><i>Timeout (in ms)</i></td>
+</tr></table></div>
+<div class="section  Class">
+<h2><u>void</u> <span>Preload::_loadJavaScript()</span></h2>
+<p><i>Handle loading of (ECMA) JavaScript</i></p>
+<table><tr class="size_4"><td class="col_0">Parameter 1</td>
+<td class="col_1"><b>String</b></td>
+<td class="col_2">src</td>
+<td class="col_3"><i>Absolute path to resource</i></td>
+</tr></table></div>
+
+
+</body>
+</html>
