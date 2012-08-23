@@ -7,6 +7,7 @@ CORE TODO:
 [LOW] Panel: Settings - Background Image
 [LOW] Panel: Finish up multiples
 [LOW] WindowManager: Effect(s) configuration
+[LOW] Split login to custom css and remove when needed
 
 MISC TODO:
 -------------------------------------------------------------------------------

@@ -61,7 +61,6 @@
   var ONLINECHK_FREQ         = 2500;                //!< On-line checking frequenzy
   var SESSION_CHECK          = 5000;                //!< Connection by session check freq
   var SESSION_KEY            = "PHPSESSID";         //!< The Server session cookie-key
-  var TIMEOUT_CSS            = (1000 * 10);         //!< CSS loading timeout
   var ENV_CACHE              = undefined;           //!< Server-side cache enabled state
   var ENV_PRODUCTION         = undefined;           //!< Server-side production env. state
   var ENV_DEMO               = undefined;           //!< Server-side demo env. state
@@ -790,39 +789,6 @@
   } // @endfunction
 
   /**
-   * PreloadResourceList() -- Preload a list of resources (simple Wrapper)
-   * @param   Array     list      Resource list
-   * @param   Function  creator   DOM Creation function
-   * @param   Function  callback  Callback When Done
-   * @return  void
-   */
-  function PreloadResourceList(list, creator, callback) {
-    var loaded = 0;
-    var errors = 0;
-    var total  = list.length;
-    if ( total ) {
-      var i = 0;
-      for ( i; i < total; i++ ) {
-        creator(list[i], function() {
-          loaded++;
-          var totals = (loaded + errors);
-          if ( totals >= total ) {
-            callback(true, totals, loaded, errors);
-          }
-        }, function() {
-          errors++;
-          var totals = (loaded + errors);
-          if ( totals >= total ) {
-            callback(false, totals, loaded, errors);
-          }
-        });
-      }
-    } else {
-      callback(true, 0, loaded, errors);
-    }
-  }
-
-  /**
    * PlaySound() -- Play a specified sound
    * @return void
    */
@@ -1521,21 +1487,12 @@
       console.group("Process::init()");
 
       this._pid       = (_Processes.push(this) - 1);
+      this._proc_name = (name !== undefined && name)  ? name    : "(unknown)";
+      this._proc_icon = (icon !== undefined && icon)  ? icon    : "mimetypes/exec.png";
+      this._locked    = (locked !== undefined)        ? locked  : false;
       this._started   = new Date();
-      this._proc_name = "(unknown)";
-      this._proc_icon = "mimetypes/exec.png";
-      this._locked    = false;
 
-      if ( name !== undefined && name ) {
-        this._proc_name = name;
-      }
-      if ( icon !== undefined && icon ) {
-        this._proc_icon = icon;
-      }
-      if ( locked !== undefined ) {
-        this._locked    = locked;
-      }
-
+      console.log("PID", this._pid, this._proc_name, this._locked);
       console.groupEnd();
     },
 
@@ -1610,8 +1567,8 @@
      * @constructor
      */
     init : function(name, type, timeout) {
-      this._name    = name || "Unknown";
-      this._type    = parseInt(type, 10) || SERVICE_GET;
+      this._name    = name                  || "Unknown";
+      this._type    = parseInt(type, 10)    || SERVICE_GET;
       this._timeout = parseInt(timeout, 10) || 30;
 
       console.group("Service::init()");
@@ -2647,8 +2604,8 @@
         $(document).focus();
 
         // New error handler
-        _OldErrorHandler = window.onerror;
-        window.onerror = self.global_error;
+        _OldErrorHandler  = window.onerror;
+        window.onerror    = self.global_error;
 
         PlaySound("service-login");
         API.ui.cursor("default", false);
@@ -2760,9 +2717,9 @@
 
     /**
      * Core::global_error() -- The Window error handler. Overrides default browser handler
-     * @param   String    msg     
-     * @param   String    url
-     * @param   int       lno
+     * @param   String    msg     Exception Message
+     * @param   String    url     Exception URL
+     * @param   int       lno     Exception Line Number
      * @return  bool
      */
     global_error : function(msg, url, lno) {
@@ -3174,53 +3131,58 @@
     run : function(preload, callback) {
       var self = this;
 
-      var _preloadImages = function(clb) {
-        PreloadResourceList(preload.images, function(src, onload, onerror) {
-          var img     = new Image();
-          img.onload  = onload;
-          img.onerror = onerror;
-          img.src     = GetIcon(src, "16x16");
-        }, function(result, total, loaded, failed) {
-          console.log("ResourceManager::run() Preloaded", loaded, "of", total, "image(s) (" + failed + " failures)");
-          clb();
-        });
-      };
+      // Compile a list of resources compatible with external loader
+      var _images     = preload.images    || [];
+      var _sounds     = preload.sounds    || [];
+      var _resources  = preload.resources || [];
+      var _list       = [];
 
-      var _preloadSounds = function(clb) {
-        if ( OSjs.Compability.SUPPORT_AUDIO ) {
-          var filetype = "oga";
-          var theme    = _Settings._get("system.sounds.theme") || "Default";
-          if ( !OSjs.Compability.SUPPORT_AUDIO_OGG && OSjs.Compability.SUPPORT_AUDIO_MP3 ) {
-            filetype = "mp3";
-          }
-
-          PreloadResourceList(preload.sounds, function(src, onload, onerror) {
-            var aud = GetSound(src, filetype, onerror, onload);
-            aud.load();
-          }, function(result, total, loaded, failed) {
-            console.log("ResourceManager::run() Preloaded", loaded, "of", total, "sound(s) (" + failed + " failures)");
-            clb();
-          });
+      var i = 0, l = _images.length;
+      for ( i; i < l; i++ ) {
+        if ( _images[i].match(/^\//) ) {
+          _list.push({"type" : "image", "src" : _images[i]});
         } else {
-          clb();
+          _list.push({"type" : "image", "src" : GetIcon(_images[i], "16x16")});
         }
+      }
+
+      if ( OSjs.Compability.SUPPORT_AUDIO ) {
+        var filetype = "oga";
+        var theme    = _Settings._get("system.sounds.theme") || "Default";
+        if ( !OSjs.Compability.SUPPORT_AUDIO_OGG && OSjs.Compability.SUPPORT_AUDIO_MP3 ) {
+          filetype = "mp3";
+        }
+
+        var j = 0, k = _sounds.length;
+        for ( j; j < k; j++ ) {
+          _list.push({"type" : "sound", "src" : sprintf(SOUND_URI, theme, _sounds[j], filetype)});
+        }
+      }
+
+      var r = 0, e = _resources.length;
+      for ( r; r < e; r++ ) {
+        i = _resources[r];
+        if ( i.match(/\.js/i) ) {
+          _list.push({"type" : "javascript", "src" : (RESOURCE_URI + i)});
+        } else if ( i.match(/\.css/i) ) {
+          _list.push({"type" : "css", "src" : (RESOURCE_URI + i)});
+        }
+      }
+
+      // First load static content, then go for internal resources
+      var _loader;
+      var _loader_done = function() {
+        try {
+          _loader.destroy();
+          delete _loader;
+        } catch ( eee ) {}
+
+        callback();
       };
 
-      var _preloadResources = function(clb) {
-        self.addResources(preload.resources, null, function(error) {
-          console.log("ResourceManager::run() Preloaded", preload.resources.length, "resources");
-          clb();
-        });
-      };
-
-      // Load all resources
-      _preloadImages(function() {
-        _preloadSounds(function() {
-          _preloadResources(function() {
-            console.log(">>> ResourceManager::run()", "FINISHED PRELOADING...");
-            callback();
-          });
-        });
+      _loader = new OSjs.Classes.Preloader(_list, function(loaded, errors) {
+        console.log("ResourceManager::run() Preloaded", errors, "of", loaded, "failed");
+        _loader_done();
       });
 
     },
@@ -3250,132 +3212,6 @@
      */
 
     /**
-     * ResourceManager::hasResource() -- Check if given resource is already loaded
-     * @param   String      res       Resource URI
-     * @return  bool
-     */
-    hasResource : function(res) {
-      return in_array(res, this.resources);
-    },
-
-    /**
-     * ResourceManager::addResource() -- Add a resource (load)
-     * @param   String      res       Resource URI
-     * @param   String      app       Application Name (if any)
-     * @param   Function    callback  onload callback (if any)
-     * @return  void
-     */
-    addResource : function(res, app, callback) {
-      app = app || "";
-      callback = callback || function() {};
-
-      var _name = (app ? (app + "/" + res) : (res));
-      if ( this.hasResource(_name) ) {
-        callback(false);
-        return;
-      }
-
-      if ( res.match(/^worker\./) || res.match(/[^(\.js|\.css)]$/) ) {
-        callback(false);
-        return;
-      }
-
-      var extra   = app ? (app + "/") : "";
-      var type    = res.split(".");
-          type    = type[type.length - 1];
-
-      /* NOTE: WTF
-      var error   = false;
-      var onload_event = function(el) {
-        self.resources.push(_name);
-        self.links.push(el);
-
-        callback(error);
-      };
-      */
-
-      var t_callback = function(addedres, had_error) {
-        console.group("ResourceManager::addResource()");
-        console.log("Added", addedres);
-        console.groupEnd();
-
-        callback(had_error);
-      };
-
-      var head  = document.getElementsByTagName("head")[0];
-      if ( type == "js" ) {
-        var triggered             = false;
-        var script                = document.createElement("script");
-        script.type               = "text/javascript";
-        script.onreadystatechange = function() {
-          if ( (this.readyState == 'complete' || this.readyState == 'complete') && !triggered) {
-            triggered = true;
-            t_callback(script, false);
-          }
-        };
-        script.onload = function() {
-          triggered = true;
-          t_callback(script, false);
-        };
-        script.onerror = function() {
-          triggered = true;
-          t_callback(script, true);
-        };
-        script.src = RESOURCE_URI + extra + res;
-        head.appendChild(script);
-        delete script;
-      } else {
-        if ( document.createStyleSheet ) {
-          var el = document.createStyleSheet(RESOURCE_URI + res);
-
-          t_callback(el, false);
-        } else {
-          var stylesheet  = document.createElement("link");
-          stylesheet.rel  = "stylesheet";
-          stylesheet.type = "text/css";
-          stylesheet.href = RESOURCE_URI + extra + res;
-
-          var sheet = "styleSheet";
-          var cssRules = "rules";
-          if ( "sheet" in stylesheet ) {
-            sheet = "sheet";
-            cssRules = "cssRules";
-          }
-
-          var timeout_t = null;
-          var timeout_i = setInterval(function() {
-            try {
-              if ( stylesheet[sheet] && stylesheet[sheet][cssRules].length ) {
-                clearInterval(timeout_i);
-                if ( timeout_t ) {
-                  clearTimeout(timeout_t);
-                }
-                t_callback(stylesheet, false);
-              }
-            } catch( e ) {
-              (function() {})();
-            } finally {
-              (function() {})();
-            }
-          }, 10 );
-
-          timeout_t = setTimeout(function() {
-            if ( timeout_i ) {
-              clearInterval(timeout_i);
-            }
-            clearTimeout(timeout_t);
-            t_callback(stylesheet, true);
-            head.removeChild(stylesheet);
-          }, TIMEOUT_CSS);
-
-
-          head.appendChild(stylesheet);
-        }
-      }
-
-    },
-
-    /**
      * ResourceManager::addResources() -- Add an array with resources and call-back
      * @param   Array     res         Resource URI array
      * @param   String    app         Application Name (if any)
@@ -3383,47 +3219,58 @@
      * @return  void
      */
     addResources : function(res, app, callback) {
-      var cont = true;
+      var self = this;
 
       if ( res ) {
+        app       = app || "";
+        callback  = callback || function() {};
+
         console.group("ResourceManager::addResources()");
         console.log("Adding", res);
         console.log("Application", app);
         console.groupEnd();
 
-        var i = 0;
-        var l = res.length;
+        var _list  = [];
+        var _loader;
+        var _loader_done = function(failed) {
+          try {
+            _loader.destroy();
+            delete _loader;
+          } catch ( eee ) {}
 
-        // Create a temporary callback for the queue
-        if ( l > 0 ) {
-          cont = false;
+          callback(failed);
+        };
 
-          var tmp_counter  = l;
-          var has_failed   = false;
-          var tmp_callback = function(failed) {
-            tmp_counter--;
-            if ( !has_failed && failed ) {
-              has_failed = true;
-            }
+        var i = 0, l = res.length, name, src;
+        for ( i; i < l; i++ ) {
+          name  = (app ? (app + "/" + res) : (res));
+          src   = app ? sprintf("%s%s/%s", RESOURCE_URI, app, res[i]) : sprintf("%s%s", RESOURCE_URI, res[i]);
 
-            if ( tmp_counter <= 0 ) {
-              setTimeout(function() {
-                callback(has_failed);
-              }, 0);
-            }
-          };
-
-          for ( i; i < l; i++ ) {
-            this.addResource(res[i], app, tmp_callback);
+          // Ignore non-valid
+          if ( (res[i].match(/^worker\./) || res[i].match(/[^(\.js|\.css)]$/)) || in_array(name, this.resources) ) {
+            continue;
           }
+
+          // Go by file-extensions
+          if ( res[i].match(/\.js/i) ) {
+            _list.push({"type" : "javascript", "src" : src});
+          } else if ( res[i].match(/\.css/i) ) {
+            _list.push({"type" : "css", "src" : src});
+          }
+        }
+
+        if ( _list.length ) {
+          _loader = new OSjs.Classes.Preloader(_list, function(loaded, errors) {
+            console.log("ResourceManager::addResources()", "Preloader loaded",loaded, "with", errors, "errors");
+            _loader_done(errors > 0);
+          }, function(res) {
+            self.resources.push((app ? (app + "/" + res) : (res)));
+          });
+        } else {
+          _loader_done(false);
         }
       }
 
-      if ( cont ) {
-        setTimeout(function() {
-          callback(false);
-        }, 0);
-      }
     }
   }); // @endclass
 
