@@ -814,10 +814,10 @@ abstract class VFS
     if ( $dest["perm"] ) {
       if ( file_exists($dest["root"]) ) {
         // Read MIME info
-        $file   = basename($dest["root"]);
         $info   = null;
+        $mime   = self::GetMIME($dest["root"], true);
 
-        switch ( @trim(strstr(self::GetMIME($dest["root"], true), "/", true)) ) {
+        switch ( @trim(strstr($mime, "/", true)) ) {
           case "image" :
           case "audio" :
           case "video" :
@@ -829,7 +829,7 @@ abstract class VFS
           "filename" => basename($dest["path"]),
           "path"     => $dest["path"],
           "size"     => filesize($dest["root"]),
-          "mime"     => $fmime,
+          "mime"     => $mime,
           "info"     => $info
         );
       }
@@ -845,10 +845,10 @@ abstract class VFS
    */
   public static function ReadPDF($argv) {
     $tmp  = explode(":", $argv, 2);
-    $pdf  = $tmp[0];
-    $page = isset($tmp[1]) ? $tmp[1] : -1;
-    $dest = self::buildPath($pdf);
+    $pdf  = addslashes($tmp[0]);
+    $page = isset($tmp[1]) ? (int) $tmp[1] : -1;
 
+    $dest = self::buildPath($pdf);
     if ( file_exists($dest["root"]) ) {
       require_once PATH_LIB . "/PDF.class.php";
       if ( $ret = PDF::PDFtoSVG($dest["root"], $page) ) {
