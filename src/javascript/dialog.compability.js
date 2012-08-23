@@ -35,36 +35,9 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
   var _LINGUAS = {
     "en_US" : {
       "title"         : "Browser compability"
-  /*
-  ,
-      "supported"     : "Supported",
-      "partially"     : "Partially supported",
-      "no_upload"     : "You will not be able to upload any files into the filesystem because 'Async Upload' is not supported.",
-      "no_work"       : "Some applications uses Web Workers to handle intensive operations to decrease processing times.",
-      "no_gl"         : "No 3D (OpenGL) content can be displayed as WebGL is not supported. (Check your browser documentation)",
-      "browser_unsup" : "Glade CSS style problems occurs in IE and Opera for &lt;table&gt; elements.",
-      "browser_ie"    : "IE is lacking some CSS effects and HTML5/W3C features.",
-      "browser_touch" : "Your device is not fully supported due to lacking Touch support.",
-      "browser_supp"  : "Your browser does not have any known problems.",
-      "notes"         : "Please note that:",
-      "footnote"      : "This message will only be showed once!",
-      "yourbrowser"   : "Your browser is"
-      */
     },
     "nb_NO" : {
-      "title"         : "Nettleser-støtte"/*,
-      "supported"     : "Støttet",
-      "partially"     : "Delvis støttet",
-      "no_upload"     : "Du vil ikke kunne laste opp filer pga. manglende 'Async Upload' støtte.",
-      "no_work"       : "Noen applikasjoner bruker 'WebWorker' for å avbelaste tunge operasjoner.",
-      "no_gl"         : "Ingen 3D (OpenGL) innhold kan vises pga manglende støtte. (Se dokumentasjon for din nettleser)",
-      "browser_unsup" : "Glade CSS problemer oppstår i IE og Opera for &lt;table&gt; elementer.",
-      "browser_ie"    : "IE mangler CSS effekter og HTML5/W3C støtte.",
-      "browser_touch" : "Din enhet er ikke helt kompatibel pga bevegelses-skjerm.",
-      "browser_supp"  : "Din nettleser har ingen kjente problemer.",
-      "notes"         : "Bemerk at:",
-      "footnote"      : "Denne meldingen vises kun én gang!",
-      "yourbrowser"   : "Din nettleser er"*/
+      "title"         : "Nettleser-støtte"
     }
   };
 
