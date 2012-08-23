@@ -2282,24 +2282,25 @@
   /**
    * Preloader -- Handles preloading/lazy-loading of resources
    *
+   * Errors will not stop iteration.
+   *
    * @class
    */
   OSjs.Classes.Preloader = Class.extend({
-    _list         : [],
-    _finished     : false,
-    _resource     : null,
-    _errors       : 0,
-    _total        : 0,
-    _options      : {},
-    _onFinished   : function() {},
-    _onSuccess    : function() {},
-    _onError      : function() {},
+    _list         : [],                   //!< Remaining items
+    _finished     : false,                //!< Finished state
+    _resource     : null,                 //!< Current resource
+    _errors       : 0,                    //!< Loading error count
+    _total        : 0,                    //!< Loading try count
+    _onFinished   : function() {},        //!< Callback: Finished with queue
+    _onSuccess    : function() {},        //!< Callback: Finished with resource
+    _onError      : function() {},        //!< Callback: Error with resource
 
     /**
      * Preloader::init() -- Construct a new Preloader
      *
      * @param   Array     list          List of resources
-     * @param   Function  onFinished    When done loading all resources
+     * @param   Function  onFinished    When done loading all resources in queue
      * @param   Function  onSuccess     When resource successfully loaded
      * @param   Function  onError       When resource fails to load
      * @constructor
@@ -2385,13 +2386,13 @@
         var item = this._list.shift();
         if ( item.type == "image" ) {
           this._loadImage(item.src);
-        } else if ( item.type == "video" ) {
+        } else if ( item.type == "video" || item.type == "film") {
           this._loadVideo(item.src);
-        } else if ( item.type == "sound" ) {
+        } else if ( item.type == "sound" || item.type == "video" ) {
           this._loadAudio(item.src);
-        } else if ( item.type == "css" ) {
+        } else if ( item.type == "css" || item.type == "stylesheet" ) {
           this._loadCSS(item.src);
-        } else if ( item.type == "javascript" ) {
+        } else if ( item.type == "javascript" || item.type == "script" ) {
           this._loadJavaScript(item.src);
         }
         return;
