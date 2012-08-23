@@ -487,8 +487,9 @@ abstract class VFS
               continue;
             }
 
+            $tmpx = explode("/", $mmime);
             $fsize = filesize($abs_path);
-            $icon  = self::getFileIcon($mmime, $mime, $ext);
+            $icon  = self::getFileIcon(reset($tmpx), $mime, $ext);
             $mime  = $mmime;
           } else if ( is_dir($abs_path) ) {
             $tpath = preg_replace("/\/+/", "/", $rel_path);
