@@ -48,6 +48,10 @@ define("DEFAULT_LANGUAGE",    "en_US");               // Locale: Language
 
 define("CACHE_EXPIRE_ADD",    60);                    // Cache: Expiration date forward in time - in seconds
 
+define("HOST_FRONTEND",       "osjs.local");
+define("HOST_API",            "api.osjs.local");
+define("HOST_STATIC",         "osjs.local");
+
 // Login
 define("ENABLE_REGISTRATION",     true);              // Enable user registration on login screen
 define("AUTOLOGIN_ENABLE",        false);             // Automatic login

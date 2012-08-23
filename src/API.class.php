@@ -161,11 +161,13 @@ abstract class API
           "production"  => ENV_PRODUCTION,
           "demo"        => ENV_DEMO,
           "cache"       => ENABLE_CACHE,
-          "server"      => sprintf("%s:%s", SERVER_HOST, SERVER_PORT),
           "connection"  => ENV_PLATFORM,
+          "ssl"         => ENV_SSL,
           "hosts"       => Array(
-            "frontend"  => HOST_FRONTEND,
-            "api"       => HOST_API
+            "server"        => sprintf("%s:%s", SERVER_HOST, SERVER_PORT),
+            "frontend"      => HOST_FRONTEND,
+            "api"           => HOST_API,
+            "static"        => HOST_STATIC
           ),
           "api_format"  => API_FORMAT,
           "autologin"   => Array(
