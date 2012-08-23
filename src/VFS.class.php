@@ -217,8 +217,7 @@ abstract class VFS
     }
 
     if ( ($json = MediaFile::GetInfo($path)) ) {
-      list($mime, $fmime) = self::GetMIME($path);
-      $json["MIMEType"] = $fmime;
+      $json["MIMEType"] = self::GetMIME($path, true);
       return $json;
     }
 
@@ -229,7 +228,7 @@ abstract class VFS
    * GetMIME() -- Get a file MIME information
    * @return Array
    */
-  public static function GetMIME($path) {
+  public static function GetMIME($path, $fixed_only = false) {
     $expl = explode(".", $path);
     $ext  = @strtolower(end($expl));
 
@@ -248,7 +247,7 @@ abstract class VFS
       }
     }
 
-    return Array($mime, $fmime);
+    return $fixed_only ? $fmime : Array($mime, $fmime);
   }
 
   /**
@@ -466,7 +465,7 @@ abstract class VFS
             // Read MIME info
             $type  = "file";
             $add   = sizeof($mimes) ? false : true;
-            list($mime, $mmime) = self::GetMIME($abs_path);
+            $mime  = self::GetMIME($abs_path, true);
             $fmime = strstr($mime, "/", true);
 
             foreach ( $mimes as $m ) {
@@ -478,7 +477,7 @@ abstract class VFS
                   break;
                 }
               } else {
-                if ( $mmime == $m ) {
+                if ( $mime == $m ) {
                   $add = true;
                   break;
                 }
@@ -490,8 +489,7 @@ abstract class VFS
             }
 
             $fsize = filesize($abs_path);
-            $icon  = self::getFileIcon($mmime, $ext);
-            $mime  = $mmime;
+            $icon  = self::getFileIcon($mime, $ext);
           } else if ( is_dir($abs_path) ) {
             $tpath = preg_replace("/\/+/", "/", $rel_path);
             if ( isset($virtual[$tpath]) ) {
@@ -816,14 +814,10 @@ abstract class VFS
     if ( $dest["perm"] ) {
       if ( file_exists($dest["root"]) ) {
         // Read MIME info
-        $file = basename($dest["root"]);
-        $expl = explode(".", $file);
-        $ext = end($expl);
-        list($mime, $fmime) = self::GetMIME($dest["root"]);
-        $fmmime = trim(strstr($fmime, "/", true));
+        $file   = basename($dest["root"]);
         $info   = null;
 
-        switch ( $fmmime ) {
+        switch ( @trim(strstr(self::GetMIME($dest["root"], true), "/", true)) ) {
           case "image" :
           case "audio" :
           case "video" :
