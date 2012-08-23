@@ -271,8 +271,9 @@ abstract class CoreSettings
     "image" => "mimetypes/image-x-generic.png",
     "video" => "mimetypes/video-x-generic.png",
     "text"  => Array(
-      "text/html" => "mimetypes/text-html.png",
-      "_" => "mimetypes/text-x-generic.png"
+      "text/html"   => "mimetypes/text-html.png",
+      "text/plain"  => "mimetypes/gnome-mime-text.png",
+      "_"           => "mimetypes/text-x-generic.png"
     )
   );
 
@@ -280,6 +281,7 @@ abstract class CoreSettings
    * @var Icons from Extension (Overrides _MimeIcons)
    */
   protected static $_IconsExt = Array(
+    "pdf"    => "mimetypes/gnome-mime-application-pdf.png",
     "mp3"    => "mimetypes/audio-x-generic.png",
     "ogg"    => "mimetypes/audio-x-generic.png",
     "flac"   => "mimetypes/audio-x-generic.png",
