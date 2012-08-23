@@ -279,6 +279,7 @@ abstract class CoreSettings
 
   /**
    * @var Icons from Extension (Overrides _MimeIcons)
+   * Overrides all other icons
    */
   protected static $_IconsExt = Array(
     "pdf"    => "mimetypes/gnome-mime-application-pdf.png",

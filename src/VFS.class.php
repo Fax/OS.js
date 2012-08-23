@@ -200,17 +200,6 @@ abstract class VFS
    * @param  String   $ext    File Extenstion
    * @return String
    */
-  protected final static function _fixMIME($mime, $ext) {
-    $ext = strtolower($ext);
-    $fixes = CoreSettings::getMimeFixes();
-    if ( isset($fixes[$mime]) ) {
-      if ( isset($fixes[$mime][$ext]) ) {
-        return $fixes[$mime][$ext];
-      }
-    }
-    return $mime;
-  }
-
   /**
    * MediaInformation() -- Get information about a media file
    * @param  String   $path   Destination
@@ -242,14 +231,23 @@ abstract class VFS
    */
   public static function GetMIME($path) {
     $expl = explode(".", $path);
-    $ext = end($expl);
+    $ext  = @strtolower(end($expl));
 
     $fi = new finfo(FILEINFO_MIME);
     $finfo = $fi->file($path);
     //$mime  = explode("; charset=", $finfo);
     $mime  = explode(";", $finfo);
     $mime  = trim(reset($mime));
-    $fmime = self::_fixMIME($mime, $ext);
+    $fmime = $mime;
+
+    // Fix mime type by extension
+    $fixes = CoreSettings::getMimeFixes();
+    if ( isset($fixes[$mime]) ) {
+      if ( isset($fixes[$mime][$ext]) ) {
+        $fmime = $fixes[$mime][$ext];
+      }
+    }
+
     return Array($mime, $fmime);
   }
 
@@ -282,7 +280,6 @@ abstract class VFS
 
   /**
    * Get file icon from MIME and Extension
-   * @param  String   $mmime      Mime base type
    * @param  String   $mime       Full mime type
    * @param  String   $ext        File-extension
    * @param  String   $icon       Default icon
@@ -290,38 +287,43 @@ abstract class VFS
    * @see    VFS::_$IconsExt
    * @return String
    */
-  public final static function getFileIcon($mmime, $mime, $ext, $icon = "mimetypes/binary.png") {
-    $ext    = strtolower($ext);
-    $micons = CoreSettings::getMimeIcons();
-    $ecions = CoreSettings::getExtIcons();
+  public final static function getFileIcon($mime, $ext, $icon = "mimetypes/binary.png") {
+    $ext = strtolower($ext);
 
-    if ( isset($micons[$mmime]) ) {
-      $iter = $micons[$mmime];
-      if ( is_string($iter) ) {
-        $icon = $iter;
-      } else {
-        if ( isset($iter[$mime]) ) {
-          if ( is_string($iter[$mime]) ) {
-            $icon = $iter[$mime];
-          } else {
-            if ( isset($iter[$mime][$ext]) ) {
-              $icon = $iter[$mime][$ext];
-            } else {
-              if ( isset($iter[$mime]["_"]) ) {
-                $icon = $iter[$mime]["_"];
-              }
-            }
-          }
-        } else {
-          if ( isset($iter["_"]) ) {
-            $icon = $iter["_"];
-          }
-        }
+    if ( $ecions = CoreSettings::getExtIcons() ) {
+      if ( isset($ecions[$ext]) ) {
+        return $ecions[$ext];
       }
     }
 
-    if ( isset($ecions[$ext]) ) {
-      $icon = $ecions[$ext];
+    if ( ($micons = CoreSettings::getMimeIcons()) ) {
+      $tmpx   = explode("/", $mime);
+      $mmime  = reset($tmpx);
+
+      if ( isset($micons[$mmime]) ) {
+        $iter = $micons[$mmime];
+        if ( is_string($iter) ) {
+          $icon = $iter;
+        } else {
+          if ( isset($iter[$mime]) ) {
+            if ( is_string($iter[$mime]) ) {
+              $icon = $iter[$mime];
+            } else {
+              if ( isset($iter[$mime][$ext]) ) {
+                $icon = $iter[$mime][$ext];
+              } else {
+                if ( isset($iter[$mime]["_"]) ) {
+                  $icon = $iter[$mime]["_"];
+                }
+              }
+            }
+          } else {
+            if ( isset($iter["_"]) ) {
+              $icon = $iter["_"];
+            }
+          }
+        }
+      }
     }
 
     return $icon;
@@ -458,7 +460,7 @@ abstract class VFS
           $rel_path = "{$path}/{$file}";
 
           $expl = explode(".", $file);
-          $ext = end($expl);
+          $ext  = end($expl);
 
           if ( is_file($abs_path) || is_link($abs_path) ) {
             // Read MIME info
@@ -487,9 +489,8 @@ abstract class VFS
               continue;
             }
 
-            $tmpx = explode("/", $mmime);
             $fsize = filesize($abs_path);
-            $icon  = self::getFileIcon(reset($tmpx), $mime, $ext);
+            $icon  = self::getFileIcon($mmime, $ext);
             $mime  = $mmime;
           } else if ( is_dir($abs_path) ) {
             $tpath = preg_replace("/\/+/", "/", $rel_path);
