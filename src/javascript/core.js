@@ -5246,12 +5246,14 @@
         var i = 0, l = panels.length, p;
         for ( i; i < l; i++ ) {
           p = panels[i];
-          if ( p.getPosition() == "top" ) {
-            result.y += p.getHeight();
-            result.h -= p.getHeight();
-          } else {
-            //result.y += p.getHeight();
-            result.h -= p.getHeight();
+          if ( p ) {
+            if ( p.getPosition() == "top" ) {
+              result.y += p.getHeight();
+              result.h -= p.getHeight();
+            } else {
+              //result.y += p.getHeight();
+              result.h -= p.getHeight();
+            }
           }
         }
       }
@@ -5847,12 +5849,15 @@
      */
     removePanel : function(p, destroyed) {
       var i;
+      console.log("Desktop::removePanel()", p, destroyed);
       for ( i in this.panels ) {
         if ( this.panels.hasOwnProperty(i) ) {
           if ( this.panels[i] === p ) {
             if ( !destroyed ) {
               this.panels[i].destroy();
             }
+
+            console.log("Desktop::removePanel()", "found", i, p);
 
             this.panels[i] = null;
             delete this.panels[i];
