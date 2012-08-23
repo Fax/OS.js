@@ -2356,6 +2356,8 @@
      * @destructor
      */
     destroy : function() {
+      console.log("Preloader::destroy()");
+
       this._finished    = false;
       this._list        = [];
       this._errors      = 0;
@@ -2531,11 +2533,13 @@
               cssRules  = "cssRules";
             }
 
-            if ( self._resource[sheet] && self._resource[sheet][cssRules].length ) {
-              _found = true;
-              self._onSuccess(src);
-              _clear();
-            }
+            try {
+              if ( self._resource[sheet] && self._resource[sheet][cssRules].length ) {
+                _found = true;
+                self._onSuccess(src);
+                _clear();
+              }
+            } catch ( eee ) { (function() {})(); } finally { (function() {})(); }
           }
         }, 10);
 
@@ -2558,21 +2562,24 @@
       this._resource.onreadystatechange = function() {
         if ( (this.readyState == 'complete' || this.readyState == 'complete') && !loaded) {
           loaded = true;
-          self._onSuccess(src);
+          if ( self._onSuccess ) // Needed because this event may fire after destroy() in some browsers, depending on onload
+            self._onSuccess(src);
         }
       };
       this._resource.onload             = function() {
         if ( loaded )
           return;
         loaded = true;
-        self._onSuccess(src);
+        if ( self._onSuccess ) // Needed because this event may fire after destroy() in some browsers, depending onreadystatechange
+          self._onSuccess(src);
       };
       this._resource.onerror            = function() {
         if ( loaded )
           return;
         loaded = true;
 
-        self._onError(src);
+        if ( self._onError ) // Needed because this event may fire after destroy() in some browsers, depending on above notes
+          self._onError(src);
       };
       this._resource.src = src;
 
