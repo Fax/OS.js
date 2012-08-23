@@ -2275,5 +2275,301 @@
 
   });
 
+  /////////////////////////////////////////////////////////////////////////////
+  // PRELOADER
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Preloader -- Handles preloading/lazy-loading of resources
+   *
+   * @class
+   */
+  OSjs.Classes.Preloader = Class.extend({
+    _list         : [],
+    _finished     : false,
+    _resource     : null,
+    _errors       : 0,
+    _total        : 0,
+    _options      : {},
+    _onFinished   : function() {},
+    _onSuccess    : function() {},
+    _onError      : function() {},
+
+    /**
+     * Preloader::init() -- Construct a new Preloader
+     *
+     * @param   Array     list          List of resources
+     * @param   Function  onFinished    When done loading all resources
+     * @param   Function  onSuccess     When resource successfully loaded
+     * @param   Function  onError       When resource fails to load
+     * @constructor
+     */
+    init : function(list, onFinished, onSuccess, onError) {
+      this._finished    = false;
+      this._list        = list        || [];
+      this._errors      = 0;
+      this._total       = list.length;
+
+      var self = this;
+      this._onFinished  = function() {
+        if ( self._finished ) {
+          return;
+        }
+        self._finished = true;
+
+        (onFinished || function() {})(self._total, self._errors);
+      };
+
+      this._onSuccess   = function(src) {
+        if ( self._finished )
+          return;
+
+        console.log("Preloader::_onSuccess()", src);
+
+        (onSuccess || function() {})(src);
+
+        self._checkQueue();
+      };
+
+      this._onError     = function(src) {
+        if ( self._finished )
+          return;
+
+        self._errors++;
+
+        console.log("Preloader::_onError()", src);
+
+        (onError || function() {})(src);
+
+        self._checkQueue();
+      };
+
+      console.group("Preloader::init()");
+      console.log("List", this._list);
+      console.groupEnd();
+
+      this.run();
+    },
+
+    /**
+     * Preloader::destroy() -- Destroy current instance
+     * @destructor
+     */
+    destroy : function() {
+      this._finished    = false;
+      this._list        = [];
+      this._errors      = 0;
+      this._total       = 0;
+      this._resource    = null;
+      this._onFinished  = null;
+      this._onSuccess   = null;
+      this._onError     = null;
+    },
+
+    /**
+     * Preloader::run() -- Start loading
+     * @return  void
+     */
+    run : function() {
+      this._checkQueue();
+    },
+
+    /**
+     * Preloader::_checkQueue() -- Check the Queue for items to load
+     * @return  void
+     */
+    _checkQueue : function() {
+      if ( this._list.length ) {
+        var item = this._list.shift();
+        if ( item.type == "image" ) {
+          this._loadImage(item.src);
+        } else if ( item.type == "video" ) {
+          this._loadVideo(item.src);
+        } else if ( item.type == "sound" ) {
+          this._loadAudio(item.src);
+        } else if ( item.type == "css" ) {
+          this._loadCSS(item.src);
+        } else if ( item.type == "javascript" ) {
+          this._loadJavaScript(item.src);
+        }
+        return;
+      }
+
+      this._onFinished();
+    },
+
+    /**
+     * Preloader::_cleanResource() -- Handle safe destruction of DOM objects etc.
+     * @return  void
+     */
+    _cleanResource : function() {
+      if ( this._resource ) {
+        //if ( (this._resource instanceof Audio) || (this._resource instanceof Video) ) {
+          var self = this;
+          self._resource.removeEventListener('canplaythrough', function(ev) {
+            self._onSuccess(src);
+          }, false );
+        //}
+
+        this._resource = null;
+      }
+    },
+
+    /**
+     * Preload::_loadImage() -- Handle loading of Images
+     * @param   String    src       Absolute path to resource
+     * @return  void
+     */
+    _loadImage : function(src) {
+      var self = this;
+
+      this._resource = new Image();
+      this._resource.onload = function() {
+        self._onSuccess(src);
+      };
+      this._resource.onerror = function() {
+        self._onError(src);
+      };
+      this._resource.src = src;
+    },
+
+    /**
+     * Preload::_loadVideo() -- Handle loading of Video
+     * @param   String    src       Absolute path to resource
+     * @return  void
+     */
+    _loadVideo : function(src) {
+      var self = this;
+
+      this._resource = document.createElement("video");
+      this._resource.onerror = function() {
+        self._onError(src);
+        self._cleanResource();
+      };
+
+      self._resource.addEventListener('canplaythrough', function(ev) {
+        self._onSuccess(src);
+        self._cleanResource();
+      }, false );
+
+      this._resource.preload   = "auto";
+      this._resource.src       = src;
+    },
+
+    /**
+     * Preload::_loadAudio() -- Handle loading of Audio
+     * @param   String    src       Absolute path to resource
+     * @return  void
+     */
+    _loadAudio : function(src) {
+      var self = this;
+
+      this._resource = new Audio();
+      this._resource.onerror = function() {
+        self._onError(src);
+        self._cleanResource();
+      };
+
+      self._resource.addEventListener('canplaythrough', function(ev) {
+        self._onSuccess(src);
+        self._cleanResource();
+      }, false );
+
+      this._resource.preload   = "auto";
+      this._resource.src       = src;
+    },
+
+    _loadCSS : function(src, timeout) {
+      var self = this;
+
+      timeout = timeout || 7500;
+
+      if ( document.createStyleSheet ) {
+        document.createStyleSheet(src);
+        this._onSuccess(src);
+
+      } else {
+        this._resource        = document.createElement("link");
+        this._resource.rel    = "stylesheet";
+        this._resource.type   = "text/css";
+        this._resource.href   = src;
+
+        var _found   = false;
+        var _poll    = null;
+        var _timeout = null;
+        var _clear    = function() {
+
+          if ( _timeout ) {
+            clearTimeout(_timeout);
+            _timeout = null;
+          }
+          if ( _poll ) {
+            clearInterval(_poll);
+            _poll = null;
+          }
+        };
+
+        _timeout = setTimeout(function() {
+          if ( !_found ) {
+            self._onError(src);
+          }
+
+          _clear();
+        }, timeout);
+
+        _poll  = setInterval(function() {
+          if ( self._resource ) {
+            var sheet     = "styleSheet";
+            var cssRules  = "rules";
+            if ( "sheet" in self._resource ) {
+              sheet     = "sheet";
+              cssRules  = "cssRules";
+            }
+
+            if ( self._resource[sheet] && self._resource[sheet][cssRules].length ) {
+              _found = true;
+              self._onSuccess(src);
+              _clear();
+            }
+          }
+        }, 10);
+
+        document.getElementsByTagName("head")[0].appendChild(this._resource);
+      }
+
+    },
+
+    _loadJavaScript : function(src) {
+      var self   = this;
+      var loaded = false;
+
+      this._resource                    = document.createElement("script");
+      this._resource.type               = "text/javascript";
+      this._resource.onreadystatechange = function() {
+        if ( (this.readyState == 'complete' || this.readyState == 'complete') && !loaded) {
+          loaded = true;
+          self._onSuccess(src);
+        }
+      };
+      this._resource.onload             = function() {
+        if ( loaded )
+          return;
+        loaded = true;
+        self._onSuccess(src);
+      };
+      this._resource.onerror            = function() {
+        if ( loaded )
+          return;
+        loaded = true;
+
+        self._onError(src);
+      };
+      this._resource.src = src;
+
+      document.getElementsByTagName("head")[0].appendChild(this._resource);
+    }
+
+  });
+
 
 })($);

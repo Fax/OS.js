@@ -16,6 +16,7 @@ CORE TODO:
 [LOW]  Add/Remove Panel
 [LOW]  Remove the global resize event and make a poll ?!
        This would increase the performance of panel redraws etc.
+[LOW] Split login to custom css and remove when needed
 
 MISC TODO:
 -------------------------------------------------------------------------------
