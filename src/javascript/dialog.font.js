@@ -67,7 +67,7 @@ OSjs.Dialogs.FontOperationDialog = (function($, undefined) {
 
       var doc     = el.get(0).contentWindow.document;
       var content = sprintf('<font size="%s">%s</font>', (size + unit), LABELS.text);
-      var css     = "font-family : " + font + ";";
+      var css     = "font-family : " + font + " !important;";
 
       /*
       if ( size !== undefined ) {
