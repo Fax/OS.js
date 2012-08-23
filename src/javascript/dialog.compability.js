@@ -34,7 +34,9 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
 
   var _LINGUAS = {
     "en_US" : {
-      "title"         : "Browser compability",
+      "title"         : "Browser compability"
+  /*
+  ,
       "supported"     : "Supported",
       "partially"     : "Partially supported",
       "no_upload"     : "You will not be able to upload any files into the filesystem because 'Async Upload' is not supported.",
@@ -47,9 +49,10 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
       "notes"         : "Please note that:",
       "footnote"      : "This message will only be showed once!",
       "yourbrowser"   : "Your browser is"
+      */
     },
     "nb_NO" : {
-      "title"         : "Nettleser støtte",
+      "title"         : "Nettleser-støtte"/*,
       "supported"     : "Støttet",
       "partially"     : "Delvis støttet",
       "no_upload"     : "Du vil ikke kunne laste opp filer pga. manglende 'Async Upload' støtte.",
@@ -61,7 +64,7 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
       "browser_supp"  : "Din nettleser har ingen kjente problemer.",
       "notes"         : "Bemerk at:",
       "footnote"      : "Denne meldingen vises kun én gang!",
-      "yourbrowser"   : "Din nettleser er"
+      "yourbrowser"   : "Din nettleser er"*/
     }
   };
 
@@ -83,20 +86,8 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
        * @constructor
        */
       init : function() {
-        var supported = LABELS.supported;
-        var color     = "black";
-
-        var mob = MobileSupport();
-        if ( ($.browser.msie || $.browser.opera) || (mob.iphone || mob.blackberry || mob.android) ) {
-          supported = LABELS.partially;
-          color = "#f3a433";
-        } else {
-          supported = LABELS.supported;
-          color = "#137a26";
-        }
-
         this._super("Crash", false);
-        this._content = "<div style=\"padding:10px;\"><div><b>" + LABELS.yourbrowser + ": <span style=\"color:" + color + ";\">" + supported + "</span></b></div> <table class=\"outer\"><tr><td class=\"content\"><table class=\"chart\"></table></td><td class=\"space\">&nbsp;</td><td class=\"content\"><div class=\"notes\"></div></td></tr></table></div>";
+        this._content = $("<div class=\"CompabilityDialogTable\"></div>");
         this._title = LABELS.title;
         this._icon = 'status/software-update-available.png';
         this._is_draggable = true;
@@ -121,84 +112,53 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
       create : function(id, mcallback) {
         var el = this._super(id, mcallback);
 
-        var mtable = el.find("table.outer");
-        mtable.css("height", "280px");
-        mtable.find("td.content").css({
-          "width" : "230px",
-          "verticalAlign" : "top",
-          "backgroundColor" : "#fff"
-        });
-        mtable.find("td.space").css({
-          "width" : "5px"
-        });
+        var is_mobile     = false;
+        var is_supported  = true;
 
-        var table  = el.find("table.chart");
-        var _row   = "<tr><td width=\"16\"><img alt=\"\" src=\"/img/icons/16x16/emblems/emblem-%s.png\" /></td><td>%s</td></tr>";
-        var _check = OSjs.Public.CompabilityLabels;
-
-        var row;
-        var icon;
-        for ( var c in _check ) {
-          if ( _check.hasOwnProperty(c) ) {
-            icon = _check[c] ? "default" : "important";
-            row = $(sprintf(_row, icon, c));
-            table.append(row);
-          }
+        var mob = MobileSupport();
+        if ( mob.iphone || mob.blackberry || mob.android ) {
+          is_mobile     = true;
+          is_supported  = false;
+        }
+        if ( ($.browser.msie || $.browser.opera) || (mob.iphone || mob.blackberry || mob.android) ) {
+          is_supported  = false;
         }
 
-        $(table).find("td").css({
-          "padding" : "3px",
-          "vertical-align" : "middle"
-        });
+        var items  = [];
+        var header = $(sprintf("<div class=\"Header\">%s: <span class=\"%s\">%s</span>. </div><div class=\"Note\">%s</div>",
+                               "Your browser is",
+                               (is_supported ? "supported" : ""),
+                               (is_supported ? "Supported" : "Partially Supported"),
+                               "Any features not supported is listed below"));
 
-        var details = [];
+        if ( is_mobile ) {
+          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Mobile support", "There is currently no maintainance for Mobile browsers"));
+        }
 
         if ( !OSjs.Compability.SUPPORT_UPLOAD ) {
-          details.push("<li>" + LABELS.no_upload + "</li>");
+          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Asynchronous File Upload", "You will not be able to upload any files"));
         }
         if ( !OSjs.Compability.SUPPORT_WEBGL ) {
-          details.push("<li>" + LABELS.no_gl + "</li>");
+          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "WebGL (3D Canvas)", "3D Applications cannot be used because no support was found (or enabled?)"));
         }
-        if ( OSjs.Compability.SUPPORT_WORKER ) {
-          details.push("<li>" + LABELS.no_work + "</li>");
+        if ( !OSjs.Compability.SUPPORT_WORKER ) {
+          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "WebWorkers", "Any applications using WebWorkers to function will not start"));
         }
-
-        var notes = el.find("div.notes");
-        if ( $.browser.msie || $.browser.opera ) {
-          notes.append("<p>" + LABELS.browser_unsup + "</p>");
-          if ( $.browser.msie ) {
-            notes.append("<p>" + LABELS.browser_ie + "</p>");
-          }
-        } else {
-          var mob = MobileSupport();
-          if ( mob.iphone || mob.blackberry || mob.android ) {
-            notes.append("<p>" + LABELS.browser_touch + "</p>");
-          } else {
-            notes.append("<p>" + LABELS.browser_supp + "</p>");
-          }
+        if ( !OSjs.Compability.SUPPORT_VIDEO ) {
+          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Video", "Your browser does not support Video playback"));
+        }
+        if ( !OSjs.Compability.SUPPORT_AUDIO ) {
+          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Video", "Your browser does not support Audio playback"));
+        }
+        if ( !OSjs.Compability.SUPPORT_RICHTEXT ) {
+          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Richtext Editing", "Found no support for Richtext"));
+        }
+        if ( !OSjs.Compability.SUPPORT_DND ) {
+          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Drag-and-Drop", "DnD has been disabled because no support was found, or enabled"));
         }
 
-        if ( details.length ) {
-          notes.append($("<p><b>" + LABELS.notes + "</b></p>"));
-          if ( details.length ) {
-            notes.append($("<ul class=\"CompactList\">" + details.join("") + "</ul>"));
-          }
-          notes.append($("<hr />").css({
-            "background"  : "transparent",
-            "display"     : "block",
-            "position"    : "relative",
-            "overflow"    : "hidden",
-            'borderColor' : "#000",
-            'borderWidth' : "1px",
-            'borderBottom': "0 none",
-            "color"       : "#000",
-            "width"       : "95%"
-          }));
-        }
-
-        notes.append($("<p><b>" + LABELS.footnote + "</b></p>").css("textAlign", "center"));
-
-        $(notes).find("p").css({"padding" : "5px", "margin" : "0"});
+        var table  = $("<div class=\"Items\">" + items.join("\n") + "</div>");
+        el.find(".CompabilityDialogTable").append(header, table);
       }
 
     }); // @endclass

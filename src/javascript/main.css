@@ -566,6 +566,46 @@ ul.CompactList li {
     text-align : center;
   }
 
+.CompabilityDialogTable {
+  margin : 10px;
+}
+  .CompabilityDialogTable .Note {
+    display : inline;
+  }
+  .CompabilityDialogTable .Header {
+    font-weight : bold;
+    display : inline;
+  }
+  .CompabilityDialogTable .Header span {
+    color : #f3a433;
+  }
+  .CompabilityDialogTable .Header span.supported {
+    color : #137a26;
+  }
+  .CompabilityDialogTable .Items {
+    background : #fff;
+    position : absolute;
+    top : 35px;
+    left : 10px;
+    bottom : 10px;
+    right : 10px;
+    overflow : auto;
+  }
+  .CompabilityDialogTable .Item {
+    padding : 5px;
+  }
+  .CompabilityDialogTable .Item span {
+    display : block;
+    font-weight : bold;
+    margin-bottom : 5px;
+    font-size : 120%;
+  }
+  .CompabilityDialogTable .Item p {
+    margin : 0;
+    padding : 0;
+    display : block;
+  }
+
 /****************************************************************
                         OPERATION DIALOGS
  ****************************************************************/
