@@ -2245,7 +2245,7 @@
     //
 
     /**
-     * RichtextEditor::setContent() -- Set the HTML content of document
+     * RichtextEditor::setContent() -- Set the BODY HTML content of document
      *
      * This function clears the document entirely
      *
@@ -2260,6 +2260,21 @@
       this._frame.src = "about:blank";
       this._doc.open();
       this._doc.write('<head><link rel="stylesheet" type="text/css" href="/VFS/resource/iframe.css" /><style type="text/css">' + css + '</style></head><body>' + content + '</body>');
+      this._doc.close();
+    },
+
+    /**
+     * RichtextEditor::setInnerContent() -- Set the HTML content of document
+     *
+     * This function clears the document entirely
+     *
+     * @param   String    content     The content
+     * @return  void
+     */
+    setInnerContent : function(content) {
+      this._frame.src = "about:blank";
+      this._doc.open();
+      this._doc.write(content);
       this._doc.close();
     },
 
