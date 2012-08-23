@@ -1,5 +1,6 @@
 CORE TODO:
 -------------------------------------------------------------------------------
+[MED] Init: redo detection of features
 [MED] VFS: Finish JS Class (Temporary / Persistent)
 [MED] Richtext: Add custom contextmenu
 [MED] Panel: Redesign preferences
