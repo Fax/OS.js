@@ -13,6 +13,17 @@
     <![endif]-->
   </head>
   <body>
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
     <div class="wrapper">
       <header>
         <h1>Os.js</h1>
@@ -117,14 +128,17 @@ of X11.</p>
   </section>
 
       <footer>
-        <p>This project is maintained by <a href="https://github.com/andersevenrud">andersevenrud</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-        <p><small>Visit maintainer's profile at <a href="https://plus.google.com/101576798387217383063?rel=author">Google+</a></small></p>
+        <p>This project is maintained by Anders Evenrud on <a href="https://github.com/andersevenrud">GitHub</a>, <a href="https://plus.google.com/101576798387217383063?rel=author">Google+</a></p>
 
         <!-- Place this tag where you want the +1 button to render. -->
         <div style="margin:10px;">
           <div class="g-plusone" data-size="tall" data-annotation="inline" data-width="250"></div>
         </div>
+        <div style="margin:10px;">
+          <div class="fb-like" data-href="http://andersevenrud.github.com/OS.js/" data-send="true" data-layout="button_count" data-width="250" data-show-faces="false"></div>
+        </div>
+
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
     <script src="javascripts/scale.fix.js"></script>
