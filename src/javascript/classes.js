@@ -2484,14 +2484,24 @@
 
     /**
      * Preload::_loadCSS() -- Handle loading of CSS Stylesheet
-     * @param   String    src       Absolute path to resource
-     * @param   int       timeout   Timeout for non-ie browsers
+     *
+     * There currently are no onload() an onerror() event
+     * for <link /> items. IE has document.createStyleSheet(), W3C only has
+     * DOM.
+     *
+     * In IE, we assume the stylesheet is added. Otherwise we use an interval
+     * to check if the 
+     *
+     * @param   String    src         Absolute path to resource
+     * @param   int       interval    Interval (in ms)
+     * @param   int       timeout     Timeout (in ms)
      * @return  void
      */
-    _loadCSS : function(src, timeout) {
+    _loadCSS : function(src, interval, timeout) {
       var self = this;
 
-      timeout = timeout || 7500;
+      interval  = interval  || 10;
+      timeout   = timeout   || 7500;
 
       if ( document.createStyleSheet ) {
         document.createStyleSheet(src);
@@ -2542,7 +2552,7 @@
               }
             } catch ( eee ) { (function() {})(); } finally { (function() {})(); }
           }
-        }, 10);
+        }, interval);
 
         document.getElementsByTagName("head")[0].appendChild(this._resource);
       }
@@ -2560,6 +2570,7 @@
 
       this._resource                    = document.createElement("script");
       this._resource.type               = "text/javascript";
+      this._resource.charset            = "utf-8";
       this._resource.onreadystatechange = function() {
         if ( (this.readyState == 'complete' || this.readyState == 'complete') && !loaded) {
           loaded = true;
