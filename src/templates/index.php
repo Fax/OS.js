@@ -82,7 +82,6 @@ if ( $locale = Core::get()->getLocale() ) {
   <meta name="keywords" content="OS.js, JavaScript Operating System, Web Desktop" />
   <meta name="description" content="OS.js - JavaScript Web Desktop" />
   <meta name="author" content="<?php print PROJECT_AUTHOR; ?> <?php print PROJECT_CONTACT; ?>" />
-  <meta name="copyright" content="Copyright (c) <?php print PROJECT_COPYRIGHT; ?>" />
 
   <!-- OS.js stylesheets -->
   <link rel="stylesheet" type="text/css" href="/VFS/resource/main.css" />
@@ -107,18 +106,18 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
     }
   } else {
     foreach ( $links as $l ) {
-      print sprintf("  <script type=\"text/javascript\" src=\"/%s/%s\"></script>\n", $key, $l);
+      print sprintf("  <script charset=\"utf-8\" type=\"text/javascript\" src=\"/%s/%s\"></script>\n", $key, $l);
     }
   }
 }
 ?>
 
   <!-- OS.js libraries -->
-  <script type="text/javascript" src="/VFS/resource/utils.js"></script>
-  <script type="text/javascript" src="/VFS/resource/init.js"></script>
-  <script type="text/javascript" src="/VFS/language/<?php print $current_locale; ?>" id="LanguageFile"></script>
-  <script type="text/javascript" src="/VFS/resource/classes.js"></script>
-  <script type="text/javascript" src="/VFS/resource/core.js"></script>
+  <script charset="utf-8" type="text/javascript" src="/VFS/resource/utils.js"></script>
+  <script charset="utf-8" type="text/javascript" src="/VFS/resource/init.js"></script>
+  <script charset="utf-8" type="text/javascript" src="/VFS/language/<?php print $current_locale; ?>" id="LanguageFile"></script>
+  <script charset="utf-8" type="text/javascript" src="/VFS/resource/classes.js"></script>
+  <script charset="utf-8" type="text/javascript" src="/VFS/resource/core.js"></script>
 
   <!-- Google Analytics -->
 <?php if ( GA_ENABLE ) { ?>
