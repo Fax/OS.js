@@ -793,6 +793,9 @@
    * @return void
    */
   function PlaySound(type) {
+    if ( !_Core || !_Core.running )
+      return;
+
     var se = (_Settings._get("system.sounds.enable") === "true");
     var sv = parseInt(_Settings._get("system.sounds.volume"), 10);
     if ( sv < 0 ) {
@@ -3162,9 +3165,9 @@
       var r = 0, e = _resources.length;
       for ( r; r < e; r++ ) {
         i = _resources[r];
-        if ( i.match(/\.js/i) ) {
+        if ( i.match(/\.js$/i) ) {
           _list.push({"type" : "javascript", "src" : (RESOURCE_URI + i)});
-        } else if ( i.match(/\.css/i) ) {
+        } else if ( i.match(/\.css$/i) ) {
           _list.push({"type" : "css", "src" : (RESOURCE_URI + i)});
         }
       }
@@ -3181,7 +3184,7 @@
       };
 
       _loader = new OSjs.Classes.Preloader(_list, function(loaded, errors) {
-        console.log("ResourceManager::run() Preloaded", errors, "of", loaded, "failed");
+        console.log("ResourceManager::run() Preloaded", loaded, "of", errors, "failed");
         _loader_done();
       });
 

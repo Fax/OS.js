@@ -2479,6 +2479,12 @@
       this._resource.src       = src;
     },
 
+    /**
+     * Preload::_loadCSS() -- Handle loading of CSS Stylesheet
+     * @param   String    src       Absolute path to resource
+     * @param   int       timeout   Timeout for non-ie browsers
+     * @return  void
+     */
     _loadCSS : function(src, timeout) {
       var self = this;
 
@@ -2487,7 +2493,6 @@
       if ( document.createStyleSheet ) {
         document.createStyleSheet(src);
         this._onSuccess(src);
-
       } else {
         this._resource        = document.createElement("link");
         this._resource.rel    = "stylesheet";
@@ -2539,6 +2544,11 @@
 
     },
 
+    /**
+     * Preload::_loadJavaScript() -- Handle loading of (ECMA) JavaScript
+     * @param   String    src       Absolute path to resource
+     * @return  void
+     */
     _loadJavaScript : function(src) {
       var self   = this;
       var loaded = false;
