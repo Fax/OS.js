@@ -63,7 +63,7 @@ if ( (isset($_GET["file"]) && ($path = $_GET['file'])) ) {
         @ob_end_flush();
 
         $mime = VFS::GetMIME($absolute);
-        header("Content-type: {$mime[1]}");
+        header("Content-type: {$mime}");
 
         if ( $download ) {
           $fsize = filesize($absolute);
