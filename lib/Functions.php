@@ -174,4 +174,16 @@ function get_absolute_path($path, $ds = DIRECTORY_SEPARATOR) {
   return $abs;
 }
 
+/**
+ * pathinfo() for multibyte
+ */
+function mb_pathinfo($filepath) {
+  preg_match('%^(.*?)[\\\\/]*(([^/\\\\]*?)(\.([^\.\\\\/]+?)|))[\\\\/\.]*$%im', $filepath, $m);
+  if ( isset($m[1]) ) $ret['dirname']   = $m[1];
+  if ( isset($m[2]) ) $ret['basename']  = $m[2];
+  if ( isset($m[5]) ) $ret['extension'] = $m[5];
+  if ( isset($m[3]) ) $ret['filename']  = $m[3];
+  return $ret;
+}
+
 ?>
