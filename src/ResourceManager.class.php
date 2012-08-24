@@ -179,9 +179,6 @@ abstract class ResourceManager
    */
   public static function getFont($font, $compress) {
     $font   = preg_replace("/[^a-zA-Z0-9]/", "", $font);
-    $italic = $font == "FreeSerif" ? "Italic" : "Oblique";
-    $bos    = $font == "Sansation" ? "/*" : "";
-    $boe    = $font == "Sansation" ? "*/" : "";
 
     if ( ENABLE_LOGGING )
       Logger::logInfo(sprintf("%s: %s", __METHOD__, JSON::encode(Array($font, $compress))));
@@ -190,70 +187,56 @@ abstract class ResourceManager
     $sources      = Array(
       "normal"   => sprintf("%s/%s.ttf",        URI_FONT, $font_name),
       "bold"     => sprintf("%s/%sBold.ttf",    URI_FONT, $font_name),
-      "italic"   => sprintf("%s/%s%s.ttf",      URI_FONT, $font_name, $italic),
-      "bitalic"  => sprintf("%s/%sBold%s.ttf",  URI_FONT, $font_name, $italic)
+      "italic"   => sprintf("%s/%s%s.ttf",      URI_FONT, $font_name, ($font == "FreeSerif" ? "Italic" : "Oblique")),
+      "bitalic"  => sprintf("%s/%sBold%s.ttf",  URI_FONT, $font_name, ($font == "FreeSerif" ? "Italic" : "Oblique"))
     );
 
     // Base64 Encode fonts
+    $bdocument = null;
     try {
-      $bdocument = @(new SimpleXMLElement(file_get_contents(FONT_CACHE)));
-    } catch ( Exception $e ) {
-      $bdocument = null;
-    }
-
-    foreach ( $sources as $face => $rpath )
-    {
-      // First check the cache
-      if ( $bdocument ) {
-        $filename = basename($rpath);
-        foreach ( $bdocument as $bn ) {
-          if ( ((string)$bn['name']) == $filename ) {
-            $sources[$face] = sprintf("data:%s;base64,%s", MIME_TTF, (string)$bn);
-            break;
+      if ( $bdocument = @(new SimpleXMLElement(file_get_contents(FONT_CACHE))) ) {
+        foreach ( $sources as $face => $rpath ) {
+          $filename = basename($rpath);
+          foreach ( $bdocument as $bn ) {
+            if ( ((string)$bn['name']) == $filename ) {
+              $sources[$face] = sprintf("data:%s;base64,%s", MIME_TTF, (string)$bn);
+              break;
+            }
           }
+          unset($filename);
         }
-        unset($filename);
+        unset($bdocument);
       }
-    }
+    } catch ( Exception $e ) { }
 
-    unset($bdocument);
+    $tpl = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "resource.css"));
+    $rep = Array(
+      "%NORMAL%"          => $sources['normal'],
+      "%BOLD%"            => $sources['bold'],
+      "%ITALIC%"          => $sources['italic'],
+      "%BOLD_ITALIC%"     => $sources['bitalic'],
+      "%START_COMMENT%"   => ($font == "Sansation" ? "/*" : ""),
+      "%END_COMMENT%"     => ($font == "Sansation" ? "*/" : "")
+    );
 
-    $css = <<<EOCSS
-@font-face {
-  font-family : OSjsFont;
-  src: url("{$sources['normal']}");
-}
-@font-face {
-  font-family : OSjsFont;
-  font-weight : bold;
-  src: url("{$sources['bold']}");
-}
-@font-face {
-  font-family : OSjsFont;
-  font-style : italic;
-  src: url("{$sources['italic']}");
-}
-
-{$bos}
-@font-face {
-  font-family : OSjsFont;
-  font-weight : bold;
-  font-style : italic;
-  src: url("{$sources['bitalic']}");
-}
-{$boe}
-
-body {
-  font-family : OSjsFont, Arial;
-}
-EOCSS;
-
+    $css = str_replace(array_keys($rep), array_values($rep), $tpl);
     if ( $compress ) {
-      $css = preg_replace("/\s/", "", $css);
-      $css = preg_replace('%/\s*\*.*?\*/\s*%s', '', $css);
+      //$css = preg_replace("/\s/", "", $css);
+      //$css = preg_replace('%/\s*\*.*?\*/\s*%s', '', $css);
+
+      $regex = array(
+        "`^([\t\s]+)`ism"=>'',
+        "`([:;}{]{1})([\t\s]+)(\S)`ism"=>'$1$3',
+        "`(\S)([\t\s]+)([:;}{]{1})`ism"=>'$1$3',
+        //"`\/\*(.+?)\*\/`ism"=>"",
+        "`([\n|\A|;]+)\s//(.+?)[\n\r]`ism"=>"$1\n",
+        "`(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+`ism"=>"\n"
+      );
+      $css = preg_replace(array_keys($regex), $regex, $css);
+
     }
 
-    return (file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "resource.css")) . $css);
+    return $css;
   }
 
   /**
