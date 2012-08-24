@@ -217,7 +217,7 @@ abstract class VFS
     }
 
     if ( ($json = MediaFile::GetInfo($path)) ) {
-      $json["MIMEType"] = self::GetMIME($path, true);
+      $json["MIMEType"] = self::GetMIME($path);
       return $json;
     }
 
@@ -228,26 +228,28 @@ abstract class VFS
    * GetMIME() -- Get a file MIME information
    * @return Array
    */
-  public static function GetMIME($path, $fixed_only = false) {
-    $expl = explode(".", $path);
-    $ext  = @strtolower(end($expl));
-
-    $fi = new finfo(FILEINFO_MIME);
-    $finfo = $fi->file($path);
-    //$mime  = explode("; charset=", $finfo);
-    $mime  = explode(";", $finfo);
+  public static function GetMIME($path) {
+    $fi     = new finfo(FILEINFO_MIME);
+    $finfo  = $fi->file($path);
+    if ( strstr("charset=", $finfo) !== false ) {
+      $mime  = explode("; charset=", $finfo);
+    } else {
+      $mime  = explode(";", $finfo);
+    }
     $mime  = trim(reset($mime));
-    $fmime = $mime;
 
-    // Fix mime type by extension
+    // Trust internal types more
     $fixes = CoreSettings::getMimeFixes();
     if ( isset($fixes[$mime]) ) {
-      if ( isset($fixes[$mime][$ext]) ) {
-        $fmime = $fixes[$mime][$ext];
+      $pi = mb_pathinfo($path);
+      if ( ($ext = isset($pi['extension']) ? $pi['extension'] : "") ) {
+        if ( isset($fixes[$mime][$ext]) ) {
+          $mime = $fixes[$mime][$ext];
+        }
       }
     }
 
-    return $fixed_only ? $fmime : Array($mime, $fmime);
+    return $mime;
   }
 
   /**
@@ -458,14 +460,11 @@ abstract class VFS
           $abs_path = "{$absolute}/{$file}";
           $rel_path = "{$path}/{$file}";
 
-          $expl = explode(".", $file);
-          $ext  = end($expl);
-
           if ( is_file($abs_path) || is_link($abs_path) ) {
             // Read MIME info
             $type  = "file";
             $add   = sizeof($mimes) ? false : true;
-            $mime  = self::GetMIME($abs_path, true);
+            $mime  = self::GetMIME($abs_path);
             $fmime = strstr($mime, "/", true);
 
             foreach ( $mimes as $m ) {
@@ -489,7 +488,8 @@ abstract class VFS
             }
 
             $fsize = filesize($abs_path);
-            $icon  = self::getFileIcon($mime, $ext);
+            $pi    = mb_pathinfo($abs_path);
+            $icon  = self::getFileIcon($mime, (isset($pi['extension']) ? $pi['extension'] : ""));
           } else if ( is_dir($abs_path) ) {
             $tpath = preg_replace("/\/+/", "/", $rel_path);
             if ( isset($virtual[$tpath]) ) {
@@ -815,7 +815,7 @@ abstract class VFS
       if ( file_exists($dest["root"]) ) {
         // Read MIME info
         $info   = null;
-        $mime   = self::GetMIME($dest["root"], true);
+        $mime   = self::GetMIME($dest["root"]);
 
         switch ( @trim(strstr($mime, "/", true)) ) {
           case "image" :
@@ -880,10 +880,7 @@ abstract class VFS
       if ( file_exists($dest["root"]) && is_dir($dest["root"]) ) {
         if ( $result = @move_uploaded_file($src["tmp_name"], $ndest["root"]) ) {
           self::_permissions($ndest["root"]);
-
-          list($mime, $fmime) = self::GetMIME($ndest["root"]);
-
-          return Array("result" => $result, "mime" => $fmime);
+          return Array("result" => $result, "mime" => self::GetMIME($ndest["root"]));
         }
       }
     }
