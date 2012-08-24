@@ -32,5 +32,31 @@
  * @created 2011-05-30
  */
 
+@font-face {
+  font-family : OSjsFont;
+  src: url("%NORMAL%");
+}
+@font-face {
+  font-family : OSjsFont;
+  font-weight : bold;
+  src: url("%BOLD%");
+}
+@font-face {
+  font-family : OSjsFont;
+  font-style : italic;
+  src: url("%ITALIC%");
+}
 
+%START_COMMENT%
+@font-face {
+  font-family : OSjsFont;
+  font-weight : bold;
+  font-style : italic;
+  src: url("%BOLD_ITALIC%");
+}
+%END_COMMENT%
+
+body {
+  font-family : OSjsFont, Arial;
+}
 
