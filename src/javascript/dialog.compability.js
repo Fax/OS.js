@@ -47,14 +47,14 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     /**
-     * BrowserDialog -- Browser Compability Dialog
+     * _CompabilityDialog -- Browser Compability Dialog
      * @extends Window
      * @class
      */
-    var BrowserDialog = Window.extend({
+    var _CompabilityDialog = Window.extend({
 
       /**
-       * BrowserDialog::init() -- Constructor
+       * _CompabilityDialog::init() -- Constructor
        * @see Window
        * @constructor
        */
@@ -78,7 +78,7 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
       },
 
       /**
-       * BrowserDialog::create() -- Create DOM elements etc
+       * _CompabilityDialog::create() -- Create DOM elements etc
        * @see Window
        * @return $
        */
@@ -136,7 +136,7 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
 
     }); // @endclass
 
-    return construct(BrowserDialog, argv); //new BrowserDialog(...);
+    return construct(_CompabilityDialog, argv); //new _CompabilityDialog(...);
   };
 })($);
 
