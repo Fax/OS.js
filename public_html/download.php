@@ -40,11 +40,6 @@ require "_header.php";
 // FILE DOWNLOADING
 ///////////////////////////////////////////////////////////////////////////////
 
-$error_400 = false;
-$error_401 = false;
-$error_404 = false;
-
-
 if ( (isset($_GET["file"]) && ($path = $_GET['file'])) ) {
   if ( (($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
     $download = isset($_GET['download']) && ($_GET['download'] === "true");
@@ -87,25 +82,19 @@ if ( (isset($_GET["file"]) && ($path = $_GET['file'])) ) {
         }
         exit;
       } else {
-        $error_404 = true;
+        header("HTTP/1.0 404 Not Found");
+        exit;
       }
     } else {
-      $error_400 = true;
+      header("HTTP/1.0 400 Bad Request");
+      exit;
     }
   } else {
-    $error_401 = true;
+    header("HTTP/1.0 401 Unauthorized");
+    exit;
   }
 }
 
-if ( $error_400 ) {
-  header("HTTP/1.0 400 Bad Request");
-} else if ( $error_401 ) {
-  header("HTTP/1.0 401 Unauthorized");
-} else if ( $error_404 ) {
-  header("HTTP/1.0 404 Not Found");
-} else {
-  header("HTTP/1.0 412 Precondition Failed");
-}
-
+header("HTTP/1.0 412 Precondition Failed");
 exit;
 ?>

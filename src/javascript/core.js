@@ -393,7 +393,11 @@
       var error     = false;
       switch ( operation ) {
         case 'CompabilityDialog' :
-          _WM.addWindow(new OSjs.Dialogs.CompabilityDialog(Window, API, args));
+          try {
+            _WM.addWindow(new OSjs.Dialogs.CompabilityDialog(Window, API, args));
+          } catch ( eee ) {
+            console.error(eee);
+          }
         break;
 
         case 'Launch' :
