@@ -3093,23 +3093,17 @@
    */
   var ResourceManager = Process.extend({
 
-    resources : [],       //!< Resources array
-    links     : [],       //!< Resource link array
+    resources : {},       //!< Loaded Resources list
 
     /**
      * ResourceManager::init() -- Constructor
      * @constructor
      */
     init : function() {
-      var self = this;
-
       console.group("ResourceManager::init()");
-
-      this.resources  = [];
-      this.links      = [];
-
       console.groupEnd();
 
+      this.resources  = {};
       this._super("(ResourceManager)", "apps/system-software-install.png", true);
     },
 
@@ -3119,13 +3113,7 @@
      * @destructor
      */
     destroy : function() {
-      forEach(this.links, function(i, el) {
-        $(el).remove();
-      });
-
-      this.resources = null;
-      this.links = null;
-
+      this.resources = {};
       this._super();
     },
 
@@ -3253,15 +3241,14 @@
 
         var i = 0, l = res.length, name, src;
         for ( i; i < l; i++ ) {
-          name  = (app ? (app + "/" + res) : (res));
-          src   = app ? sprintf("%s%s/%s", RESOURCE_URI, app, res[i]) : sprintf("%s%s", RESOURCE_URI, res[i]);
-
-          // Ignore non-valid
-          if ( (res[i].match(/^worker\./) || res[i].match(/[^(\.js|\.css)]$/)) || in_array(name, this.resources) ) {
+          // Ignore non-valid or already added
+          name = (app ? (app + "/" + res) : (res));
+          if ( this.resources[name] || (res[i].match(/^worker\./) || res[i].match(/[^(\.js|\.css)]$/)) ) {
             continue;
           }
 
           // Go by file-extensions
+          src = app ? sprintf("%s%s/%s", RESOURCE_URI, app, res[i]) : sprintf("%s%s", RESOURCE_URI, res[i]);
           if ( res[i].match(/\.js/i) ) {
             _list.push({"type" : "javascript", "src" : src});
           } else if ( res[i].match(/\.css/i) ) {
@@ -3269,12 +3256,13 @@
           }
         }
 
+        // Use external loader
         if ( _list.length ) {
           _loader = new OSjs.Classes.Preloader(_list, function(loaded, errors) {
             console.log("ResourceManager::addResources()", "Preloader loaded",loaded, "with", errors, "errors");
             _loader_done(errors > 0);
           }, function(res) {
-            self.resources.push((app ? (app + "/" + res) : (res)));
+            self.resources[(app ? (app + "/" + res) : (res))] = true;
           });
         } else {
           _loader_done(false);
