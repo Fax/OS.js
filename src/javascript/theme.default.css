@@ -380,8 +380,11 @@ button[disabled="disabled"]:active {
 .GtkIconView tbody tr:nth-child(odd).Current {
   color : #fff;
 }
-.GtkIconView thead td:nth-child(odd) {
+.GtkIconView thead td {
   border-right : 1px solid #ced1d3;
+}
+.GtkIconView thead td:last-child {
+  border-right : 0 none;
 }
 .GtkIconView .DND-Enter {
   font-weight : bold;

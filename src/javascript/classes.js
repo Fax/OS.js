@@ -2029,6 +2029,8 @@
     $element      : null,       //!< HTML Element
     _currentView  : "icon",     //!< Current view type
     _currentItem  : null,       //!< Current selected item HTML
+    _sortKey      : null,       //!< Current sorting key
+    _sortDir      : "asc",      //!< Current sorting direction
     _opts         : {},         //!< Options
 
     /**
@@ -2047,6 +2049,8 @@
       this._currentView = view    || "icon";
       this._currentItem = null;
       this._opts        = opts;
+      this._sortKey     = null;
+      this._sortDir     = "asc";
 
       var self = this;
       this.$element.bind("contextmenu", function(ev) {
@@ -2057,6 +2061,11 @@
       });
       this.$element.bind("mousedown", function(ev) {
         ev.preventDefault();
+        return false;
+      });
+      this.$element.bind("click", function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
         self.onItemSelect(null, null, null);
         return false;
       });
@@ -2065,6 +2074,12 @@
         ev.stopPropagation();
         return false;
       });
+
+      /*
+      this.$element.bind("focus", function(ev) {
+        self.onFocus(ev);
+      });
+      */
 
       if ( OSjs.Compability.SUPPORT_DND && this._opts.dnd ) {
         this.$element.bind("dragover", function(ev) {
@@ -2098,20 +2113,34 @@
       this._currentItem = null;
       this._currentView = "icon";
       this._opts        = {};
+      this._sortKey     = null;
+      this._sortDir     = "asc";
+    },
+
+    /**
+     * IconView::onFocus() -- When user focuses view
+     * @return  void
+     */
+    onFocus : function(ev) {
     },
 
     /**
      * IconView::onItemSelect() -- When user clicks/selects a item
      * @return  void
      */
-    onItemSelect : function(ev, el) {
-      if ( this._currentItem ) {
-        $(this._currentItem).removeClass("Current");
-      }
-      this._currentItem = $(el);
+    onItemSelect : function(ev, el, iter) {
+      this.onFocus(ev);
 
       if ( this._currentItem ) {
-        this._currentItem.addClass("Current");
+        $(this._currentItem).removeClass("Current");
+        this._currentItem = null;
+      }
+
+      if ( el ) {
+        this._currentItem = $(el);
+        if ( this._currentItem ) {
+          this._currentItem.addClass("Current");
+        }
       }
     },
 
@@ -2137,7 +2166,7 @@
      * @return  void
      */
     onContextMenu : function(ev) {
-      this.onItemSelect(null, null, null);
+      this.onItemSelect(null, null);
       return false;
     },
 
@@ -2146,6 +2175,17 @@
      * @return  void
      */
     onColumnActivate : function(ev, el, iter) {
+      if ( iter != this._sortKey ) {
+        this._sortDir = "asc";
+      } else {
+        if ( this._sortDir == "asc" ) {
+          this._sortDir = "desc";
+        } else {
+          this._sortDir = "asc";
+        }
+      }
+      this._sortKey = iter;
+
       return false;
     },
 
@@ -2168,7 +2208,10 @@
         break;
 
         case "dragenter" :
-          if ( !item ) {
+          if ( item ) {
+            $(item).addClass("DND-Enter");
+            ev.originalEvent.dataTransfer.dropEffect = "copy";
+          } else {
             this.$element.addClass("DND-Enter");
             ev.originalEvent.dataTransfer.dropEffect = "copy";
           }
@@ -2227,7 +2270,7 @@
       if ( view )
         this._currentView = view;
 
-      this.onItemSelect(null, null, null);
+      this.onItemSelect(null, null);
       var ul, root;
       if ( this._currentView == "icon" ) {
         root = ul = $("<ul></ul>");
@@ -2247,13 +2290,13 @@
 
         root = body;
       }
+      this.$element.html(ul);
 
       var i = 0, l = items.length;
       for ( i; i < l; i++ ) {
         ul.append(this._createItem(items[i]));
       }
 
-      this.$element.html(ul);
     },
 
     /**
@@ -2275,7 +2318,9 @@
      * @return  HTMLElement
      */
     createColumn : function(iter) {
-      return $("<td>" + iter + "</td>");
+      var el = $("<td>" + iter + "</td>");
+      el.data("name", iter);
+      return el;
     },
 
     /**
