@@ -340,9 +340,11 @@ abstract class VFS
    * @return Array
    */
   public static function ListDirectory($argv) {
-    $path    = $argv['path'];
-    $ignores = isset($argv['ignore']) ? $argv['ignore'] : null;
-    $mimes   = isset($argv['mime']) ? ($argv['mime'] ? $argv['mime'] : Array()) : Array();
+    $path    = isset($argv['path'])     ? $argv['path']                             : "/";
+    $ignores = isset($argv['ignore'])   ? $argv['ignore']                           : null;
+    $mimes   = isset($argv['mime'])     ? ($argv['mime'] ? $argv['mime'] : Array()) : Array();
+    $sort    = isset($argv['sort'])     ? $argv['sort']                             : null;
+    $sdir    = isset($argv['sort_dir']) ? $argv['sort_dir']                         : "asc";
     $uid     = 0;
 
     if ( !(($user = Core::get()->getUser()) && ($uid = $user->id)) ) {
@@ -519,7 +521,7 @@ abstract class VFS
           }
         }
 
-        $items[$type][$file] =  Array(
+        $items[$type][$file] = Array(
           "path"       => $fpath,
           "size"       => $fsize,
           "mime"       => $mime,
@@ -527,11 +529,18 @@ abstract class VFS
           "type"       => $type,
           "protected"  => $protected ? 1 : 0
         );
-
       }
 
-      ksort($items["dir"]);
-      ksort($items["file"]);
+      //if ( $sort !== null ) {
+      //} else {
+        if ( $sdir == "asc" ) {
+          ksort($items["dir"]);
+          ksort($items["file"]);
+        } else {
+          krsort($items["dir"]);
+          krsort($items["file"]);
+        }
+      //}
 
       closedir($handle);
 
