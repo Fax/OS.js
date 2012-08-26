@@ -627,604 +627,6 @@
   });
 
   /////////////////////////////////////////////////////////////////////////////
-  // ICON VIEW
-  /////////////////////////////////////////////////////////////////////////////
-
-  var ICONVIEW_ICON  = 0;
-  var ICONVIEW_LIST  = 1;
-  var ICONVIEW_TREE  = 2;
-  var ICONVIEW_GRID  = 3;
-
-  var ICONVIEW_TYPES = {
-    "icon" : ICONVIEW_ICON,
-    "list" : ICONVIEW_LIST,
-    "tree" : ICONVIEW_TREE,
-    "grid" : ICONVIEW_GRID
-  };
-
-  /**
-   * IconView -- IconView Class
-   * @class
-   */
-  OSjs.Classes.IconView = Class.extend({
-
-    type                : -1,                   //!< View Type
-    list                : [],                   //!< List
-    columns             : [],                   //!< Columns
-    transparent         : false,                //!< Bubble events?
-    $root               : null,                 //!< Root Container DOM Element
-    $element            : null,                 //!< View DOM Element
-    $selected           : null,                 //!< Selected DOM Element
-    on_render           : function() {},        //!< Render item callback function
-    on_activate         : function() {},        //!< Activate item callback function
-    on_toggle           : function() {},        //!< Toggle item callback function
-    on_focus            : function() {},        //!< On-focus event
-    on_context          : function() {},        //!< On context-menu show
-    on_drop             : function() {},        //!< DnD: Dropped in view
-    on_drag_over        : function() {},        //!< DnD: View mouseover
-    on_drag_leave       : function() {},        //!< DnD: View mouseout
-    on_drop_item        : function() {},        //!< DnD: Dropped in item
-    on_drag_item_over   : function() {},        //!< DnD: Item mouseover
-    on_drag_item_leave  : function() {},        //!< DnD: Item mouseout
-
-    /**
-     * IconView::init() -- Constructor
-     * @constructor
-     */
-    init : function(root, type, list, columns, on_render, on_activate, on_toggle, transparent) {
-      this.list         = [];
-      this.columns      = [];
-      this.transparent  = transparent === undefined ? false : transparent;
-      this.$root        = null;
-      this.$element     = null;
-      this.$selected    = null;
-
-      this.on_render            = on_render   || function() {};
-      this.on_activate          = on_activate || function() {};
-      this.on_toggle            = on_toggle   || function() {};
-      this.on_focus             = function() {};
-      this.on_context           = function() {};
-      this.on_drop              = function() {};
-      this.on_drag_over         = function() {};
-      this.on_drag_leave        = function() {};
-      this.on_drop_item         = function() {};
-      this.on_drag_item_over    = function() {};
-      this.on_drag_item_leaver  = function() {};
-
-      if ( $(root).hasClass("GtkIconView") ) {
-        this.$root = root;
-      } else {
-        var tmp = $("<div class=\"GtkIconView\"></div>");
-        this.$root = tmp;
-        $(root).append(tmp);
-      }
-
-      this.setListType(type, false);
-      if ( this.setList(list, columns) ) {
-        this.renderList(this.list, this.columns);
-      }
-
-      var self = this;
-
-      if ( this.transparent ) {
-        this.$root.bind("mousedown", function(ev) {
-          self.on_focus(ev);
-          $(document).click(); // Trigger this! (deselects context-menu)
-          ev.preventDefault();
-        });
-      } else {
-        this.$root.bind("mousedown", function(ev) {
-          self.on_focus(ev);
-          $(document).click(); // Trigger this! (deselects context-menu)
-          ev.preventDefault();
-          return false;
-        });
-      }
-
-      this.$root.bind("click", function(ev) {
-        self._selectItem(ev, null, null, false);
-        $(document).click(); // Trigger this! (deselects context-menu)
-
-        if ( !self.transparent ) {
-          ev.preventDefault();
-          return true;
-        }
-
-        return false;
-      });
-
-      this.$root.bind("contextmenu", function(ev) {
-        ev.preventDefault();
-        self._selectItem(ev, null, null, false);
-
-        if ( !self.transparent ) {
-          $(document).click(); // Trigger this! (deselects context-menu)
-          return true;
-        }
-        return false;
-      });
-    },
-
-    /**
-     * IconView::init() -- Destructor
-     * @destructor
-     */
-    destroy : function() {
-      this.$root.unbind();
-
-      this.clear();
-
-      this.$root.empty();
-
-      this.on_render    = null;
-      this.on_activate  = null;
-      this.on_toggle    = null;
-      this.on_focus     = null;
-
-      this.$root      = null;
-      this.$element   = null;
-      this.$selected  = null;
-      this.list       = null;
-      this.columns    = null;
-      this.type       = -1;
-    },
-
-    /**
-     * IconView::resize() -- Resize event
-     * @return void
-     */
-    resize : function() {
-      var self = this;
-      if ( !this.$element )
-        return;
-
-      if ( this.type == ICONVIEW_LIST ) {
-        this.$element.find(".TableHead td").each(function(ind, el) {
-          var pel = self.$element.find(".TableBody tr:first-child td").get(ind);
-          if ( pel ) {
-            $(el).css("width", $(pel).width() + "px");
-          }
-        });
-      }
-    },
-
-    /**
-     * IconView::clear() -- Clear event
-     * @return void
-     */
-    clear : function() {
-      if ( this.$element ) {
-        this.$element.unbind();
-        this.$element.remove();
-      }
-    },
-
-    /**
-     * IconView::_clearRoot -- Clear the Icon View
-     * @return void
-     */
-    _clearRoot  : function(el) {
-      this.clear();
-      this.$root.empty();
-
-      if ( el ) {
-        this.$element = el;
-        this.$root.append(this.$element);
-      } else {
-        this.$element = null;
-      }
-
-      return this.$element;
-    },
-
-    /**
-     * IconView::_createRoot() -- Create the Icon View roViewot element
-     * @return DOMElement
-     */
-    _createRoot : function() {
-      var self = this;
-
-      var el;
-      if ( this.type === ICONVIEW_ICON || this.type === ICONVIEW_GRID ) {
-        el = $("<ul class=\"ListWrap\"></ul>");
-      } else {
-        el = $("<div class=\"TableWrap\"><table class=\"TableHead GtkIconViewHeader\"><tbody></tbody></table><div class=\"TableBodyWrap\"><table class=\"TableBody\"><tbody></tbody></table></div></div>");
-      }
-
-      el.bind("mousedown", function(ev) {
-        self.on_focus(ev);
-
-        ev.preventDefault();
-        //ev.stopPropagation();
-        return false;
-      }).bind("dblclick", function(ev) {
-        ev.preventDefault();
-        ev.stopPropagation();
-        return false;
-      });
-
-      if ( OSjs.Compability.SUPPORT_DND ) {
-        el.bind("dragover", function(ev) {
-          ev.stopPropagation();
-          ev.preventDefault();
-          self.on_drag_over(ev);
-          return false;
-        });
-        el.bind("dragleave", function(ev) {
-          el.removeClass("DND-Enter");
-          self.on_drag_leave(ev);
-          return false;
-        });
-        el.bind("dragenter", function(ev) {
-          el.addClass("DND-Enter");
-          ev.stopPropagation();
-          ev.preventDefault();
-          ev.originalEvent.dataTransfer.dropEffect = "copy";
-          return false;
-        });
-        el.bind("dragend", function(ev) {
-          el.find(".DND-Active").removeClass("DND-Active");
-          return false;
-        });
-        el.bind("drop", function(ev) {
-          var data = ev.originalEvent.dataTransfer.getData("text/plain");
-          var jsn = null;
-          if ( data ) {
-            try {
-              jsn = JSON.parse(data);
-            } catch (e) {}
-          }
-
-          ev.preventDefault();
-          ev.stopPropagation();
-
-          self.on_drop(ev, jsn, null, ev.originalEvent.dataTransfer.files);
-          return false;
-        });
-      }
-
-      return $(el);
-    },
-
-    /**
-     * IconView::_renderList() -- Render the list
-     * @return void
-     */
-    _renderList : function(list, columns) {
-      var self = this;
-
-      var x = 0, cl = columns.length;
-      var i = 0, l  = list.length;
-      var el, b, item;
-      var cel;
-
-      this.$element = this._clearRoot(this._createRoot());
-
-      // Figure out what container to use
-      var table = false;
-      if ( this.type === ICONVIEW_ICON || this.type === ICONVIEW_GRID ) {
-        b = this.$element;//.find(".ListWrap");
-      } else {
-        b = this.$element.find(".TableBody tbody");
-        table = true;
-      }
-
-      b.empty();
-
-
-      // Apply table headers
-      if ( table ) {
-        var hb = this.$element.find(".TableHead tbody").empty();
-        for ( i = 0; i < cl; i++ ) {
-          cel = columns[i];
-          el = $(sprintf("<td class=\"%s\" style=\"%s\"><span>%s</span></td>", cel.className || "", cel.style || "", cel.title || ""));
-          hb.append(el);
-        }
-      }
-
-      // Apply table content
-      for ( i = 0; i < l; i++ ) {
-        item = list[i];
-
-        if ( this.type === ICONVIEW_ICON || this.type === ICONVIEW_GRID ) {
-          el = $("<li><div class=\"Inner\"></div></li>");
-
-          for ( x = 0; x < cl; x++ ) {
-            cel = columns[x];
-            el.find(".Inner").append(sprintf("<div class=\"%s\" style=\"%s\">%s</div>", cel.className || "", cel.style || "", cel.title || ""));
-          }
-
-          el.find(".Inner").click((function(it) {
-            return function(ev) {
-              ev.preventDefault();
-              ev.stopPropagation();
-
-              self._selectItem(ev, $(this), it);
-            };
-          })(item)).mousedown((function(it) {
-            return function(ev) {
-              var t = $(ev.target || ev.srcElement);
-              if ( !(t.attr("draggable") === "true" || t.closest("*[draggable=true]", t).length) ) {
-                ev.preventDefault();
-              } else {
-                ev.stopPropagation();
-              }
-
-              self._toggleItem(ev, $(this), it);
-            };
-          })(item)).dblclick((function(it) {
-            return function(ev) {
-              ev.preventDefault();
-              ev.stopPropagation();
-
-              self._activateItem(ev, $(this), it);
-            };
-          })(item));
-
-          el.find(".Inner").bind("contextmenu", (function(it) {
-            return function(ev) {
-              ev.preventDefault();
-              console.log(item);
-              self.on_context(ev, $(this), it);
-              return false;
-            };
-          })(item));
-
-        } else {
-          el = $("<tr>" + i + "</tr>");
-
-          for ( x = 0; x < cl; x++ ) {
-            cel = columns[x];
-            el.append($(sprintf("<td class=\"%s\" style=\"%s\">%s</td>", cel.className || "", cel.style || "", cel.title || "")));
-          }
-
-          /*if ( item['class'] !== undefined ) {
-            el.addClass(item['class']);
-          } else {
-          }*/
-          el.addClass(i % 2 ? "odd" : "even");
-
-          el.click((function(it) {
-            return function(ev) {
-              ev.preventDefault();
-              ev.stopPropagation();
-
-              self._selectItem(ev, $(this), it);
-            };
-          })(item)).mousedown((function(it) {
-            return function(ev) {
-              ev.preventDefault();
-              //ev.stopPropagation();
-
-              self._toggleItem(ev, $(this), it);
-            };
-          })(item)).dblclick((function(it) {
-            return function(ev) {
-              ev.preventDefault();
-              ev.stopPropagation();
-
-              self._activateItem(ev, $(this), it);
-            };
-          })(item));
-
-          el.bind("contextmenu", function(ev) {
-            ev.preventDefault();
-            self.on_context(ev, $(this), item);
-            return false;
-          });
-        }
-
-        b.append(el);
-
-        this.on_render(el, item, this.type, i);
-
-        // Drag-and-drop
-        if ( OSjs.Compability.SUPPORT_DND ) {
-          el.attr("draggable", "true");
-          el.bind("dragover", function(ev) {
-            ev.preventDefault();
-            self.on_drag_item_over(ev);
-            return false;
-          });
-          el.bind("dragleave", function(ev) {
-            el.removeClass("DND-Enter");
-            self.on_drag_item_leave(ev);
-            return false;
-          });
-          el.bind("dragstart", (function(jsn) {
-            return function(ev) {
-              ev.originalEvent.dataTransfer.setData('text/plain', jsn);
-              el.addClass("DND-Active");
-              return true;
-            };
-          })(JSON.stringify(item)));
-          el.bind("dragend", function(ev) {
-            return false;
-          });
-
-          el.bind("drop", (function(dst) {
-            return function(ev) {
-              var data = ev.originalEvent.dataTransfer.getData("text/plain");
-              var jsn = null;
-              if ( data ) {
-                try {
-                  jsn = JSON.parse(data);
-                } catch (e) {}
-              }
-
-              ev.preventDefault();
-              ev.stopPropagation();
-
-              self.on_drop_item(ev, jsn, dst, ev.originalEvent.dataTransfer.files);
-              return false;
-            };
-          })(item));
-        }
-      }
-
-      setTimeout(function() {
-        self.resize();
-      }, 0);
-    },
-
-    /**
-     * IconView::_activateItem() -- Activate an item (internal)
-     * @return void
-     */
-    _activateItem : function(ev, el, item) {
-      this.on_activate(el, item);
-    },
-
-    /**
-     * IconView::_selectItem() -- Select an item (internal)
-     * @return void
-     */
-    _selectItem : function(ev, el, item, no_change) {
-      no_change = no_change === undefined ? true : no_change;
-
-      if ( this.$selected ) {
-        this.$selected.removeClass("Current");
-      }
-
-      if ( el !== this.$selected ) {
-        if ( !no_change ) {
-          this.on_toggle(ev, el, item);
-        }
-      }
-
-      if ( el ) {
-        this.$selected = el;
-        this.$selected.addClass("Current");
-      } else {
-        this.$selected = null;
-      }
-
-    },
-
-    /**
-     * IconView::_toggleItem() -- Toggle an item (internal)
-     * @return void
-     */
-    _toggleItem : function(ev, el, item) {
-      $(document).click(); // Trigger this! (deselects context-menu)
-
-      this.on_toggle(ev, el, item);
-
-      this._selectItem(ev, el, item, false);
-    },
-
-    /**
-     * IconView::selectItem() -- Select an item
-     * @return void
-     */
-    selectItem : function(key, value) {
-      if ( key && value ) {
-        var item = this.findItem(key, value);
-        if ( item ) {
-          this._selectItem(null, item[0], item[1]);
-        }
-      } else {
-        this._selectItem(null, null, null, false);
-      }
-    },
-
-    /**
-     * IconView::findItem() -- Find an item
-     * @return Mixed
-     */
-    findItem : function(key, value) {
-
-      var test  = this.$element.find(".Info input[name=" + key + "]");
-      var el    = null;
-      var els   = null;
-      var inps  = null;
-      var item  = {};
-      var found = false;
-
-      for ( var i = 0; i < test.length; i++ ) {
-        el = $(test[i]);
-        if ( el.val() == value ) {
-          if ( this.type === ICONVIEW_ICON || this.type === ICONVIEW_GRID ) {
-            els = el.parents("li");
-          } else {
-            els = el.parents("td");
-          }
-
-          inps = els.find("input[type=hidden]");
-          for ( var x in inps ) {
-            if ( inps.hasOwnProperty(x) ) {
-              item[el.attr("name")] = el.val();
-            }
-          }
-
-          found = [els, item];
-
-          break;
-        }
-      }
-
-      return found;
-    },
-
-    /**
-     * IconView::renderList() -- Render the list
-     * @return void
-     */
-    renderList : function(list, columns) {
-      if ( list.length ) {
-        this._renderList(list, columns);
-      }
-    },
-
-    /**
-     * IconView::refreshList() -- Refresh the list
-     * @return void
-     */
-    refreshList : function() {
-      this.renderList(this.list, this.columns);
-    },
-
-    /**
-     * IconView::setListType() -- Set the list view type
-     * @return void
-     */
-    setListType : function(type, refresh) {
-      if ( ICONVIEW_TYPES[type] !== undefined ) {
-        type = ICONVIEW_TYPES[type];
-      }
-
-      this.type = parseInt(type, 10) || 0;
-
-      if ( refresh === true ) {
-        this.refreshList();
-      }
-    },
-
-    /**
-     * IconView::setList() -- Set the list
-     * @return void
-     */
-    setList : function(list, columns, refresh) {
-      if ( list instanceof Array ) {
-        this.list = list;
-
-        if ( columns instanceof Array ) {
-          this.columns = columns;
-        }
-
-        if ( refresh === true ) {
-          this.setListType(this.type, true);
-        }
-
-        return true;
-      }
-
-      return false;
-    }
-
-  });
-
-  /////////////////////////////////////////////////////////////////////////////
   // MediaPlayer
   /////////////////////////////////////////////////////////////////////////////
 
@@ -2611,6 +2013,364 @@
       this._resource.src = src;
 
       document.getElementsByTagName("head")[0].appendChild(this._resource);
+    }
+
+  });
+
+  /////////////////////////////////////////////////////////////////////////////
+  // ICON VIEW
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * IconView -- Gtk Icon View
+   * @class
+   */
+  OSjs.Classes.Iconview = Class.extend({
+    $element      : null,       //!< HTML Element
+    _currentView  : "icon",     //!< Current view type
+    _currentItem  : null,       //!< Current selected item HTML
+
+    /**
+     * IconView::init() -- Constructor
+     * @constructor
+     */
+    init : function(el, view) {
+      if ( !el )
+        throw "Cannot create IconView without root container";
+
+      this.$element     = $(el);
+      this._currentView = view    || "icon";
+      this._currentItem = null;
+
+      var self = this;
+      this.$element.bind("contextmenu", function(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
+        self.onContextMenu(ev, this);
+        return false;
+      });
+      this.$element.bind("mousedown", function(ev) {
+        ev.preventDefault();
+        self.onItemSelect(null, null, null);
+        return false;
+      });
+      this.$element.bind("dblclick", function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        return false;
+      });
+
+      if ( OSjs.Compability.SUPPORT_DND ) {
+        this.$element.bind("dragover", function(ev) {
+          ev.preventDefault();
+          return self.onDragAction(ev, "dragover");
+        });
+        this.$element.bind("dragleave", function(ev) {
+          /*return */self.onDragAction(ev, "dragleave");
+        });
+        this.$element.bind("dragenter", function(ev) {
+          /*return */self.onDragAction(ev, "dragenter");
+        });
+        this.$element.bind("dragend", function(ev) {
+          /*return */self.onDragAction(ev, "dragend");
+        });
+        this.$element.bind("drop", function(ev) {
+          ev.preventDefault();
+          return self.onDragAction(ev, "drop");
+        });
+      }
+
+      console.log("IconviewNew::init()", el, items, columns, view);
+    },
+
+    /**
+     * IconView::destroy() -- Destructor
+     * @destructor
+     */
+    destroy : function() {
+      this.$element     = null;
+      this._currentItem = null;
+      this._currentView = "icon";
+    },
+
+    /**
+     * IconView::onItemSelect() -- When user clicks/selects a item
+     * @return  void
+     */
+    onItemSelect : function(ev, el) {
+      if ( this._currentItem ) {
+        $(this._currentItem).removeClass("Current");
+      }
+      this._currentItem = $(el);
+
+      if ( this._currentItem ) {
+        this._currentItem.addClass("Current");
+      }
+    },
+
+    /**
+     * IconView::onItemActivate() -- When user opens an item
+     * @return  void
+     */
+    onItemActivate : function(ev, el, iter) {
+      return false;
+    },
+
+    /**
+     * IconView::onItemContextMenu() -- When user opens item context menu
+     * @return  void
+     */
+    onItemContextMenu : function(ev, el, iter) {
+      this.onItemSelect(ev, el, iter);
+      return false;
+    },
+
+    /**
+     * IconView::onContextMenu() -- When user opens main context menu
+     * @return  void
+     */
+    onContextMenu : function(ev) {
+      this.onItemSelect(null, null, null);
+      return false;
+    },
+
+    /**
+     * IconView::onColumnActivate() -- When user clicks a column
+     * @return  void
+     */
+    onColumnActivate : function(ev, el, iter) {
+      return false;
+    },
+
+    /**
+     * IconView::onDragAction() -- When a DnD action occurs
+     * @return  bool
+     */
+    onDragAction : function(ev, action, item, args) {
+      switch ( action ) {
+        case "dragover" :
+          if ( item ) {
+            ev.originalEvent.dataTransfer.dropEffect = "copy";
+          }
+        break;
+
+        case "dragleave" :
+          if ( item ) {
+            item.removeClass("DND-Enter");
+          }
+        break;
+
+        case "dragenter" :
+          if ( !item ) {
+            this.$element.addClass("DND-Enter");
+            ev.originalEvent.dataTransfer.dropEffect = "copy";
+          }
+        break;
+
+        case "dragend" :
+          if ( item ) {
+            this.$element.removeClass("DND-Enter");
+          } else {
+            this.$element.find(".DND-Active").removeClass("DND-Active");
+          }
+        break;
+
+        case "dragstart" :
+          if ( item ) {
+            item.addClass("DND-Active");
+          }
+        break;
+
+        case "drop" :
+          var files = ev.originalEvent.dataTransfer.files;
+          var data  = ev.originalEvent.dataTransfer.getData("text/plain");
+          var jsn   = null;
+          if ( data ) {
+            try {
+              jsn = JSON.parse(data);
+            } catch (e) { jsn = {}; }
+          }
+
+          return {"json" : jsn, "data" : data, "files" : files, "item" : item};
+        break;
+
+        default :
+          return true;
+        break;
+      }
+
+      return false;
+    },
+
+    /**
+     * IconView::render() -- Render a list of items
+     *
+     * This function works as a setter for items, columns and view type
+     *
+     * @param   Array     items       The list of items (if any)
+     * @param   Array     columns     The list of columns (for listview, if any)
+     * @param   String    view        Change view type
+     * @return  void
+     */
+    render : function(items, columns, view) {
+      if ( view )
+        this._currentView = view;
+
+      this.onItemSelect(null, null, null);
+
+      var ul;
+      if ( this._currentView == "icon" ) {
+        ul = $("<ul></ul>");
+        this.$element.html(ul);
+      } else {
+        ul = $("<table></table>");
+        var head = $("<thead><tr></tr></thead>");
+        var body = $("<tbody></tbody>");
+
+        var j = 0, k = columns.length;
+        for ( j; j < k; j++ ) {
+          head.find("tr").append(this._createColumn(columns[j]));
+        }
+
+        ul.append(head);
+        ul.append(body);
+        this.$element.html(ul);
+
+        ul = body;
+      }
+
+      var i = 0, l = items.length;
+      for ( i; i < l; i++ ) {
+        ul.append(this._createItem(items[i]));
+      }
+    },
+
+    /**
+     * IconView::createItem() -- Create the HTML Element for iter
+     *
+     * This function is for developer to implement in extended class
+     *
+     * @return  HTMLElement
+     */
+    createItem : function(view, iter) {
+      return view == "icon" ? $("<li class=\"GtkIconViewItem\">?</li>") : $("<tr class=\"GtkIconViewItem\"><td>?</td></tr>");
+    },
+
+    /**
+     * IconView::createColumn() -- Create the HTML Column Element for iter
+     *
+     * This function is for developer to implement in extended class
+     *
+     * @return  HTMLElement
+     */
+    createColumn : function(iter) {
+      return $("<td>" + iter + "</td>");
+    },
+
+    /**
+     * IconView::_createItem() -- Create the HTML Element in render()
+     * @see     IconView::render()
+     * @see     IconView::createItem()
+     * @return  HTMLElement
+     */
+    _createItem : function(iter) {
+      var self = this;
+      var el = this.createItem(this._currentView, iter);
+      var jsn = {};
+      try {
+        jsn = JSON.stringify(iter);
+      } catch ( eee ) {
+        jsn = {};
+      }
+
+      if ( OSjs.Compability.SUPPORT_DND ) {
+        el.attr("draggable", "true");
+        el.bind("dragover", function(ev) {
+          ev.preventDefault();
+          return self.onDragAction(ev, "dragover", $(this));
+        });
+        el.bind("dragleave", function(ev) {
+          //ev.preventDefault();
+          /*return */self.onDragAction(ev, "dragleave", $(this));
+        });
+        el.bind("dragstart", function(ev) {
+          ev.originalEvent.dataTransfer.setData('text/plain', jsn);
+          /*return */self.onDragAction(ev, "dragstart", $(this));
+        });
+        el.bind("dragend", function(ev) {
+          /*return */self.onDragAction(ev, "dragend", $(this));
+        });
+        el.bind("drop", function(ev) {
+          ev.preventDefault();
+          return self.onDragAction(ev, "drop", $(this));
+        });
+      }
+
+      el.mousedown(function(ev) {
+        var t = $(ev.target || ev.srcElement);
+        console.warn(t, t.closest("*[draggable=true]", t));
+        if ( !(t.attr("draggable") === "true" || t.closest("*[draggable=true]", t).length) ) {
+          ev.preventDefault();
+        } else {
+          ev.stopPropagation();
+        }
+        //return false;
+      });
+      el.click(function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        self.onItemSelect(ev, this, iter);
+      });
+      el.bind("contextmenu", function(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
+        return self.onItemContextMenu(ev, this, iter);
+      });
+      el.dblclick(function(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
+        return self.onItemActivate(ev, this, iter);
+      });
+
+      return el;
+    },
+
+    /**
+     * IconView::_createColumn() -- Create the HTML Column Element in render()
+     * @see     IconView::render()
+     * @see     IconView::createColumn()
+     * @return  HTMLElement
+     */
+    _createColumn : function(iter) {
+      var self = this;
+      var el = this.createColumn(iter);
+
+      el.click(function(ev) {
+        ev.stopPropagation();
+        self.onColumnActivate(ev, this, iter);
+      });
+
+      console.warn("IconviewNew::_createColumn()", iter, el);
+
+      return el;
+    },
+
+    /**
+     * IconView::selectItem() -- Select an item by searching
+     * @return  void
+     */
+    selectItem : function(key, value) {
+      var els = this.$element.find(".GtkIconViewItem");
+      var i = 0, l = els.length, el;
+      for ( i; i < l; i++ ) {
+        el = $(els[i]);
+        if ( el.data(key) == value ) {
+          this.onItemSelect(null, el);
+          return;
+        }
+      }
+
+      this.onItemSelect(null, null);
     }
 
   });

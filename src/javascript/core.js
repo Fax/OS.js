@@ -2641,8 +2641,7 @@
      * @return void
      */
     _initializeWindowManager : function(callback) {
-      _WM      = new WindowManager();
-
+      _WM = new WindowManager();
       try {
         _WM.run();
       } catch ( exception ) {
