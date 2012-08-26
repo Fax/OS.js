@@ -361,33 +361,26 @@ button[disabled="disabled"]:active {
 .GtkIconView {
   background : #fff;
 }
-
-.GtkIconViewHeader,
+.GtkIconView td {
+}
 .GtkIconView thead {
   color : #222;
 }
-
-.GtkIconView .Even,
-.GtkIconView tr.even,
 .GtkIconView tbody tr:nth-child(odd) {
   background : #fff;
 }
-.GtkIconView .Odd,
-.GtkIconView tr.odd,
 .GtkIconView tbody tr:nth-child(even) {
   background : #e6e6e6;
 }
-
-.GtkIconView tr.Current,
-.GtkIconView tr.odd.Current,
-.GtkIconView tbody tr:nth-child(odd).Current {
+.GtkIconView tbody tr.Current {
   background : #4f4f4f;
   color : #fff;
 }
-
-.GtkIconView table.TableBody,
-.GtkIconView tbody {
-  background : #fff;
+.GtkIconView tbody tr:nth-child(odd).Current {
+  color : #fff;
+}
+.GtkIconView thead td:nth-child(odd) {
+  border-right : 1px solid #ced1d3;
 }
 
 .GtkStatusbar {

@@ -1,6 +1,5 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG] CLEAN UP OLD ICONVIEW STYLES ALLLLL OF THEM
 [MED] Init: redo detection of features
 [MED] VFS: Finish JS Class (Temporary / Persistent)
 [MED] Richtext: Add custom contextmenu
