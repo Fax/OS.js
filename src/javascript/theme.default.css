@@ -372,7 +372,8 @@ button[disabled="disabled"]:active {
 .GtkIconView tbody tr:nth-child(even) {
   background : #e6e6e6;
 }
-.GtkIconView tbody tr.Current {
+.GtkIconView tbody tr.Current,
+.GtkIconView li.Current .Label {
   background : #4f4f4f;
   color : #fff;
 }
@@ -381,6 +382,9 @@ button[disabled="disabled"]:active {
 }
 .GtkIconView thead td:nth-child(odd) {
   border-right : 1px solid #ced1d3;
+}
+.GtkIconView .DND-Enter {
+  font-weight : bold;
 }
 
 .GtkStatusbar {
