@@ -232,19 +232,19 @@
   }
 */
   .GtkIconView td {
+    margin : 0;
     padding : 2px;
     padding-left : 5px;
     padding-right : 5px;
+    white-space : nowrap;
+    vertical-align : middle;
   }
   .GtkIconView table {
     border-collapse : collapse;
-  }
-  .GtkIconView table td {
-    vertical-align : middle;
+    width : 100%;
   }
   .GtkIconView tbody,
-  .GtkIconView tr,
-  .GtkIconView td {
+  .GtkIconView tr {
     border : 0 none;
     margin : 0;
     padding : 0;
@@ -254,13 +254,6 @@
     height : 20px;
     line-height : 20px;
   }
-
-  /*
-  .GtkIconView .Even {
-  }
-  .GtkIconView .Odd {
-  }
-  */
 
   .GtkIconView {
     overflow : auto;
@@ -286,51 +279,10 @@
     word-wrap : break-word;
   }
 
-  .GtkIconView .Inner,
-  .GtkIconView .Inner * {
+  .GtkIconView tr,
+  .GtkIconView li * {
     cursor : pointer;
   }
-  /*
-  .GtkIconView tr.Current,
-  .GtkIconView tr.odd.Current {
-  }
-  */
-  .GtkIconView table {
-    border-collapse : collapse;
-    width : 100%;
-  }
-  .GtkIconView td {
-    padding : 2px;
-    white-space : nowrap;
-  }
-  /*
-  .GtkIconView tr.odd {
-  }
-  */
-
-
-  .GtkIconView table.TableHead {
-    overflow : hidden;
-    display : block;
-  }
-  .GtkIconView table.TableHead span {
-    display : block;
-    margin-top :5px;
-    margin-bottom : 5px;
-  }
-  /*
-  .GtkIconView table.TableBody {
-  }
-
-  .GtkIconView .TableWrap {
-  }
-
-  .GtkIconView .TableBodyWrap {
-  }
-
-  .GtkIconView .GtkIconView {
-  }
-  */
 
 
 /* GtkStatusbar */
