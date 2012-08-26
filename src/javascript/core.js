@@ -5044,6 +5044,9 @@
         var i = 0, l = _l.length;
 
         for ( i; i < l; i++ ) {
+          if ( _l[i].skip_pager )
+            continue;
+
           e = $(sprintf("<li><img alt=\"%s\" src=\"%s\" /></li>", _l[i].title, _l[i].icon));
           r.append(e);
         }
@@ -5271,14 +5274,18 @@
      */
     getStack : function() {
       var stack = [];
-      var i = 0, l = this.stack.length;
+      var i = 0, l = this.stack.length, iter;
 
       for ( i; i < l; i++ ) {
+        iter = this.stack[i];
         stack.push({
-          id    : this.stack[i]._getWindowId(),
-          title : this.stack[i]._getTitle(),
-          icon  : this.stack[i]._getIcon(),
-          focus : (function(w) {
+          id            : iter._getWindowId(),
+          title         : iter._getTitle(),
+          icon          : iter._getIcon(),
+          skip_pager    : iter._skip_pager,
+          skip_taskbar  : iter._skip_taskbar,
+
+          focus         : (function(w) {
             return function() {
               w.focus();
             };
