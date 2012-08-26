@@ -3263,6 +3263,8 @@
             _loader_done(errors > 0);
           }, function(res) {
             self.resources[(app ? (app + "/" + res) : (res))] = true;
+          }, function(res) {
+            self.resources[(app ? (app + "/" + res) : (res))] = false;
           });
         } else {
           _loader_done(false);
