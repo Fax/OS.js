@@ -2029,18 +2029,24 @@
     $element      : null,       //!< HTML Element
     _currentView  : "icon",     //!< Current view type
     _currentItem  : null,       //!< Current selected item HTML
+    _opts         : {},         //!< Options
 
     /**
      * IconView::init() -- Constructor
      * @constructor
      */
-    init : function(el, view) {
+    init : function(el, view, opts) {
       if ( !el )
         throw "Cannot create IconView without root container";
+
+      if ( !opts ) {
+        opts = {"dnd" : true};
+      }
 
       this.$element     = $(el);
       this._currentView = view    || "icon";
       this._currentItem = null;
+      this._opts        = opts;
 
       var self = this;
       this.$element.bind("contextmenu", function(ev) {
@@ -2060,7 +2066,7 @@
         return false;
       });
 
-      if ( OSjs.Compability.SUPPORT_DND ) {
+      if ( OSjs.Compability.SUPPORT_DND && this._opts.dnd ) {
         this.$element.bind("dragover", function(ev) {
           ev.preventDefault();
           return self.onDragAction(ev, "dragover");
@@ -2080,7 +2086,7 @@
         });
       }
 
-      console.log("IconviewNew::init()", el, items, columns, view);
+      console.log("IconviewNew::init()", el, view);
     },
 
     /**
@@ -2091,6 +2097,7 @@
       this.$element     = null;
       this._currentItem = null;
       this._currentView = "icon";
+      this._opts        = {};
     },
 
     /**
@@ -2178,6 +2185,7 @@
         case "dragstart" :
           if ( item ) {
             item.addClass("DND-Active");
+            this.onItemSelect(ev, item);
           }
         break;
 
@@ -2213,6 +2221,9 @@
      * @return  void
      */
     render : function(items, columns, view) {
+      items = items || [];
+      columns = columns || [];
+
       if ( view )
         this._currentView = view;
 
@@ -2283,7 +2294,7 @@
         jsn = {};
       }
 
-      if ( OSjs.Compability.SUPPORT_DND ) {
+      if ( OSjs.Compability.SUPPORT_DND && this._opts.dnd ) {
         el.attr("draggable", "true");
         el.bind("dragover", function(ev) {
           ev.preventDefault();
@@ -2308,7 +2319,6 @@
 
       el.mousedown(function(ev) {
         var t = $(ev.target || ev.srcElement);
-        console.warn(t, t.closest("*[draggable=true]", t));
         if ( !(t.attr("draggable") === "true" || t.closest("*[draggable=true]", t).length) ) {
           ev.preventDefault();
         } else {
@@ -2349,8 +2359,6 @@
         ev.stopPropagation();
         self.onColumnActivate(ev, this, iter);
       });
-
-      console.warn("IconviewNew::_createColumn()", iter, el);
 
       return el;
     },
