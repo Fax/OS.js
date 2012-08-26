@@ -2228,10 +2228,9 @@
         this._currentView = view;
 
       this.onItemSelect(null, null, null);
-
-      var ul;
+      var ul, root;
       if ( this._currentView == "icon" ) {
-        ul = $("<ul></ul>");
+        root = ul = $("<ul></ul>");
         this.$element.html(ul);
       } else {
         ul = $("<table></table>");
@@ -2245,15 +2244,16 @@
 
         ul.append(head);
         ul.append(body);
-        this.$element.html(ul);
 
-        ul = body;
+        root = body;
       }
 
       var i = 0, l = items.length;
       for ( i; i < l; i++ ) {
         ul.append(this._createItem(items[i]));
       }
+
+      this.$element.html(ul);
     },
 
     /**
