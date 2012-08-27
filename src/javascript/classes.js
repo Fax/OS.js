@@ -2205,6 +2205,51 @@
       this._opts        = {};
       this._sortKey     = null;
       this._sortDir     = "asc";
+      this._focued      = false;
+    },
+
+    /**
+     * IconView::onActionPress() -- When an action key is pressed
+     * @return  void
+     */
+    onActionPress : function(ev, key) {
+      var cur = -1;
+      var max = this.$element.find(".GtkIconViewItem").size() - 1;
+      if ( this._currentItem ) {
+        cur = $(this._currentItem).index();
+      }
+
+      if ( key == "up" || key == "left" ) {
+        if ( cur > 0 ) {
+          cur--;
+        }
+        $(this.$element.find(".GtkIconViewItem").get(cur)).click();
+      } else if ( key == "down" || key == "right" ) {
+        if ( cur < max ) {
+          cur++;
+        }
+        $(this.$element.find(".GtkIconViewItem").get(cur)).click();
+      } else if ( key == "enter" ) {
+        $(this.$element.find(".GtkIconViewItem").get(cur)).dblclick();
+      }
+    },
+
+    /**
+     * IconView::onKeyPress() -- When a key is pressed
+     * @return  void
+     */
+    onKeyPress : function(ev, key) {
+      if ( key == 38 ) {
+        this.onActionPress(ev, "up");
+      } else if ( key == 40 ) {
+        this.onActionPress(ev, "down");
+      } else if ( key == 13 ) {
+        this.onActionPress(ev, "enter");
+      } else if ( key == 37 ) {
+        this.onActionPress(ev, "left");
+      } else if ( key == 39 ) {
+        this.onActionPress(ev, "right");
+      }
     },
 
     /**
@@ -2218,8 +2263,9 @@
      * IconView::onItemSelect() -- When user clicks/selects a item
      * @return  void
      */
-    onItemSelect : function(ev, el, iter) {
-      this.onFocus(ev);
+    onItemSelect : function(ev, el, iter, focus) {
+      if ( focus === undefined || focus === true)
+        this.onFocus(ev);
 
       if ( this._currentItem ) {
         $(this._currentItem).removeClass("Current");

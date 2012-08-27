@@ -732,7 +732,7 @@ ul.CompactList li {
 .GUIMenu .HasChildren span {
   padding-right : 16px;
 }
-.GUIMenu .GUIMenuFocus {
+.GUIMenuFocus, .GtkIconViewFocus {
   width : 1px;
   height : 1px;
   border : 0 none;
