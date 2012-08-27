@@ -1317,7 +1317,7 @@
         throw "Failed to initialize Richtext IFrame";
 
       // Prepare design mode
-      this._enabled = enabled === undefined ? true : (enabled === true);
+      this._enabled = (enabled === undefined || enabled);
       this._created = false;
 
       if ( this._enabled )
@@ -1695,36 +1695,55 @@
     //
 
     /**
+     * RichtextEditor::setSource() -- Set the iframe url
+     * @return  void
+     */
+    setSource : function(src) {
+      this._setContent(null, src);
+    },
+
+    /**
      * RichtextEditor::_setContent() -- Internal method for setting content
      * @return  void
      */
-    _setContent : function(content) {
+    _setContent : function(content, src) {
       var foc = false;
       var self = this;
 
-      this._frame.src = "about:blank";
-      this._doc.open();
-      this._doc.write(content);
-      this._doc.close();
+      var _events = function() {
+        $(self._frame).unbind("load");
+        $(self._win).unbind("focus");
+        $(self._win).unbind("blur");
 
-      $(this._win).unbind("focus");
-      $(this._win).unbind("blur");
+        $(self._win).focus(function(ev) {
+          if ( foc )
+            return;
+          foc = true;
 
-      $(this._win).focus(function(ev) {
-        if ( foc )
-          return;
-        foc = true;
+          self.onFocus(ev);
+        });
 
-        self.onFocus(ev);
-      });
+        $(self._win).blur(function(ev) {
+          if ( !foc )
+            return;
+          foc = false;
 
-      $(this._win).blur(function(ev) {
-        if ( !foc )
-          return;
-        foc = false;
+          self.onBlur(ev);
+        });
+      };
 
-        self.onBlur(ev);
-      });
+      if ( src ) {
+        $(this._frame).load(function() {
+          _events();
+        });
+        this._frame.src = src;
+      } else {
+        this._frame.src = "about:blank";
+        this._doc.open();
+        this._doc.write(content);
+        this._doc.close();
+        _events();
+      }
     },
 
     /**
