@@ -413,6 +413,12 @@
           }
         break;
 
+        case 'Run' :
+          if ( spl[1] ) {
+            API.system.launch(spl[1], args);
+          }
+        break;
+
         default :
           error = true;
         break;
@@ -5539,18 +5545,31 @@
         addItem : function(jsn) {
           var self = this;
           if ( jsn ) {
-            if ( jsn.mime && !jsn.mime.match(/^OSjs/) ) {
-              var iter = {
-                'title'     : jsn.name,
-                'icon'      : jsn.icon,
-                'launch'    : "API::Launch",
-                'arguments' : {path: jsn.path, mime: jsn.mime},
-                'protected' : false
-              };
+            var iter;
+            if ( jsn.mime ) {
+              if ( jsn.mime.match(/^OSjs/) ) {
+                if ( jsn.mime == "OSjs/Application" ) {
+                  iter = {
+                    'title'     : jsn.name,
+                    'icon'      : jsn.icon,
+                    'launch'    : "API::Run::" + basename(jsn.path),
+                    'arguments' : {},
+                    'protected' : false
+                  };
+                }
+              } else {
+                iter = {
+                  'title'     : jsn.name,
+                  'icon'      : jsn.icon,
+                  'launch'    : "API::Launch",
+                  'arguments' : {path: jsn.path, mime: jsn.mime},
+                  'protected' : false
+                };
+              }
+            }
 
-              console.log(jsn, iter);
+            if ( iter ) {
               this._list.push(iter);
-
               _Settings._apply({"desktop.grid" : this._list}, function() {
                 self.refresh();
               });
