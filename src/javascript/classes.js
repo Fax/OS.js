@@ -1290,15 +1290,17 @@
    */
   OSjs.Classes.RichtextEditor = Class.extend({
 
-    _frame : null,    //!< HTML Document iframe
-    _doc   : null,    //!< HTML Document reference
-    _win   : null,    //!< HTML Window reference
+    _frame    : null,    //!< HTML Document iframe
+    _doc      : null,    //!< HTML Document reference
+    _win      : null,    //!< HTML Window reference
+    _enabled  : true,    //!< Editor enabled
+    _created  : false,   //!< Created var
 
     /**
      * RichtextEditor::init() -- Constructor
      * @constructor
      */
-    init : function(area) {
+    init : function(area, enabled) {
       this._frame = $(area).get(0);
 
       if ( this._frame.contentDocument ) {
@@ -1309,24 +1311,18 @@
         this._doc   = this._frame.document;
       }
 
-      var self = this;
-      /*
-      $(this._win).live("focus", function() {
-        alert('y');
-      });
-      $(area).contents().find("body").live("focus", function(ev) {
-        alert('x');
-        self.onFocus(ev);
-      });
-      */
-
       console.log("RichtextEditor::init()", this._frame);
 
       if ( !this._doc || !this._win )
         throw "Failed to initialize Richtext IFrame";
 
       // Prepare design mode
-      this.enable();
+      this._enabled = enabled === undefined ? true : (enabled === true);
+      this._created = false;
+
+      if ( this._enabled )
+        this.enable();
+
       this.setContent("");
     },
 
@@ -1335,37 +1331,59 @@
      * @destructor
      */
     destroy : function() {
-      this._frame = null;
-      this._doc   = null;
-      this._win   = null;
+      this._frame   = null;
+      this._doc     = null;
+      this._win     = null;
+      this._enabled = true;
     },
 
     /**
      * RichtextEditor::onFocus() -- When document gets focus
+     *
+     * Make this function call Window's focus() function.
+     * This solves all browser problems for now
+     *
      * @return  void
      */
-    onFocus : function() {
-    },
+    onFocus : function() { },
 
     /**
      * RichtextEditor::onBlur() -- When document blurs
+     *
      * @return  void
      */
-    onBlur : function() {
-    },
+    onBlur : function() { },
 
     /**
      * RichtextEditor::focus() -- Focus editor
+     *
+     * Make a binding in your window's "focus" event queue,
+     * and call this. This solves all browser problems for now.
+     *
      * @return  void
      */
     focus : function() {
+      if ( this._win ) {
+        if ( this._enabled )
+          this.enable();
+        this._win.focus();
+      }
     },
 
     /**
      * RichtextEditor::blur() -- Blur editor
+     *
+     * Make a binding in your window's "blur" event queue,
+     * and call this. This solves all browser problems for now.
+     *
      * @return  void
      */
     blur : function() {
+      if ( this._win ) {
+        if ( this._enabled )
+          this.disable();
+        this._win.blur();
+      }
     },
 
     //
@@ -1388,15 +1406,6 @@
     disable : function() {
       if ( this._doc )
         this._doc.designMode = "off";
-    },
-
-    /**
-     * RichtextEditor::focus() -- Focus document element
-     * @return  void
-     */
-    focus : function() {
-      if ( this._win )
-        this._win.focus();
     },
 
     /**
@@ -1686,6 +1695,39 @@
     //
 
     /**
+     * RichtextEditor::_setContent() -- Internal method for setting content
+     * @return  void
+     */
+    _setContent : function(content) {
+      var foc = false;
+      var self = this;
+
+      this._frame.src = "about:blank";
+      this._doc.open();
+      this._doc.write(content);
+      this._doc.close();
+
+      $(this._win).unbind("focus");
+      $(this._win).unbind("blur");
+
+      $(this._win).focus(function(ev) {
+        if ( foc )
+          return;
+        foc = true;
+
+        self.onFocus(ev);
+      });
+
+      $(this._win).blur(function(ev) {
+        if ( !foc )
+          return;
+        foc = false;
+
+        self.onBlur(ev);
+      });
+    },
+
+    /**
      * RichtextEditor::setContent() -- Set the BODY HTML content of document
      *
      * This function clears the document entirely
@@ -1698,10 +1740,8 @@
       content = content || "";
       css     = css || "";
 
-      this._frame.src = "about:blank";
-      this._doc.open();
-      this._doc.write('<head><link rel="stylesheet" type="text/css" href="/VFS/resource/iframe.css" /><style type="text/css">' + css + '</style></head><body>' + content + '</body>');
-      this._doc.close();
+      var body = '<head><link rel="stylesheet" type="text/css" href="/VFS/resource/iframe.css" /><style type="text/css">' + css + '</style></head><body>' + content + '</body>';
+      this._setContent(body);
     },
 
     /**
@@ -1713,10 +1753,7 @@
      * @return  void
      */
     setInnerContent : function(content) {
-      this._frame.src = "about:blank";
-      this._doc.open();
-      this._doc.write(content);
-      this._doc.close();
+      this._setContent(content);
     },
 
     /**
@@ -2113,12 +2150,6 @@
         ev.stopPropagation();
         return false;
       });
-
-      /*
-      this.$element.bind("focus", function(ev) {
-        self.onFocus(ev);
-      });
-      */
 
       if ( OSjs.Compability.SUPPORT_DND && this._opts.dnd ) {
         this.$element.bind("dragover", function(ev) {
