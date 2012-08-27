@@ -3002,6 +3002,7 @@
      * @return  bool
      */
     global_contextmenu : function(e) {
+      var t = e.target || e.srcElement;
       if ( $(e.target).hasClass("ContextMenu") || $(e.target).hasClass("Menu") || $(e.target).parent().hasClass("ContextMenu") || $(e.target).parent().hasClass("Menu") ) {
         return false;
       }
@@ -7377,12 +7378,25 @@
         //
         el.bind('contextmenu', function(ev) {
           ev.stopPropagation();
+          $(document).click(); // TRIGGER GLOBAL CONTEXTMENU
+
+          var t = ev.target || ev.srcElement;
+          if ( t.tagName ) {
+            var tn = t.tagName.toLowerCase();
+            if ( tn  == "textarea" || (tn == "input") ) {
+              return true;
+            }
+          }
+
+          ev.preventDefault();
+          return false;
         });
 
         el.bind('mousedown', function(ev) {
           self.focus();
           if ( ev.which > 1 ) { // Menu only NOTE
             ev.stopPropagation();
+            $(document).click(); // TRIGGER GLOBAL CONTEXTMENU
           }
         });
         if ( this._is_maximizable ) {
