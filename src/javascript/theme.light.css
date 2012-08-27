@@ -35,15 +35,6 @@ body {
   color : #222;
 }
 
-/*
-#LoadingBar {
-  background : #9c9c9e;
-}
-#Loading .ui-progressbar-value {
-  background-image: url('/img/pbar-ani.gif');
-}
-*/
-
 .DesktopPanel .Background {
   background : #a2a4a5;
   border-bottom : 1px solid #8f9191;
@@ -104,23 +95,6 @@ body {
   color : #fff;
 }
 
-.Menu,
-.GtkWindow .GtkMenuBar .GtkMenuItem ul, .GUIMenu {
-  border : 1px solid #30353d;
-  background : #eeeeee;
-  color : #222;
-}
-.Menu li.Default:hover,
-.GUIMenu li:hover {
-  color : #fff;
-  background : #4f4f4f;
-}
-.Menu li.Disabled,
-.GtkMenuBar li.Disabled,
-.GUIMenu li.Disabled {
-  color : #b0b3b7;
-}
-
 body .GtkMenuBar {
   background : #bababa;
 }
@@ -146,9 +120,4 @@ body .GtkMenuBar {
 ::-webkit-scrollbar-corner {
 }
 ::-webkit-scrollbar-resizer {
-}
-
-.GtkSeparatorToolItem,
-.GtkSeparatorMenuItem {
-  background-color : #b0b3b7;
 }

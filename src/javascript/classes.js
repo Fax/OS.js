@@ -1721,6 +1721,7 @@
           foc = true;
 
           self.onFocus(ev);
+          $(document).click(); // FOR GLOBAL MENU!
         });
 
         $(self._win).blur(function(ev) {
@@ -2231,6 +2232,9 @@
           this._currentItem.addClass("Current");
         }
       }
+
+      if ( !ev || ev.which <= 1 )
+        $(document).click(); // FOR GLOBAL MENU!
     },
 
     /**

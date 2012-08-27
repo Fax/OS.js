@@ -2818,9 +2818,9 @@
      * @return  bool
      */
     global_keydown : function(ev) {
-      var key = ev.keyCode || ev.which;
-      var target = ev.target || ev.srcElement;
-      var ret = true;
+      var key     = ev.keyCode || ev.which;
+      var target  = ev.target  || ev.srcElement;
+      var ret     = true;
 
       if ( key == KEYCODES.ctrl ) {
         KEY_CTRL = true;
@@ -2830,7 +2830,6 @@
       } else if ( key == KEYCODES.shift ) {
         KEY_SHIFT = true;
       }
-
 
       if ( KEY_ALT && KEY_SHIFT ) {
         ev.preventDefault();
@@ -2843,11 +2842,37 @@
         return false;
       }
 
+      // Check for keyboard hints etc.
+      if ( KEY_ALT && (_Window && _Window._showing) ) {
+        var k = String.fromCharCode(key).toUpperCase();
+        var h = _Window._getKeyboardBinding(k);
+        if ( h ) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          try {
+            h.click();
+          } catch ( eee ) {}
+          return false;
+        }
+      }
+
       // ESC cancels dialogs
       if ( key === KEYCODES.esc ) {
-        if ( _Window && _Window._is_dialog ) {
+        $(document).click(); // GLOBAL CONTEXT MENU
+        if ( _Window && _Window._is_dialog && _Window._showing ) {
           _Window.$element.find(".ActionClose").click();
           return false;
+        }
+      }
+
+      // Cursor keys
+      if ( _Menu ) {
+        if ( key == 38 ) {
+          _Menu.handleGlobalKey(ev, "up");
+        } else if ( key == 40 ) {
+          _Menu.handleGlobalKey(ev, "down");
+        } else if ( key == 13 ) {
+          _Menu.handleGlobalKey(ev, "enter");
         }
       }
 
@@ -7062,6 +7087,7 @@
     _lock_height      : -1,                               //!< Lock to this window height in px
     _global_dnd       : false,                            //!< Enable DnD support on window globally
     _bindings         : {},                               //!< Event bindings list
+    _hints            : {},                               //!< Keyboard shortcuts
 
     /**
      * Window::init() -- Constructor
@@ -7119,7 +7145,8 @@
       this._is_minimizable = dialog ? false : true;
       this._is_sessionable = dialog ? false : true;
       this._attrs_restore  = restore;
-      this._bindings = {
+      this._hints          = {};
+      this._bindings       = {
         "die"    : [],
         "focus"  : [],
         "blur"   : [],
@@ -7146,6 +7173,7 @@
         this._showing    = false;
         this._created    = false;
         this._bindings   = null;
+        this._hints      = {};
 
         $(this.$element).fadeOut(ANIMATION_SPEED, function() {
           $(self.$element).empty().remove();
@@ -7992,7 +8020,15 @@
         };
       }
       return false;
-   }
+   },
+
+    /**
+     * Window::_getKeyboardBinding() -- Get current Window keyboard modifiers
+     * @return  Mixed
+     */
+    _getKeyboardBinding : function(mod) {
+      return !mod ? this._hints : this._hints[mod] || null;
+    }
 
   }); // @endclass
 
@@ -8009,7 +8045,7 @@
    */
   var GtkWindow = Window.extend({
 
-    app : null, //!< Application reference (see constructor)
+    app    : null,  //!< Application reference (see constructor)
 
     /**
      * GtkWindow::init() -- Constructor
@@ -8018,8 +8054,17 @@
      */
     init : function(window_name, window_dialog, app, attrs) {
       this.app = app;
-
       this._super(window_name, window_dialog, attrs);
+    },
+
+    /**
+     * GtkWindow::destroy() -- Destructor
+     * @see Window::destroy()
+     * @destructor
+     */
+    destroy : function() {
+      this.app = null;
+      this._super();
     },
 
     /**
@@ -8046,6 +8091,10 @@
 
         if ( el.find(".GtkMenuBar").length ) {
           var last_menu = null;
+
+          el.find(".GtkMenuBar span u").each(function() {
+            self._hints[($(this).html()).toUpperCase()] = $(this).parents(".GtkMenuItem");
+          });
 
           el.find(".GtkMenuItem, .GtkImageMenuItem, .GtkRadioMenuItem").each(function() {
             var level = ($(this).parents(".GtkMenu").length);
@@ -8217,6 +8266,8 @@
 
     $element : null,  //!< Menu DOM Element
     $clicked : null,  //!< Clicked elemenet
+    _curpos  : -1,    //!< Current item position (index)
+    _maxpos  : -1,    //!< Maximum item position (index)
 
     /**
      * Menu::init() -- Constructor
@@ -8225,6 +8276,8 @@
     init : function(clicked) {
       this.$element = null;
       this.$clicked = clicked;
+      this._curpos  = -1;
+      this._maxpos  = -1;
 
       console.group("Menu::init()");
       console.groupEnd();
@@ -8243,6 +8296,8 @@
         this.$element.remove();
         this.$element = null;
       }
+      this._curpos = -1;
+      this._maxpos = -1;
 
       if ( _Menu ) {
         if ( _Menu !== this ) {
@@ -8260,7 +8315,7 @@
      * @param  Object     iter    Menu Item Iter
      * @return DOMElement
      */
-    _createItem : function(ev, iter) {
+    _createItem : function(ev, iter, index) {
       var self = this;
 
       //console.log("Menu::_createItem()", iter);
@@ -8307,6 +8362,14 @@
         ev.preventDefault();
       });
 
+      li.hover(function() {
+        self._curpos = index;
+        $(this).parents("ul").find("li").removeClass("hover");
+        $(this).addClass("hover");
+      }, function() {
+        $(this).removeClass("hover");
+      });
+
       if ( iter.items instanceof Array ) {
         li.addClass("HasChildren");
         var smenu = this._createMenu(ev, iter.items);
@@ -8324,16 +8387,17 @@
         });
       }
 
+      this._maxpos++;
+
       return li;
     },
 
     /**
      * Menu::_createSeparator() -- Create a new Menu Separator Item
      * @param  DOMEvent   ev      DOM Event
-     * @param  Object     iter    Menu Item Iter
      * @return DOMElement
      */
-    _createSeparator : function() {
+    _createSeparator : function(ev, index) {
       var li = $("<li class=\"GUIMenuItem\"></li>");
       li.append("<hr />");
       return li;
@@ -8353,12 +8417,13 @@
       for ( i; i < l; i++ ) {
         iter = menu[i];
         if ( menu[i] == "---" ) {
-          ul.append(this._createSeparator(ev));
+          ul.append(this._createSeparator(ev, i));
         } else {
-          ul.append(this._createItem(ev, menu[i]));
+          ul.append(this._createItem(ev, menu[i], i));
         }
       }
 
+      div.append("<input type=\"text\" class=\"GUIMenuFocus\" />");
       div.append(ul);
 
       return div;
@@ -8373,6 +8438,9 @@
      */
     create : function(ev, menu, show) {
       console.group("Menu::create()");
+
+      this._curpos = -1;
+      this._maxpos = -1;
 
       var div = this._createMenu(ev, menu);
       this.$element = div;
@@ -8393,6 +8461,8 @@
      * @return void
      */
     show : function(ev, el) {
+      this._curpos = -1;
+
       $("body").append(el);
 
       el.css({
@@ -8423,6 +8493,10 @@
         console.log("Pos", x, "x", y);
         console.log("El", el);
         console.groupEnd();
+
+        try {
+          el.find(".GUIMenuFocus").focus();
+        } catch ( eee ) {}
       }, 0);
     },
 
@@ -8438,6 +8512,33 @@
         if ( !t.hasClass(".GUIMenu") && !t.parents(".GUIMenu").size() ) {
           this.destroy();
         }
+      }
+    },
+
+    /**
+     * Menu::handleGlobalKey() -- Handle Globak Key events
+     * @return  void
+     */
+    handleGlobalKey : function(ev, key) {
+      if ( key == "up" ) {
+        if ( this._curpos > 0 ) {
+          $(this.$element.find("li").get(this._curpos)).trigger("mouseleave");
+          this._curpos--;
+        }
+        $(this.$element.find("li").get(this._curpos)).trigger("mouseenter");
+
+      } else if ( key == "down" ) {
+        if ( this._curpos < this._maxpos ) {
+          $(this.$element.find("li").get(this._curpos)).trigger("mouseleave");
+          this._curpos++;
+        }
+        $(this.$element.find("li").get(this._curpos)).trigger("mouseenter");
+
+      } else if ( key == "enter" ) {
+        if ( this._curpos >= 0 )
+          $(this.$element.find("li").get(this._curpos)).click();
+
+        this.handleGlobalClick(ev);
       }
     }
 

@@ -454,6 +454,29 @@ button[disabled="disabled"]:active {
   text-decoration : none;
 }
 
+.Menu,
+.GtkMenuBar .GtkMenuItem ul,
+.GUIMenu {
+  border : 1px solid #30353d;
+  background : #eeeeee;
+  color : #222;
+}
+
+.Menu li.Disabled,
+.GtkMenuBar li.Disabled,
+.GUIMenu li.Disabled {
+  color : #b0b3b7;
+}
+
+.GtkMenuBar li.hover,
+/*.Menu li.Default:hover,*/
+.Menu li.Default.hover,
+/*.GUIMenu li:hover,*/
+.GUIMenu li.hover {
+  color : #fff;
+  background : #4f4f4f;
+}
+
 .GtkNotebook .ui-tabs-nav a {
   color : #222;
   font-weight : normal;
@@ -471,6 +494,11 @@ button[disabled="disabled"]:active {
 .GtkNotebook .GtkTab {
   background : #fff;
   border : 1px solid #d1d4d7;
+}
+
+.GtkSeparatorToolItem,
+.GtkSeparatorMenuItem {
+  background-color : #b0b3b7;
 }
 
 /****************************************************************

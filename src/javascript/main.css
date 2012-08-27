@@ -732,6 +732,20 @@ ul.CompactList li {
 .GUIMenu .HasChildren span {
   padding-right : 16px;
 }
+.GUIMenu .GUIMenuFocus {
+  width : 1px;
+  height : 1px;
+  border : 0 none;
+  outline : none;
+  background : transparent;
+  color : transparent;
+  margin : 0;
+  padding : 0;
+  display : block;
+  position : absolute;
+  top : 0px;
+  left : 0px;
+}
 
 .GUIProgress {
   height: 20px;
