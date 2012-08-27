@@ -2213,24 +2213,22 @@
      * @return  void
      */
     onActionPress : function(ev, key) {
-      var cur = -1;
-      var max = this.$element.find(".GtkIconViewItem").size() - 1;
-      if ( this._currentItem ) {
-        cur = $(this._currentItem).index();
-      }
-
-      if ( key == "up" || key == "left" ) {
-        if ( cur > 0 ) {
-          cur--;
+      var cur = this._currentItem ? $(this._currentItem).index(): -1;
+      if ( cur != -1 ) {
+        var max = this.$element.find(".GtkIconViewItem").size() - 1;
+        if ( key == "up" || key == "left" ) {
+          if ( cur > 0 ) {
+            cur--;
+          }
+          $(this.$element.find(".GtkIconViewItem").get(cur)).click();
+        } else if ( key == "down" || key == "right" ) {
+          if ( cur < max ) {
+            cur++;
+          }
+          $(this.$element.find(".GtkIconViewItem").get(cur)).click();
+        } else if ( key == "enter" ) {
+          $(this.$element.find(".GtkIconViewItem").get(cur)).dblclick();
         }
-        $(this.$element.find(".GtkIconViewItem").get(cur)).click();
-      } else if ( key == "down" || key == "right" ) {
-        if ( cur < max ) {
-          cur++;
-        }
-        $(this.$element.find(".GtkIconViewItem").get(cur)).click();
-      } else if ( key == "enter" ) {
-        $(this.$element.find(".GtkIconViewItem").get(cur)).dblclick();
       }
     },
 
