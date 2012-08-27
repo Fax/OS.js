@@ -441,7 +441,7 @@ button[disabled="disabled"]:active {
   background : #4f4f4f;
 }
 
-.GtkMenuBar .Level_0 {
+.GtkMenuBar > .GtkMenuItem {
   color : #fff;
 }
 
