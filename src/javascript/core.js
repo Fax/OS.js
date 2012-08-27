@@ -8344,6 +8344,12 @@
       this._curpos  = -1;
       this._maxpos  = -1;
 
+      $(this.$clicked).bind("contextmenu", function(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
+        return false;
+      });
+
       console.group("Menu::init()");
       console.groupEnd();
 
@@ -8512,6 +8518,12 @@
 
       var div = this._createMenu(ev, menu);
       this.$element = div;
+
+      this.$element.bind("contextmenu", function(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
+        return false;
+      });
 
       if ( show === true ) {
         this.show(ev, this.$element);
@@ -8695,6 +8707,12 @@
         this._createItem(ev, $(els.get(i)), i);
         this._maxpos++;
       }
+
+      this.$element.bind("contextmenu", function(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
+        return false;
+      });
 
       if ( show === true )
         this.show(ev, this.$element);
