@@ -2874,6 +2874,7 @@
         } else if ( key == 13 ) {
           _Menu.handleGlobalKey(ev, "enter");
         }
+        return false;
       }
 
       if ( target ) {
@@ -8090,66 +8091,29 @@
         //
 
         if ( el.find(".GtkMenuBar").length ) {
-          var last_menu = null;
 
           el.find(".GtkMenuBar span u").each(function() {
             self._hints[($(this).html()).toUpperCase()] = $(this).parents(".GtkMenuItem");
           });
 
-          el.find(".GtkMenuItem, .GtkImageMenuItem, .GtkRadioMenuItem").each(function() {
-            var level = ($(this).parents(".GtkMenu").length);
-
-            $(this).hover(function() {
-              $(this).addClass("Hover").find("span:first").addClass("Hover");
-            }, function() {
-              $(this).removeClass("Hover").find("span:first").removeClass("Hover");
+          el.find(".GtkMenuBar > li").each(function() {
+            $(this).mousedown(function(ev) {
+              ev.preventDefault();
+              return false;
             });
-
-            $(this).addClass("Level_" + level);
-            if ( level > 0 ) {
-              $(this).addClass("SubItem");
-
-              if ( $(this).find(".GtkMenu").length ) {
-                $(this).addClass("Subbed");
-              }
-            }
-
-            if ( level > 0 ) {
-              $(this).hover(function() {
-                var c = $(this).find(".GtkMenu").first();
-                if ( last_menu !== c ) {
-                  if ( $(this).hasClass("Level_1") || $(this).hasClass("Level_2") ) {
-                    $(this).parent().find(".GtkMenu").hide();
-                  }
-
-                  c.show().css({
-                    'top'  : '0px',
-                    'left' : $(this).parent().width() + 'px'
-                  });
-                }
-              }, function() {
-                $(this).find(".GtkMenu").first().hide();
-              }).click(function(ev) {
-                if ( !$(this).hasClass("Subbed") ) {
-                  el.find(".GtkMenuItem .GtkMenu").hide();
-                }
-                ev.stopPropagation();
-              });
-            } else {
-              $(this).click(function() {
-                var c = $(this).find(".GtkMenu:first");
-                if ( last_menu && c !== last_menu ) {
-                  last_menu.hide();
-                }
-                last_menu = c.show();
-              });
-            }
+            $(this).click(function(ev) {
+              $(document).click(); // TRIGGER GLOBAL CONTEXTMENU
+              ev.preventDefault();
+              ev.stopPropagation();
+              ((new GtkWindowMenu($(this))).create(ev, null, true));
+              return false;
+            });
           });
 
-          $(document).click(function(ev) {
+          el.find(".GtkMenuBar").click(function(ev) {
             var t = $(ev.target || ev.srcElement);
-            if ( !$(t).closest(".GtkMenuBar").get(0) && !$(t).closest(".GtkMenu").get(0)  ) {
-              el.find(".GtkMenuItem .GtkMenu").hide();
+            if ( $(t).hasClass("GtkMenuBar") ) {
+              $(document).click();
             }
           });
         }
@@ -8296,6 +8260,7 @@
         this.$element.remove();
         this.$element = null;
       }
+      this.$clicked = null;
       this._curpos = -1;
       this._maxpos = -1;
 
@@ -8311,8 +8276,9 @@
 
     /**
      * Menu::_createItem() -- Create a new Menu Item
-     * @param  DOMEvent   ev      DOM Event
-     * @param  Object     iter    Menu Item Iter
+     * @param  DOMEvent   ev        DOM Event
+     * @param  Object     iter      Menu Item Iter
+     * @param  int        index     Item index
      * @return DOMElement
      */
     _createItem : function(ev, iter, index) {
@@ -8370,7 +8336,7 @@
         $(this).removeClass("hover");
       });
 
-      if ( iter.items instanceof Array ) {
+      if ( (iter.items instanceof Array) ) {
         li.addClass("HasChildren");
         var smenu = this._createMenu(ev, iter.items);
 
@@ -8400,6 +8366,7 @@
     _createSeparator : function(ev, index) {
       var li = $("<li class=\"GUIMenuItem\"></li>");
       li.append("<hr />");
+      this._maxpos++;
       return li;
    },
 
@@ -8413,7 +8380,7 @@
       var div = $("<div class=\"GUIMenu\"></div>");
       var ul  = $("<ul class=\"GUIMenuList\"></ul>");
 
-      var i   = 0, l = menu.length;
+      var i = 0, l = menu.length;
       for ( i; i < l; i++ ) {
         iter = menu[i];
         if ( menu[i] == "---" ) {
@@ -8543,6 +8510,107 @@
     }
 
   }); // @endclass
+
+  /**
+   * GtkWindowMenu -- Menu for GtkMenuBar in Windows
+   *
+   * @extends Menu
+   * @class
+   */
+  var GtkWindowMenu = Menu.extend({
+    /**
+     * GtkWindowMenu::init() -- Constructor
+     * @constructor
+     */
+    init : function(clicked) {
+      this._super(clicked);
+    },
+
+    /**
+     * GtkWindowMenu::destroy() -- Destructor
+     * @destructor
+     */
+    destroy : function() {
+      if ( this.$element ) {
+        this.$element.hide();
+      }
+
+      this.$element = null;
+      this.$clicked = null;
+      this._curpos  = -1;
+      this._maxpos  = -1;
+
+      if ( _Menu ) {
+        if ( _Menu !== this ) {
+          _Menu.destroy();
+        }
+        _Menu = null;
+      }
+    },
+
+    /**
+     * GtkWindowMenu::_createItem() -- Create a new Menu Item
+     * @return DOMElement
+     */
+    _createItem : function(ev, iter, index) {
+      var disabled = iter.hasClass(".Disabled");
+
+      iter.hover(function() {
+        self._curpos = index;
+        $(this).parents("ul").find("li").removeClass("hover");
+        $(this).addClass("hover");
+      }, function() {
+        $(this).removeClass("hover");
+      });
+      iter.mousedown(function(ev) {
+        ev.preventDefault();
+      });
+
+      if ( !disabled ) {
+        var self = this;
+        iter.click(function(ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          self.destroy();
+          return false;
+        });
+      }
+    },
+
+    /**
+     * GtkWindowMenu::create() -- Create a new Menu
+     * @return DOMElement
+     */
+    create : function(ev, menu, show) {
+      this._curpos  = -1;
+      this._maxpos  = -1;
+      this.$element = this.$clicked.find("> .GtkMenu");
+      var els = this.$element.find("li");
+
+      var i = 0, l = els.size();
+      for ( i; i < l; i++ ) {
+        this._createItem(ev, $(els.get(i)), i);
+        this._maxpos++;
+      }
+
+      if ( show === true )
+        this.show(ev, this.$element);
+
+      return this.$element;
+    },
+
+    /**
+     * GtkWindowMenu::show() -- Display the menu
+     * @return void
+     */
+    show : function(ev, el) {
+      $(el).show();
+
+      try {
+        el.find(".GUIMenuFocus").focus();
+      } catch ( eee ) {}
+    }
+  });
 
   /////////////////////////////////////////////////////////////////////////////
   // DIALOG
