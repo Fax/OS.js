@@ -82,6 +82,7 @@ if ( $locale = Core::get()->getLocale() ) {
   <meta name="keywords" content="OS.js, JavaScript Operating System, Web Desktop" />
   <meta name="description" content="OS.js - JavaScript Web Desktop" />
   <meta name="author" content="<?php print PROJECT_AUTHOR; ?> <?php print PROJECT_CONTACT; ?>" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
   <!-- OS.js stylesheets -->
   <link rel="stylesheet" type="text/css" href="/VFS/resource/main.css" />
