@@ -2268,6 +2268,8 @@
       if ( this.running ) {
         console.log("Unbinding events...");
 
+        $(window).unbind("focus",                       this.global_focus);
+        $(window).unbind("blur",                        this.global_blur);
         //$(window).unbind("offline",                   this.global_offline);
         $(document).unbind("keydown",                 this.global_keydown);
         //$(document).unbind("keypress",                this.global_keypress);
@@ -2584,6 +2586,8 @@
       OSjs.Classes.ProgressBar($("#LoadingBar"), 40);
 
       // Bind global events
+      $(window).bind("focus",         this.global_focus);
+      $(window).bind("blur",          this.global_blur);
       $(window).bind("beforeunload",  this.leaving);
       //$(window).bind("offline",       this.global_offline);
       $(document).bind("keydown",     this.global_keydown);
@@ -2791,6 +2795,24 @@
           console.log("Core::global_offline()", _OnLine);
         }
       }
+    },
+
+    /**
+     * Core::global_focus() -- When browser gets focus
+     * @param   DOMEvent    ev      DOM Event
+     * @return  void
+     */
+    global_focus : function(ev) {
+      KEY_ALT = KEY_SHIFT = KEY_CTRL = false;
+    },
+
+    /**
+     * Core::global_blur() -- When browser gets blurred
+     * @param   DOMEvent    ev      DOM Event
+     * @return  void
+     */
+    global_blur : function(ev) {
+      KEY_ALT = KEY_SHIFT = KEY_CTRL = false;
     },
 
     /**
