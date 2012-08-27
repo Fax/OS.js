@@ -2879,13 +2879,18 @@
       // Cursor keys
       if ( _Menu ) {
         if ( key == 38 ) {
-          _Menu.handleGlobalKey(ev, "up");
+          return _Menu.handleGlobalKey(ev, "up");
         } else if ( key == 40 ) {
-          _Menu.handleGlobalKey(ev, "down");
+          return _Menu.handleGlobalKey(ev, "down");
         } else if ( key == 13 ) {
-          _Menu.handleGlobalKey(ev, "enter");
+          return _Menu.handleGlobalKey(ev, "enter");
         }
-        return false;
+      }
+
+      if ( _Window && _Window._showing ) {
+        if ( _Window._handleGlobalKey(ev, key) ) {
+          return false;
+        }
       }
 
       if ( target ) {
@@ -7172,10 +7177,11 @@
       this._attrs_restore  = restore;
       this._hints          = {};
       this._bindings       = {
-        "die"    : [],
-        "focus"  : [],
-        "blur"   : [],
-        "resize" : []
+        "die"     : [],
+        "focus"   : [],
+        "blur"    : [],
+        "resize"  : [],
+        "keydown" : []
       };
 
       console.group("Window::init()");
@@ -7223,19 +7229,23 @@
     /**
      * Window::_call() -- Call an event by name and arguments
      * @param   String    mname     Binding name
-     * @return  void
+     * @param   Mixed     args      Arguments to give (optional)
+     * @return  bool
      */
-    _call : function(mname) {
+    _call : function(mname, args) {
       if ( this._bindings && this._showing ) {
         var fs = this._bindings[mname];
         if ( fs ) {
           var i = 0, l = fs.length;
 
           for ( i; i < l; i++ ) {
-            fs[i]();
+            fs[i](args);
           }
+
+          return true;
         }
       }
+      return false;
     },
 
     /**
@@ -7661,6 +7671,15 @@
     //
     // EVENTS
     //
+
+    /**
+     * Window::_handleGlobalKey() -- This event comes from global handler
+     * @see     Core::global_keydown()
+     * @return  void
+     */
+    _handleGlobalKey : function(ev, key) {
+      return this._call("keydown", {'ev' : ev, 'key' : key});
+    },
 
     /**
      * Window::show() -- Show window (add)
@@ -8531,6 +8550,8 @@
 
         this.handleGlobalClick(ev);
       }
+
+      return false;
     }
 
   }); // @endclass
