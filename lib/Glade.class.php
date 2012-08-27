@@ -281,8 +281,9 @@ class Glade
       $label = $dom->createElement("span");
       if ( $t_hinted ) {
         // "Hinted" Underlined first character
+        $k = substr($t_label, 0, 1);
         $u = $dom->createElement("u");
-        $u->appendChild(new DomText(substr($t_label, 0, 1)));
+        $u->appendChild(new DomText($k));
         $label->appendChild($u);
         $label->appendChild(new DomText(substr($t_label, 1)));
       } else {

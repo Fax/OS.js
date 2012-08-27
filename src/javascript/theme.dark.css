@@ -103,26 +103,6 @@ body {
   font-weight : bold;
 }
 
-.Menu,
-.GtkMenuBar .GtkMenuItem ul,
-.GUIMenu {
-  border : 1px solid #30353d;
-  background : #eeeeee;
-  color : #222;
-}
-
-.Menu li.Disabled,
-.GtkMenuBar li.Disabled,
-.GUIMenu li.Disabled {
-  color : #b0b3b7;
-}
-
-.Menu li.Default:hover,
-.GUIMenu li:hover {
-  color : #fff;
-  background : #4f4f4f;
-}
-
 /* SCROLLBARS */
 
 ::-webkit-scrollbar {
@@ -142,10 +122,4 @@ body {
 }
 ::-webkit-scrollbar-thumb:horizontal {
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #41454d), color-stop(100%, #31363d));
-}
-
-
-.GtkSeparatorToolItem,
-.GtkSeparatorMenuItem {
-  background-color : #b0b3b7;
 }
