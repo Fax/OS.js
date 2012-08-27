@@ -116,7 +116,9 @@
     shift : 16,
     esc   : 27,
     tab   : 9,
-    enter : 13
+    enter : 13,
+    up    : 38,
+    down  : 40
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -2842,54 +2844,58 @@
         KEY_SHIFT = true;
       }
 
+      // Pager
       if ( KEY_ALT && KEY_SHIFT ) {
-        ev.preventDefault();
-        ev.stopPropagation();
-
         if ( _WM ) {
-          _WM.toggleWindow();
-        }
-
-        return false;
-      }
-
-      // Check for keyboard hints etc.
-      if ( KEY_ALT && (_Window && _Window._showing) ) {
-        var k = String.fromCharCode(key).toUpperCase();
-        var h = _Window._getKeyboardBinding(k);
-        if ( h ) {
           ev.preventDefault();
           ev.stopPropagation();
-          try {
-            h.click();
-          } catch ( eee ) {}
+          _WM.toggleWindow();
           return false;
         }
       }
 
-      // ESC cancels dialogs
-      if ( key === KEYCODES.esc ) {
-        $(document).click(); // GLOBAL CONTEXT MENU
-        if ( _Window && _Window._is_dialog && _Window._showing ) {
-          _Window.$element.find(".ActionClose").click();
-          return false;
-        }
-      }
-
-      // Cursor keys
+      // Menus
       if ( _Menu ) {
-        if ( key == 38 ) {
+        if ( KEY_CTRL || KEY_ALT || KEY_SHIFT || (key == KEYCODES.esc) ) {
+          $(document).click(); // TRIGGER GLOBAL CONTEXTMENU
+        }
+
+        // Navigation
+        if ( key == KEYCODES.up ) {
           return _Menu.handleGlobalKey(ev, "up");
-        } else if ( key == 40 ) {
+        } else if ( key == KEYCODES.down ) {
           return _Menu.handleGlobalKey(ev, "down");
-        } else if ( key == 13 ) {
+        } else if ( key == KEYCODES.enter ) {
           return _Menu.handleGlobalKey(ev, "enter");
         }
       }
 
+      // Windows
       if ( _Window && _Window._showing ) {
-        if ( _Window._handleGlobalKey(ev, key) ) {
-          return false;
+        if ( (key == KEYCODES.esc) ) {
+          // Close dialogs
+          if ( _Window._is_dialog ) {
+            _Window.$element.find(".ActionClose").click();
+            return false;
+          }
+        } else if ( KEY_ALT ) {
+          // Menu hints
+          var k = String.fromCharCode(key).toUpperCase();
+          var h = _Window._getKeyboardBinding(k);
+          if ( h ) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            try {
+              h.click();
+              return false;
+            } catch ( eee ) {
+            }
+          }
+        } else {
+          // All other keys
+          if ( _Window._handleGlobalKey(ev, key) ) {
+            return false;
+          }
         }
       }
 
@@ -2909,6 +2915,7 @@
           return false;
         }
       }
+
 
       return ret;
     },
@@ -7242,7 +7249,7 @@
             fs[i](args);
           }
 
-          return true;
+          return fs.length > 0;
         }
       }
       return false;
