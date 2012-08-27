@@ -7680,6 +7680,35 @@
     //
 
     /**
+     * Window::_addObject() -- Fix events and browser bugs from things in 'classes.js'
+     * @param   Class     o         Object to check
+     * @return  void
+     */
+    _addObject : function(o) {
+      if ( o ) {
+        var self = this;
+        if ( o instanceof OSjs.Classes.Iconview ) {
+          this._bind("keydown", function(a) {
+            o.onKeyPress(a.ev, a.key);
+          });
+        } else if ( o instanceof OSjs.Classes.RichtextEditor ) {
+          o.onFocus = function() {
+            self.focus();
+          };
+          /*this.richtext.onBlur = function() {
+            self.blur();
+          };*/
+          this._bind("focus", function() {
+            o.focus();
+          });
+          this._bind("blur", function() {
+            o.blur();
+          });
+        }
+      }
+    },
+
+    /**
      * Window::_handleGlobalKey() -- This event comes from global handler
      * @see     Core::global_keydown()
      * @return  void
