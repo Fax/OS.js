@@ -30,45 +30,23 @@
  * @licence Simplified BSD License
  */
 
-body {
-  background : #005a77;
-  color : #222;
-}
-
 .DesktopPanel .Background {
   background : #3c3c3d;
   border-bottom : 1px solid #2a2a2b;
   border-left : 1px solid #2a2a2b;
   border-right : 1px solid #2a2a2b;
 }
-.DesktopPanel.Transparent .Background {
-  background : transparent;
-  border : 0 none;
-}
 
 .PanelItem {
   color : #b0c2c1;
-}
-.PanelItemWindow:hover {
-  color : #fff;
-}
-.PanelItem.Current {
 }
 .PanelItemSeparator {
   border-left : 1px solid #363636;
   border-right : 1px solid #3f4040;
 }
-.PanelItemSeparator.Ghost {
-  border : 0 none;
-  background : #ff0000;
-}
-.PanelItemSeparator:hover,
-.PanelItemClock:hover {
-}
 
 .Window {
   border : 1px solid #30353d;
-  background : #eeeeee;
 }
 .WindowTop {
   color : #b0c2c1;
@@ -76,31 +54,13 @@ body {
   background-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20version%3D%221.0%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22gradient%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%20%2341454d%3B%22/%3E%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%20%2331363d%3B%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20x%3D%220%22%20y%3D%220%22%20fill%3D%22url%28%23gradient%29%22%20width%3D%22100%25%22%20height%3D%22100%25%22%20/%3E%3C/svg%3E);
   background: -webkit-gradient(linear, left top, left bottom, from(#41454d), to(#31363d)); /* for webkit browsers */
   background: -moz-linear-gradient(top,  #41454d,  #31363d); /* for firefox 3.6+ */ 
-
-}
-.GtkIconView thead {
-  color : #222;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e7eaec', endColorstr='#dddfe1'); /* for IE */
-  background-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20version%3D%221.0%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22gradient%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%22100%25%22%3E%3Cstop%20offset%3D%220%25%22%20style%3D%22stop-color%3A%20%23e7eaec%3B%22/%3E%3Cstop%20offset%3D%22100%25%22%20style%3D%22stop-color%3A%20%23dddfe1%3B%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20x%3D%220%22%20y%3D%220%22%20fill%3D%22url%28%23gradient%29%22%20width%3D%22100%25%22%20height%3D%22100%25%22%20/%3E%3C/svg%3E);
-  background: -webkit-gradient(linear, left top, left bottom, from(#e7eaec), to(#dddfe1)); /* for webkit browsers */
-  background: -moz-linear-gradient(top,  #e7eaec,  #dddfe1); /* for firefox 3.6+ */ 
-  border-top : 1px solid #bdbfc1;
-  border-bottom : 1px solid #cacdcf;
-}
-
-.WindowTopController {
-  font-weight : bold;
-  font-size : 16px;
-}
-.WindowTopController:hover {
-  color : #fff;
 }
 .Window.Current .WindowTopInner {
   color : #fff;
 }
-.PanelItemWindow.Current {
-  color : #fff;
-  font-weight : bold;
+
+.GtkMenuBar {
+  background : #4f4f4f;
 }
 
 /* SCROLLBARS */
@@ -123,3 +83,4 @@ body {
 ::-webkit-scrollbar-thumb:horizontal {
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #41454d), color-stop(100%, #31363d));
 }
+
