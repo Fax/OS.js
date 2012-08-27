@@ -1309,6 +1309,17 @@
         this._doc   = this._frame.document;
       }
 
+      var self = this;
+      /*
+      $(this._win).live("focus", function() {
+        alert('y');
+      });
+      $(area).contents().find("body").live("focus", function(ev) {
+        alert('x');
+        self.onFocus(ev);
+      });
+      */
+
       console.log("RichtextEditor::init()", this._frame);
 
       if ( !this._doc || !this._win )
@@ -1327,6 +1338,34 @@
       this._frame = null;
       this._doc   = null;
       this._win   = null;
+    },
+
+    /**
+     * RichtextEditor::onFocus() -- When document gets focus
+     * @return  void
+     */
+    onFocus : function() {
+    },
+
+    /**
+     * RichtextEditor::onBlur() -- When document blurs
+     * @return  void
+     */
+    onBlur : function() {
+    },
+
+    /**
+     * RichtextEditor::focus() -- Focus editor
+     * @return  void
+     */
+    focus : function() {
+    },
+
+    /**
+     * RichtextEditor::blur() -- Blur editor
+     * @return  void
+     */
+    blur : function() {
     },
 
     //
