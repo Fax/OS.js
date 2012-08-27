@@ -468,6 +468,7 @@ abstract class VFS
             $type  = "file";
             $add   = sizeof($mimes) ? false : true;
             $mime  = null;
+            $fmime = null;
 
             if ( file_exists($abs_path) ) {
               $mime  = self::GetMIME($abs_path);
@@ -475,18 +476,20 @@ abstract class VFS
               $fmime = strstr($mime, "/", true);
             }
 
-            foreach ( $mimes as $m ) {
-              $m = trim($m);
+            if ( $fmime ) {
+              foreach ( $mimes as $m ) {
+                $m = trim($m);
 
-              if ( preg_match("/\/\*$/", $m) ) {
-                if ( strstr($m, "/", true) == $fmime ) {
-                  $add = true;
-                  break;
-                }
-              } else {
-                if ( $mime == $m ) {
-                  $add = true;
-                  break;
+                if ( preg_match("/\/\*$/", $m) ) {
+                  if ( strstr($m, "/", true) == $fmime ) {
+                    $add = true;
+                    break;
+                  }
+                } else {
+                  if ( $fmime == $m ) {
+                    $add = true;
+                    break;
+                  }
                 }
               }
             }
