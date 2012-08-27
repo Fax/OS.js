@@ -464,10 +464,16 @@ abstract class VFS
 
           if ( is_file($abs_path) || is_link($abs_path) ) {
             // Read MIME info
+            $fsize = 0;
             $type  = "file";
             $add   = sizeof($mimes) ? false : true;
-            $mime  = self::GetMIME($abs_path);
-            $fmime = strstr($mime, "/", true);
+            $mime  = null;
+
+            if ( file_exists($abs_path) ) {
+              $mime  = self::GetMIME($abs_path);
+              $fsize = filesize($abs_path);
+              $fmime = strstr($mime, "/", true);
+            }
 
             foreach ( $mimes as $m ) {
               $m = trim($m);
@@ -489,7 +495,6 @@ abstract class VFS
               continue;
             }
 
-            $fsize = filesize($abs_path);
             $pi    = mb_pathinfo($abs_path);
             $icon  = self::getFileIcon($mime, (isset($pi['extension']) ? $pi['extension'] : ""));
           } else if ( is_dir($abs_path) ) {
