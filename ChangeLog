@@ -1,3 +1,84 @@
+## 0.9.1
+
+Core\JS:
+* Cleaned up ResourceManager
+* Bugfix: ResourceManager adding duplicates
+* Window now uses new GtkWindowMenu implementation for GtkMenuBar
+* Desktop IconView now supports applications
+* Window::_addObject() for adding objects from classes.js (fixes events)
+
+Classes:
+* New Iconview class (Full DnD support, primitive sorting, keyhints)
+* Richtext focus/blur, setSource()
+
+UI/XP:
+* Inactive Windows now slightly transparent
+* Implemented _skip_pager and _skip_taskbar in Windows
+* DnD Effects
+* Keyboard shortcuts for menus
+* Bugfix: Sticky modifier keys
+
+Misc:
+* Bugfix for download.php (headers was sendt)
+* Bugfix for crashing on live server when logging in with new user
+* Cleaned up CSS, Removed unwanted
+* Optimizations
+* Documentation updated
+
+## 0.8.9
+
+* Core\JS: Fixed a bug where apps crash when no panels exist
+* Core\UI: Fixed font dialog bugs
+* Core\UI: New compability dialog
+* Core\Libs: Richtext with more content setting abilities
+* Core\VFS: Fixed icon detection bugs
+* Core\VFS: Cleaned up functions
+* Core\ResourceManage: Font generation improvments
+* Core: Added conten="utf-8" to all scripts
+* Bin: Fixed joxygen, improvments
+* Template: Updated index.php for Google seaches
+* Template: Updated robots.txt
+* Updated documentation and documents
+
+## 0.8.8
+
+New Preloading/Lazy-Loading of resources. Added to Classes and
+implemented in Core\ResourceManager. Slimmed down quite a bit.
+
+Simpler, faster and more robust!
+
+## 0.8.7
+
+Core & Misc:
+* Cleaned up header.php
+* Misc cleanups
+* Fixed bin/create-package
+* Added support for configuring static content host
+* Moved VFS/0 template to src/templates
+* Updated documentation
+
+Libs/Core:
+* IMAP: Added support for sending messages
+* IMAP: Recoded some parts of the class
+
+Libs/JS:
+* Improvments to richtext
+
+Core/JS:
+* Fixed: Registry appstorage not sendt to server for snapshots
+* Fixed: appstore registry loading
+* Fixed: Applications loading before desktop is finished
+* Fixed: Multiple sessions starting (SERIOUS)
+* Fixed: Check is_orphan when launching windows inside application
+* Optimizations, speed-improvments, cleanups
+
+UI:
+* CSS: Fixed Horizontal HR and spacers
+* CSS: Fixed statusbar
+* Glade: Fixed statusbar
+* CSS: Fixed GtkBox
+* Fixed: Disabled menu items
+
 ## 0.8.5
 
 WARNING: BREAKS APPLICATION DIALOG CONSTRUCTS
