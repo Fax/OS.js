@@ -2466,7 +2466,9 @@
      * @see     IconView::createItem()
      * @return  HTMLElement
      */
-    _createItem : function(iter) {
+    _createItem : function(iter, dnd) {
+      dnd = (dnd === undefined || dnd === true);
+
       var self = this;
       var el = this.createItem(this._currentView, iter);
       var jsn = {};
@@ -2476,7 +2478,7 @@
         jsn = {};
       }
 
-      if ( OSjs.Compability.SUPPORT_DND && this._opts.dnd ) {
+      if ( OSjs.Compability.SUPPORT_DND && this._opts.dnd && dnd ) {
         el.attr("draggable", "true");
         el.bind("dragover", function(ev) {
           ev.preventDefault();
