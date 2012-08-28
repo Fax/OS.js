@@ -48,6 +48,7 @@ abstract class API
    * @var doPOST 'action' argument method mapping
    */
   protected static $__POSTEvents = Array(
+    "bug"               => "doBugReport",
     "boot"              => "doBoot",
     "shutdown"          => "doShutdown",
     "snapshotList"      => "doSnapshotList",
@@ -143,6 +144,58 @@ abstract class API
   /////////////////////////////////////////////////////////////////////////////
 
   /**
+   * Do a 'Bug Report' AJAX Call
+   * @return  Array
+   */
+  protected static final function _doBugReport(Array $args, Core $inst = null) {
+    if ( BUGREPORT_ENABLE && isset($args['data']) ) {
+      require_once PATH_LIB . "/IMAP.php";
+      $d = new DateTime();
+      $success = false;
+
+      $template = <<<EOHTML
+<h1>OS.js Bugreport</h1>
+<hr />
+Date: %s
+
+<h2>Exception</h2>
+<div>
+  <pre>%s</pre>
+</div>
+
+<h2>User info:</h2>
+<div>
+  <pre>%s</pre>
+</div>
+EOHTML;
+
+      $html = sprintf($template,
+                      $d->format("r"),
+                      htmlspecialchars(json_encode($args['error'], JSON_PRETTY_PRINT)),
+                      htmlspecialchars(json_encode($args['data'], JSON_PRETTY_PRINT)));
+
+      $myargs = Array(
+        "from"        => BUGREPORT_MAIL_FROM,
+        "to"          => BUGREPORT_MAIL_TO,
+        "subject"     => BUGREPORT_MAIL_SUBJECT,
+        "attachments" => Array(),
+        "plain"       => "",
+        "html"        => $html
+      );
+
+      $success = @SMTP::send(IMAPMail::compose($myargs), Array(
+        "host"      => BUGREPORT_SMTP_HOST,
+        "username"  => BUGREPORT_SMTP_USER,
+        "password"  => BUGREPORT_SMTP_PASS
+      ), Array());
+    }
+
+    return Array(
+      "success" => $success
+    );
+  }
+
+  /**
    * Do a 'Core Boot' AJAX Call
    * @return Array
    */
@@ -158,6 +211,7 @@ abstract class API
       "success" => true,
       "result" => Array(
         "environment" => Array(
+          "bugreporting"=> BUGREPORT_ENABLE,
           "production"  => ENV_PRODUCTION,
           "demo"        => ENV_DEMO,
           "cache"       => ENABLE_CACHE,

@@ -69,6 +69,7 @@
   var ENV_CACHE              = undefined;           //!< Server-side cache enabled state
   var ENV_PRODUCTION         = undefined;           //!< Server-side production env. state
   var ENV_DEMO               = undefined;           //!< Server-side demo env. state
+  var ENV_BUGREPORT          = false;               //!< Enable posting of errors (reporting, server-side mailing)
   var STORE_APPS             = false;               //!< Always store applicaion data in registry
   // @endconstants
 
@@ -119,6 +120,26 @@
     enter : 13,
     up    : 38,
     down  : 40
+  };
+
+  /**
+   * @constants Navigator item
+   */
+  var NAVIGATOR = {
+    appName     : window.navigator.appName,
+    appVersion  : window.navigator.appVersion,
+    platform    : window.navigator.platform,
+    os          : window.navigator.oscpu || "unknown",
+    userAgent   : window.navigator.userAgent,
+    cookes      : window.navigator.cookieEnabled,
+    language    : window.navigator.language,
+    browser     : {
+      buildId    : window.navigator.buildId     || null,
+      product    : window.navigator.product     || null,
+      productSub : window.navigator.productSub  || null,
+      vendor     : window.navigator.vendor      || null,
+      vendorSub  : window.navigator.vendorSub   || null
+    }
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -2386,22 +2407,6 @@
         return;
       }
 
-      var nav = {
-        appName     : window.navigator.appName,
-        appVersion  : window.navigator.appVersion,
-        platform    : window.navigator.platform,
-        os          : window.navigator.oscpu || "unknown",
-        userAgent   : window.navigator.userAgent,
-        cookes      : window.navigator.cookieEnabled,
-        language    : window.navigator.language,
-        browser     : {
-          buildId    : window.navigator.buildId     || null,
-          product    : window.navigator.product     || null,
-          productSub : window.navigator.productSub  || null,
-          vendor     : window.navigator.vendor      || null,
-          vendorSub  : window.navigator.vendorSub   || null
-        }
-      };
 
       var login = function(alogin) {
         if ( alogin.enable ) {
@@ -2411,11 +2416,12 @@
         }
       };
 
-      DoPost({'action' : 'boot', 'navigator' : nav, 'compability' : OSjs.Compability}, function(response) {
+      DoPost({'action' : 'boot', 'navigator' : NAVIGATOR, 'compability' : OSjs.Compability}, function(response) {
         var data    = response.result;
         var env     = data.environment;
         var alogin  = env.autologin;
 
+        ENV_BUGREPORT   = env.bugreporting;
         ENV_CACHE       = env.cache;
         ENV_PRODUCTION  = env.production;
         ENV_DEMO        = env.demo;
@@ -2748,6 +2754,22 @@
     global_error : function(msg, url, lno) {
       var title = msg.split(":", 1).shift();
       CrashCustom("_" + title, msg, sprintf("in %s on line %d", url, lno));
+
+      if ( ENV_BUGREPORT ) {
+        try {
+          DoPost({
+            'action' : 'bug',
+            'data'   : {
+              'browser' : NAVIGATOR
+            },
+            'error'  : {
+              'message' : msg,
+              'url'     : url,
+              'line'    : lno
+            }
+          });
+        } catch (eee) {}
+      }
       return false; // Bubble down
     },
 
