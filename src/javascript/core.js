@@ -46,6 +46,8 @@
   //var ZINDEX_WINDOW_MAX   = 88888889;               //!< Max Window z-index
   var ZINDEX_WINDOW_ONTOP = 90000000;               //!< Window cur ontop z-index
   //var ZINDEX_LOADING      = 1000100;                //!< Loadingbar z-index
+  var WINDOW_MIN_HEIGHT   = 100;
+  var WINDOW_MIN_WIDTH    = 128;
   // @endconstants
 
   /**
@@ -1109,6 +1111,19 @@
         console.groupEnd();
 
         return _WM.addWindow(new OSjs.Dialogs.FileOperationDialog(OperationDialog, API, [args]));
+      },
+
+      'dialog_file_operation' : function(args) {
+        if ( !_WM ) {
+          MessageBox(OSjs.Labels.WindowManagerMissing);
+          return null;
+        }
+
+        console.group("=== API OPERATION ===");
+        console.log("Method", "API.ui.dialog_file_operation");
+        console.groupEnd();
+
+        return _WM.addWindow(new OSjs.Dialogs.CopyOperationDialog(OperationDialog, API, [args]));
       },
 
       'dialog_launch' : function(args) {
@@ -2729,6 +2744,7 @@
             var _l = OSjs.Labels.FirstRun;
             var _i = GetIcon("emotes/face-smile-big.png", "32x32");
             API.application.notification(_l.title, _l.message, _i);
+
           }, 500);
         }
       }
@@ -4505,6 +4521,34 @@
      */
     createFileDialog : function(args) {
       this.__addWindow(API.ui.dialog_file(args));
+    },
+
+    /**
+     * Application::createFileCopyDialog() -- Create Dialog: File Operation Dialog
+     * @see     API.ui.dialog_file
+     * @return  void
+     */
+    createFileCopyDialog : function(args) {
+      if ( !(args instanceof Object) ) {
+        args = {};
+      }
+      args.type = "copy";
+
+      this.__addWindow(API.ui.dialog_file_operation(args));
+    },
+
+    /**
+     * Application::createFileMoveDialog() -- Create Dialog: File Operation Dialog
+     * @see     API.ui.dialog_file
+     * @return  void
+     */
+    createFileMoveDialog : function(args) {
+      if ( !(args instanceof Object) ) {
+        args = {};
+      }
+      args.type = "move";
+
+      this.__addWindow(API.ui.dialog_file_operation(args));
     },
 
     /**
@@ -8074,7 +8118,7 @@
       el = el || this.$element;
 
       if ( height ) {
-        height = height < 128 ? 128 : height;
+        height = height < WINDOW_MIN_HEIGHT ? WINDOW_MIN_HEIGHT : height;
         if ( this._lock_height > 0 && height > this._lock_height ) {
           height = this._lock_height;
         }
@@ -8084,7 +8128,7 @@
         el.css("height", (this._height) + "px");
       }
       if ( width ) {
-        width = width < 128 ? 128 : width;
+        width = width < WINDOW_MIN_WIDTH ? WINDOW_MIN_WIDTH : width;
         if ( this._lock_width > 0 && width > this._lock_width ) {
           width = this._lock_width;
         }
@@ -8789,7 +8833,7 @@
 
       this._super("Dialog", type);
       this._width    = 220;
-      this._height   = 90;
+      this._height   = 100;
       this._gravity  = "center";
       this._content  = message;
       this._is_ontop = true;
@@ -8827,7 +8871,7 @@
         "right" : "auto"
       }).addClass("Message");
 
-      this._resize(dc.width() + 20, dc.height() + 50);
+      //this._resize(dc.width() + 20, dc.height() + 50);
       this._gravitate();
 
       if ( this._is_dialog == "confirm" ) {
@@ -8909,7 +8953,7 @@
      * @return void
      */
     create : function(id, mcallback) {
-      this._super(id, mcallback);
+      var el = this._super(id, mcallback);
 
       var self = this;
       this.$element.find(".DialogButtons .Close").click(function() {
@@ -8930,6 +8974,8 @@
           this.$element.find(".DialogButtons ." + c).html(l[c]);
         }
       }
+
+      return el;
     }
 
   }); // @endclass

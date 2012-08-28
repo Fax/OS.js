@@ -263,3 +263,17 @@
   padding : 0;
 }
 
+
+.OperationDialogCopy {
+  padding : 5px;
+}
+.OperationDialogCopy .CopyTitle {
+  height : 50px;
+  overflow : hidden;
+}
+.OperationDialogCopy .CopyProgress {
+  position : absolute;
+  bottom : -15px;
+  left : 5px;
+  right : 5px;
+}

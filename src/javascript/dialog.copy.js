@@ -35,10 +35,14 @@ OSjs.Dialogs.CopyOperationDialog = (function($, undefined) {
 
   var _LINGUAS = {
     "en_US" : {
-      "title" : "Copy file"
+      "title" : "File operation",
+      "copy"  : "Copying <b>%s</b> to <i>%s</i>",
+      "move"  : "Moving <b>%s</b> to <i>%s</i>"
     },
     "nb_NO" : {
-      "title" : "Koper fil"
+      "title" : "Fil-operasjon",
+      "copy"  : "Kopierer <b>%s</b> til <i>%s</i>",
+      "move"  : "Flytter <b>%s</b> til <i>%s</i>"
     }
   };
 
@@ -48,28 +52,60 @@ OSjs.Dialogs.CopyOperationDialog = (function($, undefined) {
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
     var _CopyOperationDialog = OperationDialog.extend({
-      init : function(src, dest, clb_finish, clb_progress, clb_cancel) {
-        this.src          = src          || null;
-        this.dest         = dest         || null;
-        this.clb_finish   = clb_finish   || function() {};
-        this.clb_progress = clb_progress || function() {};
-        this.clb_cancel   = clb_cancel   || function() {};
+      init : function(args) {
+        this._super("CopyMove");
+        this._title        = LABELS.title;
+        this._content      = $("<div class=\"OperationDialog OperationDialogCopy\"></div>");
+        this._width        = 350;
+        this._height       = 120;
+        this._is_closable  = false;
 
-        this._super("Copy");
-        this._title    = LABELS.title;
-        this._content  = $("<div class=\"OperationDialog OperationDialogCopy\">    <h1>Copy file</h1>    <div class=\"OperationDialogInner\">      <p class=\"Status\">0 of 0</p>      <div class=\"ProgressBar\"></div>    </div>  </div>");
-        this._width    = 400;
-        this._height   = 170;
+        this.error_on   = args.error_on   === true;
+        this.callback   = args.callback   || function() {};
+        this.source     = args.source     || null;
+        this.dest       = args.dest       || null;
+        this.type       = args.type       || "copy";
+        this.title      = "";
+
+        if ( this.type == "copy" ) {
+          this.title = sprintf(LABELS.copy, basename(this.source), this.dest);
+        } else {
+          this.title = sprintf(LABELS.move, basename(this.source), this.dest);
+        }
       },
-
 
       create : function(id, mcallback) {
         var self = this;
-        this._super(id, mcallback);
+        var el = this._super(id, mcallback).find(".OperationDialogCopy");
 
-        $(this._content).find(".ProgressBar").progressbar({
-          value : 50
-        });
+        var title    = $(sprintf("<div class=\"CopyTitle\">%s</div>", this.title));
+        var progress = $("<div class=\"CopyProgress\"></div>");
+
+        el.append(title);
+        el.append(progress);
+        this.$element.find(".DialogButtons").hide();
+        this.updateProgress(0);
+
+        if ( (this.source == this.dest) || !(this.source && this.dest) ) {
+          this.updateProgress(100);
+          return;
+        }
+
+        API.system.call("cp", {'source' : self.source, 'destination' : self.dest}, function(result, error) {
+          self.callback(result, error);
+
+          setTimeout(function() {
+            self.updateProgress(100);
+          }, 0);
+        }, this.error_on);
+      },
+
+      updateProgress : function(p) {
+        p = (parseInt(p, 10) || 0);
+        OSjs.Classes.ProgressBar(this.$element.find(".CopyProgress"), p);
+        if ( p >= 100 ) {
+          this.close();
+        }
       }
     });
 
