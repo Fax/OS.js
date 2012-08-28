@@ -4,8 +4,6 @@ OS.js is a simple, yet powerful Web Desktop platform.
 A live demonstration is available on http://OSjs.0o.no
 Please note that this site may be down at times. To access this demo you need to register a user.
 
-Sources will be released when reaching version `1.0-rc1` (Summer 2012).
-
 Only WebKit and Gecko based browsers fully support Glade/Gtk+ due to incomplete implementation of various
 CSS features.
 

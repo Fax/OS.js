@@ -1,12 +1,13 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[MED] Init: redo detection of features
+[MED] Copy/Move Operation Dialog/Progress thingy
 [MED] VFS: Finish JS Class (Temporary / Persistent)
 [MED] Richtext: Add custom contextmenu
-[MED] Panel: Redesign preferences
-[MED] Panel: Fix dock ?!
-[LOW] Panel: Settings - Background Image
-[LOW] Panel: Finish up multiples
+[MED] Panel
+      - Redesign preferences
+      - Settings - Background Image
+      - Finish up multiples
+      - Fix dock ?!
 [LOW] WindowManager: Effect(s) configuration
 [LOW] Panel setting: Background Image
 [LOW] Panels: Add/Remove (Implement multiples in GUI)
@@ -18,13 +19,15 @@ CORE TODO:
 [LOW]  Remove the global resize event and make a poll ?!
        This would increase the performance of panel redraws etc.
 [LOW] Split login to custom css and remove when needed
+[LOW] Maybe change the way feature detection is done
 
 MISC TODO:
 -------------------------------------------------------------------------------
-[HIG] Finish Standalone Platform
+[HIG] Create installer
+[MED] Finish Standalone Platform
 [LOW] Manifest and Cache for offline usage
-[LOW] Finish up the Installer
-[LOW] Finish up Console
+[---] Replace jQuery
+[---] Streaming of applications over SSH
 
 IDEAS ETC:
 -------------------------------------------------------------------------------

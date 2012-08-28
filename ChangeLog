@@ -1,3 +1,21 @@
+## 0.9.2
+
+* download.php: Fixed header errors
+* download.php: Now using VFS::buildPath()
+* Libs: SMTP Fixed for PHP < 4.3
+* Core: Implemented bug-reporting
+* Core\JS: Implemented automatic bug-reporting on global_error()
+* Core\JS: Removed browser context-menu from non-input elements
+* Libs\JS: IconView -- added 'dnd' parameter to _createItem()
+* CSS: Cleaned up some deprecated classes
+* CSS: Moved duplicates from themes into theme.default
+* CSS: theme.light now actually light and somewhat pretty
+* Template: Added viewport META - fixes scaling on mobile devices
+* VFS: Optimized some methods
+* VFS: Bugfix in ListDirectory() when file does not exist
+* Removed some unwanted comments
+* Updated documentation
+
 ## 0.9.1
 
 Core\JS:
