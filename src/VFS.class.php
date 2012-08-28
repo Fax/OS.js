@@ -163,15 +163,16 @@ abstract class VFS
    * Build a absolute path and check permissions in VFS
    * @param  String     $path         The relative path
    * @param  int        $method       Requested Attribute
+   * $param  bool       $user_only    Handle as a User directory
    * @return Array
    */
-  public static function buildPath($path, $method = VFS_ATTR_READ) {
+  public static function buildPath($path, $method = VFS_ATTR_READ, $user_only = false) {
     $blacklist  = array("?", "[", "]", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
     $path       = preg_replace("/\/+/", "/", preg_replace("/\/$/", "", str_replace($blacklist, "", $path)));
     $permission = false;
 
     // Create and validate absoulte path
-    if ( preg_match("/^\/User/", $path) ) {
+    if ( preg_match("/^\/User/", $path) || $user_only ) {
       $uid = 0;
       if ( (Core::get()) && ($user = Core::get()->getUser()) ) {
         $uid = $user->id;
