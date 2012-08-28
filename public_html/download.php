@@ -46,43 +46,46 @@ if ( (isset($_GET["file"]) && ($path = $_GET['file'])) ) {
     $rpath    = dirname($path);
     $rname    = basename($path);
 
-    if ( $rpath && $rname ) {
-      $special_charsa = array("?", "[", "]", "/", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
-      $special_charsb = array("?", "[", "]", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", "../", "./");
-      $filename       = trim(preg_replace('/\s+/', ' ', str_replace($special_charsa, '', $rname)), '.-_');
-      $path           = trim(preg_replace('/\s+/', ' ', str_replace($special_charsb, '', $rpath)), '.-_');
-      $base           = sprintf("%s/%d", PATH_VFS, $uid);
-      $absolute       = sprintf("%s%s/%s", $base, $path, $filename);
+    if ( ($rpath && $rname) && ($vfsiter  = VFS::buildPath($path, VFS_ATTR_READ, true)) ) {
+      $path     = $vfsiter['path'];
+      $absolute = $vfsiter['root'];
+      $valid    = $vfsiter['perm'];
+      $filename = basename($path);
 
-      if ( file_exists($absolute) ) {
-        @ob_end_clean();
+      if ( $valid ) {
+        error_log($absolute);
 
-        $mime = VFS::GetMIME($absolute);
-        header("Content-type: {$mime}");
+        if ( file_exists($absolute) && ($mime = VFS::GetMIME($absolute)) ) {
+          @ob_end_clean(); // Important, in case headers were sendt
 
-        if ( $download ) {
-          $fsize = filesize($absolute);
-          $fmod  = filemtime($absolute);
-          $fmod  = strftime("D, d M Y H:i:s", $fmod);
+          if ( $download ) {
+            $fsize = filesize($absolute);
+            $fmod  = filemtime($absolute);
+            $fmod  = strftime("D, d M Y H:i:s", $fmod);
 
-          header("Pragma: public");
-          header("Content-Description: File Transfer");
-          header("Content-Disposition: attachment; filename=\"{$filename}\"");
-          header("Content-Transfer-Encoding: binary");
-          header("Content-Length: {$fsize}");
-          header("Cache-Control: must-revalidate, post-check=0, pre-check=0, no-cache");
-          header("Last-Modified: {$fmod} GMT");
-          header("Expires: 0");
+            // No caching on downloadable content
+            header("Pragma: public");
+            header("Content-type: {$mime}");
+            header("Content-Description: File Transfer");
+            header("Content-Disposition: attachment; filename=\"{$filename}\"");
+            header("Content-Transfer-Encoding: binary");
+            header("Content-Length: {$fsize}");
+            header("Cache-Control: must-revalidate, post-check=0, pre-check=0, no-cache");
+            header("Last-Modified: {$fmod} GMT");
+            header("Expires: 0");
+            print file_get_contents($absolute);
+            flush();
+          } else {
+            header("Content-type: {$mime}");
+            print file_get_contents($absolute);
+          }
+          exit;
+        } else {
+          header("HTTP/1.0 404 Not Found");
+          exit;
         }
-
-        print file_get_contents($absolute);
-
-        if ( $download ) {
-          flush();
-        }
-        exit;
       } else {
-        header("HTTP/1.0 404 Not Found");
+        header("HTTP/1.0 405 Method Not Allowed");
         exit;
       }
     } else {
