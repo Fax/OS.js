@@ -55,7 +55,7 @@ if ( (isset($_GET["file"]) && ($path = $_GET['file'])) ) {
       $absolute       = sprintf("%s%s/%s", $base, $path, $filename);
 
       if ( file_exists($absolute) ) {
-        @ob_end_flush();
+        @ob_end_clean();
 
         $mime = VFS::GetMIME($absolute);
         header("Content-type: {$mime}");
