@@ -430,8 +430,6 @@ abstract class VFS
     }
 
     $absolute = preg_replace("/\/+/", "/", $absolute);
-
-    // Read directory
     if ( is_dir($absolute) && $handle = opendir($absolute)) {
       $items = Array("dir" => Array(), "file" => Array());
       while (false !== ($file = readdir($handle))) {
@@ -464,7 +462,6 @@ abstract class VFS
           $rel_path = "{$path}/{$file}";
 
           if ( is_file($abs_path) || is_link($abs_path) ) {
-            // Read MIME info
             $fsize = 0;
             $type  = "file";
             $add   = sizeof($mimes) ? false : true;
