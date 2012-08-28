@@ -40,6 +40,14 @@ require "_header.php";
 // FILE DOWNLOADING
 ///////////////////////////////////////////////////////////////////////////////
 
+/*
+ * This script is requested every time a user GETs a file in its
+ * "home" directory, i.e. in the VFS.
+ *
+ * A parameter can be given to make the browser respond with a download dialog.
+ *
+ */
+
 if ( (isset($_GET["file"]) && ($path = $_GET['file'])) ) {
   if ( (($user = Core::get()->getUser()) && ($uid = $user->id) ) ) {
     $download = isset($_GET['download']) && ($_GET['download'] === "true");
@@ -63,7 +71,6 @@ if ( (isset($_GET["file"]) && ($path = $_GET['file'])) ) {
             $fmod  = filemtime($absolute);
             $fmod  = strftime("D, d M Y H:i:s", $fmod);
 
-            // No caching on downloadable content
             header("Pragma: public");
             header("Content-type: {$mime}");
             header("Content-Description: File Transfer");
