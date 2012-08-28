@@ -169,10 +169,17 @@ Date: %s
 </div>
 EOHTML;
 
-      $html = sprintf($template,
-                      $d->format("r"),
-                      htmlspecialchars(json_encode($args['error'], JSON_PRETTY_PRINT)),
-                      htmlspecialchars(json_encode($args['data'], JSON_PRETTY_PRINT)));
+      if ( floatval(phpversion()) < 5.4 ) {
+        $html = sprintf($template,
+                        $d->format("r"),
+                        htmlspecialchars(json_encode($args['error'])),
+                        htmlspecialchars(json_encode($args['data'])));
+      } else {
+        $html = sprintf($template,
+                        $d->format("r"),
+                        htmlspecialchars(json_encode($args['error'], JSON_PRETTY_PRINT)),
+                        htmlspecialchars(json_encode($args['data'], JSON_PRETTY_PRINT)));
+      }
 
       $myargs = Array(
         "from"        => BUGREPORT_MAIL_FROM,
