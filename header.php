@@ -282,6 +282,25 @@ if ( !defined("BIN_CC") )
 if ( !defined("BIN_CC_ENABLE") )
   define("BIN_CC_ENABLE",       false);
 
+//
+// Bug Reporting
+//
+
+if ( !defined("BUGREPORT_ENABLE") )
+  define("BUGREPORT_ENABLE",        false);
+if ( !defined("BUGREPORT_MAIL_FROM") )
+  define("BUGREPORT_MAIL_FROM",     "");
+if ( !defined("BUGREPORT_MAIL_TO") )
+  define("BUGREPORT_MAIL_TO",       "");
+if ( !defined("BUGREPORT_MAIL_SUBJECT") )
+  define("BUGREPORT_MAIL_SUBJECT",  "OS.js Bugreport");
+if ( !defined("BUGREPORT_SMTP_HOST") )
+  define("BUGREPORT_SMTP_HOST",     "");
+if ( !defined("BUGREPORT_SMTP_USER") )
+  define("BUGREPORT_SMTP_USER",     "");
+if ( !defined("BUGREPORT_SMTP_PASS") )
+  define("BUGREPORT_SMTP_PASS",     "");
+
 ///////////////////////////////////////////////////////////////////////////////
 // MAIN
 ///////////////////////////////////////////////////////////////////////////////
