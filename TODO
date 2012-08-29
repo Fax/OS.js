@@ -4,8 +4,6 @@ CORE TODO:
       - Does not come from text mime types
       - Only on images/videos/music so far
       - Only in USER VFS root dir
-[HIG] Rewrite error handling of launching processes... just use the globale error, duh!
-[HIG] Return ERROR_TYPE from VFS and push to JS
 [MED] Combine all resources in production env.
       - Send a list of all the cat'ed items
       - Make ResourceManager::MinimizeCombine()
@@ -19,6 +17,8 @@ CORE TODO:
       - Settings - Background Image
       - Finish up multiples
       - Fix dock ?!
+[LOW] Rewrite core.js CrashApplication() and CustomCrash(), merge this
+      - Also check exceptions here
 [LOW] WindowManager: Effect(s) configuration
 [LOW] Maybe change the way feature detection is done
 

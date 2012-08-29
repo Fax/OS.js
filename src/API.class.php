@@ -799,6 +799,8 @@ EOHTML;
       $json['result']  = call_user_func_array(Array("VFS", $method), Array($argv));
       if ( ($json['result']) !== false ) {
         $json['success'] = true;
+      } else {
+        $json['error']   = _("Failed to perform operation or permission denied!");
       }
     } catch ( Exception $e ) {
       $json['result'] = false;

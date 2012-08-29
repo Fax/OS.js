@@ -157,3 +157,6 @@ msgstr "Brukernavnet er opptatt!"
 msgid "Invalid or no action given!"
 msgstr "Ugyldig eller ingen oppgave gitt!"
 
+msgid "Failed to perform operation or permission denied!"
+msgstr "Klarte ikke utføre operasjonen eller ingen adgang!"
+
