@@ -1,7 +1,7 @@
 <?php
 /*!
  * @file
- * OS.js - JavaScript Operating System - index.home.php
+ * OS.js - JavaScript Operating System - index.login.php
  *
  * Copyright (c) 2011-2012, Anders Evenrud <andersevenrud@gmail.com>
  * All rights reserved.
