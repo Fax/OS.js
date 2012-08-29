@@ -8854,8 +8854,8 @@
       this.cmd_cancel = cmd_cancel || function() {};
 
       this._super("Dialog", type);
-      this._width    = 220;
-      this._height   = 100;
+      this._width    = 250;
+      this._height   = 120;
       this._gravity  = "center";
       this._content  = message;
       this._is_ontop = true;
@@ -8885,13 +8885,6 @@
     create : function(id, mcallback) {
       var self = this;
       var el = this._super(id, mcallback);
-
-      var dc = el.find(".DialogContent").css({
-        "top" : "auto",
-        "left" : "auto",
-        "bottom" : "auto",
-        "right" : "auto"
-      }).addClass("Message");
 
       //this._resize(dc.width() + 20, dc.height() + 50);
       this._gravitate();

@@ -1,6 +1,10 @@
 CORE TODO:
 -------------------------------------------------------------------------------
+[HIG] Abstraction from Iframe and RichtextEditor
 [HIG] Return ERROR_TYPE from VFS and push to JS
+[MED] Combine all resources in production env.
+      - Send a list of all the cat'ed items
+      - Make ResourceManager::MinimizeCombine()
 [MED] VFS: Finish JS Class (Temporary / Persistent)
 [MED] Richtext: Add custom contextmenu
 [MED] IconView: Multiple selections

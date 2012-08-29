@@ -510,7 +510,10 @@ ul.CompactList li {
   left : 5px;
 }
 .DialogContent.Message {
-  padding : 10px;
+  top : 5px;
+  left : 5px;
+  right : 5px;
+  word-wrap : break-word;
 }
   .DialogButtons {
     position : absolute;
