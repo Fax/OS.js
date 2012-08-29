@@ -79,6 +79,7 @@ define("RESOURCE_THEME",              PATH_JSBASE       . "/%s");
 define("RESOURCE_THEME_MIN",          PATH_JSBASE       . "/_min/%s");
 define("RESOURCE_CURSOR",             PATH_JSBASE       . "/%s");
 define("RESOURCE_CURSOR_MIN",         PATH_JSBASE       . "/_min/%s");
+define("RESOURCE_COMBINED_MIN",       PATH_JSBASE       . "/_min/ALL.%s");
 define("RESOURCE_VFS_PACKAGE",        PATH_VFS_PACKAGES . "/%s/%s");
 define("RESOURCE_VFS_PACKAGE_MIN",    PATH_VFS_PACKAGES . "/%s/_min/%s");
 
@@ -230,11 +231,14 @@ if ( !defined("VFS_UMASK") )
   define("VFS_UMASK",           ""); // TODO
 
 //
-// Caching (public_html/_header.php)
+// Caching and Serving (ex: public_html/_header.php)
 //
 
 if ( !defined("CACHE_EXPIRE_ADD") )
   define("CACHE_EXPIRE_ADD",    (60 * 60 * 24)); // in seconds
+
+if ( !defined("CACHE_COMBINED_RESOURCES") )
+  define("CACHE_COMBINED_RESOURCES",   false);
 
 //
 // WebSocket Server (lib/Server.class.php)
