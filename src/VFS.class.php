@@ -342,7 +342,7 @@ abstract class VFS
    */
   public static function ListDirectory($argv) {
     $path    = isset($argv['path'])     ? $argv['path']                             : "/";
-    $ignores = isset($argv['ignore'])   ? $argv['ignore']                           : null;
+    $ignores = isset($argv['ignore'])   ? $argv['ignore']                           : Array();
     $mimes   = isset($argv['mime'])     ? ($argv['mime'] ? $argv['mime'] : Array()) : Array();
     $sort    = isset($argv['sort'])     ? $argv['sort']                             : null;
     $sdir    = isset($argv['sort_dir']) ? $argv['sort_dir']                         : "asc";
@@ -352,10 +352,7 @@ abstract class VFS
       return false;
     }
 
-    if ( $ignores === null ) {
-      $ignores = CoreSettings::getIgnoreFiles();
-    }
-
+    $ignores  = array_merge($ignores, CoreSettings::getIgnoreFiles());
     $base     = PATH_MEDIA;
     $absolute = "{$base}{$path}";
     $apps     = false;

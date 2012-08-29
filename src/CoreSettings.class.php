@@ -333,7 +333,7 @@ abstract class CoreSettings
    * @var Default files to ignore
    */
   protected static $_IgnoreFiles = Array(
-    ".gitignore", ".git", ".cvs"
+    ".", ".gitignore", ".git", ".cvs"
   );
 
   /**
