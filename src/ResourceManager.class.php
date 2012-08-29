@@ -209,7 +209,7 @@ abstract class ResourceManager
       }
     } catch ( Exception $e ) { }
 
-    $tpl = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "resource.css"));
+    $tpl = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "resource.font.css"));
     $rep = Array(
       "%NORMAL%"          => $sources['normal'],
       "%BOLD%"            => $sources['bold'],
