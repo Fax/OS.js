@@ -185,10 +185,6 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
 
 <?php require_template ("Login.php"); ?>
 
-<?php require_template ("Window.php"); ?>
-
-<?php require_template ("Dialog.php"); ?>
-
 <!-- Version Stamp -->
 <div id="Version">
   OS.js version <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)<br />
