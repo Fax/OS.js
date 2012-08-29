@@ -605,8 +605,8 @@ EOJAVASCRIPT;
 // TEMPLATES
 ///////////////////////////////////////////////////////////////////////////////
 
-Compiler::$TemplatePHP      = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.php"));
-Compiler::$TemplateCSS      = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.css"));
+Compiler::$TemplatePHP      = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.package.php"));
+Compiler::$TemplateCSS      = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.package.css"));
 Compiler::$TemplateJSAPP    = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.application.js"));
 Compiler::$TemplateJSPI     = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.panelitem.js"));
 Compiler::$TemplateJSBS     = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.service.js"));
