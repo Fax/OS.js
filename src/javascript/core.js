@@ -7834,7 +7834,7 @@
           this._bind("keydown", function(a) {
             o.onKeyPress(a.ev, a.key);
           });
-        } else if ( o instanceof OSjs.Classes.RichtextEditor ) {
+        } else if ( o instanceof OSjs.Classes.IFrame ) {
           o.onFocus = function() {
             self.focus();
           };
