@@ -314,6 +314,23 @@ if ( ENV_PRODUCTION || ENV_DEMO ) {
   ini_set("display_errors", "on");
 }
 
+if ( !function_exists('error_log') ) {
+  function error_log($msg) {
+    @Logger::logError("error_log(): {$msg}");
+  }
+}
+
+// This function is used for loading template files
+function require_template($template) {
+  if ( substr($template, 0, 1) !== "/" ) {
+    if ( $res = CoreSettings::getCustomTemplate($template) ) {
+      require $res;
+      return;
+    }
+  }
+  require PATH_TEMPLATES . "/{$template}";
+}
+
 // Locales
 date_default_timezone_set(DEFAULT_TIMEZONE);
 

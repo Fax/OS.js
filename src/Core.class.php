@@ -119,7 +119,7 @@ class Core
       try {
         $args = (Array)JSON::decode($data, true);
       } catch ( Exception $e ) {
-        error_log($raw);
+        error_log("doPOST() Exception: {$raw}");
       }
     } else if ( is_array($data) ) {
       $args = $data;

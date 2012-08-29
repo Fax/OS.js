@@ -1,5 +1,10 @@
 CORE TODO:
 -------------------------------------------------------------------------------
+[HIG] FIX THAT ANNOYING BUG THAT ERRORS INTO APACHE LOG WHEN READING RESOURCES FROM VFS
+      - Does not come from text mime types
+      - Only on images/videos/music so far
+      - Only in USER VFS root dir
+[HIG] Rewrite error handling of launching processes... just use the globale error, duh!
 [HIG] Abstraction from Iframe and RichtextEditor
 [HIG] Return ERROR_TYPE from VFS and push to JS
 [MED] Combine all resources in production env.

@@ -59,6 +59,7 @@ if ( !($json = $core->doPOST($_POST)) === false ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 header(sprintf("Content-Type: %s; charset=utf-8", MIME_HTML));
-require PATH_TEMPLATES . "/index.php";
+
+require_template ("index.php");
 
 ?>
