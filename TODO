@@ -1,6 +1,5 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG] Notifications block events when showing (right side of screen)
 [HIG] FIX THAT ANNOYING BUG THAT ERRORS INTO APACHE LOG WHEN READING RESOURCES FROM VFS
       - Does not come from text mime types
       - Only on images/videos/music so far
@@ -21,6 +20,7 @@ CORE TODO:
 [LOW] Combine all resources in production env.
       - Send a list of all the cat'ed items
       - Make ResourceManager::MinimizeCombine()
+[LOW] Make DnD cursor customizable by user (when wrong filetype etc.)
 [LOW] WindowManager: Effect(s) configuration
 [LOW] Maybe change the way feature detection is done
 
