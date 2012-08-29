@@ -99,7 +99,7 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
           if ( path == current_dir )
             return;
 
-          var ignores = path == "/" ? ["..", "."] : ["."];
+          var ignores = path == "/" ? [".."] : ["."];
           currentFile = null;
 
           API.system.call("readdir", {'path' : path, 'mime' : self.aargv, 'ignore' : ignores}, function(result, error) {
