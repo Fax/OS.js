@@ -932,6 +932,19 @@
   var API = {
 
     //
+    // API: INPUT
+    //
+    'input' : {
+      'modkeys' : function() {
+        return {
+          'ctrl'  : KEY_CTRL,
+          'shift' : KEY_SHIFT,
+          'alt'   : KEY_ALT
+        };
+      }
+    },
+
+    //
     // API::UI
     //
 
