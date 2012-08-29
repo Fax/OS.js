@@ -41,8 +41,9 @@ Download: ```http://ffmpeg.org/download.html```
 * Gnome 2.x icon pack(s)  
   ```http://ftp.gnome.org/pub/GNOME/sources/gnome-icon-theme/```
 
-* Yahoo YUI Compressor (Included)  
-  ```http://developer.yahoo.com/yui/compressor/```
+* Yahoo YUI Compressor or Google Closure Compiler  
+  ```http://developer.yahoo.com/yui/compressor/```  
+  ```https://developers.google.com/closure/```
 
 * Freedesktop Sound Theme  
   ```http://cgit.freedesktop.org/sound-theme-freedesktop/tree/```
@@ -99,6 +100,17 @@ The installer is not yet complete. See the next section.
   - Drop into `vendor/`  
   - Symlink `stereo` directory to `public_html/sounds` (Should exist)  
   - Run `./bin/convert-sounds` to create MP3 samples (Optional)
+
+* Download **Yahoo YUI Compressor**
+  - Drop `jar` file into `vendor/yui-compressor`  
+  - Synmlink/copy/move the jar to `vendor/yui-compressor/yuicompressor.jar`
+  
+  OR :  
+  
+* Download ** Google Closure Compiler**
+  - Drop `jar` file into `vendor/closure-compiler/`  
+  - Add this to your `config.php`:  
+      define("BIN_CC_ENABLE",       true);
 
 ## Extras
 * Clone the "OSjs-Packages" repository into `src/packages`  
