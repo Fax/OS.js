@@ -7755,7 +7755,28 @@
             ev.stopPropagation();
             ev.preventDefault();
 
-            self._call("dnd", {'data' : ev.originalEvent.dataTransfer, 'event' : ev});
+            var path  = null;
+            var data  = ev.originalEvent.dataTransfer;
+            var files = ev.originalEvent.dataTransfer.files;
+
+            if ( data ) {
+              var plain = data.getData("text/plain");
+              if ( plain ) {
+                try {
+                  plain = JSON.parse(plain);
+                  if ( plain && plain.path ) {
+                    path = plain.path;
+                  }
+                } catch ( eee ) {}
+              }
+            }
+
+            self._call("dnd", {
+              'path'  : path,
+              'files' : files,
+              'data'  : data,
+              'event' : ev
+            });
 
             ___hide();
             return false;
