@@ -7211,6 +7211,7 @@
     _lock_size        : false,                            //!< Lock window size
     _lock_width       : -1,                               //!< Lock to this window width in px
     _lock_height      : -1,                               //!< Lock to this window height in px
+    _is_moving        : false,                            //!< If window was moved recently
     _global_dnd       : false,                            //!< Enable DnD support on window globally
     _bindings         : {},                               //!< Event bindings list
     _hints            : {},                               //!< Keyboard shortcuts
@@ -7260,6 +7261,7 @@
       this._lock_width       = -1;
       this._lock_height      = -1;
       this._global_dnd       = false;
+      this._is_moving        = false;
 
       // Window attributes
       this._name           = name;
@@ -7299,8 +7301,9 @@
 
         this._showing    = false;
         this._created    = false;
-        this._bindings   = null;
+        this._bindings   = {};
         this._hints      = {};
+        this._is_moving  = false;
 
         $(this.$element).fadeOut(ANIMATION_SPEED, function() {
           $(self.$element).empty().remove();
@@ -7416,6 +7419,9 @@
           el.find(".WindowContentInner").html(this._content);
 
           el.find(".WindowTopInner img").click(function(ev) {
+            if ( self._is_moving )
+              return;
+
             var labels = OSjs.Labels.ContextMenuWindowMenu;
             API.application.context_menu(ev, $(this), [
               {"title" : (self._is_maximized ? labels.restore : labels.max), "icon" : "actions/window_fullscreen.png", "disabled" : !self._is_maximizable, "method" : function() {
@@ -7447,6 +7453,7 @@
         //
         // Events
         //
+
         el.bind('contextmenu', function(ev) {
           ev.stopPropagation();
           $(document).click(); // TRIGGER GLOBAL CONTEXTMENU
@@ -7482,6 +7489,9 @@
 
         if ( this._is_closable ) {
           el.find(".ActionClose").click(function() {
+            if ( self._is_moving )
+              return;
+
             self.close();
           });
         } else {
@@ -7490,6 +7500,9 @@
 
         if ( this._is_minimizable ) {
           el.find(".ActionMinimize").click(function() {
+            if ( self._is_moving )
+              return;
+
             self._minimize();
           });
         } else {
@@ -7498,6 +7511,9 @@
 
         if ( this._is_maximizable ) {
           el.find(".ActionMaximize").click(function() {
+            if ( self._is_moving )
+              return;
+
             self._maximize();
           });
         } else {
@@ -7608,6 +7624,8 @@
               el.addClass("Blend");
               API.ui.cursor("move");
 
+              self._is_moving = true;
+
               return true;
             },
             stop : function() {
@@ -7617,6 +7635,10 @@
 
               self._left = self.$element.offset()['left'];
               self._top = self.$element.offset()['top'];
+
+              setTimeout(function() {
+                self._is_moving = false;
+              }, 50); // NOTE: This timeout prevents close/min/max while dragging
             }
           });
         }
