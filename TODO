@@ -3,6 +3,7 @@ CORE TODO:
 [HIG] Return ERROR_TYPE from VFS and push to JS
 [MED] VFS: Finish JS Class (Temporary / Persistent)
 [MED] Richtext: Add custom contextmenu
+[MED] IconView: Multiple selections
 [MED] Panel
       - Redesign preferences
       - Settings - Background Image
