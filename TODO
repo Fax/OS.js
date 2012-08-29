@@ -5,18 +5,20 @@ CORE TODO:
       - Only on images/videos/music so far
       - Only in USER VFS root dir
 [HIG] Rewrite error handling of launching processes... just use the globale error, duh!
-[HIG] Abstraction from Iframe and RichtextEditor
 [HIG] Return ERROR_TYPE from VFS and push to JS
 [MED] Combine all resources in production env.
       - Send a list of all the cat'ed items
       - Make ResourceManager::MinimizeCombine()
-[MED] VFS: Finish JS Class (Temporary / Persistent)
+[MED] Copy/Move dialog: confirm replace!
+[MED] Move DnD to Windows
+      - Solve global_dnd
 [MED] Richtext: Add custom contextmenu
 [MED] IconView: Multiple selections
 [MED] Remove yuicompressor from Git
       - Fix INSTALL
       - Add symlink ?!
       - Fix header.php
+[MED] VFS: Finish JS Class (Temporary / Persistent)
 [MED] Panel
       - Redesign preferences
       - Settings - Background Image

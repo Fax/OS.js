@@ -1271,6 +1271,190 @@
   });
 
   /////////////////////////////////////////////////////////////////////////////
+  // IFRAME
+  /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * IFrame -- Iframe
+   *
+   * @class
+   */
+  OSjs.Classes.IFrame = Class.extend({
+    _frame    : null,    //!< HTML Document iframe
+    _doc      : null,    //!< HTML Document reference
+    _win      : null,    //!< HTML Window reference
+
+    /**
+     * IFrame::init() -- Constructor
+     * @constructor
+     */
+    init : function(area, set_content) {
+      this._frame = $(area).get(0);
+
+      if ( this._frame.contentDocument ) {
+        this._win   = this._frame.contentWindow;
+        this._doc   = this._frame.contentWindow.document;
+      } else {
+        this._win   = this._frame.window;
+        this._doc   = this._frame.document;
+      }
+
+      console.log("IFrame::init()", this._frame);
+
+      if ( !this._doc || !this._win )
+        throw "Failed to initialize Richtext IFrame";
+
+      if ( set_content !== false ) {
+        this.setContent("");
+      }
+    },
+
+    /**
+     * IFrame::destroy() -- Destructor
+     * @destructor
+     */
+    destroy : function() {
+      this._frame   = null;
+      this._doc     = null;
+      this._win     = null;
+    },
+
+    /**
+     * IFrame::onFocus() -- When document gets focus
+     *
+     * Make this function call Window's focus() function.
+     * This solves all browser problems for now
+     *
+     * @return  void
+     */
+    onFocus : function() { },
+
+    /**
+     * IFrame::onBlur() -- When document blurs
+     *
+     * @return  void
+     */
+    onBlur : function() { },
+
+    /**
+     * IFrame::focus() -- Focus editor
+     *
+     * Make a binding in your window's "focus" event queue,
+     * and call this. This solves all browser problems for now.
+     *
+     * @return  void
+     */
+    focus : function() {
+      this._win.focus();
+    },
+
+    /**
+     * IFrame::blur() -- Blur editor
+     *
+     * Make a binding in your window's "blur" event queue,
+     * and call this. This solves all browser problems for now.
+     *
+     * @return  void
+     */
+    blur : function() {
+      this._win.blur();
+    },
+
+    /**
+     * IFrame::setSource() -- Set the iframe url
+     * @return  void
+     */
+    setSource : function(src) {
+      this._setContent(null, src);
+    },
+
+    /**
+     * IFrame::_setContent() -- Internal method for setting content
+     * @return  void
+     */
+    _setContent : function(content, src) {
+      var foc = false;
+      var self = this;
+
+      var _events = function() {
+        $(self._frame).unbind("load");
+        $(self._win).unbind("focus");
+        $(self._win).unbind("blur");
+
+        $(self._win).focus(function(ev) {
+          if ( foc )
+            return;
+          foc = true;
+
+          self.onFocus(ev);
+          $(document).click(); // FOR GLOBAL MENU!
+        });
+
+        $(self._win).blur(function(ev) {
+          if ( !foc )
+            return;
+          foc = false;
+
+          self.onBlur(ev);
+        });
+      };
+
+      if ( src ) {
+        $(this._frame).load(function() {
+          _events();
+        });
+        this._frame.src = src;
+      } else {
+        this._frame.src = "about:blank";
+        this._doc.open();
+        this._doc.write(content);
+        this._doc.close();
+        _events();
+      }
+    },
+
+    /**
+     * IFrame::setContent() -- Set the BODY HTML content of document
+     *
+     * This function clears the document entirely
+     *
+     * @param   String    content     The content
+     * @param   String    css         Extra CSS (optional)
+     * @return  void
+     */
+    setContent : function(content, css) {
+      content = content || "";
+      css     = css || "";
+
+      var body = '<head><link rel="stylesheet" type="text/css" href="/VFS/resource/iframe.css" /><style type="text/css">' + css + '</style></head><body>' + content + '</body>';
+      this._setContent(body);
+    },
+
+    /**
+     * IFrame::setInnerContent() -- Set the HTML content of document
+     *
+     * This function clears the document entirely
+     *
+     * @param   String    content     The content
+     * @return  void
+     */
+    setInnerContent : function(content) {
+      this._setContent(content);
+    },
+
+    /**
+     * IFrame::getContent() -- Get the contents of document in HTML format
+     * @return  String
+     */
+    getContent : function() {
+      if ( this._frame )
+        return this._doc.body.innerHTML;
+      return "";
+    }
+
+  });
+
+  /////////////////////////////////////////////////////////////////////////////
   // RICHTEXT
   /////////////////////////////////////////////////////////////////////////////
 
@@ -1288,37 +1472,19 @@
    *
    * @class
    */
-  OSjs.Classes.RichtextEditor = Class.extend({
+  OSjs.Classes.RichtextEditor = OSjs.Classes.IFrame.extend({
 
-    _frame    : null,    //!< HTML Document iframe
-    _doc      : null,    //!< HTML Document reference
-    _win      : null,    //!< HTML Window reference
     _enabled  : true,    //!< Editor enabled
-    _created  : false,   //!< Created var
 
     /**
      * RichtextEditor::init() -- Constructor
      * @constructor
      */
     init : function(area, enabled) {
-      this._frame = $(area).get(0);
-
-      if ( this._frame.contentDocument ) {
-        this._win   = this._frame.contentWindow;
-        this._doc   = this._frame.contentWindow.document;
-      } else {
-        this._win   = this._frame.window;
-        this._doc   = this._frame.document;
-      }
-
-      console.log("RichtextEditor::init()", this._frame);
-
-      if ( !this._doc || !this._win )
-        throw "Failed to initialize Richtext IFrame";
+      this._super(area, false);
 
       // Prepare design mode
       this._enabled = (enabled === undefined || enabled);
-      this._created = false;
 
       if ( this._enabled )
         this.enable();
@@ -1331,10 +1497,8 @@
      * @destructor
      */
     destroy : function() {
-      this._frame   = null;
-      this._doc     = null;
-      this._win     = null;
       this._enabled = true;
+      this._super();
     },
 
     /**
@@ -1366,7 +1530,7 @@
       if ( this._win ) {
         if ( this._enabled )
           this.enable();
-        this._win.focus();
+        this._super();
       }
     },
 
@@ -1382,7 +1546,7 @@
       if ( this._win ) {
         if ( this._enabled )
           this.disable();
-        this._win.blur();
+        this._super();
       }
     },
 
@@ -1688,102 +1852,6 @@
 
       if ( background )
         this.edit("backColor", background);
-    },
-
-    //
-    // FS
-    //
-
-    /**
-     * RichtextEditor::setSource() -- Set the iframe url
-     * @return  void
-     */
-    setSource : function(src) {
-      this._setContent(null, src);
-    },
-
-    /**
-     * RichtextEditor::_setContent() -- Internal method for setting content
-     * @return  void
-     */
-    _setContent : function(content, src) {
-      var foc = false;
-      var self = this;
-
-      var _events = function() {
-        $(self._frame).unbind("load");
-        $(self._win).unbind("focus");
-        $(self._win).unbind("blur");
-
-        $(self._win).focus(function(ev) {
-          if ( foc )
-            return;
-          foc = true;
-
-          self.onFocus(ev);
-          $(document).click(); // FOR GLOBAL MENU!
-        });
-
-        $(self._win).blur(function(ev) {
-          if ( !foc )
-            return;
-          foc = false;
-
-          self.onBlur(ev);
-        });
-      };
-
-      if ( src ) {
-        $(this._frame).load(function() {
-          _events();
-        });
-        this._frame.src = src;
-      } else {
-        this._frame.src = "about:blank";
-        this._doc.open();
-        this._doc.write(content);
-        this._doc.close();
-        _events();
-      }
-    },
-
-    /**
-     * RichtextEditor::setContent() -- Set the BODY HTML content of document
-     *
-     * This function clears the document entirely
-     *
-     * @param   String    content     The content
-     * @param   String    css         Extra CSS (optional)
-     * @return  void
-     */
-    setContent : function(content, css) {
-      content = content || "";
-      css     = css || "";
-
-      var body = '<head><link rel="stylesheet" type="text/css" href="/VFS/resource/iframe.css" /><style type="text/css">' + css + '</style></head><body>' + content + '</body>';
-      this._setContent(body);
-    },
-
-    /**
-     * RichtextEditor::setInnerContent() -- Set the HTML content of document
-     *
-     * This function clears the document entirely
-     *
-     * @param   String    content     The content
-     * @return  void
-     */
-    setInnerContent : function(content) {
-      this._setContent(content);
-    },
-
-    /**
-     * RichtextEditor::getContent() -- Get the contents of document in HTML format
-     * @return  String
-     */
-    getContent : function() {
-      if ( this._frame )
-        return this._doc.body.innerHTML;
-      return "";
     }
 
   });
