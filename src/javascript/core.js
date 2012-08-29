@@ -7361,7 +7361,13 @@
         this._origtitle = this._title;
 
         var fresh = true;
-        var el    = this._is_dialog ? $($("#Dialog").html()) : $($("#Window").html());
+        var el    = null;
+
+        if ( this._is_dialog ) {
+          el = $("<div class=\"Window Dialog\"><div class=\"WindowTop\"><div class=\"WindowTopInner\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div><div class=\"WindowTopControllers\"><div class=\"WindowTopController ActionClose\"><span>x</span></div></div></div><div class=\"WindowContent\"><div class=\"WindowContentInner\"><div class=\"DialogContent\"></div><div class=\"DialogButtons\"><button class=\"Choose\" style=\"display:none;\">Choose</button><button class=\"Ok\" style=\"display:none;\">Ok</button><button class=\"Close\">Close</button><button class=\"Cancel\" style=\"display:none;\">Cancel</button></div></div></div></div>");
+        } else {
+          el = $("<div class=\"Window\"><div class=\"WindowTop\"><div class=\"WindowTopInner\"><img alt=\"\" src=\"/img/blank.gif\" /><span></span></div><div class=\"WindowTopControllers\"><div class=\"WindowTopController\"><div class=\"ActionMinimize\">&nbsp;</div></div><div class=\"WindowTopController\"><div class=\"ActionMaximize\">&nbsp;</div></div><div class=\"WindowTopController\"><div class=\"ActionClose\">&nbsp;</div></div></div></div><div class=\"WindowContent\"><div class=\"WindowContentInner\"></div></div></div>");
+        }
 
         this.$element = el;
 
