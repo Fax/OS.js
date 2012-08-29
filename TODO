@@ -4,14 +4,12 @@ CORE TODO:
       - Does not come from text mime types
       - Only on images/videos/music so far
       - Only in USER VFS root dir
-[MED] Combine all resources in production env.
-      - Send a list of all the cat'ed items
-      - Make ResourceManager::MinimizeCombine()
-[MED] Add mime-checking to dropping
-      - Create a default drop handler
 [MED] Richtext: Add custom contextmenu
 [MED] IconView: Multiple selections
-[MED] VFS: Finish JS Class (Temporary / Persistent)
+[MED] JS VFS
+      - Finish up
+      - Temporary storage
+      - Persistent storage
 [MED] Panel
       - Redesign preferences
       - Settings - Background Image
@@ -19,6 +17,9 @@ CORE TODO:
       - Fix dock ?!
 [LOW] Rewrite core.js CrashApplication() and CustomCrash(), merge this
       - Also check exceptions here
+[LOW] Combine all resources in production env.
+      - Send a list of all the cat'ed items
+      - Make ResourceManager::MinimizeCombine()
 [LOW] WindowManager: Effect(s) configuration
 [LOW] Panel setting: Background Image
 [LOW] Panels: Add/Remove (Implement multiples in GUI)
