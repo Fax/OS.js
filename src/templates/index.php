@@ -140,16 +140,7 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
 <body>
 
 <div id="HomePage">
-  <h1>OS.js - JavaScript Web Desktop Environment (Version <?php print PROJECT_VERSION; ?> demo)</h1>
-  <p>
-    This is the demo site for testing OS.js releases.
-  </p>
-  <p>
-    For more information contact the author: <a href="https://plus.google.com/101576798387217383063?rel=author">Anders Evenrud</a> <a href="mailto:andersevenrud@gmail.com">&lt;andersevenrud@gmail.com&gt;</a>
-  </p>
-  <p>
-    Homepage on <a href="http://andersevenrud.github.com/OS.js/">GitHub</a>
-  </p>
+<?php require_template ("index.home.php"); ?>
 </div>
 
 <!-- Main Container -->
@@ -170,25 +161,22 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
     <div id="WindowTogglerTitle"><span>Empty</span></div>
   </div>
 
-  <div id="LoginDemoNotice" style="display:<?php print ENV_DEMO ? "block" : "none"; ?>">
-      <p>
-        <b>NOTE:</b> This is a demonstration version. Not all features are available.
-        If any errors occur, please clear the browser cache and try again before reporting any bugs.
-        You can also try to create a new user.
-      </p>
-  </div>
-
   <!-- Loaded content will appear here -->
 </div>
+
+<!-- Notices -->
+<?php if ( ENV_DEMO ) { require_template ("index.demo.php"); } ?>
 
 <!-- Login Window -->>
 <?php require_template ("index.login.php"); ?>
 
+<?php if ( ENV_PRODUCTION || ENV_DEMO ) { ?>
 <!-- Version Stamp -->
-<div id="Version" style="<?php echo ENV_PRODUCTION ? "" : "display:none;" ;?>">
+<div id="Version">
   OS.js version <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)<br />
   &copy; <?php print htmlspecialchars(PROJECT_COPYRIGHT); ?>
 </div>
+<?php } ?>
 
 </body>
 </html>

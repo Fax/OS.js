@@ -35,30 +35,13 @@
  */
 
 ?>
-<div id="LoginWindow">
-  <div id="Login">
-    <form method="post" action="javascript:void(0);" id="LoginForm">
-      <div class="Row">
-        <input type="text" id="LoginUsername" value="" name="username" placeholder="Username" />
-      </div>
-
-      <div class="Row">
-        <input type="password" id="LoginPassword" value="" name="password" placeholder="Password" />
-      </div>
-
-      <div class="Row">
-        <div id="LoginButtons">
-          <?php if ( ENABLE_REGISTRATION ) { ?>
-          <button id="CreateLoginButton">Create User</button>
-          <?php } ?>
-          <button id="LoginButton">Login</button>
-        </div>
-      </div>
-    </form>
-  </div>
-
-  <div id="LoadingBarContainer">
-    <div id="LoadingBar"></div>
-  </div>
-
-</div>
+  <h1>OS.js - JavaScript Web Desktop Environment (Version <?php print PROJECT_VERSION; ?> demo)</h1>
+  <p>
+    This is the demo site for testing OS.js releases.
+  </p>
+  <p>
+    For more information contact the author: <a href="https://plus.google.com/101576798387217383063?rel=author">Anders Evenrud</a> <a href="mailto:andersevenrud@gmail.com">&lt;andersevenrud@gmail.com&gt;</a>
+  </p>
+  <p>
+    Homepage on <a href="http://andersevenrud.github.com/OS.js/">GitHub</a>
+  </p>
