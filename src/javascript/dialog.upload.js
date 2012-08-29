@@ -100,25 +100,25 @@ OSjs.Dialogs.UploadOperationDialog = (function($, undefined) {
         var ftype = "";
 
         try {
-          pbar.progressbar({ value : 0 });
+          OSjs.Classes.ProgressBar(pbar, 0);
 
           var u = new OSjs.Classes.Uploader(self.upload_uri, self.upload_path, function(name, size, type) {
             fname = name;
             fsize = size;
             ftype = type;
 
-            pbar.progressbar({ value : 0 });
+            OSjs.Classes.ProgressBar(pbar, 0);
             sbar.html(sprintf("%s (%s)", fname, fsize));
           }, function(progress) {
             var pr = (parseInt(progress, 10) || 0);
-            pbar.progressbar({ value : pr });
+            OSjs.Classes.ProgressBar(pbar, pr);
             sbar.html(sprintf("%s (%s%% of %s)", fname, pr, fsize));
 
             self.clb_progress(fname, pr, fsize);
           }, function(response) {
             var fpath = self.upload_path + "/" + fname;
 
-            pbar.progressbar({ value : 100 });
+            OSjs.Classes.ProgressBar(pbar, 100);
             sbar.html(sprintf("%s %s (%s)", LABELS.finished, fname, fsize));
 
             setTimeout(function() {
