@@ -61,8 +61,6 @@ if ( (isset($_GET["file"]) && ($path = $_GET['file'])) ) {
       $filename = basename($path);
 
       if ( $valid ) {
-        error_log($absolute);
-
         if ( file_exists($absolute) && ($mime = VFS::GetMIME($absolute)) ) {
           @ob_end_clean(); // Important, in case headers were sendt
 
