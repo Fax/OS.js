@@ -13,6 +13,10 @@ CORE TODO:
 [MED] VFS: Finish JS Class (Temporary / Persistent)
 [MED] Richtext: Add custom contextmenu
 [MED] IconView: Multiple selections
+[MED] Remove yuicompressor from Git
+      - Fix INSTALL
+      - Add symlink ?!
+      - Fix header.php
 [MED] Panel
       - Redesign preferences
       - Settings - Background Image
