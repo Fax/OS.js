@@ -43,6 +43,8 @@ if ( $locale = Core::get()->getLocale() ) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <!--
   OS.js - JavaScript Operating System - Main HTML Template
 
@@ -73,12 +75,10 @@ if ( $locale = Core::get()->getLocale() ) {
   @author  Anders Evenrud <andersevenrud@gmail.com>
   @licence Simplified BSD License
   -->
+
+  <!-- Meta -->
   <title>OS.js <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)</title>
 
-  <!-- Compability -->
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
-  <!-- SEO -->
   <meta name="keywords" content="OS.js, JavaScript Operating System, Web Desktop" />
   <meta name="description" content="OS.js - JavaScript Web Desktop" />
   <meta name="author" content="<?php print PROJECT_AUTHOR; ?> <?php print PROJECT_CONTACT; ?>" />
@@ -118,8 +118,8 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
   <link rel="stylesheet" type="text/css" href="/VFS/cursor/default" id="CursorFace" />
   <link rel="stylesheet" type="text/css" href="/VFS/font/Sansation" id="FontFace" />
 
-  <!-- Google Analytics -->
 <?php if ( GA_ENABLE ) { ?>
+  <!-- Google Analytics -->
   <script type="text/javascript">
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', '<?php print GA_ACCOUNT_ID; ?>']);
@@ -131,8 +131,6 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
-<?php } else { ?>
-  <!-- Disabled on development environment -->
 <?php } ?>
 </head>
 <body>
