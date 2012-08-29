@@ -7756,6 +7756,7 @@
             ev.preventDefault();
 
             var path  = null;
+            var mime  = "";
             var data  = ev.originalEvent.dataTransfer;
             var files = ev.originalEvent.dataTransfer.files;
 
@@ -7766,13 +7767,18 @@
                   plain = JSON.parse(plain);
                   if ( plain && plain.path ) {
                     path = plain.path;
+                    mime = plain.mime || "";
                   }
                 } catch ( eee ) {}
               }
             }
 
             self._call("dnd", {
+              // Internal
               'path'  : path,
+              'mime'  : mime,
+
+              // Browser
               'files' : files,
               'data'  : data,
               'event' : ev

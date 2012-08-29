@@ -1,5 +1,6 @@
 CORE TODO:
 -------------------------------------------------------------------------------
+[HIG] Notifications block events when showing (right side of screen)
 [HIG] FIX THAT ANNOYING BUG THAT ERRORS INTO APACHE LOG WHEN READING RESOURCES FROM VFS
       - Does not come from text mime types
       - Only on images/videos/music so far
