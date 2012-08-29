@@ -4,13 +4,9 @@ _work/
 *.*.sw*
 .vimerr
 vim.session
-template/*.php
-doc/doxygen.log
-doc/api/*
-doc/*
+doc/
 public_html/.htpasswd
-VFS/*
-!VFS/0
+VFS
 public_html/media/Public/*
 
 # Misc
@@ -22,18 +18,13 @@ vendor/*
 !vendor/launcher
 
 # Build files
-src/build/minimize.cache
 src/locale/*/LC_MESSAGES/messages.mo
+src/build/minimize.cache
 src/build/packages.xml
-src/build/applications.xml
-src/build/database.sdb
-src/build/filesystem.sdb
 src/build/fontcache.xml
 
 # Minimized files
-src/apps/*/_min
+src/packages/*/_min
 src/resources/_min
-src/base/_min
-src/base/locale/_min
 src/javascript/_min
 src/javascript/locale/_min
