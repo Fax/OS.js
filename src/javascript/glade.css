@@ -290,6 +290,7 @@
   height : 15px;
   width : 100%;
   padding : 5px;
+  white-space : nowrap;
 }
 
 /* GtkCheckButton */
@@ -594,6 +595,11 @@
   left : 0px;
   right : 0px;
   bottom : 0px;
+
+  /* Fixes shrinking bugs in FF */
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
   width : 100%;
   height : 100%;
 }
