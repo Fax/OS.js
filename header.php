@@ -276,7 +276,7 @@ if ( !defined("GA_ACCOUNT_ID") )
 //
 
 if ( !defined("BIN_YUI") )
-  define("BIN_YUI",             sprintf("%s/java-wrapper.sh %s/yuicompressor-2.4.6.jar", PATH_BIN, PATH_VENDOR));
+  define("BIN_YUI",             sprintf("%s/java-wrapper.sh %s/yui-compressor/yuicompressor.jar", PATH_BIN, PATH_VENDOR));
 if ( !defined("BIN_CC") )
   define("BIN_CC",              sprintf("%s/java-wrapper.sh %s/closure-compiler/compiler.jar", PATH_BIN, PATH_VENDOR));
 if ( !defined("BIN_CC_ENABLE") )
