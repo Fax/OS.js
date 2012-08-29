@@ -474,7 +474,8 @@ abstract class CoreSettings
       "json.js",
       "sprintf.js",
       "jquery.js",
-      "jquery-ui.js"
+      "jquery-ui.js",
+      "jquery-ui-theme.css"
     ),
     "code" => Array(
     )
@@ -515,6 +516,7 @@ abstract class CoreSettings
   /**
    * @var Frontend Main Resources
    * @desc Used mainly for file compression lists
+   *       NOTE: If combined resources are enabled, these files are not used
    */
   protected static $_CoreResources = Array(
     "theme.default.css",
@@ -527,10 +529,10 @@ abstract class CoreSettings
     "pimp.css",
     "glade.css",
     "iframe.css",
+    "utils.js",
     "init.js",
     "classes.js",
-    "core.js",
-    "utils.js"
+    "core.js"
   );
 
   /**

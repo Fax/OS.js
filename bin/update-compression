@@ -39,12 +39,17 @@ require "header.php";
 
 $verbose = false;
 $force   = false;
+$combine = true;
 
-$cmd_short = "vfh";
-$cmd_long = Array("verbose", "force", "help");
+$cmd_short = "cvfh";
+$cmd_long = Array("combine", "verbose", "force", "help");
 if ( $options = getopt($cmd_short, $cmd_long) ) {
   foreach ( $options as $k => $v ) {
     switch ( $k ) {
+      case "c" :
+      case "combine" :
+        $combine = true;
+      break;
       case "v" :
       case "verbose" :
         $verbose = true;
@@ -140,5 +145,38 @@ file_put_contents(MINIMIZE_CACHE, json_encode((Array)$timestamps));
 // Display result
 print sprintf("\nCompressed %d of %d file(s)\n", $total_compressed, $total_files);
 print sprintf("Initial size: %db, Resulted size: %db, %d%% Compression\n\n", $size_before, $size_after, $size_result);
+
+if ( $combine ) {
+  if ( $resources = ResourceManager::getAllResources(false) ) {
+    $total = 0;
+    $css = Array();
+    $js  = Array();
+
+    foreach ( $resources['resources'] as $res ) {
+      $res = basename($res);
+      if ( preg_match("/^(theme|cursor)/", $res) )
+        continue;
+
+      if ( preg_match("/\.css$/", $res) ) {
+        $css[] = file_get_contents(sprintf(RESOURCE_CORE_MIN, $res));
+        $total++;
+      } else {
+        $js[] = file_get_contents(sprintf(RESOURCE_CORE_MIN, $res));
+        $total++;
+      }
+
+    }
+
+    $css = implode("\n", $css);
+    $js  = implode("\n", $js);
+
+    $size_js  = file_put_contents(sprintf(RESOURCE_COMBINED_MIN, "js"), $js);
+    $size_css = file_put_contents(sprintf(RESOURCE_COMBINED_MIN, "css"), $css);
+
+    print sprintf("Combining %d file(s)\n", $total);
+    print sprintf("Combined CSS size: %d\n", $size_css);
+    print sprintf("Combined CSS size: %d\n", $size_js);
+  }
+}
 
 ?>

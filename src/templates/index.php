@@ -84,21 +84,7 @@ if ( $locale = Core::get()->getLocale() ) {
   <meta name="author" content="<?php print PROJECT_AUTHOR; ?> <?php print PROJECT_CONTACT; ?>" />
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-  <!-- OS.js stylesheets -->
-  <link rel="stylesheet" type="text/css" href="/VFS/resource/main.css" />
-  <link rel="stylesheet" type="text/css" href="/VFS/resource/dialogs.css" />
-  <link rel="stylesheet" type="text/css" href="/VFS/resource/glade.css" />
-  <link rel="stylesheet" type="text/css" href="/VFS/resource/pimp.css" />
-
-  <link rel="stylesheet" type="text/css" href="/VFS/theme/default" id="ThemeBase" />
-  <link rel="stylesheet" type="text/css" href="/VFS/theme/none" id="ThemeFace" />
-  <link rel="stylesheet" type="text/css" href="/VFS/cursor/default" id="CursorFace" />
-  <link rel="stylesheet" type="text/css" href="/VFS/font/Sansation" id="FontFace" />
-
-  <!-- Vendor stylesheets -->
-  <link rel="stylesheet" type="text/css" href="/vendor/jquery-ui-theme.css" />
-
-  <!-- Vendor libraries -->
+  <!-- Vendor -->
 <?php
 foreach ( CoreSettings::getPreload() as $key => $links ) {
   if ( $key == "code" ) {
@@ -107,18 +93,30 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
     }
   } else {
     foreach ( $links as $l ) {
-      print sprintf("  <script charset=\"utf-8\" type=\"text/javascript\" src=\"/%s/%s\"></script>\n", $key, $l);
+      if ( preg_match("/\.css$/", $l) ) {
+        print sprintf("  <link rel=\"stylesheet\" type=\"text/css\" href=\"/%s/%s\" />\n", $key, $l);
+      } else {
+        print sprintf("  <script charset=\"utf-8\" type=\"text/javascript\" src=\"/%s/%s\"></script>\n", $key, $l);
+      }
     }
   }
 }
 ?>
 
-  <!-- OS.js libraries -->
+  <!-- OS.js -->
   <script charset="utf-8" type="text/javascript" src="/VFS/resource/utils.js"></script>
   <script charset="utf-8" type="text/javascript" src="/VFS/resource/init.js"></script>
   <script charset="utf-8" type="text/javascript" src="/VFS/language/<?php print $current_locale; ?>" id="LanguageFile"></script>
   <script charset="utf-8" type="text/javascript" src="/VFS/resource/classes.js"></script>
   <script charset="utf-8" type="text/javascript" src="/VFS/resource/core.js"></script>
+  <link rel="stylesheet" type="text/css" href="/VFS/resource/main.css" />
+  <link rel="stylesheet" type="text/css" href="/VFS/resource/dialogs.css" />
+  <link rel="stylesheet" type="text/css" href="/VFS/resource/glade.css" />
+  <link rel="stylesheet" type="text/css" href="/VFS/resource/pimp.css" />
+  <link rel="stylesheet" type="text/css" href="/VFS/theme/default" id="ThemeBase" />
+  <link rel="stylesheet" type="text/css" href="/VFS/theme/none" id="ThemeFace" />
+  <link rel="stylesheet" type="text/css" href="/VFS/cursor/default" id="CursorFace" />
+  <link rel="stylesheet" type="text/css" href="/VFS/font/Sansation" id="FontFace" />
 
   <!-- Google Analytics -->
 <?php if ( GA_ENABLE ) { ?>

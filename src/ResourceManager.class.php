@@ -331,7 +331,7 @@ abstract class ResourceManager
    * @see bin/update-compression
    * @return Array
    */
-  public static function getAllResources() {
+  public static function getAllResources($packages = true) {
     $result = Array(
       "locales"   => Array(),
       "resources" => Array(),
@@ -356,12 +356,14 @@ abstract class ResourceManager
     }
 
     // Packages
-    if ( $xml = file_get_contents(PACKAGE_BUILD) ) {
-      if ( $xml = new SimpleXmlElement($xml) ) {
-        foreach ( $xml as $app ) {
-          if ( isset($app->resource) ) {
-            foreach ( $app->resource as $r ) {
-              $result['packages'][] = sprintf("%s/%s/%s", PATH_PACKAGES, ((string) $app['packagename']), ((string) $r));
+    if ( $packages === true ) {
+      if ( $xml = file_get_contents(PACKAGE_BUILD) ) {
+        if ( $xml = new SimpleXmlElement($xml) ) {
+          foreach ( $xml as $app ) {
+            if ( isset($app->resource) ) {
+              foreach ( $app->resource as $r ) {
+                $result['packages'][] = sprintf("%s/%s/%s", PATH_PACKAGES, ((string) $app['packagename']), ((string) $r));
+              }
             }
           }
         }
