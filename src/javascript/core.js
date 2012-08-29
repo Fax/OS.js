@@ -4218,8 +4218,7 @@
       this._workers         = {};
       this._sockets         = {};
       this._bindings        = {
-        "vfs" : [],
-        "dnd" : []
+        "vfs" : []
       };
 
       console.group("Application::init()");
@@ -7281,7 +7280,8 @@
         "focus"   : [],
         "blur"    : [],
         "resize"  : [],
-        "keydown" : []
+        "keydown" : [],
+        "dnd"     : []
       };
 
       console.group("Window::init()");
@@ -7759,9 +7759,9 @@
           dnd.bind("drop", function(ev) {
             ev.stopPropagation();
             ev.preventDefault();
-            if ( self.app ) {
-              self.app._call("dnd", ev.originalEvent.dataTransfer);
-            }
+
+            self._call("dnd", {'data' : ev.originalEvent.dataTransfer, 'event' : ev});
+
             ___hide();
             return false;
           });
