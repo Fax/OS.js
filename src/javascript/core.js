@@ -7448,6 +7448,14 @@
 
             ev.stopPropagation();
             ev.preventDefault();
+          })./*mousedown(function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            return false;
+          }).*/dblclick(function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            return false;
           });
         }
 
@@ -7485,6 +7493,16 @@
         }
 
         el.find(".WindowTop").bind("contextmenu",function() {
+          return false;
+        });
+
+        el.find(".WindowTopController").mousedown(function(ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          return false;
+        }).dblclick(function(ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
           return false;
         });
 
