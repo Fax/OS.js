@@ -53,7 +53,7 @@ class Compiler
 
   public static $TemplatePHP;             //!< text/plain PHP Template
   public static $TemplateCSS;             //!< text/plain CSS Template
-  public static $TemplateJS;              //!< text/plain Application JS Template
+  public static $TemplateJSAPP;           //!< text/plain Application JS Template
   public static $TemplateJSPI;            //!< text/plain PanelItem JS Template
   public static $TemplateJSBS;            //!< text/plain BackgroundService JS Template
   public static $TemplateJSWindow;        //!< text/plain Glade Template
@@ -403,7 +403,7 @@ EOJAVASCRIPT;
       $data["icon"]  = PanelItem::PANELITEM_ICON;
       $data["desc"]  = PanelItem::PANELITEM_DESC;
     } else if ( $classType == "Application" ) {
-      $templateJS = self::$TemplateJS;
+      $templateJS = self::$TemplateJSAPP;
       $data["title"] = Application::APPLICATION_TITLE;
       $data["icon"]  = Application::APPLICATION_ICON;
     } else {
@@ -607,7 +607,7 @@ EOJAVASCRIPT;
 
 Compiler::$TemplatePHP      = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.php"));
 Compiler::$TemplateCSS      = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.css"));
-Compiler::$TemplateJS       = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.js"));
+Compiler::$TemplateJSAPP    = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.application.js"));
 Compiler::$TemplateJSPI     = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.panelitem.js"));
 Compiler::$TemplateJSBS     = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.service.js"));
 Compiler::$TemplateJSWindow = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "compiler.window.js"));
