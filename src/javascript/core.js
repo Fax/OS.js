@@ -2768,7 +2768,9 @@
      * @return  bool
      */
     global_error : function(msg, url, lno) {
+      url = url || window.location.href;
       var title = msg.split(":", 1).shift();
+
       CrashCustom("_" + title, msg, sprintf("in %s on line %d", url, lno));
 
       if ( ENV_BUGREPORT ) {

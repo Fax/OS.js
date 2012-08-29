@@ -157,3 +157,6 @@ msgstr "The username already exists!"
 msgid "Invalid or no action given!"
 msgstr "Invalid or no action given!"
 
+msgid "Failed to perform operation or permission denied!"
+msgstr "Failed to perform operation or permission denied!"
+
