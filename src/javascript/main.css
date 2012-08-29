@@ -517,12 +517,17 @@ ul.CompactList li {
 }
   .DialogButtons {
     position : absolute;
-    bottom : 10px;
+    bottom : 20px;
     right : 0px;
     left : 0px;
     height : 20px;
     text-align : center;
+    margin : -5px;
   }
+    .DialogButtons button {
+      margin : 5px;
+      min-width : 60px;
+    }
 
 .CompabilityDialogTable {
   margin : 10px;
