@@ -137,7 +137,7 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
   <!-- Disabled on development environment -->
 <?php } ?>
 </head>
-<body class="env_<?php print (ENV_DEMO ? "demo" : (ENV_PRODUCTION ? "live" : "dev")); ?>">
+<body>
 
 <div id="HomePage">
   <h1>OS.js - JavaScript Web Desktop Environment (Version <?php print PROJECT_VERSION; ?> demo)</h1>
@@ -181,12 +181,11 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
   <!-- Loaded content will appear here -->
 </div>
 
-<!-- Templates -->
-
-<?php require_template ("Login.php"); ?>
+<!-- Login Window -->>
+<?php require_template ("index.login.php"); ?>
 
 <!-- Version Stamp -->
-<div id="Version">
+<div id="Version" style="<?php echo ENV_PRODUCTION ? "" : "display:none;" ;?>">
   OS.js version <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)<br />
   &copy; <?php print htmlspecialchars(PROJECT_COPYRIGHT); ?>
 </div>
