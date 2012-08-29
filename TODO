@@ -7,8 +7,8 @@ CORE TODO:
 [MED] Combine all resources in production env.
       - Send a list of all the cat'ed items
       - Make ResourceManager::MinimizeCombine()
-[MED] Move DnD to Windows
-      - Solve global_dnd
+[MED] Add mime-checking to dropping
+      - Create a default drop handler
 [MED] Richtext: Add custom contextmenu
 [MED] IconView: Multiple selections
 [MED] VFS: Finish JS Class (Temporary / Persistent)
