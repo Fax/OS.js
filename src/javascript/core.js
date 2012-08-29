@@ -46,7 +46,7 @@
   //var ZINDEX_WINDOW_MAX   = 88888889;               //!< Max Window z-index
   var ZINDEX_WINDOW_ONTOP = 90000000;               //!< Window cur ontop z-index
   //var ZINDEX_LOADING      = 1000100;                //!< Loadingbar z-index
-  var WINDOW_MIN_HEIGHT   = 100;
+  var WINDOW_MIN_HEIGHT   = 128;
   var WINDOW_MIN_WIDTH    = 128;
   // @endconstants
 
@@ -8891,7 +8891,6 @@
       var self = this;
       var el = this._super(id, mcallback);
 
-      //this._resize(dc.width() + 20, dc.height() + 50);
       this._gravitate();
 
       if ( this._is_dialog == "confirm" ) {

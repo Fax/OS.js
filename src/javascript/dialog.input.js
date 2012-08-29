@@ -65,7 +65,7 @@ OSjs.Dialogs.InputOperationDialog = (function($, undefined) {
         this._title    = LABELS.title;
         this._content  = $("<div class=\"OperationDialog OperationDialogInput\">    <h1>Input:</h1>    <div class=\"OperationDialogInner\">      <input type=\"text\" />    </div>  </div>");
         this._width    = 200;
-        this._height   = 100;
+        this._height   = 130;
       },
 
 
@@ -74,7 +74,7 @@ OSjs.Dialogs.InputOperationDialog = (function($, undefined) {
         this._super(id, mcallback);
 
         if ( this.desc ) {
-          this.$element.find("h1").html(this.desc + ":");
+          this.$element.find("h1").html(this.desc);
         }
 
         var txt = this.$element.find(".OperationDialog input");
