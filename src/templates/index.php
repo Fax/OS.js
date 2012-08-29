@@ -183,11 +183,11 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
 
 <!-- Templates -->
 
-<?php require PATH_TEMPLATES . "/Login.php"; ?>
+<?php require_template ("Login.php"); ?>
 
-<?php require PATH_TEMPLATES . "/Window.php"; ?>
+<?php require_template ("Window.php"); ?>
 
-<?php require PATH_TEMPLATES . "/Dialog.php"; ?>
+<?php require_template ("Dialog.php"); ?>
 
 <!-- Version Stamp -->
 <div id="Version">

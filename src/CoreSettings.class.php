@@ -541,6 +541,13 @@ abstract class CoreSettings
     "en_US.js", "nb_NO.js"
   );
 
+  /**
+   * @var Custom Templates
+   * @desc Overrides internal templates
+   */
+  protected static $_CustomTemplates = Array(
+  );
+
   /////////////////////////////////////////////////////////////////////////////
   // SETTERS
   /////////////////////////////////////////////////////////////////////////////
@@ -562,6 +569,16 @@ abstract class CoreSettings
   }
 
   /**
+   * addCustomTemplate() -- Add a custom template
+   * @param   String      $k      Template name
+   * @param   String      $v      Absolute path to template
+   * @return  void
+   */
+  public static function addCustomTemplate($k, $v) {
+    self::$_CustomTemplates[$k] = $v;
+  }
+
+  /**
    * setRegistry() -- Set the default registry
    * @return void
    */
@@ -575,6 +592,14 @@ abstract class CoreSettings
    */
   public static function setVFSMeta(Array $meta) {
     self::$_VFSMeta = $meta;
+  }
+
+  /**
+   * setCustomTemplates() -- Set the custom defined templates
+   * @return  void
+   */
+  public static function setCustomTemplates(Array $arr) {
+    self::$_CustomTemplates = $arr;
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -667,6 +692,26 @@ abstract class CoreSettings
    */
   public static function getIgnoreFiles() {
     return self::$_IgnoreFiles;
+  }
+
+  /**
+   * getCustomTemplates() -- Get custom defined templates
+   * @return  Array
+   */
+  public static function getCustomTemplates() {
+    return self::$_CustomTemplates;
+  }
+
+  /**
+   * getCustomTemplate() -- Get custom defined template by name
+   * @param   String    $t      Template name
+   * @return  Mixed
+   */
+  public static function getCustomTemplate($t) {
+    if ( isset(self::$_CustomTemplates[$t]) ) {
+      return self::$_CustomTemplates[$t];
+    }
+    return null;
   }
 
 }
