@@ -5,7 +5,6 @@ CORE TODO:
       - Only on images/videos/music so far
       - Only in USER VFS root dir
 [MED] Richtext: Add custom contextmenu
-[MED] IconView: Multiple selections
 [MED] JS VFS
       - Finish up
       - Temporary storage

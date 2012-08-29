@@ -2192,7 +2192,7 @@
   OSjs.Classes.Iconview = Class.extend({
     $element      : null,       //!< HTML Element
     _currentView  : "icon",     //!< Current view type
-    _currentItem  : null,       //!< Current selected item HTML
+    _currentItem  : [],         //!< Current selected item HTML
     _sortKey      : null,       //!< Current sorting key
     _sortDir      : "asc",      //!< Current sorting direction
     _opts         : {},         //!< Options
@@ -2202,16 +2202,21 @@
      * @constructor
      */
     init : function(el, view, opts) {
+      opts = opts || {};
+
       if ( !el )
         throw "Cannot create IconView without root container";
 
-      if ( !opts ) {
-        opts = {"dnd" : true};
+      if ( opts.dnd === undefined ) {
+        opts.dnd = true;
+      }
+      if ( opts.multiselect === undefined ) {
+        opts.multiselect = false;
       }
 
       this.$element     = $(el);
       this._currentView = view    || "icon";
-      this._currentItem = null;
+      this._currentItem = [];
       this._opts        = opts;
       this._sortKey     = null;
       this._sortDir     = "asc";
@@ -2268,7 +2273,7 @@
      */
     destroy : function() {
       this.$element     = null;
-      this._currentItem = null;
+      this._currentItem = [];
       this._currentView = "icon";
       this._opts        = {};
       this._sortKey     = null;
@@ -2281,7 +2286,7 @@
      * @return  void
      */
     onActionPress : function(ev, key) {
-      var cur = this._currentItem ? $(this._currentItem).index(): -1;
+      var cur = this._currentItem.length ? $(this._currentItem[0]).index(): -1;
       if ( cur != -1 ) {
         var max = this.$element.find(".GtkIconViewItem").size() - 1;
         if ( key == "up" || key == "left" ) {
@@ -2330,18 +2335,41 @@
      * @return  void
      */
     onItemSelect : function(ev, el, iter, focus) {
+      el = el ? $(el) : null;
+      var ctrl = (ev ? (ev.ctrlKey) : false);
+
       if ( focus === undefined || focus === true)
         this.onFocus(ev);
 
-      if ( this._currentItem ) {
-        $(this._currentItem).removeClass("Current");
-        this._currentItem = null;
-      }
+      if ( this._opts.multiselect && ctrl ) {
+        var desel = false;
+        if ( this._currentItem.length ) {
+          var i = 0, l = this._currentItem.length, e;
+          for ( i; i < l; i++ ) {
+            e = this._currentItem[i];
+            if ( e === el.index() ) {
+              desel = true;
+              this.$element.find(".GtkIconViewItem").eq(e).removeClass("Current");
+              this._currentItem.splice(i, 1);
+              break;
+            }
+          }
+        }
 
-      if ( el ) {
-        this._currentItem = $(el);
-        if ( this._currentItem ) {
-          this._currentItem.addClass("Current");
+        if ( !desel ) {
+          if ( !this._currentItem.length ) {
+            this._currentItem = [];
+          }
+          this._currentItem.push(el.index());
+          el.addClass("Current");
+        }
+      } else {
+        this.$element.find(".GtkIconViewItem").removeClass("Current");
+        this._currentItem = [];
+
+        if ( el ) {
+          this._currentItem = [el.index()];
+          el.addClass("Current");
         }
       }
 
@@ -2362,6 +2390,9 @@
      * @return  void
      */
     onItemContextMenu : function(ev, el, iter) {
+      if ( (this._currentItem.length > 1) )
+        return false;
+
       this.onItemSelect(ev, el, iter);
       return false;
     },
@@ -2631,6 +2662,20 @@
       }
 
       this.onItemSelect(null, null);
+    },
+
+    /**
+     * IconView::getSelectedItems() -- Get a list of selected items
+     * @return  Array
+     */
+    getSelectedItems : function() {
+      var i = 0, l = this._currentItem.length;
+      var result = [];
+      var els    = this.$element.find(".GtkIconViewItem");
+      for ( i; i < l; i++ ) {
+        result.push(els.eq(this._currentItem[i]).data());
+      }
+      return result;
     }
 
   });
