@@ -435,8 +435,13 @@ ul.CompactList li {
     .WindowTopInner {
       height : 28px;
       line-height : 28px;
+      overflow : hidden;
     }
     .WindowTopInner span {
+      /*
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      */
     }
     .WindowTop img {
       float : left;
