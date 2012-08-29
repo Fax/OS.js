@@ -1,3 +1,28 @@
+## 0.9.3
+
+WARNING: Breaks current DnD for applications.
+Binding has been moved Window.
+
+* Deps: Removed yuicompressor
+* Libs\JS: Added IFrame, abstraction in RichtextEditor
+* Core\JS: Implemented File Move/Copy Dialog
+* Core\JS\XP: Fixed action button clicking when dragging Window
+* Core\JS: Moved DnD bindings to Window
+* Core\JS: Implemented default DnD Drop handler to handle internal files
+* CSS: Fixed notifications blocking events
+* CSS: Cross-browser maximized container fixes
+* CSS: Cross-browser fixes for overflowing texts
+* CSS: MessageBox style updated
+* dialog.upload.js: Now using internal progressbar
+* Core: Added require_template() for custom templates
+* VFS: Added error message on access denied and failure
+* CoreSettings: Added support for custom templates
+* Templates: Removed Window and Dialog, moved to JS
+* Templates: Renaming of files
+* Templates: Added index.demo, index.home
+* count-lines: Updated
+* Updated documentation
+
 ## 0.9.2
 
 * download.php: Fixed header errors
