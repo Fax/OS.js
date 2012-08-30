@@ -2604,6 +2604,8 @@
         });
         el.bind("drop", function(ev) {
           ev.preventDefault();
+          ev.stopPropagation();
+
           if ( droppable ) {
             return self.onDragAction(ev, "drop", $(this));
           }
