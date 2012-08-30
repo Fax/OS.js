@@ -2286,6 +2286,9 @@
      * @return  void
      */
     onActionPress : function(ev, key) {
+      if ( !this.$element )
+        return;
+
       var cur = this._currentItem.length ? this._currentItem[0] : -1;
       if ( cur != -1 ) {
         var max = this.$element.find(".GtkIconViewItem").size() - 1;
@@ -2349,7 +2352,8 @@
             e = this._currentItem[i];
             if ( e === el.index() ) {
               desel = true;
-              this.$element.find(".GtkIconViewItem").eq(e).removeClass("Current");
+              if ( this.$element )
+                this.$element.find(".GtkIconViewItem").eq(e).removeClass("Current");
               this._currentItem.splice(i, 1);
               break;
             }
@@ -2364,7 +2368,8 @@
           el.addClass("Current");
         }
       } else {
-        this.$element.find(".GtkIconViewItem").removeClass("Current");
+        if ( this.$element )
+          this.$element.find(".GtkIconViewItem").removeClass("Current");
         this._currentItem = [];
 
         if ( el ) {
@@ -2452,6 +2457,9 @@
         break;
 
         case "dragend" :
+          if ( !this.$element )
+            return false;
+
           if ( item ) {
             this.$element.removeClass("DND-Enter");
           } else {
@@ -2678,12 +2686,14 @@
      * @return  Mixed
      */
     getItem : function(key, value) {
-      var els = this.$element.find(".GtkIconViewItem");
-      var i = 0, l = els.length, el;
-      for ( i; i < l; i++ ) {
-        el = $(els[i]);
-        if ( el.data(key) === value ) {
-          return el;
+      if ( this.$element ) {
+        var els = this.$element.find(".GtkIconViewItem");
+        var i = 0, l = els.length, el;
+        for ( i; i < l; i++ ) {
+          el = $(els[i]);
+          if ( el.data(key) === value ) {
+            return el;
+          }
         }
       }
       return null;
@@ -2694,11 +2704,13 @@
      * @return  Array
      */
     getSelectedItems : function() {
-      var i = 0, l = this._currentItem.length;
       var result = [];
-      var els    = this.$element.find(".GtkIconViewItem");
-      for ( i; i < l; i++ ) {
-        result.push(els.eq(this._currentItem[i]).data());
+      if ( this.$element ) {
+        var i = 0, l = this._currentItem.length;
+        var els    = this.$element.find(".GtkIconViewItem");
+        for ( i; i < l; i++ ) {
+          result.push(els.eq(this._currentItem[i]).data());
+        }
       }
       return result;
     }
