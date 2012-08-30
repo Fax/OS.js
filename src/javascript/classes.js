@@ -2286,7 +2286,7 @@
      * @return  void
      */
     onActionPress : function(ev, key) {
-      var cur = this._currentItem.length ? $(this._currentItem[0]).index(): -1;
+      var cur = this._currentItem.length ? this._currentItem[0] : -1;
       if ( cur != -1 ) {
         var max = this.$element.find(".GtkIconViewItem").size() - 1;
         if ( key == "up" || key == "left" ) {
