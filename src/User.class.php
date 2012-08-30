@@ -145,6 +145,14 @@ class User
    * @return bool
    */
   public final function isLoggedIn() {
+    if ( (SESSION_TIMEOUT > 0) && $this->logged_in && $this->last_login ) {
+      $diff = ((int)time() - (int)$this->last_login->format("U"));
+      if ( $diff < SESSION_TIMEOUT ) {
+        return true;
+      }
+      return false;
+    }
+
     return $this->logged_in === 1 ? true : false;
   }
 
