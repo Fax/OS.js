@@ -37,14 +37,16 @@ OSjs.Dialogs.LaunchOperationDialog = (function($, undefined) {
     "en_US" : {
       "title"     : "Select an application",
       "not_found" : "Found no suiting application for this MIME type.",
-      "found"     : "Found multiple application supporting this MIME type:",
-      "set"       : "Use this as default application"
+      "found"     : "Open file with (MIME %s):",
+      "set"       : "Use this as default application",
+      "unknown"   : "unknown"
     },
     "nb_NO" : {
       "title"     : "Velg en applikasjon",
       "not_found" : "Fant ingen applikasjoner som støtter denne MIME typen.",
-      "found"     : "Fant flere applikasjoner som støtter denne MIME'n:",
-      "set"       : "Bruk dette som standard applikasjon"
+      "found"     : "Åpne fil med (MIME %s):",
+      "set"       : "Bruk dette som standard applikasjon",
+      "unknown"   : "unkjent"
     }
   };
 
@@ -61,6 +63,7 @@ OSjs.Dialogs.LaunchOperationDialog = (function($, undefined) {
      */
     var _LaunchOperationDialog = OperationDialog.extend({
       init : function(args) {
+        this.mime         = args.mime         || LABELS.unknown;
         this.list         = args.list         || [];
         this.clb_finish   = args.on_apply     || function() {};
         this.not_found    = args.not_found === undefined ? false : args.not_found;
@@ -84,7 +87,7 @@ OSjs.Dialogs.LaunchOperationDialog = (function($, undefined) {
         if ( this.not_found ) {
           this.$element.find(".OperationDialogInner").prepend("<p>" + LABELS.not_found + "</p>");
         } else {
-          this.$element.find(".OperationDialogInner").prepend("<p>" + LABELS.found + "</p>");
+          this.$element.find(".OperationDialogInner").prepend("<p>" + sprintf(LABELS.found, this.mime) + "</p>");
         }
 
         this.$element.find(".UseDefault").html(LABELS.set);

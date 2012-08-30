@@ -687,7 +687,7 @@
           if ( found.length == 1 ) {
             __run(found[0]);
           } else {
-            API.ui.dialog_launch({'list' : list, 'on_apply' : function(mapp, set_default) {
+            API.ui.dialog_launch({'mime' : mime, 'list' : list, 'on_apply' : function(mapp, set_default) {
               __run(mapp);
               if ( set_default ) {
                 SetVFSObjectDefault(mapp, path, mime);
