@@ -69,35 +69,34 @@
   bottom : 40px;
   overflow : auto;
 }
-.OperationDialog .FileChooser ul {
-  margin : 0;
-  padding : 0;
-  list-style-type : none;
+
+.OperationDialog .FileChooser .GtkIconView {
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 0px;
 }
-.OperationDialog .FileChooser li {
-  padding : 5px;
+.OperationDialog .FileChooser .GtkIconView thead {
+  display : none;
 }
-.OperationDialog .FileChooser li img {
-  vertical-align : middle;
-  margin-right : 10px;
+.OperationDialog .FileChooser .GtkIconView td:nth-child(1) {
+  width : 16px;
 }
-/*
-.OperationDialog .FileChooser li {
-}
-.OperationDialog .FileChooser li:hover {
-}
-.OperationDialog .FileChooser li.current {
-}
-  */
 .OperationDialog .FileChooserInput {
   position : absolute;
   left : 0px;
   right : 0px;
-  bottom : 10px;
+  bottom : 15px;
   height : 20px;
 }
 .OperationDialog .FileChooserInput input {
+  /* Fixes shrinking bugs in FF */
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
   width : 100%;
+  height : 100%;
 }
 
 /*

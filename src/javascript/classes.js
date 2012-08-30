@@ -2528,9 +2528,19 @@
       }
       this.$element.html(ul);
 
-      var i = 0, l = items.length;
-      for ( i; i < l; i++ ) {
-        ul.append(this._createItem(items[i]));
+      if ( items instanceof Array ) {
+        var i = 0, l = items.length;
+        for ( i; i < l; i++ ) {
+          ul.append(this._createItem(items[i]));
+        }
+      } else {
+        var x;
+        for ( x in items ) {
+          if ( items.hasOwnProperty(x) ) {
+            items[x].name = x;
+            ul.append(this._createItem(items[x]));
+          }
+        }
       }
 
     },
@@ -2648,20 +2658,32 @@
 
     /**
      * IconView::selectItem() -- Select an item by searching
-     * @return  void
+     * @return  Mixed
      */
     selectItem : function(key, value) {
+      var el = this.getItem(key, value);
+      if ( el ) {
+        this.onItemSelect(null, el);
+        return el;
+      }
+      this.onItemSelect(null, null);
+      return null;
+    },
+
+    /**
+     * IconView::getItem() -- Get an item by searching
+     * @return  Mixed
+     */
+    getItem : function(key, value) {
       var els = this.$element.find(".GtkIconViewItem");
       var i = 0, l = els.length, el;
       for ( i; i < l; i++ ) {
         el = $(els[i]);
-        if ( el.data(key) == value ) {
-          this.onItemSelect(null, el);
-          return;
+        if ( el.data(key) === value ) {
+          return el;
         }
       }
-
-      this.onItemSelect(null, null);
+      return null;
     },
 
     /**
