@@ -53,6 +53,66 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
+    var FileOperationView = OSjs.Classes.Iconview.extend({
+      init : function(win, area) {
+        this._super(area, "list", {"dnd" : false, "multiselect" : false});
+
+        this.win = win;
+      },
+
+      createItem : function(view, iter) {
+        var ispkg = false;
+        if ( iter.mime.match(/^OSjs\/(Application|PanelItem|Service|BackgroundService)/) ) {
+          ispkg = basename(iter.path);
+        }
+
+        var el = $(sprintf("<tr class=\"GtkIconViewItem\"><td><img alt=\"\" src=\"%s\" /></td><td>%s</td></tr>",
+                         API.ui.getIcon(iter.icon, "16x16", ispkg),
+                         iter.name));
+
+        el.data("name", iter.name);
+        el.data("mime", iter.mime);
+        el.data("size", iter.size);
+        el.data("path", iter.path);
+        el.data("type", iter.type);
+        el.data("protected", iter['protected']);
+
+        return el;
+      },
+
+      onItemSelect : function(ev, el, item, focus) {
+        this.win.select(item);
+        return this._super(ev, el, item, focus);
+      },
+
+      onItemActivate : function(ev, el, item) {
+        var self = this;
+        if ( el && item ) {
+          if ( item.type == "dir" ) {
+            if ( item.name == ".." ) {
+              var prev = "/";
+              var tmp  = item.path.split("/");
+              if ( tmp.length > 1 ) {
+                tmp.pop();
+                prev = tmp.join("/") || "/";
+              }
+              this.win.readdir(prev);
+            } else {
+              this.win.readdir(item.path);
+            }
+          } else {
+            if ( !this.win.$element.find("button.Ok").attr("disabled") ) {
+              this.win.send();
+            }
+          }
+        }
+
+        return this._super(ev, el, item);
+      }
+
+
+    });
+
     /**
      * Arguments:
      * type       Dialog type (open/save)
@@ -62,143 +122,145 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
      */
     var _FileOperationDialog = OperationDialog.extend({
       init : function(args) {
-
-        var type        = args.type || "open";
-        var cur_dir     = args.cwd  || "/";
-        var mime_filter = args.mime || [];
-
-        this.aargv         = mime_filter;
-        this.atype         = type;
-        this.init_dir      = cur_dir;
-        this.selected_file = null;
+        this.view_dir      = (args.cwd  || "/");
+        this.view_filter   = (args.mime || []);
+        this.view_type     = (args.type || "open");
         this.clb_finish    = args.on_apply   || function() {};
 
         this._super("File");
-        this._title        = type == "save" ? LABELS.title_saveas : LABELS.title_open;
-        this._icon         = type == "save" ? "actions/document-save.png" : "actions/document-open.png";
-        this._content      = $("<div class=\"OperationDialog OperationDialogFile\">    <div class=\"FileChooser\">      <ul>      </ul>    </div>    <div class=\"FileChooserInput\">      <input type=\"text\" />    </div>  </div>");
+        this._title        = this.view_type == "save" ? LABELS.title_saveas : LABELS.title_open;
+        this._icon         = this.view_type == "save" ? "actions/document-save.png" : "actions/document-open.png";
+        this._content      = $("<div class=\"OperationDialog OperationDialogFile\">    <div class=\"FileChooser\">      <div class=\"GtkIconView\">      </div>    </div>    <div class=\"FileChooserInput\">      <input type=\"text\" />    </div>  </div>");
         this._is_resizable = true;
         this._width        = 400;
         this._height       = 300;
+
+        this.iconview = null;
+        this.selected = null;
+      },
+
+      destroy : function() {
+        if ( this.iconview ) {
+          this.iconview .destroy();
+          this.iconview = null;
+        }
+        this.selected = null;
+
+        this._super();
+      },
+
+      readdir : function(path) {
+        var self = this;
+
+        path = path || this.view_dir;
+        var mime = this.view_filter;
+        var ignores = [];
+
+        this.selected = null;
+        this.$element.find("button.Ok").attr("disabled", "disabled");
+        this.$element.find("input[type=text]").val("");
+
+        API.system.call("readdir", {'path' : path, 'mime' : mime, 'ignore' : ignores}, function(result, error) {
+          if ( !error ) {
+            self.iconview.render(result, ["icon", "filename"], "list");
+          }
+
+          self.view_dir = path;
+        });
+      },
+
+      select : function(item) {
+        this.selected = item;
+        this.$element.find("button.Ok").attr("disabled", "disabled");
+        this.$element.find("input[type=text]").val("");
+
+        if ( item ) {
+          this.$element.find("input[type=text]").val(basename(item.path));
+          if ( item.type != "dir" ) {
+            if ( this.view_type != "open" ) {
+              if ( item['protected'] == "1" ) {
+                this.$element.find("button.Ok").removeAttr("disabled");
+              }
+            } else {
+              this.$element.find("button.Ok").removeAttr("disabled");
+            }
+          }
+        }
+      },
+
+      send : function() {
+        var self = this;
+
+        var _send = function() {
+          var i = self.selected;
+          if ( i ) {
+            if ( i.type == "dir" )
+              return;
+
+            self.clb_finish(i.path, i.mime);
+
+            setTimeout(function() {
+              self.close();
+            }, 0);
+          }
+        };
+
+        // Check input field
+        if ( this.view_type != "open" ) {
+          var val = this.$element.find("input[type='text']").val();
+          if ( !this.selected || (val != this.selected.name) ) {
+            if ( val ) {
+              if ( !val.match(/^\//) ) {
+                val = (self.view_dir == "/" ? "/" : (self.view_dir + "/")) + val;
+              }
+
+              this.select({
+                "path"      : val,
+                "size"      : -1,
+                "mime"      : "",
+                "icon"      : "",
+                "type"      : "file",
+                "protected" : 0
+              });
+            }
+          }
+
+          if ( this.selected ) {
+            var exists = false;
+            var test = this.iconview.getItem("path", this.selected.path);
+            if ( test && test.size() ) {
+              this.select(test.data());
+              exists = true;
+            }
+
+            if ( this.selected['protected'] == "1" ) {
+              API.ui.alert(LABELS.protected_file);
+              return;
+            }
+
+            if ( exists ) {
+              API.ui.dialog("confirm", LABELS.overwrite, null, function() {
+                _send();
+              });
+              return;
+            }
+          }
+        }
+
+        // Normal operation "Open"
+        _send();
       },
 
       create : function(id, mcallback) {
         var self = this;
 
         this._super(id, mcallback);
-
-        var ul          = this.$element.find("ul");
+        var is_save     = this.view_type == "save";
+        var area        = this.$element.find(".GtkIconView");
         var inp         = this.$element.find("input[type='text']");
-        var prev        = null;
-        var current_dir = "";
-        var is_save     = self.atype == "save";
-        var currentFile = null;
 
-        var readdir = function(path)
-        {
-          if ( path == current_dir )
-            return;
-
-          var ignores = path == "/" ? [".."] : ["."];
-          currentFile = null;
-
-          API.system.call("readdir", {'path' : path, 'mime' : self.aargv, 'ignore' : ignores}, function(result, error) {
-            $(ul).die();
-            $(ul).unbind();
-
-            ul.find("li").empty().remove();
-
-            if ( error === null ) {
-              var i = 0;
-              for ( var f in result ) {
-                if ( result.hasOwnProperty(f) ) {
-                  var o = result[f];
-                  var el = $("<li><img alt=\"\" src=\"/img/blank.gif\" /><span></span></li>");
-                  el.find("img").attr("src", API.ui.getIcon(o.icon, "16x16", o.mime.match(/^OSjs\/(Application|PanelItem|Backround?Service)/) ? basename(o['path']) : null));
-                  el.find("span").html(f);
-                  el.addClass(i % 2 ? "odd" : "even");
-                  if ( o['protected'] == "1" ) {
-                    el.addClass("Disabled");
-                  }
-
-                  (function(vo) {
-                    el.click(function() {
-
-                      if ( prev !== null && prev !== this ) {
-                        $(prev).removeClass("current");
-                      }
-
-                      if ( prev !== this ) {
-                        $(this).addClass("current");
-                      }
-
-                      if ( vo.type == "file" ) {
-                        if ( vo['protected'] == "1" && is_save ) {
-                          self.selected_file = null;
-                          self.$element.find("button.Ok").attr("disabled", "disabled");
-                          currentFile = null;
-                          $(inp).val("");
-                        } else {
-                          self.selected_file = vo;
-                          self.$element.find("button.Ok").removeAttr("disabled");
-                          currentFile = this;
-                          $(inp).val(vo.path);
-                        }
-
-                      } else {
-                        self.selected_file = null;
-                        $(inp).val("");
-                        self.$element.find("button.Ok").attr("disabled", "disabled");
-
-                        currentFile = null;
-                      }
-
-                      prev = this;
-                    });
-
-                    el.dblclick(function() {
-
-                      if ( vo.type != "file" ) {
-                        readdir(vo.path);
-                      } else {
-
-                        var _doSelect = function() {
-                          self.selected_file = vo;
-                          $(inp).val(vo.path);
-
-                          self.$element.find("button.Ok").removeAttr("disabled");
-                          self.$element.find("button.Ok").click();
-                        };
-
-                        if ( is_save ) {
-                          if ( vo['protected'] == "1" ) {
-                            API.ui.alert(LABELS.protected_file);
-                          } else {
-                            API.ui.dialog("confirm", LABELS.overwrite, null, function() {
-                              _doSelect();
-                            });
-                          }
-                        } else {
-                          _doSelect();
-                        }
-                      }
-
-                    });
-                  })(o);
-
-                  $(ul).append(el);
-
-                  i++;
-                }
-              }
-            }
-
-            self.$element.find("button.Ok").attr("disabled", "disabled");
-          });
-
-          current_dir = path;
-        };
-
+        this.iconview = new FileOperationView(this, area);
+        this._addObject(this.iconview);
 
         if ( !is_save ) {
           $(inp).focus(function() {
@@ -207,41 +269,19 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
         }
 
         $(inp).keydown(function(ev) {
+          ev.stopPropagation();
+
           var keyCode = ev.which || ev.keyCode;
-          var val = $(this).val();
-
-          if ( keyCode == 13 ) {
-            if ( !is_save ) {
-              if ( !self.$element.find("button.Ok").attr("disabled") ) {
-                if ( currentFile ) {
-                  $(currentFile).trigger('dblclick');
-                }
-              }
-            } else {
-              if ( val ) {
-                if ( !val.match(/^\//) ) {
-                  val = (current_dir == "/" ? "/" : (current_dir + "/")) + val;
-                }
-
-                self.selected_file = {
-                  "path" : val,
-                  "size" : -1,
-                  "mime" : "",
-                  "icon" : "",
-                  "type" : "file"
-                };
-                self.$element.find("button.Ok").click();
-              }
-            }
+          if ( keyCode === 13 ) {
+            ev.preventDefault();
+            self.$element.find(".DialogButtons .Ok").click();
+            return false;
           }
-        });
 
-        $(inp).keyup(function(ev) {
-          var keyCode = ev.which || ev.keyCode;
-          var val = $(this).val();
-
+          return true;
+        }).keyup(function(ev) {
           if ( is_save ) {
-            if ( val ) {
+            if ( $(this).val() ) {
               self.$element.find("button.Ok").removeAttr("disabled");
             } else {
               self.$element.find("button.Ok").attr("disabled", "disabled");
@@ -251,37 +291,20 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
 
         this.$element.find(".DialogButtons .Close").hide();
         this.$element.find(".DialogButtons .Cancel").show();
+        this.$element.find(".DialogButtons .Ok").show();
+        this.$element.find(".DialogButtons .Ok").unbind("click").attr("disabled", "disabled");
 
-        this.$element.find(".DialogButtons .Ok").show().click(function() {
-          if ( is_save ) {
-            if ( !self.selected_file ) {
-              var val = $(inp).val();
-
-              if ( val ) {
-                if ( !val.match(/^\//) ) {
-                  val = (current_dir == "/" ? "/" : (current_dir + "/")) + val;
-                }
-
-                self.selected_file = {
-                  "path" : val,
-                  "size" : -1,
-                  "mime" : "",
-                  "icon" : "",
-                  "type" : "file"
-                };
-              }
-            }
-
+        this.$element.find(".DialogButtons .Ok").click(function(ev) {
+          ev.stopPropagation();
+          ev.preventDefault();
+          if ( !$(this).attr("disabled") ) {
+            self.send();
           }
-
-          if ( self.selected_file ) {
-            self.clb_finish(self.selected_file.path, self.selected_file.mime);
-          }
-        }).attr("disabled", "disabled");
-
-        readdir(this.init_dir);
+          return false;
+        });
 
 
+        this.readdir(this.view_dir);
       }
     });
 
