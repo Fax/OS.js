@@ -3,57 +3,53 @@ This has only been tested on these Linux distributions:
 * Ubuntu Linux
 
 # Backend Dependencies:
--------------------------------------------------------------------------------
+
 * Apache 2+  
-  Modules: ```htaccess, mod_headers, mod_expires, mod_rewrite, mod_deflate, mod_php5, mod_mime```
+  Modules: `htaccess, mod_headers, mod_expires, mod_rewrite, mod_deflate, mod_php5, mod_mime`
 * PHP 5.3 +  
-  Modules: ```apache2 mysql sockets xmlreader xmlwriter zip pdo imap mhash mysqli gettext```  
-  Suggested Modules: ```curl curlwrappers gd inifile snmp```
+  Modules: `apache2 mysql sockets xmlreader xmlwriter zip pdo imap mhash mysqli gettext`  
+  Suggested Modules: `curl curlwrappers gd inifile snmp`
   Optional PEAR modules: mail, Net_SMTP, Mail_Mime
 * MySQL 5+  
 * 'msgfmt' (Optional, Locale generation, for localization and translations)  
-  ```Included in Linux```
+  `Included in Linux`
 * 'exiftool'  
-  Debian users: ```apt-get install exiftool```  
-  Gentoo users: ```emerge exiftool```  
-  Download: ```http://www.sno.phy.queensu.ca/~phil/exiftool/```  
+  Debian users: `apt-get install exiftool`  
+  Gentoo users: `emerge exiftool`  
+  Download: `http://www.sno.phy.queensu.ca/~phil/exiftool/`  
 * 'pdf2svg' (Optional, for use with PDF applications)  
-  Debian users: ```apt-get install pdf2svg```  
-  Gentoo users: ```emerge pdf2svg```  
-  Download: ```http://www.cityinthesky.co.uk/opensource/pdf2svg```  
+  Debian users: `apt-get install pdf2svg`  
+  Gentoo users: `emerge pdf2svg`  
+  Download: `http://www.cityinthesky.co.uk/opensource/pdf2svg`  
 * _ffmpeg_ (Optional, for converting samples from OGG to MPEG)  
-Download: ```http://ffmpeg.org/download.html```
+  Download: `http://ffmpeg.org/download.html`
 
 # Frontend Dependencies:
--------------------------------------------------------------------------------
+
 * jQuery  
-  ```http://code.jquery.com/jquery-1.7.1.min.js```
+  `http://code.jquery.com/jquery-1.7.1.min.js`
 
 * jQuery UI  
-  ```http://jqueryui.com/download/jquery-ui-1.8.17.custom.zip```
+  `http://jqueryui.com/download/jquery-ui-1.8.17.custom.zip`
 
 * JSON2 by Douglas Crockford  
-  ```https://raw.github.com/douglascrockford/JSON-js/master/json2.js```
+  `https://raw.github.com/douglascrockford/JSON-js/master/json2.js`
 
 * Sprintf by Alexandru Marasteanu  
-  ```http://www.diveintojavascript.com/projects/javascript-sprintf```
+  `http://www.diveintojavascript.com/projects/javascript-sprintf`
 
 * Gnome 2.x icon pack(s)  
-  ```http://ftp.gnome.org/pub/GNOME/sources/gnome-icon-theme/```
+  `http://ftp.gnome.org/pub/GNOME/sources/gnome-icon-theme/`
 
 * Yahoo YUI Compressor or Google Closure Compiler  
-  ```http://developer.yahoo.com/yui/compressor/```  
-  ```https://developers.google.com/closure/```
+  `http://developer.yahoo.com/yui/compressor/`  
+  `https://developers.google.com/closure/`
 
 * Freedesktop Sound Theme  
-  ```http://cgit.freedesktop.org/sound-theme-freedesktop/tree/```
-
-# Automated Installation:
--------------------------------------------------------------------------------
-The installer is not yet complete. See the next section.
+  `http://cgit.freedesktop.org/sound-theme-freedesktop/tree/`
 
 # Manual Installation:
--------------------------------------------------------------------------------
+
 
 ## First steps
 
@@ -101,13 +97,11 @@ The installer is not yet complete. See the next section.
   - Symlink `stereo` directory to `public_html/sounds` (Should exist)  
   - Run `./bin/convert-sounds` to create MP3 samples (Optional)
 
-* Download **Yahoo YUI Compressor**
+* **ALTERNATIVE 1** Download **Yahoo YUI Compressor**
   - Drop `jar` file into `vendor/yui-compressor`  
   - Synmlink/copy/move the jar to `vendor/yui-compressor/yuicompressor.jar`
-  
-  OR :  
-  
-* Download ** Google Closure Compiler**
+
+* **ALTERNATIVE 2** Download **Google Closure Compiler**
   - Drop `jar` file into `vendor/closure-compiler/`  
   - Add this to your `config.php`:  
       define("BIN_CC_ENABLE",       true);
