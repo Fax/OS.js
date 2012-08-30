@@ -2511,7 +2511,6 @@
 
       $("#LoginDemoNotice").hide();
       $("#LoadingBarContainer").show();
-      OSjs.Classes.ProgressBar($("#LoadingBar"), 10);
 
       // Globals
       _SessionId        = response.sid;
@@ -2523,6 +2522,8 @@
       _Resources  = new ResourceManager();
       _PackMan    = new PackageManager();
 
+      OSjs.Classes.ProgressBar($("#LoadingBar"), 10);
+
       // Now fire them up
       _Settings.run(response.registry.stored);
       _PackMan.run(response.packages);
@@ -2530,7 +2531,6 @@
         self.run(response.session);
       });
 
-      OSjs.Classes.ProgressBar($("#LoadingBar"), 30);
     },
 
     /**
@@ -2618,7 +2618,6 @@
       var self = this;
 
       API.ui.cursor("wait", true);
-      OSjs.Classes.ProgressBar($("#LoadingBar"), 40);
 
       // Bind global events
       $(window).bind("focus",         this.global_focus);
@@ -3302,9 +3301,17 @@
         callback();
       };
 
+      var cur  = 10;
+      var diff = (50 - cur);
+      var step = parseInt(Math.min(cur / diff), 10) || 1;
+
       _loader = new OSjs.Classes.Preloader(_list, function(loaded, errors) {
         console.log("ResourceManager::run() Preloaded", loaded, "of", errors, "failed");
         _loader_done();
+      }, function() {
+        OSjs.Classes.ProgressBar($("#LoadingBar"), (cur += step));
+      }, function() {
+        OSjs.Classes.ProgressBar($("#LoadingBar"), (cur += step));
       });
 
     },
