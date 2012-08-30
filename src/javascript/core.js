@@ -5705,10 +5705,10 @@
             // > Selection
             var __select = function(selement) {
               if ( self._sel ) {
-                $(self._sel).parent().removeClass("current");
+                $(self._sel).removeClass("current");
               }
 
-              $(selement).parent().addClass("current");
+              $(selement).addClass("current");
               self._sel = selement;
             };
 
@@ -5730,33 +5730,29 @@
             for ( i; i < l; i++ ) {
               giter = this._list[i];
               e = $(sprintf("<li><div class=\"inner\"><div class=\"icon\"><img alt=\"\" src=\"%s\" /></div><div class=\"label\"><span>%s</span></div></div></li>", GetIcon(giter.icon, "32x32"), giter.title));
-
-              e.find(".inner").dblclick((function(index) {
-                return function(ev) {
-                  return __click(ev, index);
-                };
-              })(i));
-
-              e.find(".inner").bind("contextmenu", (function(index, eel, disabled) {
-                return function(ev) {
-                  __select(this);
-
-                  return API.application.context_menu(ev, $(this), [
-                    {"title" : OSjs.Labels.DesktopGridHeader, "attribute" : "header"},
-                    {"title" : OSjs.Labels.DesktopGridRemove, "disabled" : disabled, "method" : function() { self.removeItem(index, eel); }}
-
-                  ], true);
-                };
-              })(i, e, giter['protected']));
-
-              e.find(".inner").click(function(ev) {
-                ev.stopPropagation();
-                __select(this);
-                $(document).click(); // Trigger this! (deselects context-menu)
-              });
-
+              e.data("protected", giter['protected']);
               this._root.append(e);
             }
+
+            this._root.find("li").dblclick(function(ev) {
+              __click(ev, $(this).index());
+            }).click(function(ev) {
+              ev.stopPropagation();
+              __select($(this));
+              $(document).click(); // Trigger this! (deselects context-menu)
+            }).bind("contextmenu", function(ev) {
+              var el        = $(this);
+              var disabled  = el.data("protected") == "1";
+              var index     = el.index();
+
+              __select(el);
+              return API.application.context_menu(ev, this, [
+                {"title" : OSjs.Labels.DesktopGridHeader, "attribute" : "header"},
+                {"title" : OSjs.Labels.DesktopGridRemove, "disabled" : disabled, "method" : function() { self.removeItem(index, el); }}
+
+              ], true);
+            });
+
           }
         },
 
