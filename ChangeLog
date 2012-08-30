@@ -1,3 +1,16 @@
+## 0.9.4
+
+* VFS: Fixed ListDirectory() MIME check errors
+* VFS: Ignored files are loaded from settings, args appends
+* Core: Vendor loading improvments. Combined resources now supported (somewhat)
+* Core\JS: API -- Added keymods() getter
+* Core\JS: File Operation Dialog now uses GtkIconView
+* Core\JS: Customizable DnD cursors now supported
+* Libs\JS: IconView multiselect
+* Libs\JS: IconView DnD Event bubbling fixes
+* Template: index.php cleaned up
+* Upated documentation
+
 ## 0.9.3
 
 WARNING: Breaks current DnD for applications.
