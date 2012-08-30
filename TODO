@@ -13,7 +13,6 @@ CORE TODO:
 [LOW] Combine all resources in production env.
       - Send a list of all the cat'ed items
       - Make ResourceManager::MinimizeCombine()
-[LOW] Make DnD cursor customizable by user (when wrong filetype etc.)
 [LOW] WindowManager: Effect(s) configuration
 [LOW] Panel setting: Background Image
 [LOW] Panels: Add/Remove (Implement multiples in GUI)

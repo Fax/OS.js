@@ -2432,9 +2432,7 @@
     onDragAction : function(ev, action, item, args) {
       switch ( action ) {
         case "dragover" :
-          if ( item ) {
-            ev.originalEvent.dataTransfer.dropEffect = "copy";
-          }
+          ev.originalEvent.dataTransfer.dropEffect = args || "copy";
         break;
 
         case "dragleave" :
@@ -2446,10 +2444,10 @@
         case "dragenter" :
           if ( item ) {
             $(item).addClass("DND-Enter");
-            ev.originalEvent.dataTransfer.dropEffect = "copy";
+            //ev.originalEvent.dataTransfer.dropEffect = "copy";
           } else {
             this.$element.addClass("DND-Enter");
-            ev.originalEvent.dataTransfer.dropEffect = "copy";
+            //ev.originalEvent.dataTransfer.dropEffect = "copy";
           }
         break;
 
@@ -2575,8 +2573,8 @@
      * @see     IconView::createItem()
      * @return  HTMLElement
      */
-    _createItem : function(iter, dnd) {
-      dnd = (dnd === undefined || dnd === true);
+    _createItem : function(iter, droppable, dnd_cursor) {
+      dnd_cursor = dnd_cursor || "copy";
 
       var self = this;
       var el = this.createItem(this._currentView, iter);
@@ -2587,11 +2585,11 @@
         jsn = {};
       }
 
-      if ( OSjs.Compability.SUPPORT_DND && this._opts.dnd && dnd ) {
+      if ( OSjs.Compability.SUPPORT_DND && this._opts.dnd ) {
         el.attr("draggable", "true");
         el.bind("dragover", function(ev) {
           ev.preventDefault();
-          return self.onDragAction(ev, "dragover", $(this));
+          return self.onDragAction(ev, "dragover", $(this), dnd_cursor);
         });
         el.bind("dragleave", function(ev) {
           //ev.preventDefault();
@@ -2606,7 +2604,10 @@
         });
         el.bind("drop", function(ev) {
           ev.preventDefault();
-          return self.onDragAction(ev, "drop", $(this));
+          if ( droppable ) {
+            return self.onDragAction(ev, "drop", $(this));
+          }
+          return false;
         });
       }
 
