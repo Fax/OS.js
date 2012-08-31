@@ -1,12 +1,12 @@
 /*!
  * Service: %CLASSNAME%
  *
- * @package OSjs.Services
+ * @package OSjs.Packages
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @licence Simplified BSD License
  * @class
  */
-OSjs.Services.%CLASSNAME% = (function($, undefined) {
+OSjs.Packages.%CLASSNAME% = (function($, undefined) {
 
   var _LINGUAS = %LINGUAS%;
 

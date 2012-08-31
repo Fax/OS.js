@@ -87,10 +87,8 @@
     Public       : { /* ... */ },
 
     // Dynamic namespace containers
-    Applications : { /* ... */ }, // @see core.js,Application.class.php - Dynamic
     Dialogs      : { /* ... */ }, // @see core,Dialog.class.php - Dynamic
-    PanelItems   : { /* ... */ }, // @see core.js,PanelItem.class.php - Dynamic
-    Services     : { /* ... */ }, // @see core,BackgroundService.class.php - Dynamic
+    Packages     : { /* ... */ }, // @see Package.class.php, and it's classes
     Classes      : { /* ... */ }  // @see classes.js
   };
 

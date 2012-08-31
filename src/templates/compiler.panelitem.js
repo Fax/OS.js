@@ -1,12 +1,12 @@
 /*!
  * PanelItem: %CLASSNAME%
  *
- * @package OSjs.PanelItems
+ * @package OSjs.Packages
  * @author Anders Evenrud <andersevenrud@gmail.com>
  * @licence Simplified BSD License
  * @class
  */
-OSjs.PanelItems.%CLASSNAME% = (function($, undefined) {
+OSjs.Packages.%CLASSNAME% = (function($, undefined) {
 
   var _LINGUAS = %LINGUAS%;
 

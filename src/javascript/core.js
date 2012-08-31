@@ -483,15 +483,15 @@
     var resources = process.resources;
     _Resources.addResources(resources, name, function(error) {
       if ( !error ) {
-        var ref, obj;
+        var obj;
         var crashed   = false;
         var runnable  = false;
+        var ref       = OSjs.Packages[name];
 
         console.log("LaunchProcess()", name, ">", "Launching...");
 
         switch ( type ) {
           case "PanelItem" :
-            ref = OSjs.PanelItems[name];
             try {
               var argv  = args.opts || [];
               var pref  = args.panel;
@@ -503,7 +503,7 @@
                 position  : args.position
               };
 
-              obj = new OSjs.PanelItems[name](PanelItem, pref, API, argv || {});
+              obj = new ref(PanelItem, pref, API, argv || {});
               pref.addItem(obj, pargs, psave);
             } catch ( ex ) {
               CrashApplication(name, obj, ex);
@@ -514,9 +514,8 @@
 
           case "Service"           :
           case "BackgroundService" :
-            ref = OSjs.Services[name];
             try {
-              obj = new OSjs.Services[name](BackgroundService, API, args.argv || {});
+              obj = new ref(BackgroundService, API, args.argv || {});
               runnable = true;
             } catch ( ex ) {
               CrashApplication(name, obj, ex);
@@ -525,7 +524,6 @@
           break;
 
           default :
-            ref = OSjs.Applications[name];
             if ( ref ) {
               try {
                 obj = new ref(GtkWindow, Application, API, args.argv || {}, args.restore || []);
