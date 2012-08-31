@@ -163,7 +163,8 @@
     "socket"          : "window.WebSocket()",
     "richtext"        : "window.contentEditable (Rich Text Editing)",
     "upload"          : "Asynchronous Uploads",
-    "worker"          : "Web Workers"
+    "worker"          : "Web Workers",
+    "svg"             : "SVG Images"
   };
 
   /////////////////////////////////////////////////////////////////////////////

@@ -63,6 +63,7 @@
   var canvas_supported  = !!document.createElement('canvas').getContext;
   var video_supported   = !!document.createElement('video').canPlayType ? document.createElement('video') : null;
   var audio_supported   = !!document.createElement('audio').canPlayType ? document.createElement('audio') : null;
+  var ns                = ns = {'svg': 'http://www.w3.org/2000/svg'};
 
   OSjs.Compability = {
     "SUPPORT_UPLOAD"         : false,
@@ -76,6 +77,7 @@
     "SUPPORT_WEBGL"          : false,
     "SUPPORT_CANVAS_CONTEXT" : [],
     "SUPPORT_FS"             : (('requestFileSystem' in window) || ('webkitRequestFileSystem' in window)),
+    "SUPPORT_SVG"            : (!!document.createElementNS && !!document.createElementNS(ns.svg, 'svg').createSVGRect),
 
     // http://www.w3.org/TR/html5/video.html
     "SUPPORT_VIDEO"          : (!!video_supported),
@@ -91,6 +93,11 @@
     "SUPPORT_RICHTEXT"       : (!!document.createElement('textarea').contentEditable),
     "SUPPORT_DND"            : ('draggable' in document.createElement('span'))
   };
+
+  delete canvas_supported;
+  delete video_supported;
+  delete audio_supported;
+  delete ns;
 
   if ( canvas_supported ) {
     var test = ["2d", "webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
@@ -144,7 +151,8 @@
     "richtext"        : OSjs.Compability.SUPPORT_RICHTEXT,
     "upload"          : OSjs.Compability.SUPPORT_UPLOAD,
     "worker"          : OSjs.Compability.SUPPORT_WORKER,
-    "filesystem"      : OSjs.Compability.SUPPORT_FS
+    "filesystem"      : OSjs.Compability.SUPPORT_FS,
+    "svg"             : OSjs.Compability.SUPPORT_SVG
   };
 
 })($);
