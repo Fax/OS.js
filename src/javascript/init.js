@@ -46,23 +46,19 @@
   //
   window.OSjs =
   {
-    // Internal namespace containers
-    Compability  : { /* ... */ }, // Compability check results
-    Labels       : { /* ... */ }, // Translations
-
-    // Dynamic namespace containers
-    Dialogs      : { /* ... */ }, // @see core,Dialog.class.php - Dynamic
-    Packages     : { /* ... */ }, // @see Package.class.php, and it's classes
-    Classes      : { /* ... */ }  // @see classes.js
+    Compability  : {}, // Compability check results, see below
+    Labels       : {}, // @see locale/*.js
+    Dialogs      : {}, // @see CoreSettings.class.php, dialog.*.js
+    Packages     : {}, // @see Package.class.php > Application, BackroundService, PanelItem
+    Classes      : {}  // @see classes.js
   };
 
   //
   // Compability checking
   //
-  var canvas_supported  = !!document.createElement('canvas').getContext;
-  var video_supported   = !!document.createElement('video').canPlayType ? document.createElement('video') : null;
-  var audio_supported   = !!document.createElement('audio').canPlayType ? document.createElement('audio') : null;
-  var ns                = ns = {'svg': 'http://www.w3.org/2000/svg'};
+  var canvas_supported  = !!document.createElement('canvas').getContext   ? document.createElement('canvas')  : null;
+  var video_supported   = !!document.createElement('video').canPlayType   ? document.createElement('video')   : null;
+  var audio_supported   = !!document.createElement('audio').canPlayType   ? document.createElement('audio')   : null;
 
   OSjs.Compability = {
     "SUPPORT_UPLOAD"         : false,
@@ -72,13 +68,11 @@
     "SUPPORT_DSTORAGE"       : (('openDatabase'    in window) && window['openDatabase']   !== null),
     "SUPPORT_SOCKET"         : (('WebSocket'       in window) && window['WebSocket']      !== null),
     "SUPPORT_WORKER"         : (('Worker'          in window) && window['Worker']         !== null),
-    "SUPPORT_CANVAS"         : (canvas_supported),
+    "SUPPORT_CANVAS"         : (!!canvas_supported),
     "SUPPORT_WEBGL"          : false,
     "SUPPORT_CANVAS_CONTEXT" : [],
     "SUPPORT_FS"             : (('requestFileSystem' in window) || ('webkitRequestFileSystem' in window)),
-    "SUPPORT_SVG"            : (!!document.createElementNS && !!document.createElementNS(ns.svg, 'svg').createSVGRect),
-
-    // http://www.w3.org/TR/html5/video.html
+    "SUPPORT_SVG"            : (!!document.createElementNS && !!document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect),
     "SUPPORT_VIDEO"          : (!!video_supported),
     "SUPPORT_VIDEO_WEBM"     : (video_supported && !!video_supported.canPlayType('video/webm; codecs="vp8.0, vorbis"')),
     "SUPPORT_VIDEO_OGG"      : (video_supported && !!video_supported.canPlayType('video/ogg; codecs="theora"')),
@@ -95,25 +89,23 @@
 
   if ( canvas_supported ) {
     var test = ["2d", "webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
-    var canv = document.createElement('canvas');
-    var lst  = [];
-
     for ( var i = 0; i < test.length; i++ ) {
       try {
-        if ( !!canv.getContext(test[i]) ) {
-          lst.push(i);
+        if ( !!canvas_supported.getContext(test[i]) ) {
+          OSjs.Compability.SUPPORT_CANVAS_CONTEXT.push(test[i]);
         }
       } catch ( eee ) {}
     }
 
-    OSjs.Compability.SUPPORT_CANVAS_CONTEXT = lst;
-    OSjs.Compability.SUPPORT_WEBGL          = lst.length > 1;
+    OSjs.Compability.SUPPORT_WEBGL = (OSjs.Compability.SUPPORT_CANVAS_CONTEXT.length > 1);
 
-    delete lst;
     delete i;
     delete test;
-    delete canv;
   }
+
+  delete canvas_supported;
+  delete video_supported;
+  delete audio_supported;
 
   try {
     var xhr = new XMLHttpRequest();
@@ -122,10 +114,6 @@
     delete xhr;
   }
 
-  delete canvas_supported;
-  delete video_supported;
-  delete audio_supported;
-  delete ns;
 
 })($);
 
