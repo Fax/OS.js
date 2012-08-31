@@ -41,48 +41,13 @@
     window.console.groupEnd = function() { console.log(arguments); };
   }
 
-  var video_supported = !!document.createElement('video').canPlayType;
-  var audio_supported = !!document.createElement('audio').canPlayType;
-  var upload_supported = false;
-
-  try {
-    var xhr = new XMLHttpRequest();
-    upload_supported = (!! (xhr && ('upload' in xhr) && ('onprogress' in xhr.upload)));
-  } catch ( eee ) {}
-
   //
   // Main OS.js namespace
   //
   window.OSjs =
   {
-    // Compability
-    Compability : {
-      "SUPPORT_UPLOAD"         : (upload_supported),
-      "SUPPORT_LSTORAGE"       : (('localStorage'    in window) && window['localStorage']   !== null),
-      "SUPPORT_SSTORAGE"       : (('sessionStorage'  in window) && window['sessionStorage'] !== null),
-      "SUPPORT_GSTORAGE"       : (('globalStorage'   in window) && window['globalStorage']  !== null),
-      "SUPPORT_DSTORAGE"       : (('openDatabase'    in window) && window['openDatabase']   !== null),
-      "SUPPORT_SOCKET"         : (('WebSocket'       in window) && window['WebSocket']      !== null),
-      "SUPPORT_WORKER"         : (('Worker'          in window) && window['Worker']         !== null),
-      "SUPPORT_CANVAS"         : (!!document.createElement('canvas').getContext),
-      "SUPPORT_WEBGL"          : false,
-      "SUPPORT_CANVAS_CONTEXT" : [],
-      "SUPPORT_FS"             : (('requestFileSystem' in window) || ('webkitRequestFileSystem' in window)),
-
-      // http://www.w3.org/TR/html5/video.html
-      "SUPPORT_VIDEO"          : (video_supported),
-      "SUPPORT_VIDEO_WEBM"     : (video_supported && !!document.createElement('video').canPlayType('video/webm; codecs="vp8.0, vorbis"')),
-      "SUPPORT_VIDEO_OGG"      : (video_supported && !!document.createElement('video').canPlayType('video/ogg; codecs="theora, vorbis"')),
-      "SUPPORT_VIDEO_MPEG"     : (video_supported && !!document.createElement('video').canPlayType('video/mp4; codecs="avc1.4D401E, mp4a.40.2"')),    // H.264 Main profile video level 3 and Low-Complexity AAC audio in MP4 container
-      "SUPPORT_VIDEO_MKV"      : (video_supported && !!document.createElement('video').canPlayType('video/x-matroska; codecs="theora, vorbis"')),
-      "SUPPORT_AUDIO"          : (audio_supported),
-      "SUPPORT_AUDIO_OGG"      : (audio_supported && !!document.createElement('audio').canPlayType('audio/ogg; codecs="vorbis')),
-      "SUPPORT_AUDIO_MP3"      : (audio_supported && !!document.createElement('audio').canPlayType('audio/mpeg')),
-      "SUPPORT_RICHTEXT"       : (!!document.createElement('textarea').contentEditable),
-      "SUPPORT_DND"            : ('draggable' in document.createElement('span'))
-    },
-
     // Internal namespace containers
+    Compability  : { /* ... */ },
     Labels       : { /* ... */ },
     Public       : { /* ... */ },
 
@@ -92,42 +57,82 @@
     Classes      : { /* ... */ }  // @see classes.js
   };
 
-  // Compability cont.
-  if ( OSjs.Compability.SUPPORT_CANVAS ) {
-    var test = ["2d", "webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
-    for ( var i = 0; i < test.length; i++ ) {
-      var canv = document.createElement('canvas');
-      try {
-        if ( !!canv.getContext(test[i]) ) {
-          OSjs.Compability.SUPPORT_CANVAS_CONTEXT.push(test[i]);
-          if ( i > 0 ) {
-            OSjs.Compability.SUPPORT_WEBGL = true;
-          }
-        }
-      } catch ( eee ) {}
+  //
+  // Compability checking
+  //
+  var canvas_supported  = !!document.createElement('canvas').getContext;
+  var video_supported   = !!document.createElement('video').canPlayType ? document.createElement('video') : null;
+  var audio_supported   = !!document.createElement('audio').canPlayType ? document.createElement('audio') : null;
 
-      delete canv;
-    }
-    delete test;
-    delete i;
-  }
+  OSjs.Compability = {
+    "SUPPORT_UPLOAD"         : false,
+    "SUPPORT_LSTORAGE"       : (('localStorage'    in window) && window['localStorage']   !== null),
+    "SUPPORT_SSTORAGE"       : (('sessionStorage'  in window) && window['sessionStorage'] !== null),
+    "SUPPORT_GSTORAGE"       : (('globalStorage'   in window) && window['globalStorage']  !== null),
+    "SUPPORT_DSTORAGE"       : (('openDatabase'    in window) && window['openDatabase']   !== null),
+    "SUPPORT_SOCKET"         : (('WebSocket'       in window) && window['WebSocket']      !== null),
+    "SUPPORT_WORKER"         : (('Worker'          in window) && window['Worker']         !== null),
+    "SUPPORT_CANVAS"         : (canvas_supported),
+    "SUPPORT_WEBGL"          : false,
+    "SUPPORT_CANVAS_CONTEXT" : [],
+    "SUPPORT_FS"             : (('requestFileSystem' in window) || ('webkitRequestFileSystem' in window)),
 
-  // Misc
-  OSjs.Public.ENV = ((window.location.hostname.toLowerCase() == "OSjs.local") ? "dev" : "prod");
-
-  // Application Compability error exceptions (see translation file)
-  OSjs.Public.CompabilityErrors = {
+    // http://www.w3.org/TR/html5/video.html
+    "SUPPORT_VIDEO"          : (!!video_supported),
+    "SUPPORT_VIDEO_WEBM"     : (video_supported && !!video_supported.canPlayType('video/webm; codecs="vp8.0, vorbis"')),
+    "SUPPORT_VIDEO_OGG"      : (video_supported && !!video_supported.canPlayType('video/ogg; codecs="theora"')),
+    "SUPPORT_VIDEO_H264"     : (video_supported && !!(video_supported.canPlayType('video/mp4; codecs="avc1.42E01E"') || video_supported.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"'))),
+    "SUPPORT_VIDEO_MPEG"     : (video_supported && !!video_supported.canPlayType('video/mp4; codecs="mp4v.20.8"')),
+    "SUPPORT_VIDEO_MKV"      : (video_supported && !!video_supported.canPlayType('video/x-matroska; codecs="theora, vorbis"')),
+    "SUPPORT_AUDIO"          : (!!audio_supported),
+    "SUPPORT_AUDIO_OGG"      : (audio_supported && !!audio_supported.canPlayType('audio/ogg; codecs="vorbis')),
+    "SUPPORT_AUDIO_MP3"      : (audio_supported && !!audio_supported.canPlayType('audio/mpeg')),
+    "SUPPORT_AUDIO_WAV"      : (audio_supported && !!audio_supported.canPlayType('audio/wav; codecs="1"')),
+    "SUPPORT_RICHTEXT"       : (!!document.createElement('textarea').contentEditable),
+    "SUPPORT_DND"            : ('draggable' in document.createElement('span'))
   };
 
-  // Compability mapping
-  OSjs.Public.CompabilityMapping = {
+  if ( canvas_supported ) {
+    var test = ["2d", "webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
+    var canv = document.createElement('canvas');
+    var lst  = [];
+
+    for ( var i = 0; i < test.length; i++ ) {
+      try {
+        if ( !!canv.getContext(test[i]) ) {
+          lst.push(i);
+        }
+      } catch ( eee ) {}
+    }
+
+    OSjs.Compability.SUPPORT_CANVAS_CONTEXT = lst;
+    OSjs.Compability.SUPPORT_WEBGL          = lst.length > 1;
+
+    delete lst;
+    delete i;
+    delete test;
+    delete canv;
+  }
+
+  try {
+    var xhr = new XMLHttpRequest();
+    OSjs.Compability.SUPPORT_UPLOAD = (!! (xhr && ('upload' in xhr) && ('onprogress' in xhr.upload)));
+  } catch ( eee ) {}
+
+  //
+  // Compability feature checking mapping
+  //
+  OSjs.Public.CompabilityErrors   = {}; // See locale/<lang>.js
+  OSjs.Public.CompabilityMapping  = {
     "canvas"          : OSjs.Compability.SUPPORT_CANVS,
     "webgl"           : OSjs.Compability.SUPPORT_WEBGL,
     "audio"           : OSjs.Compability.SUPPORT_AUDIO,
     "audio_ogg"       : OSjs.Compability.SUPPORT_AUDIO_OGG,
     "audio_mp3"       : OSjs.Compability.SUPPORT_AUDIO_MP3,
+    "audio_wav"       : OSjs.Compability.SUPPORT_AUDIO_WAV,
     "video"           : OSjs.Compability.SUPPORT_VIDEO,
     "video_webm"      : OSjs.Compability.SUPPORT_VIDEO_WEBM,
+    "video_h264"      : OSjs.Compability.SUPPORT_VIDEO_H264,
     "video_ogg"       : OSjs.Compability.SUPPORT_VIDEO_OGG,
     "video_mpeg"      : OSjs.Compability.SUPPORT_VIDEO_MPEG,
     "video_mkv"       : OSjs.Compability.SUPPORT_VIDEO_MKV,
@@ -140,21 +145,6 @@
     "upload"          : OSjs.Compability.SUPPORT_UPLOAD,
     "worker"          : OSjs.Compability.SUPPORT_WORKER,
     "filesystem"      : OSjs.Compability.SUPPORT_FS
-  };
-
-  // Browser Compability list
-  OSjs.Public.CompabilityLabels = {
-    "Local Storage"    : OSjs.Compability.SUPPORT_LSTORAGE,
-    //"Session Storage"  : OSjs.Compability.SUPPORT_SSTORAGE,
-    //"Global Storage"   : OSjs.Compability.SUPPORT_GSTORAGE,
-    //"Database Storage" : OSjs.Compability.SUPPORT_DSTORAGE,
-    "Canvas"           : OSjs.Compability.SUPPORT_CANVAS,
-    "WebGL"            : OSjs.Compability.SUPPORT_WEBGL,
-    "Audio"            : OSjs.Compability.SUPPORT_AUDIO,
-    "Video"            : OSjs.Compability.SUPPORT_VIDEO,
-    "Sockets"          : OSjs.Compability.SUPPORT_SOCKET,
-    "Async Upload"     : OSjs.Compability.SUPPORT_UPLOAD,
-    "Web Workers"      : OSjs.Compability.SUPPORT_WORKER
   };
 
 })($);
