@@ -47,9 +47,8 @@
   window.OSjs =
   {
     // Internal namespace containers
-    Compability  : { /* ... */ },
-    Labels       : { /* ... */ },
-    Public       : { /* ... */ },
+    Compability  : { /* ... */ }, // Compability check results
+    Labels       : { /* ... */ }, // Translations
 
     // Dynamic namespace containers
     Dialogs      : { /* ... */ }, // @see core,Dialog.class.php - Dynamic
@@ -94,11 +93,6 @@
     "SUPPORT_DND"            : ('draggable' in document.createElement('span'))
   };
 
-  delete canvas_supported;
-  delete video_supported;
-  delete audio_supported;
-  delete ns;
-
   if ( canvas_supported ) {
     var test = ["2d", "webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
     var canv = document.createElement('canvas');
@@ -124,36 +118,14 @@
   try {
     var xhr = new XMLHttpRequest();
     OSjs.Compability.SUPPORT_UPLOAD = (!! (xhr && ('upload' in xhr) && ('onprogress' in xhr.upload)));
-  } catch ( eee ) {}
+  } finally {
+    delete xhr;
+  }
 
-  //
-  // Compability feature checking mapping
-  //
-  OSjs.Public.CompabilityErrors   = {}; // See locale/<lang>.js
-  OSjs.Public.CompabilityMapping  = {
-    "canvas"          : OSjs.Compability.SUPPORT_CANVS,
-    "webgl"           : OSjs.Compability.SUPPORT_WEBGL,
-    "audio"           : OSjs.Compability.SUPPORT_AUDIO,
-    "audio_ogg"       : OSjs.Compability.SUPPORT_AUDIO_OGG,
-    "audio_mp3"       : OSjs.Compability.SUPPORT_AUDIO_MP3,
-    "audio_wav"       : OSjs.Compability.SUPPORT_AUDIO_WAV,
-    "video"           : OSjs.Compability.SUPPORT_VIDEO,
-    "video_webm"      : OSjs.Compability.SUPPORT_VIDEO_WEBM,
-    "video_h264"      : OSjs.Compability.SUPPORT_VIDEO_H264,
-    "video_ogg"       : OSjs.Compability.SUPPORT_VIDEO_OGG,
-    "video_mpeg"      : OSjs.Compability.SUPPORT_VIDEO_MPEG,
-    "video_mkv"       : OSjs.Compability.SUPPORT_VIDEO_MKV,
-    "localStorage"    : OSjs.Compability.SUPPORT_LSTORAGE,
-    "sessionStorage"  : OSjs.Compability.SUPPORT_SSTORAGE,
-    "globalStorage"   : OSjs.Compability.SUPPORT_GSTORAGE,
-    "databaseStorage" : OSjs.Compability.SUPPORT_DSTORAGE,
-    "socket"          : OSjs.Compability.SUPPORT_SOCKET,
-    "richtext"        : OSjs.Compability.SUPPORT_RICHTEXT,
-    "upload"          : OSjs.Compability.SUPPORT_UPLOAD,
-    "worker"          : OSjs.Compability.SUPPORT_WORKER,
-    "filesystem"      : OSjs.Compability.SUPPORT_FS,
-    "svg"             : OSjs.Compability.SUPPORT_SVG
-  };
+  delete canvas_supported;
+  delete video_supported;
+  delete audio_supported;
+  delete ns;
 
 })($);
 
