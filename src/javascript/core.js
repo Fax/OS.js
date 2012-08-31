@@ -1898,7 +1898,7 @@
       var self = this;
 
       if ( !OSjs.Compability.SUPPORT_WORKER ) {
-        throw ("Cannot create WebWorker: " + OSjs.Public.CompabilityErrors.worker);
+        throw ("Cannot create WebWorker: " + OSjs.Labels.CompabilityErrors.worker);
       }
 
       var _default_error = function(ev, line, file, error) {
@@ -4672,22 +4672,46 @@
      * @return void
      */
     _checkCompability : (function() {
+      var _mapping = {
+        "canvas"          : OSjs.Compability.SUPPORT_CANVAS,
+        "webgl"           : OSjs.Compability.SUPPORT_WEBGL,
+        "audio"           : OSjs.Compability.SUPPORT_AUDIO,
+        "audio_ogg"       : OSjs.Compability.SUPPORT_AUDIO_OGG,
+        "audio_mp3"       : OSjs.Compability.SUPPORT_AUDIO_MP3,
+        "audio_wav"       : OSjs.Compability.SUPPORT_AUDIO_WAV,
+        "video"           : OSjs.Compability.SUPPORT_VIDEO,
+        "video_webm"      : OSjs.Compability.SUPPORT_VIDEO_WEBM,
+        "video_h264"      : OSjs.Compability.SUPPORT_VIDEO_H264,
+        "video_ogg"       : OSjs.Compability.SUPPORT_VIDEO_OGG,
+        "video_mpeg"      : OSjs.Compability.SUPPORT_VIDEO_MPEG,
+        "video_mkv"       : OSjs.Compability.SUPPORT_VIDEO_MKV,
+        "localStorage"    : OSjs.Compability.SUPPORT_LSTORAGE,
+        "sessionStorage"  : OSjs.Compability.SUPPORT_SSTORAGE,
+        "globalStorage"   : OSjs.Compability.SUPPORT_GSTORAGE,
+        "databaseStorage" : OSjs.Compability.SUPPORT_DSTORAGE,
+        "socket"          : OSjs.Compability.SUPPORT_SOCKET,
+        "richtext"        : OSjs.Compability.SUPPORT_RICHTEXT,
+        "upload"          : OSjs.Compability.SUPPORT_UPLOAD,
+        "worker"          : OSjs.Compability.SUPPORT_WORKER,
+        "filesystem"      : OSjs.Compability.SUPPORT_FS,
+        "svg"             : OSjs.Compability.SUPPORT_SVG
+      };
 
       function __check(key) {
         var error = false;
 
         // First check if we have a sub-compability check
-        var tmp   = key.match(/\_/) ? ((key.split("_")).pop()) : null;
+        var tmp = key.match(/\_/) ? ((key.split("_")).pop()) : null;
         if ( tmp === "audio" || tmp === "video" ) {
-          if ( OSjs.Public.CompabilityMapping[tmp] === false ) {
-            error = OSjs.Public.CompabilityErrors[tmp];
+          if ( _mapping[tmp] !== true ) {
+            error = OSjs.Labels.CompabilityErrors[tmp];
           }
         }
 
         // Then check main-type
         if ( error === false ) {
-          if ( OSjs.Public.CompabilityMapping[key] === false ) {
-            error = OSjs.Public.CompabilityErrors[key];
+          if ( _mapping[key] !== true ) {
+            error = OSjs.Labels.CompabilityErrors[key];
           }
         }
 

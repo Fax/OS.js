@@ -143,7 +143,7 @@
   };
 
   // Application Compability error exceptions
-  OSjs.Public.CompabilityErrors = {
+  OSjs.Labels.CompabilityErrors = {
     "canvas"          : "<canvas> Context (2d)",
     "webgl"           : "<canvas> WebGL Context (3d)",
     "audio"           : "<audio> DOM Element",
