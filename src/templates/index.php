@@ -163,7 +163,7 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
 <!-- Notices -->
 <?php if ( ENV_DEMO ) { require_template ("index.demo.php"); } ?>
 
-<!-- Login Window -->>
+<!-- Login Window -->
 <?php require_template ("index.login.php"); ?>
 
 <?php if ( ENV_PRODUCTION || ENV_DEMO ) { ?>
