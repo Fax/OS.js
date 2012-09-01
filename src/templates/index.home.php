@@ -37,6 +37,9 @@
 ?>
   <h1>OS.js - JavaScript Web Desktop Environment (Version <?php print PROJECT_VERSION; ?> demo)</h1>
   <p>
+    OS.js is a simple, yet powerful Web Desktop platform.
+  </p>
+  <p>
     This is the demo site for testing OS.js releases.
   </p>
   <p>
