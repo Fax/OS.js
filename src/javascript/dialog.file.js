@@ -90,12 +90,15 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
         if ( el && item ) {
           if ( item.type == "dir" ) {
             if ( item.name == ".." ) {
-              var prev = "/";
+              var prev = item.path || "/";
+              /*
               var tmp  = item.path.split("/");
+              console.warn(tmp, item.path);
               if ( tmp.length > 1 ) {
                 tmp.pop();
                 prev = tmp.join("/") || "/";
               }
+              */
               this.win.readdir(prev);
             } else {
               this.win.readdir(item.path);
