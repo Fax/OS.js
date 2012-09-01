@@ -43,6 +43,7 @@ abstract class Package
   const TYPE_APPLICATION  = 1;
   const TYPE_PANELITEM    = 2;
   const TYPE_SERVICE      = 3;
+  const TYPE_THEME        = 10;
 
   /////////////////////////////////////////////////////////////////////////////
   // VARIABLES
@@ -53,7 +54,8 @@ abstract class Package
   public static $PackageTypes = Array(
     self::TYPE_APPLICATION  => "Application",
     self::TYPE_PANELITEM    => "Panel Item",
-    self::TYPE_SERVICE      => "Background Service"
+    self::TYPE_SERVICE      => "Background Service",
+    self::TYPE_THEME        => "Theme"
   );
 
   /////////////////////////////////////////////////////////////////////////////

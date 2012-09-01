@@ -79,8 +79,8 @@ if ( $locale = Core::get()->getLocale() ) {
   <!-- Meta -->
   <title>OS.js <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)</title>
 
-  <meta name="keywords" content="osjs,OS.js,javascript os,js os,window manager,desktop,cloud" />
-  <meta name="description" content="OS.js - JavaScript Web Desktop" />
+  <meta name="keywords" content="osjs,OS.js,javascript os,window manager,desktop,cloud" />
+  <meta name="description" content="OS.js - A simple yet powerful Web Desktop Platfom using JavaScript and latest HTML5 and CSS features." />
   <meta name="author" content="<?php print PROJECT_AUTHOR; ?> <?php print PROJECT_CONTACT; ?>" />
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
