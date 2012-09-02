@@ -103,7 +103,17 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
 }
 ?>
 
-  <!-- OS.js -->
+  <!-- OS.js --><?php if ( CACHE_COMBINED_RESOURCES ) { ?>
+
+  <script charset="utf-8" type="text/javascript" src="/VFS/resource/ALL.js"></script>
+  <script charset="utf-8" type="text/javascript" src="/VFS/language/<?php print $current_locale; ?>" id="LanguageFile"></script>
+  <link rel="stylesheet" type="text/css" href="/VFS/resource/ALL.css" />
+  <link rel="stylesheet" type="text/css" href="/VFS/theme/default" id="ThemeBase" />
+  <link rel="stylesheet" type="text/css" href="/VFS/theme/none" id="ThemeFace" />
+  <link rel="stylesheet" type="text/css" href="/VFS/cursor/default" id="CursorFace" />
+  <link rel="stylesheet" type="text/css" href="/VFS/font/Sansation" id="FontFace" />
+  <?php } else { ?>
+
   <script charset="utf-8" type="text/javascript" src="/VFS/resource/utils.js"></script>
   <script charset="utf-8" type="text/javascript" src="/VFS/resource/init.js"></script>
   <script charset="utf-8" type="text/javascript" src="/VFS/language/<?php print $current_locale; ?>" id="LanguageFile"></script>
@@ -117,6 +127,7 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
   <link rel="stylesheet" type="text/css" href="/VFS/theme/none" id="ThemeFace" />
   <link rel="stylesheet" type="text/css" href="/VFS/cursor/default" id="CursorFace" />
   <link rel="stylesheet" type="text/css" href="/VFS/font/Sansation" id="FontFace" />
+  <?php } ?>
 
 <?php if ( GA_ENABLE ) { ?>
   <!-- Google Analytics -->

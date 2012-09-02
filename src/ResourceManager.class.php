@@ -313,11 +313,13 @@ abstract class ResourceManager
 
   /**
    * Get all preload resources
+   * @param   bool      $modules      Get list of modules (dialogs etc)
    * @return Array
    */
-  public static function getPreloads() {
+  public static function getPreloads($modules = true) {
     $result  = CoreSettings::getCorePreloads();
-    $modules = CoreSettings::getModuleResources();
+    $modules = $modules ? CoreSettings::getModuleResources() : Array();
+
     foreach ( $modules as $name => $opts ) {
       foreach ( $opts["resources"] as $res ) {
         $result["resources"][] = $res;
