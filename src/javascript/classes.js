@@ -214,9 +214,10 @@
      * VFS::read() -- Read file
      * @param  String     name      File name
      * @param  Function   callback  Async callback
+     * @param  Function   onerror   Onerror callback
      * @return void
      */
-    read : function(name, callback) {
+    read : function(name, callback, onerror) {
       var self = this;
       callback = callback || function() {};
       this._fs.root.getFile(name, {}, function(fileEntry) {
@@ -226,8 +227,8 @@
             callback(this.result);
           };
           reader.readAsText(file);
-        }, self.error);
-      }, self.error);
+        }, onerror || self.error);
+      }, onerror || self.error);
     },
 
     /**
@@ -249,9 +250,10 @@
      * @param  String     name      File name
      * @param  Mixed      data      Data to write
      * @param  Function   callback  Async callback
+     * @param  Function   onerror   onerror callback
      * @return void
      */
-    write : function(name, data, callback) {
+    write : function(name, data, callback, onerror) {
       var self = this;
       callback = callback || function() {};
       this._fs.root.getFile(name, {create: true}, function(fileEntry) {
@@ -264,13 +266,23 @@
             console.log('Write failed: ' + e.toString());
           };
 
+          /*
           var bb = new BlobBuilder();
           bb.append(data);
           fileWriter.write(bb.getBlob('text/plain'));
+          */
+
+          try {
+            var bb = new Blob([data], {type: "text/plain"});
+          } catch ( eee ) {
+            (onerror || self.error)(eee);
+          } finally {
+            fileWriter.write(bb);
+          }
 
           callback();
-        }, self.error);
-      }, self.error);
+        }, onerror || self.error);
+      }, onerror || self.error);
     },
 
     /**
@@ -323,14 +335,15 @@
      * VFS::mkdir() -- Create directory
      * @param  String     name      Directory name
      * @param  Function   callback  Async callback
+     * @param  Function   onerror   onerror callback
      * @return void
      */
-    mkdir : function(name, callback) {
+    mkdir : function(name, callback, onerror) {
       callback = callback || function() {};
       var self = this;
       this._fs.root.getDirectory(name, {create: true}, function(fileEntry) {
         callback();
-      }, self.error);
+      }, onerror || self.error);
     },
 
     /**
@@ -388,9 +401,10 @@
      * VFS::ls() -- List directory contents
      * @param  String     name      Directory name
      * @param  Function   callback  Async callback
+     * @param  Function   onerror   Onerror callback
      * @return void
      */
-    ls : function(name, callback) {
+    ls : function(name, callback, onerror) {
       var self = this;
       callback = callback || function() {};
 
@@ -409,7 +423,7 @@
             entries = entries.concat(toArray(results));
             readEntries();
           }
-        }, self.error);
+        }, onerror || self.error);
       };
 
       readEntries();

@@ -141,7 +141,7 @@
   var _Window          = null;                            //!< Current Window instance [dynamic]
   var _PackMan         = null;                            //!< Current PackageManager instance [dynamic]
   var _Menu            = null;                            //!< Current Menu instance
-  var _Storage         = null;                            //!< Current Storage (VFS) instance
+  var _VFS             = null;                            //!< Current Storage (VFS) instance
   var _Processes       = [];                              //!< Process instance list
   var _TopIndex        = (ZINDEX_WINDOW + 1);             //!< OnTop z-index
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);       //!< OnTop instances index
@@ -1190,8 +1190,8 @@
         return _Settings.getStorageUsage();
        },
 
-      'getStorage' : function() {
-        return _Storage ? _Storage.getInstance() : null;
+      'getVFSStorage' : function() {
+        return _VFS ? _VFS.getInstance() : null;
       },
 
       'language' : function() {
@@ -1270,23 +1270,13 @@
       },
 
       'call' : function(method, argv, callback, show_alert) {
-        show_alert = (show_alert === undefined) ? true : (show_alert ? true : false);
-
-        DoPost({'action' : 'call', 'method' : method, 'args' : argv}, function(data) {
-          if ( data.success ) {
-            callback(data.result, null);
-          } else {
-            if ( show_alert ) {
-              MessageBox(data.error);
-            }
-            callback(null, data.error);
-          }
-        });
-
-        console.group("=== API OPERATION ===");
-        console.log("Method", "API.system.call");
-        console.log("Arguments", method, argv);
-        console.groupEnd();
+        if ( _VFS ) {
+          _VFS.op(method, argv, callback, show_alert);
+          console.group("=== API OPERATION ===");
+          console.log("Method", "API.system.call");
+          console.log("Arguments", method, argv);
+          console.groupEnd();
+        }
       },
 
       'post' : function(args, callback) {
@@ -2174,24 +2164,31 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * CoreStorage -- Core VFS Storage Instance
+   * CoreVFS -- Core VFS Storage Instance
+   *
+   * Handles API VFS calls for Browser and Server
+   * files.
    *
    * @extends Process
+   * @see     VFS
    * @class
    */
-  var CoreStorage = Process.extend({
-    _s        : null,
-    _running  : false,
+  var CoreVFS = Process.extend({
+    _s        : null,     //!< Storage instance
+    _running  : false,    //!< If VFS is up and running
 
-    init : function(callback) {
-      this._super("(CoreStorage)");
-
-      var self = this;
-      this._s = new OSjs.Classes.VFSPersistent(function() {
-        self._running = true;
-      });
+    /**
+     * CoreVFS::init() -- Constructor
+     * @constructor
+     */
+    init : function() {
+      this._super("(CoreVFS)", "devices/gtk-floppy.png", true);
     },
 
+    /**
+     * CoreVFS::destroy() -- Destructor
+     * @destructor
+     */
     destroy : function() {
       if ( this._s ) {
         this._s.destroy();
@@ -2199,8 +2196,188 @@
       }
 
       this._super();
+
+      /*
+      // >>> REMOVE GLOBAL <<<
+      if ( _VFS )
+        _VFS = null;
+        */
     },
 
+    /**
+     * CoreVFS::run() -- Set up and start
+     * @param   Function    callback      Callback function to run when done
+     * @return  void
+     */
+    run : function(callback) {
+      if ( STORAGE_ENABLE && OSjs.Compability.SUPPORT_FS ) {
+        try {
+          var self = this;
+          this._s = new OSjs.Classes.VFSPersistent(function() {
+            callback();
+            self._running = true;
+          });
+        } catch ( ex ) {
+          console.error("CoreVFS::init()", ex);
+          if ( !self._running )
+            callback();
+        }
+      } else {
+        callback();
+      }
+    },
+
+    /**
+     * CoreVFS::op() -- Do a operation
+     * @param   String        method        Method name
+     * @param   Mixed         argv          Argument(s)
+     * @param   Function      callback      Callback function
+     * @param   bool          show_alert    Show internal alert?
+     * @return  Mixed
+     */
+    op : function(method, argv, callback, show_alert) {
+      var self  = this;
+      var rpath = null;
+      var re    = /^\/User\/WebStorage/;
+      if ( typeof argv === "object" ) {
+        rpath = !!(argv.path && argv.path.match(re));
+      } else if ( typeof argv === "string" ) {
+        rpath = !!(argv && argv.match(re));
+      }
+
+      if ( rpath ) {
+        switch ( method ) {
+          case "read"  :
+          case "touch" :
+          case "mkdir" :
+          case "rm"    :
+          case "cat"   :
+            if ( method == "cat" )
+              method = "read";
+            if ( method == "delete" )
+              method = "rm";
+
+            return this.call(method, [argv.replace(re, ""), function(result) {
+              callback(result, null);
+            }, function() {
+              callback(null, true); // FIXME
+            }]);
+          break;
+
+          case "write" :
+            return this.call(method, [argv.path.replace(re, ""), argv.content, function(result) {
+              callback(result, null);
+            }, function() {
+              callback(null, true); // FIXME
+            }]);
+          break;
+
+          case "lswrap"  :
+          case "readdir" :
+          case "ls" :
+            var __createFileIter = function(i) {
+              return {
+                "icon"       : i.icon       || "mimetypes/binary.png",
+                "path"       : i.path       || "/",
+                "size"       : i.size       || 0,
+                "hsize"      : i.hsize      || "0b",
+                "type"       : i.type       || "file",
+                "protected"  : i['protected'] === undefined ? 0 : i['protected'],
+                "name"       : escapeHtml(i.name       || "."),
+                "mime"       : escapeHtml(i.mime       || "")
+              };
+            };
+
+
+            return this.call("ls", [argv.path.replace(re, ""), function(result) {
+              if ( !result || !result.length )
+                result = [];
+
+              var iter  = __createFileIter({"path" : "/User", "type" : "dir", "name" : "..", "icon" : "status/folder-visiting.png", "protected" : 1});
+              var list  = [iter];
+              var i = 0, l = result.length, it;
+              for ( i; i < l; i++ ) {
+                it        = result[i];
+                iter      = __createFileIter({
+                  "icon"       : (it.isDirectory ? "places/folder.png" : "mimetypes/binary.png"),
+                  "path"       : argv.path + it.fullPath,
+                  "type"       : (it.isDirectory ? "dir" : "file"),
+                  "name"       : basename(it.fullPath),
+                  "mime"       : "text/plain"
+                });
+                list.push(iter);
+              }
+
+
+              if ( method == "lswrap" ) {
+                var data = {
+                  'path'  : argv.path,
+                  'total' : list.length,
+                  'bytes' : 0,
+                  'items' : list
+                };
+                callback(data, null);
+              } else {
+                callback(list, null);
+              }
+
+            }, function() {
+              callback(null, true); // FIXME
+            }]);
+          break;
+
+          default:
+            callback(false, "Not implemented in VFS yet!");
+            return false;
+          break;
+        }
+      }
+
+      return this.ajax.apply(this, arguments);
+    },
+
+    /**
+     * CoreVFS::call() -- Call a storage function on client
+     * @return  Mixed
+     */
+    call : function(m, args) {
+      if ( this._running ) {
+        this._s[m].apply(this._s, args);
+        return true;
+      }
+
+      if ( m == "ls" ) {
+        args[1]([]);
+      }
+
+      return false;
+    },
+
+    /**
+     * CoreStorate::ajax() -- Call a storage function on server
+     * @return  null
+     */
+    ajax : function(method, argv, callback, show_alert) {
+      show_alert = (show_alert === undefined) ? true : (show_alert ? true : false);
+
+      DoPost({'action' : 'call', 'method' : method, 'args' : argv}, function(data) {
+        if ( data.success ) {
+          callback(data.result, null);
+        } else {
+          if ( show_alert ) {
+            MessageBox(data.error);
+          }
+          callback(null, data.error);
+        }
+      });
+
+      return null;
+    },
+
+    /**
+     * CoreVFS::getInstance() -- Get the current storage instance
+     * @return  VFS
+     */
     getInstance : function() {
       return this._s;
     }
@@ -2409,10 +2586,10 @@
         console.groupEnd();
       }
 
-      if ( _Storage ) {
-        console.group("Shutting down 'CoreStorage'");
+      if ( _VFS ) {
+        console.group("Shutting down 'CoreVFS'");
         try {
-          _Storage.destroy();
+          _VFS.destroy();
         } catch ( eee ) {}
         console.groupEnd();
       }
@@ -2428,7 +2605,7 @@
       _Window     = null;
       _PackMan    = null;
       _Menu       = null;
-      _Storage    = null;
+      _VFS        = null;
       _Processes  = [];
       _TopIndex   = 11;
 
@@ -2544,27 +2721,21 @@
       _SystemLanguage   = response.lang_user;
 
       // Initialize base classes
-      if ( STORAGE_ENABLE ) {
-        try {
-          _Storage  = new CoreStorage();
-        } finally {
-          _Storage  = null;
-        }
-      }
-
       _Settings   = new SettingsManager(response.registry.tree);
       _Resources  = new ResourceManager();
       _PackMan    = new PackageManager();
+      _VFS        = new CoreVFS();
 
       OSjs.Classes.ProgressBar($("#LoadingBar"), 10);
 
       // Now fire them up
-      _Settings.run(response.registry.stored);
-      _PackMan.run(response.packages);
-      _Resources.run(response.preload, function() {
-        self.run(response.session);
+      _VFS.run(function() {
+        _Settings.run(response.registry.stored);
+        _PackMan.run(response.packages);
+        _Resources.run(response.preload, function() {
+          self.run(response.session);
+        });
       });
-
     },
 
     /**
@@ -4504,7 +4675,7 @@
 
       // Actual save function
       var _func = function(file, mime) {
-        var aargs = {'file' : file, 'content' : content};
+        var aargs = {'path' : file, 'content' : content};
         if ( encoding ) {
           aargs['encoding'] = encoding;
         }

@@ -397,7 +397,7 @@ abstract class CoreSettings
     ),
     "/User/WebStorage" => Array(
       "type" => "vfs",
-      "attr" => VFS_ATTR_RW,
+      "attr" => VFS_ATTR_READ, // Browser overrides this
       "icon" => "places/folder-documents.png"
     ),
     "/User/Desktop" => Array(
