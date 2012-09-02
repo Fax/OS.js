@@ -395,6 +395,11 @@ abstract class CoreSettings
       "attr" => VFS_ATTR_RW,
       "icon" => "places/folder-documents.png"
     ),
+    "/User/WebStorage" => Array(
+      "type" => "vfs",
+      "attr" => VFS_ATTR_RW,
+      "icon" => "places/folder-documents.png"
+    ),
     "/User/Desktop" => Array(
       "type" => "user",
       "attr" => VFS_ATTR_RW,

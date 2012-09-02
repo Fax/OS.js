@@ -72,7 +72,8 @@
   var ENV_PRODUCTION         = undefined;           //!< Server-side production env. state
   var ENV_DEMO               = undefined;           //!< Server-side demo env. state
   var ENV_BUGREPORT          = false;               //!< Enable posting of errors (reporting, server-side mailing)
-  var STORE_APPS             = false;               //!< Always store applicaion data in registry
+  var SAVE_APPREG            = false;               //!< Always store applicaion data in registry
+  var STORAGE_ENABLE         = false;
   // @endconstants
 
   /**
@@ -139,7 +140,8 @@
   var _Desktop         = null;                            //!< Desktop instance [not required]
   var _Window          = null;                            //!< Current Window instance [dynamic]
   var _PackMan         = null;                            //!< Current PackageManager instance [dynamic]
-  var _Menu            = null;
+  var _Menu            = null;                            //!< Current Menu instance
+  var _Storage         = null;                            //!< Current Storage (VFS) instance
   var _Processes       = [];                              //!< Process instance list
   var _TopIndex        = (ZINDEX_WINDOW + 1);             //!< OnTop z-index
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);       //!< OnTop instances index
@@ -1188,6 +1190,10 @@
         return _Settings.getStorageUsage();
        },
 
+      'getStorage' : function() {
+        return _Storage ? _Storage.getInstance() : null;
+      },
+
       'language' : function() {
         return GetLanguage();
       },
@@ -1518,11 +1524,11 @@
    */
   var Process = Class.extend({
 
-    _pid        : -1,                     //!< Process ID
-    _started    : null,                   //!< Process started date
-    _proc_name  : "(unknown)",            //!< Process name identifier
-    _proc_icon  : "mimetypes/exec.png",   //!< Process icon
-    _locked     : false,
+    ___pid        : -1,                     //!< Process ID
+    ___started    : null,                   //!< Process started date
+    ___proc_name  : "(unknown)",            //!< Process name identifier
+    ___proc_icon  : "mimetypes/exec.png",   //!< Process icon
+    ___locked     : false,
 
     /**
      * Process::init() -- Constructor
@@ -1534,13 +1540,13 @@
     init : function(name, icon, locked) {
       console.group("Process::init()");
 
-      this._pid       = (_Processes.push(this) - 1);
-      this._proc_name = (name !== undefined && name)  ? name    : "(unknown)";
-      this._proc_icon = (icon !== undefined && icon)  ? icon    : "mimetypes/exec.png";
-      this._locked    = (locked !== undefined)        ? locked  : false;
-      this._started   = new Date();
+      this.___pid       = (_Processes.push(this) - 1);
+      this.___proc_name = (name !== undefined && name)  ? name    : "(unknown)";
+      this.___proc_icon = (icon !== undefined && icon)  ? icon    : "mimetypes/exec.png";
+      this.___locked    = (locked !== undefined)        ? locked  : false;
+      this.___started   = new Date();
 
-      console.log("PID", this._pid, this._proc_name, this._locked);
+      console.log("PID", this.___pid, this.___proc_name, this.___locked);
       console.groupEnd();
     },
 
@@ -1551,11 +1557,11 @@
     destroy : function() {
       console.group("Process::destroy()");
 
-      if ( this._pid >= 0 ) {
-        _Processes[this._pid] = undefined;
+      if ( this.___pid >= 0 ) {
+        _Processes[this.___pid] = undefined;
       }
 
-      this._started = null;
+      this.___started = null;
 
       console.groupEnd();
     },
@@ -1565,7 +1571,7 @@
      * @return bool
      */
     _kill : function() {
-      if ( !this._locked ) {
+      if ( !this.___locked ) {
         console.log("Process::kill()", this);
 
         this.destroy();
@@ -2168,6 +2174,39 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
+   * CoreStorage -- Core VFS Storage Instance
+   *
+   * @extends Process
+   * @class
+   */
+  var CoreStorage = Process.extend({
+    _s        : null,
+    _running  : false,
+
+    init : function(callback) {
+      this._super("(CoreStorage)");
+
+      var self = this;
+      this._s = new OSjs.Classes.VFSPersistent(function() {
+        self._running = true;
+      });
+    },
+
+    destroy : function() {
+      if ( this._s ) {
+        this._s.destroy();
+        this._s = null;
+      }
+
+      this._super();
+    },
+
+    getInstance : function() {
+      return this._s;
+    }
+  });
+
+  /**
    * CoreConnection -- Core Connection Process
    *
    * @extends Socket
@@ -2261,10 +2300,10 @@
    */
   var Core = Process.extend({
 
-    running : false,        //!< If core is running
-    olint   : null,         //!< On-line checker interval
-    cuint   : null,         //!< Cache update interval
-    sclint  : null,         //!< Cache  interval
+    running     : false,        //!< If core is running
+    olint       : null,         //!< On-line checker interval
+    cuint       : null,         //!< Cache update interval
+    sclint      : null,         //!< Cache  interval
 
     /**
      * Core::init() -- Constructor
@@ -2370,6 +2409,14 @@
         console.groupEnd();
       }
 
+      if ( _Storage ) {
+        console.group("Shutting down 'CoreStorage'");
+        try {
+          _Storage.destroy();
+        } catch ( eee ) {}
+        console.groupEnd();
+      }
+
       console.log("Nulling instance...");
 
       _Connection = null;
@@ -2381,6 +2428,7 @@
       _Window     = null;
       _PackMan    = null;
       _Menu       = null;
+      _Storage    = null;
       _Processes  = [];
       _TopIndex   = 11;
 
@@ -2496,6 +2544,14 @@
       _SystemLanguage   = response.lang_user;
 
       // Initialize base classes
+      if ( STORAGE_ENABLE ) {
+        try {
+          _Storage  = new CoreStorage();
+        } finally {
+          _Storage  = null;
+        }
+      }
+
       _Settings   = new SettingsManager(response.registry.tree);
       _Resources  = new ResourceManager();
       _PackMan    = new PackageManager();
@@ -3079,7 +3135,7 @@
     getProcess : function(pid, root) {
       pid = parseInt(pid, 10) || 0;
       if ( (pid >= 0) && _Processes[pid] ) {
-        if ( root || !(_Processes[pid]._locked) ) {
+        if ( root || !(_Processes[pid].___locked) ) {
           return _Processes[pid];
         }
       }
@@ -3109,12 +3165,12 @@
             })(p);
 
             procs.push({
-              'pid'     : p._pid,
+              'pid'     : p.___pid,
               'name'    : p._name,
-              'time'    : (now - p._started.getTime()),
-              'icon'    : p._proc_icon,
-              'title'   : p._proc_name,
-              'locked'  : p._locked,
+              'time'    : (now - p.___started.getTime()),
+              'icon'    : p.___proc_icon,
+              'title'   : p.___proc_name,
+              'locked'  : p.___locked,
               //'windows' : (p instanceof Application ? p._windows : []),
               'subp'    : (p._getWorkerCount) ? (p._getWorkerCount()) : 0,
               'service' : (p instanceof ProcessService),
@@ -3416,7 +3472,7 @@
       var j;
       for ( j in this._registry ) {
         if ( this._registry.hasOwnProperty(j) ) {
-          if ( j == "user.session.appstorage" && !STORE_APPS )
+          if ( j == "user.session.appstorage" && !SAVE_APPREG )
             continue;
 
           console.log("> Injecting", j);
@@ -3513,7 +3569,7 @@
           if ( !this._registry[i] )
             continue;
 
-        if ( i == "user.session.appstorage" && !STORE_APPS )
+        if ( i == "user.session.appstorage" && !SAVE_APPREG )
           continue;
 
           console.log("> ", i, this._registry[i].type, registry[i]);
@@ -3826,7 +3882,7 @@
       var i;
 
       for ( i in this._registry ) {
-        if ( i == "user.session.appstorage" && !STORE_APPS )
+        if ( i == "user.session.appstorage" && !SAVE_APPREG )
           continue;
 
         exp[i] = this._get(i, in_array(this._registry[i], ["list", "array"]));
@@ -4277,7 +4333,7 @@
         this._restoreStorage();
         if ( root_window instanceof Window ) {
           this._root_window = root_window;
-          this._proc_icon   = root_window._icon;
+          this.___proc_icon   = root_window._icon;
 
           this._root_window._bind("die", function() {
             self._stop();
