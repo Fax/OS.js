@@ -38,13 +38,13 @@
   <h1>OS.js - JavaScript Web Desktop Environment</h1>
   <h2>About</h2>
   <p>
-    OS.js is a simple, yet powerful Web Desktop platform.<br />
+    OS.js is a simple, yet powerful Cloud/Web Desktop Platform.<br />
 
     <br />
     Only WebKit and Gecko based browsers fully support Glade/Gtk+ due to incomplete implementation of various CSS features.<br />
 
     <br />
-    OS.js also comes with a standalone executable that can be deployed on a Linux distrubution running on top of X11.<br />
+    OS.js can also be deployed standalone, either running in a browser or on top of X11 as a complete Graphical Environment.
 
     <br />
     Comes with a complete desktop environment, window manager and multi-user environment with user-installable packages (Panel items, applications, services, etc.).<br />
