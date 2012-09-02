@@ -373,7 +373,7 @@ EOHTML;
             ),
             "session"       => $session,
             "packages"      => PackageManager::GetPackages($user),
-            "preload"       => ResourceManager::getPreloads(),
+            "preload"       => ResourceManager::getPreloads(!(ENV_PRODUCTION && CACHE_COMBINED_RESOURCES)),
             "sid"           => session_id(),
             "lang_system"   => DEFAULT_LANGUAGE,
             "lang_user"     => "default", // NOTE: Should be set to user ? used as 'SystemLanguage'
