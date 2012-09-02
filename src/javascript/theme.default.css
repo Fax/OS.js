@@ -137,13 +137,15 @@ button[disabled="disabled"]:active {
 #DesktopGrid {
   font-size : 90%;
 }
-
-#DesktopGrid .label {
-  color : #000;
-  background-color : #aaa;
+#DesktopGrid .GtkIconView {
 }
-#DesktopGrid .current .label {
+#DesktopGrid .GtkIconView .Current .Label {
+  color : #000;
   background-color : #fff;
+}
+#DesktopGrid .GtkIconView .Label {
+  color : #fff;
+  background-color : #aaa;
 }
 
 /*
