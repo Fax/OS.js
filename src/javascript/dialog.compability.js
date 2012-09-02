@@ -83,28 +83,15 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
        * @return $
        */
       create : function(id, mcallback) {
-        var el = this._super(id, mcallback);
-
-        var is_mobile     = false;
-        var is_supported  = true;
-
-        var mob = MobileSupport();
-        if ( mob.iphone || mob.blackberry || mob.android ) {
-          is_mobile     = true;
-          is_supported  = false;
-        }
-        if ( ($.browser.msie || $.browser.opera) || (mob.iphone || mob.blackberry || mob.android) ) {
-          is_supported  = false;
-        }
-
-        var items  = [];
-        var header = $(sprintf("<div class=\"Header\">%s: <span class=\"%s\">%s</span>. </div><div class=\"Note\">%s</div>",
+        var el      = this._super(id, mcallback);
+        var items   = [];
+        var header  = $(sprintf("<div class=\"Header\">%s: <span class=\"%s\">%s</span>. </div><div class=\"Note\">%s</div>",
                                "Your browser is",
-                               (is_supported ? "supported" : ""),
-                               (is_supported ? "Supported" : "Partially Supported"),
+                               (OSjs.Navigator.SUPPORTED ? "supported" : ""),
+                               (OSjs.Navigator.SUPPORTED ? "Supported" : "Partially Supported"),
                                "Any features not supported is listed below"));
 
-        if ( is_mobile ) {
+        if ( OSjs.Navigator.MOBILE ) {
           items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Mobile support", "There is currently no maintainance for Mobile browsers"));
         }
 

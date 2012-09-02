@@ -46,12 +46,41 @@
   //
   window.OSjs =
   {
+    Navigator    : {}, // Navigator checks, see below
     Compability  : {}, // Compability check results, see below
     Labels       : {}, // @see locale/*.js
     Dialogs      : {}, // @see CoreSettings.class.php, dialog.*.js
     Packages     : {}, // @see Package.class.php > Application, BackroundService, PanelItem
     Classes      : {}  // @see classes.js
   };
+
+  //
+  // Navigator checking
+  //
+
+  var mob = MobileSupport();
+
+  OSjs.Navigator = {
+    MOBILE      : !!(mob.iphone || mob.blackberry || mob.android),
+    SUPPORTED   : !(($.browser.msie || $.browser.opera) || !!(mob.iphone || mob.blackberry || mob.android)),
+    appName     : window.navigator.appName,
+    appVersion  : window.navigator.appVersion,
+    platform    : window.navigator.platform,
+    os          : window.navigator.oscpu || "unknown",
+    userAgent   : window.navigator.userAgent,
+    cookes      : window.navigator.cookieEnabled,
+    language    : window.navigator.language,
+    browser     : {
+      buildId    : window.navigator.buildId     || null,
+      product    : window.navigator.product     || null,
+      productSub : window.navigator.productSub  || null,
+      vendor     : window.navigator.vendor      || null,
+      vendorSub  : window.navigator.vendorSub   || null
+    }
+  };
+
+  delete mob;
+
 
   //
   // Compability checking

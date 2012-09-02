@@ -46,7 +46,8 @@ define("ENABLE_GZIP",         true);                  // Enable Gzipped output (
 define("DEFAULT_TIMEZONE",    "UTC");                 // Locale: Timezone
 define("DEFAULT_LANGUAGE",    "en_US");               // Locale: Language
 
-define("CACHE_EXPIRE_ADD",    60);                    // Cache: Expiration date forward in time - in seconds
+define("CACHE_EXPIRE_ADD",          60);              // Cache: Expiration date forward in time - in seconds
+define("CACHE_COMBINED_RESOURCES",  ENV_PRODUCTION);  // Cache: Combile all CSS/JS resources that are normally preloaded in browser, speeds up loading
 
 define("HOST_FRONTEND",       "osjs.local");
 define("HOST_API",            "api.osjs.local");
