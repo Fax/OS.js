@@ -2,20 +2,17 @@ CORE TODO:
 -------------------------------------------------------------------------------
 [HIG] Configuration migration on JS... SETTINGS_REVISION again
 [HIG] New package type: Theme
-[MED] Richtext: Add custom contextmenu
-[MED] JS VFS
-      - Finish up
-      - Temporary storage
-      - Persistent storage
+[MED] Finish VFS integration
+      - Delete directory
+      - Backward navigation
+      - Mime and Size enums
 [MED] Panel
       - Redesign preferences
       - Settings - Background Image
       - Finish up multiples
       - Fix dock ?!
-[LOW] Combine all resources in production env.
-      - Send a list of all the cat'ed items
-      - Make ResourceManager::MinimizeCombine()
 [LOW] WindowManager: Effect(s) configuration
+[LOW] Richtext: Add custom contextmenu
 
 PACKAGES TODO:
 -------------------------------------------------------------------------------

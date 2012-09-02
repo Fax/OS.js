@@ -95,6 +95,9 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
           items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Mobile support", "There is currently no maintainance for Mobile browsers"));
         }
 
+        if ( !OSjs.Compability.SUPPORT_FS ) {
+          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Local Filesystem", "You will not be able to store any files in the browser storage"));
+        }
         if ( !OSjs.Compability.SUPPORT_UPLOAD ) {
           items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Asynchronous File Upload", "You will not be able to upload any files"));
         }

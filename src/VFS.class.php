@@ -56,6 +56,7 @@ abstract class VFS
     "exists"          => Array("Exists"),
     "readdir"         => Array("ListDirectory"),
     "ls"              => Array("ListDirectory"),
+    "lswrap"          => Array("ListDirectoryWrapper"),
     "delete"          => Array("Delete"),
     "rm"              => Array("Delete"),
     "mv"              => Array("Move", Array("path", "file")),
@@ -63,8 +64,8 @@ abstract class VFS
     "read"            => Array("ReadFile"),
     "cat"             => Array("ReadFile"),
     "touch"           => Array("TouchFile"),
-    "put"             => Array("WriteFile", Array("file", "content", "encoding")),
-    "write"           => Array("WriteFile", Array("file", "content", "encoding")),
+    "put"             => Array("WriteFile", Array("path", "content", "encoding")),
+    "write"           => Array("WriteFile", Array("path", "content", "encoding")),
     "mkdir"           => Array("CreateDirectory"),
     "file_info"       => Array("FileInformation"),
     "fileinfo"        => Array("FileInformation"),
@@ -334,6 +335,52 @@ abstract class VFS
   /////////////////////////////////////////////////////////////////////////////
   // METHODS
   /////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * ListDirectoryWrapper() -- List directory contents wrapper function
+   * Nice for JavaScript IconViews
+   *
+   * @param  Array    $argv     Arguments
+   * @return Array
+   */
+  public static function ListDirectoryWrapper($argv) {
+    $result  = Array();
+    $path    = isset($argv['path']) ? $argv['path'] : "/";
+    $sort    = explode(":", $argv['sort']);
+    $sortdir = "asc";
+    $total   = 0;
+    $bytes   = 0;
+    $ignores = Array(); // @see VFS::$_ignores
+    $files   = Array();
+
+    if ( sizeof($sort) > 1 ) {
+      $sortdir = $sort[0];
+      $sort    = $sort[1] ? $sort[1] : "name";
+    } else {
+      $sort    = reset($sort);
+    }
+
+    if ( ($items = VFS::ls(Array("path" => $path, "ignore" => $ignores, "sort" => $sort, "sort_dir" => $sortdir))) !== false ) {
+      foreach ( $items as $file => $info ) {
+        $iter = Array(
+          "icon"      => $info["icon"],
+          "type"      => $info["type"],
+          "mime"      => htmlspecialchars($info["mime"]),
+          "name"      => htmlspecialchars($file),
+          "path"      => $info["path"],
+          "size"      => $info["size"],
+          "hsize"     => getHumanSize($info["size"]),
+          "protected" => $info["protected"]
+        );
+
+        $bytes        += (int) $info['size'];
+        $files[]       = $iter;
+        $total++;
+      }
+    }
+
+    return Array("items" => $files, "total" => $total, "bytes" => $bytes, "path" => ($path == "/User/Documents" ? "Home" : $path));
+  }
 
   /**
    * ListDirectory() -- List directory contents
