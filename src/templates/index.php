@@ -139,6 +139,9 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
 <?php require_template ("index.home.php"); ?>
 </div>
 
+<script type="text/javascript"></script>
+<noscript>Your browser does not support JavaScript and cannot launch the application.</noscript>
+
 <!-- Main Container -->
 <div id="Desktop">
   <!-- IconView -->
