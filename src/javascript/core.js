@@ -119,26 +119,6 @@
     down  : 40
   };
 
-  /**
-   * @constants Navigator item
-   */
-  var NAVIGATOR = {
-    appName     : window.navigator.appName,
-    appVersion  : window.navigator.appVersion,
-    platform    : window.navigator.platform,
-    os          : window.navigator.oscpu || "unknown",
-    userAgent   : window.navigator.userAgent,
-    cookes      : window.navigator.cookieEnabled,
-    language    : window.navigator.language,
-    browser     : {
-      buildId    : window.navigator.buildId     || null,
-      product    : window.navigator.product     || null,
-      productSub : window.navigator.productSub  || null,
-      vendor     : window.navigator.vendor      || null,
-      vendorSub  : window.navigator.vendorSub   || null
-    }
-  };
-
   /////////////////////////////////////////////////////////////////////////////
   // PRIVATE VARIABLES
   /////////////////////////////////////////////////////////////////////////////
@@ -2438,7 +2418,7 @@
         }
       };
 
-      DoPost({'action' : 'boot', 'navigator' : NAVIGATOR, 'compability' : OSjs.Compability}, function(response) {
+      DoPost({'action' : 'boot', 'navigator' : OSjs.Navigator, 'compability' : OSjs.Compability}, function(response) {
         var data    = response.result;
         var env     = data.environment;
         var alogin  = env.autologin;
@@ -2784,7 +2764,7 @@
           DoPost({
             'action' : 'bug',
             'data'   : {
-              'browser' : NAVIGATOR
+              'browser' : OSjs.Navigator
             },
             'error'  : {
               'message' : msg,
