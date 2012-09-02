@@ -1,6 +1,6 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG] Rewrite IconView in desktop to IconView
+[HIG] Configuration migration on JS... SETTINGS_REVISION again
 [HIG] New package type: Theme
 [MED] Richtext: Add custom contextmenu
 [MED] JS VFS

@@ -2213,6 +2213,9 @@
       if ( opts.multiselect === undefined ) {
         opts.multiselect = false;
       }
+      if ( opts.dnd_items === undefined ) {
+        opts.dnd_items = true;
+      }
 
       this.$element     = $(el);
       this._currentView = view    || "icon";
@@ -2244,7 +2247,7 @@
         return false;
       });
 
-      if ( OSjs.Compability.SUPPORT_DND && this._opts.dnd ) {
+      if ( this._opts.dnd && OSjs.Compability.SUPPORT_DND ) {
         this.$element.bind("dragover", function(ev) {
           ev.preventDefault();
           return self.onDragAction(ev, "dragover");
@@ -2593,7 +2596,7 @@
         jsn = {};
       }
 
-      if ( OSjs.Compability.SUPPORT_DND && this._opts.dnd ) {
+      if ( this._opts.dnd_items && OSjs.Compability.SUPPORT_DND ) {
         el.attr("draggable", "true");
         el.bind("dragover", function(ev) {
           ev.preventDefault();

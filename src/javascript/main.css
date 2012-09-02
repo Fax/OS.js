@@ -197,54 +197,32 @@ ul.CompactList li {
     top : 0px;
     bottom : 40px;
   }
-  #DesktopGrid ul {
-    margin : 0;
-    padding : 0;
-    list-style-type : none;
-    margin-left : 10px;
-    margin-right : 10px;
-    /*
+  #DesktopGrid .GtkIconView {
     position : absolute;
-    display : block;
     top : 0px;
-    left : 10px;
-    right : 10px;
+    left : 0px;
+    right : 0px;
     bottom : 0px;
-    */
+    background : transparent !important;
   }
-  #DesktopGrid li {
-    margin : 10px;
-    padding : 0;
-    text-align : center;
-    display : inline-block;
+  #DesktopGrid .GtkIconView li {
+    width : auto;
+    height : 54px;
+    min-width : 48px;
+    max-width : 92px;
   }
-  #DesktopGrid li .inner {
-    overflow : visible;
-  }
-  #DesktopGrid li .icon {
-  }
-  #DesktopGrid li .icon img {
-    width : 32px;
-    height : 32px;
+  #DesktopGrid .GtkIconView .Label {
     padding : 2px;
-  }
-  #DesktopGrid li .label {
-    white-space : nowrap;
-    margin : 0;
-    padding : 0;
     padding-left : 5px;
     padding-right : 5px;
-    height : 18px;
-    line-height : 18px;
-    vertical-align : middle;
-  }
-  #DesktopGrid li .label span {
-    vertical-align : middle;
-  }
-  #DesktopGrid li.current {
-  }
-
-  #DesktopGrid li.current .label {
+white-space: pre; /* CSS2 */
+white-space: -moz-pre-wrap; /* Mozilla */
+white-space: -hp-pre-wrap; /* HP printers */
+white-space: -o-pre-wrap; /* Opera 7 */
+white-space: -pre-wrap; /* Opera 4-6 */
+white-space: pre-wrap; /* CSS 2.1 */
+white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
+word-wrap: break-word; /* IE */
   }
 
 #WindowTogglerRect {

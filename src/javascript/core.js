@@ -5479,6 +5479,126 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /**
+   * DesktopIconView -- Desktop Icon View class
+   *
+   * @extends Classes.Iconview
+   * @class
+   */
+  var DesktopIconView = OSjs.Classes.Iconview.extend({
+    init : function() {
+      var el = $("#DesktopGrid");
+      var inner = $("<div class=\"GtkIconView\"></div>");
+      el.append(inner);
+
+      this._super(inner, "icon", {'dnd' : true, 'dnd_items' : false, 'multiselect' : false});
+    },
+
+    createItem : function(view, iter) {
+      var title = iter.title;
+
+      var el = $(sprintf("<li class=\"GtkIconViewItem\"><div class=\"Image\"><img alt=\"\" src=\"%s\" /></div><div class=\"Label\">%s</div></li>",
+                       API.ui.getIcon(iter.icon, "32x32"),
+                       title));
+
+      el.data("title",      iter.title);
+      el.data("path",       iter.path);
+      el.data("mime",       iter.mime);
+      el.data("protected",  iter['protected']);
+
+      return el;
+    },
+
+    onItemActivate : function(ev, el, item) {
+      if ( el && item ) {
+        API.system.launch(item.launch, item['arguments']);
+      }
+      return this._super(ev, el, item);
+    },
+
+    onItemContextMenu : function(ev, el, item) {
+      var self = this;
+      var result = this._super(ev, el, item);
+      API.application.context_menu(ev, this, [
+        {"title" : OSjs.Labels.DesktopGridHeader, "attribute" : "header"},
+        {"title" : OSjs.Labels.DesktopGridRemove, "disabled" : item['protected'] == "1", "method" : function() { self.removeItem(el, item); }}
+      ], true);
+      return result;
+    },
+
+    onDragAction : function(ev, action, item, args) {
+      var result = this._super(ev, action, item, args);
+      if ( (action == "drop") && (result instanceof Object) && result.json ) {
+        if ( result.json.path && result.json.mime ) {
+          var iter;
+          var data = result.json;
+
+          if ( data.mime.match(/^OSjs/) ) {
+            if ( data.mime == "OSjs/Application" ) {
+              iter = {
+                'title'     : data.name,
+                'icon'      : data.icon,
+                'launch'    : "API::Run::" + basename(data.path),
+                'arguments' : {},
+                'protected' : false
+              };
+            }
+          } else {
+            iter = {
+              'title'     : data.name,
+              'icon'      : data.icon,
+              'launch'    : "API::Launch",
+              'arguments' : {path: data.path, mime: data.mime},
+              'protected' : false
+            };
+          }
+
+          if ( iter ) {
+            this.addItem(iter);
+          }
+        }
+      }
+      return result;
+    },
+
+    addItem : function(data) {
+      var self = this;
+      var list = _Settings._get("desktop.grid", true);
+      if ( !list || !(list instanceof Array) ) {
+        list = [];
+      }
+
+      list.push(data);
+
+      _Settings._apply({"desktop.grid" : list}, function() {
+        self.update();
+      });
+    },
+
+    removeItem : function(el, item) {
+      var self = this;
+      var list = _Settings._get("desktop.grid", true);
+      if ( !list || !(list instanceof Array) ) {
+        list = [];
+      } else {
+        list.splice($(el).index(), 1);
+      }
+
+      _Settings._apply({"desktop.grid" : list}, function() {
+        self.update();
+      });
+    },
+
+    update : function() {
+      var list = _Settings._get("desktop.grid", true);
+      if ( !list || !(list instanceof Array) ) {
+        list = [];
+      }
+      this.render(list);
+    }
+
+  });
+
+  /**
    * Desktop -- Main Desktop Class
    * The desktop containing all elements
    *
@@ -5616,184 +5736,10 @@
       //
       // Desktop Grid - Icon View
       //
-
-      var IconView = Class.extend({
-
-        _sel  : null,
-        _root : null,
-        _list : null,
-
-        init : function() {
-          var self = this;
-          var grid = $("#DesktopGrid");
-
-          this._root = $("<ul></ul>");
-
-          grid.html(this._root);
-          grid.click(function() {
-            if ( self._sel ) {
-              $(self._sel).parent().removeClass("current");
-              self._sel = null;
-            }
-
-            $(document).click(); // Trigger this! (deselects context-menu)
-          });
-
-          grid.bind("dragenter", function(ev) {
-            ev.stopPropagation();
-            ev.preventDefault();
-            ev.originalEvent.dataTransfer.dropEffect = "link";
-            return false;
-          });
-          grid.bind("dragend", function(ev) {
-            return false;
-          });
-          grid.bind("dragover", function(ev) {
-            ev.stopPropagation();
-            ev.preventDefault();
-            return false;
-          });
-          grid.bind("drop", function(ev) {
-            var data = ev.originalEvent.dataTransfer.getData("text/plain");
-            var jsn = null;
-            if ( data ) {
-              try {
-                jsn = JSON.parse(data);
-              } catch (e) {}
-            }
-
-            ev.preventDefault();
-            ev.stopPropagation();
-
-            if ( jsn ) {
-              self.addItem(jsn);
-            }
-
-            return false;
-          });
-
-          this.refresh();
-        },
-
-        removeItem : function(index, el) {
-          if ( this._list[index] ) {
-            this._list.splice(index, 1);
-
-            el.remove();
-
-            _Settings._apply({"desktop.grid" : this._list}, function() {
-            //  self.refresh();
-            });
-          }
-        },
-
-        addItem : function(jsn) {
-          var self = this;
-          if ( jsn ) {
-            var iter;
-            if ( jsn.mime ) {
-              if ( jsn.mime.match(/^OSjs/) ) {
-                if ( jsn.mime == "OSjs/Application" ) {
-                  iter = {
-                    'title'     : jsn.name,
-                    'icon'      : jsn.icon,
-                    'launch'    : "API::Run::" + basename(jsn.path),
-                    'arguments' : {},
-                    'protected' : false
-                  };
-                }
-              } else {
-                iter = {
-                  'title'     : jsn.name,
-                  'icon'      : jsn.icon,
-                  'launch'    : "API::Launch",
-                  'arguments' : {path: jsn.path, mime: jsn.mime},
-                  'protected' : false
-                };
-              }
-            }
-
-            if ( iter ) {
-              this._list.push(iter);
-              _Settings._apply({"desktop.grid" : this._list}, function() {
-                self.refresh();
-              });
-            }
-          }
-        },
-
-        refresh : function() {
-          var self = this;
-
-          this._list = _Settings._get("desktop.grid", true);
-          if ( this._list ) {
-            this._root.empty();
-
-            // > Selection
-            var __select = function(selement) {
-              if ( self._sel ) {
-                $(self._sel).removeClass("current");
-              }
-
-              $(selement).addClass("current");
-              self._sel = selement;
-            };
-
-            // > Click
-            var __click = function(ev, index) {
-              ev.preventDefault();
-              ev.stopPropagation();
-
-              var iter = _Settings._get("desktop.grid", true)[index]; // NOTE: This was the solution ?! WTF
-              if ( iter ) {
-                API.system.launch(iter.launch, iter['arguments']);
-              }
-              $("#DesktopGrid").click(); // Unselect
-
-              return false;
-            };
-
-            var giter, e, i = 0, l = this._list.length;
-            for ( i; i < l; i++ ) {
-              giter = this._list[i];
-              e = $(sprintf("<li><div class=\"inner\"><div class=\"icon\"><img alt=\"\" src=\"%s\" /></div><div class=\"label\"><span>%s</span></div></div></li>", GetIcon(giter.icon, "32x32"), giter.title));
-              e.data("protected", giter['protected']);
-              this._root.append(e);
-            }
-
-            this._root.find("li").dblclick(function(ev) {
-              __click(ev, $(this).index());
-            }).click(function(ev) {
-              ev.stopPropagation();
-              __select($(this));
-              $(document).click(); // Trigger this! (deselects context-menu)
-            }).bind("contextmenu", function(ev) {
-              var el        = $(this);
-              var disabled  = el.data("protected") == "1";
-              var index     = el.index();
-
-              __select(el);
-              return API.application.context_menu(ev, this, [
-                {"title" : OSjs.Labels.DesktopGridHeader, "attribute" : "header"},
-                {"title" : OSjs.Labels.DesktopGridRemove, "disabled" : disabled, "method" : function() { self.removeItem(index, el); }}
-
-              ], true);
-            });
-
-          }
-        },
-
-        destroy : function() {
-          $("#DesktopGrid").empty(); //.remove();
-          this._list = null;
-          this._sel  = null;
-        }
-
-      }); // @class
-
       console.log("Registering desktop grid...");
       try {
-        self.iconview = new IconView();
+        self.iconview = new DesktopIconView();
+        self.iconview.update();
       } catch ( exception ) {
         throw new OSjs.Classes.ProcessException(self, OSjs.Labels.CrashDesktopIconView, exception);
       }
