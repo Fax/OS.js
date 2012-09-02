@@ -54,7 +54,7 @@
   </p>
   <h2>Links</h2>
   <p>
-    OS.js is created<a href="https://plus.google.com/101576798387217383063?rel=author">by Anders Evenrud</a>
+    OS.js is created <a href="https://plus.google.com/101576798387217383063?rel=author">by Anders Evenrud</a>
   </p>
   <p>
     Homepage on is located <a href="http://andersevenrud.github.com/OS.js/">GitHub</a>
