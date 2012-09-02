@@ -35,16 +35,27 @@
  */
 
 ?>
-  <h1>OS.js - JavaScript Web Desktop Environment (Version <?php print PROJECT_VERSION; ?> demo)</h1>
+  <h1>OS.js - JavaScript Web Desktop Environment</h1>
+  <h2>About</h2>
   <p>
-    OS.js is a simple, yet powerful Web Desktop platform.
+    OS.js is a simple, yet powerful Web Desktop platform.<br />
+
+    <br />
+    Only WebKit and Gecko based browsers fully support Glade/Gtk+ due to incomplete implementation of various CSS features.<br />
+
+    <br />
+    OS.js also comes with a standalone executable that can be deployed on a Linux distrubution running on top of X11.<br />
+
+    <br />
+    Comes with a complete desktop environment, window manager and multi-user environment with user-installable packages (Panel items, applications, services, etc.).<br />
+
+    <br />
+    Applications can be developed using the Glade Interface designer (GTK+) and using OS.js' compiler and generator to create compatible packages.
+  </p>
+  <h2>Links</h2>
+  <p>
+    OS.js is created<a href="https://plus.google.com/101576798387217383063?rel=author">by Anders Evenrud</a>
   </p>
   <p>
-    This is the demo site for testing OS.js releases.
-  </p>
-  <p>
-    For more information contact the author: <a href="https://plus.google.com/101576798387217383063?rel=author">Anders Evenrud</a> <a href="mailto:andersevenrud@gmail.com">&lt;andersevenrud@gmail.com&gt;</a>
-  </p>
-  <p>
-    Homepage on <a href="http://andersevenrud.github.com/OS.js/">GitHub</a>
+    Homepage on is located <a href="http://andersevenrud.github.com/OS.js/">GitHub</a>
   </p>
