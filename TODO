@@ -1,8 +1,5 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[MED] Finish VFS integration
-      - Delete directory
-      - Mime and Size enums
 [MED] Panel
       - Redesign preferences
       - Settings - Background Image
@@ -12,6 +9,11 @@ CORE TODO:
 [HIG] New package type: Theme
 [LOW] WindowManager: Effect(s) configuration
 [LOW] Richtext: Add custom contextmenu
+[LOW] Finish CoreVFS Storage integration
+      - Solve file upload
+      - Delete directory
+      - Mime and Size enums
+      - Fix subdirs ?!
 
 PACKAGES TODO:
 -------------------------------------------------------------------------------
