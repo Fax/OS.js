@@ -56,7 +56,7 @@
   background: -webkit-gradient(linear, left top, left bottom, from(#D4D6DA), to(#8D9299)); /* for webkit browsers */
   background: -moz-linear-gradient(top,  #D4D6DA,  #8D9299); /* for firefox 3.6+ */ 
 }
-.Window.Current .WindowTopInner {
+.Window.Current .WindowTop {
   color : #222;
 }
 
