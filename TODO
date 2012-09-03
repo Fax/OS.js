@@ -1,16 +1,15 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG] Configuration migration on JS... SETTINGS_REVISION again
-[HIG] New package type: Theme
 [MED] Finish VFS integration
       - Delete directory
-      - Backward navigation
       - Mime and Size enums
 [MED] Panel
       - Redesign preferences
       - Settings - Background Image
       - Finish up multiples
       - Fix dock ?!
+[HIG] Configuration migration on JS... SETTINGS_REVISION again
+[HIG] New package type: Theme
 [LOW] WindowManager: Effect(s) configuration
 [LOW] Panel setting: Background Image
 [LOW] Panels: Add/Remove (Implement multiples in GUI)
@@ -30,14 +29,16 @@ PACKAGES TODO:
 * ApplicationMusicPlayer - Needs some work
 * ApplicationVideoPlayer - Resizing
 * ApplicationArchiver - Not even close to done
+* ApplicationMail - Needs testing
+* ApplicationIRC - !?!?!?!
 
 MISC TODO:
 -------------------------------------------------------------------------------
-[HIG] Create installer
-[MED] Finish Standalone Platform
-[LOW] Manifest and Cache for offline usage
-[---] Replace jQuery
-[---] Streaming of applications over SSH
+* Create installer
+* Finish Standalone Platform
+* Manifest and Cache for offline usage
+* Replace jQuery
+* Streaming of applications over SSH
 
 IDEAS ETC:
 -------------------------------------------------------------------------------

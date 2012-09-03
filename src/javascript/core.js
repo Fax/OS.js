@@ -73,7 +73,7 @@
   var ENV_DEMO               = undefined;           //!< Server-side demo env. state
   var ENV_BUGREPORT          = false;               //!< Enable posting of errors (reporting, server-side mailing)
   var SAVE_APPREG            = false;               //!< Always store applicaion data in registry
-  var STORAGE_ENABLE         = false;
+  var STORAGE_ENABLE         = false;               //!< Enable WebStorage for files
   // @endconstants
 
   /**
@@ -1187,8 +1187,12 @@
     'system' : {
 
       'storageUsage' : function() {
-        return _Settings.getStorageUsage();
+        return _Settings.getRegistryUsage();
        },
+
+      'vfsUsage' : function() {
+        return _VFS.getStorageUsage();
+      },
 
       'getVFSStorage' : function() {
         return _VFS ? _VFS.getInstance() : null;
@@ -2214,133 +2218,57 @@
         try {
           var self = this;
           this._s = new OSjs.Classes.VFSPersistent(function() {
+            console.log("CoreVFS::run()", "Using persistent storage", self.getStorageUsage());
+
             callback();
             self._running = true;
           });
         } catch ( ex ) {
-          console.error("CoreVFS::init()", ex);
+          console.error("CoreVFS::run()", "Error initing storage", ex);
           if ( !self._running )
             callback();
         }
       } else {
+        console.log("CoreVFS::run()", "NOT USING STORAGE", this.getStorageUsage());
+
         callback();
       }
     },
 
     /**
      * CoreVFS::op() -- Do a operation
-     * @param   String        method        Method name
-     * @param   Mixed         argv          Argument(s)
-     * @param   Function      callback      Callback function
-     * @param   bool          show_alert    Show internal alert?
+     * @see     CoreVFS::callLocal()
+     * @see     CoreVFS::callAjax()
      * @return  Mixed
      */
     op : function(method, argv, callback, show_alert) {
-      var self  = this;
-      var rpath = null;
-      var re    = /^\/User\/WebStorage/;
-      if ( typeof argv === "object" ) {
-        rpath = !!(argv.path && argv.path.match(re));
-      } else if ( typeof argv === "string" ) {
-        rpath = !!(argv && argv.match(re));
-      }
+      /*
+      if ( STORAGE_ENABLE ) {
+        var re    = /^\/User\/WebStorage/;
+        var rpath = false;
+        if ( typeof argv === "object" ) {
+          rpath = !!(argv.path && argv.path.match(re));
+        } else if ( typeof argv === "string" ) {
+          rpath = !!(argv && argv.match(re));
+        }
 
-      if ( rpath ) {
-        switch ( method ) {
-          case "read"  :
-          case "touch" :
-          case "mkdir" :
-          case "rm"    :
-          case "cat"   :
-            if ( method == "cat" )
-              method = "read";
-            if ( method == "delete" )
-              method = "rm";
+        if ( rpath ) {
+          if ( this._running )
+            return this.callLocal.apply(this, arguments);
 
-            return this.call(method, [argv.replace(re, ""), function(result) {
-              callback(result, null);
-            }, function() {
-              callback(null, true); // FIXME
-            }]);
-          break;
-
-          case "write" :
-            return this.call(method, [argv.path.replace(re, ""), argv.content, function(result) {
-              callback(result, null);
-            }, function() {
-              callback(null, true); // FIXME
-            }]);
-          break;
-
-          case "lswrap"  :
-          case "readdir" :
-          case "ls" :
-            var __createFileIter = function(i) {
-              return {
-                "icon"       : i.icon       || "mimetypes/binary.png",
-                "path"       : i.path       || "/",
-                "size"       : i.size       || 0,
-                "hsize"      : i.hsize      || "0b",
-                "type"       : i.type       || "file",
-                "protected"  : i['protected'] === undefined ? 0 : i['protected'],
-                "name"       : escapeHtml(i.name       || "."),
-                "mime"       : escapeHtml(i.mime       || "")
-              };
-            };
-
-
-            return this.call("ls", [argv.path.replace(re, ""), function(result) {
-              if ( !result || !result.length )
-                result = [];
-
-              var iter  = __createFileIter({"path" : "/User", "type" : "dir", "name" : "..", "icon" : "status/folder-visiting.png", "protected" : 1});
-              var list  = [iter];
-              var i = 0, l = result.length, it;
-              for ( i; i < l; i++ ) {
-                it        = result[i];
-                iter      = __createFileIter({
-                  "icon"       : (it.isDirectory ? "places/folder.png" : "mimetypes/binary.png"),
-                  "path"       : argv.path + it.fullPath,
-                  "type"       : (it.isDirectory ? "dir" : "file"),
-                  "name"       : basename(it.fullPath),
-                  "mime"       : "text/plain"
-                });
-                list.push(iter);
-              }
-
-
-              if ( method == "lswrap" ) {
-                var data = {
-                  'path'  : argv.path,
-                  'total' : list.length,
-                  'bytes' : 0,
-                  'items' : list
-                };
-                callback(data, null);
-              } else {
-                callback(list, null);
-              }
-
-            }, function() {
-              callback(null, true); // FIXME
-            }]);
-          break;
-
-          default:
-            callback(false, "Not implemented in VFS yet!");
-            return false;
-          break;
+          return false;
         }
       }
+      */
 
-      return this.ajax.apply(this, arguments);
+      return this.callAjax.apply(this, arguments);
     },
 
     /**
-     * CoreVFS::call() -- Call a storage function on client
+     * CoreVFS::_call() -- Call a storage function on client
      * @return  Mixed
      */
-    call : function(m, args) {
+    _call : function(m, args) {
       if ( this._running ) {
         this._s[m].apply(this._s, args);
         return true;
@@ -2354,10 +2282,137 @@
     },
 
     /**
-     * CoreStorate::ajax() -- Call a storage function on server
+     * CoreStorate::callLocal() -- Call a storage function on server
+     * @param   String      method      Method name to call
+     * @param   Mixed       argv        Arguments to send
+     * @param   Function    callback    Callback function
+     * @param   bool        show_alert  Show internal alert? (Default = true)
+     * @return  Mixed
+     */
+    /*
+    callLocal : function(method, argv, callback, show_alert) {
+      var self  = this;
+      var re    = /^\/User\/WebStorage/;
+
+      switch ( method ) {
+        case "read"  :
+        case "touch" :
+        case "mkdir" :
+        case "rm"    :
+        case "cat"   :
+          if ( method == "cat" )
+            method = "read";
+          if ( method == "delete" )
+            method = "rm";
+
+          this._call(method, [argv.replace(re, ""), function(result) {
+            callback(result, null);
+          }, function() {
+            callback(null, true); // FIXME
+          }]);
+        break;
+
+        case "write" :
+          this._call(method, [argv.path.replace(re, ""), argv.content, argv.mime, function(result) {
+            callback(result, null);
+          }, function() {
+            callback(null, true); // FIXME
+          }]);
+        break;
+
+        case "lswrap"  :
+        case "readdir" :
+        case "ls" :
+          var __createFileIter = function(i) {
+            return {
+              "icon"       : i.icon       || "mimetypes/binary.png",
+              "path"       : i.path       || "/",
+              "size"       : i.size       || 0,
+              "hsize"      : i.hsize      || "0b",
+              "type"       : i.type       || "file",
+              "protected"  : i['protected'] === undefined ? 0 : i['protected'],
+              "name"       : escapeHtml(i.name       || "."),
+              "mime"       : escapeHtml(i.mime       || "")
+            };
+          };
+
+
+          this._call("ls", [argv.path.replace(re, ""), function(entries) {
+            if ( !entries || !entries.length )
+              entries = [];
+
+            var items = [];
+            var i = 0, l = entries.length;
+            var ts = argv.path.replace(re, "") || "/";
+            var cl = ts.length;
+
+            for ( i; i < l; i++ ) {
+              console.log(entries[i].fullPath, entries[i].fullPath.substr(0, cl));
+              if ( ((entries[i].fullPath.substr(0, cl) || "/") == ts) && (entries[i].fullPath != ts) ) {
+                items.push(entries[i]);
+              }
+            }
+
+            var prev = "/User";
+            if ( argv.path.match(/^\/User(\/.*)/) ) {
+              split = argv.path.split("/");
+              split.pop();
+
+              prev  = split.join("/");
+            }
+
+            var iter  = __createFileIter({"path" : prev, "type" : "dir", "name" : "..", "icon" : "status/folder-visiting.png", "protected" : 1});
+            var list  = [iter];
+            var j = 0, k = items.length, it;
+            for ( j; j < k; j++ ) {
+              it        = items[j];
+              iter      = __createFileIter({
+                "icon"       : (it.isDirectory ? "places/folder.png" : "mimetypes/binary.png"),
+                "path"       : argv.path + it.fullPath,
+                "type"       : (it.isDirectory ? "dir" : "file"),
+                "name"       : basename(it.fullPath),
+                "mime"       : "text/plain"
+              });
+              list.push(iter);
+            }
+
+
+            if ( method == "lswrap" ) {
+              var data = {
+                'path'  : argv.path,
+                'total' : list.length,
+                'bytes' : 0,
+                'items' : list
+              };
+              callback(data, null);
+            } else {
+              callback(list, null);
+            }
+
+          }, function() {
+            callback(null, true); // FIXME
+          }]);
+        break;
+
+        default:
+          // Copy, Move, Upload not avail
+          callback(false, "Not implemented in VFS yet!");
+        break;
+      }
+
+      return null;
+    },
+      */
+
+    /**
+     * CoreStorate::callAjax() -- Call a storage function on server
+     * @param   String      method      Method name to call
+     * @param   Mixed       argv        Arguments to send
+     * @param   Function    callback    Callback function
+     * @param   bool        show_alert  Show internal alert? (Default = true)
      * @return  null
      */
-    ajax : function(method, argv, callback, show_alert) {
+    callAjax : function(method, argv, callback, show_alert) {
       show_alert = (show_alert === undefined) ? true : (show_alert ? true : false);
 
       DoPost({'action' : 'call', 'method' : method, 'args' : argv}, function(data) {
@@ -2380,6 +2435,24 @@
      */
     getInstance : function() {
       return this._s;
+    },
+
+    /**
+     * CoreVFS::getStorageUsage()
+     * @return  int
+     */
+    getStorageUsage : function() {
+      var stats = {
+        used  : 0,
+        warn  : 0,
+        max   : 0
+      };
+
+      if ( this._running && this._s ) {
+        stats.max   = this._s._quota;
+        stats.warn  = this._s._quota;
+      }
+      return stats;
     }
   });
 
@@ -3614,7 +3687,7 @@
 
   /**
    * SettingsManager -- Settings Manager
-   * Uses localSettings (WebStorage) to handle session data
+   * Uses localSettings to handle session data
    *
    * @extends Process
    * @class
@@ -3637,7 +3710,7 @@
       this._super("(SettingsManager)", "apps/system-software-update.png", true);
 
       console.log("Registry", registry);
-      console.log("Usage", this.getStorageUsage());
+      console.log("Usage", this.getRegistryUsage());
 
       // Make sure registry is up to date
       var j;
@@ -3783,18 +3856,22 @@
       var alertOpen = false;
 
       this._cinterval = setInterval(function() {
-        var size = self.getStorageUsage()['localStorage'];
-        if ( size >= WARN_STORAGE_SIZE ) {
+        var iter = self.getRegistryUsage()['localStorage'];
+        var size = iter.used;
+        var max  = iter.max;
+        var warn = iter.warn;
+
+        if ( size >= warn ) {
           if ( !warnOpen ) {
-            API.ui.alert(sprintf(OSjs.Labels.StorageWarning, size, WARN_STORAGE_SIZE), "warning", function() {
+            API.ui.alert(sprintf(OSjs.Labels.StorageWarning, size, warn), "warning", function() {
               warnOpen = false;
             });
             warnOpen = true;
           }
         }
-        if ( size >= MAX_STORAGE_SIZE ) {
+        if ( size >= max ) {
           if ( !alertOpen ) {
-            API.ui.alert(sprintf(OSjs.Labels.StorageAlert, size, MAX_STORAGE_SIZE), "error", function() {
+            API.ui.alert(sprintf(OSjs.Labels.StorageAlert, size, max), "error", function() {
               alertOpen = false;
             });
             alertOpen = true;
@@ -4062,10 +4139,10 @@
     },
 
     /**
-     * SettingsManager::getStorageUsage() -- Get storage usage
+     * SettingsManager::getRegistryUsage() -- Get storage usage
      * @return Array
      */
-    getStorageUsage : function() {
+    getRegistryUsage : function() {
       var ls = 0;
       var l;
 
@@ -4076,7 +4153,11 @@
       }
 
       return {
-        'localStorage' : ls
+        'localStorage' : {
+          used  : ls,
+          warn  : WARN_STORAGE_SIZE,
+          max   : MAX_STORAGE_SIZE
+        }
       };
     }
 
