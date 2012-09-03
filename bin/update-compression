@@ -168,10 +168,21 @@ if ( $combine ) {
     }
 
     $css = implode("\n", $css);
-    $js  = implode("\n", $js);
+    $css = preg_replace("/@charset \"UTF\-8\";/", "\n", $css);
+    $css = preg_replace('!/\*.*?\*/!s', "\n", $css);
 
-    $size_js  = file_put_contents(sprintf(RESOURCE_COMBINED_MIN, "js"), $js);
-    $size_css = file_put_contents(sprintf(RESOURCE_COMBINED_MIN, "css"), $css);
+    $js  = implode("\n", $js);
+    $js  = preg_replace('!/\*\!.*?\*/!s', "\n", $js);
+    //$js  = preg_replace('!/\*.*?\*/!s', "\n", $js);
+    //$js  = preg_replace('#/\*[^*]*\*+([^/][^*]*\*+)*/#', "\n", $js);
+
+    $tpl_js       = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "combined.js"));
+    $tpl_css      = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "combined.css"));
+    $content_js   = $tpl_js  . $js;
+    $content_css  = $tpl_css . $css;
+
+    $size_js  = file_put_contents(sprintf(RESOURCE_COMBINED_MIN, "js"), $content_js);
+    $size_css = file_put_contents(sprintf(RESOURCE_COMBINED_MIN, "css"), $content_css);
 
     print sprintf("Combining %d file(s)\n", $total);
     print sprintf("Combined CSS size: %d\n", $size_css);

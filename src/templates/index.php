@@ -143,6 +143,9 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
     })();
   </script>
 <?php } ?>
+
+  <!-- OS.js Async -->
+
 </head>
 <body>
 
