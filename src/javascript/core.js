@@ -7968,6 +7968,8 @@
 
               self._is_moving = true;
 
+              $(document).click(); // TRIGGER GLOBAL CONTEXTMENU
+
               return true;
             },
             stop : function() {
