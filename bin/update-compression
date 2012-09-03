@@ -39,17 +39,12 @@ require "header.php";
 
 $verbose = false;
 $force   = false;
-$combine = true;
 
-$cmd_short = "cvfh";
-$cmd_long = Array("combine", "verbose", "force", "help");
+$cmd_short = "vfh";
+$cmd_long = Array("verbose", "force", "help");
 if ( $options = getopt($cmd_short, $cmd_long) ) {
   foreach ( $options as $k => $v ) {
     switch ( $k ) {
-      case "c" :
-      case "combine" :
-        $combine = true;
-      break;
       case "v" :
       case "verbose" :
         $verbose = true;
@@ -146,48 +141,46 @@ file_put_contents(MINIMIZE_CACHE, json_encode((Array)$timestamps));
 print sprintf("\nCompressed %d of %d file(s)\n", $total_compressed, $total_files);
 print sprintf("Initial size: %db, Resulted size: %db, %d%% Compression\n\n", $size_before, $size_after, $size_result);
 
-if ( $combine ) {
-  if ( $resources = ResourceManager::getAllResources(false) ) {
-    $total = 0;
-    $css = Array();
-    $js  = Array();
+if ( $resources = ResourceManager::getAllResources(false) ) {
+  $total = 0;
+  $css = Array();
+  $js  = Array();
 
-    foreach ( $resources['resources'] as $res ) {
-      $res = basename($res);
-      if ( preg_match("/^(theme|cursor)/", $res) )
-        continue;
+  foreach ( $resources['resources'] as $res ) {
+    $res = basename($res);
+    if ( preg_match("/^(theme|cursor)/", $res) )
+      continue;
 
-      if ( preg_match("/\.css$/", $res) ) {
-        $css[] = file_get_contents(sprintf(RESOURCE_CORE_MIN, $res));
-        $total++;
-      } else {
-        $js[] = file_get_contents(sprintf(RESOURCE_CORE_MIN, $res));
-        $total++;
-      }
-
+    if ( preg_match("/\.css$/", $res) ) {
+      $css[] = file_get_contents(sprintf(RESOURCE_CORE_MIN, $res));
+      $total++;
+    } else {
+      $js[] = file_get_contents(sprintf(RESOURCE_CORE_MIN, $res));
+      $total++;
     }
 
-    $css = implode("\n", $css);
-    $css = preg_replace("/@charset \"UTF\-8\";/", "\n", $css);
-    $css = preg_replace('!/\*.*?\*/!s', "\n", $css);
-
-    $js  = implode("\n", $js);
-    $js  = preg_replace('!/\*\!.*?\*/!s', "\n", $js);
-    //$js  = preg_replace('!/\*.*?\*/!s', "\n", $js);
-    //$js  = preg_replace('#/\*[^*]*\*+([^/][^*]*\*+)*/#', "\n", $js);
-
-    $tpl_js       = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "combined.js"));
-    $tpl_css      = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "combined.css"));
-    $content_js   = $tpl_js  . $js;
-    $content_css  = $tpl_css . $css;
-
-    $size_js  = file_put_contents(sprintf(RESOURCE_COMBINED_MIN, "js"), $content_js);
-    $size_css = file_put_contents(sprintf(RESOURCE_COMBINED_MIN, "css"), $content_css);
-
-    print sprintf("Combining %d file(s)\n", $total);
-    print sprintf("Combined CSS size: %d\n", $size_css);
-    print sprintf("Combined CSS size: %d\n", $size_js);
   }
+
+  $css = implode("\n", $css);
+  $css = preg_replace("/@charset \"UTF\-8\";/", "\n", $css);
+  $css = preg_replace('!/\*.*?\*/!s', "\n", $css);
+
+  $js  = implode("\n", $js);
+  $js  = preg_replace('!/\*\!.*?\*/!s', "\n", $js);
+  //$js  = preg_replace('!/\*.*?\*/!s', "\n", $js);
+  //$js  = preg_replace('#/\*[^*]*\*+([^/][^*]*\*+)*/#', "\n", $js);
+
+  $tpl_js       = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "combined.js"));
+  $tpl_css      = file_get_contents(sprintf("%s/%s", PATH_TEMPLATES, "combined.css"));
+  $content_js   = $tpl_js  . $js;
+  $content_css  = $tpl_css . $css;
+
+  $size_js  = file_put_contents(sprintf(RESOURCE_COMBINED_MIN, "js"), $content_js);
+  $size_css = file_put_contents(sprintf(RESOURCE_COMBINED_MIN, "css"), $content_css);
+
+  print sprintf("Combining %d file(s)\n", $total);
+  print sprintf("Combined CSS size: %d\n", $size_css);
+  print sprintf("Combined CSS size: %d\n", $size_js);
 }
 
 ?>
