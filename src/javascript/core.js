@@ -3648,7 +3648,7 @@
         var i = 0, l = res.length, name, src;
         for ( i; i < l; i++ ) {
           // Ignore non-valid or already added
-          name = (app ? (app + "/" + res) : (res));
+          name = (app ? (app + "/" + res[i]) : (res[i]));
           if ( this.resources[name] || (res[i].match(/^worker\./) || res[i].match(/[^(\.js|\.css)]$/)) ) {
             continue;
           }
@@ -3668,9 +3668,9 @@
             console.log("ResourceManager::addResources()", "Preloader loaded",loaded, "with", errors, "errors");
             _loader_done(errors > 0);
           }, function(res) {
-            self.resources[(app ? (app + "/" + res) : (res))] = true;
+            self.resources[res.replace(RESOURCE_URI, "")] = true;
           }, function(res) {
-            self.resources[(app ? (app + "/" + res) : (res))] = false;
+            self.resources[res.replace(RESOURCE_URI, "")] = false;
           });
         } else {
           _loader_done(false);
