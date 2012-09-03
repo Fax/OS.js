@@ -77,7 +77,7 @@ if ( $locale = Core::get()->getLocale() ) {
   -->
 
   <!-- Meta -->
-  <title>OS.js Cloud/Web Desktop Platform<?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)</title>
+  <title>OS.js Cloud/Web Desktop Platform <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)</title>
 
   <meta name="keywords" content="osjs,OS.js,Web Desktop,Cloud Desktop,Window Manager,Javascript OS" />
   <meta name="description" content="OS.js - A simple yet powerful Web and Cloud Desktop Platfom using JavaScript and latest HTML5 and CSS features." />
