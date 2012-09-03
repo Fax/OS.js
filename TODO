@@ -1,8 +1,5 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[MED] Finish VFS integration
-      - Delete directory
-      - Mime and Size enums
 [MED] Panel
       - Redesign preferences
       - Settings - Background Image
@@ -23,6 +20,11 @@ CORE TODO:
 [LOW] Split login to custom css and remove when needed
 [LOW] Maybe change the way feature detection is done
 [LOW] Richtext: Add custom contextmenu
+[LOW] Finish CoreVFS Storage integration
+      - Solve file upload
+      - Delete directory
+      - Mime and Size enums
+      - Fix subdirs ?!
 
 PACKAGES TODO:
 -------------------------------------------------------------------------------

@@ -2291,6 +2291,10 @@
      * @destructor
      */
     destroy : function() {
+      if ( this.$element ) {
+        this.$element.empty();
+      }
+
       this.$element     = null;
       this._currentItem = [];
       this._currentView = "icon";
