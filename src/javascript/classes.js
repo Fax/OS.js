@@ -2207,7 +2207,7 @@
    * IconView -- Gtk Icon View
    * @class
    */
-  OSjs.Classes.Iconview = Class.extend({
+  OSjs.Classes.IconView = Class.extend({
     $element      : null,       //!< HTML Element
     _currentView  : "icon",     //!< Current view type
     _currentItem  : [],         //!< Current selected item HTML
@@ -2285,7 +2285,7 @@
         });
       }
 
-      console.log("IconviewNew::init()", el, view);
+      console.log("IconViewNew::init()", el, view);
     },
 
     /**

@@ -53,7 +53,7 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS['en_US'];
 
-    var FileOperationView = OSjs.Classes.Iconview.extend({
+    var FileOperationView = OSjs.Classes.IconView.extend({
       init : function(win, area) {
         this._super(area, "list", {"dnd" : false, "multiselect" : false});
 
