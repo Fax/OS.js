@@ -253,9 +253,11 @@
      * @param  Function   onerror   onerror callback
      * @return void
      */
-    write : function(name, data, callback, onerror) {
+    write : function(name, data, mime, callback, onerror) {
       var self = this;
       callback = callback || function() {};
+      mime     = mime     || "text/plain";
+
       this._fs.root.getFile(name, {create: true}, function(fileEntry) {
         fileEntry.createWriter(function(fileWriter) {
           fileWriter.onwriteend = function(e) {
@@ -273,7 +275,7 @@
           */
 
           try {
-            var bb = new Blob([data], {type: "text/plain"});
+            var bb = new Blob([data], {type: mime});
           } catch ( eee ) {
             (onerror || self.error)(eee);
           } finally {
