@@ -5769,10 +5769,10 @@
   /**
    * DesktopIconView -- Desktop Icon View class
    *
-   * @extends Classes.Iconview
+   * @extends Classes.IconView
    * @class
    */
-  var DesktopIconView = OSjs.Classes.Iconview.extend({
+  var DesktopIconView = OSjs.Classes.IconView.extend({
     init : function() {
       var el = $("#DesktopGrid");
       var inner = $("<div class=\"GtkIconView\"></div>");
@@ -8151,7 +8151,7 @@
     _addObject : function(o) {
       if ( o ) {
         var self = this;
-        if ( o instanceof OSjs.Classes.Iconview ) {
+        if ( o instanceof OSjs.Classes.IconView ) {
           this._bind("keydown", function(a) {
             o.onKeyPress(a.ev, a.key);
           });
