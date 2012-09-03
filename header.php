@@ -237,6 +237,9 @@ if ( !defined("VFS_UMASK") )
 if ( !defined("CACHE_EXPIRE_ADD") )
   define("CACHE_EXPIRE_ADD",    (60 * 60 * 24)); // in seconds
 
+if ( !defined("SESSION_TIMEOUT") )
+  define("SESSION_TIMEOUT",     (3600));  // In seconds
+
 if ( !defined("CACHE_COMBINED_RESOURCES") )
   define("CACHE_COMBINED_RESOURCES",   false);
 
