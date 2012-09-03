@@ -5,5 +5,4 @@ Disallow: /media/
 Disallow: /VFS/
 Disallow: /UI/
 Disallow: /API/
-Disallow: /sitemap.xml
 Disallow: /crossdomain.xml
