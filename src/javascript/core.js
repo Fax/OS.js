@@ -5813,9 +5813,16 @@
     onItemContextMenu : function(ev, el, item) {
       var self = this;
       var result = this._super(ev, el, item);
+      var labels = OSjs.Labels.DesktopGrid;
+
       API.application.context_menu(ev, this, [
-        {"title" : OSjs.Labels.DesktopGridHeader, "attribute" : "header"},
-        {"title" : OSjs.Labels.DesktopGridRemove, "disabled" : item['protected'] == "1", "method" : function() { self.removeItem(el, item); }}
+        {"title" : labels.header, "attribute" : "header"},
+        {"title" : labels.remove, "disabled" : item['protected'] == "1", "method" : function() {
+          self.removeItem(el, item);
+        }},
+        {"title" : labels.rename, "method" : function() {
+          self.renameItem(el, item);
+        }}
       ], true);
       return result;
     },
@@ -5881,6 +5888,33 @@
       _Settings._apply({"desktop.grid" : list}, function() {
         self.update();
       });
+    },
+
+    renameItem : function(el, item) {
+      var self = this;
+      var list = _Settings._get("desktop.grid", true);
+      var labels = OSjs.Labels.DesktopGrid;
+
+      if ( !list || !(list instanceof Array) ) {
+        list = [];
+      }
+      var name = null;
+      var index = $(el).index();
+      if ( list[index] !== undefined ) {
+        name = list[index].title;
+      }
+
+      if ( !name )
+        return;
+
+      API.ui.dialog_input({'value' : name, 'desc' : labels.rename, 'on_apply' : function(name) {
+        if ( name ) {
+          list[index].title = name;
+          _Settings._apply({"desktop.grid" : list}, function() {
+            self.update();
+          });
+        }
+      }});
     },
 
     update : function() {

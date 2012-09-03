@@ -82,8 +82,11 @@
     "SettingsNotifyFailSave"              : "Klarte ikke lagre instillinger",
     "SettingsNotifySave"                  : "Dine instillinger ble lagret",
     "SettingsNotifyFailSaveServer"        : "Klarte ikke lagre instillinger (server feil)",
-    "DesktopGridHeader"                   : "Stiftet ikon",
-    "DesktopGridRemove"                   : "Fjern",
+    "DesktopGrid"                         : {
+      "header"        : "Stiftet ikon",
+      "remove"        : "Fjern",
+      "rename"        : "Navngi"
+    },
     "PanelPreferences"                    : {
       "type"          : "Bakgrunnstype",
       "opt"           : "Bunkgrunns-instillinger",
