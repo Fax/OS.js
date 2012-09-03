@@ -7895,6 +7895,7 @@
         //
 
         // Fix title alignment
+        /*
         var lw = el.find(".WindowTopInner img").is(":visible") ? 16 : 0;
         var hw = 0;
         $(el).find(".WindowTop .WindowTopController").filter(":visible").each(function() {
@@ -7905,6 +7906,12 @@
           "padding-left" : lw + "px",
           "padding-right" : hw + "px"
         });
+        */
+        var hw = $(el).find(".WindowTop .WindowTopController").filter(":visible").size() * 16;
+        $(el).find(".WindowTopInner span").css({
+          "padding-right" : hw + "px"
+        });
+
 
         // Newly created windows needs their inner dimension fixed
         if ( fresh ) {
