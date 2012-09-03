@@ -1,3 +1,24 @@
+## 0.9.5
+
+WARNING: All packages now goes into 'OSjs.Packages.<MyPackage>' namespace
+
+* Core: RENAMED PACKAGE NAMESPACES
+* Core: Now supports combined resources (ALL.js and ALL.css) for core resources
+* Core\UI: Loading bar improved (now incrementing on preloads)
+* Core: User timeout check now uses a timestamp (1hr)
+* Core\JS: Desktop now uses GtkIconView
+* Core\JS: Fixed Desktop IconView and crashes
+* Core\JS: Cleaned, prettified and updated init.js
+* Core\JS: init.js - Added SUPPORT_SVG
+* Core\JS: init.js - No more Public namespace
+* Core\JS: init.js - New Navigator namespace, moved from core.js
+* Core\JS: Added CoreVFS class
+* Core\JS: Client-Side VFS implemented (But disabled, missing some features, not really usefull)
+* Core\JS: dialog.file.js: Fixed backward navigation
+* Core\JS\Libs: IconView now clears on destruct
+* Templates: SEO, sitemap, robots, noscript
+* Misc: Now called OS.js Web/Cloud Platform
+
 ## 0.9.4
 
 * VFS: Fixed ListDirectory() MIME check errors
