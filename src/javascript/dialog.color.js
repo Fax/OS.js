@@ -96,8 +96,11 @@ OSjs.Dialogs.ColorOperationDialog = (function($, undefined) {
         // Dialog buttons
         this.$element.find(".DialogButtons .Close").hide();
         this.$element.find(".DialogButtons .Cancel").show();
+
+        this.$element.find(".DialogButtons .Ok").unbind("click");
         this.$element.find(".DialogButtons .Ok").show().click(function() {
           self.clb_finish(self.colorObj, "#" + hexFromRGB(self.colorObj.red, self.colorObj.green, self.colorObj.blue));
+          self.close();
         });
       },
 

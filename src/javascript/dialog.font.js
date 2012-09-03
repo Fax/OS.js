@@ -153,7 +153,12 @@ OSjs.Dialogs.FontOperationDialog = (function($, undefined) {
         UpdatePreview(iframe, this.size, this.font, this.unit);
 
         this.$element.find(".DialogButtons .Ok").show().click(function() {
-          self.clb_finish(self.font, self.size);
+          var font = self.font;
+          if( Object.prototype.toString.call(font) === '[object Array]' ) {
+            font = font[0];
+          }
+
+          self.clb_finish(font, self.size);
         });
 
         font.change(function() {
