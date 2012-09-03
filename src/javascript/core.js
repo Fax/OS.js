@@ -5803,6 +5803,13 @@
       return this._super(ev, el, item);
     },
 
+    onContextMenu : function(ev, el) {
+      if ( _Desktop )
+        _Desktop.showContextMenu(ev);
+
+      return false;
+    },
+
     onItemContextMenu : function(ev, el, item) {
       var self = this;
       var result = this._super(ev, el, item);
