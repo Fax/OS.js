@@ -38,6 +38,30 @@ body {
   color : #222;
 }
 
+/* DnD */
+[draggable] {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+
+  -khtml-user-drag: element;
+  -webkit-user-drag: element;
+}
+
+/* Fullscreen */
+:-moz-full-screen,
+:-webkit-full-screen,
+:fullscreen {
+  width: 100% !important;
+  height : 100% !important;
+}
+:-webkit-full-screen .tohide,
+:-moz-full-screen .tohide,
+:fullscreen .tohide {
+  display: none;
+}
+
 /****************************************************************
                            GENERIC
  ****************************************************************/
@@ -88,12 +112,19 @@ button[disabled="disabled"]:active {
   font-size : 10px;
   font-weight : bold;
   line-height : 15px;
+  -moz-text-shadow: 0px 0px 2px #444;
+  -webkit-text-shadow: 0px 0px 2px #444;
+  text-shadow: 0px 0px 2px #444;
 }
 
 #ContextRectangle {
   margin : -1px;
   background : #eee;
   border : 1px solid #222;
+  filter: alpha(opacity=50); /* internet explorer */
+  -khtml-opacity: 0.50;      /* khtml, old safari */
+  -moz-opacity: 0.50;       /* mozilla, netscape */
+  opacity: 0.50;           /* fx, safari, opera */
 }
 
 #Tooltip {
@@ -105,6 +136,9 @@ button[disabled="disabled"]:active {
 #WindowToggler {
   border : 1px solid #000;
   background : #fff;
+  -moz-box-shadow: 0px 0px 10px #000;
+  -webkit-box-shadow: 0px 0px 10px #000;
+  box-shadow: 0px 0px 10px #000;
 }
 #WindowTogglerTitle {
   font-weight : bold;
@@ -120,18 +154,84 @@ button[disabled="disabled"]:active {
   margin : -2px;
 }
 
+#LoginWindow:before {
+  content: "";
+  position : fixed;
+  width : 450px;
+  height : 125px;
+  border : 5px solid rgba(255, 255, 255, 0.5);
+  margin : -5px;
+}
+#LoginWindow {
+  -moz-box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+#Tooltip {
+  -moz-box-shadow: 0px 0px 10px #000;
+  -webkit-box-shadow: 0px 0px 10px #000;
+  box-shadow: 0px 0px 10px #000;
+}
+
 /****************************************************************
                           DESKTOP
  ****************************************************************/
 
 .DesktopPanel {
+  -moz-box-shadow: 0px 0px 10px #000;
+  -webkit-box-shadow: 0px 0px 10px #000;
+  box-shadow: 0px 0px 10px #000;
+
+  -khtml-opacity: 0.98;      /* khtml, old safari */
+  -moz-opacity: 0.98;       /* mozilla, netscape */
+  opacity: 0.98;           /* fx, safari, opera */
 }
 .DesktopPanel .Background {
   background : #e6e6e6;
 }
+.DesktopPanel.Transparent {
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
 .DesktopPanel.Transparent .Background {
   background : transparent;
   border : 0 none;
+}
+.DesktopPanel.Blur .Background {
+  -webkit-filter: blur(2px);
+  -moz-filter: blur(2px);
+  -ms-filter: blur(2px);
+  -o-filter: blur(2px);
+  filter: blur(2px);
+}
+.DesktopPanel.Glass .Background {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5), inset 0 1px rgba(255,255,255,0.3), inset 0 10px rgba(255,255,255,0.2), inset 0 10px 20px rgba(255,255,255,0.25), inset 0 -15px 30px rgba(0,0,0,0.3);
+  -o-box-shadow: 0 2px 6px rgba(0,0,0,0.5), inset 0 1px rgba(255,255,255,0.3), inset 0 10px rgba(255,255,255,0.2), inset 0 10px 20px rgba(255,255,255,0.25), inset 0 -15px 30px rgba(0,0,0,0.3);
+  -webkit-box-shadow: 0 2px 6px rgba(0,0,0,0.5), inset 0 1px rgba(255,255,255,0.3), inset 0 10px rgba(255,255,255,0.2), inset 0 10px 20px rgba(255,255,255,0.25), inset 0 -15px 30px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0 2px 6px rgba(0,0,0,0.5), inset 0 1px rgba(255,255,255,0.3), inset 0 10px rgba(255,255,255,0.2), inset 0 10px 20px rgba(255,255,255,0.25), inset 0 -15px 30px rgba(0,0,0,0.3);
+}
+.DesktopPanel.Blend .Background {
+  filter: alpha(opacity=50); /* internet explorer */
+  -khtml-opacity: 0.50;      /* khtml, old safari */
+  -moz-opacity: 0.50;       /* mozilla, netscape */
+  opacity: 0.50;           /* fx, safari, opera */
+}
+.DesktopPanel, .PanelItem {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+.DesktopPanel .Ghost {
+  filter: alpha(opacity=50); /* internet explorer */
+  -khtml-opacity: 0.50;      /* khtml, old safari */
+  -moz-opacity: 0.50;       /* mozilla, netscape */
+  opacity: 0.50;           /* fx, safari, opera */
 }
 
 #DesktopGrid {
@@ -146,6 +246,14 @@ button[disabled="disabled"]:active {
 #DesktopGrid .GtkIconView .Label {
   color : #fff;
   background-color : #aaa;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+
+  filter: alpha(opacity=90);
+  -khtml-opacity: 0.90;
+  -moz-opacity: 0.90;
+  opacity: 0.90;
 }
 
 /*
@@ -174,12 +282,45 @@ button[disabled="disabled"]:active {
 .Window {
   border : 1px solid #30353d;
   background : #eeeeee;
+
+  -moz-box-shadow: 0px 0px 10px #000;
+  -webkit-box-shadow: 0px 0px 10px #000;
+  box-shadow: 0px 0px 10px #000;
+
+  filter: alpha(opacity=95); /* internet explorer */
+  -khtml-opacity: 0.95;      /* khtml, old safari */
+  -moz-opacity: 0.95;       /* mozilla, netscape */
+  opacity: 0.95;           /* fx, safari, opera */
+}
+.Window.Current {
+  filter: alpha(opacity=100); /* internet explorer */
+  -khtml-opacity: 1.0;      /* khtml, old safari */
+  -moz-opacity: 1.0;       /* mozilla, netscape */
+  opacity: 1.0;           /* fx, safari, opera */
+}
+
+.Window.Blend {
+  filter: alpha(opacity=50); /* internet explorer */
+  -khtml-opacity: 0.5;      /* khtml, old safari */
+  -moz-opacity: 0.5;       /* mozilla, netscape */
+  opacity: 0.5;           /* fx, safari, opera */
 }
 /*
 .WindowTopController {
   cursor : pointer;
 }
   */
+.WindowTopInner span {
+  -moz-text-shadow: 0px 0px 2px #888;
+  -webkit-text-shadow: 0px 0px 2px #888;
+  text-shadow: 0px 0px 2px #888;
+}
+.Window.Current .WindowTopInner span {
+  -moz-text-shadow: 0px 0px 2px #aaa;
+  -webkit-text-shadow: 0px 0px 2px #aaa;
+  text-shadow: 0px 0px 2px #aaa;
+}
+
 .WindowTopController {
   font-weight : bold;
   font-size : 16px;
@@ -279,6 +420,14 @@ button[disabled="disabled"]:active {
   cursor : pointer;
 }
   */
+.Menu,
+.GUIMenu,
+.GtkWindow .GtkMenuBar .GtkMenuItem ul,
+.GtkCustomMenu ul {
+  -moz-box-shadow: 0px 0px 10px #000;
+  -webkit-box-shadow: 0px 0px 10px #000;
+  box-shadow: 0px 0px 10px #000;
+}
 
 /****************************************************************
                             DIALOGS
@@ -367,6 +516,9 @@ button[disabled="disabled"]:active {
   color : #fff;
   border : 1px solid #222;
   word-wrap: break-word;
+  -moz-box-shadow: 0px 0px 10px #000;
+  -webkit-box-shadow: 0px 0px 10px #000;
+  box-shadow: 0px 0px 10px #000;
 }
 .DesktopNotification .Close {
   color : #ddd;
@@ -420,6 +572,12 @@ button[disabled="disabled"]:active {
 }
 .GtkIconView .DND-Enter {
   font-weight : bold;
+}
+.GtkIconView .DND-Active {
+  filter: alpha(opacity=50); /* internet explorer */
+  -khtml-opacity: 0.5;      /* khtml, old safari */
+  -moz-opacity: 0.5;       /* mozilla, netscape */
+  opacity: 0.5;           /* fx, safari, opera */
 }
 
 .GtkStatusbar {
@@ -601,3 +759,41 @@ button[disabled="disabled"]:active {
   background: url("/img/progress.png") 0 0 repeat-x;
 }
 
+/****************************************************************
+                            WEBKIT
+ ****************************************************************/
+
+/*
+::-webkit-scrollbar {
+}
+::-webkit-scrollbar-track {
+}
+::-webkit-scrollbar-track-piece {
+}
+::-webkit-scrollbar-thumb:vertical {
+}
+::-webkit-scrollbar-thumb:horizontal {
+}
+::-webkit-scrollbar-corner {
+}
+::-webkit-scrollbar-resizer {
+}
+::-webkit-scrollbar-button:horizontal:decrement {
+}
+::-webkit-scrollbar-button:horizontal:increment {
+}
+::-webkit-scrollbar-button:vertical:decrement {
+}
+::-webkit-scrollbar-button:vertical:increment {
+}
+::-webkit-scrollbar-button:start:decrement {
+}
+::-webkit-scrollbar-button:end:increment {
+}
+::-webkit-scrollbar-button {
+  cursor : default;
+}
+::-webkit-scrollbar-thumb {
+  cursor : default;
+}
+*/

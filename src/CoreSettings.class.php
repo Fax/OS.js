@@ -531,7 +531,6 @@ abstract class CoreSettings
     "cursor.default.css",
     "main.css",
     "dialogs.css",
-    "pimp.css",
     "glade.css",
     "iframe.css",
     "utils.js",

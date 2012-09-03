@@ -123,7 +123,6 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
   <link rel="stylesheet" type="text/css" href="/VFS/resource/main.css" />
   <link rel="stylesheet" type="text/css" href="/VFS/resource/dialogs.css" />
   <link rel="stylesheet" type="text/css" href="/VFS/resource/glade.css" />
-  <link rel="stylesheet" type="text/css" href="/VFS/resource/pimp.css" />
   <link rel="stylesheet" type="text/css" href="/VFS/theme/default" id="ThemeBase" />
   <link rel="stylesheet" type="text/css" href="/VFS/theme/none" id="ThemeFace" />
   <link rel="stylesheet" type="text/css" href="/VFS/cursor/default" id="CursorFace" />
