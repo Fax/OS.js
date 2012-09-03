@@ -1596,6 +1596,8 @@
      */
     edit : function(key, val) {
       if ( this._frame ) {
+        this.focus();
+
         console.log("RichtextEditor::edit()", key, val);
 
         this._doc.execCommand(key, "", val);
