@@ -2049,7 +2049,7 @@
         self._cleanResource();
       };
 
-      self._resource.addEventListener('canplaythrough', function(ev) {
+      this._resource.addEventListener('canplaythrough', function(ev) {
         self._onSuccess(src);
         self._cleanResource();
       }, false );
@@ -2072,7 +2072,7 @@
         self._cleanResource();
       };
 
-      self._resource.addEventListener('canplaythrough', function(ev) {
+      this._resource.addEventListener('canplaythrough', function(ev) {
         self._onSuccess(src);
         self._cleanResource();
       }, false );
@@ -2171,7 +2171,7 @@
       this._resource.type               = "text/javascript";
       this._resource.charset            = "utf-8";
       this._resource.onreadystatechange = function() {
-        if ( (this.readyState == 'complete' || this.readyState == 'complete') && !loaded) {
+        if ( (this.readyState == 'complete' || this.readyState == 'loaded') && !loaded) {
           loaded = true;
           if ( self._onSuccess ) // Needed because this event may fire after destroy() in some browsers, depending on onload
             self._onSuccess(src);
