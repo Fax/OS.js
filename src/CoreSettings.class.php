@@ -72,7 +72,7 @@ abstract class CoreSettings
     ),
 
     "desktop.wallpaper.path" => Array(
-      "value" => "/System/Wallpapers/go2cxpb.png"
+      "value" => "/System/Wallpapers/noise_blue.png"
     ),
 
     "desktop.wallpaper.type" => Array(
