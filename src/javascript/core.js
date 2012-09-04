@@ -57,9 +57,6 @@
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
   var NOTIFICATION_TIMEOUT   = 5000;                //!< Desktop notification timeout
   var MAX_PROCESSES          = 50;                  //!< Max processes running (except core procs)
-  var WARN_STORAGE_SIZE      = (1024 * 4) * 1000;   //!< Warning localStorage size
-  var MAX_STORAGE_SIZE       = (1024 * 5) * 1000;   //!< Max localstorage size
-  var STORAGE_SIZE_FREQ      = 1000;                //!< Storage check usage frequenzy
   var ONLINECHK_FREQ         = 2500;                //!< On-line checking frequenzy
   var SESSION_CHECK          = 5000;                //!< Connection by session check freq
   var SESSION_KEY            = "PHPSESSID";         //!< The Server session cookie-key
@@ -1185,10 +1182,6 @@
     //
 
     'system' : {
-
-      'storageUsage' : function() {
-        return _Settings.getRegistryUsage();
-       },
 
       'vfsUsage' : function() {
         return _VFS.getStorageUsage();
@@ -3695,7 +3688,6 @@
   var SettingsManager = Process.extend({
 
     _registry   : [],
-    _cinterval  : null,     //!< Space checking interval
 
     /**
      * SettingsManager::init() -- Constructor
@@ -3710,7 +3702,6 @@
       this._super("(SettingsManager)", "apps/system-software-update.png", true);
 
       console.log("Registry", registry);
-      console.log("Usage", this.getRegistryUsage());
 
       // Make sure registry is up to date
       var j;
@@ -3759,9 +3750,6 @@
       localStorage.removeItem("SETTINGS_REVISION");
       localStorage.removeItem("SETTING_REVISION");
 
-      // Create space checking interval
-      this._initQuota();
-
       console.groupEnd();
     },
 
@@ -3771,12 +3759,6 @@
      */
     destroy : function() {
       this._registry = null;
-
-      if ( this._cinterval ) {
-        clearInterval(this._cinterval);
-      }
-      this._cinterval = null;
-
       this._super();
     },
 
@@ -3844,40 +3826,6 @@
       }
 
       console.groupEnd();
-    },
-
-    /**
-     * SettingsManager::_initQuota() -- Initialize quota checking
-     * @return void
-     */
-    _initQuota : function() {
-      var self = this;
-      var warnOpen = false;
-      var alertOpen = false;
-
-      this._cinterval = setInterval(function() {
-        var iter = self.getRegistryUsage()['localStorage'];
-        var size = iter.used;
-        var max  = iter.max;
-        var warn = iter.warn;
-
-        if ( size >= warn ) {
-          if ( !warnOpen ) {
-            API.ui.alert(sprintf(OSjs.Labels.StorageWarning, size, warn), "warning", function() {
-              warnOpen = false;
-            });
-            warnOpen = true;
-          }
-        }
-        if ( size >= max ) {
-          if ( !alertOpen ) {
-            API.ui.alert(sprintf(OSjs.Labels.StorageAlert, size, max), "error", function() {
-              alertOpen = false;
-            });
-            alertOpen = true;
-          }
-        }
-      }, STORAGE_SIZE_FREQ);
     },
 
     /**
@@ -4028,15 +3976,16 @@
       } else if ( (v instanceof Object || v instanceof Array) ) {
         v = JSON.stringify(v);
       }
-      localStorage.setItem(k, v);
-        /*
+
       try {
+        localStorage.setItem(k, v);
       } catch ( e ) {
-        // Caught by interval!
-        //  if ( e == QUOTA_EXCEEDED_ERR ) {
-        //    (function() {})();
+        if ( e == QUOTA_EXCEEDED_ERR ) {
+          var msg = OSjs.Labels.StorageEmpty;
+          CrashCustom(msg, msg, JSON.stringify({"error_on" : {"key" : k, "value" : v}}));
+          return;
+        }
       }
-      */
     },
 
     /**
@@ -4136,29 +4085,6 @@
         exp[i] = this._get(i, in_array(this._registry[i], ["list", "array"]));
       }
       return exp;
-    },
-
-    /**
-     * SettingsManager::getRegistryUsage() -- Get storage usage
-     * @return Array
-     */
-    getRegistryUsage : function() {
-      var ls = 0;
-      var l;
-
-      for ( l in localStorage ) {
-        if ( localStorage.hasOwnProperty(l) ) {
-          ls += localStorage[l].length;
-        }
-      }
-
-      return {
-        'localStorage' : {
-          used  : ls,
-          warn  : WARN_STORAGE_SIZE,
-          max   : MAX_STORAGE_SIZE
-        }
-      };
     }
 
   }); // @endclass
