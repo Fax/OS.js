@@ -1,3 +1,28 @@
+## 0.9.6
+
+Major performance improvments by caching settings here
+
+* Templates: Bugfixes
+* Templates: Added favicon
+* Templates: Updated robots, sitemap and SEO
+* Templates: Changed demo template
+* Templates: Now created login automatically on DEMO mode
+* Core: removed pimp.css, migrated to theme.default.css
+* Core\JS: Fixed DesktopIconView context menu
+* Core\JS: Fixed preloading item registry
+* Core\UI: Fixed Window title position
+* Core\UI: Inactive windows a bit more "invisible"
+* Core\JS: DesktopIconView items now renamable
+* Core\JS: Fixed font dialog bugs
+* Core\JS: Now loads in IE8
+* Core\JS: Now not relying on localStorage anymore
+* Core\JS: SettingsManager rewritten
+* Core\Libs: Renamed Iconview -> IconView
+* Core: Combined resources now stripped of unwanted content
+* Core: Fixed storing settings bugs
+* UI: Included new list of wallpapers
+* bin/update-compression: Now always combining
+
 ## 0.9.5
 
 WARNING: All packages now goes into 'OSjs.Packages.<MyPackage>' namespace
