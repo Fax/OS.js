@@ -149,9 +149,8 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
 </head>
 <body>
 
-<div id="HomePage">
+<!-- Home -->
 <?php require_template ("index.home.php"); ?>
-</div>
 
 <script type="text/javascript"></script>
 <noscript>Your browser does not support JavaScript and cannot launch the application.</noscript>

@@ -35,6 +35,10 @@
  */
 
 ?>
+
+<?php if ( isset($_SERVER['HTTP_USER_AGENT']) && preg_match("/googlebot|msnbot|w3c|yahoo|yandex|bing|baiduspider/i", $_SERVER['HTTP_USER_AGENT']) ) { ?>
+<div id="HomePage">
+
   <h1>OS.js - JavaScript Web Desktop Environment</h1>
   <h2>About</h2>
   <p>
@@ -59,3 +63,6 @@
   <p>
     Homepage on is located <a href="http://andersevenrud.github.com/OS.js/">GitHub</a>
   </p>
+
+</div>
+<?php } ?>
