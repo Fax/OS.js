@@ -1555,7 +1555,11 @@
         _Processes[this.___pid] = undefined;
       }
 
-      this.___started = null;
+      this.___pid       = -1;
+      this.___started   = null;
+      this.___proc_name = "(unknown)";
+      this.___proc_icon = "mimetypes/exec.png";
+      this.___locked    = false;
 
       console.groupEnd();
     },
@@ -1633,6 +1637,10 @@
      * @destructor
      */
     destroy : function() {
+      this._name      = "";
+      this._type      = -1;
+      this._timeout   = 30;
+
       this._super();
     },
 
@@ -1727,6 +1735,10 @@
           this._socket = null;
         }
       }
+
+      this._running   = false;
+      this._name      = "";
+      this._uri       = null;
 
       this._super();
     },
@@ -2199,13 +2211,9 @@
         this._s = null;
       }
 
-      this._super();
+      this._running = false;
 
-      /*
-      // >>> REMOVE GLOBAL <<<
-      if ( _VFS )
-        _VFS = null;
-        */
+      this._super();
     },
 
     /**
@@ -2497,6 +2505,17 @@
       };
 
       this.connect();
+    },
+
+    /**
+     * CoreConnection::destroy() -- Destroy
+     * @destructor
+     */
+    destroy : function() {
+      this._connected     = false;
+      this._callbacks     = {};
+
+      this._super();
     },
 
     /**
@@ -4011,8 +4030,8 @@
    * @class
    */
   var PackageManager = Process.extend({
-    cache : {},         //!< Cached packages
-    running : false,    //!< Running state
+    cache     : {},       //!< Cached packages
+    running   : false,    //!< Running state
 
     /**
      * PackageManager::init() -- Constructor
@@ -4395,11 +4414,13 @@
         }
 
         console.log("Application::" + this._name + "::destroy()");
-
-        this._bindings = {};
-        this._running = false;
-        this._storage = null;
       }
+
+      this._windows         = [];
+      this._workers         = {};
+      this._sockets         = {};
+      this._bindings        = {};
+      this._storage         = {};
 
       this._super();
     },
@@ -5138,7 +5159,7 @@
      */
     destroy : function() {
       // Remove bindings
-      this.bindings = null;
+      this.bindings = {};
 
       // Remove windows
       var i = 0;
@@ -5148,8 +5169,7 @@
           this.stack[i].destroy();
         }
       }
-      this.stack = null;
-
+      this.stack   = [];
       this.running = false;
 
       this._super();
@@ -5842,13 +5862,11 @@
           this.panels[i] = null;
         }
       }
-      this.panels = null;
 
       // Remove IconView
       if ( this.iconview ) {
         this.iconview.destroy();
       }
-      this.iconview = null;
 
       // Reset settings
       this.setWallpaper(null);
@@ -5858,8 +5876,16 @@
       this.setTheme(null);
       this.setFont(null);
 
-      this.running = false;
-      this._rtimeout = null;
+      try {
+        this.$element.empty();
+      } catch ( eee ) {}
+
+      this.$element       = null;
+      this.panels         = [];
+      this.notifications  = 0;
+      this.running        = false;
+      this.iconview       = null;
+      this._rtimeout      = null;
 
       this._super();
 
@@ -6635,22 +6661,23 @@
         this.items[i].destroy();
       }
 
-      this.items = null;
-      this.index = -1;
-      this.name  = "";
       if ( this.$element ) {
         this.$element.unbind("contextmenu");
         this.$element.empty().remove();
       }
-      this.$element = null;
 
       if ( _Desktop ) {
         _Desktop.removePanel(this, true);
       }
 
-      this.dragging = null;
-      this.idragging = null;
-      this.running = false;
+
+      this.$element   = null;
+      this.items      = null;
+      this.index      = -1;
+      this.name       = "";
+      this.dragging   = null;
+      this.idragging  = null;
+      this.running    = false;
 
       this._super();
     },
