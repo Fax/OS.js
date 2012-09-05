@@ -53,6 +53,7 @@
   /**
    * @constants Local settings
    */
+  var SETTINGS_REVISION      = 3;
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
   var NOTIFICATION_TIMEOUT   = 5000;                //!< Desktop notification timeout
@@ -165,6 +166,41 @@
   /////////////////////////////////////////////////////////////////////////////
   // HELPERS
   /////////////////////////////////////////////////////////////////////////////
+
+  function ToString(t, v) {
+    if ( t == "bool" ) {
+      v = v ? "true" : "false";
+    } else if ( t == "list" ) {
+      try {
+        v = JSON.stringify(v);
+      } catch ( eee ) {
+        v = "";
+      }
+    } else {
+      v = "" + v;
+    }
+    return v;
+  }
+
+  function FixType(t, v) {
+    if ( t == "bool" ) {
+      v = (v === "true" || v === true);
+    } else if ( t == "int" ) {
+      v = parseInt(v, 10);
+      if ( isNan(v) )
+        v = 0;
+    } else if ( t == "list" ) {
+      if ( typeof v == "string" ) {
+        try {
+          v = JSON.parse(v);
+        } catch ( eee ) {
+          v = [];
+        }
+      }
+    }
+
+    return v;
+  }
 
   /**
    * DoPost() -- Do a POST call
@@ -489,6 +525,8 @@
 
               obj = new ref(PanelItem, pref, API, argv || {});
               pref.addItem(obj, pargs, psave);
+
+              delete args.panel; // IMPORTANT! Used in _addPanelItem()
             } catch ( ex ) {
               CrashApplication(name, obj, ex);
               obj = null;
@@ -814,7 +852,7 @@
     if ( !_Core || !_Core.running )
       return;
 
-    var se = (_Settings._get("system.sounds.enable") === "true");
+    var se = (_Settings._get("system.sounds.enable") === true);
     var sv = parseInt(_Settings._get("system.sounds.volume"), 10);
     if ( sv < 0 ) {
       sv = 0;
@@ -1340,8 +1378,8 @@
           return _Settings.getType(k);
         },
 
-        'get' : function(k, json) {
-          return _Settings._get(k, json);
+        'get' : function(k) {
+          return _Settings._get(k);
         },
 
         'options' : function(k) {
@@ -2787,7 +2825,7 @@
       _SystemLanguage   = response.lang_user;
 
       // Initialize base classes
-      _Settings   = new SettingsManager(response.registry.tree);
+      _Settings   = new SettingsManager(response.registry);
       _Resources  = new ResourceManager();
       _PackMan    = new PackageManager();
       _VFS        = new CoreVFS();
@@ -2796,10 +2834,10 @@
 
       // Now fire them up
       _VFS.run(function() {
-        _Settings.run(response.registry.stored);
+        _Settings.run(response.restore.registry);
         _PackMan.run(response.packages);
         _Resources.run(response.preload, function() {
-          self.run(response.session);
+          self.run(response.restore.session);
         });
       });
     },
@@ -2814,37 +2852,28 @@
      * @return void
      */
     shutdown : function(save) {
-      var usession  = JSON.stringify(save ? _Core.getSession() : {});
+      var usession  = JSON.stringify(save ? _Core.getSession()       : {});
+      var uregistry = JSON.stringify(save ? _Settings.getRegistry()  : {});
       var duration  = ((new Date()).getTime()) - _StartStamp;
 
       console.group("Core::shutdown()");
       console.log("Session duration", duration);
       console.groupEnd();
 
-      var _shutdown = function() {
-        DoPost({'action' : 'shutdown', 'session' : usession, 'duration' : duration, 'save' : save}, function(data) {
-          if ( data.success ) {
-            console.log("Core::shutdown()", "Shutting down...");
+      DoPost({'action' : 'shutdown', 'registry' : uregistry, 'session' : usession, 'duration' : duration, 'save' : save}, function(data) {
+        if ( data.success ) {
+          console.log("Core::shutdown()", "Shutting down...");
 
-            PlaySound("service-logout");
+          PlaySound("service-logout");
 
-            __CoreShutdown__();
-          } else {
-            MessageBox(data.error);
-          }
-        }, function(xhr, ajaxOptions, thrownError) {
-          alert("A network error occured while shutting down OS.js: " + thrownError);
-          throw("Shutdown error: " + thrownError);
-        });
-      };
-
-      if ( save ) {
-        _Settings._save(false, function() {
-          _shutdown();
-        });
-      } else {
-        _shutdown();
-      }
+          __CoreShutdown__();
+        } else {
+          MessageBox(data.error);
+        }
+      }, function(xhr, ajaxOptions, thrownError) {
+        alert("A network error occured while shutting down OS.js: " + thrownError);
+        throw("Shutdown error: " + thrownError);
+      });
     },
 
     /**
@@ -3019,14 +3048,14 @@
       }
 
       // Restore Previous Session
-      if ( _Settings._get("user.session.autorestore") === "true" ) {
+      if ( _Settings._get("user.session.autorestore") === true ) {
         _Core.setSession(session);
       }
 
       // Show compability dialog on first run
-      if ( _Settings._get("user.first-run") === "true" ) {
+      if ( _Settings._get("user.first-run") === true ) {
         LaunchString("API::CompabilityDialog");
-        _Settings._set("user.first-run", "false");
+        _Settings._set("user.first-run", false);
 
         if ( ENV_DEMO ) {
           setTimeout(function() {
@@ -3687,7 +3716,8 @@
    */
   var SettingsManager = Process.extend({
 
-    _registry   : [],
+    _cache      : {},
+    _registry   : {},
 
     /**
      * SettingsManager::init() -- Constructor
@@ -3697,58 +3727,48 @@
     init : function(registry) {
       console.group("SettingsManager::init()");
 
+      this._cache    = {};
       this._registry = registry;
 
       this._super("(SettingsManager)", "apps/system-software-update.png", true);
 
-      console.log("Registry", registry);
-
       // Make sure registry is up to date
-      var j;
-      for ( j in this._registry ) {
-        if ( this._registry.hasOwnProperty(j) ) {
-          if ( j == "user.session.appstorage" && !SAVE_APPREG )
-            continue;
+      var cur = parseInt(localStorage.getItem("SETTINGS_REVISION"), 10) || 0;
+      var j, iter;
 
-          console.log("> Injecting", j);
-          //if ( !localStorage.getItem(j) ) {
-            if ( this._registry[j].type == "list" ) {
-              try {
-                localStorage.setItem(j, JSON.stringify(this._registry[j].items));
-              }  catch ( eee ) {
-                localStorage.setItem(j, []);
+      if ( !cur || (cur < SETTINGS_REVISION) ) {
+        for ( j in registry ) {
+          if ( registry.hasOwnProperty(j) ) {
+            if ( j == "user.session.appstorage" ) {
+              if ( this._cache[j] === undefined ) {
+                this._cache[j] = {};
+                localStorage.setItem(j, "{}");
               }
-            } else if ( this._registry[j].type == "bool" ) {
-              var val = "false";
-              if ( this._registry[j].value == "true" || this._registry[j].value === true ) {
-                val = "true";
-              }
-              localStorage.setItem(j, val);
-            } else {
-              localStorage.setItem(j, this._registry[j].value || null);
+              continue;
             }
-          //}
+
+            iter = registry[j];
+            if ( iter.type == "list" ) {
+              this._set(j, iter.items);
+            } else {
+              this._set(j, iter.value);
+            }
+          }
+        }
+
+        localStorage.setItem("SETTINGS_REVISION", SETTINGS_REVISION);
+      } else {
+        var v;
+        for ( j in registry ) {
+          if ( registry.hasOwnProperty(j) ) {
+            v = null;
+            try {
+              v = localStorage.getItem(j);
+            } catch ( eee ) { }
+            this._cache[j] = FixType(registry[j].type, v);
+          }
         }
       }
-
-      // Deprecated!
-      localStorage.removeItem("system.app.registered");
-      localStorage.removeItem("system.panel.registered");
-      localStorage.removeItem("system.application.installed");
-      localStorage.removeItem("system.panelitem.installed");
-      localStorage.removeItem("system.installed.application");
-      localStorage.removeItem("system.installed.panelitem");
-      localStorage.removeItem("system.installed.packages");
-      localStorage.removeItem("user.installed.applications");
-      localStorage.removeItem("user.installed.packages");
-      localStorage.removeItem("desktop.panel.items");
-      localStorage.removeItem("desktop.panel.position");
-      localStorage.removeItem("applications");
-      localStorage.removeItem("settings");
-      localStorage.removeItem("defaults");
-      localStorage.removeItem("session");
-      localStorage.removeItem("SETTINGS_REVISION");
-      localStorage.removeItem("SETTING_REVISION");
 
       console.groupEnd();
     },
@@ -3758,12 +3778,9 @@
      * @destructor
      */
     destroy : function() {
-      this._registry = null;
+      this._cache    = {};
+      this._registry = {};
       this._super();
-    },
-
-    reset : function() {
-
     },
 
     /**
@@ -3773,55 +3790,17 @@
      */
     run : function(user_registry) {
       console.group("SettingManager::run()");
-      this._applyUserRegistry(user_registry);
-      console.groupEnd();
-    },
+      if ( !(user_registry instanceof Object) || !user_registry ) {
+        user_registry = {};
+      }
 
-    /**
-     * SettingsManager::_applyUserRegistry() -- Apply user registry settings
-     * @see SettingsManager::run()
-     * @return void
-     */
-    _applyUserRegistry : function(registry) {
-     console.group("SettingsManager::_applyUserSettings()");
-     if ( !(registry instanceof Object) || !registry ) {
-       registry = {};
-     }
-     console.log("Registry", registry);
-
-      var i;
-      for ( i in registry ) {
-        if ( registry.hasOwnProperty(i) ) {
-          if ( !this._registry[i] )
+      var j;
+      for ( j in user_registry ) {
+        if ( user_registry.hasOwnProperty(j) ) {
+          if ( j == "user.session.appstorage" && !SAVE_APPREG )
             continue;
 
-        if ( i == "user.session.appstorage" && !SAVE_APPREG )
-          continue;
-
-          console.log("> ", i, this._registry[i].type, registry[i]);
-
-          switch ( this._registry[i].type ) {
-            case "bool":
-              var val = "false";
-              if ( registry[i] === "true" || registry[i] === true ) {
-                val = "true";
-              }
-              this._set(i, val);
-            break;
-
-            //case "array":
-            case "list":
-              try {
-                this._set(i, JSON.parse(registry[i]));
-              } catch ( eee ) {
-                this._set(i, []);
-              }
-            break;
-
-            default :
-              this._set(i, registry[i]);
-            break;
-          }
+          this._set(j, user_registry[j]);
         }
       }
 
@@ -3835,7 +3814,7 @@
      * @return  Mixed
      */
     savePackageStorage : function(name, props) {
-      var storage = this._get("user.session.appstorage", true);
+      var storage = this._get("user.session.appstorage");
       if ( !(storage instanceof Object) || (storage instanceof Array) ) {
         storage = {};
       }
@@ -3857,7 +3836,7 @@
      * @return  JSON
      */
     loadPackageStorage : function(name) {
-      var res = this._get("user.session.appstorage", true);
+      var res = this._get("user.session.appstorage");
       if ( (res instanceof Object) ) {
         if ( res[name] ) {
 
@@ -3934,16 +3913,14 @@
     },
 
     /**
-     * SettingsManager::_save() -- Save settings
+     * SettingsManager::_save() -- Save settings that require backend changes
      * @return void
      */
     _save : function(internal, callback) {
       internal = internal === undefined ? true : (internal ? true : false);
       callback = callback || function() {};
 
-      var uregistry = JSON.stringify(this.getRegistry());
-      var pargs     = {"action" : "settings", "registry" : uregistry};
-
+      var pargs = {"action" : "settings", "registry" : JSON.stringify(this.getRegistry())};
       DoPost(pargs, function(data) {
         if ( data.error ) {
           if ( internal ) {
@@ -3966,19 +3943,17 @@
 
     /**
      * SettingsManager::_set() -- Set a storage item by key and value
-     * @param   String    k       Settings Key
-     * @param   Mixed     v       Settings Value
+     * @param   String    k         Settings Key
+     * @param   Mixed     v         Settings Value
      * @return  void
      */
     _set : function(k, v) {
-      if ( (typeof v === "boolean") || (v instanceof Boolean) ) {
-        v = (v ? "true" : "false");
-      } else if ( (v instanceof Object || v instanceof Array) ) {
-        v = JSON.stringify(v);
-      }
+      var type = this.getType(k);
+      this._cache[k] = FixType(type, v);
+      console.log("SettingsManager::_set()", k, this._cache[k]);
 
       try {
-        localStorage.setItem(k, v);
+        localStorage.setItem(k, ToString(type, v));
       } catch ( e ) {
         if ( e == QUOTA_EXCEEDED_ERR ) {
           var msg = OSjs.Labels.StorageEmpty;
@@ -3989,24 +3964,12 @@
     },
 
     /**
-     * SettingsManager::_get() -- Get a storage item by key
+     * SettingsManager::_get() -- Get a storage item by key (from cache)
      * @param   String    k       Settings Key
-     * @param   bool      json    Parse as JSON
      * @return  Mixed
      */
-    _get : function(k, json) {
-      var t = this.getType(k);
-      var v = localStorage.getItem(k);
-
-      if ( (json = json || false) ) {
-        try {
-          v = JSON.parse(v);
-        } catch ( e ) {
-          v = [];
-        }
-      }
-
-      return v;
+    _get : function(k) {
+      return this._cache[k];
     },
 
     /**
@@ -4017,7 +3980,7 @@
      * @return  Mixed
      */
     setDefaultApplication : function(app, mime, path) {
-      var list = this._get("user.session.appmime", true);
+      var list = this._get("user.session.appmime");
       if ( !(list instanceof Object) || (list instanceof Array) ) {
         list = {};
       }
@@ -4039,7 +4002,7 @@
      * @return Object
      */
     getDefaultApplications : function() {
-      var list = this._get("user.session.appmime", true);
+      var list = this._get("user.session.appmime");
       if ( !(list instanceof Object) || (list instanceof Array) ) {
         list = {};
       }
@@ -4075,14 +4038,12 @@
      * @return JSON
      */
     getRegistry : function() {
-      var exp = {};
-      var i;
-
+      var i, exp = {};
       for ( i in this._registry ) {
         if ( i == "user.session.appstorage" && !SAVE_APPREG )
           continue;
 
-        exp[i] = this._get(i, in_array(this._registry[i], ["list", "array"]));
+        exp[i] = this._cache[i];
       }
       return exp;
     }
@@ -5790,7 +5751,7 @@
 
     addItem : function(data) {
       var self = this;
-      var list = _Settings._get("desktop.grid", true);
+      var list = _Settings._get("desktop.grid");
       if ( !list || !(list instanceof Array) ) {
         list = [];
       }
@@ -5804,7 +5765,7 @@
 
     removeItem : function(el, item) {
       var self = this;
-      var list = _Settings._get("desktop.grid", true);
+      var list = _Settings._get("desktop.grid");
       if ( !list || !(list instanceof Array) ) {
         list = [];
       } else {
@@ -5818,7 +5779,7 @@
 
     renameItem : function(el, item) {
       var self = this;
-      var list = _Settings._get("desktop.grid", true);
+      var list = _Settings._get("desktop.grid");
       var labels = OSjs.Labels.DesktopGrid;
 
       if ( !list || !(list instanceof Array) ) {
@@ -5844,7 +5805,7 @@
     },
 
     update : function() {
-      var list = _Settings._get("desktop.grid", true);
+      var list = _Settings._get("desktop.grid");
       if ( !list || !(list instanceof Array) ) {
         list = [];
       }
@@ -6004,7 +5965,7 @@
       //
       console.log("Registering panels...");
       try {
-        var panels = _Settings._get("desktop.panels", true);
+        var panels = _Settings._get("desktop.panels");
         console.log("Panels", panels);
 
         if ( panels && panels.length ) {

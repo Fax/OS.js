@@ -46,6 +46,7 @@ abstract class SettingsManager
   public static $Session = Array();
 
   /**
+   * @see CoreSettings.class.php
    * @var Default Settings
    */
   public static $Settings = Array
@@ -53,61 +54,9 @@ abstract class SettingsManager
     //
     // Window Manager
     //
-    "wm.animation.speed" => Array(
-      "type"      => "array",
-      "options"   => Array("default", "slow", "medium", "fast"),
-      "value"     => "default"
-    ),
-    "wm.animation.windowOpen" => Array(
-      "type"      => "array",
-      "options"   => Array("none", "default", "fade", "scroll", "grow"),
-      "value"     => "default"
-    ),
-    "wm.animation.windowClose" => Array(
-      "type"      => "array",
-      "options"   => Array("none", "default", "fade", "scroll", "shrink"),
-      "value"     => "default"
-    ),
-    "wm.animation.windowMaximize" => Array(
-      "type"      => "array",
-      "options"   => Array("none", "default", "grow"),
-      "value"     => "default"
-    ),
-    "wm.animation.windowMinimize" => Array(
-      "type"      => "array",
-      "options"   => Array("none", "default", "fade", "scroll", "shrink"),
-      "value"     => "default"
-    ),
-    "wm.animation.windowRestore" => Array(
-      "type"      => "array",
-      "options"   => Array("none", "default", "fade", "scroll", "grow"),
-      "value"     => "default"
-    ),
-    "wm.animation.menuOpen" => Array(
-      "type"      => "array",
-      "options"   => Array("none", "default", "fade", "scroll"),
-      "value"     => "default"
-    ),
-    "wm.animation.menuClose" => Array(
-      "type"      => "array",
-      "options"   => Array("none", "default", "fade", "scroll"),
-      "value"     => "default"
-    ),
-    "wm.opacity.windowNormal" => Array(
-      "type"      => "integer",
-      "value"     => 100
-    ),
-    "wm.opacity.windowMove" => Array(
-      "type"      => "integer",
-      "value"     => 90
-    ),
-    "wm.shadows.show" => Array(
+    "wm.effects.enable" => Array(
       "type"      => "bool",
       "value"     => true
-    ),
-    "wm.vd.cound" => Array(
-      "type"      => "integer",
-      "value"     => 2
     ),
 
     //
@@ -188,7 +137,7 @@ abstract class SettingsManager
     // Sounds
     "system.sounds.enable" => Array(
       "type" => "bool",
-      "value" => "true"
+      "value" => true
     ),
     "system.sounds.volume" => Array(
       "type" => "integer",

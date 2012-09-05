@@ -5,7 +5,6 @@ CORE TODO:
       - Settings - Background Image
       - Finish up multiples
       - Fix dock ?!
-[HIG] Configuration migration on JS... SETTINGS_REVISION again
 [HIG] New package type: Theme
 [LOW] WindowManager: Effect(s) configuration
 [LOW] Panel setting: Background Image
