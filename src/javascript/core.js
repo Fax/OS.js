@@ -2822,7 +2822,7 @@
 
       // Now fire them up
       _VFS.run(function() {
-        _Settings.run(response.restore.registry);
+        _Settings.run(response.restore.registry, response.registry.revision);
         _PackMan.run(response.registry.packages);
         _Resources.run(response.registry.preload, function() {
           self.run(response.restore.session);
@@ -3752,23 +3752,29 @@
     /**
      * SettingsManager::run() -- Run
      * @param  Object   user_registry   User registry
+     * @param  int      revision        Revision index
      * @return void
      */
-    run : function(user_registry) {
+    run : function(user_registry, revision) {
       console.group("SettingManager::run()");
       if ( !(user_registry instanceof Object) || !user_registry ) {
         user_registry = {};
       }
 
       // This restores the settings from database, see init() when flag is set
-      var j;
-      for ( j in user_registry ) {
-        if ( user_registry.hasOwnProperty(j) ) {
-          this._set(j, user_registry[j]);
+      if ( !((user_registry.REVISION === undefined) || (parseInt(user_registry.REVISION, 10) < revision)) ) {
+        var j;
+        for ( j in user_registry ) {
+          if ( user_registry.hasOwnProperty(j) ) {
+            this._set(j, user_registry[j]);
+          }
         }
       }
 
+
       SetLanguage(this._get("system.locale.language"));
+
+      this._set("REVISION", revision);
 
       console.log("Cached", this._cache);
       console.groupEnd();

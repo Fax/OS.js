@@ -383,6 +383,7 @@ EOHTML;
           "duplicate"     => $user->isLoggedIn()
         ),
         "registry"      => Array(
+          "revision"      => 1,
           "settings"      => User::getDefaultRegistry(),
           "packages"      => PackageManager::GetPackages($user),
           "preload"       => ResourceManager::getPreloads(!(ENV_PRODUCTION && CACHE_COMBINED_RESOURCES)),
