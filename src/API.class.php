@@ -56,7 +56,7 @@ abstract class API
     "snapshotLoad"      => "doSnapshotLoad",
     "snapshotDelete"    => "doSnapshotDelete",
     "updateCache"       => "doCacheUpdate",
-    "settings"          => "doSettings",
+    //"settings"          => "doSettings",
     "login"             => "doUserLogin",
     "logout"            => "doUserLogout",
     "user"              => "doUserOperation",
@@ -297,8 +297,9 @@ EOHTML;
    * @return Array
    */
   protected static final function _doShutdown(Array $args, Core $inst = null) {
-    $session  = isset($args['session'])  ? $args['session']  : Array();
-    $save     = isset($args['save'])     ? ($args['save'] == "true" ? true : false) : false;
+    $registry  = isset($args['registry'])  ? $args['registry']   : ""; // JSON STRING here
+    $session   = isset($args['session'])   ? $args['session']    : ""; // JSON STRING here
+    $save      = isset($args['save'])      ? ($args['save'] == "true" ? true : false) : false;
 
     $json['result']   = true;
     $json['success']  = true;
@@ -306,7 +307,8 @@ EOHTML;
     if ( ($user = $inst->getUser()) ) {
       $only = Array("last_logout", "logged_in");
       if ( $save ) {
-        $user->last_session = JSON::decode($session);
+        $user->last_registry  = JSON::decode($registry, true);
+        $user->last_session   = JSON::decode($session, true);
         $only[] = "last_session";
       }
       $user->last_logout = new DateTime();
@@ -333,11 +335,11 @@ EOHTML;
    * @return Array
    */
   protected static final function _doUserLogin(Array $args, Core $inst = null) {
-    $json   = Array();
-    $uname  = "";
-    $upass  = "";
-    $time   = isset($args['time'])   ? $args['time'] : null;
-    $create = false;
+    $json     = Array();
+    $uname    = "";
+    $upass    = "";
+    $time     = isset($args['time'])       ? $args['time']      : null;
+    $create   = false;
 
     if ( ENABLE_REGISTRATION ) {
       $create = isset($args['create']) ? $args['create'] === "true" : false;
@@ -358,8 +360,10 @@ EOHTML;
       if ( $create ? ($user = User::createNew($uname, $upass)) : ($user = User::getByUsername($uname)) ) {
         if ( $user->password == $upass ) {
           if ( !($registry = $user->last_registry) ) {
-            $registry = User::getDefaultRegistry(true);
+            $registry = Array();
           }
+
+          // Session restore is handled by frontend
           if ( !($session = $user->last_session) ) {
             $session = User::getDefaultSession();
           }
@@ -367,11 +371,11 @@ EOHTML;
           $json['success'] = true;
           $json['result'] = Array(
             "user"          => $user->getUserInfo(),
-            "registry"      => Array(
-              "tree"    => User::getDefaultRegistry(),
-              "stored"  => $registry
+            "registry"      => User::getDefaultRegistry(),
+            "restore"       => Array(
+              "registry"      => $registry,
+              "session"       => $session
             ),
-            "session"       => $session,
             "packages"      => PackageManager::GetPackages($user),
             "preload"       => ResourceManager::getPreloads(!(ENV_PRODUCTION && CACHE_COMBINED_RESOURCES)),
             "sid"           => session_id(),

@@ -48,6 +48,7 @@ abstract class CoreSettings
   /////////////////////////////////////////////////////////////////////////////
 
   /**
+   * @see SettingsManager.class.php
    * @var Default Registry
    */
   protected static $_Registry = Array(
@@ -72,7 +73,7 @@ abstract class CoreSettings
     ),
 
     "desktop.wallpaper.path" => Array(
-      "value" => "/System/Wallpapers/noise_blue.png"
+      "value" => "/System/Wallpapers/go2cxpb.png"
     ),
 
     "desktop.wallpaper.type" => Array(
