@@ -2646,6 +2646,14 @@
         });
       }
 
+      if ( this._currentView == "icon" ) {
+        el.find("img").attr("width", "32");
+        el.find("img").attr("height", "32");
+      } else {
+        el.find("img").attr("width", "16");
+        el.find("img").attr("height", "16");
+      }
+
       el.mousedown(function(ev) {
         var t = $(ev.target || ev.srcElement);
         if ( !(t.attr("draggable") === "true" || t.closest("*[draggable=true]", t).length) ) {
