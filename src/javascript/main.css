@@ -79,6 +79,8 @@ ul.CompactList li {
  ****************************************************************/
 #HomePage {
   display : none;
+  color : #fff;
+  margin : 10px;
 }
 
 #LoginWindow {
