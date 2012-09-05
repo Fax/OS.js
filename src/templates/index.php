@@ -80,7 +80,7 @@ if ( $locale = Core::get()->getLocale() ) {
   <title>OS.js Cloud/Web Desktop Platform <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)</title>
 
   <meta name="keywords" content="osjs,OS.js,Web Desktop,Cloud Desktop,Window Manager,Javascript OS" />
-  <meta name="description" content="OS.js - A simple yet powerful Web and Cloud Desktop Platfom using JavaScript and latest HTML5 and CSS features." />
+  <meta name="description" content="OS.js - A simple yet powerful JavaScript Web and Cloud Desktop Platfom using JavaScript and latest HTML5 and CSS features." />
   <meta name="author" content="<?php print PROJECT_AUTHOR; ?> <?php print PROJECT_CONTACT; ?>" />
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <link rel="icon" type="image/png" href="/favicon.png" />

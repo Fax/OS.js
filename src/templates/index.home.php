@@ -40,7 +40,7 @@
   <h1>OS.js - JavaScript Web Desktop Environment</h1>
   <h2>About</h2>
   <p>
-    OS.js is a simple, yet powerful Cloud/Web Desktop Platform.<br />
+    OS.js is a simple, yet powerful JavaScript Cloud/Web Desktop Platform.<br />
 
     Only WebKit and Gecko based browsers fully support Glade/Gtk+ due to incomplete implementation of various CSS features.<br />
 
