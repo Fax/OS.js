@@ -677,3 +677,22 @@ function escapeHtml(unsafe) {
   return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
+/**
+ * checkMIME() -- Check if given mime type is valid
+ * @return  bool
+ */
+function checkMIME(needle, haystack) {
+  var i = 0, l = haystack.length, x;
+  for ( i; i < l; i++ ) {
+    x = haystack[i];
+    if ( x.match(/\/\*/) ) {
+      if ( needle.split("/")[0] == x.split("/")[0] ) {
+        return true;
+      }
+    } else {
+      if ( needle == x )
+        return true;
+    }
+  }
+  return false;
+}
