@@ -152,6 +152,7 @@
   /**
    * Language
    */
+  var _DefaultLanguage  = "en_US";
   var _BrowserLanguage  = "en_US";                        //!< Browser default language (Set by init)
   var _SystemLanguage   = "en_US";                        //!< System default language (Set by init)
   var _Languages        = {                               //!< Collection of avalilable languages
@@ -231,6 +232,27 @@
 
   } // @endfunction
 
+  /**
+   * SetLanguage() -- Set current language
+   * @return    String      lang      Language
+   * @function
+   */
+  function SetLanguage(lang) {
+    lang = lang || _SystemLanguage;
+    if ( lang == "default" ) {
+      lang = _DefaultLanguage;
+    } else if ( lang == "auto" ) {
+      lang = _BrowserLanguage;
+    }
+
+    var scr = $("#LanguageFile");
+    var href = LANGUAGE_URI + lang.toLowerCase();
+    if ( $(scr).attr("src") != href ) {
+      $(scr).attr("src", href);
+    }
+
+    _SystemLanguage = lang;
+  }
 
   /**
    * GetLanguage() -- Get Current language
@@ -241,7 +263,7 @@
     if ( _Settings ) {
       return _Settings._get("system.locale.language") || _SystemLanguage;
     }
-    return _SystemLanguage;
+    return _DefaultLanguage;
   } // @function
 
   /**
@@ -250,7 +272,7 @@
    */
   function GetLanguages() {
     var l = _Languages;
-    l['default']  = sprintf(l['default'], _SystemLanguage);
+    l['default']  = sprintf(l['default'], _DefaultLanguage);
     l['auto']     = sprintf(l['auto'],    _BrowserLanguage);
     return l;
   } // @function
@@ -2788,7 +2810,6 @@
       // Globals
       _SessionId        = response.sid;
       _BrowserLanguage  = response.lang_browser;
-      _SystemLanguage   = response.lang_user;
 
       // Initialize base classes
       _Settings   = new SettingsManager(response.registry);
@@ -3745,6 +3766,8 @@
           this._set(j, user_registry[j]);
         }
       }
+
+      SetLanguage(this._get("system.locale.language"));
 
       console.log("Cached", this._cache);
       console.groupEnd();
