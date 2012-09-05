@@ -69,22 +69,32 @@
 
 /* SCROLLBARS */
 
-::-webkit-scrollbar {
+div::-webkit-scrollbar,
+iframe::-webkit-scrollbar,
+textarea::-webkit-scrollbar {
   width: 12px;
   background : #f4f4f4;
 }
-::-webkit-scrollbar-track {
+div::-webkit-scrollbar-track,
+iframe::-webkit-scrollbar-track,
+textarea::-webkit-scrollbar-track {
   background : #f4f4f4;
   border : 0 none;
 }
-::-webkit-scrollbar-thumb {
+div::-webkit-scrollbar-thumb,
+iframe::-webkit-scrollbar-thumb,
+textarea::-webkit-scrollbar-thumb {
   background : #41454d;
   border : 0 none;
 }
-::-webkit-scrollbar-thumb:vertical {
+div::-webkit-scrollbar-thumb:vertical,
+iframe::-webkit-scrollbar-thumb:vertical,
+textarea::-webkit-scrollbar-thumb:vertical {
   background: -webkit-gradient(linear, left top, right top, color-stop(0%, #41454d), color-stop(100%, #31363d));
 }
-::-webkit-scrollbar-thumb:horizontal {
+div::-webkit-scrollbar-thumb:horizontal,
+iframe::-webkit-scrollbar-thumb:horizontal,
+textarea::-webkit-scrollbar-thumb:horizontal {
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #41454d), color-stop(100%, #31363d));
 }
 

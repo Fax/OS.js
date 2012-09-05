@@ -414,12 +414,12 @@ ul.CompactList li {
       line-height : 28px;
       overflow : hidden;
     }
-    .WindowTopInner span {
       /*
+    .WindowTopInner span {
       white-space: nowrap;
       text-overflow: ellipsis;
-      */
     }
+      */
     .WindowTop img {
       float : left;
       padding : 5px;
@@ -429,13 +429,13 @@ ul.CompactList li {
       top : 0px;
       right : 0px;
     }
-    .WindowTopController {
-      width : 27px;
-      height : 28px;
-      line-height : 28px;
-      text-align : center;
-      float : left;
-    }
+      .WindowTopController {
+        width : 27px;
+        height : 28px;
+        line-height : 28px;
+        text-align : center;
+        float : left;
+      }
     /*.WindowTopController:hover, .WindowTopController.Active {}*/
 
   .WindowContent {
