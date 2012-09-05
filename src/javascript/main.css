@@ -82,6 +82,23 @@ ul.CompactList li {
   color : #fff;
   margin : 10px;
 }
+  #HomePage a {
+    color : #fff;
+  }
+
+#LoginDemoNotice {
+  display : none;
+  position : absolute;
+  bottom : 10px;
+  left : 10px;
+}
+  #LoginDemoNotice p {
+    color : #fff;
+    font-size : 14px;
+    line-height : 22px;
+    margin : 0;
+    padding : 0;
+  }
 
 #LoginWindow {
   width : 450px;
@@ -157,19 +174,6 @@ ul.CompactList li {
     cursor : pointer;
     margin-left : 5px;
   }
-
-#LoginDemoNotice {
-  font-size : 85%;
-  width : 400px;
-  position : absolute;
-  bottom : 10px;
-  left : 10px;
-}
-#LoginDemoNotice p {
-  margin : 0;
-  padding : 0;
-  color : #fff;
-}
 
 /****************************************************************
                           DESKTOP

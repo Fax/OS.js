@@ -2768,6 +2768,10 @@
         PKG_RES_URI     = STATIC_URL + PKG_RES_URI;
         */
 
+        if ( ENV_DEMO ) {
+          $("#LoginDemoNotice").show();
+        }
+
         if ( env.connection ) {
           _Connection = new CoreConnection(function(result) {
             if ( result ) {

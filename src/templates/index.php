@@ -156,6 +156,28 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
 <script type="text/javascript"></script>
 <noscript>Your browser does not support JavaScript and cannot launch the application.</noscript>
 
+<!-- Login Window -->
+<?php require_template ("index.login.php"); ?>
+
+<?php if ( ENV_DEMO ) { ?>
+<!-- Demo Notice -->
+<div id="LoginDemoNotice">
+  <p>
+    <b>This is a demonstration version.</b> Some applications and features are disabled.
+  </p>
+  <p>
+    <i>A user will be automatically created for you when you sign in if the given username is not taken.</i>
+  </p>
+</div>
+
+<!-- Version Stamp -->
+<div id="Version">
+  OS.js version <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)<br />
+  &copy; <?php print htmlspecialchars(PROJECT_COPYRIGHT); ?>
+</div>
+<?php } ?>
+
+
 <!-- Main Container -->
 <div id="Desktop">
   <!-- IconView -->
@@ -176,20 +198,6 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
 
   <!-- Loaded content will appear here -->
 </div>
-
-<!-- Notices -->
-<?php if ( ENV_DEMO ) { require_template ("index.demo.php"); } ?>
-
-<!-- Login Window -->
-<?php require_template ("index.login.php"); ?>
-
-<?php if ( ENV_PRODUCTION || ENV_DEMO ) { ?>
-<!-- Version Stamp -->
-<div id="Version">
-  OS.js version <?php print PROJECT_VERSION; ?> (<?php print PROJECT_CODENAME; ?>)<br />
-  &copy; <?php print htmlspecialchars(PROJECT_COPYRIGHT); ?>
-</div>
-<?php } ?>
 
 </body>
 </html>

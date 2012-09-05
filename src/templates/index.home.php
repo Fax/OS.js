@@ -40,7 +40,6 @@
   <p>
     OS.js is a simple, yet powerful Cloud/Web Desktop Platform.<br />
 
-    <br />
     Only WebKit and Gecko based browsers fully support Glade/Gtk+ due to incomplete implementation of various CSS features.<br />
 
     <br />
@@ -52,6 +51,7 @@
     <br />
     Applications can be developed using the Glade Interface designer (GTK+) and using OS.js' compiler and generator to create compatible packages.
   </p>
+
   <h2>Links</h2>
   <p>
     OS.js is created <a href="https://plus.google.com/101576798387217383063?rel=author">by Anders Evenrud</a>
