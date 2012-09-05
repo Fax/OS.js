@@ -194,13 +194,6 @@ if ( !defined("ENABLE_DEBUGGING") )
   define("ENABLE_DEBUGGING",    !ENV_PRODUCTION); // Enable core verbose debugging on logging
 
 //
-// Frontend features
-//
-
-if ( !defined("ENABLE_REGISTRATION") )
-  define("ENABLE_REGISTRATION", true); // Enable user registration
-
-//
 // Automatic login
 //
 

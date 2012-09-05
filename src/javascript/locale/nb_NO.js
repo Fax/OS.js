@@ -51,7 +51,6 @@
     "LoginFailureOther"                   : "Det hendte en feil i systemet under innlogging, vennligst prøv igjen.",
     "CreateLoginFailure"                  : "Klarte ikke lage bruker: %s",
     "CreateLoginFailureOther"             : "Det hendte en feil i systemet under oppretting av bruker, vennligst prøv igjen.",
-    "CannotStart"                         : "Din nettleser støtter ikke WebStorage. Kan ikke fortsette uten...",
     "ApplicationCheckCompabilityMessage"  : "Nettleseren din støtter ikke '%s'",
     "ApplicationCheckCompabilityStack"    : "Application::_checkCompability(): Applikasjon navn: %s",
     "CrashProcess"                        : "Prosessen '%s' har stoppet med feilmeldingen '%s'!",

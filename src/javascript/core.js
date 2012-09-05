@@ -53,7 +53,6 @@
   /**
    * @constants Local settings
    */
-  var SETTINGS_REVISION      = 3;
   var ANIMATION_SPEED        = 400;                 //!< Animation speed in ms
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
   var NOTIFICATION_TIMEOUT   = 5000;                //!< Desktop notification timeout
@@ -162,41 +161,6 @@
   // HELPERS
   /////////////////////////////////////////////////////////////////////////////
 
-  function ToString(t, v) {
-    if ( t == "bool" ) {
-      v = v ? "true" : "false";
-    } else if ( t == "list" ) {
-      try {
-        v = JSON.stringify(v);
-      } catch ( eee ) {
-        v = "";
-      }
-    } else {
-      v = "" + v;
-    }
-    return v;
-  }
-
-  function FixType(t, v) {
-    if ( t == "bool" ) {
-      v = (v === "true" || v === true);
-    } else if ( t == "int" ) {
-      v = parseInt(v, 10);
-      if ( isNan(v) )
-        v = 0;
-    } else if ( t == "list" ) {
-      if ( typeof v == "string" ) {
-        try {
-          v = JSON.parse(v);
-        } catch ( eee ) {
-          v = [];
-        }
-      }
-    }
-
-    return v;
-  }
-
   /**
    * DoPost() -- Do a POST call
    * @param   JSON        args      Arguments
@@ -270,7 +234,10 @@
    * @function
    */
   function GetLanguage() {
-    return localStorage.getItem("system.locale.language") || _SystemLanguage;
+    if ( _Settings ) {
+      return _Settings._get("system.locale.language") || _SystemLanguage;
+    }
+    return _SystemLanguage;
   } // @function
 
   /**
@@ -3727,44 +3694,30 @@
 
       this._super("(SettingsManager)", "apps/system-software-update.png", true);
 
-      // Make sure registry is up to date
-      var cur = parseInt(localStorage.getItem("SETTINGS_REVISION"), 10) || 0;
-      var j, iter;
-
-      if ( !cur || (cur < SETTINGS_REVISION) ) {
-        for ( j in registry ) {
-          if ( registry.hasOwnProperty(j) ) {
-            if ( j == "user.session.appstorage" ) {
-              if ( this._cache[j] === undefined ) {
-                this._cache[j] = {};
-                localStorage.setItem(j, "{}");
-              }
-              continue;
+      for ( j in registry ) {
+        if ( registry.hasOwnProperty(j) ) {
+          if ( j == "user.session.appstorage" ) {
+            if ( this._cache[j] === undefined ) {
+              this._cache[j] = {};
             }
-
-            iter = registry[j];
-            if ( iter.type == "list" ) {
-              this._set(j, iter.items);
-            } else {
-              this._set(j, iter.value);
+            if ( !localStorage.getItem(j) ) {
+              localStorage.setItem(j, "{}");
             }
+            continue;
           }
-        }
 
-        localStorage.setItem("SETTINGS_REVISION", SETTINGS_REVISION);
-      } else {
-        var v;
-        for ( j in registry ) {
-          if ( registry.hasOwnProperty(j) ) {
-            v = null;
-            try {
-              v = localStorage.getItem(j);
-            } catch ( eee ) { }
-            this._cache[j] = FixType(registry[j].type, v);
+          iter = registry[j];
+          if ( iter.type == "list" ) {
+            this._set(j, iter.items);
+          } else {
+            this._set(j, iter.value);
           }
         }
       }
 
+
+      console.log("Registry", this._registry);
+      console.log("Cached", this._cache);
       console.groupEnd();
     },
 
@@ -3789,6 +3742,7 @@
         user_registry = {};
       }
 
+      // This restores the settings from database, see init() when flag is set
       var j;
       for ( j in user_registry ) {
         if ( user_registry.hasOwnProperty(j) ) {
@@ -3799,6 +3753,7 @@
         }
       }
 
+      console.log("Cached", this._cache);
       console.groupEnd();
     },
 
@@ -3943,17 +3898,18 @@
      * @return  void
      */
     _set : function(k, v) {
-      var type = this.getType(k);
-      this._cache[k] = FixType(type, v);
+      this._cache[k] = v;
       console.log("SettingsManager::_set()", k, this._cache[k]);
 
-      try {
-        localStorage.setItem(k, ToString(type, v));
-      } catch ( e ) {
-        if ( e == QUOTA_EXCEEDED_ERR ) {
-          var msg = OSjs.Labels.StorageEmpty;
-          CrashCustom(msg, msg, JSON.stringify({"error_on" : {"key" : k, "value" : v}}));
-          return;
+      if ( k == "user.session.appstorage" ) {
+        try {
+          localStorage.setItem(k, JSON.stringify(v));
+        } catch ( e ) {
+          if ( e == QUOTA_EXCEEDED_ERR ) {
+            var msg = OSjs.Labels.StorageEmpty;
+            CrashCustom(msg, msg, JSON.stringify({"error_on" : {"key" : k, "value" : v}}));
+            return;
+          }
         }
       }
     },
@@ -5956,7 +5912,7 @@
       }
 
       //
-      // Create panel and items from localStorage
+      // Create panel and items from settings
       //
       console.log("Registering panels...");
       try {
@@ -9351,10 +9307,6 @@
    * @function
    */
   $(document).ready(function() {
-    if ( !OSjs.Compability.SUPPORT_LSTORAGE ) {
-      alert(OSjs.Labels.CannotStart);
-      return false;
-    }
     return __CoreBoot__();
   });
 

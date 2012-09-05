@@ -56,7 +56,7 @@ abstract class API
     "snapshotLoad"      => "doSnapshotLoad",
     "snapshotDelete"    => "doSnapshotDelete",
     "updateCache"       => "doCacheUpdate",
-    //"settings"          => "doSettings",
+    "settings"          => "doSettings",
     "login"             => "doUserLogin",
     "logout"            => "doUserLogout",
     "user"              => "doUserOperation",
@@ -339,71 +339,63 @@ EOHTML;
     $uname    = "";
     $upass    = "";
     $time     = isset($args['time'])       ? $args['time']      : null;
-    $create   = false;
-
-    if ( ENABLE_REGISTRATION ) {
-      $create = isset($args['create']) ? $args['create'] === "true" : false;
-    }
 
     if ( isset($args['form']) ) {
-      if ( isset($args['form']['username']) ) {
-        $uname = trim($args['form']['username']);
-      }
-      if ( isset($args['form']['password']) ) {
-        $upass = trim($args['form']['password']);
-      }
+      $uname = isset($args['form']['username']) ? trim($args['form']['username']) : "";
+      $upass = isset($args['form']['password']) ? trim($args['form']['password']) : "";
     }
 
     $user = null;
-    $errored = true;
     if ( $uname && $upass ) {
-      if ( $create ? ($user = User::createNew($uname, $upass)) : ($user = User::getByUsername($uname)) ) {
-        if ( $user->password == $upass ) {
-          if ( !($registry = $user->last_registry) ) {
-            $registry = Array();
+      if ( !$user = User::getByUsername($uname) ) {
+        if ( ENV_DEMO ) {
+          if ( !$user = User::createNew($uname, $upass) ) {
+            $json['error'] = _("The username already exists!");
           }
-
-          // Session restore is handled by frontend
-          if ( !($session = $user->last_session) ) {
-            $session = User::getDefaultSession();
-          }
-
-          $json['success'] = true;
-          $json['result'] = Array(
-            "user"          => $user->getUserInfo(),
-            "registry"      => User::getDefaultRegistry(),
-            "restore"       => Array(
-              "registry"      => $registry,
-              "session"       => $session
-            ),
-            "packages"      => PackageManager::GetPackages($user),
-            "preload"       => ResourceManager::getPreloads(!(ENV_PRODUCTION && CACHE_COMBINED_RESOURCES)),
-            "sid"           => session_id(),
-            "lang_system"   => DEFAULT_LANGUAGE,
-            "lang_user"     => "default", // NOTE: Should be set to user ? used as 'SystemLanguage'
-            "lang_browser"  => Core::getBrowserLanguage(),
-            "duplicate"     => $user->isLoggedIn()
-          );
-
-          $user->last_login       = new DateTime();
-          $user->last_session_id  = session_id();
-          if ( !$user->isLoggedIn() ) {
-            $user->logged_in      = 1;
-          }
-
-          User::save($user, Array("last_login", "last_session_id", "logged_in"));
-
-          $errored = false;
+        } else {
+          $json['error'] = _("Check username and password!");
+        }
+      } else {
+        if ( $user->password != $upass ) {
+          $json['error'] = _("Check username and password!");
         }
       }
     }
 
-    if (  $errored ) {
-      if ( $create ) {
-        $json['error'] = _("The username already exists!");
-      } else {
-        $json['error'] = _("Check username and password!");
+    if ( $user && !isset($json['error']) ) {
+      if ( !($registry = $user->last_registry) ) {
+        $registry = Array();
       }
+
+      // Session restore is handled by frontend
+      if ( !($session = $user->last_session) ) {
+        $session = User::getDefaultSession();
+      }
+
+      $json['success'] = true;
+      $json['result'] = Array(
+        "user"          => $user->getUserInfo(),
+        "registry"      => User::getDefaultRegistry(),
+        "restore"       => Array(
+          "registry"      => $registry,
+          "session"       => $session
+        ),
+        "packages"      => PackageManager::GetPackages($user),
+        "preload"       => ResourceManager::getPreloads(!(ENV_PRODUCTION && CACHE_COMBINED_RESOURCES)),
+        "sid"           => session_id(),
+        "lang_system"   => DEFAULT_LANGUAGE,
+        "lang_user"     => "default", // NOTE: Should be set to user ? used as 'SystemLanguage'
+        "lang_browser"  => Core::getBrowserLanguage(),
+        "duplicate"     => $user->isLoggedIn()
+      );
+
+      $user->last_login       = new DateTime();
+      $user->last_session_id  = session_id();
+      if ( !$user->isLoggedIn() ) {
+        $user->logged_in      = 1;
+      }
+
+      User::save($user, Array("last_login", "last_session_id", "logged_in"));
     }
 
     Session::setUser(($user && ($user instanceof User)) ? $user : null);

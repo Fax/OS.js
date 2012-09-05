@@ -48,9 +48,6 @@
 
       <div class="Row">
         <div id="LoginButtons">
-          <?php if ( ENABLE_REGISTRATION ) { ?>
-          <button id="CreateLoginButton">Create User</button>
-          <?php } ?>
           <button id="LoginButton">Login</button>
         </div>
       </div>
