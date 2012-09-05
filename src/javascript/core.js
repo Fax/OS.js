@@ -381,7 +381,7 @@
 
       try {
         application._running = true; // NOTE: Workaround
-        application._kill();
+        application.___kill();
       } catch ( eee ) {
         console.error(">>>>>>>>>>", "ooopsie", app_name, application);
       }
@@ -602,6 +602,7 @@
    * @param   String    app       Application Name
    * @param   String    path      Path
    * @param   String    mime      MIME Type
+   * @return  void
    * @function
    */
   function SetVFSObjectDefault(app, path, mime) {
@@ -614,6 +615,7 @@
    * @param   String    path      Object path
    * @param   String    mime      MIME Type
    * @param   bool      udef      Use default defined application
+   * @return  void
    * @function
    */
   function LaunchVFSObject(path, mime, udef) {
@@ -632,8 +634,7 @@
       return;
     }
 
-    var apps        = _PackMan.getPackages(true);
-    var i;
+    var i, apps = _PackMan.getPackages(true);
 
     // First, figure out default application
     if ( udef ) {
@@ -648,6 +649,7 @@
           }
         }
       }
+      delete defs;
     }
 
     // If no application was launched we continue with the default dialog
@@ -1559,10 +1561,10 @@
     },
 
     /**
-     * Process::_kill() -- Kill process
+     * Process::___kill() -- Kill process
      * @return bool
      */
-    _kill : function() {
+    ___kill : function() {
       if ( !this.___locked ) {
         console.log("Process::kill()", this);
 
@@ -3399,7 +3401,7 @@
           if ( p !== undefined ) {
             var ckill = (function(pp) {
               return function() {
-                return pp._kill();
+                return pp.___kill();
               };
             })(p);
 
