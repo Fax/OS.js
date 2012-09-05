@@ -64,7 +64,6 @@
   var ENV_PRODUCTION         = undefined;           //!< Server-side production env. state
   var ENV_DEMO               = undefined;           //!< Server-side demo env. state
   var ENV_BUGREPORT          = false;               //!< Enable posting of errors (reporting, server-side mailing)
-  var SAVE_APPREG            = false;               //!< Always store applicaion data in registry
   var STORAGE_ENABLE         = false;               //!< Enable WebStorage for files
   // @endconstants
 
@@ -2814,6 +2813,8 @@
      * @return void
      */
     shutdown : function(save) {
+      save = (save === true || save === "true" || save === 1 || save === "1");
+
       var usession  = JSON.stringify(save ? _Core.getSession()       : {});
       var uregistry = JSON.stringify(save ? _Settings.getRegistry()  : {});
       var duration  = ((new Date()).getTime()) - _StartStamp;
@@ -3696,16 +3697,6 @@
 
       for ( j in registry ) {
         if ( registry.hasOwnProperty(j) ) {
-          if ( j == "user.session.appstorage" ) {
-            if ( this._cache[j] === undefined ) {
-              this._cache[j] = {};
-            }
-            if ( !localStorage.getItem(j) ) {
-              localStorage.setItem(j, "{}");
-            }
-            continue;
-          }
-
           iter = registry[j];
           if ( iter.type == "list" ) {
             this._set(j, iter.items);
@@ -3746,9 +3737,6 @@
       var j;
       for ( j in user_registry ) {
         if ( user_registry.hasOwnProperty(j) ) {
-          if ( j == "user.session.appstorage" && !SAVE_APPREG )
-            continue;
-
           this._set(j, user_registry[j]);
         }
       }
@@ -3900,18 +3888,6 @@
     _set : function(k, v) {
       this._cache[k] = v;
       console.log("SettingsManager::_set()", k, this._cache[k]);
-
-      if ( k == "user.session.appstorage" ) {
-        try {
-          localStorage.setItem(k, JSON.stringify(v));
-        } catch ( e ) {
-          if ( e == QUOTA_EXCEEDED_ERR ) {
-            var msg = OSjs.Labels.StorageEmpty;
-            CrashCustom(msg, msg, JSON.stringify({"error_on" : {"key" : k, "value" : v}}));
-            return;
-          }
-        }
-      }
     },
 
     /**
@@ -3989,14 +3965,7 @@
      * @return JSON
      */
     getRegistry : function() {
-      var i, exp = {};
-      for ( i in this._registry ) {
-        if ( i == "user.session.appstorage" && !SAVE_APPREG )
-          continue;
-
-        exp[i] = this._cache[i];
-      }
-      return exp;
+      return this._cache;
     }
 
   }); // @endclass

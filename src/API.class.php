@@ -306,8 +306,11 @@ EOHTML;
 
     if ( ($user = $inst->getUser()) ) {
       $only = Array("last_logout", "logged_in");
-      if ( $save ) {
+      if ( $registry ) {
         $user->last_registry  = JSON::decode($registry, true);
+        $only[] = "last_registry";
+      }
+      if ( $save ) {
         $user->last_session   = JSON::decode($session, true);
         $only[] = "last_session";
       }
