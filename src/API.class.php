@@ -265,9 +265,17 @@ EOHTML;
   protected static final function _doSettings(Array $args, Core $inst = null) {
     $json = Array();
     if ( ($inst instanceof Core) ) {
-      $user = $inst->getUser();
+      $user   = $inst->getUser();
+      $failed = true;
 
-      if ( (isset($args['registry'])) && ($registry = JSON::decode($args['registry'], true)) ) {
+      try {
+        $registry = (isset($args['registry'])) ? JSON::decode($args['registry'], true) : Array();
+      } catch ( Exception $e ) {
+        error_log("Failed to load registry somehow in _doSettings()");
+        $registry = Array();
+      }
+
+      if ( is_array($registry)  ) {
         $locale = Array(
           "locale_location" => $registry["system.locale.location"],
           "locale_time"     => $registry["system.locale.time-format"],
@@ -276,13 +284,21 @@ EOHTML;
           "locale_language" => $registry["system.locale.language"]
         );
 
+        if ( $locale["locale_language"] == "default" ) {
+          $locale["locale_language"] = DEFAULT_LANGUAGE;
+        } else if ( $locale["locale_language"] == "auto" ) {
+          $locale["locale_language"] = Core::getBrowserLanguage();
+        }
+
         $inst->setLocale($locale);
         Session::setLocale($locale);
 
         $user->last_registry = $registry;
+
+        $failed = false;
       }
 
-      if ( User::save($user, Array("last_registry")) ) {
+      if ( !$failed && User::save($user, Array("last_registry")) ) {
         $json['success'] = true;
         $json['result']  = true;
       } else {

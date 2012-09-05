@@ -253,7 +253,7 @@ class Core
       );
     }
 
-    date_default_timezone_set($this->_aLocale["locale_location"]);
+    @date_default_timezone_set($this->_aLocale["locale_location"]);
 
     //
     // i18n
