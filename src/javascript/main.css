@@ -179,10 +179,17 @@ ul.CompactList li {
  ****************************************************************/
 
 #Desktop {
-  position : relative;
+  /*
   margin : 0;
   padding : 0;
+  position : relative;
   height : 100%;
+  */
+  position : absolute;
+  top : 0px;
+  left : 0px;
+  right : 0px;
+  bottom : 0px;
 }
 
 
