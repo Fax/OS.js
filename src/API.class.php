@@ -377,18 +377,24 @@ EOHTML;
 
       $json['success'] = true;
       $json['result'] = Array(
-        "user"          => $user->getUserInfo(),
-        "registry"      => User::getDefaultRegistry(),
+        "user"          => Array(
+          "sid"           => session_id(),
+          "info"          => $user->getUserInfo(),
+          "duplicate"     => $user->isLoggedIn()
+        ),
+        "registry"      => Array(
+          "settings"      => User::getDefaultRegistry(),
+          "packages"      => PackageManager::GetPackages($user),
+          "preload"       => ResourceManager::getPreloads(!(ENV_PRODUCTION && CACHE_COMBINED_RESOURCES)),
+        ),
         "restore"       => Array(
           "registry"      => $registry,
           "session"       => $session
         ),
-        "packages"      => PackageManager::GetPackages($user),
-        "preload"       => ResourceManager::getPreloads(!(ENV_PRODUCTION && CACHE_COMBINED_RESOURCES)),
-        "sid"           => session_id(),
-        "lang_system"   => DEFAULT_LANGUAGE,
-        "lang_browser"  => Core::getBrowserLanguage(),
-        "duplicate"     => $user->isLoggedIn()
+        "locale"        => Array(
+          "system"        => DEFAULT_LANGUAGE,
+          "browser"       => Core::getBrowserLanguage(),
+        )
       );
 
       $user->last_login       = new DateTime();

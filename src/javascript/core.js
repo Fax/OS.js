@@ -2066,7 +2066,7 @@
     handleLogin : function(response, dcallback) {
       dcallback = dcallback || function() {};
 
-      if ( response.duplicate ) {
+      if ( response.user.duplicate ) {
         var con = !LoginManager.confirmation || confirm(OSjs.Labels.LoginConfirm);
         if ( con ) {
           _Core.login(response);
@@ -2808,11 +2808,12 @@
       $("#LoadingBarContainer").show();
 
       // Globals
-      _SessionId        = response.sid;
-      _BrowserLanguage  = response.lang_browser;
+      _SessionId        = response.user.sid;
+      _DefaultLanguage  = response.locale.system;
+      _BrowserLanguage  = response.locale.browser;
 
       // Initialize base classes
-      _Settings   = new SettingsManager(response.registry);
+      _Settings   = new SettingsManager(response.registry.settings);
       _Resources  = new ResourceManager();
       _PackMan    = new PackageManager();
       _VFS        = new CoreVFS();
@@ -2822,8 +2823,8 @@
       // Now fire them up
       _VFS.run(function() {
         _Settings.run(response.restore.registry);
-        _PackMan.run(response.packages);
-        _Resources.run(response.preload, function() {
+        _PackMan.run(response.registry.packages);
+        _Resources.run(response.registry.preload, function() {
           self.run(response.restore.session);
         });
       });
