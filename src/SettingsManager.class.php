@@ -141,7 +141,7 @@ abstract class SettingsManager
     ),
     "system.sounds.volume" => Array(
       "type" => "integer",
-      "value" => "100",
+      "value" => 100
     ),
     "system.sounds.theme" => Array( // CoreSettings
       "type"    => "array",
