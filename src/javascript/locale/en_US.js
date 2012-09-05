@@ -51,7 +51,6 @@
     "LoginFailureOther"                   : "A system error occured while logging in, please try again.",
     "CreateLoginFailure"                  : "Failed to create user: %s",
     "CreateLoginFailureOther"             : "A system error occured while creating user, please try again.",
-    "CannotStart"                         : "Your browser does not support WebStorage. Cannot continue...",
     "ApplicationCheckCompabilityMessage"  : "Your browser does not support '%s'",
     "ApplicationCheckCompabilityStack"    : "Application::_checkCompability(): Application name: %s",
     "CrashProcess"                        : "Process '%s' has crashed with error '%s'!",

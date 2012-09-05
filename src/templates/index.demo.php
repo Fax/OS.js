@@ -38,8 +38,7 @@
 
   <div id="LoginDemoNotice">
       <p>
-        <b>NOTE:</b> This is a demonstration version. Not all features are available.
-        If any errors occur, please clear the browser cache and try again before reporting any bugs.
-        You can also try to create a new user.
+        <i>This is a demonstration version. Some features may not be enabled.</i><br />
+        <b>If you do not have an account it will be automatically created when you post the login form.</b>
       </p>
   </div>
