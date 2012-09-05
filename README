@@ -16,6 +16,7 @@ OS.js can also be deployed standalone, either running in a browser or on top of 
 * Session Managment (Settings registry, application storage, snapshots)
 * Resource Managment (Resource (pre-)loading, compression, caching)
 * Simple Desktop Environment and Window Manager (With latest HTML/CSS features)
+* Support for translations and locales
 * TCP/IP Connections via WebSocket wrapper
 * Virtual Filesystem (VFS) via Browser and/or Server
 * Glade/Gtk+ support (Create UIs in Glade Interface Designer)
