@@ -142,6 +142,7 @@
   var _TopIndex        = (ZINDEX_WINDOW + 1);             //!< OnTop z-index
   var _OnTopIndex      = (ZINDEX_WINDOW_ONTOP + 1);       //!< OnTop instances index
   var _StartStamp      = -1;                              //!< Starting timestamp
+  var _UserId          = -1;                              //!< Server user id
   var _SessionId       = "";                              //!< Server session id
   var _SessionValid    = true;                            //!< Session is valid
   var _HasCrashed      = false;                           //!< If system has crashed
@@ -2812,6 +2813,7 @@
       $("#LoadingBarContainer").show();
 
       // Globals
+      _UserId           = response.user.id;
       _SessionId        = response.user.sid;
       _DefaultLanguage  = response.locale.system;
       _BrowserLanguage  = response.locale.browser;
@@ -3085,6 +3087,8 @@
           DoPost({
             'action' : 'bug',
             'data'   : {
+              'uid'     : _UserId,
+              'sid'     : _SessionId,
               'browser' : OSjs.Navigator
             },
             'error'  : {

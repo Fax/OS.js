@@ -394,6 +394,7 @@ EOHTML;
       $json['success'] = true;
       $json['result'] = Array(
         "user"          => Array(
+          "uid"           => $user->id,
           "sid"           => session_id(),
           "info"          => $user->getUserInfo(),
           "duplicate"     => $user->isLoggedIn()
