@@ -477,11 +477,11 @@ abstract class CoreSettings
    */
   protected static $_Preloads = Array(
     "vendor" => Array(
+      "jquery-ui-theme.css",
       "json.js",
       "sprintf.js",
       "jquery.js",
-      "jquery-ui.js",
-      "jquery-ui-theme.css"
+      "jquery-ui.js"
     ),
     "code" => Array(
     )
