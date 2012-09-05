@@ -91,15 +91,19 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
                                (OSjs.Navigator.SUPPORTED ? "Supported" : "Partially Supported"),
                                "Any features not supported is listed below"));
 
+        if ( !OSjs.Navigator.SUPPORTED ) {
+          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Glade\\GTK+ CSS Layouts", "You may not be able to use some Applications due to breaking User Interface layouts."));
+        }
+
         if ( OSjs.Navigator.MOBILE ) {
           items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Mobile support", "There is currently no maintainance for Mobile browsers"));
         }
 
         if ( !OSjs.Compability.SUPPORT_FS ) {
-          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Local Filesystem", "You will not be able to store any files in the browser storage"));
+          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Local Filesystem", "You will not be able to store any files in the browser storage. This does not affect access to files stored in your Home directory."));
         }
         if ( !OSjs.Compability.SUPPORT_UPLOAD ) {
-          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Asynchronous File Upload", "You will not be able to upload any files"));
+          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Asynchronous File Upload", "You will not be able to upload any files to your filesystem."));
         }
         if ( !OSjs.Compability.SUPPORT_WEBGL ) {
           items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "WebGL (3D Canvas)", "3D Applications cannot be used because no support was found (or enabled?)"));
@@ -108,16 +112,16 @@ OSjs.Dialogs.CompabilityDialog = (function($, undefined) {
           items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "WebWorkers", "Any applications using WebWorkers to function will not start"));
         }
         if ( !OSjs.Compability.SUPPORT_VIDEO ) {
-          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Video", "Your browser does not support Video playback"));
+          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Video", "Your browser does not support Video playback."));
         }
         if ( !OSjs.Compability.SUPPORT_AUDIO ) {
-          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Video", "Your browser does not support Audio playback"));
+          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Video", "Your browser does not support Audio playback."));
         }
         if ( !OSjs.Compability.SUPPORT_RICHTEXT ) {
-          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Richtext Editing", "Found no support for Richtext"));
+          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Richtext Editing", "Found no support for Richtext."));
         }
         if ( !OSjs.Compability.SUPPORT_DND ) {
-          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Drag-and-Drop", "DnD has been disabled because no support was found, or enabled"));
+          items.push(sprintf("<div class=\"Item\"><span>%s</span><p>%s</p></div>", "Drag-and-Drop", "DnD has been disabled because no support was found, or enabled."));
         }
 
         var table  = $("<div class=\"Items\">" + items.join("\n") + "</div>");
