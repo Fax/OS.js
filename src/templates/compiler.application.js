@@ -20,6 +20,7 @@ OSjs.Packages.%CLASSNAME% = (function($, undefined) {
   return function(GtkWindow, Application, API, argv, windows) {
 
     var LABELS = _LINGUAS[API.system.language()] || _LINGUAS["%DEFAULT_LANGUAGE%"];
+    var MIMES  = %MIMES%;
 
     ///////////////////////////////////////////////////////////////////////////
     // WINDOWS

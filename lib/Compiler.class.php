@@ -122,13 +122,11 @@ class Compiler
    * Parse a Glade file
    *
    * @param   String  $schema             Glade Schema
-   * @param   Array   $mimes              Project MIMEs
    * @param   String  $project_title      Project Title
    * @param   String  $project_icon       Project Icon
    * @return  Array
    */
-  protected static function _ParseGlade($schema, Array $project_mimes, $project_title, $project_icon) {
-    $mimes              = json_encode($project_mimes);
+  protected static function _ParseGlade($schema, $project_title, $project_icon) {
     $js_prepend         = "";
     $js_append          = "";
     $js_root_window     = "";
@@ -189,26 +187,24 @@ class Compiler
 if ( $ev_handler == "EventMenuOpen" ) {
   $ev_code = <<<EOJAVASCRIPT
 
-        var my_mimes    = {$mimes};
         var my_callback = function(fname) {}; // FIXME
         var cur         = (argv && argv['path'] ? argv['path'] : null);
 
         this.app.defaultFileOpen(function(fname) {
           my_callback(fname);
-        }, mu_mimes, null, cur);
+        }, MIMES, null, cur);
 EOJAVASCRIPT;
             } else if ( $ev_handler == "EventMenuSave" ) {
               $ev_code = <<<EOJAVASCRIPT
 
         var my_filename = (argv && argv['path'] ? argv['path'] : null);
         var my_content  = ""; // FIXME
-        var my_mimes    = {$mimes};
         var my_callback = function(fname) {}; // FIXME
 
         if ( my_filename ) {
           this.app.defaultFileSave(my_filename, my_content, function(fname) {
             my_callback(fname);
-          }, my_mimes, undefined, false);
+          }, MIMES, undefined, false);
         }
 
 EOJAVASCRIPT;
@@ -217,12 +213,11 @@ EOJAVASCRIPT;
 
         var my_filename = (argv && argv['path'] ? argv['path'] : null);
         var my_content  = ""; // FIXME
-        var my_mimes    = {$mimes};
         var my_callback = function(fname, fmime) {}; // FIXME
 
         this.app.defaultFileSave(my_filename, my_content, function(fname) {
           my_callback(fname);
-        }, my_mimes, undefined, true);
+        }, MIMES, undefined, true);
 
 EOJAVASCRIPT;
             } else if ( $ev_handler == "EventMenuClose" || $ev_handler == "EventMenuQuit" || $ev_handler == "EventClose" || $ev_handler == "EventQuit" ) {
@@ -260,13 +255,12 @@ EOJAVASCRIPT;
               if ( $ev_type == "file-set" ) {
                 $ev_code = <<<EOJAVASCRIPT
 
-        var my_mimes    = {$mimes};
         var my_path     = self.\$element.find(".{$obj} input[type=text]").val();
 
         this.app.createFileDialog(function(fname) {
           self.\$element.find(".{$obj} input[type=text]").val(fname);
           self.\$element.find(".{$obj} input[type=hidden]").val(fname);
-        }, my_mimes, "open", dirname(my_path));
+        }, MIMES, "open", dirname(my_path));
 
 EOJAVASCRIPT;
               }
@@ -475,6 +469,7 @@ EOJAVASCRIPT;
     $temp_windows   = Array();
     $glade_windows  = Array();
     $glade_html     = Array();
+    $js_mimes       = Array();
     $js_prepend     = "";
     $js_append      = "";
     $js_glade       = "";
@@ -489,6 +484,10 @@ EOJAVASCRIPT;
     }
     $js_linguas[DEFAULT_LANGUAGE]["title"] = $data["title"];
 
+    if ( isset($data['mimes']) ) {
+      $js_mimes = $data["mimes"];
+    }
+
     // Generate code from linked file(s)
     if ( $contentFile ) {
       print "* Parsing linked content\n";
@@ -496,7 +495,7 @@ EOJAVASCRIPT;
 
       if ( preg_match("/\.xml|glade$/", $contentFile) ) {
         $contentType = "glade";
-        if ( $result = self::_ParseGlade($contentFile, $data["mimes"], $data["title"], $data["icon"]) ) {
+        if ( $result = self::_ParseGlade($contentFile, $data["title"], $data["icon"]) ) {
           extract($result, EXTR_OVERWRITE);
 
           $temp_windows[$window_id] = $window_properties;
@@ -521,6 +520,7 @@ EOJAVASCRIPT;
           "%PACKAGETYPE%"       => $classType,
           "%CLASSNAME%"         => $className,
           "%LINGUAS%"           => json_encode($js_linguas),
+          "%MIMES%"             => json_encode($js_mimes),
           "%DEFAULT_LANGUAGE%"  => DEFAULT_LANGUAGE,
         )
       ),
@@ -565,6 +565,7 @@ EOJAVASCRIPT;
         "%CODE_APPEND%"       => $js_append,
         "%ROOT_WINDOW%"       => $js_root_window,
         "%LINGUAS%"           => json_encode($js_linguas),
+        "%MIMES%"             => json_encode($js_mimes),
         "%DEFAULT_LANGUAGE%"  => DEFAULT_LANGUAGE
       );
 
