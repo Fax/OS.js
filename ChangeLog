@@ -1,3 +1,23 @@
+## 0.9.7
+
+* Preloading: Changed order of scripts and links
+* Templates: Added static image sizes where appropriate
+* Templates: More SEO optimization and restrucutres
+* Templates: Updated demo screen(s)
+* Compiler: Now includes MIMES array
+* utils.js: Added checkMIME()
+* Core\JS: Redone locales, fixed
+* Core: Redone and fixed locales
+* Core: AJAX responses restructured
+* Core\JS: AJAX responses updated
+* Core: Old configuration models now ignored
+* Libs\JS: Preloader now supports parallel downloads
+* Libs\JS: Preloader optimized
+* Core\JS: Updated Compability Dialog listings
+* CSS: Orgnaized and cleaned up
+* CSS: #Desktop now absolute
+* update-compression: Removed iframe.css'
+
 ## 0.9.6
 
 Major performance improvments by caching settings here
