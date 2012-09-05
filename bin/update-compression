@@ -148,7 +148,7 @@ if ( $resources = ResourceManager::getAllResources(false) ) {
 
   foreach ( $resources['resources'] as $res ) {
     $res = basename($res);
-    if ( preg_match("/^(theme|cursor)/", $res) )
+    if ( preg_match("/^(theme|cursor|iframe)/", $res) )
       continue;
 
     if ( preg_match("/\.css$/", $res) ) {
