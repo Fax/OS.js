@@ -1888,9 +1888,9 @@
   OSjs.Classes.Preloader = Class.extend({
     _list         : [],                   //!< Remaining items
     _finished     : false,                //!< Finished state
-    _resource     : null,                 //!< Current resource
     _errors       : 0,                    //!< Loading error count
     _total        : 0,                    //!< Loading try count
+    _parallel     : 1,                    //!< Parallel loading count
     _onFinished   : function() {},        //!< Callback: Finished with queue
     _onSuccess    : function() {},        //!< Callback: Finished with resource
     _onError      : function() {},        //!< Callback: Error with resource
@@ -1898,17 +1898,23 @@
     /**
      * Preloader::init() -- Construct a new Preloader
      *
-     * @param   Array     list          List of resources
-     * @param   Function  onFinished    When done loading all resources in queue
-     * @param   Function  onSuccess     When resource successfully loaded
-     * @param   Function  onError       When resource fails to load
+     * @param   Array     args:list          List of resources
+     * @param   Function  args:onFinished    When done loading all resources in queue
+     * @param   Function  args:onSuccess     When resource successfully loaded
+     * @param   Function  args:onError       When resource fails to load
+     * @param   int       args:parallel      How many resources to load at once
+     *
      * @constructor
      */
-    init : function(list, onFinished, onSuccess, onError) {
+    init : function(args) {
+      args = args || {};
+
+
+      this._list        = args.list || [];
       this._finished    = false;
-      this._list        = list        || [];
       this._errors      = 0;
-      this._total       = list.length;
+      this._total       = this._list.length;
+      this._parallel    = args.parallel || 1;
 
       var self = this;
       this._onFinished  = function() {
@@ -1917,7 +1923,7 @@
         }
         self._finished = true;
 
-        (onFinished || function() {})(self._total, self._errors);
+        (args.onFinished || function() {})(self._total, self._errors);
       };
 
       this._onSuccess   = function(src) {
@@ -1926,7 +1932,7 @@
 
         console.log("Preloader::_onSuccess()", src);
 
-        (onSuccess || function() {})(src);
+        (args.onSuccess || function() {})(src);
 
         self._checkQueue();
       };
@@ -1939,13 +1945,13 @@
 
         console.log("Preloader::_onError()", src);
 
-        (onError || function() {})(src);
+        (args.onError || function() {})(src);
 
         self._checkQueue();
       };
 
       console.group("Preloader::init()");
-      console.log("List", this._list);
+      console.log("List", this._list, "Max parallel", this._parallel);
       console.groupEnd();
 
       this.run();
@@ -1962,7 +1968,7 @@
       this._list        = [];
       this._errors      = 0;
       this._total       = 0;
-      this._resource    = null;
+      this._parallel    = 1;
       this._onFinished  = null;
       this._onSuccess   = null;
       this._onError     = null;
@@ -1982,19 +1988,21 @@
      */
     _checkQueue : function() {
       if ( this._list.length ) {
-        var item = this._list.shift();
-        if ( item.type == "image" ) {
-          this._loadImage(item.src);
-        } else if ( item.type == "video" || item.type == "film") {
-          this._loadVideo(item.src);
-        } else if ( item.type == "sound" || item.type == "video" ) {
-          this._loadAudio(item.src);
-        } else if ( item.type == "css" || item.type == "stylesheet" ) {
-          this._loadCSS(item.src);
-        } else if ( item.type == "javascript" || item.type == "script" ) {
-          this._loadJavaScript(item.src);
+        for ( var i = 0; i < this._parallel; i++ ) {
+          var item = this._list.shift();
+          if ( item.type == "image" ) {
+            this._loadImage(item.src);
+          } else if ( item.type == "video" || item.type == "film") {
+            this._loadVideo(item.src);
+          } else if ( item.type == "sound" || item.type == "video" ) {
+            this._loadAudio(item.src);
+          } else if ( item.type == "css" || item.type == "stylesheet" ) {
+            this._loadCSS(item.src);
+          } else if ( item.type == "javascript" || item.type == "script" ) {
+            this._loadJavaScript(item.src);
+          }
+          return;
         }
-        return;
       }
 
       this._onFinished();
@@ -2004,17 +2012,14 @@
      * Preloader::_cleanResource() -- Handle safe destruction of DOM objects etc.
      * @return  void
      */
-    _cleanResource : function() {
-      if ( this._resource ) {
-        //if ( (this._resource instanceof Audio) || (this._resource instanceof Video) ) {
-          var self = this;
-          self._resource.removeEventListener('canplaythrough', function(ev) {
-            self._onSuccess(src);
-          }, false );
-        //}
-
-        this._resource = null;
-      }
+    _cleanResource : function(res) {
+      var self = this;
+      try {
+        res.removeEventListener('canplaythrough', function(ev) {
+          self._onSuccess(src);
+          self._cleanResource(res);
+        }, false );
+      } catch ( eee ) {}
     },
 
     /**
@@ -2025,14 +2030,14 @@
     _loadImage : function(src) {
       var self = this;
 
-      this._resource = new Image();
-      this._resource.onload = function() {
+      var res    = new Image();
+      res.onload = function() {
         self._onSuccess(src);
       };
-      this._resource.onerror = function() {
+      res.onerror = function() {
         self._onError(src);
       };
-      this._resource.src = src;
+      res.src = src;
     },
 
     /**
@@ -2043,19 +2048,19 @@
     _loadVideo : function(src) {
       var self = this;
 
-      this._resource = document.createElement("video");
-      this._resource.onerror = function() {
+      var res     = document.createElement("video");
+      res.onerror = function() {
         self._onError(src);
-        self._cleanResource();
+        self._cleanResource(res);
       };
 
-      this._resource.addEventListener('canplaythrough', function(ev) {
+      res.addEventListener('canplaythrough', function(ev) {
         self._onSuccess(src);
-        self._cleanResource();
+        self._cleanResource(res);
       }, false );
 
-      this._resource.preload   = "auto";
-      this._resource.src       = src;
+      res.preload   = "auto";
+      res.src       = src;
     },
 
     /**
@@ -2066,19 +2071,19 @@
     _loadAudio : function(src) {
       var self = this;
 
-      this._resource = new Audio();
-      this._resource.onerror = function() {
+      var res     = new Audio();
+      res.onerror = function() {
         self._onError(src);
-        self._cleanResource();
+        self._cleanResource(res);
       };
 
-      this._resource.addEventListener('canplaythrough', function(ev) {
+      res.addEventListener('canplaythrough', function(ev) {
         self._onSuccess(src);
-        self._cleanResource();
+        self._cleanResource(res);
       }, false );
 
-      this._resource.preload   = "auto";
-      this._resource.src       = src;
+      res.preload   = "auto";
+      res.src       = src;
     },
 
     /**
@@ -2106,10 +2111,10 @@
         document.createStyleSheet(src);
         this._onSuccess(src);
       } else {
-        this._resource        = document.createElement("link");
-        this._resource.rel    = "stylesheet";
-        this._resource.type   = "text/css";
-        this._resource.href   = src;
+        var res    = document.createElement("link");
+        res.rel    = "stylesheet";
+        res.type   = "text/css";
+        res.href   = src;
 
         var _found   = false;
         var _poll    = null;
@@ -2135,16 +2140,16 @@
         }, timeout);
 
         _poll  = setInterval(function() {
-          if ( self._resource ) {
+          if ( res ) {
             var sheet     = "styleSheet";
             var cssRules  = "rules";
-            if ( "sheet" in self._resource ) {
+            if ( "sheet" in res ) {
               sheet     = "sheet";
               cssRules  = "cssRules";
             }
 
             try {
-              if ( self._resource[sheet] && self._resource[sheet][cssRules].length ) {
+              if ( res[sheet] && res[sheet][cssRules].length ) {
                 _found = true;
                 self._onSuccess(src);
                 _clear();
@@ -2153,7 +2158,7 @@
           }
         }, interval);
 
-        document.getElementsByTagName("head")[0].appendChild(this._resource);
+        document.getElementsByTagName("head")[0].appendChild(res);
       }
 
     },
@@ -2167,24 +2172,24 @@
       var self   = this;
       var loaded = false;
 
-      this._resource                    = document.createElement("script");
-      this._resource.type               = "text/javascript";
-      this._resource.charset            = "utf-8";
-      this._resource.onreadystatechange = function() {
+      var res                = document.createElement("script");
+      res.type               = "text/javascript";
+      res.charset            = "utf-8";
+      res.onreadystatechange = function() {
         if ( (this.readyState == 'complete' || this.readyState == 'loaded') && !loaded) {
           loaded = true;
           if ( self._onSuccess ) // Needed because this event may fire after destroy() in some browsers, depending on onload
             self._onSuccess(src);
         }
       };
-      this._resource.onload             = function() {
+      res.onload             = function() {
         if ( loaded )
           return;
         loaded = true;
         if ( self._onSuccess ) // Needed because this event may fire after destroy() in some browsers, depending onreadystatechange
           self._onSuccess(src);
       };
-      this._resource.onerror            = function() {
+      res.onerror            = function() {
         if ( loaded )
           return;
         loaded = true;
@@ -2192,9 +2197,9 @@
         if ( self._onError ) // Needed because this event may fire after destroy() in some browsers, depending on above notes
           self._onError(src);
       };
-      this._resource.src = src;
+      res.src = src;
 
-      document.getElementsByTagName("head")[0].appendChild(this._resource);
+      document.getElementsByTagName("head")[0].appendChild(res);
     }
 
   });

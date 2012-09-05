@@ -3595,15 +3595,19 @@
       var diff = (50 - cur);
       var step = parseInt(Math.min(cur / diff), 10) || 1;
 
-      _loader = new OSjs.Classes.Preloader(_list, function(loaded, errors) {
-        console.log("ResourceManager::run() Preloaded", loaded, "of", errors, "failed");
-        _loader_done();
-      }, function() {
-        OSjs.Classes.ProgressBar($("#LoadingBar"), (cur += step));
-      }, function() {
-        OSjs.Classes.ProgressBar($("#LoadingBar"), (cur += step));
+      _loader = new OSjs.Classes.Preloader({
+        "list"        : _list,
+        "onFinished"  : function(loaded, errors) {
+          console.log("ResourceManager::run() Preloaded", loaded, "of", errors, "failed");
+          _loader_done();
+        },
+        "onSuccess"   : function() {
+          OSjs.Classes.ProgressBar($("#LoadingBar"), (cur += step));
+        },
+        "onError"     : function() {
+          OSjs.Classes.ProgressBar($("#LoadingBar"), (cur += step));
+        }
       });
-
     },
 
     /**
@@ -3681,13 +3685,19 @@
 
         // Use external loader
         if ( _list.length ) {
-          _loader = new OSjs.Classes.Preloader(_list, function(loaded, errors) {
-            console.log("ResourceManager::addResources()", "Preloader loaded",loaded, "with", errors, "errors");
-            _loader_done(errors > 0);
-          }, function(res) {
-            self.resources[res.replace(RESOURCE_URI, "")] = true;
-          }, function(res) {
-            self.resources[res.replace(RESOURCE_URI, "")] = false;
+          _loader = new OSjs.Classes.Preloader({
+            "list"       : _list,
+            "parallel"   : 2,
+            "onFinished" : function(loaded, errors) {
+              console.log("ResourceManager::addResources()", "Preloader loaded",loaded, "with", errors, "errors");
+              _loader_done(errors > 0);
+            },
+            "onSuccess"  : function(res) {
+              self.resources[res.replace(RESOURCE_URI, "")] = true;
+            },
+            "onError"    : function(res) {
+              self.resources[res.replace(RESOURCE_URI, "")] = false;
+            }
           });
         } else {
           _loader_done(false);
