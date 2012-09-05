@@ -1969,9 +1969,9 @@
       this._errors      = 0;
       this._total       = 0;
       this._parallel    = 1;
-      this._onFinished  = null;
-      this._onSuccess   = null;
-      this._onError     = null;
+      this._onFinished  = function() {};
+      this._onSuccess   = function() {};
+      this._onError     = function() {};
     },
 
     /**
