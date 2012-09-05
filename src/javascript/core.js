@@ -618,99 +618,78 @@
    */
   function LaunchVFSObject(path, mime, udef) {
     udef = (udef === undefined) ? true : false;
+    mime = mime || null;
 
-    if ( mime ) {
+    if ( mime === null )
+      return;
+
+    if ( mime.match(/^OSjs\//) ) {
       if ( mime == "OSjs/Application" ) {
         var expl = path.split("/");
         var name = expl[expl.length - 1];
         API.system.launch(name);
-        return;
       }
+      return;
+    }
 
-      var default_app = null;
-      var apps        = _PackMan.getPackages(true);
-      var found       = [];
-      var list        = [];
-      var inmime      = mime.split("/");
-      var launched    = false;
+    var apps        = _PackMan.getPackages(true);
+    var i;
 
-      var i;
-
-      if ( udef ) {
-        // First, figure out default application
-        var defs = _Settings.getDefaultApplications();
-        if ( defs[mime] !== undefined ) {
-          default_app = defs[mime];
-        }
-
-        // Then launch application if found
-        if ( default_app ) {
-          for ( i in apps ) {
-            if ( apps.hasOwnProperty(i) ) {
-              if ( i === default_app ) {
-                API.system.launch(i, {'path' : path, 'mime' : mime});
-                launched = true;
-                break;
-              }
-            }
-          }
-        }
-      }
-
-      // If no application was launched we continue with the default dialog
-      if ( !launched ) {
-        var app, check, mtype;
-        var all_apps = [];
+    // First, figure out default application
+    if ( udef ) {
+      var defs = _Settings.getDefaultApplications();
+      if ( defs[mime] !== undefined ) {
         for ( i in apps ) {
           if ( apps.hasOwnProperty(i) ) {
-            app = apps[i];
-            app.name = i; // append
-            if ( app.mimes && app.mimes.length ) {
-              for ( check in app.mimes ) {
-                if ( app.mimes.hasOwnProperty(check) ) {
-                  mtype = app.mimes[check].split("/");
-                  if ( mtype[1] == "*" ) {
-                    if ( mtype[0] == inmime[0] ) {
-                      found.push(i);
-                      list.push(app);
-                    }
-                  } else {
-                    if ( app.mimes[check] == mime ) {
-                      found.push(i);
-                      list.push(app);
-                    }
-                  }
-                }
-              }
+            if ( i === defs[mime] ) {
+              API.system.launch(i, {'path' : path, 'mime' : mime});
+              return;
             }
           }
-          all_apps.push(app);
-        }
-
-        function __run(mapp) {
-          API.system.launch(mapp, {'path' : path, 'mime' : mime});
-        }
-
-        if ( found.length ) {
-          if ( found.length == 1 ) {
-            __run(found[0]);
-          } else {
-            API.ui.dialog_launch({'mime' : mime, 'list' : list, 'on_apply' : function(mapp, set_default) {
-              __run(mapp);
-              if ( set_default ) {
-                SetVFSObjectDefault(mapp, path, mime);
-              }
-            }});
-          }
-        } else {
-          API.ui.dialog_launch({'list' : all_apps, 'on_apply' : function(mapp, set_default) {
-            __run(mapp);
-            if ( set_default ) {
-              SetVFSObjectDefault(mapp, path, mime);
-            }
-          }, 'not_found' : true});
         }
       }
+    }
+
+    // If no application was launched we continue with the default dialog
+    var app, check, mtype;
+    var all_apps = [];
+    var list     = [];
+
+    for ( i in apps ) {
+      if ( apps.hasOwnProperty(i) ) {
+        app = apps[i];
+        app.name = i; // append
+        if ( app.mimes && app.mimes.length ) {
+          if ( checkMIME(mime, app.mimes) ) {
+            list.push(app);
+          }
+        }
+      }
+      all_apps.push(app);
+    }
+
+    if ( list.length ) {
+      function __run(mapp) {
+        API.system.launch(mapp, {'path' : path, 'mime' : mime});
+      }
+
+      if ( list.length == 1 ) {
+        __run(list[0].name);
+      } else {
+        API.ui.dialog_launch({'mime' : mime, 'list' : list, 'on_apply' : function(mapp, set_default) {
+          __run(mapp);
+          if ( set_default ) {
+            SetVFSObjectDefault(mapp, path, mime);
+          }
+        }});
+      }
+    } else {
+      API.ui.dialog_launch({'list' : all_apps, 'on_apply' : function(mapp, set_default) {
+        __run(mapp);
+        if ( set_default ) {
+          SetVFSObjectDefault(mapp, path, mime);
+        }
+      }, 'not_found' : true});
     }
 
   } // @endfunction
