@@ -6138,7 +6138,7 @@
             API.user.settings.save({
               "desktop.wallpaper.path" : fname
             });
-          }, 'mime' : ["image/*"], 'type' : "open", 'cwd' : dir});
+          }, 'mime' : ["image/*"], 'type' : "open", 'cwd' : dir, 'preview' : true});
         }},
         {"title" : labels.sort, "method" : function() {
           API.ui.windows.tile();
