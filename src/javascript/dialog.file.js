@@ -61,7 +61,7 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
 
     var FileOperationView = OSjs.Classes.IconView.extend({
       init : function(win, area) {
-        this._super(area, "list", {"dnd" : false, "multiselect" : false});
+        this._super(area, "list", {"dnd" : false, "multiselect" : false, "dnd_items" : false});
 
         this.win = win;
       },
