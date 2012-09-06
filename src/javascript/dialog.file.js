@@ -225,19 +225,20 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
       },
 
       preview : function(path, mime) {
-        var self = this;
-        this.iframe.setContent("");
+        if ( this.iframe) {
+          this.iframe.setContent("");
+          if ( path && mime ) {
+            this.iframe.setContent(LABELS.load_peview);
 
-        if ( this.iframe && path && mime ) {
-          this.iframe.setContent(LABELS.load_peview);
-
-          API.system.call("preview", {"path" : path, "mime" : mime, "iframe" : true}, function(result, error) {
-            if ( error ) {
-              self.iframe.setContent(LABELS.fail_preview);
-              return;
-            }
-            self.iframe.setContent(result);
-          }, false);
+            var self = this;
+            API.system.call("preview", {"path" : path, "mime" : mime, "iframe" : true}, function(result, error) {
+              if ( error ) {
+                self.iframe.setContent(LABELS.fail_preview);
+                return;
+              }
+              self.iframe.setContent(result);
+            }, false);
+          }
         }
       },
 
