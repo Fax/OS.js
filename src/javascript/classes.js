@@ -1442,8 +1442,16 @@
       content = content || "";
       css     = css || "";
 
-      var body = '<head><link rel="stylesheet" type="text/css" href="/VFS/resource/iframe.css" /><style type="text/css">' + css + '</style></head><body>' + content + '</body>';
-      this._setContent(body);
+      var html = [];
+      html.push('<head>');
+      html.push('<link rel="stylesheet" type="text/css" href="/VFS/resource/iframe.css" />');
+      html.push('<style type="text/css">' + css + '</style>');
+      html.push('<script type="text/javascript" src="/VFS/resource/iframe.js"></script>');
+      html.push('</head>');
+      html.push('<body>');
+      html.push(content);
+      html.push('</body>');
+      this._setContent(html.join(""));
     },
 
     /**

@@ -1,5 +1,6 @@
 CORE TODO:
 -------------------------------------------------------------------------------
+[HIG] VFS refresh not working for some dirs ?! /User/Documents/Foo
 [HIG] Cooler file open dialog with preview etc
 [MED] Panel
       - Redesign preferences

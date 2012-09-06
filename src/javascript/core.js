@@ -3181,7 +3181,6 @@
         if ( _WM ) {
           _WM.toggleWindow(false);
         }
-        ret = false;
       } else if ( key == KEYCODES.shift ) {
         KEY_SHIFT = false;
       }

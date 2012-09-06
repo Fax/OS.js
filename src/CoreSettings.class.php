@@ -534,6 +534,7 @@ abstract class CoreSettings
     "dialogs.css",
     "glade.css",
     "iframe.css",
+    "iframe.js",
     "utils.js",
     "init.js",
     "classes.js",
