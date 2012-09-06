@@ -66,7 +66,7 @@ abstract class MediaFile
         }
 
         if ( $ImageMethod && $source = $ImageMethod($source) ) {
-          list($width, $height) = GetImageSize($path);
+          list($width, $height) = GetImageSize($source);
           if ( $image = ImageCreateTrueColor($max_width, $max_height) ) {
             ImageCopyResized($image, $source, 0, 0, 0, 0, $max_width, $max_height, $width, $height);
 
