@@ -55,7 +55,7 @@ abstract class MediaFile
     if ( preg_match("/^image\//", $mime) && function_exists("ImageCopyResized") ) {
       if ( $iframe ) {
         $ImageMethod  = null;
-        $source       = null;
+        $src          = null;
 
         if ( preg_match("/\.png$/i", $path) ) {
           $ImageMethod = "ImageCreateFromPNG";
@@ -65,10 +65,10 @@ abstract class MediaFile
           $ImageMethod = "ImageCreateFromGIF";
         }
 
-        if ( $ImageMethod && $source = $ImageMethod($source) ) {
+        if ( $ImageMethod && $src = $ImageMethod($source) ) {
           list($width, $height) = GetImageSize($source);
           if ( $image = ImageCreateTrueColor($max_width, $max_height) ) {
-            ImageCopyResized($image, $source, 0, 0, 0, 0, $max_width, $max_height, $width, $height);
+            ImageCopyResized($image, $src, 0, 0, 0, 0, $max_width, $max_height, $width, $height);
 
             $data = null;
             ob_start();
@@ -77,14 +77,14 @@ abstract class MediaFile
             ob_end_clean();
 
             if ( $data ) {
-              $src    = sprintf("data:image/png;base64,%s", base64_encode($data));
-              $result = sprintf('<img alt="%s" src="%s" width="%d" height="%d" />', basename($path), $src, $max_width, $max_height);
+              $data   = sprintf("data:image/png;base64,%s", base64_encode($data));
+              $result = sprintf('<img alt="%s" src="%s" width="%d" height="%d" />', basename($path), $data, $max_width, $max_height);
             }
 
             ImageDestroy($image);
           }
 
-          ImageDestroy($source);
+          ImageDestroy($src);
         }
       }
     } else if ( preg_match("/^video\//", $mime) ) {
