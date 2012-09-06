@@ -2431,7 +2431,8 @@
         }
       }
 
-      if ( !ev || ev.which <= 1 )
+      //if ( !ev || ev.which <= 1 )
+      if ( ev && ev.which <= 1 )
         $(document).click(); // FOR GLOBAL MENU!
     },
 
