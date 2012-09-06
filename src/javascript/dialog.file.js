@@ -225,7 +225,7 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
       },
 
       preview : function(path, mime) {
-        if ( this.iframe) {
+        if ( this.iframe ) {
           this.iframe.setContent("");
           if ( path && mime && this.view_filter.length ) {
             if ( !checkMIME(mime, this.view_filter) )
@@ -235,11 +235,14 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
 
             var self = this;
             API.system.call("preview", {"path" : path, "mime" : mime, "iframe" : true}, function(result, error) {
-              if ( error ) {
-                self.iframe.setContent(LABELS.fail_preview);
-                return;
+              if ( self.iframe ) {
+                if ( error ) {
+                  if ( self.iframe )
+                  self.iframe.setContent(LABELS.fail_preview);
+                  return;
+                }
+                self.iframe.setContent(result);
               }
-              self.iframe.setContent(result);
             }, false);
           }
         }
