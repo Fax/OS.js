@@ -187,7 +187,7 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
         var paths = path.replace(/^\//, "").split(/\//);
 
         b = $(sprintf("<button><img alt=\"%s\" title=\"%s\" width=\"%d\" height=\"%d\" src=\"%s\" /></button>", LABELS.gohome, LABELS.gohome, 16, 16, API.ui.getIcon("places/user-home.png", "16x16")));
-        b.data("dir", "User");
+        b.data("dir", "User/Documents");
         bcontainer.append(b);
 
         bcontainer.append("<div class=\"Space\">&nbsp;</div>");
