@@ -53,6 +53,7 @@ abstract class VFS
    *       'value' 1 splits arguments from call into method parameters
    */
   protected static $_calls = Array(
+    "preview"         => Array("PreviewFile", Array("path", "mime", "iframe")),
     "exists"          => Array("Exists"),
     "readdir"         => Array("ListDirectory"),
     "ls"              => Array("ListDirectory"),
@@ -662,6 +663,64 @@ abstract class VFS
         require_once PATH_LIB . "/Archive.php";
         if ( $a = Archive::open($src["root"]) ) {
           return $a->extract($dest["root"]);
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * PreviewFile() -- Preview a file
+   * @param  String   $path     File path
+   * @param  String   $mime     File MIME
+   * @param  bool     $iframe   Return as a HTML document
+   * @return Mixed
+   */
+  public static function PreviewFile($path, $mime, $iframe = false) {
+    $src  = self::buildPath($path);
+    if ( $src["perm"] ) {
+      if ( file_exists($src["root"]) && is_file($src["root"]) ) {
+        if ( preg_match("/^image\//", $mime) && function_exists("ImageCopyResized") ) {
+          if ( $iframe ) {
+            $ImageMethod  = null;
+            $source       = null;
+            $result       = false;
+            $max_width    = 240;
+            $max_height   = 240;
+
+            if ( preg_match("/\.png$/i", $path) ) {
+              $ImageMethod = "ImageCreateFromPNG";
+            } else if ( preg_match("/\.jpe?g$/i", $path) ) {
+              $ImageMethod = "ImageCreateFromJPEG";
+            } else if ( preg_match("/\.gif$/i", $path) ) {
+              $ImageMethod = "ImageCreateFromGIF";
+            }
+
+            if ( $ImageMethod && $source = $ImageMethod($src['root']) ) {
+              list($width, $height) = GetImageSize($src['root']);
+              if ( $image = ImageCreateTrueColor($max_width, $max_height) ) {
+                ImageCopyResized($image, $source, 0, 0, 0, 0, $max_width, $max_height, $width, $height);
+
+                $data = null;
+                ob_start();
+                  ImagePNG($image);
+                  $data = ob_get_contents();
+                ob_end_clean();
+
+                if ( $data ) {
+                  $src    = sprintf("data:image/png;base64,%s", base64_encode($data));
+                  $result = sprintf('<img alt="%s" src="%s" width="%d" height="%d" />', basename($path), $src, $max_width, $max_height);
+                }
+
+                ImageDestroy($image);
+              }
+
+              ImageDestroy($source);
+            }
+
+            return $result;
+          }
         }
       }
     }

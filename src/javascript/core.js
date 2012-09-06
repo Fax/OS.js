@@ -4546,48 +4546,56 @@
 
     /**
      * Application::defaultFileOpen() -- Perform default file-open operation (with dialog)
-     * @param   Function      callback      Callback when file is opened
-     * @param   Array         mimes         Mime filtering (not required)
-     * @param   String        dir           Current directory (not required)
-     * @param   String        file          Current file (not required)
-     * @param   bool          check_mime    Check MIME type (Default = true)
+     * @param   Function      args:callback      Callback when file is opened
+     * @param   Array         args:mimes         Mime filtering (not required)
+     * @param   String        args:dir           Current directory (not required)
+     * @param   String        args:file          Current file (not required)
+     * @param   bool          args:check_mime    Check MIME type (Default = true)
+     * @param   Object        args:options       Extra arguments to send
      * @return  void
      */
-    defaultFileOpen : function(callback, mimes, dir, file, check_mime) {
-      var self = this;
-      check_mime = (check_mime === undefined) ? true : (check_mime ? true : false);
+    //defaultFileOpen : function(callback, mimes, dir, file, check_mime, options) {
+    defaultFileOpen : function(args) {
+      var self  = this;
 
-      if ( !dir && file ) {
-        dir = dirname(file);
+      args.callback   = args.callback || function() {};
+      args.dir        = args.dir      || false;
+      args.file       = args.file     || false;
+      args.options    = args.options  || {};
+      args.check_mime = args.check_mime === undefined || args.check_mime === true;
+
+      if ( !args.dir && args.file ) {
+        args.dir = dirname(args.file);
+      } else {
+        args.dir = "/User"; // FIXME: Get from API ?
       }
 
-      this.createFileDialog({'on_apply' : function(fname, mime) {
-        var cont = true;
-        if ( check_mime ) {
-          if ( mime && mimes && mimes.length ) {
-            var found = false;
-            var tspl1 = mime.split("/").shift();
-            var i = 0, l = mimes.length;
+      var dargs = {
+        type       : "open",
+        mime       : args.mimes,
+        cwd        : args.dir,
+        on_apply   : function(filename, filemime) {
+          var valid = true;
+          if ( args.check_mime && args.mimes ) {
+            valid = checkMIME(filemime, args.mimes);
+          }
 
-            for ( i; i < l; i++ ) {
-              var tspl2 = mimes[i].split("/");
-              if ( mime == mimes[i] || (tspl2[1] == "*" && (tspl1 == tspl2[0])) || (tspl1 == tspl2[0]) ) {
-                found = true;
-                break;
-              }
-            }
-            cont = found;
+          if ( valid ) {
+            args.callback(filename, filemime);
+            self._setArgv('path', filename);
+          } else {
+            MessageBox(sprintf(OSjs.Labels.CrashApplicationOpen, basename(filename), filemime));
           }
         }
+      };
 
-        if ( cont ) {
-          callback(fname);
-
-          self._setArgv('path', fname);
-        } else {
-          MessageBox(sprintf(OSjs.Labels.CrashApplicationOpen, basename(fname), mime));
+      for ( var i in args.options ) {
+        if ( args.options.hasOwnProperty(i) ) {
+          dargs[i] = args.options[i];
         }
-      }, 'mime' : mimes, 'type' : "open", 'cwd' : dir});
+      }
+
+      this.createFileDialog(dargs);
     },
 
     /**

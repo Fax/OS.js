@@ -63,41 +63,86 @@
 
 .OperationDialog .FileChooser {
   position : absolute;
-  top : 0px;
+  top : 30px;
   left : 0px;
   right : 0px;
   bottom : 40px;
   overflow : auto;
 }
+.OperationDialog.FileOpenPreview .FileChooser {
+  right : 255px;
+}
 
-.OperationDialog .FileChooser .GtkIconView {
-  position : absolute;
-  top : 0px;
-  left : 0px;
-  right : 0px;
-  bottom : 0px;
-}
-.OperationDialog .FileChooser .GtkIconView thead {
-  display : none;
-}
-.OperationDialog .FileChooser .GtkIconView td:nth-child(1) {
-  width : 16px;
-}
-.OperationDialog .FileChooserInput {
-  position : absolute;
-  left : 0px;
-  right : 0px;
-  bottom : 15px;
-  height : 20px;
-}
-.OperationDialog .FileChooserInput input {
-  /* Fixes shrinking bugs in FF */
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  width : 100%;
-  height : 100%;
-}
+  .OperationDialog .DirNavigator {
+    position : absolute;
+    top : 0px;
+    left : 0px;
+    right : 0px;
+    height : 25px;
+    overflow : hidden;
+  }
+  .OperationDialog.FileOpenPreview .DirNavigator {
+    right : 255px;
+  }
+    .OperationDialog .DirNavigator button {
+      margin-right : 5px;
+      float : left;
+      height : 25px;
+    }
+    .OperationDialog .DirNavigator .Space {
+      background-color : #b0b3b7;
+      width : 1px;
+      overflow : hidden;
+      margin-left : 0px;
+      margin-right : 5px;
+      height : 25px;
+      float : left;
+    }
+
+
+  .OperationDialog .FilePreview {
+    background : #fff;
+    position : absolute;
+    top : 0px;
+    width : 250px;
+    right : 0px;
+    bottom : 40px;
+    overflow : auto;
+  }
+    .OperationDialog .FilePreview iframe {
+      padding : 5px;
+      overflow : none;
+    }
+
+  .OperationDialog .FileChooser .GtkIconView {
+    position : absolute;
+    top : 0px;
+    left : 0px;
+    right : 0px;
+    bottom : 0px;
+  }
+    .OperationDialog .FileChooser .GtkIconView thead {
+      display : none;
+    }
+    .OperationDialog .FileChooser .GtkIconView td:nth-child(1) {
+      width : 16px;
+    }
+
+  .OperationDialog .FileChooserInput {
+    position : absolute;
+    left : 0px;
+    right : 0px;
+    bottom : 15px;
+    height : 20px;
+  }
+    .OperationDialog .FileChooserInput input {
+      /* Fixes shrinking bugs in FF */
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      width : 100%;
+      height : 100%;
+    }
 
 /*
 .OperationDialog li.even {

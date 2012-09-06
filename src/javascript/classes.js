@@ -1093,6 +1093,21 @@
       return gra;
     },
 
+    effectNoise : function(rand, opacity) {
+      opacity = opacity || 0.2;
+      rand    = rand    || 60;
+
+      var x = 0, y = 0, xl = this.width, yl = this.height, num;
+      var c = this.$context;
+      for ( x; x < xl; x++ ) {
+        for ( y; y < yl; y++ ) {
+          num = Math.floor(Math.random() * rand);
+          c.fillStyle = sprintf("rgba(%d, %d, %d, %f)", num, num, num, opa);
+          c.fillRect(x, y, 1, 1);
+        }
+      }
+    },
+
     /**
      * CanvasHelper::_fill() -- Fill the canvas
      * @param   String      fill      Color

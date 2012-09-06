@@ -38,13 +38,19 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
       "title_saveas"    : "Save As...",
       "title_open"      : "Open File",
       "protected_file"  : "This file is protected!",
-      "overwrite"       : "Are you sure you want to overwrite this file?"
+      "overwrite"       : "Are you sure you want to overwrite this file?",
+      "gohome"          : "Go to home directory",
+      "load_preview"    : "Loading preview ...",
+      "fail_preview"    : "Failed to load preview ..."
     },
     "nb_NO" : {
       "title_saveas"    : "Lagre som...",
       "title_open"      : "Åpne fil",
       "protected_file"  : "Denne filen er beskyttet!",
-      "overwrite"       : "Vil du overskrive denne filen?"
+      "overwrite"       : "Vil du overskrive denne filen?",
+      "gohome"          : "Gå til hjem-mappe",
+      "load_preview"    : "Laster hurtigvisning ...",
+      "fail_preview"    : "Hurtigvisning feilet ..."
     }
   };
 
@@ -125,19 +131,33 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
      */
     var _FileOperationDialog = OperationDialog.extend({
       init : function(args) {
-        this.view_dir      = (args.cwd  || "/");
-        this.view_filter   = (args.mime || []);
-        this.view_type     = (args.type || "open");
-        this.clb_finish    = args.on_apply   || function() {};
+        this.view_dir      = (args.cwd      || "/");
+        this.view_filter   = (args.mime     || []);
+        this.view_type     = (args.type     || "open");
+        this.view_preview  = (args.preview  || false);
+        this.clb_finish    = args.on_apply  || function() {};
 
         this._super("File");
+        this._is_resizable = true;
         this._title        = this.view_type == "save" ? LABELS.title_saveas : LABELS.title_open;
         this._icon         = this.view_type == "save" ? "actions/document-save.png" : "actions/document-open.png";
-        this._content      = $("<div class=\"OperationDialog OperationDialogFile\">    <div class=\"FileChooser\">      <div class=\"GtkIconView\">      </div>    </div>    <div class=\"FileChooserInput\">      <input type=\"text\" />    </div>  </div>");
-        this._is_resizable = true;
         this._width        = 400;
-        this._height       = 300;
+        this._height       = 350;
 
+        if ( this.view_type == "open" ) {
+          this._content      = $("<div class=\"OperationDialog OperationDialogFile FileOpen\"> <div class=\"DirNavigator\"><button>/</button></div>   <div class=\"FileChooser\">      <div class=\"GtkIconView\">      </div>    </div>    <div class=\"FileChooserInput\">      <input type=\"text\" />    </div> <div class=\"FilePreview\"> </div>  </div>");
+
+          if ( this.view_preview ) {
+            this._content.addClass("FileOpenPreview");
+            this._width = 600;
+          } else {
+            this._content.find(".FilePreview").hide();
+          }
+        } else {
+          this._content      = $("<div class=\"OperationDialog OperationDialogFile FileSave\">  <div class=\"DirNavigator\"><button>/</button></div>  <div class=\"FileChooser\">      <div class=\"GtkIconView\">      </div>    </div>    <div class=\"FileChooserInput\">      <input type=\"text\" />    </div>  </div>");
+        }
+
+        this.iframe   = null;
         this.iconview = null;
         this.selected = null;
       },
@@ -146,6 +166,10 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
         if ( this.iconview ) {
           this.iconview .destroy();
           this.iconview = null;
+        }
+        if ( this.iframe ) {
+          this.iframe.destroy();
+          this.iframe = null;
         }
         this.selected = null;
 
@@ -158,6 +182,34 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
         path = path || this.view_dir;
         var mime = this.view_filter;
         var ignores = [];
+
+        var bcontainer = this.$element.find(".DirNavigator").empty();
+        var paths = path.replace(/^\//, "").split(/\//);
+
+        b = $(sprintf("<button><img alt=\"%s\" title=\"%s\" width=\"%d\" height=\"%d\" src=\"%s\" /></button>", LABELS.gohome, LABELS.gohome, 16, 16, API.ui.getIcon("places/user-home.png", "16x16")));
+        b.data("dir", "User");
+        bcontainer.append(b);
+
+        bcontainer.append("<div class=\"Space\">&nbsp;</div>");
+
+        b = $(sprintf("<button><span>%s</span></button>", "/"));
+        b.data("dir", "");
+        bcontainer.append(b);
+
+        var i = 0, l = paths.length, b, p, last = [];
+        for ( i; i < l; i++ ) {
+          p = paths[i];
+          if ( p ) {
+            last.push(p);
+            b = $(sprintf("<button><span>%s</span></button>", p));
+            b.data("dir", last.join("/"));
+            bcontainer.append(b);
+          }
+        }
+
+        bcontainer.find("button").click(function() {
+          self.readdir("/" + $(this).data("dir"));
+        });
 
         this.selected = null;
         this.$element.find("button.Ok").attr("disabled", "disabled");
@@ -172,14 +224,37 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
         });
       },
 
+      preview : function(path, mime) {
+        var self = this;
+        this.iframe.setContent("");
+
+        if ( this.iframe && path && mime ) {
+          this.iframe.setContent(LABELS.load_peview);
+
+          API.system.call("preview", {"path" : path, "mime" : mime, "iframe" : true}, function(result, error) {
+            if ( error ) {
+              self.iframe.setContent(LABELS.fail_preview);
+              return;
+            }
+            self.iframe.setContent(result);
+          }, false);
+        }
+      },
+
       select : function(item) {
         this.selected = item;
         this.$element.find("button.Ok").attr("disabled", "disabled");
         this.$element.find("input[type=text]").val("");
 
+        this.preview();
+
         if ( item ) {
           this.$element.find("input[type=text]").val(basename(item.path));
           if ( item.type != "dir" ) {
+            if ( this.view_preview ) {
+              this.preview(item.path, item.mime);
+            }
+
             if ( this.view_type != "open" ) {
               if ( item['protected'] == "1" ) {
                 this.$element.find("button.Ok").removeAttr("disabled");
@@ -261,6 +336,13 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
         var is_save     = this.view_type == "save";
         var area        = this.$element.find(".GtkIconView");
         var inp         = this.$element.find("input[type='text']");
+
+        if ( this.view_preview ) {
+          var parea = $("<iframe frameborder=\"0\" border=\"0\" cellspacing=\"0\" src=\"about:blank\" class=\"GtkRichtext\"></iframe>");
+          this.$element.find(".FilePreview").append(parea);
+          this.iframe = new OSjs.Classes.IFrame(parea);
+          this._addObject(this.iframe);
+        }
 
         this.iconview = new FileOperationView(this, area);
         this._addObject(this.iconview);
