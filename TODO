@@ -1,7 +1,5 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG] Applications focus() on dnd
-[HIG] Redo (old) applications file opening etc
 [HIG] Cooler file open dialog with preview etc
 [MED] Panel
       - Redesign preferences
