@@ -1356,6 +1356,10 @@
           return _Settings.getOptions(k);
         },
 
+        'values' : function() {
+          return _Settings.getRegistry();
+        },
+
         'user_admin' : function(argv, callback) {
           callback = callback || function() {};
           argv = argv || {};
@@ -3723,8 +3727,8 @@
    */
   var SettingsManager = Process.extend({
 
-    _cache      : {},
-    _registry   : {},
+    _cache      : {},       //!< Settings registry values
+    _registry   : {},       //!< Settings registry tree
 
     /**
      * SettingsManager::init() -- Constructor
@@ -4019,6 +4023,7 @@
     getRegistry : function() {
       return this._cache;
     }
+
 
   }); // @endclass
 

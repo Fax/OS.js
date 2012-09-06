@@ -169,6 +169,16 @@ abstract class SettingsManager
     // USER
     //
 
+    "user.env.path" => Array(
+      "type"    => "list",
+      "items"   => Array("/System/Packages", "/User/Packages")
+    ),
+
+    "user.env.home" => Array(
+      "type"    => "string",
+      "value"   => "/User/Documents"
+    ),
+
     "user.session.confirm" => Array(
       "type" => "bool",
       "value" => true
