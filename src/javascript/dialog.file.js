@@ -227,7 +227,10 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
       preview : function(path, mime) {
         if ( this.iframe) {
           this.iframe.setContent("");
-          if ( path && mime ) {
+          if ( path && mime && this.view_filter.length ) {
+            if ( !checkMIME(mime, this.view_filter) )
+              return;
+
             this.iframe.setContent(LABELS.load_peview);
 
             var self = this;

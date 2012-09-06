@@ -681,47 +681,8 @@ abstract class VFS
     $src  = self::buildPath($path);
     if ( $src["perm"] ) {
       if ( file_exists($src["root"]) && is_file($src["root"]) ) {
-        if ( preg_match("/^image\//", $mime) && function_exists("ImageCopyResized") ) {
-          if ( $iframe ) {
-            $ImageMethod  = null;
-            $source       = null;
-            $result       = false;
-            $max_width    = 240;
-            $max_height   = 240;
-
-            if ( preg_match("/\.png$/i", $path) ) {
-              $ImageMethod = "ImageCreateFromPNG";
-            } else if ( preg_match("/\.jpe?g$/i", $path) ) {
-              $ImageMethod = "ImageCreateFromJPEG";
-            } else if ( preg_match("/\.gif$/i", $path) ) {
-              $ImageMethod = "ImageCreateFromGIF";
-            }
-
-            if ( $ImageMethod && $source = $ImageMethod($src['root']) ) {
-              list($width, $height) = GetImageSize($src['root']);
-              if ( $image = ImageCreateTrueColor($max_width, $max_height) ) {
-                ImageCopyResized($image, $source, 0, 0, 0, 0, $max_width, $max_height, $width, $height);
-
-                $data = null;
-                ob_start();
-                  ImagePNG($image);
-                  $data = ob_get_contents();
-                ob_end_clean();
-
-                if ( $data ) {
-                  $src    = sprintf("data:image/png;base64,%s", base64_encode($data));
-                  $result = sprintf('<img alt="%s" src="%s" width="%d" height="%d" />', basename($path), $src, $max_width, $max_height);
-                }
-
-                ImageDestroy($image);
-              }
-
-              ImageDestroy($source);
-            }
-
-            return $result;
-          }
-        }
+        require_once PATH_LIB . "/MediaFile.class.php";
+        return MediaFile::PreviewFile($path, $src['root'], $mime, $iframe);
       }
     }
 
