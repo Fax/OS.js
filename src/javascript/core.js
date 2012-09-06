@@ -4567,25 +4567,29 @@
       if ( !args.dir && args.file ) {
         args.dir = dirname(args.file);
       } else {
-        args.dir = "/User"; // FIXME: Get from API ?
+        args.dir = "/User/Documents"; // FIXME: Get from API ?
       }
+
+      var __defaultOpen = function(filename, filemime) {
+        var valid = true;
+        if ( args.check_mime && args.mimes ) {
+          valid = checkMIME(filemime, args.mimes);
+        }
+
+        if ( valid ) {
+          args.callback(filename, filemime);
+          self._setArgv('path', filename);
+        } else {
+          MessageBox(sprintf(OSjs.Labels.CrashApplicationOpen, basename(filename), filemime));
+        }
+      };
 
       var dargs = {
         type       : "open",
         mime       : args.mimes,
         cwd        : args.dir,
         on_apply   : function(filename, filemime) {
-          var valid = true;
-          if ( args.check_mime && args.mimes ) {
-            valid = checkMIME(filemime, args.mimes);
-          }
-
-          if ( valid ) {
-            args.callback(filename, filemime);
-            self._setArgv('path', filename);
-          } else {
-            MessageBox(sprintf(OSjs.Labels.CrashApplicationOpen, basename(filename), filemime));
-          }
+          __defaultOpen(filename, filemime);
         }
       };
 
@@ -4604,47 +4608,60 @@
      * Upon success this function triggers an Application binding called "vfs" to perform
      * refreshes along all running applications. This events have to be manually bound.
      *
-     * @param   String        file          Current file
-     * @param   Mixed         content       Current file content
-     * @param   Function      callback      Callback when file is saved
-     * @param   Array         mimes         Mime filtering (not required)
-     * @param   String        dir           Current directory (not required)
-     * @param   bool          saveas        Perform a "Save As..." operation
-     * @param   String        encoding      File encoding (not required)
+     * @param   String        args:file          Current file
+     * @param   Mixed         args:content       Current file content
+     * @param   Function      args:callback      Callback when file is saved
+     * @param   Array         args:mimes         Mime filtering (not required)
+     * @param   String        args:dir           Current directory (not required)
+     * @param   bool          args:saveas        Perform a "Save As..." operation
+     * @param   String        args:encoding      File encoding (not required)
      * @return  void
      */
-    defaultFileSave : function(file, content, callback, mimes, dir, saveas, encoding) {
-      var self = this;
+    //defaultFileSave : function(file, content, callback, mimes, dir, saveas, encoding) {
+    defaultFileSave : function(args) {
+      var self   = this;
 
-      if ( !dir && file ) {
-        dir = dirname(file);
+      args.callback   = args.callback || function() {};
+      args.dir        = args.dir      || false;
+      args.file       = args.file     || false;
+      args.encoding   = args.encoding || false;
+
+      if ( !args.dir && args.file ) {
+        args.dir = dirname(args.file);
+      } else {
+        args.dir = "/User/Documents"; // FIXME: Get from API ?
       }
-      if ( file && saveas ) {
-        file = null;
+      if ( args.file && args.saveas === true ) {
+        args.dir  = dirname(args.file);
+        args.file = null;
       }
 
-      // Actual save function
-      var _func = function(file, mime) {
-        var aargs = {'path' : file, 'content' : content};
-        if ( encoding ) {
-          aargs['encoding'] = encoding;
+      var __defaultSave = function(path, filemime, content) {
+        var wargs = {"path" : path, "content" : content};
+        if ( args.encoding ) {
+          wargs.encoding = args.encoding;
         }
 
-        API.system.call("write", aargs, function(result, error) {
+        API.system.call("write", wargs, function(result, error) {
           if ( result ) {
-            VFSEvent("update", {'file' : file, 'mime' : mime}, self);
-            callback(file, mime);
-            self._setArgv('path', file);
+            VFSEvent("update", {'file' : path, 'mime' : filemime}, self);
+            args.callback(path, filemime);
+            self._setArgv('path', path);
           }
         });
       };
 
-      if ( saveas ) {
-        this.createFileDialog({'on_apply' : function(file, mime) {
-          _func(file, mime);
-        }, 'mime' : mimes, type : "save", 'cwd' : dir});
+      if ( args.saveas === true ) {
+        this.createFileDialog({
+          type       : "save",
+          mime       : args.mimes,
+          cwd        : args.dir,
+          on_apply   : function(file, mime) {
+            __defaultSave(file, mime, args.content);
+          }
+        });
       } else {
-        _func(file);
+        __defaultSave(args.file, undefined, args.content);
       }
     },
 

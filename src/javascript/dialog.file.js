@@ -237,7 +237,6 @@ OSjs.Dialogs.FileOperationDialog = (function($, undefined) {
             API.system.call("preview", {"path" : path, "mime" : mime, "iframe" : true}, function(result, error) {
               if ( self.iframe ) {
                 if ( error ) {
-                  if ( self.iframe )
                   self.iframe.setContent(LABELS.fail_preview);
                   return;
                 }

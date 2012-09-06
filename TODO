@@ -1,7 +1,5 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG] Redo Application::defaultFileSave with tuples like defaultFileOpen
-[HIG] VFS refresh not working for some dirs ?! /User/Documents/Foo
 [MED] Panel
       - Redesign preferences
       - Settings - Background Image
