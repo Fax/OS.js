@@ -2960,7 +2960,16 @@
         setTimeout(function() {
           LoginManager.hide();
         }, 50);
+
+        self.complete();
       });
+    },
+
+    /**
+     * Core::complete() -- When booting, login and init is done
+     * @return  void
+     */
+    complete : function() {
     },
 
     //

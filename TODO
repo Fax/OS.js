@@ -1,11 +1,7 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[MED] Panel
-      - Redesign preferences
-      - Settings - Background Image
-      - Finish up multiples
-      - Fix dock ?!
-[HIG] New package type: Theme
+[HIG] New package type: Theme OR theme compiler with value-sheet ?!
+[MED] Finish up adding/removing panels, etc
 [LOW] WindowManager: Effect(s) configuration
 [LOW] Panel setting: Background Image
 [LOW] Panels: Add/Remove (Implement multiples in GUI)

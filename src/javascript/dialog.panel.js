@@ -51,10 +51,10 @@ OSjs.Dialogs.PanelPreferencesOperationDialog = (function($, undefined) {
 
         this._title = LABELS.title;
         this._width    = 400;
-        this._height   = 340;
+        this._height   = 240;
         this._gravity = "center";
         this._icon = "categories/applications-utilities.png";
-        this._content = $("<div class=\"OperationDialog OperationDialogPanel\"><div class=\"OperationDialogInner\"><ul></ul></div></div>");
+        this._content = $("<div class=\"OperationDialog OperationDialogPanel\"><div class=\"OperationDialogInner\"><div class=\"PanelList\"></div><div class=\"PanelOptions\"><ul></ul></div></div></div>");
 
         this._onchange = onchange || function() {};
       },
@@ -139,16 +139,19 @@ OSjs.Dialogs.PanelPreferencesOperationDialog = (function($, undefined) {
           });
         };
 
-        var _refreshList = function(list) {
-          list.empty();
+        var _refreshList = function(el) {
+          var list    = el.find(".PanelList select");
+          var options = el.find(".PanelOptions ul");
+          options.empty();
 
           _panels   = API.user.settings.get("desktop.panels", true);
           _size     = 0;
           _current  = -1;
 
-          var pp = 0, li;
+          var pp = 0, li, opt;
           for ( pp; pp < _panels.length; pp++ ) {
-            li = $(sprintf("<li><!--<div class=\"Header\">Panel %d</div>--><div class=\"Prefs\"></div></li>", parseInt(_panels[pp].index, 10) + 1));
+            li  = $(sprintf("<li><!--<div class=\"Header\">Panel %d</div>--><div class=\"Prefs\"></div></li>", parseInt(_panels[pp].index, 10) + 1));
+            opt = $(sprintf("<option value=\"%d\">%s</option>", pp, _panels[pp].name));
 
             _createPrefs(li.find(".Prefs"), _panels[pp]);
 
@@ -159,12 +162,18 @@ OSjs.Dialogs.PanelPreferencesOperationDialog = (function($, undefined) {
             })(_size));
 
             _size++;
-            list.append(li);
+            options.append(li);
+            list.append(opt);
           }
         };
 
-        var list = this.$element.find(".OperationDialogInner ul");
-        _refreshList(list);
+        var list_content = [];
+        list_content.push('<select></select>');
+        list_content.push(sprintf('<button class="PanelRemove" disabled="disabled"><img alt="Remove" src="%s" width="16" height="16" /></button>', API.ui.getIcon("actions/add.png", "16x16")));
+        list_content.push(sprintf('<button class="PanelRemove" disabled="disabled"><img alt="Remove" src="%s" width="16" height="16" /></button>', API.ui.getIcon("actions/remove.png", "16x16")));
+        this.$element.find(".PanelList").append($(list_content.join("")));
+
+        _refreshList(this.$element.find(".OperationDialogInner"));
 
         this.$element.find(".DialogButtons .Close").show();
         this.$element.find(".DialogButtons .Ok").show();
