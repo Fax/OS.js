@@ -51,7 +51,6 @@
   var TEMP_COUNTER           = 1;                   //!< Internal temp. counter
   var NOTIFICATION_TIMEOUT   = 5000;                //!< Desktop notification timeout
   var MAX_PROCESSES          = 50;                  //!< Max processes running (except core procs)
-  var ONLINECHK_FREQ         = 2500;                //!< On-line checking frequenzy
   var SESSION_CHECK          = 5000;                //!< Connection by session check freq
   var SESSION_KEY            = "PHPSESSID";         //!< The Server session cookie-key
   var TIMEOUT_CSS            = (1000 * 10);         //!< CSS loading timeout
@@ -1431,7 +1430,7 @@
         if ( name ) {
           var data = JSON.stringify({
             "session"   : _Core.getSession(),
-            "registry"  : _Settings.getRegistry()
+            "registry"  : _Settings.getSession()
           });
 
           DoPost({'action' : 'snapshotSave', 'session' : {'name' : name, 'data' : data}}, function(result) {
@@ -2585,9 +2584,7 @@
   var Core = Process.extend({
 
     running     : false,        //!< If core is running
-    olint       : null,         //!< On-line checker interval
-    cuint       : null,         //!< Cache update interval
-    sclint      : null,         //!< Cache  interval
+    ichecker    : null,         //!< Session and Connection checker interval
 
     /**
      * Core::init() -- Constructor
@@ -2601,9 +2598,7 @@
       this._super("(Core)", "status/computer-fail.png", true);
 
       console.group("Core::init()");
-
       this.boot();
-
       console.groupEnd();
     },
 
@@ -2635,17 +2630,9 @@
         //$(document).unbind("mozfullscreenchange",     this.global_fullscreen);
         //$(document).unbind("webkitfullscreenchange",  this.global_fullscreen);
 
-        if ( this.olint ) {
-          clearInterval(this.olint);
-          this.olint = null;
-        }
-        if ( this.cuint ) {
-          clearInterval(this.cuint);
-          this.cuint = null;
-        }
-        if ( this.sclint ) {
-          clearInterval(this.sclint);
-          this.sclint = null;
+        if ( this.ichecker ) {
+          clearInterval(this.ichecker);
+          this.ichecker = null;
         }
       }
 
@@ -2863,7 +2850,7 @@
       save = (save === true || save === "true" || save === 1 || save === "1");
 
       var usession  = JSON.stringify(save ? _Core.getSession()       : {});
-      var uregistry = JSON.stringify(save ? _Settings.getRegistry()  : {});
+      var uregistry = JSON.stringify(save ? _Settings.getSession()  : {});
       var duration  = ((new Date()).getTime()) - _StartStamp;
 
       console.group("Core::shutdown()");
@@ -2947,10 +2934,8 @@
       //$(document).bind("mozfullscreenchange",     this.global_fullscreen);
       //$(document).bind("webkitfullscreenchange",  this.global_fullscreen);
 
-      this.olint = setInterval(function(ev) {
+      this.ichecker = setInterval(function(ev) {
         self.global_offline(ev, !(navigator.onLine === false));
-      }, ONLINECHK_FREQ);
-      this.sclint = setInterval(function(ev) {
         self.global_endsession(ev, GetCookie(SESSION_KEY));
       }, SESSION_CHECK);
 
@@ -3556,8 +3541,9 @@
     /**
      * ResourceManager::run() -- Start instance
      *
-     * Handles preloading of resources.
+     * Preloads resources needed to continue loading process.
      *
+     * @see    Core::login()
      * @return void
      */
     run : function(preload, callback) {
@@ -3658,7 +3644,7 @@
      */
 
     /**
-     * ResourceManager::addResources() -- Add an array with resources and call-back
+     * ResourceManager::addResources() -- Add a list of resources
      * @param   Array     res         Resource URI array
      * @param   String    app         Application Name (if any)
      * @param   Function  callback    Call when done adding
@@ -3730,7 +3716,9 @@
 
   /**
    * SettingsManager -- Settings Manager
-   * Uses localSettings to handle session data
+   *
+   * Recieves a registry tree from server and fills it with values
+   * stored in a User from backend.
    *
    * @extends Process
    * @class
@@ -3781,9 +3769,10 @@
     },
 
     /**
-     * SettingsManager::run() -- Run
+     * SettingsManager::run() -- Run instance and update registry with user settings
      * @param  Object   user_registry   User registry
      * @param  int      revision        Revision index
+     * @see    Core::login()
      * @return void
      */
     run : function(user_registry, revision) {
@@ -3857,7 +3846,7 @@
     },
 
     /**
-     * SettingsManager::savePanel() -- Save a panel session data
+     * SettingsManager::savePanel() -- Save given panel session data (and send to server)
      * @return bool
      */
     savePanel : function(p) {
@@ -3883,7 +3872,7 @@
     },
 
     /**
-     * SettingsManager::_apply() -- Apply a changeset
+     * SettingsManager::_apply() -- Apply a set of changes with a tuple
      * @param   Object    settings    Settings Array
      * @param   Function  callback    Callback function
      * @return  void
@@ -3917,14 +3906,14 @@
     },
 
     /**
-     * SettingsManager::_save() -- Save settings that require backend changes
+     * SettingsManager::_save() -- Send settings to backend for saving
      * @return void
      */
     _save : function(internal, callback) {
       internal = internal === undefined ? true : (internal ? true : false);
       callback = callback || function() {};
 
-      var pargs = {"action" : "settings", "registry" : JSON.stringify(this.getRegistry())};
+      var pargs = {"action" : "settings", "registry" : JSON.stringify(this.getSession())};
       DoPost(pargs, function(data) {
         if ( data.error ) {
           if ( internal ) {
@@ -3946,7 +3935,7 @@
     },
 
     /**
-     * SettingsManager::_set() -- Set a storage item by key and value
+     * SettingsManager::_set() -- Set a value by key into registry
      * @param   String    k         Settings Key
      * @param   Mixed     v         Settings Value
      * @return  void
@@ -3957,7 +3946,7 @@
     },
 
     /**
-     * SettingsManager::_get() -- Get a storage item by key (from cache)
+     * SettingsManager::_get() -- Get a value by key from registry
      * @param   String    k       Settings Key
      * @return  Mixed
      */
@@ -3966,7 +3955,7 @@
     },
 
     /**
-     * SettingsManager::setDefaultApplication() -- Set default application MIME
+     * SettingsManager::setDefaultApplication() -- Get the default application for specific mime type
      * @param   String    app       Application Name
      * @param   String    mime      MIME Type
      * @param   String    path      Path (Default = undefined)
@@ -3991,7 +3980,7 @@
     },
 
     /**
-     * SettingsManager::getDefaultApplications() -- Get default applications for MIME
+     * SettingsManager::getDefaultApplications() -- Get the list of default applications for specific mime types
      * @return Object
      */
     getDefaultApplications : function() {
@@ -4003,7 +3992,7 @@
     },
 
     /**
-     * SettingsManager::getType() -- Get storage item type by key
+     * SettingsManager::getType() -- Get registry item type by key
      * @param   String    key     Settings Key
      * @return  String
      */
@@ -4012,7 +4001,7 @@
     },
 
     /**
-     * SettingsManager::getOptions() -- Get storage item option  by key
+     * SettingsManager::getOptions() -- Get registry item options/items by key
      * @param   String    key     Settings Key
      * @return  Mixed
      */
@@ -4027,10 +4016,10 @@
     },
 
     /**
-     * SettingsManager::getRegistry() -- Get current Storage registry data
+     * SettingsManager::getSession() -- Get running registry session data
      * @return JSON
      */
-    getRegistry : function() {
+    getSession : function() {
       return this._cache;
     }
 
@@ -4086,6 +4075,7 @@
     /**
      * PackageManager::run() -- Run
      * @param  Object   packages   Packages
+     * @see    Core::login()
      * @return void
      */
     run : function(packages) {
