@@ -46,6 +46,7 @@
     "GlobalOfflineMessage"                : "Du har mistet server-sessjonen.<br />Dette kan forårsake feil. Omstart er kanskje nødvendig!.",
     "GlobalOfflineWarningTitle"           : "Advarsel",
     "GlobalOfflineInfoTitle"              : "Informasjon",
+    "CoreSocketFail"                      : "Klarte ikke etablere tilkobling!",
     "LoginConfirm"                        : "Du er allerede innlogget, er du sikker på at du vil fortsette?",
     "LoginFailure"                        : "Klarte ikke logge inn: %s",
     "LoginFailureOther"                   : "Det hendte en feil i systemet under innlogging, vennligst prøv igjen.",

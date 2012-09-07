@@ -46,6 +46,7 @@
     "GlobalOfflineMessage"                : "You have lost your server session.<br />This may cause errors, and you should restart!.",
     "GlobalOfflineWarningTitle"           : "Warning",
     "GlobalOfflineInfoTitle"              : "Information",
+    "CoreSocketFail"                      : "Failed to establish socket!",
     "LoginConfirm"                        : "You are already logged in, are you sure you want to continue?",
     "LoginFailure"                        : "Failed to log in: %s",
     "LoginFailureOther"                   : "A system error occured while logging in, please try again.",

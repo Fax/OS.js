@@ -2748,8 +2748,8 @@
         ENV_DEMO        = env.demo;
 
         WEBSOCKET_URI   = env.hosts.server;
-        ROOT_URL        = (env.ssl ? "https://" : "http://") + env.hosts.frontend;  // FIXME: https
-        STATIC_URL      = (env.ssl ? "https://" : "http://") + env.hosts['static']; // FIXME: https
+        ROOT_URL        = (env.ssl ? "https://" : "http://") + env.hosts.frontend;
+        STATIC_URL      = (env.ssl ? "https://" : "http://") + env.hosts['static'];
 
         /*
         ICON_URI        = STATIC_URL + ICON_URI;
@@ -2774,7 +2774,7 @@
             if ( result ) {
               login(alogin);
             } else {
-              alert("Failed to establish socket!"); // FIXME: Locale
+              alert(OSjs.Labels.CoreSocketFail);
             }
           });
         } else {
@@ -5221,10 +5221,9 @@
      */
     call : function(mname, margs) {
       if ( this.bindings && this.bindings[mname] ) {
-        //var r;
         var i = 0, l = this.bindings[mname].length;
         for ( i; i < l; i++ ) {
-          /*r = */this.bindings[mname][i].call(_Desktop, mname, margs); // FIXME: _Desktop is not this
+          this.bindings[mname][i].call(_Desktop, mname, margs); // FIXME: Customize [this] for call(), this is only used in _Desktop
         }
       }
     },
