@@ -41,8 +41,13 @@
   color : #b0c2c1;
 }
 .PanelItemSeparator {
-  border-left : 1px solid #363636;
+  /*border-left : 1px solid #363636;*/
+  background : #363636;
   border-right : 1px solid #3f4040;
+}
+.DesktopPanel.Transparent .PanelItemSeparator {
+  background : rgba(255,255,255, 0.3);
+  border : 0 none;
 }
 
 .Window {
