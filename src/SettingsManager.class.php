@@ -170,46 +170,55 @@ abstract class SettingsManager
     //
 
     "user.env.path" => Array(
+      // Package paths
       "type"    => "list",
       "items"   => Array("/System/Packages", "/User/Packages")
     ),
 
     "user.env.home" => Array(
+      // Home directory
       "type"    => "string",
       "value"   => "/User/Documents"
     ),
 
     "user.session.confirm" => Array(
+      // Confirm log-out action (display dialog)
       "type" => "bool",
       "value" => true
     ),
 
     "user.session.autorestore" => Array(
+      // Restore last session upon boot
       "type"  => "bool",
       "value" => true
     ),
 
     "user.session.autosave" => Array(
+      // Store last session on shutdown (see user.session.confirm)
       "type"  => "bool",
       "value" => true
     ),
 
     "user.session.appmime" => Array(
+      // Stored default launch application for specific mime type
       "type"  => "list",
       "items" => Array()
     ),
 
     "user.session.appstorage" => Array(
+      // Stored package settings/cache etc.
       "type"  => "list",
       "items" => Array()
     ),
 
     "user.first-run" => Array(
+      // Is user new or using a newly updated registry ?
       "type" => "bool",
       "value" => true
     ),
 
     "user.autorun" => Array(
+      // Run these processes on startup
       "type" => "list",
       "items" => Array()
     ),
