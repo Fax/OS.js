@@ -6112,10 +6112,6 @@
         }}
       ], true);
 
-      /*if ( ev.which > 1 ) {
-      ev.preventDefault();
-      }*/
-
       return ret;
     },
 
@@ -6143,9 +6139,7 @@
                 session.push(panels[i].getSession());
               }
 
-              _Settings._apply({"desktop.panels" : session}, function() {
-                // void -- removes message
-              });
+              _Settings._apply({"desktop.panels" : session});
             }
           }
         }]);
