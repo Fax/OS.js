@@ -906,6 +906,18 @@
     return aud;
   }
 
+  /**
+   * GetEffectsEnabled() -- Check if WM effects are enabled
+   * @return bool
+   * @function
+   */
+  function GetEffectsEnabled() {
+    if ( _Settings ) {
+      return !!_Settings._get("wm.effects.enable");
+    }
+    return true;
+  }
+
   /////////////////////////////////////////////////////////////////////////////
   // PUBLIC API
   /////////////////////////////////////////////////////////////////////////////
@@ -2173,9 +2185,13 @@
      * @return void
      */
     hide : function() {
-      $("#LoginWindow").fadeOut(ANIMATION_SPEED, function() {
-        $("#LoginWindow").remove();
-      });
+      if ( GetEffectsEnabled() ) {
+        $("#LoginWindow").fadeOut(ANIMATION_SPEED, function() {
+          $("#LoginWindow").remove();
+        });
+      } else {
+        $("#LoginWindow").hide().remove();
+      }
     }
 
   };
@@ -6464,14 +6480,24 @@
 
       root.append(del);
 
-      del.fadeIn(ANIMATION_SPEED);
+      if ( GetEffectsEnabled() ) {
+        del.fadeIn(ANIMATION_SPEED);
+      } else {
+        del.show();
+      }
 
       // Removal functions
       var to;
       var fu = function() {
-        del.fadeOut(ANIMATION_SPEED, function() {
+
+        if ( GetEffectsEnabled() ) {
+          del.fadeOut(ANIMATION_SPEED, function() {
+            del.remove();
+          });
+        } else {
           del.remove();
-        });
+        }
+
 
         if ( to ) {
           clearTimeout(to);
@@ -7518,9 +7544,13 @@
         this._hints      = {};
         this._is_moving  = false;
 
-        $(this.$element).fadeOut(ANIMATION_SPEED, function() {
-          $(self.$element).empty().remove();
-        });
+        if ( GetEffectsEnabled() ) {
+          $(this.$element).fadeOut(ANIMATION_SPEED, function() {
+            $(self.$element).empty().remove();
+          });
+        } else {
+          $(this.$element).hide().empty().remove();
+        }
       }
 
       console.log("Window::" + this._name + "::destroy()");
@@ -8266,17 +8296,33 @@
       if ( this._is_minimizable ) {
         var self = this;
         if ( this._is_minimized ) {
-          this.$element.animate({opacity: 'show', height: 'show'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
-            if ( _WM )
-              _WM.restoreWindow(self);
-          }});
+          if ( GetEffectsEnabled() ) {
+            this.$element.animate({opacity: 'show', height: 'show'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
+              if ( _WM )
+                _WM.restoreWindow(self);
+            }});
+          } else {
+            this.$element.show();
+            setTimeout(function() {
+              if ( _WM )
+                _WM.restoreWindow(self);
+            }, 0);
+          }
 
           this._is_minimized = false;
         } else {
-          this.$element.animate({opacity: 'hide', height: 'hide'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
-            if ( _WM )
-              _WM.minimizeWindow(self);
-          }});
+          if ( GetEffectsEnabled() ) {
+            this.$element.animate({opacity: 'hide', height: 'hide'}, {'duration' : ANIMATION_SPEED, 'complete' : function() {
+              if ( _WM )
+                _WM.minimizeWindow(self);
+            }});
+          } else {
+            this.$element.hide();
+            setTimeout(function() {
+              if ( _WM )
+                _WM.minimizeWindow(self);
+            }, 0);
+          }
 
           this._is_minimized = true;
 
@@ -8304,14 +8350,27 @@
             this._width = this._attrs_temp.width;
             this._height = this._attrs_temp.height;
 
-            this.$element.animate({
-              'top'    : this._top + 'px',
-              'left'   : this._left + 'px',
-              'width'  : this._width + 'px',
-              'height' : this._height + 'px'
-            }, {'duration' : ANIMATION_SPEED, 'complete' : function() {
-              self._call("resize");
-            }});
+            if ( GetEffectsEnabled() ) {
+              this.$element.animate({
+                'top'    : this._top + 'px',
+                'left'   : this._left + 'px',
+                'width'  : this._width + 'px',
+                'height' : this._height + 'px'
+              }, {'duration' : ANIMATION_SPEED, 'complete' : function() {
+                self._call("resize");
+              }});
+            } else {
+              this.$element.css({
+                'top'    : this._top + 'px',
+                'left'   : this._left + 'px',
+                'width'  : this._width + 'px',
+                'height' : this._height + 'px'
+              });
+
+              setTimeout(function() {
+                self._call("resize");
+              }, 0);
+            }
 
             this._attrs_temp = null;
           }
@@ -8341,15 +8400,30 @@
           this.$element.css({
             'top'    : (this._top) + 'px',
             'left'   : (this._left) + 'px'
-          }).animate({
-            'width'  : (this._width) + "px",
-            'height' : (this._height)  + "px"
-          }, {'duration' : ANIMATION_SPEED, 'complete' : function() {
-            self._call("resize");
-          }}, function() {
-            if ( _WM )
-              _WM.maximizeWindow(self);
           });
+
+          if ( GetEffectsEnabled() ) {
+            this.$element.animate({
+              'width'  : (this._width) + "px",
+              'height' : (this._height)  + "px"
+            }, {'duration' : ANIMATION_SPEED, 'complete' : function() {
+              self._call("resize");
+            }}, function() {
+              if ( _WM )
+                _WM.maximizeWindow(self);
+            });
+          } else {
+            this.$element.css({
+              'width'  : (this._width) + "px",
+              'height' : (this._height)  + "px"
+            });
+
+            setTimeout(function() {
+              self._call("resize");
+              if ( _WM )
+                _WM.maximizeWindow(self);
+            }, 0);
+          }
 
           this.$element.find(".ActionMaximize").parent().addClass("Active");
           this._is_maximized = true;
@@ -8940,10 +9014,17 @@
           y -= (h + 10);
         }
 
-        el.css({
-          "top"   : y + "px",
-          "left"  : x + "px"
-        });
+        if ( GetEffectsEnabled() ) {
+          el.hide().css({
+            "top"   : y + "px",
+            "left"  : x + "px"
+          }).fadeIn(ANIMATION_SPEED);
+        } else {
+          el.css({
+            "top"   : y + "px",
+            "left"  : x + "px"
+          });
+        }
 
         console.log("Pos", x, "x", y);
         console.log("El", el);
@@ -9100,7 +9181,11 @@
      * @return void
      */
     show : function(ev, el) {
-      $(el).show();
+      if ( GetEffectsEnabled() ) {
+        $(el).fadeIn(ANIMATION_SPEED);
+      } else {
+        $(el).show();
+      }
 
       try {
         el.find(".GUIMenuFocus").focus();
