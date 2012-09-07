@@ -146,9 +146,9 @@
   /**
    * Language
    */
-  var _DefaultLanguage  = "en_US";
-  var _BrowserLanguage  = "en_US";                        //!< Browser default language (Set by init)
   var _SystemLanguage   = "en_US";                        //!< System default language (Set by init)
+  var _DefaultLanguage  = "en_US";                        //!< Fallback language
+  var _BrowserLanguage  = "en_US";                        //!< Browser default language (Set by init)
   var _Languages        = {                               //!< Collection of avalilable languages
     'default'   : "System Default (%s)",
     'auto'      : "Browser Default (%s)",
@@ -508,7 +508,7 @@
               obj = new ref(PanelItem, pref, API, argv || {});
               pref.addItem(obj, pargs, psave);
 
-              delete args.panel; // IMPORTANT! Used in _addPanelItem()
+              delete args.panel; // NOTE: IMPORTANT! Used in _addPanelItem()
             } catch ( ex ) {
               CrashApplication(name, obj, ex);
               obj = null;
@@ -531,7 +531,7 @@
             if ( ref ) {
               try {
                 obj = new ref(GtkWindow, Application, API, args.argv || {}, args.restore || []);
-                obj._checkCompability();
+                obj._checkCompability(); // NOTE: Must be here because user can set own in init() after actual construct is done
                 runnable = true;
               } catch ( ex ) {
                 CrashApplication(name, obj, ex);
