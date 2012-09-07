@@ -7796,13 +7796,17 @@
         //
 
         // Size and dimension
+        var _ws = _WM.getWindowSpace();
         if ( this._gravity === "center" ) {
           this._top = (($(document).height() / 2) - ($(el).height() / 2));
           this._left = (($(document).width() / 2) - ($(el).width() / 2));
+
+          if ( this._top < _ws.y ) {
+            this._top = _ws.y;
+          }
         } else {
           // Find free space for new windows
           if ( _WM ) {
-            var _ws = _WM.getWindowSpace();
             this._top = _ws.y;
             this._left = _ws.x;
           }
