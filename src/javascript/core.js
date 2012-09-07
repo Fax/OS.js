@@ -4572,7 +4572,7 @@
       if ( !args.dir && args.file ) {
         args.dir = dirname(args.file);
       } else {
-        args.dir = "/User/Documents"; // FIXME: Get from API ?
+        args.dir = _Settings._get("user.env.home");
       }
 
       var __defaultOpen = function(filename, filemime) {
@@ -4634,7 +4634,7 @@
       if ( !args.dir && args.file ) {
         args.dir = dirname(args.file);
       } else {
-        args.dir = "/User/Documents"; // FIXME: Get from API ?
+        args.dir = _Settings._get("user.env.home");
       }
       if ( args.file && args.saveas === true ) {
         args.dir  = dirname(args.file);
