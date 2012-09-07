@@ -400,7 +400,7 @@ EOHTML;
           "duplicate"     => $user->isLoggedIn()
         ),
         "registry"      => Array(
-          "revision"      => 1,
+          "revision"      => 2,
           "settings"      => User::getDefaultRegistry(),
           "packages"      => PackageManager::GetPackages($user),
           "preload"       => ResourceManager::getPreloads(!(ENV_PRODUCTION && CACHE_COMBINED_RESOURCES)),

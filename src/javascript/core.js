@@ -1280,12 +1280,12 @@
         }
       },
 
-      'call' : function(method, argv, callback, show_alert) {
+      'call' : function(method, args, callback, show_alert) {
         if ( _VFS ) {
-          _VFS.op(method, argv, callback, show_alert);
+          _VFS.op(method, args, callback, show_alert);
           console.group("=== API OPERATION ===");
           console.log("Method", "API.system.call");
-          console.log("Arguments", method, argv);
+          console.log("Arguments", method, args);
           console.groupEnd();
         }
       },
@@ -1366,12 +1366,12 @@
           return _Settings.getRegistry();
         },
 
-        'user_admin' : function(argv, callback) {
+        'user_admin' : function(args, callback) {
           callback = callback || function() {};
-          argv = argv || {};
-          argv.action = "user";
+          args = args || {};
+          args.action = "user";
 
-          DoPost(argv, function(data) {
+          DoPost(args, function(data) {
             if ( data.success ) {
               callback(true, data.result);
             } else {
@@ -2264,15 +2264,15 @@
      * @see     CoreVFS::callAjax()
      * @return  Mixed
      */
-    op : function(method, argv, callback, show_alert) {
+    op : function(method, args, callback, show_alert) {
       /*
       if ( STORAGE_ENABLE ) {
         var re    = /^\/User\/WebStorage/;
         var rpath = false;
-        if ( typeof argv === "object" ) {
-          rpath = !!(argv.path && argv.path.match(re));
-        } else if ( typeof argv === "string" ) {
-          rpath = !!(argv && argv.match(re));
+        if ( typeof args === "object" ) {
+          rpath = !!(args.path && args.path.match(re));
+        } else if ( typeof args === "string" ) {
+          rpath = !!(args && args.match(re));
         }
 
         if ( rpath ) {
@@ -2307,13 +2307,13 @@
     /**
      * CoreStorate::callLocal() -- Call a storage function on server
      * @param   String      method      Method name to call
-     * @param   Mixed       argv        Arguments to send
+     * @param   Mixed       args        Arguments to send
      * @param   Function    callback    Callback function
      * @param   bool        show_alert  Show internal alert? (Default = true)
      * @return  Mixed
      */
     /*
-    callLocal : function(method, argv, callback, show_alert) {
+    callLocal : function(method, args, callback, show_alert) {
       var self  = this;
       var re    = /^\/User\/WebStorage/;
 
@@ -2328,7 +2328,7 @@
           if ( method == "delete" )
             method = "rm";
 
-          this._call(method, [argv.replace(re, ""), function(result) {
+          this._call(method, [args.replace(re, ""), function(result) {
             callback(result, null);
           }, function() {
             callback(null, true); // FIXME
@@ -2336,7 +2336,7 @@
         break;
 
         case "write" :
-          this._call(method, [argv.path.replace(re, ""), argv.content, argv.mime, function(result) {
+          this._call(method, [args.path.replace(re, ""), args.content, args.mime, function(result) {
             callback(result, null);
           }, function() {
             callback(null, true); // FIXME
@@ -2360,13 +2360,13 @@
           };
 
 
-          this._call("ls", [argv.path.replace(re, ""), function(entries) {
+          this._call("ls", [args.path.replace(re, ""), function(entries) {
             if ( !entries || !entries.length )
               entries = [];
 
             var items = [];
             var i = 0, l = entries.length;
-            var ts = argv.path.replace(re, "") || "/";
+            var ts = args.path.replace(re, "") || "/";
             var cl = ts.length;
 
             for ( i; i < l; i++ ) {
@@ -2377,8 +2377,8 @@
             }
 
             var prev = "/User";
-            if ( argv.path.match(/^\/User(\/.*)/) ) {
-              split = argv.path.split("/");
+            if ( args.path.match(/^\/User(\/.*)/) ) {
+              split = args.path.split("/");
               split.pop();
 
               prev  = split.join("/");
@@ -2391,7 +2391,7 @@
               it        = items[j];
               iter      = __createFileIter({
                 "icon"       : (it.isDirectory ? "places/folder.png" : "mimetypes/binary.png"),
-                "path"       : argv.path + it.fullPath,
+                "path"       : args.path + it.fullPath,
                 "type"       : (it.isDirectory ? "dir" : "file"),
                 "name"       : basename(it.fullPath),
                 "mime"       : "text/plain"
@@ -2402,7 +2402,7 @@
 
             if ( method == "lswrap" ) {
               var data = {
-                'path'  : argv.path,
+                'path'  : args.path,
                 'total' : list.length,
                 'bytes' : 0,
                 'items' : list
@@ -2430,15 +2430,15 @@
     /**
      * CoreStorate::callAjax() -- Call a storage function on server
      * @param   String      method      Method name to call
-     * @param   Mixed       argv        Arguments to send
+     * @param   Mixed       args        Arguments to send
      * @param   Function    callback    Callback function
      * @param   bool        show_alert  Show internal alert? (Default = true)
      * @return  null
      */
-    callAjax : function(method, argv, callback, show_alert) {
+    callAjax : function(method, args, callback, show_alert) {
       show_alert = (show_alert === undefined) ? true : (show_alert ? true : false);
 
-      DoPost({'action' : 'call', 'method' : method, 'args' : argv}, function(data) {
+      DoPost({'action' : 'call', 'method' : method, 'args' : args}, function(data) {
         if ( data.success ) {
           callback(data.result, null);
         } else {
@@ -4529,7 +4529,6 @@
      * @param   Object        args:options       Extra arguments to send
      * @return  void
      */
-    //defaultFileOpen : function(callback, mimes, dir, file, check_mime, options) {
     defaultFileOpen : function(args) {
       var self  = this;
 
@@ -4593,7 +4592,6 @@
      * @param   String        args:encoding      File encoding (not required)
      * @return  void
      */
-    //defaultFileSave : function(file, content, callback, mimes, dir, saveas, encoding) {
     defaultFileSave : function(args) {
       var self   = this;
 
