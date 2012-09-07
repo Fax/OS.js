@@ -39,7 +39,8 @@
    */
   var ZINDEX_WINDOW       = 10;                     //!< Default Window z-index
   //var ZINDEX_WINDOW_MAX   = 88888889;               //!< Max Window z-index
-  var ZINDEX_WINDOW_ONTOP = 90000000;               //!< Window cur ontop z-index
+  //var ZINDEX_WINDOW_ONTOP = 90000000;               //!< Window cur ontop z-index
+  var ZINDEX_WINDOW_ONTOP = 50000;               //!< Window cur ontop z-index
   var WINDOW_MIN_HEIGHT   = 128;
   var WINDOW_MIN_WIDTH    = 128;
   // @endconstants
