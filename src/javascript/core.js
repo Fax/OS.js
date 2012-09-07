@@ -4542,7 +4542,8 @@
       if ( !args.dir && args.file ) {
         args.dir = dirname(args.file);
       } else {
-        args.dir = _Settings._get("user.env.home");
+        if ( !args.dir )
+          args.dir = _Settings._get("user.env.home");
       }
 
       var __defaultOpen = function(filename, filemime) {
