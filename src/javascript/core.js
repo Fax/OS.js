@@ -2618,7 +2618,6 @@
         $(window).unbind("blur",                        this.global_blur);
         //$(window).unbind("offline",                   this.global_offline);
         $(document).unbind("keydown",                 this.global_keydown);
-        //$(document).unbind("keypress",                this.global_keypress);
         $(document).unbind("keyup",                   this.global_keyup);
         $(document).unbind("mousedown",               this.global_mousedown);
         $(document).unbind("mouseup",                 this.global_mouseup);
@@ -2626,9 +2625,6 @@
         $(document).unbind("click",                   this.global_click);
         $(document).unbind("dblclick",                this.global_dblclick);
         $(document).unbind("contextmenu",             this.global_contextmenu);
-        //$(document).unbind("fullscreenchange",        this.global_fullscreen);
-        //$(document).unbind("mozfullscreenchange",     this.global_fullscreen);
-        //$(document).unbind("webkitfullscreenchange",  this.global_fullscreen);
 
         if ( this.ichecker ) {
           clearInterval(this.ichecker);
@@ -2687,8 +2683,6 @@
         } catch ( eee ) {}
         console.groupEnd();
       }
-
-      console.log("Nulling instance...");
 
       _Connection = null;
       _Core       = null;
@@ -2922,7 +2916,6 @@
       $(window).bind("beforeunload",  this.leaving);
       //$(window).bind("offline",       this.global_offline);
       $(document).bind("keydown",     this.global_keydown);
-      //$(document).bind("keypress",    this.global_keypress);
       $(document).bind("keyup",       this.global_keyup);
       $(document).bind("mousedown",   this.global_mousedown);
       $(document).bind("mouseup",     this.global_mouseup);
@@ -2930,9 +2923,6 @@
       $(document).bind("click",       this.global_click);
       $(document).bind("dblclick",    this.global_dblclick);
       $(document).bind("contextmenu", this.global_contextmenu);
-      //$(document).bind("fullscreenchange",        this.global_fullscreen);
-      //$(document).bind("mozfullscreenchange",     this.global_fullscreen);
-      //$(document).bind("webkitfullscreenchange",  this.global_fullscreen);
 
       this.ichecker = setInterval(function(ev) {
         self.global_offline(ev, !(navigator.onLine === false));
@@ -3188,15 +3178,6 @@
     },
 
     /**
-     * Core::global_keypress() -- Global Event Handler: keypress
-     * @param   DOMEvent    ev      DOM Event
-     * @return  bool
-    global_keypress : function(ev) {
-      return true;
-    },
-     */
-
-    /**
      * Core::global_keydown() -- Global Event Handler: keydown
      * @param   DOMEvent    ev      DOM Event
      * @return  bool
@@ -3297,8 +3278,6 @@
      * @return  void
      */
     global_click : function(ev) {
-      //ev.preventDefault(); FIXME???
-
       if ( _Menu ) {
         _Menu.handleGlobalClick(ev);
       }
@@ -3366,25 +3345,6 @@
       }
       return true;
     },
-
-    /**
-     * Core::global_fullscreen() -- Global Event Handler: fullscreen
-     * @param   DOMEvent    e       DOM Event
-     * @return void
-     */
-    /*
-    global_fullscreen : function(e) {
-      if ( "fullscreen" in document ) {
-        _IsFullscreen = document.fullscreen ? true : false;
-      } else if ( "mozFullScreen" in document ) {
-        _IsFullscreen = document.mozFullScreen ? true : false;
-      } else if ( "webkitIsFullScreen" in document ) {
-        _IsFullscreen = document.webkitIsFullScreen ? true : false;
-      }
-
-      console.log("Core::global_fullscreen()", e, _IsFullscreen);
-    },
-     */
 
     // GETTERS / SETTERS
 
