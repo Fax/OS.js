@@ -1,3 +1,38 @@
+## 0.9.8
+
+WARNING: Breakage in Application methods for opening/saving files, now using
+tuples.
+
+* Core\JS: Fixed window negative top position when launching gravitated windows
+* Core\JS: File dialog reworked, now has navbar and preview
+* Core\JS: Cleaned up LaunchVFSObject(), now uses checkMIME()
+* Core\JS: Process.Class namespace changes
+* Core\JS: Correction of cleanup in some destoy()'s
+* Core\JS: defaultFileOpen() and defaultFileSave() now takes tuples
+* Core\JS: File dialog DnD disabled
+* Core\JS: Added default CWD to dialogs
+* Core\JS: Added preview dialog to wallpaper changer
+* Core\JS: Implemented 'user.env.home' registry key
+* Core\JS: Implemented 'wm.effects.enable'
+* Core\JS: Added fade effects on missing items
+* Core\JS: Now using GetEffectsEnabled()
+* Core\JS: Fixed contextmenu now hiding in DesktopIconView
+* Core\JS: Cleaned up some methods
+* Core\JS: Removal of deprecated code
+* Core\JS: Panel preferences dialog redesigned
+* Core\JS: Added Core::complete() method, empty
+* Core\JS: Fixed z-index of ontop windows collide with panel
+* Libs\JS: Fixed contextmenu in IconView
+* Core: UID now sendt to client
+* Core: Added new registry keys (env. paths)
+* CSS: Fixed transparent panel quirks and separator item
+* CSS: Cleanups
+* Settings: Changed default wallpaper
+* Templates: Added iframe.js
+* Templates: Fixed some titles
+* Templates: Home Page now displays for non-js browsers
+* Docs: Updated documentation in core.js
+
 ## 0.9.7
 
 * Preloading: Changed order of scripts and links

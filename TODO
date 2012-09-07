@@ -1,7 +1,8 @@
 CORE TODO:
 -------------------------------------------------------------------------------
-[HIG] New package type: Theme OR theme compiler with value-sheet ?!
+[MED] New package type: Theme OR theme compiler with value-sheet ?!
 [MED] Finish up adding/removing panels, etc
+<<<<<<< HEAD
 [LOW] WindowManager: Effect(s) configuration
 [LOW] Panel setting: Background Image
 [LOW] Panels: Add/Remove (Implement multiples in GUI)
@@ -14,6 +15,8 @@ CORE TODO:
        This would increase the performance of panel redraws etc.
 [LOW] Split login to custom css and remove when needed
 [LOW] Maybe change the way feature detection is done
+[MED] Finish HTTPS connections
+[LOW] Finish up resource loading balancing by serving URIs to client
 [LOW] Richtext: Add custom contextmenu
 [LOW] Finish CoreVFS Storage integration
       - Solve file upload
@@ -24,7 +27,6 @@ CORE TODO:
 PACKAGES TODO:
 -------------------------------------------------------------------------------
 * ApplicationMusicPlayer - Needs some work
-* ApplicationVideoPlayer - Resizing
 * ApplicationArchiver - Not even close to done
 * ApplicationMail - Needs testing
 * ApplicationIRC - !?!?!?!
