@@ -37,15 +37,9 @@
   /**
    * @constants CSS
    */
-  //var ZINDEX_MENU         = 100000000;              //!< Default Menu z-index
-  //var ZINDEX_RECT         = 100000000;              //!< Default Rect z-index
-  //var ZINDEX_TOOLTIP      = 100000001;              //!< Default Tooltip z-index
-  //var ZINDEX_NOTIFICATION = 100000002;              //!< Default Notification z-index
-  //var ZINDEX_PANEL        = 1000000;                //!< Default Panel z-index
   var ZINDEX_WINDOW       = 10;                     //!< Default Window z-index
   //var ZINDEX_WINDOW_MAX   = 88888889;               //!< Max Window z-index
   var ZINDEX_WINDOW_ONTOP = 90000000;               //!< Window cur ontop z-index
-  //var ZINDEX_LOADING      = 1000100;                //!< Loadingbar z-index
   var WINDOW_MIN_HEIGHT   = 128;
   var WINDOW_MIN_WIDTH    = 128;
   // @endconstants
@@ -5716,6 +5710,13 @@
       return false;
     },
 
+    onItemSelect : function(ev, el, iter, focus) {
+      this._super(ev, el, iter, focus);
+
+      if ( !ev || ev.which <= 1 )
+        $(document).click(); // FOR GLOBAL MENU!
+    },
+
     onItemContextMenu : function(ev, el, item) {
       var self = this;
       var result = this._super(ev, el, item);
@@ -5952,25 +5953,13 @@
       finished_callback = finished_callback || function() {};
 
       var self = this;
+      var finished = false;
+
       if ( this.running ) {
         return;
       }
 
-      var finished = false;
-
       console.group("Desktop::run()");
-
-      //
-      // Events
-      //
-      console.log("Registering events...");
-      $("#Desktop").bind("contextmenu", function(ev) {
-        ev.preventDefault();
-        ev.stopPropagation();
-
-        /*return */self.showContextMenu(ev);
-        return false;
-      });
 
       this.applySettings();
 
@@ -5979,8 +5968,8 @@
       //
       console.log("Registering desktop grid...");
       try {
-        self.iconview = new DesktopIconView();
-        self.iconview.update();
+        this.iconview = new DesktopIconView();
+        this.iconview.update();
       } catch ( exception ) {
         throw new OSjs.Classes.ProcessException(self, OSjs.Labels.CrashDesktopIconView, exception);
       }
@@ -7602,6 +7591,10 @@
       mcallback = mcallback || function() {};
 
       if ( !this._created ) {
+        var _ws = null;
+        if ( _WM ) 
+          _ws = _WM.getWindowSpace();
+
         console.group("Window::" + this._name + "::create()");
 
         this._id        = id;
@@ -7696,11 +7689,7 @@
 
             ev.stopPropagation();
             ev.preventDefault();
-          })./*mousedown(function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-            return false;
-          }).*/dblclick(function(ev) {
+          }).dblclick(function(ev) {
             ev.preventDefault();
             ev.stopPropagation();
             return false;
@@ -7787,7 +7776,6 @@
           el.find(".ActionMaximize").parent().hide();
         }
 
-        // Insert into DOM
         if ( _WM )
           _WM.insertWindow(el);
 
@@ -7796,17 +7784,15 @@
         //
 
         // Size and dimension
-        var _ws = _WM.getWindowSpace();
         if ( this._gravity === "center" ) {
           this._top = (($(document).height() / 2) - ($(el).height() / 2));
           this._left = (($(document).width() / 2) - ($(el).width() / 2));
 
-          if ( this._top < _ws.y ) {
+          if ( _ws && (this._top < _ws.y) ) {
             this._top = _ws.y;
           }
         } else {
-          // Find free space for new windows
-          if ( _WM ) {
+          if ( _ws ) {
             this._top = _ws.y;
             this._left = _ws.x;
           }
@@ -7860,18 +7846,6 @@
         //
 
         // Fix title alignment
-        /*
-        var lw = el.find(".WindowTopInner img").is(":visible") ? 16 : 0;
-        var hw = 0;
-        $(el).find(".WindowTop .WindowTopController").filter(":visible").each(function() {
-          hw += parseInt($(this).width(), 10);
-        });
-
-        $(el).find(".WindowTopInner span").css({
-          "padding-left" : lw + "px",
-          "padding-right" : hw + "px"
-        });
-        */
         var hw = $(el).find(".WindowTop .WindowTopController").filter(":visible").size() * 16;
         $(el).find(".WindowTopInner span").css({
           "padding-right" : hw + "px"
@@ -7891,6 +7865,7 @@
 
         // Add jQuery UI Handlers
         if ( this._is_draggable ) {
+          //var minY = 0;
           el.draggable({
             handle : ".WindowTop",
             start : function() {
@@ -7901,6 +7876,8 @@
               }
               el.addClass("Blend");
               API.ui.cursor("move");
+
+              //minY = (_WM ? (_WM.getWindowSpace()) : {'y' : 0}).y;
 
               self._is_moving = true;
 
@@ -7919,7 +7896,11 @@
               setTimeout(function() {
                 self._is_moving = false;
               }, 50); // NOTE: This timeout prevents close/min/max while dragging
-            }
+            }/*,
+
+            drag : function(ev, ui) {
+              if ( ui.position.top < minY ) { ui.position.top = minY; }
+            }*/
           });
         }
 
@@ -8451,7 +8432,6 @@
         var x  = (($(document).width() / 2) - ($(el).width() / 2));
         var y  = (($(document).height() / 2) - ($(el).height() / 2));
 
-        // We do not want our windows to dissappear out of view, right ?
         if ( y < 0 ) {
           y = 0;
           if ( _Desktop ) {
@@ -8843,8 +8823,6 @@
      */
     _createItem : function(ev, iter, index) {
       var self = this;
-
-      //console.log("Menu::_createItem()", iter);
 
       var li = $("<li class=\"GUIMenuItem\"></li>");
       var src;
@@ -9393,17 +9371,6 @@
 
     _StartStamp = ((new Date()).getTime());
     _Core       = new Core();
-
-
-    /*
-    var v = new OSjs.Classes.VFSPersistent(function() {
-      v.ls("/", function(result) {
-        console.log("ls", "/", result);
-      });
-    });
-    console.log("Instance", v);
-    */
-
 
     return true;
   }; // @endfunction
