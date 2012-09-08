@@ -608,7 +608,7 @@
         el.append(sprintf("<input type=\"checkbox\" name=\"%s\" /> <label>%s</label>", name, label));
         el.find("input[type=checkbox]").prop("checked", iter.active);
 
-        el.click(function() {
+        el.on("click", function() {
           if ( current ) {
             $(current).removeClass("selected");
           }
@@ -617,7 +617,7 @@
           current = this;
         });
 
-        el.dblclick(function() {
+        el.on("dblclick", function() {
           el.find("input[type=checkbox]").prop("checked", !iter.active);
         });
 
@@ -1408,11 +1408,11 @@
       var self = this;
 
       var _events = function() {
-        $(self._frame).unbind("load");
-        $(self._win).unbind("focus");
-        $(self._win).unbind("blur");
+        $(self._frame).off("load");
+        $(self._win).off("focus");
+        $(self._win).off("blur");
 
-        $(self._win).focus(function(ev) {
+        $(self._win).on("focus", function(ev) {
           if ( foc )
             return;
           foc = true;
@@ -1421,7 +1421,7 @@
           $(document).click(); // FOR GLOBAL MENU!
         });
 
-        $(self._win).blur(function(ev) {
+        $(self._win).on("blur", function(ev) {
           if ( !foc )
             return;
           foc = false;
@@ -2271,43 +2271,43 @@
       this._sortDir     = "asc";
 
       var self = this;
-      this.$element.bind("contextmenu", function(ev) {
+      this.$element.on("contextmenu", function(ev) {
         ev.stopPropagation();
         ev.preventDefault();
         self.onContextMenu(ev, this);
         return false;
       });
-      this.$element.bind("mousedown", function(ev) {
+      this.$element.on("mousedown", function(ev) {
         ev.preventDefault();
         return false;
       });
-      this.$element.bind("click", function(ev) {
+      this.$element.on("click", function(ev) {
         ev.preventDefault();
         ev.stopPropagation();
         self.onItemSelect(null, null, null);
         return false;
       });
-      this.$element.bind("dblclick", function(ev) {
+      this.$element.on("dblclick", function(ev) {
         ev.preventDefault();
         ev.stopPropagation();
         return false;
       });
 
       if ( this._opts.dnd && OSjs.Compability.SUPPORT_DND ) {
-        this.$element.bind("dragover", function(ev) {
+        this.$element.on("dragover", function(ev) {
           ev.preventDefault();
           return self.onDragAction(ev, "dragover");
         });
-        this.$element.bind("dragleave", function(ev) {
+        this.$element.on("dragleave", function(ev) {
           /*return */self.onDragAction(ev, "dragleave");
         });
-        this.$element.bind("dragenter", function(ev) {
+        this.$element.on("dragenter", function(ev) {
           /*return */self.onDragAction(ev, "dragenter");
         });
-        this.$element.bind("dragend", function(ev) {
+        this.$element.on("dragend", function(ev) {
           /*return */self.onDragAction(ev, "dragend");
         });
-        this.$element.bind("drop", function(ev) {
+        this.$element.on("drop", function(ev) {
           ev.preventDefault();
           return self.onDragAction(ev, "drop");
         });
@@ -2649,22 +2649,22 @@
 
       if ( this._opts.dnd_items && OSjs.Compability.SUPPORT_DND ) {
         el.attr("draggable", "true");
-        el.bind("dragover", function(ev) {
+        el.on("dragover", function(ev) {
           ev.preventDefault();
           return self.onDragAction(ev, "dragover", $(this), dnd_cursor);
         });
-        el.bind("dragleave", function(ev) {
+        el.on("dragleave", function(ev) {
           //ev.preventDefault();
           /*return */self.onDragAction(ev, "dragleave", $(this));
         });
-        el.bind("dragstart", function(ev) {
+        el.on("dragstart", function(ev) {
           ev.originalEvent.dataTransfer.setData('text/plain', jsn);
           /*return */self.onDragAction(ev, "dragstart", $(this));
         });
-        el.bind("dragend", function(ev) {
+        el.on("dragend", function(ev) {
           /*return */self.onDragAction(ev, "dragend", $(this));
         });
-        el.bind("drop", function(ev) {
+        el.on("drop", function(ev) {
           ev.preventDefault();
           ev.stopPropagation();
 
@@ -2683,7 +2683,7 @@
         el.find("img").attr("height", "16");
       }
 
-      el.mousedown(function(ev) {
+      el.on("mousedown", function(ev) {
         var t = $(ev.target || ev.srcElement);
         if ( !(t.attr("draggable") === "true" || t.closest("*[draggable=true]", t).length) ) {
           ev.preventDefault();
@@ -2692,17 +2692,17 @@
         }
         //return false;
       });
-      el.click(function(ev) {
+      el.on("click", function(ev) {
         ev.preventDefault();
         ev.stopPropagation();
         self.onItemSelect(ev, this, iter);
       });
-      el.bind("contextmenu", function(ev) {
+      el.on("contextmenu", function(ev) {
         ev.stopPropagation();
         ev.preventDefault();
         return self.onItemContextMenu(ev, this, iter);
       });
-      el.dblclick(function(ev) {
+      el.on("dblclick", function(ev) {
         ev.stopPropagation();
         ev.preventDefault();
         return self.onItemActivate(ev, this, iter);
@@ -2721,7 +2721,7 @@
       var self = this;
       var el = this.createColumn(iter);
 
-      el.click(function(ev) {
+      el.on("click", function(ev) {
         ev.stopPropagation();
         self.onColumnActivate(ev, this, iter);
       });

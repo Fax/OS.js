@@ -91,16 +91,21 @@
 
   OSjs.Compability = {
     "SUPPORT_UPLOAD"         : false,
+    "SUPPORT_FS"             : (('requestFileSystem' in window) || ('webkitRequestFileSystem' in window)),
     "SUPPORT_LSTORAGE"       : (('localStorage'    in window) && window['localStorage']   !== null),
     "SUPPORT_SSTORAGE"       : (('sessionStorage'  in window) && window['sessionStorage'] !== null),
     "SUPPORT_GSTORAGE"       : (('globalStorage'   in window) && window['globalStorage']  !== null),
     "SUPPORT_DSTORAGE"       : (('openDatabase'    in window) && window['openDatabase']   !== null),
+
     "SUPPORT_SOCKET"         : (('WebSocket'       in window) && window['WebSocket']      !== null),
     "SUPPORT_WORKER"         : (('Worker'          in window) && window['Worker']         !== null),
+    "SUPPORT_DND"            : ('draggable' in document.createElement('span')),
+    "SUPPORT_TOUCH"          : ('ontouchstart' in window),
+    "SUPPORT_ORIENTATION"    : ('onorientationchange' in window),
+
     "SUPPORT_CANVAS"         : (!!canvas_supported),
-    "SUPPORT_WEBGL"          : false,
     "SUPPORT_CANVAS_CONTEXT" : [],
-    "SUPPORT_FS"             : (('requestFileSystem' in window) || ('webkitRequestFileSystem' in window)),
+    "SUPPORT_WEBGL"          : false,
     "SUPPORT_SVG"            : (!!document.createElementNS && !!document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect),
     "SUPPORT_VIDEO"          : (!!video_supported),
     "SUPPORT_VIDEO_WEBM"     : (video_supported && !!video_supported.canPlayType('video/webm; codecs="vp8.0, vorbis"')),
@@ -112,8 +117,7 @@
     "SUPPORT_AUDIO_OGG"      : (audio_supported && !!audio_supported.canPlayType('audio/ogg; codecs="vorbis')),
     "SUPPORT_AUDIO_MP3"      : (audio_supported && !!audio_supported.canPlayType('audio/mpeg')),
     "SUPPORT_AUDIO_WAV"      : (audio_supported && !!audio_supported.canPlayType('audio/wav; codecs="1"')),
-    "SUPPORT_RICHTEXT"       : (!!document.createElement('textarea').contentEditable),
-    "SUPPORT_DND"            : ('draggable' in document.createElement('span'))
+    "SUPPORT_RICHTEXT"       : (!!document.createElement('textarea').contentEditable)
   };
 
   if ( canvas_supported ) {

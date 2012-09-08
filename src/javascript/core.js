@@ -430,7 +430,7 @@
         break;
 
         case 'Launch' :
-          if ( args && args.path && args.mime.match(/(.*)\/(.*)/) ) {
+          if ( args && args.path && args.mime && args.mime.match(/(.*)\/(.*)/) ) {
             API.system.run(args.path, args.mime);
           } else {
             error = true;
@@ -2131,20 +2131,20 @@
 
       $("#LoginWindow").show();
 
-      $("#LoginButton").click(function() {
+      $("#LoginButton").on("click", function() {
         LoginManager.postLogin({
           "username" : $("#LoginUsername").val(),
           "password" : $("#LoginPassword").val()
         }, false);
       });
-      $("#CreateLoginButton").click(function() {
+      $("#CreateLoginButton").on("click", function() {
         LoginManager.postLogin({
           "username" : $("#LoginUsername").val(),
           "password" : $("#LoginPassword").val()
         }, true);
       });
 
-      $("#LoginUsername").keydown(function(ev) {
+      $("#LoginUsername").on("keydown", function(ev) {
         var key = ev.keyCode || ev.which;
         if ( key == KEYCODES.enter ) {
           $("#LoginPassword").focus();
@@ -2153,7 +2153,7 @@
         }
       });
 
-      $("#LoginPassword").keydown(function(ev) {
+      $("#LoginPassword").on("keydown", function(ev) {
         var key = ev.keyCode || ev.which;
         if ( key == KEYCODES.enter ) {
           $("#LoginButton").click();
@@ -2615,17 +2615,17 @@
       if ( this.running ) {
         console.log("Unbinding events...");
 
-        $(window).unbind("focus",                       this.global_focus);
-        $(window).unbind("blur",                        this.global_blur);
-        //$(window).unbind("offline",                   this.global_offline);
-        $(document).unbind("keydown",                 this.global_keydown);
-        $(document).unbind("keyup",                   this.global_keyup);
-        $(document).unbind("mousedown",               this.global_mousedown);
-        $(document).unbind("mouseup",                 this.global_mouseup);
-        $(document).unbind("mousemove",               this.global_mousemove);
-        $(document).unbind("click",                   this.global_click);
-        $(document).unbind("dblclick",                this.global_dblclick);
-        $(document).unbind("contextmenu",             this.global_contextmenu);
+        $(window).off("focus",                     this.global_focus);
+        $(window).off("blur",                      this.global_blur);
+        //$(window).off("offline",                 this.global_offline);
+        $(document).off("keydown",                 this.global_keydown);
+        $(document).off("keyup",                   this.global_keyup);
+        $(document).off("mousedown",               this.global_mousedown);
+        $(document).off("mouseup",                 this.global_mouseup);
+        $(document).off("mousemove",               this.global_mousemove);
+        $(document).off("click",                   this.global_click);
+        $(document).off("dblclick",                this.global_dblclick);
+        $(document).off("contextmenu",             this.global_contextmenu);
 
         if ( this.ichecker ) {
           clearInterval(this.ichecker);
@@ -2701,7 +2701,7 @@
       // Try to remove remaining events
       console.log("Unbinding remaining...");
       try {
-        $("*").unbind();
+        $("*").off();
         $("*").die();
       } catch ( eee ) { }
 
@@ -2912,18 +2912,18 @@
       API.ui.cursor("wait", true);
 
       // Bind global events
-      $(window).bind("focus",         this.global_focus);
-      $(window).bind("blur",          this.global_blur);
-      $(window).bind("beforeunload",  this.leaving);
-      //$(window).bind("offline",       this.global_offline);
-      $(document).bind("keydown",     this.global_keydown);
-      $(document).bind("keyup",       this.global_keyup);
-      $(document).bind("mousedown",   this.global_mousedown);
-      $(document).bind("mouseup",     this.global_mouseup);
-      $(document).bind("mousemove",   this.global_mousemove);
-      $(document).bind("click",       this.global_click);
-      $(document).bind("dblclick",    this.global_dblclick);
-      $(document).bind("contextmenu", this.global_contextmenu);
+      $(window).on("focus",         this.global_focus);
+      $(window).on("blur",          this.global_blur);
+      $(window).on("beforeunload",  this.leaving);
+      //$(window).on("offline",       this.global_offline);
+      $(document).on("keydown",     this.global_keydown);
+      $(document).on("keyup",       this.global_keyup);
+      $(document).on("mousedown",   this.global_mousedown);
+      $(document).on("mouseup",     this.global_mouseup);
+      $(document).on("mousemove",   this.global_mousemove);
+      $(document).on("click",       this.global_click);
+      $(document).on("dblclick",    this.global_dblclick);
+      $(document).on("contextmenu", this.global_contextmenu);
 
       this.ichecker = setInterval(function(ev) {
         self.global_offline(ev, !(navigator.onLine === false));
@@ -5699,7 +5699,7 @@
           var iter;
           var data = result.json;
 
-          if ( data.mime.match(/^OSjs/) ) {
+          if ( data.mime && data.mime.match(/^OSjs/) ) {
             if ( data.mime == "OSjs/Application" ) {
               iter = {
                 'title'     : data.name,
@@ -5818,7 +5818,7 @@
       this.$element = $("#Desktop");
       this.panels   = [];
 
-      this.$element.mousedown(function(ev) {
+      this.$element.on("mousedown", function(ev) {
         _Core.global_mousedown(ev);
         //ev.preventDefault();
       });
@@ -5826,7 +5826,7 @@
       // Global resize event
       var curHeight = $(window).height();
       var curWidth  = $(window).width();
-      $(window).bind("resize", function(ev) {
+      $(window).on("resize", function(ev) {
         var newHeight = $(window).height();
         var newWidth  = $(window).width();
 
@@ -5856,7 +5856,7 @@
         clearTimeout(this._rtimeout);
       }
 
-      $(window).unbind("resize");
+      $(window).off("resize");
 
       // Remove panel
       if ( this.panels ) {
@@ -6587,27 +6587,12 @@
         }
       });
 
-      // Stop bubbling
-      $(this.$element).bind("mousedown", function(ev) {
+      $(this.$element).on("mousedown", function(ev) {
         ev.preventDefault();
-        /*ev.stopPropagation();
-        return false;*/
       });
-      /*$(this.$element).bind("dblclick", function(ev) {
-        ev.preventDefault();
-        ev.stopPropagation();
-        return false;
-      });
-      $(this.$element).bind("click", function(ev) {
-        ev.preventDefault();
-        ev.stopPropagation();
-
-        $(document).click(); // Trigger this! (deselects context-menu)
-        return false;
-      });*/
 
       // Context menu
-      this.$element.bind("contextmenu", function(ev) {
+      this.$element.on("contextmenu", function(ev) {
         ev.preventDefault();
         ev.stopPropagation();
 
@@ -6662,7 +6647,7 @@
       }
 
       if ( this.$element ) {
-        this.$element.unbind("contextmenu");
+        this.$element.off("contextmenu");
         this.$element.empty().remove();
       }
 
@@ -6700,7 +6685,7 @@
       this.running = true;
 
       var self = this;
-      $(document).mouseup(function(ev) {
+      $(document).on("mouseup", function(ev) {
         if ( self.idragging ) {
           self._stopItemDrag(ev);
         }
@@ -6740,7 +6725,7 @@
 
         console.log("Panel::_startItemDrag()", ev, this.idragging);
 
-        $(document).bind("mousemove", function(ev) {
+        $(document).on("mousemove", function(ev) {
           self._handleItemDrag(ev);
         });
 
@@ -6758,7 +6743,7 @@
       if ( this.idragging ) {
         console.log("Panel::_stopItemDrag()", ev, this.idragging);
 
-        $(document).unbind("mousemove", function(ev) {
+        $(document).off("mousemove", function(ev) {
           self._handleItemDrag(ev);
         });
 
@@ -7128,21 +7113,21 @@
 
       console.log("PanelItem::create()", lopts, cpos);
 
-      this.$element.bind("contextmenu", function(ev) {
+      this.$element.on("contextmenu", function(ev) {
         ev.preventDefault();
         ev.stopPropagation();
 
         API.application.context_menu(ev, $(this), self.getMenu(), true);
         return false;
       });
-      this.$element.bind("click", function(ev) {
+      this.$element.on("click", function(ev) {
         ev.preventDefault();
         ev.stopPropagation();
 
         $(document).click(); // Trigger this! (deselects context-menu)
         return false;
       });
-      this.$element.bind("mousedown", function(ev) {
+      this.$element.on("mousedown", function(ev) {
         ev.preventDefault();
         ev.stopPropagation();
         return false;
@@ -7224,7 +7209,7 @@
           callback(diag);
 
           diag.$element.find(".DialogButtons .Close").show();
-          diag.$element.find(".DialogButtons .Ok").show().click(function() {
+          diag.$element.find(".DialogButtons .Ok").show().on("click", function() {
             callback_ok(diag);
             self.reload();
 
@@ -7612,7 +7597,7 @@
           el.find(".WindowTopInner img").attr("src", this._getIcon());
           el.find(".WindowContentInner").html(this._content);
 
-          el.find(".WindowTopInner img").click(function(ev) {
+          el.find(".WindowTopInner img").on("click", function(ev) {
             if ( self._is_moving )
               return;
 
@@ -7641,7 +7626,7 @@
 
             ev.stopPropagation();
             ev.preventDefault();
-          }).dblclick(function(ev) {
+          }).on("dblclick", function(ev) {
             ev.preventDefault();
             ev.stopPropagation();
             return false;
@@ -7652,7 +7637,7 @@
         // Events
         //
 
-        el.bind('contextmenu', function(ev) {
+        el.on('contextmenu', function(ev) {
           ev.stopPropagation();
           $(document).click(); // TRIGGER GLOBAL CONTEXTMENU
 
@@ -7668,7 +7653,7 @@
           return false;
         });
 
-        el.bind('mousedown', function(ev) {
+        el.on('mousedown', function(ev) {
           self.focus();
           if ( ev.which > 1 ) { // Menu only NOTE
             ev.stopPropagation();
@@ -7676,27 +7661,27 @@
           }
         });
         if ( this._is_maximizable ) {
-          el.find(".WindowTopInner").dblclick(function() {
+          el.find(".WindowTopInner").on("dblclick", function() {
             el.find(".ActionMaximize").click();
           });
         }
 
-        el.find(".WindowTop").bind("contextmenu",function() {
+        el.find(".WindowTop").on("contextmenu",function() {
           return false;
         });
 
-        el.find(".WindowTopController").mousedown(function(ev) {
+        el.find(".WindowTopController").on("mousedown", function(ev) {
           ev.preventDefault();
           ev.stopPropagation();
           return false;
-        }).dblclick(function(ev) {
+        }).on("dblclick", function(ev) {
           ev.preventDefault();
           ev.stopPropagation();
           return false;
         });
 
         if ( this._is_closable ) {
-          el.find(".ActionClose").click(function() {
+          el.find(".ActionClose").on("click", function() {
             if ( self._is_moving )
               return;
 
@@ -7707,7 +7692,7 @@
         }
 
         if ( this._is_minimizable ) {
-          el.find(".ActionMinimize").click(function() {
+          el.find(".ActionMinimize").on("click", function() {
             if ( self._is_moving )
               return;
 
@@ -7718,7 +7703,7 @@
         }
 
         if ( this._is_maximizable ) {
-          el.find(".ActionMaximize").click(function() {
+          el.find(".ActionMaximize").on("click", function() {
             if ( self._is_moving )
               return;
 
@@ -7923,27 +7908,27 @@
           };
 
           var dnd = el;// .find(".WindowContent").first();
-          dnd.bind("dragover", function(ev) {
+          dnd.on("dragover", function(ev) {
             ev.preventDefault();
             ev.stopPropagation();
             ev.originalEvent.dataTransfer.dropEffect = 'link';
             return false;
           });
-          dnd.bind("dragleave", function(ev) {
+          dnd.on("dragleave", function(ev) {
             ___hide();
             return false;
           });
-          dnd.bind("dragenter", function(ev) {
+          dnd.on("dragenter", function(ev) {
             ev.preventDefault();
             ev.stopPropagation();
             ___show();
             return false;
           });
-          dnd.bind("dragend", function(ev) {
+          dnd.on("dragend", function(ev) {
             ___hide();
             return false;
           });
-          dnd.bind("drop", function(ev) {
+          dnd.on("drop", function(ev) {
             ev.stopPropagation();
             ev.preventDefault();
 
@@ -8583,11 +8568,11 @@
           });
 
           el.find(".GtkMenuBar > li").each(function() {
-            $(this).mousedown(function(ev) {
+            $(this).on("mousedown", function(ev) {
               ev.preventDefault();
               return false;
             });
-            $(this).click(function(ev) {
+            $(this).on("click", function(ev) {
               $(document).click(); // TRIGGER GLOBAL CONTEXTMENU
               ev.preventDefault();
               ev.stopPropagation();
@@ -8596,7 +8581,7 @@
             });
           });
 
-          el.find(".GtkMenuBar").click(function(ev) {
+          el.find(".GtkMenuBar").on("click", function(ev) {
             var t = $(ev.target || ev.srcElement);
             if ( $(t).hasClass("GtkMenuBar") ) {
               $(document).click();
@@ -8612,7 +8597,7 @@
         el.find(".GtkScale div").slider();
 
         // Item Groups
-        el.find(".GtkToolItemGroup").click(function() {
+        el.find(".GtkToolItemGroup").on("click", function() {
           $(this).parents(".GtkToolPalette").first().find(".GtkToolItemGroup").removeClass("Checked");
 
           if ( $(this).hasClass("Checked") ) {
@@ -8623,7 +8608,7 @@
         });
 
         // Toggle buttons
-        el.find(".GtkToggleToolButton").click(function() {
+        el.find(".GtkToggleToolButton").on("click", function() {
           if ( $(this).hasClass("Checked") ) {
             $(this).removeClass("Checked");
           } else {
@@ -8729,7 +8714,7 @@
       this._curpos  = -1;
       this._maxpos  = -1;
 
-      $(this.$clicked).bind("contextmenu", function(ev) {
+      $(this.$clicked).on("contextmenu", function(ev) {
         ev.stopPropagation();
         ev.preventDefault();
         return false;
@@ -8799,7 +8784,7 @@
       }
 
       if ( typeof iter.method == "function" ) {
-        li.click(function(ev) {
+        li.on("click", function(ev) {
           if ( !disabled ) {
             iter.method(ev);
           }
@@ -8807,14 +8792,14 @@
           self.destroy();
         });
       } else {
-        li.click(function(ev) {
+        li.on("click", function(ev) {
           ev.preventDefault();
           ev.stopPropagation();
           return false;
         });
       }
 
-      li.mousedown(function(ev) {
+      li.on("mousedown", function(ev) {
         ev.preventDefault();
       });
 
@@ -8902,7 +8887,7 @@
       var div = this._createMenu(ev, menu);
       this.$element = div;
 
-      this.$element.bind("contextmenu", function(ev) {
+      this.$element.on("contextmenu", function(ev) {
         ev.stopPropagation();
         ev.preventDefault();
         return false;
@@ -9067,13 +9052,13 @@
       }, function() {
         $(this).removeClass("hover");
       });
-      iter.mousedown(function(ev) {
+      iter.on("mousedown", function(ev) {
         ev.preventDefault();
       });
 
       if ( !disabled ) {
         var self = this;
-        iter.click(function(ev) {
+        iter.on("click", function(ev) {
           ev.preventDefault();
           ev.stopPropagation();
           self.destroy();
@@ -9098,7 +9083,7 @@
         this._maxpos++;
       }
 
-      this.$element.bind("contextmenu", function(ev) {
+      this.$element.on("contextmenu", function(ev) {
         ev.stopPropagation();
         ev.preventDefault();
         return false;
@@ -9191,15 +9176,15 @@
         this.$element.find(".DialogButtons .Cancel").show();
       }
 
-      this.$element.find(".DialogButtons .Close").click(function() {
+      this.$element.find(".DialogButtons .Close").on("click", function() {
         self.$element.find(".ActionClose").click();
         self.cmd_close();
       });
-      this.$element.find(".DialogButtons .Ok").click(function() {
+      this.$element.find(".DialogButtons .Ok").on("click", function() {
         self.$element.find(".ActionClose").click();
         self.cmd_ok();
       });
-      this.$element.find(".DialogButtons .Cancel").click(function() {
+      this.$element.find(".DialogButtons .Cancel").on("click", function() {
         self.$element.find(".ActionClose").click();
         self.cmd_cancel();
       });
@@ -9267,13 +9252,13 @@
       var el = this._super(id, mcallback);
 
       var self = this;
-      this.$element.find(".DialogButtons .Close").click(function() {
+      this.$element.find(".DialogButtons .Close").on("click", function() {
         self.$element.find(".ActionClose").click();
       });
-      this.$element.find(".DialogButtons .Ok").click(function() {
+      this.$element.find(".DialogButtons .Ok").on("click", function() {
         self.$element.find(".ActionClose").click();
       });
-      this.$element.find(".DialogButtons .Cancel").click(function() {
+      this.$element.find(".DialogButtons .Cancel").on("click", function() {
         self.$element.find(".ActionClose").click();
       });
 
@@ -9334,7 +9319,7 @@
    */
   var __CoreReboot__ = function() {
     window.onbeforeunload = null;
-    $(window).unbind("beforeunload"); // NOTE: Required!
+    $(window).off("beforeunload"); // NOTE: Required!
     window.location.reload();
   }; // @endfunction
 
@@ -9353,7 +9338,7 @@
       } catch (e) {}
 
       window.onbeforeunload = null;
-      $(window).unbind("beforeunload"); // NOTE: Required!
+      $(window).off("beforeunload"); // NOTE: Required!
     }
 
     return true;

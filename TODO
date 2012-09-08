@@ -1,5 +1,6 @@
 CORE TODO:
 -------------------------------------------------------------------------------
+[HIG] Implement IconView in launch dialog
 [MED] New package type: Theme OR theme compiler with value-sheet ?!
 [MED] Finish up adding/removing panels, etc
 <<<<<<< HEAD
