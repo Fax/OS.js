@@ -620,7 +620,7 @@
     if ( mime === null )
       return;
 
-    if ( mime.match(/^OSjs\//) ) {
+    if ( mime && mime.match(/^OSjs\//) ) {
       if ( mime == "OSjs/Application" ) {
         var expl = path.split("/");
         var name = expl[expl.length - 1];
@@ -855,6 +855,9 @@
    * @function
    */
   function GetIcon(name, size, pkg) {
+    if ( !name )
+      throw "No name given";
+
     if ( name.match(/^\//) ) {
       return name;
     } else {
@@ -1245,7 +1248,7 @@
 
         // Check if we are launching an Application
         var launch_application = false;
-        if ( !app_name.match(/^API\:\:/) ) {
+        if ( app_name && !app_name.match(/^API\:\:/) ) {
           // Check for orphans
           var wins = _WM ? _WM.stack : [];
           var i = 0, l = wins.length, ref;
@@ -1324,7 +1327,7 @@
 
       'notification' : function(title, message, icon, duration) {
         if ( _Desktop ) {
-          if ( !(icon.match(/^\//) || icon.match(/^(https?)/)) ) {
+          if ( icon && !(icon.match(/^\//) || icon.match(/^(https?)/)) ) {
             icon = GetIcon(icon, "32x32");
           }
 
@@ -2702,7 +2705,6 @@
       console.log("Unbinding remaining...");
       try {
         $("*").off();
-        $("*").die();
       } catch ( eee ) { }
 
       // Unbind the current eventhandler
@@ -4847,19 +4849,20 @@
 
       function __check(key) {
         var error = false;
-
-        // First check if we have a sub-compability check
-        var tmp = key.match(/\_/) ? ((key.split("_")).pop()) : null;
-        if ( tmp === "audio" || tmp === "video" ) {
-          if ( _mapping[tmp] !== true ) {
-            error = OSjs.Labels.CompabilityErrors[tmp];
+        if ( key ) {
+          // First check if we have a sub-compability check
+          var tmp = key.match(/\_/) ? ((key.split("_")).pop()) : null;
+          if ( tmp === "audio" || tmp === "video" ) {
+            if ( _mapping[tmp] !== true ) {
+              error = OSjs.Labels.CompabilityErrors[tmp];
+            }
           }
-        }
 
-        // Then check main-type
-        if ( error === false ) {
-          if ( _mapping[key] !== true ) {
-            error = OSjs.Labels.CompabilityErrors[key];
+          // Then check main-type
+          if ( error === false ) {
+            if ( _mapping[key] !== true ) {
+              error = OSjs.Labels.CompabilityErrors[key];
+            }
           }
         }
 
@@ -6063,7 +6066,7 @@
         return false;
       };
 
-      if ( ev.match(/^window/) ) {
+      if ( ev && ev.match(/^window/) ) {
         return redrawPanels(this.panels, ev, eargs);
       }
 
