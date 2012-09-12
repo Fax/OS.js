@@ -1,3 +1,12 @@
+## NEXT RELEASE
+
+* JS\Vendor: Migrated to jQuery on() events (for all core)
+* Core\JS: Added some checks to fix .match() errors
+* Core\API: Session now not destroyed on init()
+* Core\API: Sessions now restored on init()
+* Core\API: Changed automatic login behavior
+* Misc: Cleanup of config scripts
+
 ## 0.9.8
 
 WARNING: Breakage in Application methods for opening/saving files, now using
