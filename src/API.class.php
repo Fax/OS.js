@@ -207,11 +207,17 @@ EOHTML;
    * @return Array
    */
   protected static final function _doBoot(Array $args, Core $inst = null) {
+    $restored = false;
+
     if ( isset($args['compability']) && (is_array($args['compability'])) ) {
       Session::setCompabilityFlags($args['compability']);
     }
     if ( isset($args['navigator']) && (is_array($args['navigator'])) ) {
       Session::setBrowserFlags($args['navigator']);
+    }
+
+    if ( $user = Core::get()->getUser() ) {
+      $restored = true;
     }
 
     return Array(
@@ -224,19 +230,12 @@ EOHTML;
           "cache"       => ENABLE_CACHE,
           "connection"  => ENV_PLATFORM,
           "ssl"         => ENV_SSL,
+          "autologin"   => AUTOLOGIN_ENABLE,
+          "restored"    => $restored,
           "hosts"       => Array(
-            "server"        => sprintf("%s:%s", SERVER_HOST, SERVER_PORT),
             "frontend"      => HOST_FRONTEND,
-            "api"           => HOST_API,
             "static"        => HOST_STATIC
-          ),
-          "api_format"  => API_FORMAT,
-          "autologin"   => Array(
-            "enable"       => AUTOLOGIN_ENABLE,
-            "username"     => AUTOLOGIN_USERNAME,
-            "password"     => AUTOLOGIN_PASSWORD,
-            "confirmation" => AUTOLOGIN_CONFIRMATION
-          ),
+          )
         )
       )
     );
@@ -355,18 +354,15 @@ EOHTML;
    */
   protected static final function _doUserLogin(Array $args, Core $inst = null) {
     $json     = Array();
-    $uname    = "";
-    $upass    = "";
-    $time     = isset($args['time'])       ? $args['time']      : null;
+    $user     = null;
 
-    if ( isset($args['form']) ) {
+    if ( isset($args['resume']) && ($args['resume'] === "true") ) { // Continue from last browser/php session
+      $user = $inst->getUser();
+    } else if ( isset($args['form']) ) { // Normal login
       $uname = isset($args['form']['username']) ? trim($args['form']['username']) : "";
       $upass = isset($args['form']['password']) ? trim($args['form']['password']) : "";
-    }
 
-    $user = null;
-    if ( $uname && $upass ) {
-      if ( !$user = User::getByUsername($uname) ) {
+      if ( !($uname && $upass) || !$user = User::getByUsername($uname) ) {
         if ( ENV_DEMO ) {
           if ( !$user = User::createNew($uname, $upass) ) {
             $json['error'] = _("The username already exists!");
@@ -378,6 +374,10 @@ EOHTML;
         if ( $user->password != $upass ) {
           $json['error'] = _("Check username and password!");
         }
+      }
+    } else { // Fall back to autologin
+      if ( AUTOLOGIN_ENABLE && ($id = AUTOLOGIN_UID) ) {
+        $user = User::getById($id);
       }
     }
 

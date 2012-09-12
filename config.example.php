@@ -50,15 +50,12 @@ define("CACHE_EXPIRE_ADD",          60);              // Cache: Expiration date 
 define("CACHE_COMBINED_RESOURCES",  ENV_PRODUCTION);  // Cache: Combile all CSS/JS resources that are normally preloaded in browser, speeds up loading
 
 define("HOST_FRONTEND",       "osjs.local");
-define("HOST_API",            "api.osjs.local");
 define("HOST_STATIC",         "osjs.local");
 
 // Login
 define("ENABLE_REGISTRATION",     true);              // Enable user registration on login screen
 define("AUTOLOGIN_ENABLE",        false);             // Automatic login
-define("AUTOLOGIN_USERNAME",      "");                // ... username
-define("AUTOLOGIN_PASSWORD",      "");                // ... password
-define("AUTOLOGIN_CONFIRMATION",  !AUTOLOGIN_ENABLE); // Confirmation dialog on session duplicates etc
+define("AUTOLOGIN_UID",           1);                 // User ID
 
 //
 // VFS Permissions etc.

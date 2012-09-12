@@ -156,18 +156,8 @@ if ( !defined("ENV_SSL") )
 
 if ( !defined("HOST_FRONTEND") )
   define("HOST_FRONTEND",       "osjs.local");
-if ( !defined("HOST_API") )
-  define("HOST_API",            "api.osjs.local");
 if ( !defined("HOST_STATIC") )
   define("HOST_STATIC",         "osjs.local");
-
-//
-// API Backend (Separate Host)
-//
-
-if ( !defined("API_FORMAT") )
-  define("API_FORMAT",          "1.0/%s.%s?%s");
-
 
 //
 // Backend defaults (src/locale/<locale>/<domain>)
@@ -199,12 +189,8 @@ if ( !defined("ENABLE_DEBUGGING") )
 
 if ( !defined("AUTOLOGIN_ENABLE") )
   define("AUTOLOGIN_ENABLE",          false);
-if ( !defined("AUTOLOGIN_USERNAME") )
-  define("AUTOLOGIN_USERNAME",        "");
-if ( !defined("AUTOLOGIN_PASSWORD") )
-  define("AUTOLOGIN_PASSWORD",        "");
-if ( !defined("AUTOLOGIN_CONFIRMATION") )
-  define("AUTOLOGIN_CONFIRMATION",    true); // Enable confirmation dialog on session warnings
+if ( !defined("AUTOLOGIN_UID") )
+  define("AUTOLOGIN_UID",             0);
 
 //
 // Backend VFS (src/VFS.class.php bin/fix-permissions)

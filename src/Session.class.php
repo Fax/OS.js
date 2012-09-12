@@ -141,6 +141,9 @@ class Session
     //$_SESSION['locale']      = null;
     unset($_SESSION['compability']);
     unset($_SESSION['navigator']);
+    unset($_SESSION['user']);
+
+    @session_destroy();
   }
 
   /**
