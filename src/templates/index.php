@@ -194,6 +194,7 @@ foreach ( CoreSettings::getPreload() as $key => $links ) {
     <div id="WindowTogglerList"><ul></ul></div>
     <div id="WindowTogglerTitle"><span>Empty</span></div>
   </div>
+  <div id="WindowDND"></div>
 
   <!-- Loaded content will appear here -->
 </div>

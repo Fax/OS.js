@@ -7876,58 +7876,63 @@
         // DnD
         //
         if ( (OSjs.Compability.SUPPORT_DND) && this._global_dnd ) {
-          var dnd_hover = $("<div class=\"TempDnD\"></div>");
-
           var ___showing = false;
-          var ___show = function() {
-            if ( ___showing )
-              return;
+          var ___timeout = null;
 
-            /*
-            var pos = el.offset();
-            el.addClass("DND-Over");
-            dnd_hover.css({
-              "left"  : pos.left    + "px",
-              "top"   : pos.top     + "px",
-              "width" : el.width()  + "px",
-              "height": el.height() + "px"
-            });
+          var __showDND  = function() {
+            clearTimeout(___timeout);
 
-            $("body").append(dnd_hover);
+            if ( !___showing ) {
+              var pos = el.offset();
+              el.addClass("DND-Over");
+              $("#WindowDND").css({
+                "left"    : pos.left    + "px",
+                "top"     : pos.top     + "px",
+                "width"   : el.width()  + "px",
+                "height"  : el.height() + "px",
+                "z-index" : parseInt(el.css("z-index"), 10) - 1
+              }).show();
+            }
 
             ___showing = true;
-            */
           };
-          var ___hide = function() {
-            if ( ___showing ) {
-              el.removeClass("DND-Over");
-              dnd_hover.remove();
+
+          var __hideDND = function() {
+            ___timeout = setTimeout(function() {
               ___showing = false;
-            }
+              $("#WindowDND").hide();
+            }, 50);
           };
 
           var dnd = el;// .find(".WindowContent").first();
           dnd.on("dragover", function(ev) {
+            __showDND();
+
             ev.preventDefault();
             ev.stopPropagation();
             ev.originalEvent.dataTransfer.dropEffect = 'link';
             return false;
           });
           dnd.on("dragleave", function(ev) {
-            ___hide();
+            __hideDND();
+
             return false;
           });
           dnd.on("dragenter", function(ev) {
+            __showDND();
+
             ev.preventDefault();
             ev.stopPropagation();
-            ___show();
             return false;
           });
           dnd.on("dragend", function(ev) {
-            ___hide();
+            __hideDND();
+
             return false;
           });
           dnd.on("drop", function(ev) {
+            __hideDND();
+
             ev.stopPropagation();
             ev.preventDefault();
 
@@ -7960,7 +7965,6 @@
               'event' : ev
             });
 
-            ___hide();
             return false;
           });
         }
