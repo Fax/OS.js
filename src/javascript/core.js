@@ -7876,11 +7876,16 @@
         // DnD
         //
         if ( (OSjs.Compability.SUPPORT_DND) && this._global_dnd ) {
+
+          // Hover effect on window
           var ___showing = false;
           var ___timeout = null;
 
           var __showDND  = function() {
-            clearTimeout(___timeout);
+            if ( ___timeout ) {
+              clearTimeout(___timeout);
+              ___timeout = null;
+            }
 
             if ( !___showing ) {
               var pos = el.offset();
@@ -7901,9 +7906,13 @@
             ___timeout = setTimeout(function() {
               ___showing = false;
               $("#WindowDND").hide();
+
+              clearTimeout(___timeout);
+              ___timeout = null;
             }, 50);
           };
 
+          // Generic handlers
           var dnd = el;// .find(".WindowContent").first();
           dnd.on("dragover", function(ev) {
             __showDND();
@@ -7936,6 +7945,7 @@
             ev.stopPropagation();
             ev.preventDefault();
 
+            // Check for internal and browser dropped files
             var path  = null;
             var mime  = "";
             var data  = ev.originalEvent.dataTransfer;

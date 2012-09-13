@@ -95,7 +95,8 @@ OSjs.Dialogs.LaunchOperationDialog = (function($, undefined) {
         var clang = API.system.language();
         for ( var x = 0; x < this.list.length; x++ ) {
           app = this.list[x];
-          var li = $("<li><img alt=\"\" src=\"/img/icons/16x16/" + app.icon + "\" /><span>" + (app.titles[clang] || app.title) + "</span></li>");
+          //var li = $("<li><img alt=\"\" src=\"/img/icons/16x16/" + app.icon + "\" /><span>" + (app.titles[clang] || app.title) + "</span></li>");
+          var li = $(sprintf("<li><img alt=\"\" src=\"%s\" /><span>%s</span></li>", API.ui.getIcon(app.icon, "16x16", app.name), (app.titles[clang] || app.title)));
           li.addClass(x % 2 ? "odd" : "even");
           (function(litem, mapp) {
             li.click(function() {
