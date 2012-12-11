@@ -3,19 +3,6 @@ CORE TODO:
 [HIG] Implement IconView in launch dialog
 [MED] New package type: Theme OR theme compiler with value-sheet ?!
 [MED] Finish up adding/removing panels, etc
-<<<<<<< HEAD
-[LOW] WindowManager: Effect(s) configuration
-[LOW] Panel setting: Background Image
-[LOW] Panels: Add/Remove (Implement multiples in GUI)
-[LOW]  Core::_doUserOperation (User manipulation, backend)
-[LOW]  APP ControlPanel: _doUserOperation (User manipulation, frontend)
-[LOW]  Finish up Package Meta for loading from user
-[LOW]  Implement MenuNew in GtkMenu
-[LOW]  Add/Remove Panel
-[LOW]  Remove the global resize event and make a poll ?!
-       This would increase the performance of panel redraws etc.
-[LOW] Split login to custom css and remove when needed
-[LOW] Maybe change the way feature detection is done
 [MED] Finish HTTPS connections
 [MED] Implement new flexbox model
 [LOW] Bugfix: Session snapshot loading not working anymore
@@ -42,34 +29,3 @@ MISC TODO:
 * Replace jQuery
 * Streaming of applications over SSH
 
-IDEAS ETC:
--------------------------------------------------------------------------------
-[NUR] Application Streaming (VNC-ish)
-[NUR] Remove jQuery dependency, write custom library
-[NUR] Remove jQuery UI dependency, write custom library
-
-NEW GLADE TRANSFORMATION:
--------------------------------------------------------------------------------
-ApplicationArchiver/          X
-ApplicationArkanoid/          -
-ApplicationBrowser/           -
-ApplicationClock/             -
-ApplicationDraw/
-ApplicationFileManager/       X
-ApplicationIDE/               X
-ApplicationIRC/
-ApplicationMail/
-ApplicationMusicPlayer/       X
-ApplicationPDF/               X
-ApplicationServerStatus/      -
-ApplicationTerminal/          -
-ApplicationTest/              -
-ApplicationTextpad/           X
-ApplicationTickTackToe/       X
-ApplicationVideoPlayer/       X
-ApplicationViewer/            X
-ApplicationWriter/
-SystemAbout/                  -
-SystemControlPanel/           -
-SystemLogout/                 -
-SystemProcesses/              -
