@@ -1,10 +1,15 @@
 ## NEXT RELEASE
 
+NOTICE: Sessions are NOT destroyed on refresh anymore. They will resume if
+possible (settings not saved are lost because localStorage is not implemented in this version)
+
 * JS\Vendor: Migrated to jQuery on() events (for all core)
 * Core\JS: Added some checks to fix .match() errors
 * Core\API: Session now not destroyed on init()
 * Core\API: Sessions now restored on init()
 * Core\API: Changed automatic login behavior
+* Core\UI: DND Hover on window back and working
+* Core\JS: Fixed application icons in launcher dialog(s)
 * Misc: Cleanup of config scripts
 
 ## 0.9.8
