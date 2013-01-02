@@ -32,21 +32,14 @@ This has only been tested on these Linux distributions:
 * jQuery UI  
   `http://jqueryui.com/download/jquery-ui-1.8.17.custom.zip`
 
-* JSON2 by Douglas Crockford (Git submodule) 
-  `https://raw.github.com/douglascrockford/JSON-js/master/json2.js`
-
-* Sprintf by Alexandru Marasteanu (Git submodule) 
-  `http://www.diveintojavascript.com/projects/javascript-sprintf`
-
-* Gnome 2.x icon pack(s) (Git submodule)  
-  `http://ftp.gnome.org/pub/GNOME/sources/gnome-icon-theme/`
-
 * Yahoo YUI Compressor or Google Closure Compiler  
   `http://developer.yahoo.com/yui/compressor/`  
   `https://developers.google.com/closure/`
 
+* JSON2 by Douglas Crockford (Git submodule) 
+* Sprintf by Alexandru Marasteanu (Git submodule) 
+* Gnome 2.x icon pack(s) (Git submodule)  
 * Freedesktop Sound Theme (Git submodule)  
-  `http://cgit.freedesktop.org/sound-theme-freedesktop/tree/`
 
 # Manual Installation:
 
