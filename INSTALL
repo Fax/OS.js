@@ -32,20 +32,20 @@ This has only been tested on these Linux distributions:
 * jQuery UI  
   `http://jqueryui.com/download/jquery-ui-1.8.17.custom.zip`
 
-* JSON2 by Douglas Crockford  
+* JSON2 by Douglas Crockford (Git submodule) 
   `https://raw.github.com/douglascrockford/JSON-js/master/json2.js`
 
-* Sprintf by Alexandru Marasteanu  
+* Sprintf by Alexandru Marasteanu (Git submodule) 
   `http://www.diveintojavascript.com/projects/javascript-sprintf`
 
-* Gnome 2.x icon pack(s)  
+* Gnome 2.x icon pack(s) (Git submodule)  
   `http://ftp.gnome.org/pub/GNOME/sources/gnome-icon-theme/`
 
 * Yahoo YUI Compressor or Google Closure Compiler  
   `http://developer.yahoo.com/yui/compressor/`  
   `https://developers.google.com/closure/`
 
-* Freedesktop Sound Theme  
+* Freedesktop Sound Theme (Git submodule)  
   `http://cgit.freedesktop.org/sound-theme-freedesktop/tree/`
 
 # Manual Installation:
@@ -53,7 +53,7 @@ This has only been tested on these Linux distributions:
 
 ## First steps
 
-* Clone OS.js from Github
+* Clone OS.js from Github (Use recursive clone or pull submodules after clone)
 * Set up `config.php`
   - Create a copy of `config.example.php` and edit
   - Or create a symlink and keep current example config
@@ -78,24 +78,12 @@ This has only been tested on these Linux distributions:
 * Download **jQuery** (1.7.1 by default)  
   - Drop into `vendor/`  
   - Symlink JS to `public_html/vendor/jquery.js` (Should exist)  
+
 * Download **jQuery UI** (1.8.17 by default)  
   - Drop into `vendor/`  
   - Symlink JS to `public_html/vendor/jquery-ui.js` (Should exist)  
   - Symlink CSS to `public_html/vendor/jquery-ui-theme.css` (Should exist)  
   - Symlink CSS images to `public_html/vendor/images` (Should exist)  
-* Download **sprintf**  
-  - Drop into `vendor/`  
-  - Symlink JS to `public_html/vendor/sprintf.js` (Should exist)  
-* Download **JSON2**  
-  - Drop into `vendor/`  
-  - Symlink JS to `public_html/vendor/json.js` (Should exist)  
-* Download **Gnome Icon Theme**
-  - Drop into `vendor/`  
-  - Symlink 16x16 and 32x32 directories to `public_html/img/icons/*` (Should exist)
-* Download **Freedesktop Sound Theme**
-  - Drop into `vendor/`  
-  - Symlink `stereo` directory to `public_html/sounds` (Should exist)  
-  - Run `./bin/convert-sounds` to create MP3 samples (Optional)
 
 * **ALTERNATIVE 1** Download **Yahoo YUI Compressor**
   - Drop `jar` file into `vendor/yui-compressor`  
@@ -107,9 +95,9 @@ This has only been tested on these Linux distributions:
       define("BIN_CC_ENABLE",       true);
 
 ## Extras
-* Clone the "OSjs-Packages" repository into `src/packages`  
-  - Compile all applications with `./bin/application-gen`  
-  - Install all applications globally with `./bin/install-all`
+Needs the packages submodule
+* Compile all applications with `./bin/application-gen`  
+* Install all applications globally with `./bin/install-all`
 
 ## Finishing steps
 * Compile server-side locales with `./bin/update-locale`

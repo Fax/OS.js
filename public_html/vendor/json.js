@@ -1,1 +1,1 @@
-../../vendor/json2.js
+../../vendor/JSON-js/json2.js
