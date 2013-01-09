@@ -9,6 +9,8 @@ CSS features.
 
 OS.js can also be deployed standalone, either running in a browser or on top of X11 as a complete Graphical Environment.
 
+**Node.js backend is in development. Apache and MySQL will be dropped.**
+
 # Features
 * BSD Licensed
 * Minimalistic, light-weight multi-user Web Desktop Platform
