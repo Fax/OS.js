@@ -89,7 +89,7 @@ This has only been tested on these Linux distributions:
 
 ## Extras
 Needs the packages submodule
-* Compile all applications with `./bin/application-gen`  
+* Compile all applications with `./bin/compile-all`  
 * Install all applications globally with `./bin/install-all`
 
 ## Finishing steps
