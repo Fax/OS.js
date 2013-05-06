@@ -1,1 +1,1 @@
-../../vendor/js-sprintf/sprintf-0.7-beta1.js
+../../vendor/sprintf-0.7-beta1.js
