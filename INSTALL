@@ -26,18 +26,13 @@ This has only been tested on these Linux distributions:
 
 # Frontend Dependencies:
 
-* jQuery  
-  `http://code.jquery.com/jquery-1.7.1.min.js`
-
-* jQuery UI  
-  `http://jqueryui.com/download/jquery-ui-1.8.17.custom.zip`
-
+* jQuery (Included)
+* jQuery UI (Included)
 * Yahoo YUI Compressor or Google Closure Compiler  
   `http://developer.yahoo.com/yui/compressor/`  
   `https://developers.google.com/closure/`
-
+* Sprintf by Alexandru Marasteanu (Included) 
 * JSON2 by Douglas Crockford (Git submodule) 
-* Sprintf by Alexandru Marasteanu (Git submodule) 
 * Gnome 2.x icon pack(s) (Git submodule)  
 * Freedesktop Sound Theme (Git submodule)  
 
@@ -68,16 +63,6 @@ This has only been tested on these Linux distributions:
   (You can alternatively allow PHP scripts allow settings ini-settings)
 
 ## Frontend Dependencies
-* Download **jQuery** (1.7.1 by default)  
-  - Drop into `vendor/`  
-  - Symlink JS to `public_html/vendor/jquery.js` (Should exist)  
-
-* Download **jQuery UI** (1.8.17 by default)  
-  - Drop into `vendor/`  
-  - Symlink JS to `public_html/vendor/jquery-ui.js` (Should exist)  
-  - Symlink CSS to `public_html/vendor/jquery-ui-theme.css` (Should exist)  
-  - Symlink CSS images to `public_html/vendor/images` (Should exist)  
-
 * **ALTERNATIVE 1** Download **Yahoo YUI Compressor**
   - Drop `jar` file into `vendor/yui-compressor`  
   - Synmlink/copy/move the jar to `vendor/yui-compressor/yuicompressor.jar`
