@@ -1,4 +1,4 @@
-**This version is no longer in active development. Please check out version 2 in my other Github project page: https://github.com/andersevenrud/OS.js-v2**
+**This version is no longer in active development. Please check out version 2 in my other Github project page: http://andersevenrud.github.io/OS.js-v2**
 
 **NOTE:** This branch will soon be deprecated. PHP, Apache and MySQL will be removed and replaced
 with a Node.js backend (as originally intended). You can check out the development process in the 'node.js' branch.
