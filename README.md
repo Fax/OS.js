@@ -6,8 +6,7 @@ with a Node.js backend (as originally intended). You can check out the developme
 # About OS.js:
 OS.js is a simple, yet powerful JavaScript Cloud/Web Desktop Platform.
 
-A live demonstration is available on http://OSjs.0o.no
-Please note that this site may be down at times. To access this demo you need to register a user.
+~~A live demonstration is available on http://OSjs.0o.no~~
 
 Only WebKit and Gecko based browsers fully support Glade/Gtk+ due to incomplete implementation of various
 CSS features.
